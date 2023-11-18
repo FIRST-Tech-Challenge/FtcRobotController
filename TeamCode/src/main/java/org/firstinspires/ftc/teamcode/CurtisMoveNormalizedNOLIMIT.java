@@ -20,6 +20,8 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.4;
 
+    private double HangPower = 1;
+
 //    public int arm = 0;
 //    public int arm1 = 0;
 //
@@ -128,7 +130,7 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
 
         // slides
-        slidesPower = gamepad2.a ? MAXSLIDEPOWER : gamepad2.b ? -MAXSLIDEPOWER : 0;
+        slidesPower = gamepad2.a ? MAXSLIDEPOWER : gamepad2.b ? -MAXSLIDEPOWER : gamepad2.touchpad ? HangPower : 0;
 
 
         // Set motor powers to updated power
