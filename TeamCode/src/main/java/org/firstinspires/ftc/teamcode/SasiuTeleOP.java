@@ -35,8 +35,8 @@ public class SasiuTeleOP extends OpMode {
         motorFL = hardwareMap.get(DcMotorEx.class, "motorFL"); // Motor Back-Left
         motorFR = hardwareMap.get(DcMotorEx.class, "motorFR"); // Motor Back-Left
 
-        motorBL.setDirection(DcMotorEx.Direction.REVERSE);
-        motorFL.setDirection(DcMotorEx.Direction.REVERSE);
+        motorBR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorFR.setDirection(DcMotorEx.Direction.REVERSE);
 
         motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -49,10 +49,10 @@ public class SasiuTeleOP extends OpMode {
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        motorFR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motorFL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motorBR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motorBL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
     public void start(){
@@ -70,10 +70,10 @@ public class SasiuTeleOP extends OpMode {
                 rx = gamepad1.right_stick_x;
 
                 /* Liniile astea de cod iau niste variabile care reprezinta puterea fiecarui motor, cu ajutorul puterilor de la controller*/
-                pmotorFL = y  + rx;
-                pmotorBL = y  + rx;
-                pmotorBR = y  - rx;
-                pmotorFR = y  - rx;
+                pmotorFL = y + x  + rx;
+                pmotorBL = y - x + rx;
+                pmotorBR = y + x - rx;
+                pmotorFR = y - x - rx;
 
                 /*Secventele urmatoare de cod stabilesc maximul dintre modulele puterilor motoarelor cu un anumit scop...*/
                 max = abs(pmotorFL);

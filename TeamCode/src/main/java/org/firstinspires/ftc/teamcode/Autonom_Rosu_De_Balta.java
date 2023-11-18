@@ -69,14 +69,14 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
                 telemetry.addData("height / width:", hperw);
                 x = pipelineRosu.getRect().x + pipelineRosu.getRect().width/2;
                 telemetry.addData("x:",pipelineRosu.getRect().x + pipelineRosu.getRect().width/2);
-                if (rectx * recty < 60) {
-                    varrez = 1;
+                if (x < 350 && x > 100) {
+                    varrez = 2;
                 }
                 else if(x > 350){
                     varrez = 3;
                 }
                 else{
-                    varrez = 2;
+                    varrez = 1;
                 }
                 telemetry.addData("caz:", varrez);
             }
@@ -91,8 +91,22 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
         Pose2d startPose = new Pose2d(14.783464, -62.73622, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
         TrajectorySequence ts = drive.trajectorySequenceBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(new Vector2d(14, -40),Math.toRadians(45)))
+                    .lineToLinearHeading(new Pose2d(new Vector2d(16, -38),Math.toRadians(45)))
                     .build();
+        if(varrez == 2){
+            ts = drive.trajectorySequenceBuilder(startPose)
+                    .lineTo(new Vector2d(14, -34))
+                    .build();
+        }
+        if(varrez == 1){
+            ts = drive.trajectorySequenceBuilder(startPose)
+                    .lineToLinearHeading(new Pose2d(new Vector2d(10, -34),Math.toRadians(160)))
+                    .build();
+        }
         drive.followTrajectorySequence(ts);
+        TrajectorySequence toTable = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(new Vector2d(45,-36),Math.toRadians(180)))
+                .build();
+        drive.followTrajectorySequence(toTable);
     }
 }

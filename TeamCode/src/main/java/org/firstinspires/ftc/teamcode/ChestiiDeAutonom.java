@@ -41,7 +41,7 @@ public class ChestiiDeAutonom extends LinearOpMode {
     public TouchSensor sliderTouch;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-    public CRServo maceta;
+    public CRServo maceta,extensorL,extensorR;
     AnalogInput potentiometru;
     ChestiiDeAutonom() {}
     public void initAprilTag() {
@@ -119,11 +119,15 @@ public class ChestiiDeAutonom extends LinearOpMode {
 
         ghearaL = hard.get(Servo.class, "gherutaL");
         ghearaR = hard.get(Servo.class, "gherutaR");
-        maceta = hard.get(CRServo.class,"maceta");
         plauncher = hard.get(Servo.class,"plauncher");
+
+        maceta = hard.get(CRServo.class,"maceta");
+        extensorL = hard.get(CRServo.class, "extensorL");
+        extensorR = hard.get(CRServo.class, "extensorR");
 
         slider.setDirection(DcMotorEx.Direction.REVERSE);
         melcsus.setDirection(DcMotorEx.Direction.REVERSE);
+        extensorL.setDirection(CRServo.Direction.REVERSE);
         
         melcjos.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         melcsus.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -152,7 +156,14 @@ public class ChestiiDeAutonom extends LinearOpMode {
         }
         motor.setVelocity(0);
     }
-
+    public void extensorPower(double pow, int t){
+        extensorR.setPower(pow);
+        extensorL.setPower(pow);
+        long lastTime = System.currentTimeMillis();
+        while(lastTime + t > System.currentTimeMillis()){}
+        extensorL.setPower(0);
+        extensorR.setPower(0);
+    }
     public void slidertarget(int poz, double vel, double t, int tolerance) {
         Log.wtf("melcjos target:", Integer.toString(-poz));
         Log.wtf("melcsus target:", Integer.toString(poz));

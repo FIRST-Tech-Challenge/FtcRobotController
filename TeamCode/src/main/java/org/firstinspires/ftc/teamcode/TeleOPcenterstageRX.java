@@ -49,7 +49,7 @@ public class TeleOPcenterstageRX extends OpMode {
     double pmotorFL;
     double pmotorFR;
     ChestiiDeAutonom c = new ChestiiDeAutonom();
-    boolean stop = false, lastx = false, lasty = false, sliderState = true, aIntrat = false,aAjuns = true,aInchis = true,setSetpoint;
+    boolean stop = false, lastx = false, lasty = false, aLansat = false, aIntrat = false,setSetpoint,notEntered;
     double intPoz = 0.4, servoPos = 0.0;
     Pid_Controller_Adevarat pid = new Pid_Controller_Adevarat(kp,ki,kd);
     AnalogInput potentiometru;
@@ -93,7 +93,7 @@ public class TeleOPcenterstageRX extends OpMode {
         motorFL.setDirection(DcMotorEx.Direction.REVERSE);
         slider.setDirection(DcMotorEx.Direction.REVERSE);
         melcsus.setDirection(DcMotorEx.Direction.REVERSE);
-        extensorR.setDirection(DcMotorEx.Direction.REVERSE);
+        extensorL.setDirection(DcMotorEx.Direction.REVERSE);
 
         motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -333,6 +333,7 @@ public class TeleOPcenterstageRX extends OpMode {
 
                 if (gamepad2.left_trigger > 0) {
                     plauncher.setPosition(0.5);
+                    aLansat = true;
                 } else {
                     plauncher.setPosition(0.35);
                 }
@@ -344,10 +345,27 @@ public class TeleOPcenterstageRX extends OpMode {
                     }
                 }
                 bl = gamepad2.b;
-
-                extensorL.setPower(gamepad2.left_stick_x);
-                extensorR.setPower(gamepad2.left_stick_x);
-
+                if (gamepad2.x){
+                    c.extensorPower(-1,1300);
+                }
+                else if(!aLansat) {
+                    if (!notEntered && potentiometru.getVoltage() > 1.7) {
+                        c.extensorPower(-1, 1300);
+                        notEntered = true;
+                    }
+                    else if (potentiometru.getVoltage() > 1.7) {
+                        extensorL.setPower(gamepad2.left_stick_x);
+                        extensorR.setPower(gamepad2.left_stick_x);
+                    }
+                    else if (notEntered) {
+                        c.extensorPower(1, 1300);
+                        notEntered = false;
+                    }
+                }
+                else{
+                    extensorR.setPower(0);
+                    extensorL.setPower(0);
+                }
                 if (bval == 0.5 && gamepad2.b) {
                     bval += 0.0001;
                     gherutaR.setPosition(0.15);
