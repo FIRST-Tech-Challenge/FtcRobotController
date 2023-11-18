@@ -51,6 +51,13 @@ open class DriveMethods: LinearOpMode() {
 
     lateinit var visionProcessor: VisionProcessors
 
+    fun setMotorPowers(powerFL: Double, powerFR: Double, powerBL: Double, powerBR: Double) {
+        motorFL?.power = powerFL
+        motorFR?.power = powerFR
+        motorBL?.power = powerBL
+        motorBR?.power = powerBR
+    }
+
     fun initVision(processorType: VisionProcessors) {
         initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
