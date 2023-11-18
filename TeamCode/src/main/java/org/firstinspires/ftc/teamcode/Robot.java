@@ -729,7 +729,7 @@ public class Robot {
             }
 
             Log.d("vision", "alignToBoard: broken out of !aligned while loop");
-            straightBlocking(distanceToBoard, false, 0.75);
+            straightBlocking(distanceToBoard, false, 0.6);
             if (isRedAlliance) {
                 setHeading(-90, 0.75);
             } else {
