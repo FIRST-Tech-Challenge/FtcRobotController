@@ -137,12 +137,12 @@ public class Robot {
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1550); // move linear slide up
+        moveLinearSlideByTicks(-1700); // move linear slide up
         opMode.sleep(100);
         trayToOuttakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
-        opMode.sleep(1000);
+        opMode.sleep(3000);
         straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.5); // close clamp
@@ -678,7 +678,7 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 12;
+        double distanceToBoard = 15;
         int polarity = isRedAlliance ? -1 : 1;
         int PIXEL_SIZE = 4;
         int inchesMovedBack = 0;
@@ -719,7 +719,7 @@ public class Robot {
                     aligned = false;
                 }
 
-                if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
+                if (!aligned && inchesMovedBack >= 6) { //TIMEOUT SITUATION
                     Log.d("vision", "alignToBoard: apriltag detection timed out");
                     distanceToBoard = distanceToBoard + inchesMovedBack - 2;
                     Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
@@ -875,7 +875,7 @@ public class Robot {
          * Park near center
          */
         int parkDistance = 25; // distance from center tag in inches
-        int distanceBetweenTags = 6; // inches
+        int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
