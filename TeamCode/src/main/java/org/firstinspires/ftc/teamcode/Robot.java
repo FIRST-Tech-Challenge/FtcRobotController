@@ -126,28 +126,28 @@ public class Robot {
     }
 
     public void trayToIntakePos() {
-        setServoPosBlocking(tray, 0.4);
+        setServoPosBlocking(tray, 0.47);
     }
     public void trayToOuttakePos() {
-        setServoPosBlocking(tray, 0.7);
+        setServoPosBlocking(tray, 0.78);
     }
 
     public void autoOuttake() {
-        setServoPosBlocking(tray, 0.594); // tray to down position
+        trayToIntakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1600); // move linear slide up
+        moveLinearSlideByTicks(-1550); // move linear slide up
         opMode.sleep(100);
-        setServoPosBlocking(tray, 1); // tray up
+        trayToOuttakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
         opMode.sleep(1000);
-        straightBlocking(2, true, 0.7);
+        straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.5); // close clamp
         opMode.sleep(100);
-        setServoPosBlocking(tray, 0.594); // tray down
+        trayToIntakePos();
         opMode.sleep(100);
         moveLinearSlideByTicks(0); // linear slide down
         opMode.sleep(500);
@@ -513,12 +513,8 @@ public class Robot {
         double vertical2;
         double horizontal3;
         double HORIZONTAL_TOTAL;
-        double vertical4;
-        double vertical6;
         double horizontal1;
         double horizontal2;
-        double horizontal5;
-        double horizontal7;
 
         while (opMode.opModeIsActive()) {
             if (isRedAlliance) {
@@ -588,7 +584,7 @@ public class Robot {
                 // Calculate distances
                 vertical1 = 6;
                 vertical2 = 20;
-                horizontal1 = 26;
+                horizontal1 = 27;
                 horizontal2 = 10;
                 horizontal3 = 8;
 
@@ -725,7 +721,7 @@ public class Robot {
 
                 if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
                     Log.d("vision", "alignToBoard: apriltag detection timed out");
-                    distanceToBoard = distanceToBoard + inchesMovedBack;
+                    distanceToBoard = distanceToBoard + inchesMovedBack - 2;
                     Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
                     break;
                 }
@@ -785,12 +781,12 @@ public class Robot {
 
                 // Calculate distances
                 vertical1 = 0;
-                horizontal2 = 20;
+                horizontal2 = 18;
                 horizontal3 = 0;
                 vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 20;
 
                 // Start moving
                 straightBlocking(horizontal2, false, 0.7); //go forward FAST
@@ -799,6 +795,7 @@ public class Robot {
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
                 straightBlocking(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
+                mecanumBlocking(2, isRedAlliance, 0.7);
                 straightBlocking(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
                 moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
@@ -812,12 +809,12 @@ public class Robot {
 
                 // Calculate distances
                 vertical1 = 11;
-                horizontal2 = 16;
+                horizontal2 = 18;
                 horizontal3 = 10;
                 vertical4 = vertical1; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -877,7 +874,7 @@ public class Robot {
          * Park near wall
          * Park near center
          */
-        int parkDistance = 23; // distance from center tag in inches
+        int parkDistance = 25; // distance from center tag in inches
         int distanceBetweenTags = 6; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);

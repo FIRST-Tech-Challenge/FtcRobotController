@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,7 +54,6 @@ public class TeleOp extends LinearOpMode {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         double clampPos;
-        double trayPos;
         boolean hangingMode;
         int polarity;
 
@@ -60,7 +61,6 @@ public class TeleOp extends LinearOpMode {
 
         //default positions
         clampPos = 0.5;
-        trayPos = 0.594;
 
         hangingMode = false;
         polarity = 1;
@@ -140,11 +140,6 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
-            //if linear slide motor's # of ticks is under 4, set it to down
-            if (lsFront.getCurrentPosition() < 4) {
-                trayPos = 0.594;
-            }
-
             //intake
             if (gamepad2.left_trigger > 0) {
                 intake.setPower(0.4);
@@ -171,23 +166,19 @@ public class TeleOp extends LinearOpMode {
                 //close
             }
 
+            /*
             //gamepad 2 right stick manually pivots tray
             if (Math.abs(gamepad2.right_stick_y) > 0.1) {
                 trayPos -= -(gamepad2.right_stick_y / (1 / 0.004));
+                Log.d("tray debug", "runOpMode: trayPos = " + trayPos);
             }
+            */
 
             //set limits on the holder clamp
             if (clampPos > 1) {
                 clampPos = 1;
             } else if (clampPos < 0.43) {
                 clampPos = 0.43;
-            }
-
-            //set limits on how much the tray can pivot
-            if (trayPos > 1) {
-                trayPos = 1;
-            } else if (trayPos < 0) {
-                trayPos = 0;
             }
 
             //set intake/outtake positions for tray
@@ -200,7 +191,6 @@ public class TeleOp extends LinearOpMode {
             //the earlier conditionals set variables based on what was pressed
             //here the servos are actually set to those variables
             clamp.setPosition(clampPos);
-            tray.setPosition(trayPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
 
