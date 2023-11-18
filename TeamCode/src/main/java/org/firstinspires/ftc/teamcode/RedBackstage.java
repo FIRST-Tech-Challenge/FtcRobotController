@@ -148,6 +148,16 @@ public class RedBackstage extends LinearOpMode {
          */
         waitForStart();
 
+        String result = pipeline.getResult();
+
+
+        if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
+
+        if(test==2) {drive.followTrajectorySequence(Left);};
+        if(test==3) {drive.followTrajectorySequence(Middle);};
+        if(test==1) {drive.followTrajectorySequence(Right);};
+        telemetry.update();
+
         while (opModeIsActive())
         {
 
@@ -155,15 +165,6 @@ public class RedBackstage extends LinearOpMode {
              * Send some stats to the telemetry
              */
             //opencvBlue.processFrame(opencvBlue.maskedInputMat);
-            String result = pipeline.getResult();
-
-
-            if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
-
-            if(test==2) {drive.followTrajectorySequence(Left);};
-            if(test==3) {drive.followTrajectorySequence(Middle);};
-            if(test==1) {drive.followTrajectorySequence(Right);};
-            telemetry.update();
 
             /*
              * NOTE: stopping the stream from the camera early (before the end of the OpMode

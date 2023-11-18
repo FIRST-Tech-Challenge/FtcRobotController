@@ -166,49 +166,9 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
 
         // slides
-        //slidesPower = gamepad2.a ? MAXSLIDEPOWER : gamepad2.b ? -MAXSLIDEPOWER : 0;
-
-        if(gamepad2.a)
-        {
-            extendmove = 1f;
+        slidesPower = gamepad2.a ? MAXSLIDEPOWER : gamepad2.b ? -MAXSLIDEPOWER : 0;
 
 
-
-
-            slidesPower = extendmove;
-            extend = extend - 1;
-
-                Slides.setTargetPosition(extend);
-                Slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slides.setPower(-2);
-
-
-
-        }
-
-        else if(gamepad2.b)
-        {
-            extendmove = 1f;
-
-            slidesPower = extendmove;
-            extend = extend + 1;
-
-                Slides.setTargetPosition(extend);
-                Slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slides.setPower(2);
-
-
-
-
-
-
-        }
-        else
-        {
-            slidesPower = 0;
-            extend = 0;
-            extendmove = 0;
-        }
         // Set motor powers to updated power
 
         if (gamepad1.right_bumper) {
