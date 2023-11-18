@@ -11,35 +11,48 @@ public class Centerstage_TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Initiates Bessie!
+        // Initiates the robots system and subsystems!
         Robot robot = new Robot(hardwareMap);
-        boolean toggle = false;
-        ElapsedTime toggleTime = new ElapsedTime();
+
+        boolean intakeToggle = false;
+        ElapsedTime intakeToggleTime = new ElapsedTime();
+
+        boolean directionToggle = false;
+        ElapsedTime directionToggleTime = new ElapsedTime();
 
         waitForStart();
         while (opModeIsActive()) {
 
-            // This controls the drive train using three input methods:
-            // -1 to 1
-            robot.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-
-            robot.outtake.driveLift(gamepad2.left_stick_y);
-
-            if (gamepad2.x && toggleTime.time() > .75 && !toggle) {
-                toggle = true;
-                toggleTime.reset(); }
-            else if (gamepad2.x && toggleTime.time() > .75 && toggle) {
-                toggle = false;
-                toggleTime.reset();
+            if (gamepad2.x && intakeToggleTime.time() > .75 && !intakeToggle) {
+                intakeToggle = true;
+                intakeToggleTime.reset(); }
+            else if (gamepad2.x && intakeToggleTime.time() > .75 && intakeToggle) {
+                intakeToggle = false;
+                intakeToggleTime.reset();
             }
 
-            robot.intake.driveIntake(toggle);
+            if (gamepad1.x && directionToggleTime.time() > .75 && !directionToggle) {
+                directionToggle = true;
+                directionToggleTime.reset(); }
+            else if (gamepad1.x && directionToggleTime.time() > .75 && directionToggle) {
+                directionToggle = false;
+                directionToggleTime.reset();
+            }
 
-            // The next six lines give the power of each of the driving motors to the driver station:
-            telemetry.addData("Front Driving Motors | Left, Right", "%4.2f, %4.2f",
+
+            // This controls the drive train using three double input methods:
+            // It uses the last boolean input to reverse the controls:
+            robot.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, directionToggle);
+
+            // This functions uses one double input to drive the lift.
+            robot.outtake.driveLift(gamepad2.left_stick_y);
+
+            // This function uses a boolean to toggle the intakeMotors.
+            robot.intake.driveIntake(intakeToggle);
+
+            telemetry.addData("Front Driving Motors (Left, Right), Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     robot.driveTrain.leftFrontDrive.getPower(),
-                    robot.driveTrain.rightFrontDrive.getPower());
-            telemetry.addData("Back Driving Motors | Left, Right", "%4.2f, %4.2f",
+                    robot.driveTrain.rightFrontDrive.getPower(),
                     robot.driveTrain.leftBackDrive.getPower(),
                     robot.driveTrain.rightBackDrive.getPower());
             telemetry.update();

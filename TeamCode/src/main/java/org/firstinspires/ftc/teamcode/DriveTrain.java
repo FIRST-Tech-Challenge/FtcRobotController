@@ -27,7 +27,7 @@ public class DriveTrain {
     }
 
     // This function needs an axial, lateral, and yaw input. It uses this input to drive the drive train motors.
-    public void drive(double axial, double lateral, double yaw) {
+    public void drive(double axial, double lateral, double yaw, boolean direction) {
 
         double leftFrontPower = 0;
         double rightFrontPower = 0;
@@ -57,10 +57,19 @@ public class DriveTrain {
         }
 
         // The next four lines gives the calculated power to each motor:
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        if (direction) {
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+        }
+        else {
+            leftFrontDrive.setPower(-leftFrontPower);
+            rightFrontDrive.setPower(-rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
+        }
+
 
     }
 }
