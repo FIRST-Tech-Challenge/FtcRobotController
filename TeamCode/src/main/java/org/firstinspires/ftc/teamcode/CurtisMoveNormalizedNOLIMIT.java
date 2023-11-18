@@ -18,17 +18,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     //Motors
     private double MAXARMPOWER = 0.5;
-    private double MAXSLIDEPOWER = 0.5;
+    private double MAXSLIDEPOWER = 0.4;
 
-    public int arm = 0;
-    public int arm1 = 0;
-
-    public float armmove;
-    public int extend = 0;
+//    public int arm = 0;
+//    public int arm1 = 0;
+//
+//    public float armmove;
+//    public int extend = 0;
 
     public Servo lancher = null;
 
-    public float extendmove;
+//    public float extendmove;
 
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
 
@@ -64,13 +64,13 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
         //set direction for motors not servos(servos do not need pos set)
 //        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 //        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -121,45 +121,7 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
 
         // arm
-        if(gamepad2.dpad_up)
-        {
-
-            armmove = 1f;
-
-            armPower = armmove;
-            if(Arm.getCurrentPosition() < 400)
-            {
-                arm = arm + 1;
-                arm1 = arm1 +1;
-                Arm.setTargetPosition(arm);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Arm.setPower(2);
-
-            }
-
-        }
-        else if(gamepad2.dpad_down)
-        {
-            armmove = 1f;
-            armPower = armmove;
-            if(Slides.getCurrentPosition() < -1)
-            {
-                arm = arm - 1;
-                arm1 = arm1 - 1;
-
-                Arm.setTargetPosition(arm);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Arm.setPower(-2);
-            }
-
-
-
-        }
-        else
-        {
-            armPower = 0;
-            arm = 0;
-        }
+        armPower = gamepad2.dpad_up ? MAXARMPOWER : gamepad2.dpad_down ? -MAXARMPOWER : 0;
 
 
 
