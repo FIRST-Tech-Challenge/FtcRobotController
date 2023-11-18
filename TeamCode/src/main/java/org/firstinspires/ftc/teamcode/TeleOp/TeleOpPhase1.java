@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.MovingStatistics;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -33,7 +35,7 @@ public class TeleOpPhase1 extends LinearOpMode {
     boolean isHolding = false;
 
     private void snapToButtons(double externalHeading) {
-        double relative = 0; // Rad
+        double relative = 0; // Radians
         if (gamepad1.start) {
             relative = externalHeading; // If the start button is pressed, everything will be relative to the current heading
         }
