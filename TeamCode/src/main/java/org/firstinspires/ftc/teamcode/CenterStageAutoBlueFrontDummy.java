@@ -44,7 +44,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedFront extends LinearOpMode {
+public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -67,8 +67,8 @@ public class CenterStageAutoRedFront extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
-    static final double     DRIVE_SPEED             = 0.4;
-    static final double     TURN_SPEED              = 0.25;
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
@@ -100,37 +100,34 @@ public class CenterStageAutoRedFront extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        drive(13.5);
-        //drive(1);
+        //drive(14);
+        drive(1);
+        /*
         List<Recognition> pixels = telemetryTfod();
-        double pixel_distance = 3.0;
-        //*
         if (pixels.size() > 0) {
-            drive(pixel_distance);
+            drive(6);
             ejectPixel();
-            drive(-pixel_distance);
-            turn(90);
+            drive(-6);
         } else {
             turn(-30);
             pixels = telemetryTfod();
             if (pixels.size() > 0) {
-                drive(pixel_distance);
+                drive(6);
                 ejectPixel();
-                drive(-pixel_distance);
-                turn(30 + 90);
+                drive(-6);
+                turn(30);
             } else {
                 turn(60);
-                drive(pixel_distance);
+                drive(6);
                 ejectPixel();
-                drive(-pixel_distance);
-                turn(-30 + 90);
+                drive(-6);
+                turn(-30);
             }
         }
         //*/
-        //ejectPixel();
-        turn(60);
-        drive(100);
-        //ejectPixel();
+        turn(-60);
+        drive(40);
+        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

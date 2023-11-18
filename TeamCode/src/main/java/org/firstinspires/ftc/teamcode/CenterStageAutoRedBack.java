@@ -99,9 +99,9 @@ public class CenterStageAutoRedBack extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        //drive(14);
+        drive(13.5);
         drive(1);
-        /*
+        //*
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
             drive(6);

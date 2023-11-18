@@ -100,7 +100,7 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
 
         // Main code
         dropCarWash();
-        drive(14);
+        drive(13.5);
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
             drive(6);
@@ -122,7 +122,7 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
                 turn(-30);
             }
         }
-        turn(-90);
+        turn(-60);
         drive(40);
         ejectPixel();
 
