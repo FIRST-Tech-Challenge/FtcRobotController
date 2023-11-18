@@ -137,17 +137,18 @@ public class Robot {
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1700); // move linear slide up
+        moveLinearSlideByTicks(-1800); // move linear slide up
         opMode.sleep(100);
         trayToOuttakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
         opMode.sleep(3000);
+        moveLinearSlideByTicks(-2000); // move slide up more
         straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.5); // close clamp
+        trayToIntakePos(); //intake
         opMode.sleep(100);
-        trayToIntakePos();
+        setServoPosBlocking(clamp, 0.5); // close clamp
         opMode.sleep(100);
         moveLinearSlideByTicks(0); // linear slide down
         opMode.sleep(500);
@@ -874,7 +875,7 @@ public class Robot {
          * Park near wall
          * Park near center
          */
-        int parkDistance = 25; // distance from center tag in inches
+        int parkDistance = 23; // distance from center tag in inches
         int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
