@@ -125,7 +125,7 @@ public class CenterStageAutoBlueBackDummy extends LinearOpMode {
         }
         //*/
         turn(-60);
-        drive(20);
+        drive(30);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

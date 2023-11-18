@@ -101,7 +101,7 @@ public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
         // Main code
         //dropCarWash();
         //drive(14);
-        drive(1);
+        drive(0);
         /*
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {

@@ -44,7 +44,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedFrontDummy extends LinearOpMode {
+public class Nothing extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -98,43 +98,11 @@ public class CenterStageAutoRedFrontDummy extends LinearOpMode {
         runtime.reset();
 
 
-        // Main code
-        //dropCarWash();
-        //drive(13.5);
-        drive(0);
-        /*
-        List<Recognition> pixels = telemetryTfod();
-        double pixel_distance = 3.0;
-        if (pixels.size() > 0) {
-            drive(pixel_distance);
-            ejectPixel();
-            drive(-pixel_distance);
-            turn(90);
-        } else {
-            turn(-30);
-            pixels = telemetryTfod();
-            if (pixels.size() > 0) {
-                drive(pixel_distance);
-                ejectPixel();
-                drive(-pixel_distance);
-                turn(30 + 90);
-            } else {
-                turn(60);
-                drive(pixel_distance);
-                ejectPixel();
-                drive(-pixel_distance);
-                turn(-30 + 90);
-            }
-        }
-        //*/
-        //ejectPixel();
-        turn(60);
-        drive(100);
-        //ejectPixel();
+        // No code
 
-        telemetry.addData("Path", "Complete");
+        telemetry.addData("Status", "This program runs nothing.");
         telemetry.update();
-        sleep(1000);  // Pause to display final telemetry message.
+        sleep(2500);
     }
 
     /*

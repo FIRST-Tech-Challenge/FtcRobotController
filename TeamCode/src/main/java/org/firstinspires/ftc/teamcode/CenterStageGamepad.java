@@ -75,28 +75,28 @@ public class CenterStageGamepad extends LinearOpMode {
         runtime.reset();
 
         double slow = 1.0;
-        double strafeSlow = 2.0;
+        double turnSpeed = 2.0;
         int targetEncoderValue = 0;
         double carWashPower = 1.0;
 
         while (opModeIsActive()) {
             double max;
             if (gamepad1.right_trigger > 0.7) {
-                slow = 0.25;
-                strafeSlow = 1.25;
+                slow = 0.35;
+                turnSpeed = 1.25;
             } else {
-                slow = 0.5;
-                strafeSlow = 2.5;
+                slow = 0.75;
+                turnSpeed = 2.5;
             }
-            strafeSlow = 2.5 * (1 - gamepad1.right_trigger);
+            turnSpeed = 2.5 * (1 - gamepad1.right_trigger);
 
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
             axial = -gamepad1.left_stick_y * slow;
-            lateral = gamepad1.left_stick_x * 0.75 * slow;
-            yaw = gamepad1.right_stick_x * strafeSlow;
+            lateral = gamepad1.left_stick_x * 1.0 * slow;
+            yaw = gamepad1.right_stick_x * turnSpeed;
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -129,7 +129,7 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(-carWashPower);
             }
 
-            if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && runtime.seconds() > 80) {
+            if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && runtime.seconds() > 90) {
                 droneServo.setPosition(1);
             } else if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && gamepad2.left_bumper && gamepad2.right_bumper) {
                 droneServo.setPosition(1);
@@ -139,14 +139,14 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            if (runtime.seconds() > 80){
+            if (runtime.seconds() > 90){
                 telemetry.addData("Game Phase","End Game");
             }else {
                 telemetry.addData("Game Phase", "Driver Controlled");
             }
             telemetry.update();
 
-            sleep(50);
+            sleep(25);
         }
 
             }
