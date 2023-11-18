@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name="Red Left Auto", group="Basic")
 public class basicautonomous1 extends LinearOpMode{
@@ -10,6 +11,7 @@ public class basicautonomous1 extends LinearOpMode{
     DcMotor m_frontRight;
     DcMotor m_rearLeft;
     DcMotor m_rearRight;
+    Servo m_Servo;
 
     @Override
     public void runOpMode() {
@@ -17,6 +19,7 @@ public class basicautonomous1 extends LinearOpMode{
         m_frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         m_rearLeft = hardwareMap.get(DcMotor.class, "rearLeft");
         m_rearRight = hardwareMap.get(DcMotor.class, "rearRight");
+        m_Servo = hardwareMap.get(Servo.class,"Servo");
 
         m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -31,22 +34,37 @@ public class basicautonomous1 extends LinearOpMode{
         waitForStart();
 
         //drive sideways
-        drive(0, -1, 0);
+        drive(0, -0.7, 0,0.3);
         sleep(1500);
-        drive(0,0,0);
+        drive(0,0,0,0.3);
 
         //drive forward
-        drive(1, 0, 0);
-        sleep(2000);
-        drive(0,0,0);
+        drive(0.7, 0, 0,0.3);
+        sleep(1650);
+        drive(0,0,0,0.3);
 
+        sleep(1100);
+
+        //drive backwards
+        drive(-0.7, 0, 0,1);
+        sleep(430);
+        drive(0,0,0,0.3);
+
+        //drive forward
+        drive(0.7, 0, 0,0.3);
+        sleep(440);
+        drive(0,0,0,0.3);
         }
 
-    public void drive(double y, double x, double rotation){
+
+
+
+    public void drive(double y, double x, double rotation, double gate){
         m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
         m_rearLeft.setPower(y - x + rotation);
         m_frontRight.setPower(y - x - rotation);
         m_rearRight.setPower(y + x - rotation);
+        m_Servo.setPosition(gate);
     }
 
 }

@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="Red Right Auto", group="Basic")
-public class basicautonomous2 extends LinearOpMode{
+@Autonomous(name="BlackTeam - Red Left Auto", group="Basic")
+public class BlackTeam_RedLeft extends LinearOpMode{
     DcMotor m_frontLeft;
     DcMotor m_frontRight;
     DcMotor m_rearLeft;
     DcMotor m_rearRight;
-    Servo m_Servo;
+    Servo m_pixelgrabber;
+    Servo m_pixelspinner;
 
     @Override
     public void runOpMode() {
@@ -19,7 +20,8 @@ public class basicautonomous2 extends LinearOpMode{
         m_frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         m_rearLeft = hardwareMap.get(DcMotor.class, "rearLeft");
         m_rearRight = hardwareMap.get(DcMotor.class, "rearRight");
-        m_Servo = hardwareMap.get(Servo.class,"Servo");
+        m_pixelgrabber = hardwareMap.get(Servo.class, "pixelgrabber");
+        m_pixelspinner = hardwareMap.get(Servo.class, "pixelspinner");
 
         m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -33,30 +35,31 @@ public class basicautonomous2 extends LinearOpMode{
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        //drive Left
+        drive(0, -1, 0);
+        sleep(1);
+        drive(0,0,0);
 
         //drive forward
-        drive(0.7, 0, 0,0.3);
-        sleep(550);
-        drive(0,0,0,0.3);
+        drive(1, 0, 0);
+        sleep(1750);
+        drive(0,0,0);
 
-        //drive backwards
-        drive(-0.7, 0, 0,1);
-        sleep(430);
-        drive(0,0,0,0.3);
+        //drive left to backboard
+        drive(0, -1, 0);
+        sleep(200);
+        drive(0,0,0);
 
-        //drive forward
-        drive(0.7, 0, 0,0.3);
-        sleep(450);
-        drive(0,0,0,0.3);
 
-    }
 
-    public void drive(double y, double x, double rotation, double gate){
+        }
+
+
+    public void drive(double y, double x, double rotation){
         m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
         m_rearLeft.setPower(y - x + rotation);
         m_frontRight.setPower(y - x - rotation);
         m_rearRight.setPower(y + x - rotation);
-        m_Servo.setPosition(gate);
     }
 
 }
