@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
@@ -23,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.7;
+    public static final double TICKS_PER_REV = 537.6;
     public static final double MAX_RPM = 312;
 
     /*
@@ -48,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13; // in
+    public static double TRACK_WIDTH = 11.33858; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -88,19 +87,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-
-    /*
-     * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
-     */
-    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.UP;
-
     public static double MAX_VEL = 52.48291908330528;
     public static double MAX_ACCEL = 52.48291908330528;
-    public static double MAX_ANG_VEL = Math.toRadians(231.31152000000003);
-    public static double MAX_ANG_ACCEL = Math.toRadians(231.31152000000003);
+    public static double MAX_ANG_VEL = Math.toRadians(265.2051456178816);
+    public static double MAX_ANG_ACCEL = Math.toRadians(265.2051456178816);
 
 
     public static double encoderTicksToInches(double ticks) {
