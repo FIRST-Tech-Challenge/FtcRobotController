@@ -21,7 +21,7 @@ public class drivesample extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("RLeft");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("FRight");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("RRight");
-        DcMotor intakemotor = hardwareMap.dcMotor.get("spinwoo");
+        DcMotor intakeMotor = hardwareMap.dcMotor.get("spinwoo");
         Servo arm = hardwareMap.get(Servo.class, "intaker");
         Servo wrist = hardwareMap.get(Servo.class, "hahah");
         Servo out = hardwareMap.get(Servo.class, "armo");
@@ -82,18 +82,18 @@ public class drivesample extends LinearOpMode {
             }
             if(gamepad1.right_bumper){
                 arm.setPosition(0.55);
-                intakemotor.setPower(1);
+                intakeMotor.setPower(1);
                 out.setPosition(1);
                 wrist.setPosition(0);
 
             }
             if(gamepad1.left_bumper){
                 arm.setPosition(0);
-                intakemotor.setPower(0);
+                intakeMotor.setPower(0);
             }
             if(gamepad1.b){
                 out.setPosition(1);
-                intakemotor.setPower(0);
+                intakeMotor.setPower(0);
                 arm.setPosition(0.3);
                 wrist.setPosition(0);
 
