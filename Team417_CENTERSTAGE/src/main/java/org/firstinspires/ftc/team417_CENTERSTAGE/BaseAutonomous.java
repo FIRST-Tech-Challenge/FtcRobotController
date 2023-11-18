@@ -112,6 +112,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
+        // Robot takes 5 seconds for camera to be able to detect meaningful images (as opposed to a bright flash of light)
         sleep(5000);
 
         telemetry.clear();
