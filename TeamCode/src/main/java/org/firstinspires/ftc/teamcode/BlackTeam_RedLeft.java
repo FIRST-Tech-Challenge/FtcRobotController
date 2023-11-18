@@ -11,6 +11,7 @@ public class BlackTeam_RedLeft extends LinearOpMode{
     DcMotor m_frontRight;
     DcMotor m_rearLeft;
     DcMotor m_rearRight;
+    DcMotor m_elevator;
     Servo m_pixelgrabber;
     Servo m_pixelspinner;
 
@@ -22,6 +23,7 @@ public class BlackTeam_RedLeft extends LinearOpMode{
         m_rearRight = hardwareMap.get(DcMotor.class, "rearRight");
         m_pixelgrabber = hardwareMap.get(Servo.class, "pixelgrabber");
         m_pixelspinner = hardwareMap.get(Servo.class, "pixelspinner");
+        m_elevator = hardwareMap.get(DcMotor.class,"elevator");
 
         m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -35,20 +37,20 @@ public class BlackTeam_RedLeft extends LinearOpMode{
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        //drive Left
+
         drive(0, -1, 0);
         sleep(1);
-        drive(0,0,0);
-
-        //drive forward
-        drive(1, 0, 0);
-        sleep(1750);
-        drive(0,0,0);
-
-        //drive left to backboard
-        drive(0, -1, 0);
+        drive(1,0,0);
+        sleep(1000);
+        drive(0,-1,0);
         sleep(200);
-        drive(0,0,0);
+        m_elevator.setPower(1);
+        sleep(1000);
+        m_pixelspinner.setPosition(1);
+        sleep(100);
+        m_pixelgrabber.setPosition(0);
+
+
 
 
 
