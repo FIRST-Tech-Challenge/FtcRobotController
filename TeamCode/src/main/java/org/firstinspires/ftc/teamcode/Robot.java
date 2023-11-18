@@ -66,18 +66,17 @@ public class Robot {
     double avgRightY;
 
     //CONSTRUCTOR
-    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red) {
+    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
         AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         setUpDrivetrainMotors();
-        setUpImu();
+        setUpImu(isAutonomous);
         lsFront = hardwareMap.dcMotor.get("lsFront");
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         isRedAlliance = red;
         tray = hardwareMap.servo.get("arm");
         clamp = hardwareMap.servo.get("holderClamp");
@@ -213,7 +212,7 @@ public class Robot {
                 .build();
     }
 
-    public void setUpImu() {
+    public void setUpImu(boolean isAutonomous) {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
 
@@ -224,8 +223,9 @@ public class Robot {
                 )
         ));
 
-        imu.resetYaw();
-
+        if (isAutonomous) {
+            imu.resetYaw();
+        }
 
     }
 

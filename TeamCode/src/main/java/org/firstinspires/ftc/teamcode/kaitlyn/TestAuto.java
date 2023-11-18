@@ -13,7 +13,7 @@ public class TestAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, false);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, true);
         robot.setUpDrivetrainMotors();
         robot.initVisionProcessing();
 
