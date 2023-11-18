@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 //@I2cDeviceType()
@@ -226,7 +227,7 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
         if(gamepad1.share)
         {
-            lancher.setPosition(0.60);
+            lancher.setPosition(1);
         }
 
         if(gamepad1.left_bumper)

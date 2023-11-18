@@ -51,8 +51,8 @@ public class OpenCVRed extends OpenCvPipeline  {
      * that all pixels will be shown.
      */
     private volatile String result = "start";
-    private Scalar lower = new Scalar(96.3f, 73.7f, 0);
-    private Scalar upper = new Scalar(147.3f, 255, 199.8f);
+    private Scalar lower = new Scalar(0, 167.2f, 4.3);
+    private Scalar upper = new  Scalar(8.5f, 255, 204);
     /**
      * This will allow us to choose the color
      * space we want to use on the live field
