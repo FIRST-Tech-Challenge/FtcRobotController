@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.NoahBres:MeepMeep:2.0.2'
+    implementation 'com.github.NoahBres:MeepMeep:2.0.3'
 }
