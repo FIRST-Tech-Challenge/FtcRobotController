@@ -211,9 +211,9 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.x) {
                 if (robot.isRedAlliance) {
-                    robot.setHeading(-90, 0.75);
-                } else {
                     robot.setHeading(90, 0.75);
+                } else {
+                    robot.setHeading(-90, 0.75);
                 }
             }
 
@@ -256,6 +256,7 @@ public class TeleOp extends LinearOpMode {
             }
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+            tray.setPosition(trayPos);
         }
     }
 
