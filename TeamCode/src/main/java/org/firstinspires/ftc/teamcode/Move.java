@@ -274,8 +274,7 @@ public class Move extends OpMode {
 
 
 
-            //fire.setPosition(0.60);
-        }
+         }
         else if(gamepad1.left_bumper)
         {
             //fire.setPosition(0.0);

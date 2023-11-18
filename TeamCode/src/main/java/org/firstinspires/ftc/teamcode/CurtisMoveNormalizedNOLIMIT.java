@@ -25,6 +25,8 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     public float armmove;
     public int extend = 0;
 
+    public Servo lancher = null;
+
     public float extendmove;
 
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
@@ -54,6 +56,8 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
         Arm = hardwareMap.get(DcMotor.class, "AE");
 
         Slides = hardwareMap.get(DcMotor.class, "SE");
+
+        lancher = hardwareMap.get(Servo.class, "PEW");
         //-------------------------------------------------------
 
         //set direction for motors not servos(servos do not need pos set)
@@ -217,6 +221,18 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
             rightFrontDrive.setPower(speeds[1]);
             leftBackDrive.setPower(speeds[2]);
             rightBackDrive.setPower(speeds[3]);
+        }
+
+
+        if(gamepad1.share)
+        {
+            lancher.setPosition(0.60);
+        }
+
+        if(gamepad1.left_bumper)
+        {
+            lancher.setPosition(0);
+
         }
 
 
