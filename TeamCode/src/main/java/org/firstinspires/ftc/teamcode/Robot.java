@@ -137,13 +137,13 @@ public class Robot {
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1800); // move linear slide up
+        moveLinearSlideByTicks(-1700); // move linear slide up
         opMode.sleep(100);
         trayToOuttakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
-        opMode.sleep(3000);
-        moveLinearSlideByTicks(-2000); // move slide up more
+        opMode.sleep(100);
+        moveLinearSlideByTicks(-1900); // move slide up more
         straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
         trayToIntakePos(); //intake
@@ -720,9 +720,9 @@ public class Robot {
                     aligned = false;
                 }
 
-                if (!aligned && inchesMovedBack >= 6) { //TIMEOUT SITUATION
+                if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
                     Log.d("vision", "alignToBoard: apriltag detection timed out");
-                    distanceToBoard = distanceToBoard + inchesMovedBack - 2;
+                    distanceToBoard = distanceToBoard + inchesMovedBack - 3;
                     Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
                     break;
                 }
@@ -815,7 +815,7 @@ public class Robot {
                 vertical4 = vertical1; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -875,7 +875,7 @@ public class Robot {
          * Park near wall
          * Park near center
          */
-        int parkDistance = 23; // distance from center tag in inches
+        int parkDistance = 25; // distance from center tag in inches
         int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
