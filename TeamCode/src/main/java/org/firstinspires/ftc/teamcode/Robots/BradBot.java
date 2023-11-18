@@ -242,6 +242,7 @@ public class BradBot extends BasicRobot {
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
+    boolean isRightBumper2 =         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");;
     if (isA) {
       arm.flipTo(UNFLIPPED);
       lift.update();
@@ -321,6 +322,7 @@ public class BradBot extends BasicRobot {
     if (isY2) {
       preloader.load();
     }
+
 
     roadrun.setWeightedDrivePower(
         new Pose2d(

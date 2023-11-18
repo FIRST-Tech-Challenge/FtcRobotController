@@ -58,7 +58,7 @@ public class Wrist extends RFServo {
     HOLD(1-0.2*24/26, false),
     FLIP(0.5*26/24, false),
 
-    DROP(0.0, false);
+    DROP(0.05, false);
     double position;
     public boolean state;
 
