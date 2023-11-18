@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 // note: around line 55 I set the front and back motors to the same target. this might be consequential in the future
 
 @Autonomous(name = "Autonomous Mode (Djokovic will win a record breaking 7th ATP Final Title)")
-public class Opsareautonomousnow extends LinearOpMode {
+public class autonomousphase1 extends LinearOpMode {
 
     private DcMotor leftFront;
     private DcMotor leftBack;
@@ -54,7 +54,8 @@ public class Opsareautonomousnow extends LinearOpMode {
         drive(-2000, 2000, 0.5);
     }
 
-    private void stop() {
+    // Stop is already declared, eStop is not
+    private void eStop() {
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
