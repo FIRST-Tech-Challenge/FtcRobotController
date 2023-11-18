@@ -55,6 +55,11 @@ public class HydraDrive {
             mMotDrFrLt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
             mMotDrFrRt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
         }
+        // increase the tolerance in the PID
+        mMotDrBkLt.setTargetPositionTolerance(10);
+        mMotDrBkRt.setTargetPositionTolerance(10);
+        mMotDrFrLt.setTargetPositionTolerance(10);
+        mMotDrFrRt.setTargetPositionTolerance(10);
         // set the motor directions
         mMotDrFrLt.setDirection(DcMotor.Direction.REVERSE);
         mMotDrBkLt.setDirection(DcMotor.Direction.REVERSE);
