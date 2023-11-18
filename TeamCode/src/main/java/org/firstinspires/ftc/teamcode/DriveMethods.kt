@@ -4,6 +4,7 @@ import android.util.Size
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
@@ -336,6 +337,17 @@ open class DriveMethods: LinearOpMode() {
         touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
     }
+
+
+    open fun initMotorsSecondSimple() {
+        motorFL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFL")
+        motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
+        motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
+        motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
+        motorFL!!.direction = DcMotorSimple.Direction.REVERSE
+        motorBL!!.direction = DcMotorSimple.Direction.REVERSE
+    }
+
 
     open fun initSlideMotors() {
         motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
