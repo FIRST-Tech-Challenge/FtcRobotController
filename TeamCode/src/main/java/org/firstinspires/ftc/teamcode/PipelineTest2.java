@@ -272,7 +272,7 @@ public class PipelineTest2 extends LinearOpMode {
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;

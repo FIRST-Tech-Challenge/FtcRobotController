@@ -20,7 +20,9 @@ public class CompetitionTeleop2024 extends OpMode {
     private DcMotor RB = null; //Located on Control Hub- Motor port 3
     //Declare variables used for our arm lift
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
-    //private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo elbow = null; //Located on Expansion Hub- Servo port 0
+
     //variable for Rev Touch Sensor
     //private TouchSensor touch;
 
@@ -32,7 +34,7 @@ public class CompetitionTeleop2024 extends OpMode {
     private int desiredpos = 0; //Used as base for increasing arm position
     private double armPower = .7f;
 
-    //boolean changed = false; //Used for the gripper button code
+    boolean changed = false; //Used for the gripper button code
     boolean changed2 = false; //Used for the code that allows the driver to alter speed
     boolean changed3 = false; //Used to toggle between auto and manual mode for arm
     boolean game2back = false; //Used to override switch for arm in case of failure
@@ -56,7 +58,9 @@ public class CompetitionTeleop2024 extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         arm = hardwareMap.get(DcMotor.class, "arm");
-        //gripper = hardwareMap.get(Servo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
+        elbow = hardwareMap.get(Servo.class, "elbow");
+
 
         //gripper sensor for pulling arm down
         //touch  = hardwareMap.get(TouchSensor .class, "Touch");
@@ -153,7 +157,7 @@ public class CompetitionTeleop2024 extends OpMode {
             if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode)
             {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setPower(gamepad2.left_trigger);
+                arm.setPower(gamepad2.left_trigger * (0.5));
                 telemetry.addData("arm ticks", arm.getCurrentPosition());
                 telemetry.update();
                 //Moves the arm down
@@ -161,7 +165,7 @@ public class CompetitionTeleop2024 extends OpMode {
             else if (gamepad2.right_trigger >= .1 && ((arm.getCurrentPosition() > 0) || game1back || !game2back) /*&& !touchIsPressed*/)
             {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setPower(-gamepad2.right_trigger);
+                arm.setPower(-gamepad2.right_trigger * (0.5));
             }
             else
             {
@@ -172,34 +176,9 @@ public class CompetitionTeleop2024 extends OpMode {
         else
         {
             //Allows the arm to stay in the location the drivers want
-            if (!gamepad2.b && gamebpush) {
-                desiredpos += 1;
-                desiredpos &= 3;
-                if (desiredpos == 1) {
-                    arm.setTargetPosition(pos1);
-                    //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    arm.setPower(armPower);
-                } else if (desiredpos == 2) {
-                    arm.setTargetPosition(pos2);
-                    //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    arm.setPower(armPower);
-                } else if (desiredpos == 3) {
-                    arm.setTargetPosition(maxEncode);
-                    //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    arm.setPower(armPower);
-                }
-            }
+
+
             //Code to decrease height position
-            else if (gamepad2.x) {
-                desiredpos = 0;
-                arm.setTargetPosition(minEncode);
-                //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(armPower);
-            }
         }
         if (gamepad2.b)
         {
@@ -212,21 +191,37 @@ public class CompetitionTeleop2024 extends OpMode {
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        /*if (gamepad2.a && !changed) {
-            if (gripper.getPosition() == 0.2)
+        telemetry.addData("Gripper Position = ", gripper.getPosition());
+        telemetry.addData("Elbow Position = ", elbow.getPosition());
+        if (gamepad2.a && !changed) {
+            if (gripper.getPosition() == 0.0)
             {
-                gripper.setPosition(.6);
-                arm.setTargetPosition(150);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(armPower);
+                gripper.setPosition(.05);
+                //arm.setTargetPosition(150);
+                //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //arm.setPower(armPower);
             }
             else
-                gripper.setPosition(0.2);
+                gripper.setPosition(0.0);
             changed = true;
         } else if (!gamepad2.a)
         {
             changed = false;
-        }*/
+        }
+        double elbowPosition = elbow.getPosition();
+        double elbowDelta = 0.001;
+        if (gamepad2.left_stick_y > (0.0)) {
+            if (elbowPosition < (0.9))
+
+            {
+                elbow.setPosition(elbowPosition + (elbowDelta));
+
+            }
+        } else if (gamepad2.left_stick_y < (0.0))
+        {
+            if (elbowPosition > (0.0))
+                elbow.setPosition(elbowPosition - (elbowDelta));
+        }
     // Show the elapsed game time and wheel power.
             telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);

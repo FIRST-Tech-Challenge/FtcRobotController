@@ -125,15 +125,15 @@ public class actuatorUtils {
         }
     }
 
-    public static void dumpClose() throws InterruptedException {
+    public static void dumpClose()  {
         dump.setPosition(1); //Position that grabs cone tightly
 
     }
 
     //Method to open gripper
 
-    public static void dumpOpen() throws InterruptedException {
-        dump.setPosition(0.21); //Position to open gripper
+    public static void dumpOpen() {
+        dump.setPosition(0.1); //Position to open gripper
     }
     //Method to move arm to pole heights
     public static void armPole(ArmLevel desiredHeight) throws InterruptedException {
