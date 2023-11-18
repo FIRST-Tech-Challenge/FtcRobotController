@@ -145,7 +145,7 @@ public class RedRight extends LinearOpMode {
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-30,-1,Math.toRadians(-180));
+        pose = new Pose2d(-30,-2,Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -160,7 +160,7 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        pose = new Pose2d(-50, -50, Math.toRadians(-90));
+        pose = new Pose2d(-52, -50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -170,7 +170,7 @@ public class RedRight extends LinearOpMode {
     }
     private void MiddlePath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-16,-18,Math.toRadians(-180));
+        pose = new Pose2d(-17,-17,Math.toRadians(-180));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -178,7 +178,7 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-16, -22, Math.toRadians(-180));
+        pose = new Pose2d(-17, -22, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
