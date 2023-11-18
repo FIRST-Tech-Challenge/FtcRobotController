@@ -175,7 +175,10 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
 
         if (gamepieceLocation == "left" && state == 0){
-            moveTo.Forward(1440);
+            moveTo.Forward(2160);
+            moveTo.Right(1440);
+            moveTo.Left(1440);
+            moveTo.Backwards(1440);
             telemetry.addData("run", state);
             telemetry.update();
 
