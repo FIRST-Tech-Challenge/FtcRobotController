@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 
 
@@ -58,6 +59,7 @@ public class lm1teleop1driver extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor hang;
+    Servo plane;
     Servo hangs;
     Servo wrist;
     Servo claw;
@@ -66,6 +68,8 @@ public class lm1teleop1driver extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        plane=hardwareMap.get(Servo.class,"plane");
+        plane.setPosition(1);
         boolean half = false;//half speed
         boolean open = false;
         boolean state = false;
@@ -95,9 +99,21 @@ public class lm1teleop1driver extends LinearOpMode {
         waitForStart();
         runtime.reset();
         boolean hangmode=false;
-
+        gamepad1.setLedColor(255.0,215,0,180000);
+        boolean planeb=false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            if(gamepad1.touchpad_finger_1){
+                planeb=true;
+            }else if(gamepad1.touchpad_finger_2){
+               planeb=false;
+            }if(planeb){
+                extend.setTilt((int)((gamepad1.touchpad_finger_1_y+0.5)*400));
+                plane.setPosition(1);
+            }
+            telemetry.addData("y",gamepad1.touchpad_finger_1_y);
+            telemetry.update();
+          //  gamepad1.rumble(Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),50);
             if (gamepad1.a) {//slow turn mode
                 slowturn = true;
             }
@@ -119,9 +135,9 @@ public class lm1teleop1driver extends LinearOpMode {
 
             state = gamepad1.left_bumper;//state for claw
 
-            if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);hangs.setPosition(0);}//set positions
-            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.33);}
-            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.95);}
+            if (gamepad1.left_trigger >= 0.5&&!planeb) {extend.setIntake();wrist.setPosition(1);hangs.setPosition(0);}//set positions
+            else if (gamepad1.right_bumper&&!planeb) {extend.setIntake();wrist.setPosition(0.315);}
+            else if (gamepad1.right_trigger >= 0.5&&!planeb) {extend.setPlace();wrist.setPosition(0.95);}
 
             if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
                 if (open) {claw.setPosition(0.2);open = false;}
