@@ -92,6 +92,8 @@ public class Pipeline2023 extends OpenCvPipeline {
         middleResult = findWhiteCount(mask, 0, mask.width()*2/3);
         rightResult = findWhiteCount(mask, mask.width()*2/3, mask.width()/3);
         int duckiePixels = 10000;
+        if (useBlue)
+            duckiePixels = 7000;
 
         if  (rightResult > duckiePixels)         return 2;
 

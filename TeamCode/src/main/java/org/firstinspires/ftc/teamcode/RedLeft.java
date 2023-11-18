@@ -143,19 +143,24 @@ public class RedLeft extends LinearOpMode {
 
     private void LeftPath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-40,37,Math.toRadians(-180));
+        pose = new Pose2d(-50,35,Math.toRadians(0));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-29, 36, Math.toRadians(-180));
+        pose = new Pose2d(-40, 35, Math.toRadians(-180));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-27, 35, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-29, 31, Math.toRadians(-180));
+        pose = new Pose2d(-27, 31, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -195,19 +200,19 @@ public class RedLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-12, 53, Math.toRadians(0));
+        pose = new Pose2d(-18, 53, Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
-        pose = new Pose2d(-3, 53, Math.toRadians(90));
+        pose = new Pose2d(-4, 53, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-5, -60, Math.toRadians(90));
+        pose = new Pose2d(-4, -60, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
