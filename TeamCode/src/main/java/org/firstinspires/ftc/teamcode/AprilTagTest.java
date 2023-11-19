@@ -16,8 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
-@Autonomous
-@Disabled
+@Autonomous(name="April Tag Detection",group="Tests")
 public class AprilTagTest extends LinearOpMode {
 
     DcMotor m1, m2, m3, m4;
