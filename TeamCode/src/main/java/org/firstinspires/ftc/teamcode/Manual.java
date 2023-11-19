@@ -48,6 +48,10 @@ public class Manual  extends LinearOpMode{
             // April Tag detection call
             //telemetryAprilTag();
 
+            if(gamepad1.right_bumper){
+                robot.setSideway(1);
+            }
+
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
         }

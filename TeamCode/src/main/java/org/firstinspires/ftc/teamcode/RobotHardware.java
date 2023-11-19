@@ -255,6 +255,13 @@ public class RobotHardware {
         lbMotor.setPower(leftWheel);
     }
 
+    public void setSideway(double num){
+        //rfMotor.setPower(-num);
+        rbMotor.setPower(num);
+        lfMotor.setPower(num);
+        //lbMotor.setPower(-num);
+    }
+
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
      *      Power is reduced by 25%
