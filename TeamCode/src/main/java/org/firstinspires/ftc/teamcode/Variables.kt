@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode
 import androidx.core.graphics.rotationMatrix
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern
+import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
@@ -23,6 +24,8 @@ object Variables {
     var motorFR: DcMotor? = null
     var motorBR: DcMotor? = null
     var slideGate: Servo? = null
+    var leftFlyWheel: CRServo? = null
+    var rightFlyWheel: CRServo? = null
     var rMotorR: DcMotor? = null;
     var rMotorL: DcMotor? = null;
     var touchyR: TouchSensor? = null
