@@ -23,6 +23,9 @@ public class MechanismTest extends OpMode
     //servo variable declarations
     boolean leftUp = false;
     boolean rightUp = false;
+    boolean aPressed = false;
+    boolean xPressed = false;
+    boolean bPressed = false;
 
     static final double MAX_POS = 1.0;
     static final double MIN_POS = 0.0;
@@ -72,5 +75,46 @@ public class MechanismTest extends OpMode
         } else {
             depositServoTwo.setPosition(0);
         }
+
+        /*deposit
+//        a button logic
+        if (gamepad1.a && !aPressed)
+        {
+            rightUp = !rightUp;
+            leftUp = !leftUp;
+            aPressed = true;
+        }
+        else if (!gamepad1.a)
+            aPressed = false;
+
+        //x button logic
+        if (gamepad1.x && !xPressed)
+        {
+            leftUp = !leftUp;
+            xPressed = true;
+        }
+        else if (!gamepad1.x)
+            xPressed = false;
+
+        //b button logic
+        if (gamepad1.b && !bPressed)
+        {
+            rightUp = !rightUp;
+            bPressed = true;
+        }
+        else if (!gamepad1.b)
+            bPressed = false;
+
+        //x button drops left
+        if (leftUp == true)
+            depositServoTwo.setPosition(1);
+        else if (leftUp == false)
+            depositServoTwo.setPosition(0);
+
+        //b button drops right
+        if (rightUp == true)
+            depositServoOne.setPosition (1);
+        else if (rightUp == false)
+            depositServoOne.setPosition (0);*/
     }
 }
