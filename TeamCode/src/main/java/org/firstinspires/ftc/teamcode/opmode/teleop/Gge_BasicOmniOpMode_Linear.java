@@ -34,7 +34,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -75,6 +78,12 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    Servo leftClaw;
+    Servo rightClaw;
+    Servo intakeFlip;
+
+    IntakeMovement intake;
+
     @Override
     public void runOpMode() {
 
@@ -84,6 +93,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        leftClaw = hardwareMap.get(Servo.class, "left_claw");
+        rightClaw = hardwareMap.get(Servo.class, "right_claw");
+        intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -98,9 +111,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD); // No idea why this needs to be reversed - debugging
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE); // No idea why this needs to be reversed - debugging
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip);
 
         //drive speed limiter
         double powerFactor = 0.25;
@@ -114,6 +128,17 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            if (gamepad1.a){
+                intake.ClawOpen();
+            } else if (gamepad1.b) {
+                intake.ClawClosed();
+            } else if (gamepad1.y) {
+                intake.FlipUp();
+            } else if (gamepad1.x) {
+                intake.FlipDown();
+            }
+
 
             //adjust drive speed limiter
             if (gamepad1.back){
