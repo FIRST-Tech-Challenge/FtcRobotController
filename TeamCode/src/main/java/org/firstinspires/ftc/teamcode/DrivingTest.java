@@ -47,8 +47,7 @@ import java.util.List;
  */
 
 @Autonomous
-@Disabled
-public class DropCarWashTest extends LinearOpMode {
+public class DrivingTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -103,35 +102,7 @@ public class DropCarWashTest extends LinearOpMode {
 
 
         // Main code
-        dropCarWash();
-        //drive(13.5);
-        //drive(1);
-        /*
-        List<Recognition> pixels = telemetryTfod();
-        if (pixels.size() > 0) {
-            drive(6);
-            ejectPixel();
-            drive(-6);
-        } else {
-            turn(-30);
-            pixels = telemetryTfod();
-            if (pixels.size() > 0) {
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(30);
-            } else {
-                turn(60);
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(-30);
-            }
-        }
-        //*/
-        //turn(-60);
-        //drive(20);
-        //ejectPixel();
+        drive(24);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
