@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
  * 7/29/23
  * Test teleOp for a butterfly drivetrain
  */
+@Disabled
 @Config
 @TeleOp(name = "ButterflyTest")
 public class ButterflyTest extends LinearOpMode {

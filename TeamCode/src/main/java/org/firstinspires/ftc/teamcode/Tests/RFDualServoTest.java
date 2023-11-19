@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Tests;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
@@ -6,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
  * William
  * same as RFServoTest but for RFDualServo
  */
+@Disabled
 
 public abstract class RFDualServoTest extends LinearOpMode{
     RFServo testServo;

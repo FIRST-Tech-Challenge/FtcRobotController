@@ -57,9 +57,9 @@ public class RedLeftAuto extends LinearOpMode {
             .lineToLinearHeading(new Pose2d(-40, -58, toRadians(180)))
             .setReversed(true)
             .splineTo(new Vector2d(10, -56.5), toRadians(5))
-            .splineTo(new Vector2d(45, -32), toRadians(0))
+            .splineTo(new Vector2d(45, -28), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(180)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[1] =
@@ -70,7 +70,7 @@ public class RedLeftAuto extends LinearOpMode {
                 .setReversed(true)
             .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
-            .splineTo(new Vector2d(40, -32), toRadians(0))
+            .splineTo(new Vector2d(40, -28), toRadians(0))
             .waitSeconds(2)
             .lineToLinearHeading(new Pose2d(52.5, -36, toRadians(180)))
             .addTemporalMarker(robot::done)
@@ -85,7 +85,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
             .splineTo(new Vector2d(45, -28), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(53, -43, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(53, -43, toRadians(180)))
             .addTemporalMarker(robot::done)
             .build();
     TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
@@ -117,8 +117,9 @@ public class RedLeftAuto extends LinearOpMode {
       robot.update();
     }
     while (!isStopRequested() && opModeIsActive() && !robot.queuer.isFullfilled()) {
+      robot.queuer.addDelay(4.5);
       robot.followTrajSeq(spikePosition[pos]);
-      robot.queuer.addDelay(0.5);
+      robot.queuer.addDelay(5);
       robot.preloadAuto();
       robot.queuer.addDelay(1.5);
       robot.followTrajSeq(throughTruss[pos]);

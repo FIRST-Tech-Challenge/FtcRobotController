@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  * William
  * program to effectively be able to tune the constants of a servo from dashboard, abstract so new devices can just extend it
  */
+@Disabled
 
 public abstract class RFServoTest extends LinearOpMode {
     RFServo testServo;

@@ -42,7 +42,7 @@ public class RedRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,-39, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(181)))
+                        .lineToLinearHeading(new Pose2d(52.5, -27.5, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         throughTruss[1] =
@@ -65,7 +65,7 @@ public class RedRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,-40, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(53, -43, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(53, -43.5, toRadians(180)))
                         .addTemporalMarker(robot::done)
                         .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];

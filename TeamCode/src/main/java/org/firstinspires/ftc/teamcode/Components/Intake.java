@@ -29,7 +29,7 @@ public class Intake extends RFMotor {
   Motor motor;
   double requestTime = 0.0;
 
-  private final double INTAKE_POWER = 0.6;
+  private final double INTAKE_POWER = 0.9;
   private final double REVERSE_POWER = -0.6;
 
   private boolean full = false;

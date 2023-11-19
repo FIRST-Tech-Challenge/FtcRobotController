@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
  * Harry
  * program to tune ALL RFMotor constants from dashboard, including the auto-tuned ones, abstract so people just have to extend this
  */
+@Disabled
+
 public abstract class RFMotorTest extends LinearOpMode {
     BasicRobot robot;
     RFMotor motor;

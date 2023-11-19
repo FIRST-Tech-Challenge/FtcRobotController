@@ -223,6 +223,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         servos.add(hardwareMap.servo.get("servoLeftBack"));
         servos.add(hardwareMap.servo.get("servoRightFront"));
         servos.add(hardwareMap.servo.get("servoRightBack"));
+        isButtered=true;
+        toggleButtered();
 //
     }
 
