@@ -74,8 +74,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
         */
 
-        // Waits so the imu can process
-        sleep(2000);
     }
 
     public DcMotor initializeMotor(String motorName, DcMotorSimple.Direction direction, DcMotor.RunMode mode) {

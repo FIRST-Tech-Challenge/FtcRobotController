@@ -31,24 +31,7 @@ public class BaseTeleOp extends BaseOpMode {
     public boolean sensitive = false;
 
     public void driveUsingControllers() {
-        sensitive = gamepad1.right_bumper;
-
-        double sensitivity, rotSensitivity;
-        double strafeConstant = 1.1;
-
-        if (sensitive) {
-            sensitivity = 0.5;
-            rotSensitivity = 0.8;
-        } else {
-            sensitivity = 1;
-            rotSensitivity = 1;
-        }
-
-        double x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
-        double y = curveStick(-gamepad1.left_stick_y) * sensitivity;
-        double rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
-
-        mecanumDrive(x, y, rot);
+       driveUsingControllers(false);
     }
 
     public void driveUsingControllers(boolean curve) {
@@ -206,19 +189,6 @@ public class BaseTeleOp extends BaseOpMode {
         }
         bIsPressed = gamepad2.b;
 
-        /*
-        if (!xIsPressed && gamepad2.x) {
-            if (dumperTilted) {
-                resetDumper();
-                dumperDumped = false;
-            } else {
-                tiltDumper();
-                dumperDumped = true;
-            }
-            dumperTilted = !dumperTilted;
-        }
-        xIsPressed = gamepad2.x;
-        */
     }
 
     public boolean gateOpen = false;
