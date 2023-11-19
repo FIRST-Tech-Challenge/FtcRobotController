@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -14,17 +15,25 @@ import java.util.ArrayList;
 @TeleOp(name = "Concept: AprilTag")
 public class AprilTagDetectionConcept extends BaseTeleOp {
 
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
      * The variable to store our instance of the AprilTag processor.
      */
-    private AprilTagProcessor aprilTag;
+    public AprilTagProcessor aprilTag;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
+
+    // For this concept: supposed location of the robot
+    double x = 0;
+    double y = 0;
+    double z = 0;
+    double pitch = 0;
+    double roll = 0;
+    double yaw = 0;
 
     @Override
     public void runOpMode() {
@@ -65,7 +74,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     /**
      * Initialize the AprilTag processor.
      */
-    private void initAprilTag() {
+    public void initAprilTag() {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
@@ -130,14 +139,41 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
 
     }   // end method initAprilTag()
 
+    public Pose2d calculatePoseEstimate(AprilTagDetection detection, AprilTag aprilTag) {
+        double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
+
+        d = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        gamma = Math.atan2(x, y);
+        beta = gamma + detection.ftcPose.yaw; //(or gamma + detection.ftcPose.yaw if that doesn't work)
+        relativeX = d * Math.cos(beta) + aprilTag.x;
+        relativeY = -d * Math.sin(beta) + aprilTag.y;
+        absoluteX = relativeX * Math.cos(aprilTag.yaw) - relativeY * Math.sin(aprilTag.yaw);
+        absoluteY = relativeX * Math.sin(aprilTag.yaw) + relativeY * Math.cos(aprilTag.yaw);
+        absoluteTheta = beta + aprilTag.yaw + (Math.PI / 2);
+        Pose2d pose = new Pose2d(absoluteX, absoluteY, absoluteTheta);
+
+        return pose;
+    }
 
     /**
      * Add telemetry about AprilTag detections.
      */
-    private void telemetryAprilTag() {
-
+    public void telemetryAprilTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        /*
+        for (AprilTagDetection detection : currentDetections) {
+            for (10 aprilTags) {
+
+            }
+        }
+        */
+
+        telemetry.addLine(String.format("Robot XYZ %6.1f %6.1f %6.1f  (inch)", x, y, z));
+        telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", pitch, roll, yaw));
+        
+
+        telemetry.addData("\n# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
