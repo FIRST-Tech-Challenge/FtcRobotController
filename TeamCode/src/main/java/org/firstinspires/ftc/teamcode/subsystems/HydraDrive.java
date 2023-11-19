@@ -31,6 +31,7 @@ public class HydraDrive {
     protected int mRampDownStart;
     protected double mCurrentDrivePower;
     protected double mCurrentDriveMaxPower;
+    protected final boolean cResetEncodersBetweenDrives = true;
     public HydraDrive(HydraOpMode op) {
         mOp = op;
         // grab the motors out of the hardware map
@@ -82,20 +83,32 @@ public class HydraDrive {
      * @param inRotate the amount to rotate in either direction
      */
     public void Start(int inDrive, int inStrafe, int inRotate) {
-        // Clean up the last drive to prepare for the next one
+        int frontLeftCurrent = 0;
+        int frontRightCurrent = 0;
+        int backLeftCurrent = 0;
+        int backRightCurrent = 0;
         SetAllMotorPower(0);
-        SetAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (cResetEncodersBetweenDrives) {
+            // Clean up the last drive to prepare for the next one
+            SetAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        else {
+            frontLeftCurrent = mMotDrFrLt.getCurrentPosition();
+            frontRightCurrent = mMotDrFrRt.getCurrentPosition();
+            backLeftCurrent = mMotDrBkLt.getCurrentPosition();
+            backRightCurrent = mMotDrBkRt.getCurrentPosition();
+        }
         // Front left target position
-        int frontLeftTarget = (int)((inDrive + inStrafe + inRotate) * cCountsPerInch);
+        int frontLeftTarget = frontLeftCurrent + (int)((inDrive + inStrafe + inRotate) * cCountsPerInch);
         mMotDrFrLt.setTargetPosition(frontLeftTarget);
         // Rear left target position
-        int rearLeftTarget = (int)((inDrive - inStrafe + inRotate) * cCountsPerInch);
+        int rearLeftTarget = backLeftCurrent + (int)((inDrive - inStrafe + inRotate) * cCountsPerInch);
         mMotDrBkLt.setTargetPosition(rearLeftTarget);
         // Front right target position
-        int frontRightTarget = (int)((inDrive - inStrafe - inRotate) * cCountsPerInch);
+        int frontRightTarget = frontRightCurrent + (int)((inDrive - inStrafe - inRotate) * cCountsPerInch);
         mMotDrFrRt.setTargetPosition(frontRightTarget);
         // Rear right target position
-        int rearRightTarget = (int)((inDrive + inStrafe - inRotate) * cCountsPerInch);
+        int rearRightTarget = backRightCurrent + (int)((inDrive + inStrafe - inRotate) * cCountsPerInch);
         mMotDrBkRt.setTargetPosition(rearRightTarget);
         // Get the total drive so we can calculate when to ramp the power down
         int totalDrive = Math.abs(frontLeftTarget) + Math.abs(rearLeftTarget) + Math.abs(frontRightTarget) + Math.abs(rearRightTarget);
