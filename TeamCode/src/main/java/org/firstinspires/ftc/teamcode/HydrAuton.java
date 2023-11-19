@@ -52,7 +52,7 @@ public class HydrAuton extends LinearOpMode {
         ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        mLogger = new HydraDatalogger("datalog_01");
+        mLogger = new HydraDatalogger("datalog");
         mOp = new HydraOpMode(telemetry, hardwareMap, mLogger);
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         // Initialization Routines

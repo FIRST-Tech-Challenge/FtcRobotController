@@ -36,6 +36,9 @@ public class HydraDatalogger
 
     public HydraDatalogger(String name)
     {
+        // append the date to the filename
+        java.util.Date now = new java.util.Date(System.currentTimeMillis());
+        name += "-" + now;
         // Build the underlying datalog object
         datalogger = new Datalogger.Builder()
 
