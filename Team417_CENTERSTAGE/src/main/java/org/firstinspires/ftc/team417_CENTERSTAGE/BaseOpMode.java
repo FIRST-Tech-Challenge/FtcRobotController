@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import drive.DriveConstants;
-import drive.SampleMecanumDrive;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
+
 
 public abstract class BaseOpMode extends LinearOpMode {
-    SampleMecanumDrive drive;
+
 
     //Declares drive-motors
     public DcMotor FR = null; // null because of DevBot
@@ -44,7 +44,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
         //Drive Motors
-        if(DriveConstants.isDevBot) {
+        if(MecanumDrive.isDevBot) {
             FL = initializeMotor("leftFront", DcMotor.Direction.REVERSE);
             FR = initializeMotor("rightFront", DcMotor.Direction.FORWARD);
             BL = initializeMotor("leftBack", DcMotor.Direction.REVERSE);
