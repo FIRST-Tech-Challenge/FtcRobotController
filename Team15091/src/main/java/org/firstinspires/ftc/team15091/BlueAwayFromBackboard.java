@@ -10,7 +10,7 @@ public class BlueAwayFromBackboard extends AutonomousBase{
     public void runOpMode() throws InterruptedException {
         setupAndWait();
         DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 10, false);
-        PixelPosition initialPos = pixelDetector.objectDetected();
+        PixelPosition initialPos = rbProcessor.position;
         if (initialPos == PixelPosition.Left) {
             robotDriver.gyroDrive(0.3d, 12d, 0, 3, null);
             robotDriver.gyroDrive(0.2d, 24d, 45, 3, null);

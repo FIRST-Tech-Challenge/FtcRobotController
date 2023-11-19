@@ -37,7 +37,7 @@ public class RedNearBackboard extends AutonomousBase{
         setupAndWait();
         DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 7, false);
         DistanceDetector frontDistanceShort = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 5, false);
-        PixelPosition initialPos = pixelDetector.objectDetected();
+        PixelPosition initialPos = rbProcessor.position;
         robot.setArmPosition(0.7);
         if (initialPos == PixelPosition.Right) {
             robotDriver.gyroDrive(0.3d, 12d, 0, 3, null);

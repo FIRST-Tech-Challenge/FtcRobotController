@@ -8,7 +8,7 @@ public class PushAuto extends AutonomousBase {
     public void runOpMode() throws InterruptedException {
         setupAndWait();
 
-        PixelPosition initialPos = pixelDetector.objectDetected();
+        PixelPosition initialPos = rbProcessor.position;
         if (initialPos == PixelPosition.Left) {
             robotDriver.gyroDrive(0.5d, 12d, 0, 3, null);
             robotDriver.gyroDrive(0.2d, 25d, 45, 3, null);

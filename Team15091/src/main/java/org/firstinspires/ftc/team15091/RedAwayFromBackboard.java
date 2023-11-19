@@ -9,7 +9,7 @@ public class RedAwayFromBackboard extends AutonomousBase {
     public void runOpMode() throws InterruptedException {
         setupAndWait();
         DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 10, false);
-        PixelPosition initialPos = pixelDetector.objectDetected();
+        PixelPosition initialPos = rbProcessor.position;
         if (initialPos == PixelPosition.Right) {
             robotDriver.gyroDrive(0.3d, 25.5, 0, 3, null); // move forward to the center of the second tile
             robotDriver.gyroTurn(0.1d, -90, 5); // turn right 90 deg
