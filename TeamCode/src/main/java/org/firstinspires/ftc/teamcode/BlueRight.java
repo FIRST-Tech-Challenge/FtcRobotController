@@ -147,19 +147,19 @@ public class BlueRight extends LinearOpMode {
 
     private void LeftPath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-41,-27,Math.toRadians(-180));
+        pose = new Pose2d(-40,-27,Math.toRadians(-180));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-30, -26, Math.toRadians(-180));
+        pose = new Pose2d(-29, -25, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-30, -30, Math.toRadians(-180));
+        pose = new Pose2d(-29, -30, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -177,7 +177,7 @@ public class BlueRight extends LinearOpMode {
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-5, 60, Math.toRadians(-90));
+        pose = new Pose2d(-5, 63, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
