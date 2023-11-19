@@ -7,7 +7,7 @@ public class ConstantsOpenCV {
 
     // Color ranges for OpenCV detection
     public static final Scalar RED_COLOR_DETECT_MAX_HSV = new Scalar(9, 255, 255);
-    public static final Scalar RED_COLOR_DETECT_MIN_HSV = new Scalar(0, 150, 95);
+    public static final Scalar RED_COLOR_DETECT_MIN_HSV = new Scalar(0, 60, 50);
     public static final Scalar BLUE_COLOR_DETECT_MAX_HSV = new Scalar(120, 255, 255);
     public static final Scalar BLUE_COLOR_DETECT_MIN_HSV = new Scalar(108, 50, 50);
     public static final Scalar borderColor = new Scalar(0, 255, 0);  // green
