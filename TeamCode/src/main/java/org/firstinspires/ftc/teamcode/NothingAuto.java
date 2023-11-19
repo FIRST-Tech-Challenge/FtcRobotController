@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class NothingAuto extends LinearOpMode {
 
     public void runOpMode() {
-        telemetry.addData("Currently", "Initialized");
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
-        telemetry.addData("Currently", "Doing nothing");
+        telemetry.addData("Status", "Doing nothing");
         telemetry.update();
 
         while (opModeIsActive()){}
