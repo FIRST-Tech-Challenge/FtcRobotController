@@ -44,8 +44,8 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="IMU",group="Tests")
-public class IMUTest extends LinearOpMode {
+@Autonomous(name="Turning",group="Tests")
+public class TurningTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -87,6 +87,11 @@ public class IMUTest extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition());
         rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition());

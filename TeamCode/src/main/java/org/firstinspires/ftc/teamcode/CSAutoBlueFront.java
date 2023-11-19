@@ -45,7 +45,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Blue Front")
+@Autonomous(name = "Blue Front", group = "CenterStage")
 public class CSAutoBlueFront extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
