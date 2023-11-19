@@ -4,6 +4,7 @@ import android.util.Size
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
@@ -50,6 +51,13 @@ open class DriveMethods: LinearOpMode() {
     lateinit var aprilTag: AprilTagProcessor
 
     lateinit var visionProcessor: VisionProcessors
+
+    fun setMotorPowers(powerFL: Double, powerFR: Double, powerBL: Double, powerBR: Double) {
+        motorFL?.power = powerFL
+        motorFR?.power = powerFR
+        motorBL?.power = powerBL
+        motorBR?.power = powerBR
+    }
 
     fun initVision(processorType: VisionProcessors) {
         initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
@@ -324,11 +332,29 @@ open class DriveMethods: LinearOpMode() {
         motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
         motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
         motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
-        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
-        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
+        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR")
+        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL")
         touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
     }
+
+    open fun initOnlyRackAndPain() {
+        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR")
+        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL")
+        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
+        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
+    }
+
+
+    open fun initMotorsSecondSimple() {
+        motorFL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFL")
+        motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
+        motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
+        motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
+        motorFL!!.direction = DcMotorSimple.Direction.REVERSE
+        motorBL!!.direction = DcMotorSimple.Direction.REVERSE
+    }
+
 
     open fun initSlideMotors() {
         motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
