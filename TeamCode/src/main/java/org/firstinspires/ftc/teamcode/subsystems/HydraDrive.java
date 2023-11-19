@@ -144,14 +144,17 @@ public class HydraDrive {
         int FRmotPos = mMotDrFrRt.getCurrentPosition();
         int BLmotPos = mMotDrBkLt.getCurrentPosition();
         int BRmotPos = mMotDrBkRt.getCurrentPosition();
-        /*mOp.mTelemetry.addData("FLmotTarget",FLmotTarget);
-        mOp.mTelemetry.addData("FRmotTarget",FRmotTarget);
-        mOp.mTelemetry.addData("BLmotTarget",BLmotTarget);
-        mOp.mTelemetry.addData("BRmotTarget",BRmotTarget);
-        mOp.mTelemetry.addData("FLmotPos",FLmotPos);
-        mOp.mTelemetry.addData("FRmotPos",FRmotPos);
-        mOp.mTelemetry.addData("BLmotPos",BLmotPos);
-        mOp.mTelemetry.addData("BRmotPos",BRmotPos);*/
+        if (mOp.mLogger != null) {
+            mOp.mLogger.blposition.set(BLmotPos);
+            mOp.mLogger.bltarget.set(BLmotTarget);
+            mOp.mLogger.brposition.set(BRmotPos);
+            mOp.mLogger.brtarget.set(BRmotTarget);
+            mOp.mLogger.flposition.set(FLmotPos);
+            mOp.mLogger.fltarget.set(FLmotTarget);
+            mOp.mLogger.frposition.set(FRmotPos);
+            mOp.mLogger.frtarget.set(FRmotTarget);
+            mOp.mLogger.writeLine();
+        }
         // Calculate the current error for each motor
         int errorBkLt = Math.abs(BLmotTarget) - Math.abs(BLmotPos);
         int errorBkRt = Math.abs(BRmotTarget) - Math.abs(BRmotPos);

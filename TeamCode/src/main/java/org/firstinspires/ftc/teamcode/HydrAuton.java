@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
 import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
 import org.firstinspires.ftc.teamcode.types.HydraObjectLocations;
 import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
+import org.firstinspires.ftc.teamcode.datalogger.HydraDatalogger;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class HydrAuton extends LinearOpMode {
     protected final int cPixelDropRunTimeMs = 2000;
     protected final int cPixelFrontScoreRunTimeMs = 2000;
     protected final int cAutonAbortTimeMs = 27000;
+    protected HydraDatalogger mLogger;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -50,7 +52,8 @@ public class HydrAuton extends LinearOpMode {
         ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        mOp = new HydraOpMode(telemetry, hardwareMap);
+        mLogger = new HydraDatalogger("datalog_01");
+        mOp = new HydraOpMode(telemetry, hardwareMap, mLogger);
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
@@ -86,6 +89,11 @@ public class HydrAuton extends LinearOpMode {
         }*/
         // Use this timer for time elapsed in the opmode. Do not reset it
         opModeTimer.reset();
+        int loops = 0;
+        if (mLogger != null) {
+            mLogger.loops.set(loops);
+            mLogger.writeLine();
+        }
         // Find the object so we can drive to it
         while (opModeIsActive()) {
             // clear the hardware read cache
@@ -128,6 +136,10 @@ public class HydrAuton extends LinearOpMode {
             }
             telemetry.addData("State", autonState);
             telemetry.update();
+            ++loops;
+            if (mLogger != null) {
+                mLogger.loops.set(loops);
+            }
             // Share the CPU.
             sleep(20);
         }
