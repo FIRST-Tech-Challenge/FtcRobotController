@@ -5,12 +5,21 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
     Used in AprilTagDetectionConcept
 */
 
-public class AprilTagLocationDump {
+public class AprilTagInfoDump {
     public static final AprilTag[] aprilTags = new AprilTag[] {
             // Note that these measurements are not accurate (up to +- 2 inches) and can be improved on
             new AprilTag(7, 5, -72, -42, 5.5),
             new AprilTag(10, 5, -72, 42, 1)
     };
+
+    public static AprilTag findTagWithId(int id) {
+        for (AprilTag aprilTag : aprilTags) {
+            if (aprilTag.id == id) {
+                return aprilTag;
+            }
+        }
+        return null;
+    }
 }
 
 // Stores data about April Tags

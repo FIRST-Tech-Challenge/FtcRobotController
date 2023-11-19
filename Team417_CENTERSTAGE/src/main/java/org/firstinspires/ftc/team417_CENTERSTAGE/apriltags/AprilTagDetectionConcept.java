@@ -28,12 +28,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     public VisionPortal visionPortal;
 
     // For this concept: supposed location of the robot
-    double x = 0;
-    double y = 0;
-    double z = 0;
-    double pitch = 0;
-    double roll = 0;
-    double yaw = 0;
+    Pose2d robotPoseEstimate = new Pose2d(0, 0, 0);
 
     @Override
     public void runOpMode() {
@@ -142,8 +137,8 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     public Pose2d calculatePoseEstimate(AprilTagDetection detection, AprilTag aprilTag) {
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
-        d = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        gamma = Math.atan2(x, y);
+        d = Math.sqrt(Math.pow(detection.ftcPose.x, 2) + Math.pow(detection.ftcPose.y, 2));
+        gamma = Math.atan2(detection.ftcPose.x, detection.ftcPose.y);
         beta = gamma + detection.ftcPose.yaw; //(or gamma + detection.ftcPose.yaw if that doesn't work)
         relativeX = d * Math.cos(beta) + aprilTag.x;
         relativeY = -d * Math.sin(beta) + aprilTag.y;
@@ -161,17 +156,16 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     public void telemetryAprilTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-        /*
-        for (AprilTagDetection detection : currentDetections) {
-            for (10 aprilTags) {
 
+        for (AprilTagDetection detection : currentDetections) {
+            AprilTag aprilTag = AprilTagInfoDump.findTagWithId(detection.id);
+            if (aprilTag != null) {
+                robotPoseEstimate = calculatePoseEstimate(detection, aprilTag);
+                break;
             }
         }
-        */
 
-        telemetry.addLine(String.format("Robot XYZ %6.1f %6.1f %6.1f  (inch)", x, y, z));
-        telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", pitch, roll, yaw));
-        
+        telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.getX(), robotPoseEstimate.getY(), Math.toDegrees(robotPoseEstimate.getHeading())));
 
         telemetry.addData("\n# AprilTags Detected", currentDetections.size());
 
