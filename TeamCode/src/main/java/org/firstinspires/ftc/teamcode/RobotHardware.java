@@ -59,8 +59,8 @@ public class RobotHardware {
     private Servo   launcher    = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
+    public static final double GRABBER_SPEED   =  0.10 ;
+    public static final double ELBOW_SPEED     =  0.05 ;  // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
 
@@ -281,9 +281,9 @@ public class RobotHardware {
     }
 
     public void moveElbow(boolean moveUp){
-        if (moveUp && elbowDrive > ELBOW_MIN) elbowDrive -= .01;
+        if (moveUp && elbowDrive > ELBOW_MIN) elbowDrive -= ELBOW_SPEED;
 
-        if (!moveUp && elbowDrive < ELBOW_MAX) elbowDrive += .01;
+        if (!moveUp && elbowDrive < ELBOW_MAX) elbowDrive += ELBOW_SPEED;
 
         elbowServo.setPosition(Range.clip(elbowDrive, ELBOW_MIN, ELBOW_MAX));
     }
@@ -294,9 +294,9 @@ public class RobotHardware {
     }
 
     public void moveGrabber(boolean closeGrabber){
-        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= .01;
+        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= GRABBER_SPEED;
 
-        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += .01;
+        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += GRABBER_SPEED;
 
         grabberServo.setPosition(Range.clip(grabberDrive, GRABBER_MIN, GRABBER_MAX));
     }
