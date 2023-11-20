@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -71,10 +72,12 @@ public class CyDogsAprilTags {
                         BuiltinCameraDirection.BACK, aprilTag);
             }
 
+
         }   // end method initAprilTag()
 
         public AprilTagDetection GetAprilTag(int tagID)
         {
+            telemetryAprilTag();
             // Get the latest AprilTag detections from the pipeline.
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
@@ -108,12 +111,15 @@ public class CyDogsAprilTags {
                     myOpMode.telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                     myOpMode.telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
+
+
             }   // end for() loop
 
             // Add "key" information to telemetry
-            myOpMode.telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-            myOpMode.telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-            myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
+       //     myOpMode.telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        //    myOpMode.telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+       //     myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
+            myOpMode.telemetry.update();
 
         }   // end method telemetryAprilTag()
 

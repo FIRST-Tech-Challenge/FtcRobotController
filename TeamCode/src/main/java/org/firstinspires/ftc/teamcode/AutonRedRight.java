@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
 @Autonomous
 public class AutonRedRight extends LinearOpMode {
     SpikeCam.location mySpikeLocation;
@@ -19,6 +21,9 @@ public class AutonRedRight extends LinearOpMode {
 
         CyDogsSparky mySparky = new CyDogsSparky(this);
         mySparky.initializeSpikeCam(SpikeCam.TargetColor.RED);
+
+        CyDogsAprilTags myReader = new CyDogsAprilTags(this);
+        myReader.initAprilTag("Webcam 2");
 
         mySparky.initializeDevices();
         mySparky.initializePositions();
@@ -63,12 +68,13 @@ public class AutonRedRight extends LinearOpMode {
 
 
             mySparky.StrafeLeft(20, .5, 500);
-            mySparky.AdjustToAprilTag(mySpikeLocation);
+            AprilTagDetection myDetection = myReader.GetAprilTag(1);
+       /*     mySparky.AdjustToAprilTag(mySpikeLocation);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
             sleep(3000);
-            //mySparky.SetLiftToZero();
-
+         */   //mySparky.SetLiftToZero();
+            sleep(13000);
             mySparky.LowerArmAtAutonEnd();
         }
     }
