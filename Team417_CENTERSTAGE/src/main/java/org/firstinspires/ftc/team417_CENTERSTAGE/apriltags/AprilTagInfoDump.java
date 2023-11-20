@@ -45,6 +45,6 @@ class AprilTag {
     }
 
     public AprilTag(int id, double sideLength, double x, double y, double z) {
-        new AprilTag(id, sideLength, x, y, z, 0, 0, 0);
+        this(id, sideLength, x, y, z, 0, 0, 0);
     }
 }
