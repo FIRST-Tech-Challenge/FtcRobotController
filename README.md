@@ -1,3 +1,7 @@
+# README
+ ## Notice
+this repository is a fork of the original repo and the secondary NOTICE begins the forked repository information section.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
