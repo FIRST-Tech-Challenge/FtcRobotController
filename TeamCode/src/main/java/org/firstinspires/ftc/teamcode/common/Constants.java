@@ -14,12 +14,8 @@ public class Constants {
         put("right_front", Direction.FORWARD);
         put("left_back", Direction.FORWARD);
         put("right_back", Direction.FORWARD);
+        put("lift", Direction.REVERSE);
     }};
-    public static final int ArmCountsPerRev = 1680;
-    public static final double ArmCountsPerDegree = 14.0/3;
-    public static final double ServoUnitsPerDegree = 1.0/135;
-    public static final double ServoOffsetDegrees = 30; // not for sure
-    public static double NormalDegreesToServoUnits(double normalDegrees) {
-        return (normalDegrees - ServoOffsetDegrees)*ServoUnitsPerDegree;
-    }
+    public static final int elevatorPositionTop = 3060; //High junction
+    public static final int elevatorPositionBottom = 20; // changed from -10 to -20
 }

@@ -28,7 +28,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotorEx arm = null;
+    private DcMotorEx lift = null;
     private IMU imu = null;
     private DcMotor intake = null;
     private Servo servo = null;
@@ -49,7 +49,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        arm = hardwareMap.get(DcMotorEx.class, "arm");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         servo = hardwareMap.get(Servo.class, "servo");
@@ -65,16 +65,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu.resetYaw();
 
         // Wait for the game to start (driver presses PLAY)
         while(!isStarted() && !isStopRequested()) {
-            arm.setPower(0.0001 + gamepad2.right_stick_y * 1/20);
-            telemetry.addData("Arm position: ", arm.getCurrentPosition());
-            telemetry.addData("Arm joystick position: ", gamepad2.right_stick_y);
+            telemetry.addData("Lift joystick position: ", gamepad2.right_stick_y);
         }
 
         runtime.reset();
@@ -99,7 +95,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             if (gamepad1.b) imu.resetYaw();
 
-            handleArm();
+            handleLift();
 
             HandleDrivetrain();
             telemetry.update();
@@ -115,10 +111,20 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     when scoring set position to 0.7
     */
 
-    public void handleArm(){
+    public void handleLift() {
+        int liftPos = lift.getCurrentPosition();
+        if (liftPos > Constants.elevatorPositionTop && -gamepad2.right_stick_y > 0) lift.setPower((gamepad2.left_stick_y) * 0.1 + 0.001);
+        else if (liftPos < Constants.elevatorPositionBottom && -gamepad2.right_stick_y < 0) lift.setPower((gamepad2.left_stick_y) * 0.01);
+        else lift.setPower(gamepad2.right_stick_y * 0.5 + 0.001);
 
         double servoSetpoint = 0;
 
+        if (gamepad2.dpad_up) servoSetpoint += 0.1; sleep(100);
+        if (gamepad2.dpad_down) servoSetpoint -= 0.1; sleep(100);
+
+        if (servoSetpoint != servo.getPosition()) servo.setPosition(servoSetpoint);
+
+        /*
         telemetry.addData("Trigger: ", gamepad2.right_trigger);
         intakeButton.update(gamepad2.right_trigger > 0.5);
 
@@ -196,6 +202,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             arm.setPower(gamepad2.right_stick_y * 1 / 4 + 0.002);
 
         }
+         */
     }
 
     public void HandleDrivetrain() {
