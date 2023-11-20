@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -44,12 +46,23 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.inspection.InspectionState;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 @Config
 public final class MecanumDrive {
+
+    public static String getBotName() {
+        InspectionState inspection=new InspectionState();
+        inspection.initializeLocal();
+        Log.d("roadrunner", String.format("Device name:" + inspection.deviceName));
+        return inspection.deviceName;
+    }
+    public static boolean isDevBot = getBotName().equals("6220-D-RC");
+
     public static class Params {
         // drive model parameters
         public double inPerTick = 0;
@@ -95,7 +108,8 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront, intakeMotor;
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public DcMotorEx intakeMotor;
 
     public final VoltageSensor voltageSensor;
 
@@ -182,7 +196,9 @@ public final class MecanumDrive {
         leftBack = hardwareMap.get(DcMotorEx.class, "motBL");
         rightBack = hardwareMap.get(DcMotorEx.class, "motBR");
         rightFront = hardwareMap.get(DcMotorEx.class, "motFR");
-        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        if (!isDevBot) {
+            intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        }
 
         // reverse fr and br motors so that it drives correctly
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -192,7 +208,9 @@ public final class MecanumDrive {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if (!isDevBot) {
+            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         // now has been enabled, encoders are goodge :D
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -200,7 +218,9 @@ public final class MecanumDrive {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (!isDevBot) {
+            intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(

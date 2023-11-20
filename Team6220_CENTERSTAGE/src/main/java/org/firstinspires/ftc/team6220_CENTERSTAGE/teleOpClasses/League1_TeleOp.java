@@ -159,14 +159,16 @@ public class League1_TeleOp extends LinearOpMode {
             drive.updatePoseEstimate();
 
 
-            // reverse if bumpers are held
-            if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
-                    gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                intakePower = -Math.abs(intakePower);
-            }
+            if (!drive.isDevBot) {
+                // reverse if bumpers are held
+                if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
+                        gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    intakePower = -Math.abs(intakePower);
+                }
 
-            // apply clamped intakePower
-            drive.intakeMotor.setPower(Utilities.clamp(intakePower));
+                // apply clamped intakePower
+                drive.intakeMotor.setPower(Utilities.clamp(intakePower));
+            }
 
 
             // telemetry
