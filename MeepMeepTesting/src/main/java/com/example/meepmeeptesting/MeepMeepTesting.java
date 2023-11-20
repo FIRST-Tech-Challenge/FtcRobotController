@@ -23,7 +23,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new RoadRunnerBotEntity(
                 meepMeep,
                 // Robot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width:
-                new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15),
+                new Constraints(30, 60, Math.toRadians(180), Math.toRadians(180), 15),
                 // Robot dimensions: width, height:
                 15, 15,
                 new Pose2d(0, 0, 0),
@@ -94,14 +94,14 @@ class AutonDriveFactory {
         } else {
             yMultiplier = -1;
         }
-        TrajectoryActionBuilder build = this.drive.actionBuilder(xForm(new Pose2d(-40, -65, 90)));
-        build = build.splineTo(xForm(new Vector2d(-36, -36)), xForm(Math.toRadians(90)))
-            .splineTo(xForm(new Vector2d(-37, -46)), xForm(Math.toRadians(240)))
-                .splineTo(xForm(new Vector2d(-37.64, -46.65)), xForm(Math.toRadians(238.45)))
-                .splineTo(xForm(new Vector2d(-39.71, -50.78)), xForm(Math.toRadians(-77.72)))
-                .splineTo(xForm(new Vector2d(-10.61, -59.98)), xForm(Math.toRadians(3.58)))
-                .splineTo(xForm(new Vector2d(25.63, -57.17)), xForm(Math.toRadians(26.97)))
-                .splineToSplineHeading(xForm(new Pose2d(61.86, -60.17, Math.toRadians(0.36))), xForm(Math.toRadians(0.36)));
+        TrajectoryActionBuilder build = this.drive.actionBuilder(xForm(new Pose2d(-38, -60, Math.toRadians(90))));
+        build = build.splineTo(xForm(new Vector2d(-36, -36)), xForm(Math.toRadians(90)));
+//            .splineTo(xForm(new Vector2d(-37, -46)), xForm(Math.toRadians(240)))
+//                .splineTo(xForm(new Vector2d(-37.64, -46.65)), xForm(Math.toRadians(238.45)))
+//                .splineTo(xForm(new Vector2d(-39.71, -50.78)), xForm(Math.toRadians(-77.72)))
+//                .splineTo(xForm(new Vector2d(-10.61, -59.98)), xForm(Math.toRadians(3.58)))
+//                .splineTo(xForm(new Vector2d(25.63, -57.17)), xForm(Math.toRadians(26.97)))
+//                .splineToSplineHeading(xForm(new Pose2d(61.86, -60.17, Math.toRadians(0.36))), xForm(Math.toRadians(0.36)));
 
 
 //        build = build.lineToX(30)
@@ -132,6 +132,6 @@ class AutonDriveFactory {
      * arguments here to test your different code paths.
      */
     Action getMeepMeepAction() {
-        return getDriveAction(false, false);
+        return getDriveAction(true, true);
     }
 }
