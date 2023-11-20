@@ -92,4 +92,5 @@ abstract public class BaseAutonomous extends BaseOpMode {
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
     }
+    OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 }

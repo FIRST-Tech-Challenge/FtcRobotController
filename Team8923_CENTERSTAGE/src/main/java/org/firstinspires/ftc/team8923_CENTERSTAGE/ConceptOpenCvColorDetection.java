@@ -39,17 +39,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *   Press the red B button to detect red objects
  * Run scrcpy on a computer to see the image pipeline on the control hub
  */
-
-@TeleOp(name = "OpenCV Color Detection ")
-// @Disabled
 public class ConceptOpenCvColorDetection extends LinearOpMode {
     // create the openCV detection object
     //   pass (opmode: this) to the object so it could access the camera hardware
     OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         // initialize the webcam and openCV pipeline
         myColorDetection.init();
 
@@ -58,8 +54,7 @@ public class ConceptOpenCvColorDetection extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             // print detection status and coordinates of largest object
             telemetry.addLine("Detection")
                     .addData(" ", myColorDetection.targetDetected)
@@ -73,25 +68,8 @@ public class ConceptOpenCvColorDetection extends LinearOpMode {
             telemetry.addData("Overhead time ms", myColorDetection.robotCamera.getOverheadTimeMs());
             telemetry.update();
 
-            // Change detection color with game pad buttons
-            if(gamepad1.x){
-                myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.BLUE);
-            }
-
-            if(gamepad1.b){
-                myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
-            }
-
-            // start and stop pipeline
-            if(gamepad1.y){
-                myColorDetection.startStreaming();
-            }
-
-            if(gamepad1.a){
-                myColorDetection.stopStreaming();
-            }
+            myColorDetection.robotCamera.stopStreaming();
+            myColorDetection.robotCamera.closeCameraDevice();
         }
-        myColorDetection.robotCamera.stopStreaming();
-        myColorDetection.robotCamera.closeCameraDevice();
     }
 }
