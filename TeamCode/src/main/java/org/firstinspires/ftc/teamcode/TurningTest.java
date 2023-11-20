@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -199,41 +200,32 @@ public class TurningTest extends LinearOpMode {
         } else {
             degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double currentAngle = startAngle;
+            double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
-            double goalAngle = correctedGoalAngle;
+            double difference;
+            double turnModifier;
+            double turnPower;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
-           }
-            while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle > TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle < -TURN_ACCURACY) {
+            }
+            while (opModeIsActive() && (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle > TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle < -TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-                if (abs(correctedGoalAngle) / correctedGoalAngle != abs(startAngle) / startAngle) {
-                    goalAngle = initialGoalAngle;
-                } else {
-                    goalAngle = correctedGoalAngle;
-                }
-                double turnModifier = Math.min(1, (abs(goalAngle - currentAngle) + 5) / 30);
-                double turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
+                difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
+                turnModifier = Math.min(1, (difference + 5) / 30);
+                turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 leftBackDrive.setPower(-turnPower);
                 rightBackDrive.setPower(turnPower);
                 leftFrontDrive.setPower(-turnPower);
                 rightFrontDrive.setPower(turnPower);
-                telemetry.addData("Goal", correctedGoalAngle);
+                telemetry.addData("Corrected Goal", correctedGoalAngle);
+                telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
                 telemetry.addData("Angle", currentAngle);
-                telemetry.addData("Distance from goal", abs(goalAngle - currentAngle));
+                telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
             stopRobot();
-            goalAngle = correctedGoalAngle;
-            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            sleep(1000);
-            telemetry.addData("Goal", goalAngle);
-            telemetry.addData("Start", startAngle);
-            telemetry.addData("Angle", currentAngle);
-            telemetry.addData("RAW error", abs(goalAngle - currentAngle));
-            telemetry.update();
         }
     }
 

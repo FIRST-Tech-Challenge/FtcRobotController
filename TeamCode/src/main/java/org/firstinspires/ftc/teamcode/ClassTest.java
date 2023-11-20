@@ -16,10 +16,10 @@ public class ClassTest extends LinearOpMode {
 
     private TfodProcessor tfod;
     private final ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor lf = null;
+    private DcMotor lb = null;
+    private DcMotor rf = null;
+    private DcMotor rb = null;
     private DcMotor carWashMotor = null;
     private IMU imu = null;
 
@@ -32,32 +32,34 @@ public class ClassTest extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
-
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+    double carWashPower = 1.0;
     private VisionPortal visionPortal;
-
-
     public void runOpMode() {
-
         // Initialize the drive system variables.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-        //carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        /*
-        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //*/
-
+        lf = hardwareMap.get(DcMotor.class, "leftFront");
+        lb = hardwareMap.get(DcMotor.class, "leftBack");
+        rf = hardwareMap.get(DcMotor.class, "rightFront");
+        rb = hardwareMap.get(DcMotor.class, "rightBack");
+        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         imu = hardwareMap.get(IMU.class, "imu");
+
+        lf.setDirection(DcMotor.Direction.REVERSE);
+        lb.setDirection(DcMotor.Direction.REVERSE);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.FORWARD);
+
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lb.setTargetPosition(lb.getCurrentPosition());
+        rb.setTargetPosition(rb.getCurrentPosition());
+        lf.setTargetPosition(lf.getCurrentPosition());
+        rf.setTargetPosition(rf.getCurrentPosition());
 
         cs.initTfod();
 
