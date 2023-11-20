@@ -19,8 +19,17 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 }
 
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.openftc:easyopencv:1.5.2'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.8"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.14"
 }
