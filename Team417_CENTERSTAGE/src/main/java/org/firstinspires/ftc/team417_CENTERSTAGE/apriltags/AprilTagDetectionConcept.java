@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team417_CENTERSTAGE.BaseTeleOp;
 import org.firstinspires.ftc.team417_CENTERSTAGE.Pose;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -158,7 +163,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         absoluteY = relativeX * Math.sin(Math.toRadians(aprilTag.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTag.yaw));
         telemetry.addData("absoluteY", absoluteY);
 
-        absoluteTheta = beta + Math.toRadians(Math.toRadians(aprilTag.yaw)) + (Math.PI / 2);
+        absoluteTheta = beta + Math.toRadians(aprilTag.yaw) + Math.PI;
         telemetry.addData("absoluteTheta", absoluteTheta);
 
         Pose pose = new Pose(absoluteX, absoluteY, absoluteTheta);
@@ -172,9 +177,16 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     public void telemetryAprilTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
+        double x = 0;
+        double y = 0;
+        double theta = 0;
+
         for (AprilTagDetection detection : currentDetections) {
             AprilTag aprilTag = AprilTagInfoDump.findTagWithId(detection.id);
             if (aprilTag != null) {
+                x = detection.ftcPose.x;
+                y = detection.ftcPose.y;
+                theta = detection.ftcPose.yaw;
                 robotPoseEstimate = calculatePoseEstimate(detection, aprilTag);
                 break;
             }
@@ -201,6 +213,16 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & yaw) (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+        // Code added to draw the pose:
+        TelemetryPacket p = new TelemetryPacket();
+        Canvas c = p.fieldOverlay();
+        c.setStroke("#3F51B5");
+        MecanumDrive.drawRobot(c, new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta));
+        c.setStroke("#3F5100");
+        MecanumDrive.drawRobot(c, new Pose2d(x, y, theta));
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        dashboard.sendTelemetryPacket(p);
 
     }   // end method telemetryAprilTag()
 
