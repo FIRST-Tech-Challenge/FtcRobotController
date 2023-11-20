@@ -88,7 +88,7 @@ public class OpenCvColorDetection {
         // OR... use internal phone camera
         // phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-       // setDetectColor(detectColorType.BLUE);
+       setDetectColor(detectColorType.BLUE);
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -107,7 +107,7 @@ public class OpenCvColorDetection {
         robotCamera.stopStreaming();
     }
 
-    public void startStreaming() {
+    public void startStreaming() { // resolution of camera stream
         robotCamera.startStreaming(ConstantsOpenCV.CAMERA_IMAGE_WIDTH, ConstantsOpenCV.CAMERA_IMAGE_HEIGHT, OpenCvCameraRotation.UPRIGHT);
     }
 

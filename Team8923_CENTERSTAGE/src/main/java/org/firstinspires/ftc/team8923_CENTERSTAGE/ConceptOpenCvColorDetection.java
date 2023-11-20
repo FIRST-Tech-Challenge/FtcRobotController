@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Run scrcpy on a computer to see the image pipeline on the control hub
  */
 
-@TeleOp(name = "OpenCV Color Detection ", group = "Concept")
+@TeleOp(name = "OpenCV Color Detection ")
 // @Disabled
 public class ConceptOpenCvColorDetection extends LinearOpMode {
     // create the openCV detection object
