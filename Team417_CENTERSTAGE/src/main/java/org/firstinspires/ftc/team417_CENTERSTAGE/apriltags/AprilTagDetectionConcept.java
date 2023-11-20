@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team417_CENTERSTAGE.BaseTeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.Pose;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -14,17 +15,20 @@ import java.util.ArrayList;
 @TeleOp(name = "Concept: AprilTag")
 public class AprilTagDetectionConcept extends BaseTeleOp {
 
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
      * The variable to store our instance of the AprilTag processor.
      */
-    private AprilTagProcessor aprilTag;
+    public AprilTagProcessor aprilTag;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
+
+    // For this concept: supposed location of the robot
+    Pose robotPoseEstimate = new Pose(0, 0, 0);
 
     @Override
     public void runOpMode() {
@@ -65,7 +69,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     /**
      * Initialize the AprilTag processor.
      */
-    private void initAprilTag() {
+    public void initAprilTag() {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
@@ -130,14 +134,55 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
 
     }   // end method initAprilTag()
 
+    public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTag aprilTag) {
+        double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
+
+        d = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
+        telemetry.addData("d", d);
+
+        gamma = Math.atan2(detection.ftcPose.x, detection.ftcPose.y);
+        telemetry.addData("gamma", gamma);
+
+        beta = gamma + Math.toRadians(detection.ftcPose.yaw); //(or gamma - detection.ftcPose.yaw) if that doesn't work)
+        telemetry.addData("beta", beta);
+
+        relativeX = d * Math.cos(beta) + aprilTag.x;
+        telemetry.addData("relativeX", relativeX);
+
+        relativeY = -d * Math.sin(beta) + aprilTag.y;
+        telemetry.addData("relativeY", relativeY);
+
+        absoluteX = relativeX * Math.cos(Math.toRadians(aprilTag.yaw)) - relativeY * Math.sin(Math.toRadians(aprilTag.yaw));
+        telemetry.addData("absoluteX", absoluteX);
+
+        absoluteY = relativeX * Math.sin(Math.toRadians(aprilTag.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTag.yaw));
+        telemetry.addData("absoluteY", absoluteY);
+
+        absoluteTheta = beta + Math.toRadians(Math.toRadians(aprilTag.yaw)) + (Math.PI / 2);
+        telemetry.addData("absoluteTheta", absoluteTheta);
+
+        Pose pose = new Pose(absoluteX, absoluteY, absoluteTheta);
+
+        return pose;
+    }
 
     /**
      * Add telemetry about AprilTag detections.
      */
-    private void telemetryAprilTag() {
-
+    public void telemetryAprilTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        for (AprilTagDetection detection : currentDetections) {
+            AprilTag aprilTag = AprilTagInfoDump.findTagWithId(detection.id);
+            if (aprilTag != null) {
+                robotPoseEstimate = calculatePoseEstimate(detection, aprilTag);
+                break;
+            }
+        }
+
+        telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
+
+        telemetry.addData("\n# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
@@ -154,7 +199,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
 
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("PRY = Pitch, Roll & yaw) (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
