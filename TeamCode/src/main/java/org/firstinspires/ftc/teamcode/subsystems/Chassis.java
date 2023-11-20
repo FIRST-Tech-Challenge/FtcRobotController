@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.function.DoubleSupplier;
 
-public class chassis implements Subsystem {
+public class Chassis implements Subsystem {
 
     private HardwareMap map;
     private Telemetry m_telemetry;
@@ -18,7 +18,7 @@ public class chassis implements Subsystem {
     private MotorEx motor_FR;
     private MotorEx motor_BL;
     private MotorEx motor_BR;
-    public chassis(HardwareMap map, Telemetry telemetry){
+    public Chassis(HardwareMap map, Telemetry telemetry){
         this.map=map;
         this.m_telemetry=telemetry;
         motor_FL = new MotorEx(map, "motor_FL");
