@@ -12,6 +12,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
     //bind commands to trigger
     public void bindCommands(){
+
     }
 
     public Command AutonomousCommand(){
