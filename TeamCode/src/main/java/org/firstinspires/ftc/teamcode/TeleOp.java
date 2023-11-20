@@ -16,42 +16,14 @@ public class TeleOp extends LinearOpMode {
         //initialize robot class
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false);
 
-        //getting motors and servos from config
-
-        DcMotor intake = hardwareMap.dcMotor.get("intake");
-
-        //TODO: refactor to left/right
-        DcMotor lsBack = hardwareMap.dcMotor.get("lsBack");
-        DcMotor lsFront = hardwareMap.dcMotor.get("lsFront");
-
-        DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
-        DcMotor rFront = hardwareMap.dcMotor.get("fRight");
-        DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
-        DcMotor rBack = hardwareMap.dcMotor.get("bRight");
-
-        Servo clamp = hardwareMap.servo.get("holderClamp");
-        Servo tray = hardwareMap.servo.get("arm");
-        Servo launcher = hardwareMap.servo.get("planeLauncher");
-        Servo lock = hardwareMap.servo.get("linearLocker");
-        Servo spikeServo = hardwareMap.servo.get("spikeServo");
-
         //setting motor direction
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        lFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        lBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        //set motor zero power behavior
-        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //set run mode
-        lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         double clampPos;
         double trayPos;
@@ -68,46 +40,46 @@ public class TeleOp extends LinearOpMode {
         polarity = 1;
 
         //set launcher and lock positions at start
-        launcher.setPosition(0.25);
-        lock.setPosition(0.5);
+        robot.planeLauncher.setPosition(0.25);
+        robot.hook.setPosition(0.5);
 
         while (opModeIsActive()) {
 
             //GAME PAD 2 CONTROLS NOT DRIVER
 
-            double remainingDistanceHigh = 300 - lsFront.getCurrentPosition();
-            double remainingDistanceMid = 200 - lsFront.getCurrentPosition();
-            double remainingDistanceLow = 100 - lsFront.getCurrentPosition();
-            double remainingDistanceZero = -1 * lsFront.getCurrentPosition();
+            double remainingDistanceHigh = 300 - robot.lsFront.getCurrentPosition();
+            double remainingDistanceMid = 200 - robot.lsFront.getCurrentPosition();
+            double remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
+            double remainingDistanceZero = -1 * robot.lsFront.getCurrentPosition();
 
             //gamepad 1 dpad moves linear slide to a set position
             if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
 
-                lsFront.setPower(remainingDistanceHigh * 0.002);
-                lsBack.setPower(remainingDistanceHigh * 0.002);
+                robot.lsFront.setPower(remainingDistanceHigh * 0.002);
+                robot.lsBack.setPower(remainingDistanceHigh * 0.002);
 
             } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
 
-                lsFront.setPower(remainingDistanceMid * 0.002);
-                lsBack.setPower(remainingDistanceMid * 0.002);
+                robot.lsFront.setPower(remainingDistanceMid * 0.002);
+                robot.lsBack.setPower(remainingDistanceMid * 0.002);
 
             } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
 
-                lsFront.setPower(remainingDistanceLow * 0.002);
-                lsBack.setPower(remainingDistanceLow * 0.002);
+                robot.lsFront.setPower(remainingDistanceLow * 0.002);
+                robot.lsBack.setPower(remainingDistanceLow * 0.002);
 
             } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
 
-                lsFront.setPower(remainingDistanceZero * 0.002);
-                lsBack.setPower(remainingDistanceZero * 0.002);
+                robot.lsFront.setPower(remainingDistanceZero * 0.002);
+                robot.lsBack.setPower(remainingDistanceZero * 0.002);
 
             }
 
             //gamepad 2 dpad locks and unlocks the lock
             if (gamepad2.dpad_up) {
-                lock.setPosition(0.3);
+                robot.hook.setPosition(0.3);
             } else if (gamepad2.dpad_down) {
-                lock.setPosition(0.5);
+                robot.hook.setPosition(0.5);
             }
 
             //gamepad 2 B changes amount of linear slide motor power (for endgame hanging)
@@ -119,44 +91,44 @@ public class TeleOp extends LinearOpMode {
             if (!hangingMode) {
                 //if not hanging, power less
                 if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(0.5);
-                    lsFront.setPower(0.5);
+                    robot.lsBack.setPower(0.5);
+                    robot.lsFront.setPower(0.5);
                 } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-0.5);
-                    lsFront.setPower(-0.5);
+                    robot.lsBack.setPower(-0.5);
+                    robot.lsFront.setPower(-0.5);
                 } else {
-                    lsBack.setPower(0);
-                    lsFront.setPower(0);
+                    robot.lsBack.setPower(0);
+                    robot.lsFront.setPower(0);
                 }
             } else if (hangingMode) {
                 //if hanging, power more
                 if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(1);
-                    lsFront.setPower(1);
+                    robot.lsBack.setPower(1);
+                    robot.lsFront.setPower(1);
                 } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-1);
-                    lsFront.setPower(-1);
+                    robot.lsBack.setPower(-1);
+                    robot.lsFront.setPower(-1);
                 } else {
-                    lsBack.setPower(0);
-                    lsFront.setPower(0);
+                    robot.lsBack.setPower(0);
+                    robot.lsFront.setPower(0);
                 }
             }
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                intake.setPower(0.4);
+                robot.intake.setPower(0.4);
                 clampPos = 0.4;
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper) {
                 //reversed intake
-                intake.setPower(-0.6);
+                robot.intake.setPower(-0.6);
                 clampPos = 0.4;
             } else {
                 if ((Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1) && !gamepad2.left_bumper) {
                     //if robot moving, keep holder closed
                     clampPos = 0.5;
                 }
-                intake.setPower(0);
+                robot.intake.setPower(0);
             }
 
             //right bumper and trigger of gamepad 2 open and close clamp
@@ -192,7 +164,7 @@ public class TeleOp extends LinearOpMode {
 
             //the earlier conditionals set variables based on what was pressed
             //here the servos are actually set to those variables
-            clamp.setPosition(clampPos);
+            robot.clamp.setPosition(clampPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
 
@@ -206,7 +178,7 @@ public class TeleOp extends LinearOpMode {
 
             //gamepad 1 right bumper launches drone
             if (gamepad1.right_bumper) {
-                launcher.setPosition(0.7);
+                robot.planeLauncher.setPosition(0.7);
             }
 
             if (gamepad1.x) {
@@ -256,7 +228,7 @@ public class TeleOp extends LinearOpMode {
             }
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
-            tray.setPosition(trayPos);
+            robot.tray.setPosition(trayPos);
         }
     }
 

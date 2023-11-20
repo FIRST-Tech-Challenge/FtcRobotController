@@ -73,6 +73,7 @@ public class Robot {
         AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
+        intake = hardwareMap.dcMotor.get("intake");
         lsFront = hardwareMap.dcMotor.get("lsFront");
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack = hardwareMap.dcMotor.get("lsBack");
@@ -235,7 +236,6 @@ public class Robot {
         bLeft = hardwareMap.dcMotor.get("bLeft");
         bRight = hardwareMap.dcMotor.get("bRight");
 
-
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fRight.setDirection(DcMotorSimple.Direction.FORWARD);
         bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -301,11 +301,11 @@ public class Robot {
         };
     }
 
-    public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
-        this.fLeft.setPower(lFront);
-        this.fRight.setPower(rFront);
-        this.bLeft.setPower(lBack);
-        this.bRight.setPower(rBack);
+    public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
+        this.fLeft.setPower(fLeft);
+        this.fRight.setPower(fRight);
+        this.bLeft.setPower(bLeft);
+        this.bRight.setPower(bRight);
     }
 
     public void setMotorPower(double[] powers) {
