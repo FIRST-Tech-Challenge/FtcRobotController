@@ -88,7 +88,7 @@ public class Robot {
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
-    public void moveLinearSlideByTicks(double targetDistanceInTicks) {
+    public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
 
         //target distance negative when going up
         double remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
@@ -112,6 +112,28 @@ public class Robot {
         lsFront.setPower(0);
         lsBack.setPower(0);
 
+        telemetry.update();
+    }
+
+    public void moveLinearSlidesByTicksParallel(double targetDistanceInTicks) {
+
+        //target distance negative when going up
+        double remainingDistanceLowParallel = targetDistanceInTicks - lsFront.getCurrentPosition();
+
+        if (opMode.opModeIsActive() && Math.abs(targetDistanceInTicks - lsFront.getCurrentPosition()) > 100) {
+            remainingDistanceLowParallel = targetDistanceInTicks - lsFront.getCurrentPosition();
+
+            telemetry.addData("linear slide pos in ticks", lsFront.getCurrentPosition());
+            telemetry.addData("linear slides power", remainingDistanceLowParallel * 0.02);
+
+            lsFront.setPower(remainingDistanceLowParallel * 0.002);
+            lsBack.setPower(remainingDistanceLowParallel * 0.002);
+
+            telemetry.update();
+        } else {
+            lsFront.setPower(0);
+            lsBack.setPower(0);
+        }
 
         telemetry.update();
     }
@@ -137,20 +159,20 @@ public class Robot {
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1700); // move linear slide up
+        moveLinearSlideByTicksBlocking(-1700); // move linear slide up
         opMode.sleep(100);
         trayToOuttakePos();
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1900); // move slide up more
+        moveLinearSlideByTicksBlocking(-1900); // move slide up more
         straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
         trayToIntakePos(); //intake
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.5); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(0); // linear slide down
+        moveLinearSlideByTicksBlocking(0); // linear slide down
         opMode.sleep(500);
     }
 
@@ -953,6 +975,10 @@ public class Robot {
         }
         setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
+    }
+
+    public void straightIMU() {
+
     }
 
 
