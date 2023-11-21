@@ -9,12 +9,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends LinearOpMode {
+    Robot robot;
+    double trayPos;
+    private static double TRAY_DOWN_POS = 0.47;
+    private static double TRAY_UP_POS = 0.78;
+    double clampPos;
+    private static double CLAMP_CLOSE_POS = 0.5;
+    private static double CLAMP_OPEN_POS = 0.4;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         //initialize robot class
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, false);
+        robot = new Robot(hardwareMap, this, telemetry, true, false);
+        robot.setUpDrivetrainMotors();
 
         //setting motor direction
         robot.intake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -25,16 +33,14 @@ public class TeleOp extends LinearOpMode {
         robot.lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double clampPos;
-        double trayPos;
         boolean hangingMode;
         int polarity;
 
         waitForStart();
 
         //default positions
-        clampPos = 0.5;
-        trayPos = 0.47;
+        clampPos = CLAMP_CLOSE_POS;
+        trayPos = TRAY_DOWN_POS;
 
         hangingMode = false;
         polarity = 1;
@@ -54,25 +60,17 @@ public class TeleOp extends LinearOpMode {
 
             //gamepad 1 dpad moves linear slide to a set position
             if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
-
                 robot.lsFront.setPower(remainingDistanceHigh * 0.002);
                 robot.lsBack.setPower(remainingDistanceHigh * 0.002);
-
             } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
-
                 robot.lsFront.setPower(remainingDistanceMid * 0.002);
                 robot.lsBack.setPower(remainingDistanceMid * 0.002);
-
             } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
-
                 robot.lsFront.setPower(remainingDistanceLow * 0.002);
                 robot.lsBack.setPower(remainingDistanceLow * 0.002);
-
             } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
-
                 robot.lsFront.setPower(remainingDistanceZero * 0.002);
                 robot.lsBack.setPower(remainingDistanceZero * 0.002);
-
             }
 
             //gamepad 2 dpad locks and unlocks the lock
@@ -116,17 +114,17 @@ public class TeleOp extends LinearOpMode {
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                robot.intake.setPower(0.4);
-                clampPos = 0.4;
+                robot.intake.setPower(0.6);
+                //clampPos = CLAMP_OPEN_POS; //TODO UNCOMMENT
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper) {
                 //reversed intake
                 robot.intake.setPower(-0.6);
-                clampPos = 0.4;
+                //clampPos = CLAMP_OPEN_POS; //TODO UNCOMMENT
             } else {
                 if ((Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1) && !gamepad2.left_bumper) {
                     //if robot moving, keep holder closed
-                    clampPos = 0.5;
+                    clampPos = CLAMP_CLOSE_POS; //TODO UNCOMMENT
                 }
                 robot.intake.setPower(0);
             }
@@ -149,22 +147,23 @@ public class TeleOp extends LinearOpMode {
 
 
             //set limits on the holder clamp
-            if (clampPos > 1) {
+            /* if (clampPos > 1) {
                 clampPos = 1;
-            } else if (clampPos < 0.43) {
-                clampPos = 0.43;
-            }
+            } else if (clampPos < CLAMP_OPEN_POS) {
+                clampPos = CLAMP_OPEN_POS;
+            } */ //TODO UNCOMMENT
 
             //set intake/outtake positions for tray
             if (gamepad2.a) {
-                trayPos = 0.47; //down (intake) position
+                trayPos = TRAY_DOWN_POS; //down (intake) position
             } else if (gamepad2.y) {
-                trayPos = 0.78; //up (outtake) position
+                trayPos = TRAY_UP_POS; //up (outtake) position
             }
 
             //the earlier conditionals set variables based on what was pressed
             //here the servos are actually set to those variables
             robot.clamp.setPosition(clampPos);
+            robot.tray.setPosition(trayPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
 
@@ -228,7 +227,6 @@ public class TeleOp extends LinearOpMode {
             }
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
-            robot.tray.setPosition(trayPos);
         }
     }
 
@@ -242,5 +240,15 @@ public class TeleOp extends LinearOpMode {
         }
 
         return max;
+    }
+
+    private void slidesToMid() {
+        robot.moveLinearSlidesByTicksParallel(-2400);
+    }
+
+    private void oneButtonOuttake() {
+        slidesToMid();
+        trayPos = TRAY_UP_POS;
+        robot.setServoPosBlocking(robot.tray, trayPos);
     }
 }
