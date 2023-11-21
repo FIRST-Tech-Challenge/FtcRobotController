@@ -47,7 +47,30 @@ public class HydrAuton_Backdrop extends HydrAuton {
                         if (setTrueForRed) {
                             flip = -1;
                         }
-                        Drive.Start(0, 26 * flip, 0);
+                        int dist;
+                        switch (ObjLoc) {
+                            case ObjLocLeftSpike:
+                                if (setTrueForRed) {
+                                    dist = 34;
+                                }
+                                else {
+                                    dist = 26;
+                                }
+                                break;
+                            case ObjLocCenterSpike:
+                                dist = 26;
+                                break;
+                            case ObjLocRightSpike:
+                            default:
+                                if (setTrueForRed) {
+                                    dist = 26;
+                                }
+                                else {
+                                    dist = 34;
+                                }
+                                break;
+                        }
+                        Drive.Start(0, dist * flip, 0);
                         autonState += 501;
                     }
                     break;
