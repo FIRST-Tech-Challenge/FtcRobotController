@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -102,7 +104,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        //aprilTag.setDecimation(3);
+        aprilTag.setDecimation(1);
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -115,7 +117,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);
@@ -163,7 +165,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         absoluteY = relativeX * Math.sin(Math.toRadians(aprilTag.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTag.yaw));
         telemetry.addData("absoluteY", absoluteY);
 
-        absoluteTheta = beta + Math.toRadians(aprilTag.yaw) + Math.PI;
+        absoluteTheta = Math.toRadians(aprilTag.yaw) - Math.toRadians(detection.ftcPose.yaw) + Math.PI;
         telemetry.addData("absoluteTheta", absoluteTheta);
 
         Pose pose = new Pose(absoluteX, absoluteY, absoluteTheta);
