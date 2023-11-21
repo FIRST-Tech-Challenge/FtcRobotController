@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Config
 public class RFAprilCam {
-    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=25;
+    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=10;
     public static int EXPOSURE_MS= 10, GAIN = 40;
     public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
     private AprilTagProcessor aprilTag;
@@ -69,6 +70,18 @@ public class RFAprilCam {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("initializing Apriltag processor ");
         aprilTagGameDatabase = AprilTagGameDatabase.getCenterStageTagLibrary();
+        /*
+        size="640 360"
+            focalLength="463.566f, 463.566f"
+            principalPoint="316.402f, 176.412f"
+            distortionCoefficients="0.111626 , -0.255626, 0, 0, 0.107992, 0, 0, 0"
+
+
+             size="800 600"
+            focalLength="775.79f, 775.79f"
+            principalPoint="400.898f, 300.79f"
+            distortionCoefficients="0.112507, -0.272067, 0, 0, 0.15775, 0, 0, 0"
+         */
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
                 .setDrawCubeProjection(false)
@@ -76,9 +89,9 @@ public class RFAprilCam {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .setLensIntrinsics(822.317f, 822.317f, 319.495f, 242.502f)
+                .setLensIntrinsics(755.79f, 775.79f, 500.898f, 300.79f)
                 .build();
-        aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
+        aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
         aprilTag.setDecimation((float)UPSAMPLE);
 
         // Create the WEBCAM vision portal by using a builder.
@@ -87,7 +100,7 @@ public class RFAprilCam {
                 .addProcessor(aprilTag)
                 .enableLiveView(false)
                 .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(800, 600))
                 .build();
         visionPortal.stopLiveView();
         while(visionPortal.getCameraState()!= RFVisionPortal.CameraState.STREAMING){

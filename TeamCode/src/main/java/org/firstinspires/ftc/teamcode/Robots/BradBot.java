@@ -4,6 +4,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Arm;
@@ -157,6 +158,7 @@ public class BradBot extends BasicRobot {
     }
   }
 
+
   /**
    * Empties the hopper in auto, hopper.update() will handle the rest Logs that this function called
    * to general surface
@@ -213,6 +215,18 @@ public class BradBot extends BasicRobot {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
         roadrun.followTrajectorySequenceAsync(p_traj);
+      }
+    }
+  }
+  public void followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
+    if (queuer.isFirstLoop()) {
+      queuer.queue(false, false, true);
+    } else {
+      if (queuer.queue(false, queuer.isStarted() && (!roadrun.isBusy()), isOptional)) {
+        if (!roadrun.isBusy()) {
+          roadrun.followTrajectorySequenceAsync(p_traj);
+          LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
+        }
       }
     }
   }
