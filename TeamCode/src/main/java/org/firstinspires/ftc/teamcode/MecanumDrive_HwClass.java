@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.RobotHardware;
 
 @TeleOp(name = "MecanumDrive_HwClass")
+@Disabled
 public class MecanumDrive_HwClass extends LinearOpMode {
   RobotHardware drive = new RobotHardware(); //*** This was the trick**
   @Override
