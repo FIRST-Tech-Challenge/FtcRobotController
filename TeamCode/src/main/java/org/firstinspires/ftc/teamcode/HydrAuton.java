@@ -407,7 +407,9 @@ public class HydrAuton extends LinearOpMode {
                 break;
             ////////////////////////////////////////////////////////////////////////////////////////
             case 299:
-                if (!Drive.Busy() && Arm.RunAction(HydraArmMovements.ArmMoveToFront)) {
+                boolean drivecomplete = !Drive.Busy();
+                boolean armcomplete = Arm.RunAction(HydraArmMovements.ArmMoveToFront);
+                if (drivecomplete && armcomplete) {
                     autonState = 300;
                 }
                 break;
@@ -521,7 +523,9 @@ public class HydrAuton extends LinearOpMode {
                 break;
             ///////////////////////////////////////////////////////////////////////////////////////
             case 299:
-                if (!Drive.Busy() && Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
+                boolean drivecomplete = !Drive.Busy();
+                boolean armcomplete = Arm.RunAction(HydraArmMovements.ArmMoveToBack);
+                if (drivecomplete && armcomplete) {
                     autonState = 300;
                 }
                 break;
