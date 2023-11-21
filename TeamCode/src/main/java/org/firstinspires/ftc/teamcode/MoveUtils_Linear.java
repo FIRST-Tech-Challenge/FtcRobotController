@@ -24,7 +24,5 @@ public class MoveUtils_Linear {
     public void moveForward(Integer moveTime) {
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
-
     }
 }

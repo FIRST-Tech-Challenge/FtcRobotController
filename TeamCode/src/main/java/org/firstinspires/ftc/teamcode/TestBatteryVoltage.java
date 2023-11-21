@@ -30,7 +30,7 @@ public class TestBatteryVoltage extends RobotOpMode {
         double voltage = getBatteryVoltage();
         dbp.createNewTelePacket();
 
-        if ((runtime.seconds() < VOLTAGE_CONSTANTS.VOLTAGE_POLL_RATE) || shouldStop) {
+        if ((runtime.seconds() < VoltageConstants.VOLTAGE_POLL_RATE) || shouldStop) {
             dbp.put("Battery Voltage", String.format(Locale.ENGLISH,
                     "%f s : Current Voltage: %.1f v",
                     batteryTestTime.seconds(), voltage));
@@ -51,11 +51,11 @@ public class TestBatteryVoltage extends RobotOpMode {
             e.printStackTrace();
         }
 
-        if (voltage < VOLTAGE_CONSTANTS.CUT_OFF_VOLTAGE) {
+        if (voltage < VoltageConstants.CUT_OFF_VOLTAGE) {
             dbp.put("Battery Voltage",
                     String.format(Locale.ENGLISH,
                             "Battery Voltage reached the cutoff of %.1f v",
-                            VOLTAGE_CONSTANTS.CUT_OFF_VOLTAGE));
+                            VoltageConstants.CUT_OFF_VOLTAGE));
         }
         dbp.send(false);
     }

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public final class VOLTAGE_CONSTANTS {
+public final class VoltageConstants {
     /**
      * The voltage in which to cut off polling of the battery voltage
      */
@@ -13,7 +13,7 @@ public final class VOLTAGE_CONSTANTS {
      */
     public static final int VOLTAGE_POLL_RATE = 360;
 
-    private VOLTAGE_CONSTANTS() {
+    private VoltageConstants() {
 
     }
 }

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 @Config
 public final class AutoRobotOpMode {
 
@@ -33,7 +36,7 @@ public final class AutoRobotOpMode {
          */
         final double YAW;
 
-        public float getAngle() {
+        public double getAngle() {
             return YAW;
         }
 
@@ -106,6 +109,11 @@ public final class AutoRobotOpMode {
         public void init() {
             super.init();
             // Do nothing
+        }
+
+        @Override
+        public void robotLoop() {
+
         }
     }
 }

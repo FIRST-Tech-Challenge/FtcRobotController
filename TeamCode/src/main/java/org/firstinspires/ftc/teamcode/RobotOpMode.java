@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -21,15 +23,19 @@ public abstract class RobotOpMode extends OpMode {
     public static float MAX_POWER = 1;
     public static float MAX_ARM_POWER = 0.5f;
 
+    // Hardware variables
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor, armExtensionMotor;
     public Servo armCatcherServo, wristServo, fingerServo;
+    public BNO055IMU imu;
+    public RevColorSensorV3 colorSensor;
+    public RevTouchSensor touchSensor;
+
     @Deprecated
     public float armCatcherServoPosition;
     public float wristServoPosition;
     public float fingerServoPosition;
-    BNO055IMU imu;
-    ElapsedTime elapsedTime;
+    public ElapsedTime elapsedTime;
     /**
      * A initializer for FTCDashboardPackets(), which can be used to show telemetry on the dashboard
      */
@@ -39,75 +45,28 @@ public abstract class RobotOpMode extends OpMode {
 
     @Override
     public void init() {
-        try {
-            leftFrontDrive = hardwareMap.get(DcMotor.class, "fl_drv");
-            rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drv");
-            leftBackDrive = hardwareMap.get(DcMotor.class, "bl_drv");
-            rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
-        } catch(Exception e) {
-            createTelemetryPacket();
-            log("FATAL ERROR", e.getMessage());
-            sendTelemetryPacket(true);
-            requestOpModeStop();
-            return;
-        }
-
         elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-        createTelemetryPacket();
+        RobotHardwareInitializer.beginInitialization(this);
 
-        try {
-            armMotor = hardwareMap.get(DcMotor.class, "arm");
-            armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extension");
+        // Initialize the drive motors
+        RobotHardwareInitializer.initializeDriveMotors(this);
 
-            //armCatcherServo = hardwareMap.get(Servo.class, "arm_servo");
-            //armCatcherServoPosition = (float) armCatcherServo.getPosition();
+        // Initialize the hardware requried for the arm
+        RobotHardwareInitializer.initializeArm(this);
 
-            fingerServo = hardwareMap.get(Servo.class, "finger_servo");
-            wristServo = hardwareMap.get(Servo.class, "wrist_servo");
-            wristServoPosition = (float) wristServo.getPosition();
-            fingerServoPosition = (float) fingerServo.getPosition();
-            setTargetHandState(HandState.RELEASE);
-        } catch(Exception e) {
-            log(ERROR, "Error initializing arm and wrist motors: "+e.getMessage());
-        }
+        // Initialize the internal IMU
+        RobotHardwareInitializer.initializeIMU(this);
 
-        try {
-            leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        } catch (Exception e) {
-            log(ERROR, "Error initializing drive motors: "+e.getMessage());
-        }
+        // Initialize the color sensor (not currently used, but if it is needed in the future,
+        // it can be implemented in the config and used as needed)
+        RobotHardwareInitializer.initializeColorSensor(this);
 
-        try {
-            armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            armMotor.setTargetPosition(0);
-            //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Initialize the touch sensor (not currently used, but if it is needed in the future,
+        // it can be implemented in the config and used as needed)
+        RobotHardwareInitializer.initializeTouchSensor(this);
 
-            armExtensionMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            //initArm();
-        } catch(Exception e) {
-            log(ERROR, "Error initializing arm motor: "+e.getMessage());
-        }
-
-        try {
-            imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.temperatureUnit = BNO055IMU.TempUnit.CELSIUS;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-            imu.initialize(parameters);
-        } catch(Exception e) {
-            log(WARNING, "Error initializing IMU: "+e.getMessage());
-        }
-        if(imu != null) {
-            log(INFO, "IMU connected successfully!");
-        }
-        sendTelemetryPacket(true);
+        RobotHardwareInitializer.endInitialization(this);
     }
 
     @Override
@@ -234,7 +193,7 @@ public abstract class RobotOpMode extends OpMode {
     }
 
     /**
-     * Moves a specified servo to the inputted degrees
+     * Moves the passed servo to the degree arguments
      * @param servo The servo to move
      * @param position The position, in degrees, to move the servo
      */
