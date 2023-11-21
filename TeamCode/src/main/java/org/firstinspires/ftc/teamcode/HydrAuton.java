@@ -103,6 +103,8 @@ public class HydrAuton extends LinearOpMode {
             }
             // Run tensorflow to see if we can find the object
             ObjLoc = ObjDet.GetObjectLocation();
+            // UNCOMMENT THIS TO HARDCODE THE OBJECT LOCATION
+            // ObjLoc = HydraObjectLocations.ObjLocCenterSpike;
             // Push telemetry to the Driver Station.
             telemetry.update();
             // If we found the device or if we have been searching for a long time, leave
@@ -122,6 +124,7 @@ public class HydrAuton extends LinearOpMode {
             for (LynxModule mod : hubs) {
                 mod.clearBulkCache();
             }
+            telemetry.addData("Location", ObjLoc);
             // The auton returns true when it's done
             if (RunAuton()) {
                 break;
