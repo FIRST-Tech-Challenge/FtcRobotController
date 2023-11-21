@@ -61,6 +61,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setDirection(Constants.motorDirections.get("left_back"));
         rightFrontDrive.setDirection(Constants.motorDirections.get("right_front"));
         rightBackDrive.setDirection(Constants.motorDirections.get("right_back"));
+        lift.setDirection(Constants.motorDirections.get("lift"));
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -114,6 +115,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     */
 
     public void handleLift() {
+        intake.setPower(-gamepad2.right_trigger);
+
         int liftPos = lift.getCurrentPosition();
         if (liftPos > Constants.elevatorPositionTop && -gamepad2.right_stick_y > 0) lift.setPower((gamepad2.left_stick_y) * 0.1 + 0.001);
         else if (liftPos < Constants.elevatorPositionBottom && -gamepad2.right_stick_y < 0) lift.setPower((gamepad2.left_stick_y) * 0.01);

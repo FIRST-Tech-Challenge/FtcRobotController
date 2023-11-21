@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,13 +12,16 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "da not a moose")
 public class Autonomous extends LinearOpMode {
 
-    protected DcMotor left_front;
-    protected DcMotor right_front;
-    protected DcMotor left_back;
-    protected DcMotor right_back;
+    protected DcMotorEx left_front;
+    protected DcMotorEx right_front;
+    protected DcMotorEx left_back;
+    protected DcMotorEx right_back;
+    ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
     protected DcMotor arm;
     protected Servo servo;
     private DcMotor intake = null;
@@ -33,10 +37,15 @@ public class Autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        left_front = hardwareMap.get(DcMotor.class, "left_front");
-        right_front = hardwareMap.get(DcMotor.class, "right_front");
-        left_back = hardwareMap.get(DcMotor.class, "left_back");
-        right_back = hardwareMap.get(DcMotor.class, "right_back");
+        left_front = hardwareMap.get(DcMotorEx.class, "left_front");
+        right_front = hardwareMap.get(DcMotorEx.class, "right_front");
+        left_back = hardwareMap.get(DcMotorEx.class, "left_back");
+        right_back = hardwareMap.get(DcMotorEx.class, "right_back");
+
+        driveMotors.add(left_front);
+        driveMotors.add(left_back);
+        driveMotors.add(right_front);
+        driveMotors.add(right_back);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
 
@@ -60,31 +69,13 @@ public class Autonomous extends LinearOpMode {
             }
         });
 
-        left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        for(DcMotorEx driveMotor: driveMotors) {
+            driveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //right_front.setPower(1);
-        //left_front.setPower(1);
-        //right_back.setPower(1);
-        //left_back.setPower(1);
-        //sleep(1000);
-        //right_front.setPower(0);
-        //left_front.setPower(0);
-        //right_back.setPower(0);
-        // left_back.setPower(0);
 
         arm.setPower(0.075);
 
@@ -158,58 +149,50 @@ public class Autonomous extends LinearOpMode {
         sleep(100000);
     }
 
-    public void moveForward(double power, int time) {
-        right_front.setPower(power);
-        left_front.setPower(power);
-        right_back.setPower(power);
-        left_back.setPower(power);
-        sleep(time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
-
+    public void moveForward(double power, int setpoint) {
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            driveMotor.setTargetPosition(setpoint);
+            driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            driveMotor.setPower(power);
+        }
+        while (left_front.isBusy()) telemetry.addLine("going forward");
     }
 
-    public void moveStrafing(double power, int time){
+    public void moveStrafing(double power, int setpoint){
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        left_front.setTargetPosition(setpoint);
+        left_back.setTargetPosition(-setpoint);
+        right_front.setTargetPosition(-setpoint);
+        right_back.setTargetPosition(setpoint);
+        for (DcMotorEx driveMotor : driveMotors) driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front.setPower(power);
-        left_front.setPower(power);
+        left_front.setPower(-power);
         right_back.setPower(-power);
-        left_back.setPower(-power);
-        sleep(time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
+        left_back.setPower(power);
 
     }
 
-    public void moveTurning(double power, int time){
+    public void moveTurning(double power, int setpoint){
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        left_front.setTargetPosition(setpoint);
+        left_back.setTargetPosition(setpoint);
+        right_front.setTargetPosition(-setpoint);
+        right_back.setTargetPosition(-setpoint);
+        for (DcMotorEx driveMotor : driveMotors) driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front.setPower(-power);
         left_front.setPower(power);
         right_back.setPower(-power);
         left_back.setPower(power);
-        sleep( time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
+
+        while (left_front.isBusy()) telemetry.addLine("going forward");
     }
 
-
-
-   /*
-    Strafing:
-    lf +
-    rf +
-    lb -
-    rb -
-    Turning
-    lf +
-    rf -
-    lb +
-    rb -
-     */
-
-    //Drive the robot forward
 }
