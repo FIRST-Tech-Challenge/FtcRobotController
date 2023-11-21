@@ -108,6 +108,8 @@ public class OpenCvColorDetection {
         robotCamera.startStreaming(Constants.CAMERA_IMAGE_WIDTH, Constants.CAMERA_IMAGE_HEIGHT, OpenCvCameraRotation.UPRIGHT);
     }
 
+    // Four possibilities for the camera; SideDetected.INITIALIZED means the camera
+    //    hasn't had a chance to detect anything yet
     public enum SideDetected {
         INITIALIZED,
         LEFT,
@@ -161,7 +163,9 @@ public class OpenCvColorDetection {
                 default:
             }
 
+            // Clears list from the last loop to use as a empty
             contoursList.clear();
+
             // create a list of contours surrounding groups of contiguous pixels that were filtered
             Imgproc.findContours(filteredMat, contoursList, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -233,6 +237,9 @@ public class OpenCvColorDetection {
 
                 double width = inputMat.size().width;
 
+                // Update sideDetected so that robot can detect position with detectPosition()
+                // Takes the left fourth of the screen for left spike mark, right fourth for right, and
+                //    otherwise is center
                 if (targetPoint.x < width / 4) {
                     sideDetected = SideDetected.LEFT;
                 } else if (targetPoint.x > (3 * width) / 4) {

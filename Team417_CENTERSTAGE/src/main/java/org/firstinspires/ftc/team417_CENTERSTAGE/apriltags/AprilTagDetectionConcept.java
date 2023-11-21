@@ -19,6 +19,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 
+/*
+    Concept: most of the code will get encapsulated in another class, but this does well for testing
+*/
+
 @TeleOp(name = "Concept: AprilTag")
 public class AprilTagDetectionConcept extends BaseTeleOp {
 
@@ -141,6 +145,10 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
 
     }   // end method initAprilTag()
 
+    // Calculates the pose estimate based on a detection of an april tag
+    //     and the stored information of said april tag (position etc.)
+    // Also telemeters relevant info
+    // Note that this is relative to the center of the camera
     public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTag aprilTag) {
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
@@ -183,6 +191,8 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         double y = 0;
         double theta = 0;
 
+        // Iterates through detections and finds any the the robot "knows"
+        // Then it replaces the pose estimate with pose estimate from that april tag
         for (AprilTagDetection detection : currentDetections) {
             AprilTag aprilTag = AprilTagInfoDump.findTagWithId(detection.id);
             if (aprilTag != null) {
@@ -194,6 +204,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
             }
         }
 
+        // Telemeters the current pose estimate
         telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
 
         telemetry.addData("\n# AprilTags Detected", currentDetections.size());
@@ -216,7 +227,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         telemetry.addLine("PRY = Pitch, Roll & yaw) (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-        // Code added to draw the pose:
+        // Telemeters the pose info to FTC dashboard so that it draws the robot pose
         TelemetryPacket p = new TelemetryPacket();
         Canvas c = p.fieldOverlay();
         c.setStroke("#3F51B5");

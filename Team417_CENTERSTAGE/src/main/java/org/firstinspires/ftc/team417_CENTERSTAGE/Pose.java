@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+// A utility class to bypass the fact that one can only return a single value
+
 public class Pose {
     public double x;
     public double y;
