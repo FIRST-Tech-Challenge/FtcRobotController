@@ -222,34 +222,26 @@ public class HydrAuton extends LinearOpMode {
                 // LEFT RIGGING RIGHT SPIKE
                 // RIGHT RIGGING LEFT SPIKE
                 // todo this is a 13 drive and -15 strafe in blue backstage blocks
-                Drive.Start(16, 14 * flip, 0);
+                Drive.Start(16, 13 * flip, 0);
                 autonState = 99;
                 break;
             ////////////////////////////////////////////////////////////////////////////////////////
             case 20:
                 // CENTER SPIKE
-                Drive.Start(34, 20 * flip, 0);
+                Drive.Start(28, 20 * flip, 0);
                 autonState += 1;
                 break;
             case 21:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 0, -20 * flip);
-                    autonState = 99;//+= 1;
+                    Drive.Start(8, 0, 0);
+                    autonState += 1;
                 }
                 break;
             case 22:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 7 * flip, 0);
-                    autonState = 99;//+= 1;
-                }
-                break;
-            case 23:
-                // CENTER SPIKE
-                // todo this strafe is 16 for some blocks and 15 for others
-                if (!Drive.Busy()) {
-                    Drive.Start(0, 15 * flip, 0);
+                    Drive.Start(0, 0, -20 * flip);
                     autonState = 99;
                 }
                 break;
@@ -333,7 +325,7 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE RIGHT
                 // RED LEFT
                 if (!Drive.Busy()) {
-                    Drive.Start(30, 0, 0);
+                    Drive.Start(33, 0, 0);
                     autonState += 1;
                 }
                 break;
@@ -368,7 +360,7 @@ public class HydrAuton extends LinearOpMode {
             case 220:
                 // CENTER
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 19 * flip, 0);
+                    Drive.Start(0, 18 * flip, 0);
                     autonState += 1;
                 }
                 break;
@@ -382,7 +374,7 @@ public class HydrAuton extends LinearOpMode {
             case 222:
                 // CENTER
                 if (!Drive.Busy()) {
-                    Drive.Start(0, -24 * flip, 0);
+                    Drive.Start(0, -27 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToFront);
                     autonState = 299;
                 }
@@ -468,7 +460,7 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 0, 20 * flip);
+                    Drive.Start(-4, 0, 0);
                     autonState += 1;
                 }
                 break;
@@ -476,8 +468,7 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    // todo this was -22 for blue backstage
-                    Drive.Start(-20, 0, 0);
+                    Drive.Start(0, 0, 20 * flip);
                     autonState += 1;
                 }
                 break;
@@ -485,8 +476,17 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
+                    // todo this was -22 for blue backstage
+                    Drive.Start(-16, 0, 0);
+                    autonState += 1;
+                }
+                break;
+            case 213:
+                // BLUE LEFT SPIKE
+                // RED RIGHT SPIKE
+                if (!Drive.Busy()) {
                     // todo negative or positive?
-                    Drive.Start(0, -12 * flip, 0);
+                    Drive.Start(0, -10 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }
@@ -496,14 +496,14 @@ public class HydrAuton extends LinearOpMode {
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
                     // todo this was 12 for blue backstage
-                    Drive.Start(0, -8 * flip, 0);
+                    Drive.Start(0, 10 * flip, 0);
                     autonState += 1;
                 }
                 break;
             case 221:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(-17, 0, 0);
+                    Drive.Start(-14, 0, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }
@@ -583,7 +583,7 @@ public class HydrAuton extends LinearOpMode {
                 break;
             case 301:
                 if (!Drive.Busy()) {
-                    Drive.Start(8, 0, 0);
+                    Drive.Start(7, 0, 0);
                     autonState += 1;
                 }
                 break;
