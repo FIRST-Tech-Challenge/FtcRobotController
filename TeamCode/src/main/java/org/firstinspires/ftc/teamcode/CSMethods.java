@@ -22,9 +22,7 @@ import java.util.List;
 
 @Disabled
 public class CSMethods extends LinearOpMode {
-
     private static final boolean USE_WEBCAM = true;
-
     private TfodProcessor tfod;
     private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;
@@ -33,17 +31,19 @@ public class CSMethods extends LinearOpMode {
     private DcMotor rb = null;
     private DcMotor carWashMotor = null;
     private IMU imu = null;
-
-    // Calculate the COUNTS_PER_INCH for your specific drive train.
-    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
-    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
-    // This is gearing DOWN for less speed and more torque.
-    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
+    /*
+     - Calculate the COUNTS_PER_INCH for your specific drive train.
+     - Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
+     - For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
+     - For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
+     - This is gearing DOWN for less speed and more torque.
+     - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
+    //*/
+    static final double     PI                      = 3.141592653589793238462643383279502884197169399; // 47 digits of pi
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
@@ -189,6 +189,12 @@ public class CSMethods extends LinearOpMode {
         carWashMotor.setPower(0);
     }
     public void stopRobot() {
+        // Set target position to avoid an error
+        lb.setTargetPosition(lb.getCurrentPosition());
+        rb.setTargetPosition(rb.getCurrentPosition());
+        lf.setTargetPosition(lf.getCurrentPosition());
+        rf.setTargetPosition(rf.getCurrentPosition());
+
         // Turn On RUN_TO_POSITION
         lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -247,5 +253,9 @@ public class CSMethods extends LinearOpMode {
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         } // Telemetry
         return currentRecognitions;
+    }
+    public void telemetryTest() {
+        telemetry.addData("Telemetry", "Functional");
+        telemetry.update();
     }
 }

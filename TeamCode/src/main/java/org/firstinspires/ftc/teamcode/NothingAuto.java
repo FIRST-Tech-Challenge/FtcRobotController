@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Nothing",group="CenterStage")
+@Autonomous(name = "Nothing", group = "CenterStage")
 public class NothingAuto extends LinearOpMode {
 
     public void runOpMode() {

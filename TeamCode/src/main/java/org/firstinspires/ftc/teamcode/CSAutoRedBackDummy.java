@@ -45,7 +45,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red Back Dummy",group="CenterStage")
+@Autonomous(name = "Red Back Dummy", group = "CenterStage")
 public class CSAutoRedBackDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;

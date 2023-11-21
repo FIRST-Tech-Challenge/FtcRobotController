@@ -14,7 +14,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@Autonomous(name="Pixel Detection",group="Tests")
+@Autonomous(name = "Pixel Detection", group = "Tests")
 public class PixelDetectionTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
