@@ -19,19 +19,40 @@ public class MeepMeepTesting2 {
 
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setDimensions(13.5,14.5)
-                .setConstraints(50, 40, 4 * PI, 2 * PI, 11)
-                .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
+                .setDimensions(16.5,17.5)
+                .setConstraints(120, 60, 4 * PI, 2 * PI, 16)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(15.5, 63.25, toRadians(90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(15.5, -63.25, toRadians(-90)))
 
                                         .setReversed(true) //spike 1
-                                        .splineToLinearHeading(new Pose2d(8, 37, toRadians(45)), toRadians(225))
-                                        .lineToConstantHeading(new Vector2d(13, 42))
+                                        .splineToLinearHeading(new Pose2d(8, -37, toRadians(-45)), toRadians(135))
+                                        .lineToLinearHeading(new Pose2d(53, -30.5, toRadians(180)))
                                         .setReversed(false)
-                                        .lineToLinearHeading(new Pose2d(56, 30.5, toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(56, 60, toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(60, 60, toRadians(180)))
+                                        .splineTo(new Vector2d(-10,-12), toRadians(180))
+                                        .splineTo(new Vector2d(-58,-12), toRadians(180))
+                                        .setReversed(true) //spike 1
+                                        .splineTo(new Vector2d(-10,-12), toRadians(0))
+                                        .splineTo(new Vector2d(53, -28.5), toRadians(0))
+                                        .setReversed(false)
+                                        .splineTo(new Vector2d(-10,-12), toRadians(180))
+                                        .splineTo(new Vector2d(-58,-12), toRadians(180))
+                                        .setReversed(true) //spike 1
+                                        .splineTo(new Vector2d(-10,-12), toRadians(0))
+                                        .splineTo(new Vector2d(53, -28.5), toRadians(0))
+                                        .setReversed(false)
+                                        .splineTo(new Vector2d(-10,-12), toRadians(180))
+                                        .splineTo(new Vector2d(-58,-20), toRadians(190))
+                                        .setReversed(true) //spike 1
+                                        .splineTo(new Vector2d(-10,-12), toRadians(0))
+                                        .splineTo(new Vector2d(53, -28.5), toRadians(0))
+                                        .setReversed(false)
+                                        .splineTo(new Vector2d(-10,-12), toRadians(180))
+                                        .splineTo(new Vector2d(-58,-20), toRadians(190))
+                                        .setReversed(true) //spike 1
+                                        .splineTo(new Vector2d(-10,-12), toRadians(0))
+                                        .splineTo(new Vector2d(53, -28.5), toRadians(0))
+
+
                                         .build()
                 );
 
