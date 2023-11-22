@@ -17,20 +17,20 @@ class RackAndPain: DriveMethods() {
         var rClick: Int
         var lPower = 0.2
         var rPower = 0.22280685416
-        val leftRack = 1;
-        val rightRack = -1;
+        val leftRack = 1
+        val rightRack = -1
         telemetry.addData("Initiating", "Rack Motor Init");
         telemetry.update()
 
         waitForStart()
-        var mode = 0;
+        var mode = 0
         //0 = increase, 1 = decrease;
-        var increaseMode = 0;
+        var increaseMode = 0
         var changed_mode = false
-        var changed_mode2 = false;
+        var changed_mode2 = false
         //mode 0 = both, 1 = left, 2 = right
         while (opModeIsActive()) {
-            var ending = false;
+            var ending = false
             if (touchyR!!.isPressed) {
                 rMotorR!!.power = .4*rightRack
                 telemetry.addLine("R Sensor Detected")
@@ -47,8 +47,8 @@ class RackAndPain: DriveMethods() {
 
             lClick = (rMotorL!!.currentPosition)
             rClick = (rMotorR!!.currentPosition)
-            telemetry.addLine("Current LPos: $lClick\nCurrent RPos: $rClick");
-            telemetry.addLine("LPower: $lPower\nRPower: $rPower");
+            telemetry.addLine("Current LPos: $lClick\nCurrent RPos: $rClick")
+            telemetry.addLine("LPower: $lPower\nRPower: $rPower")
             telemetry.addLine("Mode: $mode")
             telemetry.addLine("IncreaseMode: $increaseMode")
             telemetry.addLine("Left touch sensor pressed is: " + touchyL!!.isPressed)
