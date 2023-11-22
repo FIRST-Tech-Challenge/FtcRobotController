@@ -57,7 +57,7 @@ public class OpenCvColorDetection {
         RED
     }
 
-    enum Position {
+    public enum Position {
         ONE,
         TWO,
         THREE,
@@ -189,20 +189,6 @@ public class OpenCvColorDetection {
             return outputMat;
         }
 
-        public Position detectColor() {
-            Position position = Position.FOUR;
-            if (targetPoint.x < 213.3) {
-                position = Position.ONE;
-            } else if ((targetPoint.x > 213.3) && (targetPoint.x < 426.6)) {
-                position = Position.TWO;
-            } else if ((targetPoint.x > 426.6) && (targetPoint.x < 640)) {
-                position = Position.THREE;
-            } else {
-                position = Position.FOUR;
-            }
-            return position;
-        }
-
         //@Override
         /*public void onViewportTapped() {
             viewportPaused = !viewportPaused;
@@ -214,5 +200,19 @@ public class OpenCvColorDetection {
                 robotCamera.resumeViewport();
             }
         }*/
+    }
+
+    public Position detectColor() {
+        Position position = Position.FOUR;
+        if (targetPoint.x < 213.3) {
+            position = Position.ONE;
+        } else if ((targetPoint.x > 213.3) && (targetPoint.x < 426.6)) {
+            position = Position.TWO;
+        } else if ((targetPoint.x > 426.6) && (targetPoint.x < 640)) {
+            position = Position.THREE;
+        } else {
+            position = Position.FOUR;
+        }
+        return position;
     }
 }

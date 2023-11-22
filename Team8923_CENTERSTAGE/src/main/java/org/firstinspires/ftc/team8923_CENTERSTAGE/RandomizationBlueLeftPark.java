@@ -5,5 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 public class RandomizationBlueLeftPark extends BaseAutonomous {
     public void runOpMode() {
+        initAuto();
+        waitForStart();
+        switch (myColorDetection.detectColor()) {
+            case ONE:
+                driveInches(0, 24);
+                break;
+        }
     }
 }

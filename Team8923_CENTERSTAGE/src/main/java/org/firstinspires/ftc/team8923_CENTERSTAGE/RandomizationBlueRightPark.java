@@ -7,7 +7,7 @@ public class RandomizationBlueRightPark extends BaseAutonomous {
         public void runOpMode() {
             initAuto();
             waitForStart();
-            detectColor();
+            initOpenCv();
 
 
         }

@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 abstract public class BaseAutonomous extends BaseOpMode {
 
@@ -17,7 +15,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
-    public void detectColor() {
+    public void initOpenCv() {
         // initialize the webcam and openCV pipeline
         myColorDetection.init();
 
@@ -25,6 +23,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
 
         waitForStart();
+        myColorDetection.detectColor();
 
         while (opModeIsActive()) {
             // print detection status and coordinates of largest object
