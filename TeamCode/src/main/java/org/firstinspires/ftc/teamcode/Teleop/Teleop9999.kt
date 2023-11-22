@@ -78,7 +78,7 @@ class Teleop9999: DriveMethods() {
             if (gamepad1.a) {
                 for (detection in aprilTag.detections)  {
                     // Original source data
-                    var poseY = detection.rawPose.y;
+                    val poseY = detection.rawPose.y;
 
                     slideToBoard = poseY + .05
                     linearSlideCalc()

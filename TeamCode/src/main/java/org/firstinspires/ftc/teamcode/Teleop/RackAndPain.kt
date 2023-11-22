@@ -26,8 +26,8 @@ class RackAndPain: DriveMethods() {
         var mode = 0
         //0 = increase, 1 = decrease;
         var increaseMode = 0
-        var changed_mode = false
-        var changed_mode2 = false
+        var changedMode = false
+        var changedMode2 = false
         //mode 0 = both, 1 = left, 2 = right
         while (opModeIsActive()) {
             var ending = false
@@ -56,28 +56,28 @@ class RackAndPain: DriveMethods() {
             telemetry.addLine()
             telemetry.update()
 
-            if (!changed_mode&&gamepad1.y) {
+            if (!changedMode&&gamepad1.y) {
                 mode++
                 if (mode > 2) {
                     mode = 0
                 }
-                changed_mode = true
+                changedMode = true
             }
-            if(changed_mode&&!gamepad1.y) {
-                changed_mode = false
+            if(changedMode&&!gamepad1.y) {
+                changedMode = false
             }
 
 
-            if (!changed_mode2&&gamepad1.x){
+            if (!changedMode2&&gamepad1.x){
                 if (increaseMode<1){
                     increaseMode+=1
                 }else {
                     increaseMode=0
                 }
-                changed_mode2=true
+                changedMode2=true
             }
-            if(changed_mode2&&!gamepad1.x){
-                changed_mode2=false
+            if(changedMode2&&!gamepad1.x){
+                changedMode2=false
             }
 
 

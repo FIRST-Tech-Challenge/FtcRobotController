@@ -113,6 +113,8 @@ class TeleopFromHell: DriveMethods() {
         var angleFromSlideToClaw = 0.0
         var slideRottarget = 25.0
         var clawClamp = false
+        val passiveServo = hardwareMap.get(Servo::class.java, "passiveServo")
+
         while (opModeIsActive()) {
             //set gamepad inputs
             leftY = (-gamepad1.left_stick_y).toDouble()
@@ -269,7 +271,6 @@ class TeleopFromHell: DriveMethods() {
 
 //            All Stuff for Temp Passive intake claw
 
-            var passiveServo = hardwareMap.get(Servo::class.java, "passiveServo")
             if(gamepad2.a) {
                 if (clawClamp) {
                     clawClamp = !clawClamp

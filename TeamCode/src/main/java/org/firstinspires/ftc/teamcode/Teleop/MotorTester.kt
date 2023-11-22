@@ -10,16 +10,16 @@ class MotorTester: DriveMethods() {
     override fun runOpMode() {
         initMotorsSecondBot()
         initSlideMotors()
-        var motorBeingTested = slideRotationMotor
+        val motorBeingTested: DcMotor = slideRotationMotor!!
 
-        motorBeingTested!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motorBeingTested!!.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        motorBeingTested.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        motorBeingTested.mode = DcMotor.RunMode.RUN_USING_ENCODER
         waitForStart()
 
         while (opModeIsActive()) {
-            motorBeingTested?.power = gamepad2.left_stick_y.toDouble()/4
+            motorBeingTested.power = gamepad2.left_stick_y.toDouble() / 4
 
-            telemetry.addData("Motor Value: ", motorBeingTested?.currentPosition)
+            telemetry.addData("Motor Value: ", motorBeingTested.currentPosition)
             telemetry.update()
         }
     }
