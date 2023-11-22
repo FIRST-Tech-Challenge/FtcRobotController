@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@I2cDeviceType()
 
 public class CurtisMoveNormalizedNOLIMIT extends OpMode {
+
     //Motors
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.4;
@@ -28,7 +29,7 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 //    public float armmove;
 //    public int extend = 0;
 
-    public Servo lancher = null;
+    public Servo lancher = null;    
 
 //    public float extendmove;
 
