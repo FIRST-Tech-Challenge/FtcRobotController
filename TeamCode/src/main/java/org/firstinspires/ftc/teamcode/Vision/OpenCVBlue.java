@@ -33,6 +33,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.opencv.core.Rect;
 
 //@I2cDeviceType()
 //@TeleOp
@@ -77,6 +78,7 @@ public class OpenCVBlue extends OpenCvPipeline {
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
     public Mat maskedInputMat = new Mat();
+    public Mat croppedimage = new Mat();
 
     Mat dest_matrix = new Mat();
     Mat stats_mat = new Mat();
@@ -232,6 +234,13 @@ public class OpenCVBlue extends OpenCvPipeline {
         //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
         Imgproc.line(maskedInputMat, new Point(lineRightX, 0), new Point(lineRightX, input.rows()), new Scalar(0, 255, 0), 20);
 
+        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
+        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
+        Rect roi = new Rect(0,429, 1920, 651);
+
+        croppedimage = new Mat(maskedInputMat, roi);
+
+
         /*
          * The Mat returned from this method is the
          * one displayed on the viewport.
@@ -241,7 +250,7 @@ public class OpenCVBlue extends OpenCvPipeline {
          * pixel from the input Mat that were inside
          * the threshold range.
          */
-        return  maskedInputMat;
+        return  croppedimage;
         // return  maskedInputMat;
     }
 
