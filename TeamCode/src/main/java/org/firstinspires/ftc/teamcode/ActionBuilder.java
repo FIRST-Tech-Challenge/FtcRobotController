@@ -23,8 +23,8 @@ public class ActionBuilder {
     }
     public ActionBuilder setMotorPosition(DcMotor motor, int targetPosition, double power) {
         ActionFunction function = () -> {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setTargetPosition(targetPosition);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(power);
             return true;
         };
@@ -78,7 +78,7 @@ public class ActionBuilder {
     }
 
     public ActionBuilder waitUntil(ElapsedTime timer, double targetTime) {
-        ActionFunction function = () -> { return timer.milliseconds() >= targetTime; };
+        ActionFunction function = () -> timer.milliseconds() >= targetTime;
         String name = "wait for timer " + timer.toString() + " to exceed " + targetTime;
         return add(name, function);
     }

@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.tools;
 
 
-import android.app.Notification;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -45,8 +42,8 @@ public class RobotStateMachine {
         actionBuilder = new ActionBuilder();
 
         // adding transitions
-        readyForIntake.addTransition(intaking, handlerButtonAPressed, actionBuilder.setMotorPosition(testingMotor, 300, 0.7).resetTimer(timer).waitUntil(timer, 3000).servoRunToPosition(testingServo, 1.0).getList());
-        intaking.addTransition(readyForIntake, handlerButtonBPressed, actionBuilder.servoRunToPosition(testingServo, 0.0).waitUntil(timer, 6000).setMotorPosition(testingMotor, 0, 0.7).getList());
+        readyForIntake.addTransitionTo(intaking, handlerButtonAPressed, actionBuilder.setMotorPosition(testingMotor, 300, 0.7).resetTimer(timer).waitUntil(timer, 3000).servoRunToPosition(testingServo, 1.0).getList());
+        intaking.addTransitionTo(readyForIntake, handlerButtonBPressed, actionBuilder.servoRunToPosition(testingServo, 0.0).waitUntil(timer, 6000).setMotorPosition(testingMotor, 0, 0.7).getList());
     }
 
 
@@ -64,6 +61,8 @@ public class RobotStateMachine {
 
     public void update(){
         stateMachine.updateState();
+        TelemetryManager.getTelemetry().addLine(Double.toString(timer.milliseconds()));
+
     }
 
 }

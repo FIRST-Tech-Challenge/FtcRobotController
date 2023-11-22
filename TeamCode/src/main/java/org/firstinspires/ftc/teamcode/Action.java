@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
-import java.util.function.BooleanSupplier;
-
- public class Action {
+public class Action {
         private final ActionFunction performAction; // A function that performs the action and returns true if the action is complete
         private final String msg;
 
@@ -15,9 +13,9 @@ import java.util.function.BooleanSupplier;
         }
 
         // Method to determine if the action is complete based on the BooleanSupplier
-        public boolean actionComplete() {
+        public boolean evaluate() {
             if (msg != null){
-                telemetry.addLine(msg);
+                TelemetryManager.getTelemetry().addLine(msg);
             }
             return performAction.evaluate();
         }

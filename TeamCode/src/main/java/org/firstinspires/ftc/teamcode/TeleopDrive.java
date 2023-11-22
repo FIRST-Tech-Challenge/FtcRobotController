@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.RobotStateMachine;
+import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,6 +20,7 @@ public class TeleopDrive extends LinearOpMode {
     RobotStateMachine stateMachine;
 
     public void Setup(){
+        TelemetryManager.setTelemetry(telemetry);
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
         //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         //TouchSensor touchDown = hardwareMap.touchSensor.get("touchDown");
@@ -30,6 +32,7 @@ public class TeleopDrive extends LinearOpMode {
         handlerButtonA = new Button(gamepad2, Button.NAME.A);
         handlerButtonB = new Button(gamepad2, Button.NAME.B);
         stateMachine = new RobotStateMachine(hardwareMap, handlerButtonA, handlerButtonB);
+
     }
 
     public boolean atRest(){
@@ -66,6 +69,7 @@ public class TeleopDrive extends LinearOpMode {
             updateButtons();
             stateMachine.update();
             telemetry.addLine("Is handler button A pressed?" + handlerButtonA.Pressed());
+            telemetry.addLine("Is handler button B pressed?" + handlerButtonB.Pressed());
         }
     }
     private void updateButtons(){

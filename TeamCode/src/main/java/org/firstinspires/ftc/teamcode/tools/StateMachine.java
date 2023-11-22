@@ -20,7 +20,7 @@ public class StateMachine {
         }
 
         // Method to add a transition to this state
-        public void addTransition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions)
+        public void addTransitionTo(State nextState, BooleanSupplier trigger, ArrayList<Action> actions)
         {
             transitions.add(new Transition(nextState, trigger, actions));
         }
@@ -37,6 +37,7 @@ public class StateMachine {
                 this.nextState = nextState;
                 this.trigger = trigger;
                 this.actions = actions;
+                currentActionIndex = 0;
             }
 
             // Method to determine if this transition's condition is met
@@ -44,11 +45,15 @@ public class StateMachine {
                 return trigger.getAsBoolean();
             }
 
+
             // Method to determine if all actions for this transition are complete
-            public boolean transitionComplete() {
+
+            public boolean isTransitionComplete() {
+
+
                 // Iterate through all actions to see if they are complete
-                for (currentActionIndex = 0; currentActionIndex < actions.size(); currentActionIndex++) {
-                    if (!(actions.get(currentActionIndex).actionComplete())) {
+                for (; currentActionIndex < actions.size(); currentActionIndex++) {
+                    if (!(actions.get(currentActionIndex).evaluate())) {
                         return false;
                     }
                 }
@@ -75,8 +80,9 @@ public class StateMachine {
                 }
                 return this; // No transition triggered, stay in this state
             }
+
             // If the current transition is complete, move to the next state
-            if (currentTransition.transitionComplete()) {
+            if (currentTransition.isTransitionComplete()) {
                 State destinationState = currentTransition.getDestinationState();
                 currentTransition = null;
                 return destinationState; // Transition to the next state
