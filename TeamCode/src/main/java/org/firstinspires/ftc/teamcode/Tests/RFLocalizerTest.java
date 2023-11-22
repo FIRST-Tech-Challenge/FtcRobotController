@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 8/22
  * TeleOp + RR odometry test
  */
-@Disabled
+//@Disabled
 
 @Config
 @Autonomous(name = "OdometryLocalizerTest")

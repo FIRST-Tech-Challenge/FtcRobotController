@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  */
 //@Disabled
 
-@Autonomous(name = "OdomMoveTest")
-public class RoadRunMoveTest extends LinearOpMode {
+@Autonomous(name = "OdomMoveTest2")
+public class RoadRunMoveTest2 extends LinearOpMode {
     Queuer queuer;
     SampleMecanumDrive roadrun;
 
@@ -33,7 +33,7 @@ public class RoadRunMoveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
         roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
-        Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(35.25, -57.75, Math.toRadians(-270));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         roadrun.setPoseEstimate(startPose);
         queuer = new Queuer();
@@ -41,11 +41,11 @@ public class RoadRunMoveTest extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(180)))
-                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
-                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
-                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
+        TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,-57.75, Math.toRadians(-270)))
+                .lineToSplineHeading(new Pose2d(35.25, -35.25,Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(13.75, -35.25,Math.toRadians(-90)))
+                .lineToSplineHeading(new Pose2d(13.75, -57.75,Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(35.25, -57.75,Math.toRadians(-270)))
                 .build();
 
         //        while (opModeIsActive()) {
