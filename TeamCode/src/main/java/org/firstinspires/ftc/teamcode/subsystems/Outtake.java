@@ -10,10 +10,10 @@ public class Outtake implements Subsystem{
     //Constants
     double syncFactor=1.05;
     double resetPositionL = 0.5;
-    double resetPositionR = 0.511; // + means up and towards intake
+    double resetPositionR = 0.5186; // + means up and towards intake
     //BELOW NOT TESTED YET
-    double carryL = 0.39140; double carryR=0.62503;
-    double dumpL = 0.3633; double dumpR = 0.65454;
+    double carryL = 0.4057; double carryR=0.61835;
+    double dumpL = 0.3756; double dumpR = 0.64922;
 
     //Hardware
     private Servo armServoL;

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 @TeleOp
-public class AATele extends LinearOpMode {
+public class ServoConfig extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         CrabRobot robot = new CrabRobot(this);
@@ -36,13 +36,19 @@ public class AATele extends LinearOpMode {
             */
 
             //UG OUTTAKE
-            boolean dpadUp = gamepad1.dpad_up;// +
-            boolean dpadDown = gamepad1.dpad_down;// -
+            boolean dpadUp = gamepad1.dpad_up;//move both +
+            boolean dpadDown = gamepad1.dpad_down;//move both arms -
+            boolean dpadRight = gamepad1.dpad_right;//adjust right arm +
+            boolean dpadLeft = gamepad1.dpad_left;//adjust right arm-
 
             if(dpadUp){
                 robot.outtake.moveArm(0.1);
             } if(dpadDown) {
                 robot.outtake.moveArm(-0.1);
+            } if(dpadRight){
+                robot.outtake.moveR(0.1);
+            } if(dpadLeft) {
+                robot.outtake.moveR(-0.1);
             } if (gamepad1.x){
                 robot.outtake.resetPos();
             }
