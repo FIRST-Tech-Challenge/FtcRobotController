@@ -1,8 +1,6 @@
-// "builder", not "easy"
+// "builder," not "easy"
 
 package org.firstinspires.ftc.teamcode.Auto;
-
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -18,23 +16,29 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 @Autonomous(group="Concept")
-public class Visionportal1 {
+public class Visionportal1 extends LinearOpMode {
 
-    AprilTagProcessor.Builder myAprilTagProcessorBuilder;
-    AprilTagProcessor myAprilTagProcessor;
+    private void initTfod() {
+        TfodProcessor myTfodProcessor;
+        myTfodProcessor = new TfodProcessor.Builder()
+                .setMaxNumRecognitions(10) // max # recognitions
+                .setUseObjectTracker(true) // use object tracker
+                .setTrackerMaxOverlap((float) 0.2) // max % of box overlapped by another box for recognition
+                .setTrackerMinSize(16) // minimum size of a tracked/recognized object (units?)
+                .build();
+    }
 
-    myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
 
-// Optional: specify a custom Library of AprilTags.
-myAprilTagProcessorBuilder.setTagLibrary(CurrentGameTagLibrary); // CurrentGameTagLibrary = centerstage + sample apriltags
+    @Override
+    public void runOpMode() throws InterruptedException {
+        waitForStart();
 
-// Optional: set other custom features of the AprilTag Processor (4 are shown here).
-myAprilTagProcessorBuilder.setDrawTagID(true);       // Default: true, for all detections.
-myAprilTagProcessorBuilder.setDrawTagOutline(true);  // Default: true, when tag size was provided (thus eligible for pose estimation).
-myAprilTagProcessorBuilder.setDrawAxes(true);        // Default: false.
-myAprilTagProcessorBuilder.setDrawCubeProjection(true);        // Default: false.
+        if (!isStopRequested()) {
+            while(opModeIsActive()) {
 
-// Create an AprilTagProcessor by calling build()
-    myAprilTagProcessor = myAprilTagProcessorBuilder.build();
+                telemetry.update();
+            }
+        }
+    }
 
 }
