@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 
-@Disabled
+
 @TeleOp(group = "org/firstinspires/ftc/teamcode/roadRunner/drive")
 public class LocalizationTest extends LinearOpMode {
     @Override

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.tools;
 
 import org.firstinspires.ftc.teamcode.Action;
+import org.firstinspires.ftc.teamcode.ActionBuilder;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -20,9 +21,9 @@ public class StateMachine {
         }
 
         // Method to add a transition to this state
-        public void addTransitionTo(State nextState, BooleanSupplier trigger, ArrayList<Action> actions)
+        public void addTransitionTo(State nextState, BooleanSupplier trigger, ActionBuilder actionBuilder)
         {
-            transitions.add(new Transition(nextState, trigger, actions));
+            transitions.add(new Transition(nextState, trigger, actionBuilder.getList()));
         }
 
         // Inner Transition class representing a possible change from the current state to another

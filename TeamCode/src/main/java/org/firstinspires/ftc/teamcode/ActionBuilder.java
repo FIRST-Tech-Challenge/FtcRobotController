@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+
 public class ActionBuilder {
     // Builder
     public ActionBuilder() { list = new ArrayList<>(); }
@@ -82,6 +84,12 @@ public class ActionBuilder {
         String name = "wait for timer " + timer.toString() + " to exceed " + targetTime;
         return add(name, function);
     }
+    public ActionBuilder addLine(String text) {
+        ActionFunction function = () -> {TelemetryManager.getTelemetry().addLine(text); TelemetryManager.getTelemetry().update(); return true;};
+        String name = "";
+        return add(name, function);
+    }
+
 
     private ActionBuilder add(String name, ActionFunction function) {
         list.add(new Action(name, function));

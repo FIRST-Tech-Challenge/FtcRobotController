@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
  */
 @Config
-@Disabled
+
 @Autonomous(group = "org/firstinspires/ftc/teamcode/roadRunner/drive")
 public class BackAndForth extends LinearOpMode {
 
