@@ -255,11 +255,18 @@ public class RobotHardware {
         lbMotor.setPower(leftWheel);
     }
 
-    public void setSideway(double num){
+    public void goDiagonal(double num){
         //rfMotor.setPower(-num);
         rbMotor.setPower(num);
         lfMotor.setPower(num);
         //lbMotor.setPower(-num);
+    }
+
+    public void goStrafe (double num){
+        rfMotor.setPower(-num);
+        rbMotor.setPower(num);
+        lfMotor.setPower(num);
+        lbMotor.setPower(-num);
     }
 
     /**
