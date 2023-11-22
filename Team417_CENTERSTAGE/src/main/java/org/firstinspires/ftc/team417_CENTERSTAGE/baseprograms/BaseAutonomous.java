@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team417_CENTERSTAGE;
+package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import android.util.Log;
 
@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 
@@ -14,10 +15,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    int lastEncoderFL = 0;
-    int lastEncoderFR = 0;
-    int lastEncoderBL = 0;
-    int lastEncoderBR = 0;
+    public int lastEncoderFL = 0;
+    public int lastEncoderFR = 0;
+    public int lastEncoderBL = 0;
+    public int lastEncoderBR = 0;
 
     // Autonomous tuning constants
     public static double LEFT_Y = 26.0;
@@ -84,6 +85,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         while (opModeIsActive() &&
                 (runtime.seconds() < 30) &&
                 (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+            myAprilTagPoseEstimator.telemeterAprilTagInfo();
         }
 
         // Stop all motion;
@@ -96,13 +98,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
+    public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
+    public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         initializeHardware();
         myColorDetection.init();
+        myAprilTagPoseEstimator.init();
 
         telemetry.addData("Init State", "Init Finished");
 

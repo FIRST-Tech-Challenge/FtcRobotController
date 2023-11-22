@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.team417_CENTERSTAGE;
+package org.firstinspires.ftc.team417_CENTERSTAGE.concepts;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -46,7 +46,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @Disabled
 @TeleOp(name = "Concept: OpenCV Red Detection", group = "Concept")
 // @Disabled
-public class RedWebcamDetection extends LinearOpMode {
+public class RedWebcamDetectionConcept extends LinearOpMode {
 
     OpenCvCamera robotCamera;
 

@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.team417_CENTERSTAGE;
+package org.firstinspires.ftc.team417_CENTERSTAGE.calibration;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseAutonomous;
 
 @Autonomous(name="Calibrate Intake")
 public class CalibrateIntake extends BaseAutonomous {

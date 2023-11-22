@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
+package org.firstinspires.ftc.team417_CENTERSTAGE.concepts;
 
 import android.util.Size;
 
@@ -10,8 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.team417_CENTERSTAGE.BaseTeleOp;
-import org.firstinspires.ftc.team417_CENTERSTAGE.Pose;
+import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseTeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagInfoDump;
+import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.AprilTagInfo;
+import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.Pose;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -149,7 +151,7 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
     //     and the stored information of said april tag (position etc.)
     // Also telemeters relevant info
     // Note that this is relative to the center of the camera
-    public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTag aprilTag) {
+    public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTagInfo aprilTagInfo) {
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
         d = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
@@ -161,19 +163,19 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         beta = gamma + Math.toRadians(detection.ftcPose.yaw); //(or gamma - detection.ftcPose.yaw) if that doesn't work)
         telemetry.addData("beta", beta);
 
-        relativeX = d * Math.cos(beta) + aprilTag.x;
+        relativeX = d * Math.cos(beta) + aprilTagInfo.x;
         telemetry.addData("relativeX", relativeX);
 
-        relativeY = -d * Math.sin(beta) + aprilTag.y;
+        relativeY = -d * Math.sin(beta) + aprilTagInfo.y;
         telemetry.addData("relativeY", relativeY);
 
-        absoluteX = relativeX * Math.cos(Math.toRadians(aprilTag.yaw)) - relativeY * Math.sin(Math.toRadians(aprilTag.yaw));
+        absoluteX = relativeX * Math.cos(Math.toRadians(aprilTagInfo.yaw)) - relativeY * Math.sin(Math.toRadians(aprilTagInfo.yaw));
         telemetry.addData("absoluteX", absoluteX);
 
-        absoluteY = relativeX * Math.sin(Math.toRadians(aprilTag.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTag.yaw));
+        absoluteY = relativeX * Math.sin(Math.toRadians(aprilTagInfo.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTagInfo.yaw));
         telemetry.addData("absoluteY", absoluteY);
 
-        absoluteTheta = Math.toRadians(aprilTag.yaw) - Math.toRadians(detection.ftcPose.yaw) + Math.PI;
+        absoluteTheta = Math.toRadians(aprilTagInfo.yaw) - Math.toRadians(detection.ftcPose.yaw) + Math.PI;
         telemetry.addData("absoluteTheta", absoluteTheta);
 
         Pose pose = new Pose(absoluteX, absoluteY, absoluteTheta);
@@ -194,12 +196,12 @@ public class AprilTagDetectionConcept extends BaseTeleOp {
         // Iterates through detections and finds any the the robot "knows"
         // Then it replaces the pose estimate with pose estimate from that april tag
         for (AprilTagDetection detection : currentDetections) {
-            AprilTag aprilTag = AprilTagInfoDump.findTagWithId(detection.id);
-            if (aprilTag != null) {
+            AprilTagInfo aprilTagInfo = AprilTagInfoDump.findTagWithId(detection.id);
+            if (aprilTagInfo != null) {
                 x = detection.ftcPose.x;
                 y = detection.ftcPose.y;
                 theta = detection.ftcPose.yaw;
-                robotPoseEstimate = calculatePoseEstimate(detection, aprilTag);
+                robotPoseEstimate = calculatePoseEstimate(detection, aprilTagInfo);
                 break;
             }
         }

@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.team417_CENTERSTAGE;
+package org.firstinspires.ftc.team417_CENTERSTAGE.concepts;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,7 +52,7 @@ import java.util.List;
 @Disabled
 @TeleOp(name = "Concept: OpenCV Blue Detection", group = "Concept")
 // @Disabled
-public class BlueWebcamDetection extends LinearOpMode {
+public class BlueWebcamDetectionConcept extends LinearOpMode {
 
     OpenCvCamera robotCamera;
 

@@ -50,7 +50,7 @@ import java.util.List;
 public class OpenCvColorDetection {
     OpenCvCamera robotCamera;
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
     public enum detectColorType {
         BLUE,

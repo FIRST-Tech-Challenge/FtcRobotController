@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.team417_CENTERSTAGE;
+package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 
-@TeleOp(name = "TeleOp League 1")
-public class BaseTeleOp extends BaseOpMode {
+public abstract class BaseTeleOp extends BaseOpMode {
+    AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
+
     @Override
     public void runOpMode() {
         initializeHardware();
+        myAprilTagPoseEstimator.init();
 
         waitForStart();
 
@@ -24,6 +26,7 @@ public class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.addData("ArmMotor", armMotor.getCurrentPosition());
             telemetry.addData("DumperServo", dumperServo.getPosition());
+            myAprilTagPoseEstimator.telemeterAprilTagInfo();
             telemetry.update();
         }
     }
