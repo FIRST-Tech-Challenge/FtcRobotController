@@ -66,7 +66,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "Basic: Omni Linear OpMode", group = "Linear OpMode")
+@TeleOp(name = "Main TeleOp", group = "Linear OpMode")
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -102,11 +102,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
         wrist = hardwareMap.get(CRServo.class, "wrist");
         hand = hardwareMap.get(CRServo.class, "hand");
 
-
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -114,8 +109,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         armExtendMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        armRotator.setDirection(DcMotor.Direction.FORWARD);
-        armRotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotator.setDirection(DcMotor.Direction.REVERSE);
 
         intakeSystem.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSystem.resetDeviceConfigurationForOpMode();
@@ -132,9 +126,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
         boolean open = true;
         //hand.setPower(1);
 
+        boolean wristDirection = true;
+
         int waitTime = 0;
 
+
         int timeToMove = 0;
+
+        wrist.setPower(0);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -145,17 +144,35 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-            double arm = -gamepad2.left_stick_y;
+            double arm = -gamepad2.right_stick_y * 0.65;
 
             double outputServo = gamepad2.right_stick_y;
+
+            double speedMultiplier = 0.5;
+
+            if (gamepad1.right_bumper) { // Right bumper slows down the speed on the wheels
+                if (speedMultiplier == 1) {
+                    speedMultiplier = 0.5;
+                } else if (speedMultiplier == 0.5) {
+                    speedMultiplier = 1;
+                }
+            }
+
+            if (gamepad1.left_bumper) { // Left bumper slows down the speed on the wheels
+                if (speedMultiplier == 0.5) {
+                    speedMultiplier = 0.25;
+                } else if (speedMultiplier == 0.25) {
+                    speedMultiplier = 0.5;
+                }
+            }
 
             double armPower = arm;
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial - lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial + lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = (axial - lateral + yaw) * speedMultiplier;
+            double rightFrontPower = (axial - lateral - yaw)* speedMultiplier;
+            double leftBackPower   = (axial + lateral + yaw) * speedMultiplier;
+            double rightBackPower  = (axial + lateral - yaw) * speedMultiplier;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -171,7 +188,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 armPower /= max;
             }
 
-            if (gamepad2.a) {
+            /*if (gamepad2.a) {
                 if (armRotator.getCurrentPosition() < 5) {
                     armRotator.setTargetPosition(50);
                     armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -183,27 +200,33 @@ public class BasicOpMode_Linear extends LinearOpMode {
                     armRotator.setPower(0.03);
                 }
             }
+             */
 
-            if (gamepad2.b) {
-                if (wrist.getPower() == 1) {
-                    wrist.setPower(-0.5);
-                    timeToMove++;
-                } else {
-                    wrist.setPower(0.5);
-                    timeToMove++;
-                }
-                //telemetry.addData("stuff", armRotator.getCurrentPosition())
-                //armRotator.setTargetPosition(armRotator.getCurrentPosition());
-                //243
+            //TODO: automate the arm rotator using setPosition and pray that it works
+            if (gamepad2.dpad_up) {
+                armRotator.setPower(-0.5);
+            }
+            if (gamepad2.dpad_down) {
+                armRotator.setPower(0.25);
             }
 
-            if (timeToMove > 250) {
+            if (!gamepad2.dpad_up && !gamepad2.dpad_down){
+                armRotator.setPower(0);
+            }
+
+            //TODO: have to automate the wrist
+            if (gamepad2.a) { //change the wrist because the automatic thing wasn't working
+                wrist.setPower(-0.5);
+            }
+            else if (gamepad2.b) {
+                wrist.setPower(0.5);
+            }
+
+            if (!gamepad2.a && !gamepad2.b) {
                 wrist.setPower(0);
-                timeToMove = 0;
-            } else if (timeToMove > 0){
-                timeToMove++;
             }
 
+            //Closes the hand
             if (gamepad2.x && waitTime == 0) {
                 if (open) {
                     hand.setPower(-0.27); //-0.27
@@ -228,12 +251,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             armExtendMotor.setPower(armPower);
 
-            intakeSystem.setPower(-gamepad2.right_stick_y);
-
-            //if (-gamepad2.right_stick_y > 0) {
-            //armRotator.setPower(0.5);
-
-            int x = Math.abs(150- armRotator.getCurrentPosition());
+            intakeSystem.setPower(-gamepad2.left_stick_y * 0.3);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -243,6 +261,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("arm rotator: ", armRotator.getCurrentPosition());
             telemetry.addData("timeToMove: ", timeToMove);
             telemetry.addData("target position ", armRotator.getTargetPosition());
+            telemetry.addData("ArmRotatorPower", armRotator.getPower());
+            telemetry.addData("dPad Up", gamepad2.dpad_up);
             telemetry.update();
         }
 }}
