@@ -2,17 +2,8 @@ package org.firstinspires.ftc.teamcode.Teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorController
 import org.firstinspires.ftc.teamcode.DriveMethods
-import org.firstinspires.ftc.teamcode.Variables
-import org.firstinspires.ftc.teamcode.Variables.encoders
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
-import org.firstinspires.ftc.teamcode.Variables.rotationsPerMeter
-import org.firstinspires.ftc.teamcode.Variables.slideLength
-import org.firstinspires.ftc.teamcode.Variables.slideToBoard
-import org.firstinspires.ftc.teamcode.Variables.t
-import kotlin.math.E
-import kotlin.math.abs
 import kotlin.math.exp
 
 @TeleOp(name = "LSTest", group = "LinearSlide")

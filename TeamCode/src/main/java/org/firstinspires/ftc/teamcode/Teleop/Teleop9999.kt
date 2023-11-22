@@ -1,18 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.Range
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
 import org.firstinspires.ftc.teamcode.Variables.DESIRED_DISTANCE
@@ -22,18 +11,12 @@ import org.firstinspires.ftc.teamcode.Variables.MAX_AUTO_TURN
 import org.firstinspires.ftc.teamcode.Variables.SPEED_GAIN
 import org.firstinspires.ftc.teamcode.Variables.STRAFE_GAIN
 import org.firstinspires.ftc.teamcode.Variables.TURN_GAIN
-import org.firstinspires.ftc.teamcode.Variables.clawToBoard
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
 import org.firstinspires.ftc.teamcode.Variables.drive
 import org.firstinspires.ftc.teamcode.Variables.slideToBoard
 import org.firstinspires.ftc.teamcode.Variables.strafe
-import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.teamcode.Variables.turn
-import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
-import java.util.concurrent.TimeUnit
 
 @TeleOp(name = "Teleop-1", group = "AprilTag")
 class Teleop9999: DriveMethods() {

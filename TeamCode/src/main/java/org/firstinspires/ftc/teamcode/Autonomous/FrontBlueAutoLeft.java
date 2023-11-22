@@ -8,10 +8,9 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityC
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
-import org.firstinspires.ftc.teamcode.Variables.Detection;
-
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Variables.Detection;
+import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 
 import java.util.Arrays;
 

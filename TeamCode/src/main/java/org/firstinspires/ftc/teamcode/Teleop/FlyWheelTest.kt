@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.leftFlyWheel
-import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.rightFlyWheel
 
 @TeleOp(name = "FlyWheelTest", group = "Flywheel")

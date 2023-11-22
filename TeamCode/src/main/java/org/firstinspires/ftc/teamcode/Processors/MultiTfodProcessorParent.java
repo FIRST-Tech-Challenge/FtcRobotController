@@ -33,11 +33,12 @@
 
 package org.firstinspires.ftc.teamcode.Processors;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TfodParameters;
 import org.firstinspires.ftc.vision.VisionProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MultiTfodProcessorParent implements VisionProcessor
 {
