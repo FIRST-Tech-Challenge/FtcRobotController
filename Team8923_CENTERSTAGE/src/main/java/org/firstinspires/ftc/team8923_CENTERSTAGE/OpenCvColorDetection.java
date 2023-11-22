@@ -57,6 +57,13 @@ public class OpenCvColorDetection {
         RED
     }
 
+    enum Position {
+        ONE,
+        TWO,
+        THREE,
+        FOUR
+    }
+
     detectColorType myColor;
 
     // coordinates of largest detected image
@@ -138,8 +145,7 @@ public class OpenCvColorDetection {
             //   or Constants.RED_COLOR_DETECT_MIN_HSV and Constants.RED_COLOR_DETECT_MAX_HSV
             if (myColor == detectColorType.BLUE) {
                 Core.inRange(hsvMat, ConstantsOpenCV.BLUE_COLOR_DETECT_MIN_HSV, ConstantsOpenCV.BLUE_COLOR_DETECT_MAX_HSV, filteredMat);
-            }
-            else {
+            } else {
                 Core.inRange(hsvMat, ConstantsOpenCV.RED_COLOR_DETECT_MIN_HSV, ConstantsOpenCV.RED_COLOR_DETECT_MAX_HSV, filteredMat);
             }
 
@@ -174,17 +180,31 @@ public class OpenCvColorDetection {
                 double boundHeightX = boundingRect.x + boundingRect.width;
                 double boundHeightY = boundingRect.y + boundingRect.height;
                 Imgproc.rectangle(outputMat, new Point(boundingRect.x, boundingRect.y), new Point(boundHeightX, boundHeightY), ConstantsOpenCV.borderColor, 3, Imgproc.LINE_8, 0);
-                targetPoint.x = (int)boundingRect.width/2.0 + boundingRect.x;
-                targetPoint.y = (int)boundingRect.height/2.0 + boundingRect.y;
-                Imgproc.circle(outputMat, targetPoint , 10, ConstantsOpenCV.borderColor , Imgproc.LINE_4, -1);
+                targetPoint.x = (int) boundingRect.width / 2.0 + boundingRect.x;
+                targetPoint.y = (int) boundingRect.height / 2.0 + boundingRect.y;
+                Imgproc.circle(outputMat, targetPoint, 10, ConstantsOpenCV.borderColor, Imgproc.LINE_4, -1);
             }
 
             // See this image on the computer using scrcpy
             return outputMat;
         }
 
-        @Override
-        public void onViewportTapped() {
+        public Position detectColor() {
+            Position position = Position.FOUR;
+            if (targetPoint.x < 213.3) {
+                position = Position.ONE;
+            } else if ((targetPoint.x > 213.3) && (targetPoint.x < 426.6)) {
+                position = Position.TWO;
+            } else if ((targetPoint.x > 426.6) && (targetPoint.x < 640)) {
+                position = Position.THREE;
+            } else {
+                position = Position.FOUR;
+            }
+            return position;
+        }
+
+        //@Override
+        /*public void onViewportTapped() {
             viewportPaused = !viewportPaused;
 
             if(viewportPaused) {
@@ -193,6 +213,6 @@ public class OpenCvColorDetection {
             else {
                 robotCamera.resumeViewport();
             }
-        }
+        }*/
     }
 }
