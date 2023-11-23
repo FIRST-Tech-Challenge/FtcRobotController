@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class HydrAuton_Backdrop extends HydrAuton {
+public class HydrAuton_Backstage extends HydrAuton {
     protected boolean setTrueForRed = false;
     protected boolean setTrueForRiggingOnRight = false;
     public boolean RunAuton() {
