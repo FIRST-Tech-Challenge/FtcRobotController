@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+/**
+ * This class contains methods to control drive base movement
+ */
 public class Movement {
 
     public int motor_ticks;
@@ -15,6 +17,14 @@ public class Movement {
     private DcMotor rfDrive;
     private DcMotor lbDrive;
     private DcMotor rbDrive;
+    /**
+     * Pulls in information about the motors that is determined during initialization and makes
+     * that information accessible to the rest of the class.
+     * @param leftFrontDrive  the front left wheels motor,
+     * @param  rightFrontDrive  the front right wheels motor,
+     * @param  leftBackDrive  the back left wheels motor,
+     * @param  rightBackDrive  the back right wheels motor
+     */
     public Movement(DcMotor leftFrontDrive,DcMotor rightFrontDrive,
                     DcMotor leftBackDrive, DcMotor rightBackDrive){
         lfDrive = leftFrontDrive;
@@ -23,6 +33,9 @@ public class Movement {
         rbDrive = rightBackDrive;
     }
 
+    /**
+     * Resets all wheel motor encoder positions to 0
+     */
     private void initMovement(){
         motor_ticks = 0;
         lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
@@ -38,6 +51,10 @@ public class Movement {
         //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
     }
 
+    /**
+     * Moves all wheel motors forward a distance in ticks
+     * @param ticks  the distance the motors move in ticks, should be positive.
+     */
     public void Forward(int ticks){
         initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -56,6 +73,11 @@ public class Movement {
 
         }
     }
+
+    /**
+     * Moves all wheel motors backwards a distance in ticks
+     * @param ticks  the distance the motors move in ticks, should be positive.
+     */
     public void Backwards(int ticks){
         initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -75,7 +97,11 @@ public class Movement {
         }
     }
 
-
+    /**
+     * Moves the front right and the back left motor forwards, and the front left and the back right
+     * motors backwards in order to move left a distance in ticks
+     * @param ticks  the distance the motors move in ticks, should be positive.
+     */
     public void Left(int ticks){
         initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -95,6 +121,11 @@ public class Movement {
         }
     }
 
+    /**
+     * Moves the front left and the back right motor forwards, and the front right and the back left
+     * motors backwards in order to move left a distance in ticks
+     * @param ticks  the distance the motors move in ticks, should be positive.
+     */
     public void Right(int ticks){
         initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -114,6 +145,10 @@ public class Movement {
         }
     }
 
+    /**
+     * turns the robot in place a distance in degrees
+     * @param degrees - the distance of the rotation in degrees
+     */
     public void Rotate(int degrees){
 
     }
