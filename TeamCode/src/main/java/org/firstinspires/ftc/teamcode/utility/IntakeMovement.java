@@ -18,8 +18,10 @@ public class IntakeMovement {
     static final double LEFT_MAX_POS     =  1.0;     // Maximum rotational position of the left servo
     static final double LEFT_MIN_POS     =  0.6;     // Minimum rotational position of the left servo
     // Intake flip
+    // The lower the int the higher the wrist goes
     static final double FLIP_MAX_POS     =  1.0;     // Maximum rotational position of the wrist servo
-    static final double FLIP_MIN_POS     =  0.35;     // Minimum rotational position of the wrist servo
+    static final double FLIP_MIN_POS     =  0.4;     // Minimum rotational position of the wrist servo
+
 
     public Servo rightClaw;
     public Servo leftClaw;

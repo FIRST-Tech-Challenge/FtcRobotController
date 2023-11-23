@@ -78,9 +78,14 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private DcMotor leftLinearSlide = null;
+    private DcMotor rightLinearSlide = null;
+
     Servo leftClaw;
     Servo rightClaw;
     Servo intakeFlip;
+
+    Servo conveyor;
 
     IntakeMovement intake;
 
@@ -94,9 +99,14 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        leftLinearSlide = hardwareMap.get(DcMotor.class, "left_linear_slide");
+        rightLinearSlide = hardwareMap.get(DcMotor.class, "right_linear_slide");
+
         leftClaw = hardwareMap.get(Servo.class, "left_claw");
         rightClaw = hardwareMap.get(Servo.class, "right_claw");
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
+
+        conveyor = hardwareMap.get(Servo.class, "conveyor");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -114,6 +124,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE); // No idea why this needs to be reversed - debugging
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
         intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip);
 
         //drive speed limiter
@@ -129,6 +143,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            // Controls the intake
             if (gamepad1.a){
                 intake.ClawOpen();
             } else if (gamepad1.b) {
@@ -137,6 +152,22 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 intake.FlipUp();
             } else if (gamepad1.x) {
                 intake.FlipDown();
+            }
+            
+            if(gamepad1.dpad_down){
+                
+            } else if (gamepad1.dpad_left) {
+                
+            } else if (gamepad1.dpad_right) {
+                
+            } else if (gamepad1.dpad_up) {
+                
+            }
+
+            if (gamepad1.left_bumper){
+                conveyor.setPosition(0.5);
+            } else if (gamepad1.right_bumper) {
+                conveyor.setPosition(0);
             }
 
 
