@@ -50,6 +50,7 @@ public abstract class Teleop extends LinearOpMode {
     final int DRIVER_MODE_STANDARD     = 2;
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
+//  int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
 
     boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
@@ -178,6 +179,7 @@ public abstract class Teleop extends LinearOpMode {
 
             // Update telemetry data
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
+            telemetry.addData("Viper", "%d cts (%.2f mA)", robot.viperMotorsPos, robot.viperMotorsPwr );
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
                     frontLeft, robot.frontLeftMotorPos, frontRight, robot.frontRightMotorPos );
             telemetry.addData("Rear ", "%.2f (%d cts) %.2f (%d cts)",
@@ -291,17 +293,17 @@ public abstract class Teleop extends LinearOpMode {
         }
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
-            frontLeft  =  fineStrafeSpeed;
-            frontRight = -fineStrafeSpeed;
-            rearLeft   = -fineStrafeSpeed;
-            rearRight  =  fineStrafeSpeed;
-        }
-        else if( gamepad1.dpad_right ) {
-            telemetry.addData("Dpad","RIGHT");
             frontLeft  = -fineStrafeSpeed;
             frontRight =  fineStrafeSpeed;
             rearLeft   =  fineStrafeSpeed;
             rearRight  = -fineStrafeSpeed;
+        }
+        else if( gamepad1.dpad_right ) {
+            telemetry.addData("Dpad","RIGHT");
+            frontLeft  =  fineStrafeSpeed;
+            frontRight = -fineStrafeSpeed;
+            rearLeft   = -fineStrafeSpeed;
+            rearRight  =  fineStrafeSpeed;
         }
 
 /*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL
@@ -446,8 +448,8 @@ public abstract class Teleop extends LinearOpMode {
         // Retrieve X/Y and ROTATION joystick input
         if( controlMultSegLinear ) {
             yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-            xTranslation = multSegLinearXY( -gamepad1.left_stick_x );
-            rotation     = multSegLinearRot( gamepad1.right_stick_x );
+            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
         }
         else {
             yTranslation = -gamepad1.left_stick_y * 1.00;
@@ -586,5 +588,5 @@ public abstract class Teleop extends LinearOpMode {
         robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
     } // globalCoordinatePositionUpdate
-	
+
 } // Teleop

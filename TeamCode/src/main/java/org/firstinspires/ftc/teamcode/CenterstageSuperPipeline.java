@@ -45,19 +45,22 @@ class CenterstageSuperPipeline implements VisionProcessor {
     protected Point sub3PointA = new Point(580, 100);
     protected Point sub3PointB = new Point(620, 140);
     protected Point spikeMarkCenter = new Point(); // defined dynamically below
+//  protected Mat YCrCb = new Mat();
+//  protected Mat CrChan = new Mat();
+//  protected Mat CbChan = new Mat();
     protected Mat HSV = new Mat();
-    protected Mat colorChan = new Mat();
-    protected Mat subMat1;
-    protected Mat subMat2;
-    protected Mat subMat3;
+    protected Mat HueChan = new Mat();
+    protected Mat subMat1Hue;
+    protected Mat subMat2Hue;
+    protected Mat subMat3Hue;
     protected int avg1;
     protected int avg2;
     protected int avg3;
-    protected int err1;
-    protected int err2;
-    protected int err3;
-    protected int target;     // target hue
-    protected int threshold;  // maximum allowed hue error
+    protected int hueErr1;
+    protected int hueErr2;
+    protected int hueErr3;
+    protected int targetHue;  // target hue number
+    protected int maxHueErr;  // maximum allowed hue error
 
     public CenterstageSuperPipeline(boolean leftSide, boolean redAlliance)
     {
@@ -72,28 +75,48 @@ class CenterstageSuperPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+
+        // Convert the image from RGB to YCrCb (frame -> YCrCb)
+//      Imgproc.cvtColor(frame, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+        // Extract the CrCb channels (YCrCb -> CrChan)
+//      Core.extractChannel(YCrCb, CrChan, 0);
+//      Core.extractChannel(YCrCb, CbChan, 1);
+        // NOTE: For RED  we need both large Cr + small Cb
+        //       (large Cr with LARGE Cb would be purple, not red)
+        //       For BLUE we need both small Cr + large Cb
+        //       (small Cr with SMALL Cb would be green, not blue)
+        // In poor lighting, red blue & purple are too close together to threshold.
+
         // Convert the image from RGB to HSV  (frame -> HSV)
         Imgproc.cvtColor(frame, HSV, Imgproc.COLOR_RGB2HSV);
-
-        // Extract the HUE channel data (HSV -> colorChan)
-        Core.extractChannel(HSV, colorChan, 0);
+        // Extract the HUE channel data (HSV -> HueChan)
+        Core.extractChannel(HSV, HueChan, 0);
         // What target hue  are we looking for on this alliance?
-        //   RED team prop      = 105     BLUE team prop      = 120
+        //   RED team prop      = 160     BLUE team prop      = 120
         //   RED spikemark tape =         BLUE spikemark tape = 
-        target = (redAlliance)? 160 : 120;
-        threshold = 15;    // TBD (how far off can we go and still be the desired color??)
+        targetHue = (redAlliance)? 160 : 120;
+        maxHueErr = 15;     // how far off can we go and still be the desired color??
 
-        // Define permanent sampling areas from this color channel (colorChan -> submat)
-        subMat1 = colorChan.submat(new Rect(sub1PointA, sub1PointB));
-        subMat2 = colorChan.submat(new Rect(sub2PointA, sub2PointB));
-//      subMat3 = colorChan.submat(new Rect(sub3PointA, sub3PointB));
+        // Define permanent sampling areas from this color channel (HueChan -> submatHue)
+        subMat1Hue = HueChan.submat(new Rect(sub1PointA, sub1PointB));
+        subMat2Hue = HueChan.submat(new Rect(sub2PointA, sub2PointB));
+//      subMat3Hue = HueChan.submat(new Rect(sub3PointA, sub3PointB));
 
         // Compute the AVERAGE hue number for the sample region
-        avg1 = (int)Core.mean(subMat1).val[0];  err1 = Math.abs(avg1-target);
-        avg2 = (int)Core.mean(subMat2).val[0];  err2 = Math.abs(avg2-target);
-//      avg3 = (int)Core.mean(subMat3).val[0];  err3 = Math.abs(avg3-target);
+        avg1 = (int)Core.mean(subMat1Hue).val[0];  hueErr1 = Math.abs(avg1-targetHue);
+        avg2 = (int)Core.mean(subMat2Hue).val[0];  hueErr2 = Math.abs(avg2-targetHue);
+//      avg3 = (int)Core.mean(subMat3Hue).val[0];  hueErr3 = Math.abs(avg3-targetHue);
 
-        // Draw 4-pixel-wide RED or BLUE rectangles identifying the sample areas (frame)
+        // Determine which sample zone was closest to our target hue
+        if( (hueErr1 < maxHueErr) && (hueErr1 < hueErr2) ) {
+            spikeMark = 1;
+        } else if ((hueErr2 < maxHueErr) && (hueErr2 <= hueErr1) ) {
+            spikeMark = 2;
+        } else {
+            spikeMark = 3;
+        }
+
+        // Draw 4-pixel-wide RED or BLUE rectangles identifying sample areas on original frame
         if( redAlliance ) {
             Imgproc.rectangle(frame, sub1PointA, sub1PointB, new Scalar(255, 0, 0), 4);
             Imgproc.rectangle(frame, sub2PointA, sub2PointB, new Scalar(255, 0, 0), 4);
@@ -104,31 +127,26 @@ class CenterstageSuperPipeline implements VisionProcessor {
             Imgproc.rectangle(frame, sub3PointA, sub3PointB, new Scalar(0, 0, 255), 4);
         }
 
-        // Determine which sample zone was closest to our target hue
-        if( (err1 < threshold) && (err1 < err2) ) {
+        // Add a purple circle to the middle of the chosen sample
+        if( spikeMark == 1 ) {
             spikeMarkCenter.x = (sub1PointA.x + sub1PointB.x) / 2;
             spikeMarkCenter.y = (sub1PointA.y + sub1PointB.y) / 2;
-            Imgproc.circle(frame, spikeMarkCenter, 10, new Scalar(225, 52, 235), -1);
-            spikeMark = 1;
-        } else if ((err2 < threshold) && (err2 <= err1) ) {
+        } else if ( spikeMark == 1 ) {
             spikeMarkCenter.x = (sub2PointA.x + sub2PointB.x) / 2;
             spikeMarkCenter.y = (sub2PointA.y + sub2PointB.y) / 2;
-            Imgproc.circle(frame, spikeMarkCenter, 10, new Scalar(225, 52, 235), -1);
-            spikeMark = 2;
         } else {
             spikeMarkCenter.x = (sub3PointA.x + sub3PointB.x) / 2;
             spikeMarkCenter.y = (sub3PointA.y + sub3PointB.y) / 2;
-            Imgproc.circle(frame, spikeMarkCenter, 10, new Scalar(225, 52, 235), -1);
-            spikeMark = 3;
         }
+        Imgproc.circle(frame, spikeMarkCenter, 10, new Scalar(225, 52, 235), -1);
 
         // Free the allocated submat memory
-        subMat1.release();
-        subMat1 = null;
-        subMat2.release();
-        subMat2 = null;
-//      subMat3.release();
-//      subMat3 = null;
+        subMat1Hue.release();
+        subMat1Hue = null;
+        subMat2Hue.release();
+        subMat2Hue = null;
+//      subMat3Hue.release();
+//      subMat3Hue = null;
 
         return frame;
     }

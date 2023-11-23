@@ -82,7 +82,7 @@ public class AutonomousRightRed extends AutonomousBase {
             if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.target +
+            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.targetHue +
                                           ") L:"   + pipelineLeft.avg1   +
                                           " C:"    + pipelineLeft.avg2   + 
                                           " R:"    + pipelineLeft.avg3   +
@@ -172,7 +172,7 @@ public class AutonomousRightRed extends AutonomousBase {
         // Strafe right 12"
         driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         // Turn 180 deg
-//      driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/

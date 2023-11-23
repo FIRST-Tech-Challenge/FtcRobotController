@@ -59,7 +59,7 @@ public class AutonomousRightBlue extends AutonomousBase {
         // This is right side blue alliance.
         pipelineLeft = new CenterstageSuperPipeline(false, false );
         visionPortalLeft = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Left"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Right"))
                 .addProcessor(pipelineLeft)
                 .setCameraResolution(new Size(640, 480))
                 .build();
@@ -76,13 +76,13 @@ public class AutonomousRightBlue extends AutonomousBase {
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
-            telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
+            telemetry.addData("ALLIANCE", "%s %c (X=blue webO=red)",
                     ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
             // If vision pipeline disagrees with forced alliance setting, report it
             if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.target +
+            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.targetHue +
                                           ") L:"   + pipelineLeft.avg1   +
                                           " C:"    + pipelineLeft.avg2   + 
                                           " R:"    + pipelineLeft.avg3   +
@@ -172,7 +172,7 @@ public class AutonomousRightBlue extends AutonomousBase {
         // Strafe right 12"
         driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         // Turn 180 deg
-//      driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/

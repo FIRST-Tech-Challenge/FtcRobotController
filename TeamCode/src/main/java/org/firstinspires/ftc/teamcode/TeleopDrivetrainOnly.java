@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * TeleOp DriveTrain Only (with test modes).
  */
 @TeleOp(name="Teleop-DrivetrainOnly", group="7592")
-@Disabled
+//@Disabled
 public class TeleopDrivetrainOnly extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
@@ -119,7 +119,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
                         driverMode = DRIVER_MODE_STANDARD;
                         break;
                 } // switch()
-            }
+            } // processDpadDriveMode
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -130,7 +130,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
             // Update telemetry data
             telemetry.addData("Front", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     frontLeft, robot.frontLeftMotorVel, frontRight, robot.frontRightMotorVel );
-            telemetry.addData("Back ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
+            telemetry.addData("Rear ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
             telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
@@ -181,17 +181,17 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
         }
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
-            frontLeft  =  fineControlSpeed;
-            frontRight = -fineControlSpeed;
-            rearLeft   = -fineControlSpeed;
-            rearRight  =  fineControlSpeed;
-        }
-        else if( gamepad1.dpad_right ) {
-            telemetry.addData("Dpad","RIGHT");
             frontLeft  = -fineControlSpeed;
             frontRight =  fineControlSpeed;
             rearLeft   =  fineControlSpeed;
             rearRight  = -fineControlSpeed;
+        }
+        else if( gamepad1.dpad_right ) {
+            telemetry.addData("Dpad","RIGHT");
+            frontLeft  =  fineControlSpeed;
+            frontRight = -fineControlSpeed;
+            rearLeft   = -fineControlSpeed;
+            rearRight  =  fineControlSpeed;
         }
         else {
             dPadMode = false;
@@ -219,7 +219,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.02 ) {
+        if( Math.abs( valueIn) < 0.05 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
@@ -251,37 +251,37 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
                 valueOut = (6.00 * valueIn) + 4.8925;
         }
 
-        return valueOut;
+        return valueOut/2.0;
     } // multSegLinearRot
 
     private double multSegLinearXY( double valueIn ) {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.02 ) {
+        if( Math.abs( valueIn) < 0.05 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
         else if( valueIn > 0.0 ) {
-            if( valueIn < 0.33 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
-                valueOut = (0.25 * valueIn) + 0.0550;    // 0.01=0.060   0.33=0.1375
+            if( valueIn < 0.50 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
+                valueOut = (0.25 * valueIn) + 0.040;     // 0.01=0.0425   0.50=0.1650
             }
             else if( valueIn < 0.90 ) {
-                valueOut = (1.00 * valueIn) - 0.1925;   // 0.33=0.1375   0.90=0.7075
+                valueOut = (0.75 * valueIn) - 0.210;     // 0.50=0.1650   0.90=0.4650
             }
             else
-                valueOut = (14.0 * valueIn) - 11.8925;  // 0.90=0.7075   1.00=2.1075 (clipped)
+                valueOut = (8.0 * valueIn) - 6.735;      // 0.90=0.4650   1.00=1.265 (clipped)
         }
         //========= NEGATIVE JOYSTICK INPUTS =========
         else { // valueIn < 0.0
-            if( valueIn > -0.33 ) {
-                valueOut = (0.25 * valueIn) - 0.0550;
+            if( valueIn > -0.50 ) {
+                valueOut = (0.25 * valueIn) - 0.040;
             }
             else if( valueIn > -0.90 ) {
-                valueOut = (1.00 * valueIn) + 0.1925;
+                valueOut = (0.75 * valueIn) + 0.210;
             }
             else
-                valueOut = (14.0 * valueIn) + 11.8925;
+                valueOut = (8.0 * valueIn) + 6.735;
         }
 
         return valueOut;
@@ -292,8 +292,8 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processSingleWheelControl() {
         // Use the motor-power variables so our telemetry updates correctly
-        frontLeft  = minThreshold( -gamepad1.left_stick_y  );
-        frontRight = minThreshold( -gamepad1.right_stick_y );
+        frontLeft  = minThreshold( gamepad1.left_stick_y  );
+        frontRight = minThreshold( gamepad1.right_stick_y );
         rearLeft   = minThreshold( gamepad1.left_stick_x  );
         rearRight  = minThreshold( gamepad1.right_stick_x );
 
@@ -312,9 +312,9 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
             rotation     = multSegLinearRot( -gamepad1.right_stick_x );
         }
         else {
-            yTranslation = -gamepad1.left_stick_y;
-            xTranslation = gamepad1.left_stick_x;
-            rotation = -gamepad1.right_stick_x;
+            yTranslation = -gamepad1.left_stick_y * 1.00;
+            xTranslation =  gamepad1.left_stick_x * 1.25;
+            rotation     = -gamepad1.right_stick_x * 0.50;
         }
         // If BACKWARD drive control, reverse the operator inputs
         if( backwardDriveControl ) {
