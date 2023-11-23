@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters.tests;
+package org.firstinspires.ftc.masters.apriltesting;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,31 +19,22 @@ import java.util.List;
 
 
 @Config
-@TeleOp(name="Warcrimes Against Code", group = "competition")
-public class lukesGooblyGoob extends LinearOpMode {
+@TeleOp(name="AprilTagMoves")
+public class aprilTagButItMoves extends LinearOpMode {
 
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
 
-    Servo clawServo = null;
-    Servo heightControl = null;
-    Servo v4b = null;
-
-    double servoPos = .5;
-    double v4bPos = .5;
-
-    double x1 = 0;
-    double x2 = 0;
-    double x3 = 0;
-    double y1 = 0;
-    double y2 = 0;
-    double y3 = 0;
-
+    double x = 0;
+    double y = 0;
+    
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     private AprilTagProcessor aprilTag;
+
+    public AprilTagDetection myTag;
 
     private VisionPortal visionPortal;
 
@@ -53,10 +44,6 @@ public class lukesGooblyGoob extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-
-        clawServo = hardwareMap.servo.get("servo");
-        heightControl = hardwareMap.servo.get("intake");
-        v4b = hardwareMap.servo.get("v4b");
 
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -81,52 +68,45 @@ public class lukesGooblyGoob extends LinearOpMode {
 
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
+                telemetry.addData("#AprilTags Detected", currentDetections.size());
+                telemetry.addData("Detection String", detection.toString());
+                telemetry.addData("Detection ID's", detection.id);
                 if (detection.metadata != null) {
-                    if (detection.id == 1) {
-                        x1 = detection.ftcPose.x;
-                        y1 = detection.ftcPose.y;
-                    }
-                    if (detection.id == 2) {
-                        x2 = detection.ftcPose.x;
-                        y2 = detection.ftcPose.y;
-                    }
-                    if (detection.id == 3) {
-                        x3 = detection.ftcPose.x;
-                        y3 = detection.ftcPose.y;
+                    if (detection.id == 9) {
+                        myTag = detection;
                     }
                 }
             }
 
-            telemetry.addData("v4b", v4bPos);
-            telemetry.addData("servo pos: ", servoPos);
-            telemetry.addData("X", x1);
-            telemetry.addData("Y", y1);
-            telemetry.update();
 
-            // Push telemetry to the Driver Station.
-            telemetry.update();
-
-            if (x1 > .8){
-                leftFrontMotor.setPower(.1);
-                rightFrontMotor.setPower(.1);
-                leftRearMotor.setPower(.1);
-                rightRearMotor.setPower(.1);
-            } else if(x1 < -.8){
-                leftFrontMotor.setPower(-.1);
-                rightFrontMotor.setPower(-.1);
-                leftRearMotor.setPower(-.1);
-                rightRearMotor.setPower(-.1);
-            } else if(y1 > 20){
-                leftFrontMotor.setPower(-.3);
-                rightFrontMotor.setPower(.3);
-                leftRearMotor.setPower(.3);
-                rightRearMotor.setPower(-.3);
-            } else {
-                leftFrontMotor.setPower(0);
-                rightFrontMotor.setPower(0);
-                leftRearMotor.setPower(0);
-                rightRearMotor.setPower(0);
+            if (myTag != null) {
+                telemetry.addData("MyTag X", myTag.ftcPose.x);
+                telemetry.addData("MyTag Y", myTag.ftcPose.y);
+                telemetry.addData("MyTag Z", myTag.ftcPose.z);
+                if (myTag.ftcPose.z > .8) {
+                    leftFrontMotor.setPower(.1);
+                    rightFrontMotor.setPower(.1);
+                    leftRearMotor.setPower(.1);
+                    rightRearMotor.setPower(.1);
+                } else if (myTag.ftcPose.z < -.8) {
+                    leftFrontMotor.setPower(-.1);
+                    rightFrontMotor.setPower(-.1);
+                    leftRearMotor.setPower(-.1);
+                    rightRearMotor.setPower(-.1);
+                } else if (myTag.ftcPose.y > 8) {
+                    leftFrontMotor.setPower(-.3);
+                    rightFrontMotor.setPower(.3);
+                    leftRearMotor.setPower(.3);
+                    rightRearMotor.setPower(-.3);
+                } else {
+                    leftFrontMotor.setPower(0);
+                    rightFrontMotor.setPower(0);
+                    leftRearMotor.setPower(0);
+                    rightRearMotor.setPower(0);
+                }
             }
+
+            telemetry.update();
 
         }
     }
@@ -140,7 +120,7 @@ public class lukesGooblyGoob extends LinearOpMode {
                         .setDrawCubeProjection(true)
                         .setDrawTagOutline(true)
                         .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                        .setTagLibrary((org.firstinspires.ftc.masters.apriltesting.CustomDatabase.DataBaseTest()))
+                        .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                         .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
                         .build();

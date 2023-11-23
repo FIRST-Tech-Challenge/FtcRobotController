@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters.apriltesting.tests;
+package org.firstinspires.ftc.masters.tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
