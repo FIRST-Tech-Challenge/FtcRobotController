@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 
@@ -144,17 +145,6 @@ public class HydraDrive {
         int FRmotPos = mMotDrFrRt.getCurrentPosition();
         int BLmotPos = mMotDrBkLt.getCurrentPosition();
         int BRmotPos = mMotDrBkRt.getCurrentPosition();
-        if (mOp.mLogger != null) {
-            mOp.mLogger.blposition.set(BLmotPos);
-            mOp.mLogger.bltarget.set(BLmotTarget);
-            mOp.mLogger.brposition.set(BRmotPos);
-            mOp.mLogger.brtarget.set(BRmotTarget);
-            mOp.mLogger.flposition.set(FLmotPos);
-            mOp.mLogger.fltarget.set(FLmotTarget);
-            mOp.mLogger.frposition.set(FRmotPos);
-            mOp.mLogger.frtarget.set(FRmotTarget);
-            mOp.mLogger.writeLine();
-        }
         // Calculate the current error for each motor
         int errorBkLt = Math.abs(BLmotTarget) - Math.abs(BLmotPos);
         int errorBkRt = Math.abs(BRmotTarget) - Math.abs(BRmotPos);
@@ -181,6 +171,23 @@ public class HydraDrive {
             }
             SetAllMotorPower(mCurrentDrivePower);
 
+        }
+        if (mOp.mLogger != null) {
+            mOp.mLogger.blposition.set(BLmotPos);
+            mOp.mLogger.bltarget.set(BLmotTarget);
+            mOp.mLogger.brposition.set(BRmotPos);
+            mOp.mLogger.brtarget.set(BRmotTarget);
+            mOp.mLogger.flposition.set(FLmotPos);
+            mOp.mLogger.fltarget.set(FLmotTarget);
+            mOp.mLogger.frposition.set(FRmotPos);
+            mOp.mLogger.frtarget.set(FRmotTarget);
+            mOp.mLogger.drMotPwr.set(mCurrentDrivePower);
+            for (VoltageSensor battvolt : mOp.mHardwareMap.voltageSensor) {
+                // I assume it's the first battery voltage
+                mOp.mLogger.battVoltage.set(battvolt.getVoltage());
+                break;
+            }
+            mOp.mLogger.writeLine();
         }
         // if any motor is still active, we are still busy
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {

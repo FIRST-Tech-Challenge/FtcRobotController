@@ -33,6 +33,8 @@ public class HydraDatalogger
     public Datalogger.GenericField blposition = new Datalogger.GenericField("BL Pos");
     public Datalogger.GenericField brtarget = new Datalogger.GenericField("BR Tgt");
     public Datalogger.GenericField brposition = new Datalogger.GenericField("BR Pos");
+    public Datalogger.GenericField drMotPwr = new Datalogger.GenericField("Dr Pwr");
+    public Datalogger.GenericField battVoltage = new Datalogger.GenericField("Batt");
 
     public HydraDatalogger(String name)
     {
@@ -53,6 +55,8 @@ public class HydraDatalogger
                 // the fields is the order in which they will appear in the log.
                 .setFields(
                         loops,
+                        battVoltage,
+                        drMotPwr,
                         fltarget,
                         flposition,
                         frtarget,
