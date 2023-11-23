@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
-import org.firstinspires.ftc.teamcode.tools.RobotStateMachine;
+import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "FC_square_TO_drive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
@@ -15,9 +14,8 @@ public class TeleopDrive extends LinearOpMode {
     private SlideLift slideLiftObj;
     private Intake intakeObj;
     private Hanger hangerObj;
-    private Button handlerButtonA;
-    private Button handlerButtonB;
-    RobotStateMachine stateMachine;
+
+    Robot robot;
 
     public void Setup(){
         TelemetryManager.setTelemetry(telemetry);
@@ -29,9 +27,7 @@ public class TeleopDrive extends LinearOpMode {
         intakeObj = new Intake(hardwareMap);
         hangerObj = new Hanger(hardwareMap);*/
 
-        handlerButtonA = new Button(gamepad2, Button.NAME.A);
-        handlerButtonB = new Button(gamepad2, Button.NAME.B);
-        stateMachine = new RobotStateMachine(hardwareMap, handlerButtonA, handlerButtonB);
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
     }
 
@@ -66,14 +62,10 @@ public class TeleopDrive extends LinearOpMode {
 
             /*intakeObj.setIntakePower(driverButtonA);
             hangerObj.setHangerPower(driverButtonB);*/
-            updateButtons();
-            stateMachine.update();
-            telemetry.addLine("Is handler button A pressed?" + handlerButtonA.Pressed());
-            telemetry.addLine("Is handler button B pressed?" + handlerButtonB.Pressed());
+            robot.update();
+            telemetry.addLine("Is handler button A pressed?" + robot.handlerButtonA.Pressed());
+            telemetry.addLine("Is handler button B pressed?" + robot.handlerButtonB.Pressed());
         }
     }
-    private void updateButtons(){
-        handlerButtonA.updateButton(gamepad2);
-        handlerButtonB.updateButton(gamepad2);
-    }
+
 }

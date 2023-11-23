@@ -45,6 +45,16 @@ public class ActionBuilder {
         return add(name, function);
     }
 
+    public ActionBuilder stopMotor(DcMotor motor) {
+        ActionFunction function = () -> {
+            motor.setPower(0);
+            return true;
+        };
+        String name =
+                "stop motor " + motor.getDeviceName();
+        return add(name, function);
+    }
+
     public ActionBuilder servoRunToPosition(Servo servo, double targetPosition) {
         ActionFunction function = () -> {
             servo.setPosition(targetPosition);
