@@ -19,9 +19,9 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setDimensions(16.5,17.5)
-                .setConstraints(120, 60, 4 * PI, 2 * PI, 16)
+                .setConstraints(100, 60, 4 * PI, 2 * PI, 16)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-38.5, -62, Math.toRadians(-90)))
                                         .setReversed(true)
                                         .lineToLinearHeading(new Pose2d(-55, -32, toRadians(-160)))
                                         .setReversed(true)

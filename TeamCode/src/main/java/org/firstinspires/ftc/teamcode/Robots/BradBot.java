@@ -359,6 +359,8 @@ public class BradBot extends BasicRobot {
     arm.update();
     if (!isTeleop) {
       cv.update();
+      if(op.isStarted())
+        queuer.setFirstLoop(false);
     }
     intake.update();
     lift.update();
