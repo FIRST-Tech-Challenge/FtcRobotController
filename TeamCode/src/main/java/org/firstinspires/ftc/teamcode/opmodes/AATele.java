@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,17 +13,20 @@ public class AATele extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         CrabRobot robot = new CrabRobot(this);
         waitForStart();
-        robot.addGamepads(gamepad1,gamepad2);
+        robot.addGamepads(gamepad1, gamepad2);
         SmartGamepad smartGamepad1 = robot.smartGamepad1;
         SmartGamepad smartGamepad2 = robot.smartGamepad2;
+
+        NanoClock clock = NanoClock.system();
+        double prevTime = clock.seconds();
 
         while (!isStopRequested()) {
             //EDWARD'S INTAKE
             boolean buttonA = gamepad2.a;
             boolean buttonB = gamepad2.b;
-            //telemetry.addData("left_stick_y:", gamepad1.left_stick_y);
-            telemetry.update();
-            robot.update();
+
+                //telemetry.update();
+                robot.update();
 
             /*
             if(buttonA) {
@@ -34,30 +38,49 @@ public class AATele extends LinearOpMode {
             robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
             */
 
-            //UG OUTTAKE
+                //UG OUTTAKE
 
-            if(smartGamepad2.dpad_right){
-                robot.outtake.moveArm(0.1);
-            } if(smartGamepad2.dpad_left) {
-                robot.outtake.moveArm(-0.1);
+                if (smartGamepad2.dpad_right) {
+                    robot.outtake.moveArm(0.1);
+                }
+                if (smartGamepad2.dpad_left) {
+                    robot.outtake.moveArm(-0.1);
+                }
+
+                if (smartGamepad2.left_trigger_pressed()) {
+                    robot.outtake.moveDumper(-0.1);
+                }
+                if (smartGamepad2.right_trigger_pressed()) {
+                    robot.outtake.moveDumper(0.1);
+                }
+
+                if (smartGamepad2.x_pressed()) {
+                    robot.outtake.toIntakePos();
+                }
+                if (smartGamepad2.b_pressed()) {
+                    robot.outtake.toDumpPos(2);
+                }
+                if (smartGamepad2.right_bumper) {
+                    robot.outtake.dropPixelPos();
+                }
+                if (smartGamepad2.dpad_up_pressed()) {
+                robot.dualMotorLift.goToRelativeOffset(2);
+                telemetry.addLine("dpad up pressed");
+                //Log.v("PIDLift: gamepad", "dpad up");
+                }
+                else if (smartGamepad2.dpad_down_pressed()) {
+                    robot.dualMotorLift.goToRelativeOffset(-2);
+                    telemetry.addLine("dpad down pressed");
+                    //Log.v("PIDLift: gamepad", "dpad down");
+                }
+
+                telemetry.addData("right servo position: ", robot.outtake.getRightServoPos());
+                telemetry.addData("left servo position: ", robot.outtake.getLeftServoPos());
+                telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
+                //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
+                double currentTime = clock.seconds();
+                telemetry.addData("Update time: ", currentTime - prevTime);
+                prevTime = currentTime;
             }
-
-            if(smartGamepad2.left_trigger_pressed()) { robot.outtake.moveDumper(-0.1);}
-            if(smartGamepad2.right_trigger_pressed()) {robot.outtake.moveDumper( 0.1);}
-
-            if (smartGamepad2.x_pressed()) {
-                robot.outtake.toIntakePos();
-            } if(smartGamepad2.b_pressed()){
-                robot.outtake.toDumpPos(2);
-            } if(smartGamepad2.right_bumper){
-                robot.outtake.dropPixelPos();
-            }
-
-            telemetry.addData("right servo position: ", robot.outtake.getRightServoPos());
-            telemetry.addData("left servo position: ", robot.outtake.getLeftServoPos());
-            telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
-            //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
-
         }
     }
-}

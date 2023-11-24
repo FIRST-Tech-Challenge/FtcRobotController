@@ -59,12 +59,13 @@ public class DualMotorLift implements Subsystem {
         this.mode = mode;
         this.telemetry = telemetry;
         batteryVoltageSensor = robot.getVoltageSensor();
-        slideMotorL = robot.getMotor("slideMotorL");
-        slideMotorR = robot.getMotor("slideMotorR");
+        slideMotorL = robot.getMotor("slideLt");
+        slideMotorR = robot.getMotor("slideRt");
         slideMotorL.setTargetPositionTolerance(inchToTicks(0.3)); //HEIGHT_DIFF_TOLERANCE);
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
         if (mode== Mode.RIGHT_FOLLOW_LEFT) {
             slideMotorL.setTargetPosition(0);
             slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -197,9 +198,9 @@ public class DualMotorLift implements Subsystem {
             */
         }
         this.targetReached = (this.targetReached || (motorLVel <= 20 && Math.abs(targetPos - currPos) <= HEIGHT_DIFF_TOLERANCE));
-        //telemetry.addData("slideMotorL.getVelocity() ", Math.abs(slideMotorL.getVelocity()));
-        //telemetry.addData("lastError ", ticksToInches((int)Math.abs(targetPos - currPos)));
-        //telemetry.addData("targetReached ", this.targetReached);
+        telemetry.addData("slideMotorL.getVelocity() ", Math.abs(slideMotorL.getVelocity()));
+        telemetry.addData("lastError ", ticksToInches((int)Math.abs(targetPos - currPos)));
+        telemetry.addData("targetReached ", this.targetReached);
         //telemetry.update();
     }
 
@@ -258,7 +259,7 @@ public class DualMotorLift implements Subsystem {
         }
         //telemetry.addLine("Slide motor set to " + ticksToInches(slideMotorL.getTargetPosition()));
         //telemetry.addLine("current slide velocity: " + slideMotorL.getVelocity());
-        //telemetry.addLine("current slide position: " + ticksToInches(slideMotorL.getCurrentPosition()));
+        telemetry.addLine("current slide position: " + ticksToInches(slideMotorL.getCurrentPosition()));
         packet.put("target pos (inches)", ticksToInches(slideMotorL.getTargetPosition()));
         if (mode == Mode.BOTH_MOTORS_PID) {
             packet.put("PID target pos", pidfController.getTargetPosition());
