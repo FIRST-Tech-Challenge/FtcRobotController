@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 public class HydrAuton_Backstage extends HydrAuton {
-    protected boolean setTrueForRed = false;
-    protected boolean setTrueForRiggingOnRight = false;
     public boolean RunAuton() {
         if (autonState < 100) {
             // These states handle driving to the correct spike
@@ -49,25 +47,22 @@ public class HydrAuton_Backstage extends HydrAuton {
                         }
                         int dist;
                         switch (ObjLoc) {
-                            case ObjLocLeftSpike:
-                                if (setTrueForRed) {
-                                    dist = 34;
-                                }
-                                else {
-                                    dist = 26;
-                                }
+                            case ObjLocRedLeftSpike:
+                                dist = 34;
                                 break;
-                            case ObjLocCenterSpike:
+                            case ObjLocBlueLeftSpike:
                                 dist = 26;
                                 break;
-                            case ObjLocRightSpike:
+                            case ObjLocBlueCenterSpike:
+                            case ObjLocRedCenterSpike:
+                                dist = 26;
+                                break;
+                            case ObjLocRedRightSpike:
                             default:
-                                if (setTrueForRed) {
-                                    dist = 26;
-                                }
-                                else {
-                                    dist = 34;
-                                }
+                                dist = 26;
+                                break;
+                            case ObjLocBlueRightSpike:
+                                dist = 34;
                                 break;
                         }
                         Drive.Start(0, dist * flip, 0);

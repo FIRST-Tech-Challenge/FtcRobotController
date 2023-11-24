@@ -5,7 +5,10 @@ package org.firstinspires.ftc.teamcode.types;
  */
 public enum HydraObjectLocations {
     ObjLocUnknown,
-    ObjLocLeftSpike,
-    ObjLocCenterSpike,
-    ObjLocRightSpike
+    ObjLocBlueLeftSpike,
+    ObjLocBlueCenterSpike,
+    ObjLocBlueRightSpike,
+    ObjLocRedLeftSpike,
+    ObjLocRedCenterSpike,
+    ObjLocRedRightSpike
 }

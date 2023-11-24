@@ -29,9 +29,12 @@ public class HydrAuton extends LinearOpMode {
     protected HydraPixelPalace PixelPalace;
     protected HydraIntake Intake;
     protected HydraObjectLocations ObjLoc;
+    protected HydraObjectDetect ObjDet;
     protected ElapsedTime pixelDropTimer;
     protected int autonState;
     protected String modelFilename = "Blue_Prop.tflite";
+    protected boolean setTrueForRed = false;
+    protected boolean setTrueForRiggingOnRight = false;
     protected HydraOpMode mOp;
     protected MultipleTelemetry dashboard;
     protected final int cMaxObjectSearchTimeMs = 2000;
@@ -67,7 +70,7 @@ public class HydrAuton extends LinearOpMode {
         Drive = new HydraDrive(mOp);
         PixelPalace = new HydraPixelPalace(mOp);
         Intake = new HydraIntake(mOp);
-        HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename);
+        ObjDet = new HydraObjectDetect(mOp, modelFilename);
         // print any telemetry that came from initialization of the subsystems
         mOp.mTelemetry.update();
         // manual caching mode
@@ -102,7 +105,7 @@ public class HydrAuton extends LinearOpMode {
                 mod.clearBulkCache();
             }
             // Run tensorflow to see if we can find the object
-            ObjLoc = ObjDet.GetObjectLocation();
+            ObjLoc = ObjDet.GetObjectLocation(setTrueForRed);
             // UNCOMMENT THIS TO HARDCODE THE OBJECT LOCATION
             // ObjLoc = HydraObjectLocations.ObjLocCenterSpike;
             // Push telemetry to the Driver Station.
@@ -116,8 +119,15 @@ public class HydrAuton extends LinearOpMode {
         }
         // If we did not find it, we have no choice but to assume that it was in the position we can't see
         if (ObjLoc == HydraObjectLocations.ObjLocUnknown) {
-            ObjLoc = HydraObjectLocations.ObjLocRightSpike;
+            if (setTrueForRed) {
+                ObjLoc = HydraObjectLocations.ObjLocRedRightSpike;
+            }
+            else {
+                ObjLoc = HydraObjectLocations.ObjLocBlueRightSpike;
+            }
         }
+        // disable object detection now to save CPU
+        ObjDet.SetObjDetectEnabled(false);
         // Run the proper auton for the object location
         while (opModeIsActive()) {
             // clear the hardware read cache
@@ -197,7 +207,8 @@ public class HydrAuton extends LinearOpMode {
             case 0:
                 // Jump to the correct state based on the location
                 switch (ObjLoc) {
-                    case ObjLocRightSpike:
+                    case ObjLocBlueRightSpike:
+                    case ObjLocRedRightSpike:
                         if (flipWhenRiggingIsRight) {
                             autonState = 30;
                         }
@@ -205,10 +216,12 @@ public class HydrAuton extends LinearOpMode {
                             autonState = 10;
                         }
                         break;
-                    case ObjLocCenterSpike:
+                    case ObjLocBlueCenterSpike:
+                    case ObjLocRedCenterSpike:
                         autonState = 20;
                         break;
-                    case ObjLocLeftSpike:
+                    case ObjLocBlueLeftSpike:
+                    case ObjLocRedLeftSpike:
                         if (flipWhenRiggingIsRight) {
                             autonState = 10;
                         }
@@ -294,24 +307,17 @@ public class HydrAuton extends LinearOpMode {
             case 200:
                 switch (ObjLoc) {
                     // jump to the correct state based on the detected location
-                    case ObjLocRightSpike:
-                        if (flipWhenRed) {
-                            autonState = 230;
-                        }
-                        else {
-                            autonState = 210;
-                        }
+                    case ObjLocBlueLeftSpike:
+                    case ObjLocRedRightSpike:
+                        autonState = 230;
                         break;
-                    case ObjLocCenterSpike:
+                    case ObjLocBlueRightSpike:
+                    case ObjLocRedLeftSpike:
+                        autonState = 210;
+                        break;
+                    case ObjLocBlueCenterSpike:
+                    case ObjLocRedCenterSpike:
                         autonState = 220;
-                        break;
-                    case ObjLocLeftSpike:
-                        if (flipWhenRed) {
-                            autonState = 210;
-                        }
-                        else {
-                            autonState = 230;
-                        }
                         break;
                     default:
                         return false;
@@ -439,22 +445,17 @@ public class HydrAuton extends LinearOpMode {
             case 200:
                 // jump to the correct state based on which spike we are at
                 switch (ObjLoc) {
-                    case ObjLocRightSpike:
-                        if (flipForRed) {
-                            autonState = 210;
-                        } else {
-                            autonState = 230;
-                        }
+                    case ObjLocBlueLeftSpike:
+                    case ObjLocRedRightSpike:
+                        autonState = 210;
                         break;
-                    case ObjLocCenterSpike:
+                    case ObjLocBlueCenterSpike:
+                    case ObjLocRedCenterSpike:
                         autonState = 220;
                         break;
-                    case ObjLocLeftSpike:
-                        if (flipForRed) {
-                            autonState = 230;
-                        } else {
-                            autonState = 210;
-                        }
+                    case ObjLocBlueRightSpike:
+                    case ObjLocRedLeftSpike:
+                        autonState = 230;
                         break;
                     default:
                         return false;

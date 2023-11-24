@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 public class HydrAuton_Wing extends HydrAuton {
-    protected boolean setTrueForRed = false;
-    protected boolean setTrueForRiggingOnRight = false;
     public boolean RunAuton() {
         if (autonState < 100) {
             // These states handle driving to the correct spike
@@ -46,6 +44,11 @@ public class HydrAuton_Wing extends HydrAuton {
         else {
             BadState();
             return true;
+        }
+        if (autonState >= 200) {
+            // now that we are driving towards the backdrop, start looking for the AprilTag
+            // this just prints to telemetry for now
+            ObjDet.FindAprilTag(ObjLoc);
         }
         return false;
     }
