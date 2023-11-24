@@ -93,7 +93,7 @@ public class StateMachine {
     }
 
     private final ArrayList<State> states = new ArrayList<>(); // List of all states in the state machine
-    private State currentState = null; // The state machine's current state
+    public State currentState = null; // The state machine's current state
 
     // Method to add a new state to the state machine
     public void addState(State state) {
@@ -112,6 +112,10 @@ public class StateMachine {
     public void updateState() {
         assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
         currentState = currentState.update(); // Update the current state, which may cause a state transition
+    }
+
+    public State getCurrentState(){
+        return currentState;
     }
 }
 

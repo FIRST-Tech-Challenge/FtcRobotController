@@ -22,14 +22,18 @@ public class Robot {
         this.gamepad2 = gamepad2;
 
         // Button assignment
-        handlerButtonA = new Button(this.gamepad2, Button.NAME.A);
-        handlerButtonB = new Button(this.gamepad2, Button.NAME.B);
-        handlerButtonX = new Button(this.gamepad2, Button.NAME.X);
-        handlerButtonY = new Button(this.gamepad2, Button.NAME.Y);
-        handlerButtonLeftBumper = new Button(this.gamepad2, Button.NAME.LEFT_BUMPER);
-        handlerButtonRightBumper = new Button(this.gamepad2, Button.NAME.RIGHT_BUMPER);
-        handlerButtonLeftTrigger = new Button(this.gamepad2, Button.NAME.LEFT_TRIGGER);
-        handlerButtonRightTrigger = new Button(this.gamepad2, Button.NAME.RIGHT_TRIGGER);
+        handlerA = new Button(this.gamepad2, Button.NAME.A);
+        handlerB = new Button(this.gamepad2, Button.NAME.B);
+        handlerX = new Button(this.gamepad2, Button.NAME.X);
+        handlerY = new Button(this.gamepad2, Button.NAME.Y);
+        handlerLeftBumper = new Button(this.gamepad2, Button.NAME.LEFT_BUMPER);
+        handlerRightBumper = new Button(this.gamepad2, Button.NAME.RIGHT_BUMPER);
+        handlerLeftTrigger = new Button(this.gamepad2, Button.NAME.LEFT_TRIGGER);
+        handlerRightTrigger = new Button(this.gamepad2, Button.NAME.RIGHT_TRIGGER);
+        handlerDPad_Down = new Button(this.gamepad2, Button.NAME.DPAD_DOWN);
+        handlerDPad_Up = new Button(this.gamepad2, Button.NAME.DPAD_UP);
+        handlerDPad_Left = new Button(this.gamepad2, Button.NAME.DPAD_LEFT);
+        handlerDPad_Right = new Button(this.gamepad2, Button.NAME.DPAD_RIGHT);
 
         stateMachine = new StateMachine();
 
@@ -38,12 +42,15 @@ public class Robot {
         rejectingPixels = new StateMachine.State("rejectingPixels");
         holdingPixels = new StateMachine.State("holdingPixels");
         noPixels = new StateMachine.State("noPixels");
+        outTakingPixels = new StateMachine.State("outTakingPixels");
 
         // Adding states to stateMachine
         stateMachine.addState(intakingPixels);
         stateMachine.addState(rejectingPixels);
         stateMachine.addState(holdingPixels);
         stateMachine.addState(noPixels);
+        stateMachine.addState(outTakingPixels);
+
 
         //testing
         /*readyForIntake = new StateMachine.State("readyForIntake");
@@ -64,13 +71,16 @@ public class Robot {
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
         liftMotor = hardwareMap.dcMotor.get("liftMotor");
         skyHookMotor = hardwareMap.dcMotor.get("skyHookMotor");
-
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Servos
         clawPitch = hardwareMap.servo.get("clawPitch");
         clawYaw = hardwareMap.servo.get("clawYaw");
         clawGrip = hardwareMap.servo.get("clawGrip");
+
+        clawGrip.scaleRange(0.02, 0.22);
+        clawPitch.scaleRange(0.755, 0.973);
+        clawYaw.scaleRange(0.125, 0.675);
 
         // Touch Sensors
         liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
@@ -79,23 +89,34 @@ public class Robot {
         clawOpen = 1;
         clawClose = 0;
 
+        clawPitchIntake = 0;
+        clawPitchOutTake = 0;
+
+        clawYawIntake = -0.5; // temporary placeholder value, even though servo pos is 0 to 1 still need to reprogram it to turn further
+
+
 
 
         // Timer
         timer = new ElapsedTime();
 
         // button triggers
-        BooleanSupplier handlerButtonAPressed = handlerButtonA::Pressed;
-        BooleanSupplier handlerButtonBPressed = handlerButtonB::Pressed;
-        BooleanSupplier handlerButtonXPressed = handlerButtonX::Pressed;
-        BooleanSupplier handlerButtonYPressed = handlerButtonY::Pressed;
-        BooleanSupplier handlerButtonLeftBumperPressed = handlerButtonLeftBumper::Pressed;
-        BooleanSupplier handlerButtonRightBumperPressed = handlerButtonRightBumper::Pressed;
-        BooleanSupplier handlerButtonLeftTriggerPressed = handlerButtonLeftTrigger::Pressed;
-        BooleanSupplier handlerButtonRightTriggerPressed = handlerButtonRightTrigger::Pressed;
+        BooleanSupplier handlerButtonAPressed = handlerA::Pressed;
+        BooleanSupplier handlerButtonBPressed = handlerB::Pressed;
+        BooleanSupplier handlerButtonXPressed = handlerX::Pressed;
+        BooleanSupplier handlerButtonYPressed = handlerY::Pressed;
+        BooleanSupplier handlerButtonLeftBumperPressed = handlerLeftBumper::Pressed;
+        BooleanSupplier handlerButtonRightBumperPressed = handlerRightBumper::Pressed;
+        BooleanSupplier handlerButtonLeftTriggerPressed = handlerLeftTrigger::Pressed;
+        BooleanSupplier handlerButtonRightTriggerPressed = handlerRightTrigger::Pressed;
+        BooleanSupplier handlerDPad_DownPressed = handlerDPad_Down::Pressed;
+        BooleanSupplier handlerDPad_UpPressed = handlerDPad_Up::Pressed;
+        BooleanSupplier handlerDPad_LeftPressed = handlerDPad_Left::Pressed;
+        BooleanSupplier handlerDPad_RightPressed = handlerDPad_Right::Pressed;
 
 
-        // adding transitions
+
+        // testing
         /*readyForIntake.addTransitionTo(intaking, handlerButtonAPressed,
                 new ActionBuilder().addLine("start")
                                    .setMotorPosition(testingMotor, 300, 0.7)
@@ -113,7 +134,12 @@ public class Robot {
                                    .addLine("i skipped ")
                                    .setMotorPosition(testingMotor, 0, 0.7));
         */
-        noPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
+
+
+        // adding transitions
+
+        // intaking pixels
+        /*noPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .startMotor(intakeMotor, 0.2));
 
@@ -122,6 +148,7 @@ public class Robot {
                         .servoRunToPosition(clawGrip, clawClose)
                         .stopMotor(intakeMotor));
 
+        // rejecting pixels
         holdingPixels.addTransitionTo(rejectingPixels, handlerButtonLeftBumperPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawOpen)
@@ -129,7 +156,14 @@ public class Robot {
 
         rejectingPixels.addTransitionTo(noPixels, handlerButtonLeftBumperPressed,
                 new ActionBuilder()
-                        .stopMotor(intakeMotor));
+                        .stopMotor(intakeMotor));*/
+
+        holdingPixels.addTransitionTo(outTakingPixels, handlerButtonBPressed,
+                new ActionBuilder()
+                        .setMotorPosition(liftMotor, liftOutTake, 1)
+                        .servoRunToPosition(clawPitch, clawPitchOutTake));
+
+        //outTakingPixels.addTransitionTo(noPixels);
     }
 
 
@@ -138,10 +172,7 @@ public class Robot {
     StateMachine stateMachine;
     /*StateMachine.State readyForIntake;
     StateMachine.State intaking;*/
-    StateMachine.State intakingPixels;
-    StateMachine.State rejectingPixels;
-    StateMachine.State holdingPixels;
-    StateMachine.State noPixels;
+    public StateMachine.State intakingPixels, rejectingPixels, holdingPixels, noPixels, outTakingPixels;
 
     // testing
     /*DcMotor testingMotor;
@@ -149,42 +180,45 @@ public class Robot {
 
     // Motors
 
-    DcMotor intakeMotor;
-    DcMotor liftMotor;
-    DcMotor skyHookMotor;
+    public static DcMotor intakeMotor, liftMotor, skyHookMotor;
     // Servos
-    Servo clawPitch;
-    Servo clawYaw;
-    Servo clawGrip;
+    public static Servo clawPitch, clawYaw, clawGrip;
     // TouchSensors
-    TouchSensor liftTouchDown;
-    TouchSensor skyHookTouchUp;
+    public static TouchSensor liftTouchDown, skyHookTouchUp;
 
-    double clawOpen;
-    double clawClose;
+    static double clawPitchIntake, clawPitchOutTake;
+    public static double clawOpen, clawClose, clawYawIntake, clawYawLeft, clawYawRight;
+    int liftOutTake;
 
-    public Button handlerButtonA, handlerButtonB, handlerButtonX, handlerButtonY, handlerButtonLeftBumper,
-            handlerButtonRightBumper, handlerButtonLeftTrigger, handlerButtonRightTrigger;
+    public static Button handlerA, handlerB, handlerX, handlerY, handlerLeftBumper,
+            handlerRightBumper, handlerLeftTrigger, handlerRightTrigger, handlerDPad_Down, handlerDPad_Up, handlerDPad_Left, handlerDPad_Right;
 
-    Gamepad gamepad1;
-    Gamepad gamepad2;
+    Gamepad gamepad1, gamepad2;
     ActionBuilder actionBuilder;
     ElapsedTime timer;
 
     private void updateButtons(){
-        handlerButtonA.updateButton(gamepad2);
-        handlerButtonB.updateButton(gamepad2);
-        handlerButtonX.updateButton(gamepad2);
-        handlerButtonY.updateButton(gamepad2);
-        handlerButtonLeftBumper.updateButton(gamepad2);
-        handlerButtonRightBumper.updateButton(gamepad2);
-        handlerButtonLeftTrigger.updateButton(gamepad2);
-        handlerButtonRightTrigger.updateButton(gamepad2);
+        handlerA.updateButton(gamepad2);
+        handlerB.updateButton(gamepad2);
+        handlerX.updateButton(gamepad2);
+        handlerY.updateButton(gamepad2);
+        handlerLeftBumper.updateButton(gamepad2);
+        handlerRightBumper.updateButton(gamepad2);
+        handlerLeftTrigger.updateButton(gamepad2);
+        handlerRightTrigger.updateButton(gamepad2);
+        handlerDPad_Down.updateButton(gamepad2);
+        handlerDPad_Up.updateButton(gamepad2);
+        handlerDPad_Left.updateButton(gamepad2);
+        handlerDPad_Right.updateButton(gamepad2);
     }
 
     public void update(){
         updateButtons();
         stateMachine.updateState();
+    }
+
+    public StateMachine.State currentState(){
+        return stateMachine.getCurrentState();
     }
 
 }

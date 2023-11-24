@@ -11,21 +11,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleopDrive extends LinearOpMode {
     private SetDriveMotors setDriveMotorsObj;
 
-    private SlideLift slideLiftObj;
-    private Intake intakeObj;
-    private Hanger hangerObj;
-
     Robot robot;
 
     public void Setup(){
         TelemetryManager.setTelemetry(telemetry);
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
-        //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        //TouchSensor touchDown = hardwareMap.touchSensor.get("touchDown");
-
-       /* slideLiftObj = new SlideLift(hardwareMap);
-        intakeObj = new Intake(hardwareMap);
-        hangerObj = new Hanger(hardwareMap);*/
 
         robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
@@ -58,13 +48,16 @@ public class TeleopDrive extends LinearOpMode {
 //            }
             setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast);
 
-            //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); //not ready to test yet
 
-            /*intakeObj.setIntakePower(driverButtonA);
-            hangerObj.setHangerPower(driverButtonB);*/
             robot.update();
-            telemetry.addLine("Is handler button A pressed?" + robot.handlerButtonA.Pressed());
-            telemetry.addLine("Is handler button B pressed?" + robot.handlerButtonB.Pressed());
+
+            if(robot.currentState()== robot.outTakingPixels){
+
+                if(Robot.handlerRightBumper.Pressed()){
+                    Robot.clawGrip.setPosition(Robot.clawOpen);
+                }
+            }
+
         }
     }
 
