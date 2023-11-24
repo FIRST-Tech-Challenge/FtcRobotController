@@ -4,29 +4,41 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class LinearSlideMovement {
 
-    static final int top_linearslide_ticks = 2000;
-
-    static final int mid_linearslide_ticks = 1000;
-
-    static final int low_linearslide_ticks = 500;
-
-    static final int bottom_linearslide_ticks = 0;
+    private IntakeMovement intake;
 
     private DcMotor leftLinearSlide;
 
     private DcMotor rightLinearSlide;
 
-    public void LinearSlideMovement(DcMotor leftSlide, DcMotor rightSlide){
+    /**
+     * Pulls in information about the motors that is determined during initialization and the
+     * IntakeMovement class and makes that information accessible to the rest of this class
+     * @param leftSlide  the left slide motor
+     * @param  rightSlide  the right slide motor
+     * @param  intakeMovement  the IntakeMovement class
+     */
+    public LinearSlideMovement(DcMotor leftSlide, DcMotor rightSlide, IntakeMovement intakeMovement){
         leftLinearSlide = leftSlide;
         rightLinearSlide = rightSlide;
+        intake = intakeMovement;
+        initMovement();
     }
 
+    /**
+     * Resets all wheel motor encoder positions to 0
+     */
     private void initMovement(){
         leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void linearslidetop(){
-
+    public void Movelinearslide(int ticks){
+        intake.FlipDown();
+        leftLinearSlide.setTargetPosition(ticks);
+        rightLinearSlide.setTargetPosition(ticks);
+        leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLinearSlide.setPower(0.5);
+        rightLinearSlide.setPower(0.5);
     }
 }

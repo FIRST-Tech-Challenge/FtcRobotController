@@ -22,6 +22,9 @@ public class IntakeMovement {
     static final double FLIP_MAX_POS     =  1.0;     // Maximum rotational position of the wrist servo
     static final double FLIP_MIN_POS     =  0.4;     // Minimum rotational position of the wrist servo
 
+    double rightClawPos = RIGHT_MIN_POS;
+    double leftClawPos = LEFT_MAX_POS;
+    double flipPos = FLIP_MAX_POS;
 
     public Servo rightClaw;
     public Servo leftClaw;
@@ -43,31 +46,45 @@ public class IntakeMovement {
      *  Sets both the left and right servos to an open position.
      */
     public void ClawOpen(){
-        rightClaw.setPosition(RIGHT_MAX_POS);
-        leftClaw.setPosition(LEFT_MIN_POS);
+        while (rightClawPos<RIGHT_MAX_POS && leftClawPos>LEFT_MIN_POS) {
+            rightClawPos += .01;
+            leftClawPos -= .01;
+            rightClaw.setPosition(rightClawPos);
+            leftClaw.setPosition(leftClawPos);
+        }
     }
 
     /**
      * Sets both the left and right servos to a closed position.
      */
     public void ClawClosed(){
-        rightClaw.setPosition(RIGHT_MIN_POS);
-        leftClaw.setPosition(LEFT_MAX_POS);
+        while (rightClawPos>RIGHT_MIN_POS && leftClawPos<LEFT_MAX_POS) {
+            rightClawPos -= .01;
+            leftClawPos += .01;
+            rightClaw.setPosition(rightClawPos);
+            leftClaw.setPosition(leftClawPos);
+        }
     }
 
     /**
      * Sets the wrist position downward past the floor to allow
      * the claw servos to touch it.
      */
-    public void FlipDown(){
-       intakeFlip.setPosition(FLIP_MAX_POS);
+    public void FlipDown() {
+        while (flipPos < FLIP_MAX_POS){
+            flipPos += .01;
+            intakeFlip.setPosition(flipPos);
+        }
     }
 
     /**
      * Sets the wrist position upward about 180 degrees from the floor.
      */
     public void FlipUp(){
-       intakeFlip.setPosition(FLIP_MIN_POS);
+        while (flipPos>FLIP_MIN_POS) {
+            flipPos -= .01;
+            intakeFlip.setPosition(flipPos);
+        }
     }
 
 }

@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
+import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -71,6 +72,15 @@ import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
+    static final int top_linearslide_ticks = 2000;
+
+    static final int mid_linearslide_ticks = 1000;
+
+    static final int low_linearslide_ticks = 500;
+
+    static final int bottom_linearslide_ticks = 0;
+
+
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -88,6 +98,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     Servo conveyor;
 
     IntakeMovement intake;
+    LinearSlideMovement linearslidemovement;
 
     @Override
     public void runOpMode() {
@@ -129,6 +140,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
 
         intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip);
+        linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
         double powerFactor = 0.25;
@@ -155,13 +167,13 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             }
             
             if(gamepad1.dpad_down){
-                
+                linearslidemovement.Movelinearslide(low_linearslide_ticks);
             } else if (gamepad1.dpad_left) {
-                
+                linearslidemovement.Movelinearslide(mid_linearslide_ticks);
             } else if (gamepad1.dpad_right) {
-                
+                linearslidemovement.Movelinearslide(bottom_linearslide_ticks);
             } else if (gamepad1.dpad_up) {
-                
+                linearslidemovement.Movelinearslide(top_linearslide_ticks);
             }
 
             if (gamepad1.left_bumper){
