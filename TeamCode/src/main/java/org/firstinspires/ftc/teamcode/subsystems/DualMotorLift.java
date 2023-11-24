@@ -23,8 +23,8 @@ public class DualMotorLift implements Subsystem {
     //Hardware: 2 lift motors
     private DcMotorEx slideMotorL;
     private DcMotorEx slideMotorR;
-    private static final double TICKS_PER_REV = 537.7; //fix this
-    private static final double PULLEY_DIAMETER = 50.4 / 25.4; //update diameter of the pulley
+    private static final double TICKS_PER_REV = 751.8; //5203-2402-0027, 223 RPM
+    private static final double PULLEY_DIAMETER_IN = (32.25 / 24.5); //3407-0002-0112 // = 1.269685 inches
     private final int HEIGHT_DIFF_TOLERANCE = inchToTicks(1.5); //(int) (0.3*TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
     private Telemetry telemetry;
     private boolean targetReached = true;
@@ -39,8 +39,8 @@ public class DualMotorLift implements Subsystem {
     public Mode mode;
     // Public just to allow tuning through Dashboard
     public static double  UP_VELOCITY = 500;
-    public static double[] LEVEL_HT = {0, 6.5, 17.0, 29.0, 4}; // in inches, please fine-tune
-    //4 levels: 0 ground, 1 low, 2 middle, 3 high, 4 (minimum height for free chain bar movement)
+    public static double[] LEVEL_HT = {0, 6.5, 17.0, 29.0}; // in inches, please fine-tune
+    //4 levels: 0 ground, 1 low, 2 middle, 3 high
     //0:5.0
 
     private PIDFController pidfController;
@@ -187,7 +187,6 @@ public class DualMotorLift implements Subsystem {
             this.targetReached = (this.targetReached ||
                     (Math.abs(slideMotorL.getVelocity()) <= 20
                             && (Math.abs(slideMotorL.getTargetPosition() - slideMotorL.getCurrentPosition()) <= HEIGHT_DIFF_TOLERANCE)));
-
             */
         } else {
             targetPos = inchToTicks(pidfController.getTargetPosition());
@@ -209,18 +208,14 @@ public class DualMotorLift implements Subsystem {
     }
 
     public int inchToTicks(double inches) {
-        return (int) (inches * TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
+        return (int) (inches * TICKS_PER_REV / (PULLEY_DIAMETER_IN * Math.PI));
     }
     private double ticksToInches(int ticks){
-        return ((double) ticks) / (TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
+        return ((double) ticks) / (TICKS_PER_REV / (PULLEY_DIAMETER_IN * Math.PI));
     }
 
     public double getPosition(){
-        return slideMotorL.getCurrentPosition() / (TICKS_PER_REV/(PULLEY_DIAMETER * Math.PI));
-    }
-    public boolean chainBarCanSwing(){
-        //Log.v("ChainBar: can swing?", ticksToInches(slideMotorL.getCurrentPosition())+"");
-        return slideMotorL.getCurrentPosition()>=inchToTicks(LEVEL_HT[4]);
+        return slideMotorL.getCurrentPosition() / (TICKS_PER_REV/(PULLEY_DIAMETER_IN * Math.PI));
     }
 
     public void resetEncoder(){

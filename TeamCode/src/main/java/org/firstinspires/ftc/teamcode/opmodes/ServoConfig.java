@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import android.util.Log;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+
 import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
-import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 @TeleOp
 public class ServoConfig extends LinearOpMode {
@@ -40,6 +35,8 @@ public class ServoConfig extends LinearOpMode {
             boolean dpadDown = gamepad1.dpad_down;//move both arms -
             boolean dpadRight = gamepad1.dpad_right;//adjust right arm +
             boolean dpadLeft = gamepad1.dpad_left;//adjust right arm-
+            double leftTrigger = gamepad1.left_trigger;
+            double rightTrigger = gamepad1.right_trigger;
 
             if(dpadUp){
                 robot.outtake.moveArm(0.1);
@@ -49,12 +46,18 @@ public class ServoConfig extends LinearOpMode {
                 robot.outtake.moveR(0.1);
             } if(dpadLeft) {
                 robot.outtake.moveR(-0.1);
-            } if (gamepad1.x){
-                robot.outtake.resetPos();
+            } if (gamepad1.x) {
+                robot.outtake.resetArmPos();
+            } if(gamepad1.y) {
+                robot.outtake.resetDumpPos();
             }
+            if(leftTrigger>0) { robot.outtake.moveDumper(-0.1);}
+            if(rightTrigger>0) {robot.outtake.moveDumper( 0.1);}
+
 
             telemetry.addData("right servo position: ", robot.outtake.getRightServoPos());
             telemetry.addData("left servo position: ", robot.outtake.getLeftServoPos());
+            telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
 
         }
