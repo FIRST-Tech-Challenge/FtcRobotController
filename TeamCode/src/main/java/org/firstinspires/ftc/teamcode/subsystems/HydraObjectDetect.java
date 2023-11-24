@@ -119,7 +119,8 @@ public class HydraObjectDetect {
                 mOp.mObjLogger.objConf.set(confidence);
                 mOp.mObjLogger.writeLine();
             }
-            if (confidence > highestConfidence) {
+            if (confidence >= highestConfidence) {
+                highestConfidence = confidence;
                 if (x < cXvalueForLeftToCenterObject) {
                     if (trueForRed) {
                         detectedLocation = HydraObjectLocations.ObjLocRedLeftSpike;
