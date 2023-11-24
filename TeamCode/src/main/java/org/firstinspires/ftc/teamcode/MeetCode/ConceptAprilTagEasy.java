@@ -1,4 +1,4 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
+/* Copyright (c) 2023 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -27,51 +27,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.TestBot;
+package org.firstinspires.ftc.teamcode.MeetCode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 /*
- * This OpMode illustrates the basics of TensorFlow Object Detection, using
- * the easiest way.
+ * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
+ * the easy way.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Easy", group = "Concept")
-
-public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
-
-    TestHardware robot = new TestHardware();
-    double xPos, yPos;
+@TeleOp(name = "Concept: AprilTag Easy", group = "Concept")
+//@Disabled
+public class ConceptAprilTagEasy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
+     * The variable to store our instance of the AprilTag processor.
      */
-    private TfodProcessor tfod;
+    private AprilTagProcessor aprilTag;
 
     /**
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-    double xcoord;
 
     @Override
     public void runOpMode() {
-        robot.init(hardwareMap);
-        initTfod();
+
+        initAprilTag();
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -82,10 +77,10 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                telemetryTfod();
-                robot.turnOnEncoders();
+                telemetryAprilTag();
 
-
+                // Push telemetry to the Driver Station.
+                telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
@@ -102,52 +97,53 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
-    }   // end runOpMode()
+    }   // end method runOpMode()
 
     /**
-     * Initialize the TensorFlow Object Detection processor.
+     * Initialize the AprilTag processor.
      */
-    private void initTfod() {
+    public void initAprilTag() {
 
-        // Create the TensorFlow processor the easy way.
-        tfod = TfodProcessor.easyCreateWithDefaults();
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+                    hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
         } else {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                BuiltinCameraDirection.BACK, tfod);
+                    BuiltinCameraDirection.BACK, aprilTag);
         }
 
-    }   // end method initTfod()
+    }   // end method initAprilTag()
 
     /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
+     * Add telemetry about AprilTag detections.
      */
-    private void telemetryTfod() {
+    public void telemetryAprilTag() {
 
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
-        while (currentRecognitions.size() == 0){
-            robot.setPowerOfAllMotorsTo(.2);
-        }
-        robot.setPowerOfAllMotorsTo(0);
-        //telemetry.addData("# Objects Detected", currentRecognitions.size());
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
 
-        // Step through the list of recognitions and display info for each one.
-        for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-            xPos = x;
-            yPos = y;
-
-            telemetry.addData(""," ");
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
         }   // end for() loop
 
-    }   // end method telemetryTfod()
+        // Add "key" information to telemetry
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+    }   // end method telemetryAprilTag()
 
 }   // end class

@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 public class TestHardware {
     public DcMotor frontLeft, backLeft, frontRight, backRight, cascadeMotorRight, cascadeMotorLeft, arm;
@@ -22,7 +24,7 @@ public class TestHardware {
     public ColorSensor colorSensor;
     public Servo claw;
     public CRServo wrist;
-    public DistanceSensor distanceSensor;
+    public DistanceSensor distanceLeft, distanceRight;
     HardwareMap hwMap;
     static final double COUNTS_PER_MOTOR_REV = 384.5;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
@@ -40,7 +42,8 @@ public class TestHardware {
         backRight = hwMap.dcMotor.get("rb");
         frontLeft = hwMap.dcMotor.get("lf");
         frontRight = hwMap.dcMotor.get("rf");
-
+        distanceLeft = (DistanceSensor) hwMap.get("distanceLeft");
+        distanceRight = (DistanceSensor) hwMap.get("distanceRight");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -139,6 +142,20 @@ public class TestHardware {
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+    public void squareUp(){
+        if(distanceLeft.getDistance(DistanceUnit.INCH) < distanceRight.getDistance(DistanceUnit.INCH) ){
+            while (distanceLeft.getDistance(DistanceUnit.INCH) < distanceRight.getDistance(DistanceUnit.INCH)){
+                backRight.setPower(.2);
+                frontRight.setPower(.2);
+            }
+        }
+        if(distanceLeft.getDistance(DistanceUnit.INCH) > distanceRight.getDistance(DistanceUnit.INCH) ){
+            while (distanceLeft.getDistance(DistanceUnit.INCH) > distanceRight.getDistance(DistanceUnit.INCH)){
+                backLeft.setPower(.2);
+                frontLeft.setPower(.2);
+            }
+        }
+    }   
 }
 
 

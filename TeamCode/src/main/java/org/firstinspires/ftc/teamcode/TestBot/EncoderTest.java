@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.TestBot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "EncoderTest")
+@Autonomous(name = "Encoder")
 
 public class EncoderTest extends LinearOpMode {
     TestHardware robot = new TestHardware();
