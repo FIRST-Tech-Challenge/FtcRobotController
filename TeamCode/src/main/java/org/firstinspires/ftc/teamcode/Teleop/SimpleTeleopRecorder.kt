@@ -83,7 +83,7 @@ class SimpleTeleopRecorder: DriveMethods() {
             commandList.add("motorFR.power:$motorFRPower");
             commandList.add("motorBL.power:$motorBLPower");
             commandList.add("motorBR.power:$motorBRPower");
-
+            telemetry.addLine("Length of Commands: "+commandList.size);
             if (gamepad1.left_bumper) {
                 motorFL?.power = 1.0/speedDiv
                 motorBL?.power = -1.0/speedDiv
@@ -117,7 +117,8 @@ class SimpleTeleopRecorder: DriveMethods() {
             }
 
             telemetry.update()
-
+            sleep(50);
+            commandList.add("sleep:50");
         }
 
         var outputWriter: BufferedWriter? = null
