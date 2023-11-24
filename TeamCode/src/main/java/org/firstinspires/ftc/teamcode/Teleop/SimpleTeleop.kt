@@ -3,19 +3,22 @@ package org.firstinspires.ftc.teamcode.Teleop
 //import org.firstinspires.ftc.teamcode.Variables.rMotorL
 //import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.pomPomServo
 
 @TeleOp(name = "SimpleTeleop", group = "TeleopFinal")
 class SimpleTeleop: DriveMethods() {
     override fun runOpMode() {
         initMotorsSecondSimple() //init rack and pinion & wheel motors
+        pomPomServo = hardwareMap.get(CRServo::class.java, "pomPomServo")
 
         telemetry.update()
-
 
         waitForStart()
         var leftY: Double
@@ -23,6 +26,7 @@ class SimpleTeleop: DriveMethods() {
         var rightX: Double
         var upOrDown = true
         var speedDiv = 3.0
+        var pomPomSpinning = false
         while (opModeIsActive()) {
             //set gamepad inputs
             leftY = (-gamepad1.left_stick_y).toDouble()
@@ -64,9 +68,19 @@ class SimpleTeleop: DriveMethods() {
                     speedDiv = 3.0
                 }
             }
+            if (gamepad1.b) {
+                if (pomPomSpinning) {
+                    pomPomServo!!.power = 0.0
+                    pomPomSpinning = false
+                } else {
+                    pomPomServo!!.power = 1.0
+                    pomPomSpinning = true
+                }
+                sleep(400)
+            }
 
             telemetry.update()
-
+            sleep(20)
         }
     }
 }

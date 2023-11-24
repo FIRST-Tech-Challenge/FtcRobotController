@@ -23,6 +23,7 @@ object Variables {
     var motorFR: DcMotor? = null
     var motorBR: DcMotor? = null
     var slideGate: Servo? = null
+    var pomPomServo: CRServo? = null
     var leftFlyWheel: CRServo? = null
     var rightFlyWheel: CRServo? = null
     var rMotorR: DcMotor? = null;
