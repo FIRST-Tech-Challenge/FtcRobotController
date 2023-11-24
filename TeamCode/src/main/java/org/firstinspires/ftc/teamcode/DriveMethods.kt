@@ -332,8 +332,15 @@ open class DriveMethods: LinearOpMode() {
         motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
         motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
         motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
-        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
-        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
+        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR")
+        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL")
+        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
+        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
+    }
+
+    open fun initOnlyRackAndPain() {
+        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR")
+        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL")
         touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
     }

@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
-import org.firstinspires.ftc.teamcode.DriveMethods;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.sequencesegment.SequenceSegment;
-import org.firstinspires.ftc.teamcode.Variables.*;
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.Variables.Detection;
+import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 
 public class RandomAutoTest extends MeepMeepBoilerplate {
     @Override

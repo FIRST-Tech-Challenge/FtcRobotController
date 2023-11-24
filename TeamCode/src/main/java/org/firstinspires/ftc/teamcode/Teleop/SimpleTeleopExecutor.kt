@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
-import org.firstinspires.ftc.teamcode.Variables.rMotorL
-import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import java.io.BufferedReader
 import java.io.FileReader
 

@@ -9,23 +9,22 @@ class ServoTester: DriveMethods() {
     override fun runOpMode() {
         initMotorsSecondBot()
         initSlideMotors()
-        var ServoBeingTested = hardwareMap.get(Servo::class.java, "autoServo")
+        val servoBeingTested: Servo = hardwareMap.get(Servo::class.java, "autoServo")!!
 
         waitForStart()
 
-        ServoBeingTested?.position = 0.55
+        servoBeingTested.position = 0.55
         while (opModeIsActive()) {
             if (gamepad2.y) {
-                ServoBeingTested?.position = ServoBeingTested?.position?.plus(0.05)!!
+                servoBeingTested.position = servoBeingTested.position.plus(0.05)
                 sleep(150)
             }
 
             if (gamepad2.x) {
-                ServoBeingTested?.position = ServoBeingTested?.position?.minus(0.05
-                )!!
+                servoBeingTested.position = servoBeingTested.position.minus(0.05)
                 sleep(150)
             }
-            telemetry.addData("Servo Value: ", ServoBeingTested?.position)
+            telemetry.addData("Servo Value: ", servoBeingTested.position)
             telemetry.update()
         }
     }

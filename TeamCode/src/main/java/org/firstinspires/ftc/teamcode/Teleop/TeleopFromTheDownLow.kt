@@ -86,7 +86,7 @@ class TeleopFromTheDownLow: DriveMethods() {
         var angleFromSlideToClaw = 0.0
         var slideRottarget = 25.0
         var clawClamp = false
-        var commandList = ArrayList<String>();
+        val commandList = ArrayList<String>();
 
         while (opModeIsActive()) {
             //set gamepad inputs

@@ -62,15 +62,15 @@ class TeleopReaderAuto : DriveMethods() {
         initMotorsSecondBot()
         initSlideMotors()
 
-        var passiveServo = hardwareMap.get(Servo::class.java,"passiveServo");
+        val passiveServo = hardwareMap.get(Servo::class.java,"passiveServo")
         waitForStart()
         BufferedReader(FileReader("/sdcard/FIRST/training/test.txt")).use { br ->
             var line: String?
             while (br.readLine().also { line = it } != null) {
-                var splitLine = line!!.split(":");
+                val splitLine = line!!.split(":");
                 if(splitLine.size>1){
-                    var command = splitLine[0];
-                    var parameter = splitLine[1];
+                    val command = splitLine[0];
+                    val parameter = splitLine[1];
                     when(command){
                         "motorFL.power"->motorFL!!.power=parameter.toDouble();
                         "motorBL.power"->motorBL!!.power=parameter.toDouble();
