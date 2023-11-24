@@ -133,6 +133,8 @@ public class HydraObjectDetect {
                         detectedLocation = HydraObjectLocations.ObjLocBlueCenterSpike;
                     }
                 }
+                // uncomment this break if you want to just take the first one like we used to
+                // break;
             }
         }
         return detectedLocation;
