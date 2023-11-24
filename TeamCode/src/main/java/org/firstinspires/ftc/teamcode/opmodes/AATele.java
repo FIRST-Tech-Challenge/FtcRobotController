@@ -42,8 +42,8 @@ public class AATele extends LinearOpMode {
                 robot.outtake.moveArm(-0.1);
             }
 
-            if(smartGamepad2.left_trigger_pressed()) { robot.outtake.moveDumper(-0.1);}
-            if(smartGamepad2.right_trigger_pressed()) {robot.outtake.moveDumper( 0.1);}
+            if(smartGamepad2.left_trigger>0) { robot.outtake.moveDumper(-0.1);}
+            if(smartGamepad2.right_trigger>0) {robot.outtake.moveDumper( 0.1);}
 
             if (smartGamepad2.x_pressed()) {
                 robot.outtake.toIntakePos();

@@ -49,7 +49,11 @@ public class ServoConfig extends LinearOpMode {
             } if (gamepad1.x) {
                 robot.outtake.resetArmPos();
             } if(gamepad1.y) {
-                robot.outtake.resetDumpPos();
+                robot.outtake.toTravelPos();
+            } if(gamepad1.b) {
+                robot.outtake.toDumpPos(0);
+            } if(gamepad1.right_bumper){
+                robot.outtake.dropPixelPos();
             }
             if(leftTrigger>0) { robot.outtake.moveDumper(-0.1);}
             if(rightTrigger>0) {robot.outtake.moveDumper( 0.1);}
