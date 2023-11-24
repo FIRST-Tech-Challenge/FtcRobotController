@@ -3,31 +3,34 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 
 public abstract class BaseOpMode extends LinearOpMode {
-
+    //Declares LEDs on Devbot
+    public DigitalChannel red;
+    public DigitalChannel green;
 
     //Declares drive-motors
-    public DcMotor FR = null; // null because of DevBot
-    public DcMotor FL = null;
-    public DcMotor BR = null;
-    public DcMotor BL = null;
+    public DcMotor FR;
+    public DcMotor FL ;
+    public DcMotor BR ;
+    public DcMotor BL ;
 
-    public DcMotor intakeMotor = null;
-    public DcMotor armMotor = null;
+    public DcMotor intakeMotor ;
+    public DcMotor armMotor ;
     final public int ARM_MOTOR_MIN_POSITION = 0;
     final public int ARM_MOTOR_MAX_POSITION = 4200;
     final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND = 100;
     final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_UPPER_BOUND = 200;
-    public Servo dumperServo = null;
+    public Servo dumperServo;
     public final double DUMPER_SERVO_TILT_POSITION = 0.32;
     public final double DUMPER_SERVO_RESET_POSITION = 0.48;
     public final double DUMPER_SERVO_DUMP_POSITION = 0;
-    public Servo gateServo = null;
+    public Servo gateServo;
     public final double GATE_SERVO_OPEN_POSITION = 0.5;
     public final double GATE_SERVO_CLOSE_POSITION = 1;
 
@@ -43,12 +46,19 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
-        //Drive Motors
+        //Drive Motors, other motors, sensors, etc.
         if(MecanumDrive.isDevBot) {
             FL = initializeMotor("leftFront", DcMotor.Direction.REVERSE);
             FR = initializeMotor("rightFront", DcMotor.Direction.FORWARD);
             BL = initializeMotor("leftBack", DcMotor.Direction.REVERSE);
             BR = initializeMotor("rightBack", DcMotor.Direction.FORWARD);
+
+            red = initializeDigitalChannel("red", DigitalChannel.Mode.OUTPUT);
+            green = initializeDigitalChannel("green", DigitalChannel.Mode.OUTPUT);
+
+            // Turn LEDs off (counterintuitive, on = false, off = true)
+            red.setState(true);
+            green.setState(true);
         } else {
             FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
             FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD);
@@ -83,6 +93,12 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         // Waits so the imu can process 
         sleep(2000);
+    }
+
+    public DigitalChannel initializeDigitalChannel(String channelName, DigitalChannel.Mode mode) {
+        DigitalChannel digitalChannel = hardwareMap.get(DigitalChannel.class, channelName);
+        digitalChannel.setMode(mode);
+        return digitalChannel;
     }
 
     public DcMotor initializeMotor(String motorName, DcMotorSimple.Direction direction, DcMotor.RunMode mode) {

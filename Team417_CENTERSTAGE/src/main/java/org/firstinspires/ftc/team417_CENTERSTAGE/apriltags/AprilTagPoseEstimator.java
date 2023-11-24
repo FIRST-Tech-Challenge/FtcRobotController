@@ -2,17 +2,16 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.AprilTagInfo;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.Pose;
-import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -28,6 +27,11 @@ public class AprilTagPoseEstimator {
      * The variable to store our instance of the AprilTag processor.
      */
     public AprilTagProcessor aprilTag;
+
+    /**
+     * The variable to store our instance of the status light.
+     */
+    public DigitalChannel statusLight;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -47,7 +51,6 @@ public class AprilTagPoseEstimator {
      * Initialize the AprilTag processor.
      */
     public void init() {
-
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
 
@@ -86,6 +89,16 @@ public class AprilTagPoseEstimator {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
 
+        // Sets the status light for latency testing, etc.
+        if (MecanumDrive.isDevBot) {
+            statusLight = myOpMode.hardwareMap.get(DigitalChannel.class, "green");
+            statusLight.setMode(DigitalChannel.Mode.OUTPUT);
+        }
+
+        if (statusLight != null) {
+            statusLight.setState(true);
+        }
+
         // Choose a camera resolution. Not all cameras support all resolutions.
         builder.setCameraResolution(new Size(1920, 1080));
 
@@ -116,13 +129,14 @@ public class AprilTagPoseEstimator {
     // Also telemeters relevant info
     // Note that this is relative to the center of the camera
     public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTagInfo aprilTagInfo) {
+        //See November notebook 11/20/2023 for more info on the math used here
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
-        d = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
+        d = Math.hypot(detection.ftcPose.x + + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
         
-        gamma = Math.atan2(detection.ftcPose.x, detection.ftcPose.y);
+        gamma = Math.atan2(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
         
-        beta = gamma + Math.toRadians(detection.ftcPose.yaw); //(or gamma - detection.ftcPose.yaw) if that doesn't work)
+        beta = gamma + Math.toRadians(detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT) if that doesn't work)
         
         relativeX = d * Math.cos(beta) + aprilTagInfo.x;
         
@@ -142,22 +156,18 @@ public class AprilTagPoseEstimator {
     /**
      * Add telemetry about AprilTag detections.
      */
-    public void telemeterAprilTagInfo() {
+    public void telemeterAprilTagInfo(Canvas c) {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-        double x = 0;
-        double y = 0;
-        double theta = 0;
 
         // Iterates through detections and finds any the the robot "knows"
         // Then it replaces the pose estimate with pose estimate from that april tag
         for (AprilTagDetection detection : currentDetections) {
             AprilTagInfo aprilTagInfo = AprilTagInfoDump.findTagWithId(detection.id);
             if (aprilTagInfo != null) {
-                x = detection.ftcPose.x;
-                y = detection.ftcPose.y;
-                theta = detection.ftcPose.yaw;
                 robotPoseEstimate = calculatePoseEstimate(detection, aprilTagInfo);
+                if (statusLight != null) {
+                    statusLight.setState(false);
+                }
                 break;
             }
         }
@@ -165,14 +175,20 @@ public class AprilTagPoseEstimator {
         // Telemeters the current pose estimate
         myOpMode.telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
 
+        // Telemeters the pose info to FTC dashboard so that it draws the robot pose
+        // Remove before competition, could cause lags
+        c.setStroke("#3F51B5");
+        MecanumDrive.drawRobot(c, new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta));
+
+        /*
         myOpMode.telemetry.addData("\n# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 myOpMode.telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                myOpMode.telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                myOpMode.telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                myOpMode.telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x + + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + + Constants.DEVBOT_CAMERA_TO_CENTER_Y, detection.ftcPose.z));
+                myOpMode.telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT));
                 myOpMode.telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
                 myOpMode.telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -184,18 +200,7 @@ public class AprilTagPoseEstimator {
         myOpMode.telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         myOpMode.telemetry.addLine("PRY = Pitch, Roll & yaw) (XYZ Rotation)");
         myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-        // Telemeters the pose info to FTC dashboard so that it draws the robot pose
-        // Remove before competition, could cause lags
-        TelemetryPacket p = new TelemetryPacket();
-        Canvas c = p.fieldOverlay();
-        c.setStroke("#3F51B5");
-        MecanumDrive.drawRobot(c, new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta));
-        c.setStroke("#3F5100");
-        MecanumDrive.drawRobot(c, new Pose2d(x, y, theta));
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        dashboard.sendTelemetryPacket(p);
-
+        */
     }   // end method telemetryAprilTag()
 
     public Pose estimatePose() {

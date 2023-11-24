@@ -2,7 +2,10 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -85,7 +88,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
         while (opModeIsActive() &&
                 (runtime.seconds() < 30) &&
                 (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
-            myAprilTagPoseEstimator.telemeterAprilTagInfo();
+
+            // Code added to draw the pose, remove before competition, causes lags:
+            TelemetryPacket p = new TelemetryPacket();
+            Canvas c = p.fieldOverlay();
+            myAprilTagPoseEstimator.telemeterAprilTagInfo(c);
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            dashboard.sendTelemetryPacket(p);
         }
 
         // Stop all motion;
