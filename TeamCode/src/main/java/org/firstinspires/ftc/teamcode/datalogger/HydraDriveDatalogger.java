@@ -18,7 +18,7 @@ Credit to @Windwoes (https://github.com/Windwoes).
 
 package org.firstinspires.ftc.teamcode.datalogger;
 
-public class HydraDatalogger
+public class HydraDriveDatalogger
 {
     // The underlying datalogger object - it cares only about an array of loggable fields
     private final Datalogger datalogger;
@@ -35,8 +35,9 @@ public class HydraDatalogger
     public Datalogger.GenericField brposition = new Datalogger.GenericField("BR Pos");
     public Datalogger.GenericField drMotPwr = new Datalogger.GenericField("Dr Pwr");
     public Datalogger.GenericField battVoltage = new Datalogger.GenericField("Batt");
+    public Datalogger.GenericField state = new Datalogger.GenericField("State");
 
-    public HydraDatalogger(String name)
+    public HydraDriveDatalogger(String name)
     {
         // append the date to the filename
         java.util.Date now = new java.util.Date(System.currentTimeMillis());

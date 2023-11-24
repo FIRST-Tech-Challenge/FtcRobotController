@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.datalogger.HydraObjDetDatalogger;
 import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.HydraArm;
 import org.firstinspires.ftc.teamcode.subsystems.HydraDrive;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
 import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
 import org.firstinspires.ftc.teamcode.types.HydraObjectLocations;
 import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
-import org.firstinspires.ftc.teamcode.datalogger.HydraDatalogger;
+import org.firstinspires.ftc.teamcode.datalogger.HydraDriveDatalogger;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class HydrAuton extends LinearOpMode {
     protected ElapsedTime pixelDropTimer;
     protected int autonState;
     protected String modelFilename = "Blue_Prop.tflite";
+    protected String mOpModeName = "HydrAuton";
     protected boolean setTrueForRed = false;
     protected boolean setTrueForRiggingOnRight = false;
     protected HydraOpMode mOp;
@@ -41,7 +43,8 @@ public class HydrAuton extends LinearOpMode {
     protected final int cPixelDropRunTimeMs = 2000;
     protected final int cPixelFrontScoreRunTimeMs = 2000;
     protected final int cAutonAbortTimeMs = 27000;
-    protected HydraDatalogger mLogger;
+    protected HydraDriveDatalogger mDriveLogger;
+    protected HydraObjDetDatalogger mObjLogger;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -55,8 +58,9 @@ public class HydrAuton extends LinearOpMode {
         ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        mLogger = new HydraDatalogger("datalog");
-        mOp = new HydraOpMode(telemetry, hardwareMap, mLogger);
+        mDriveLogger = new HydraDriveDatalogger("drive-log-" + mOpModeName);
+        mObjLogger = new HydraObjDetDatalogger("obj-log-" + mOpModeName);
+        mOp = new HydraOpMode(telemetry, hardwareMap, mDriveLogger, mObjLogger);
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
@@ -71,6 +75,8 @@ public class HydrAuton extends LinearOpMode {
         PixelPalace = new HydraPixelPalace(mOp);
         Intake = new HydraIntake(mOp);
         ObjDet = new HydraObjectDetect(mOp, modelFilename);
+        // disable AprilTag detection until we need it
+        ObjDet.SetAprilDetectEnabled(false);
         // print any telemetry that came from initialization of the subsystems
         mOp.mTelemetry.update();
         // manual caching mode
@@ -93,9 +99,13 @@ public class HydrAuton extends LinearOpMode {
         // Use this timer for time elapsed in the opmode. Do not reset it
         opModeTimer.reset();
         int loops = 0;
-        if (mLogger != null) {
-            mLogger.loops.set(loops);
-            mLogger.writeLine();
+        if (mDriveLogger != null) {
+            mDriveLogger.loops.set(loops);
+            mDriveLogger.writeLine();
+        }
+        if (mObjLogger != null) {
+            mObjLogger.loops.set(loops);
+            mObjLogger.writeLine();
         }
         // Find the object so we can drive to it
         while (opModeIsActive()) {
@@ -110,6 +120,10 @@ public class HydrAuton extends LinearOpMode {
             // ObjLoc = HydraObjectLocations.ObjLocCenterSpike;
             // Push telemetry to the Driver Station.
             telemetry.update();
+            ++loops;
+            if (mObjLogger != null) {
+                mObjLogger.loops.set(loops);
+            }
             // If we found the device or if we have been searching for a long time, leave
             if (ObjLoc != HydraObjectLocations.ObjLocUnknown ||
                     opModeTimer.milliseconds() >= cMaxObjectSearchTimeMs) {
@@ -126,6 +140,8 @@ public class HydrAuton extends LinearOpMode {
                 ObjLoc = HydraObjectLocations.ObjLocBlueRightSpike;
             }
         }
+        // enable AprilTag detection
+        ObjDet.SetAprilDetectEnabled(true);
         // disable object detection now to save CPU
         ObjDet.SetObjDetectEnabled(false);
         // Run the proper auton for the object location
@@ -150,8 +166,13 @@ public class HydrAuton extends LinearOpMode {
             telemetry.addData("State", autonState);
             telemetry.update();
             ++loops;
-            if (mLogger != null) {
-                mLogger.loops.set(loops);
+            if (mDriveLogger != null) {
+                mDriveLogger.loops.set(loops);
+                mDriveLogger.state.set(autonState);
+            }
+            if (mObjLogger != null) {
+                mObjLogger.loops.set(loops);
+                mObjLogger.state.set(autonState);
             }
             // Share the CPU.
             sleep(20);

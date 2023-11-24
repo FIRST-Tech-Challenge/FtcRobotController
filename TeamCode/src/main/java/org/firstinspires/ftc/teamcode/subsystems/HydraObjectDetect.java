@@ -80,10 +80,19 @@ public class HydraObjectDetect {
     public HydraObjectLocations GetObjectLocation(boolean trueForRed) {
         HydraObjectLocations detectedLocation = HydraObjectLocations.ObjLocUnknown;
         Recognition myTfodRecognition;
+        VisionPortal.CameraState camState = myVisionPortal.getCameraState();
         // Get a list of recognitions from TFOD.
-        mOp.mTelemetry.addData("Camera State", myVisionPortal.getCameraState());
+        mOp.mTelemetry.addData("Camera State", camState);
         List<Recognition> myTfodRecognitions = myTfodProcessor.getRecognitions();
         mOp.mTelemetry.addData("# Objects Detected", JavaUtil.listLength(myTfodRecognitions));
+        if (mOp.mObjLogger != null) {
+            ZeroOutLogger();
+            mOp.mObjLogger.camState.set(camState.toString());
+            mOp.mObjLogger.numObjDet.set(JavaUtil.listLength(myTfodRecognitions));
+            if (JavaUtil.listIsEmpty(myTfodRecognitions)) {
+                mOp.mObjLogger.writeLine();
+            }
+        }
         // keep the detection with the highest confidence
         double highestConfidence = 0;
         // Iterate through list and call a function to display info for each recognized object.
@@ -99,11 +108,17 @@ public class HydraObjectDetect {
             // Display position.
             float x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
             float y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
+            // we will keep the detected object that has the highest confidence
+            double confidence = myTfodRecognition.getConfidence();
             // Display the position of the center of the detection boundary for the recognition
             mOp.mTelemetry.addData("- Position", JavaUtil.formatNumber(x, 0) +
                     ", " + JavaUtil.formatNumber(y, 0));
-            // we will keep the detected object that has the highest confidence
-            double confidence = myTfodRecognition.getConfidence();
+            if (mOp.mObjLogger != null) {
+                mOp.mObjLogger.objX.set(x);
+                mOp.mObjLogger.objY.set(y);
+                mOp.mObjLogger.objConf.set(confidence);
+                mOp.mObjLogger.writeLine();
+            }
             if (confidence > highestConfidence) {
                 if (x < cXvalueForLeftToCenterObject) {
                     if (trueForRed) {
@@ -125,7 +140,16 @@ public class HydraObjectDetect {
 
     public HydraAprilTagPose FindAprilTag(HydraObjectLocations objLocToFind) {
         List<AprilTagDetection> aprilTagDetections = mAprilTagProcessor.getDetections();
-        mOp.mTelemetry.addData("Camera State", myVisionPortal.getCameraState());
+        VisionPortal.CameraState camState = myVisionPortal.getCameraState();
+        mOp.mTelemetry.addData("Camera State", camState);
+        if (mOp.mObjLogger != null) {
+            ZeroOutLogger();
+            mOp.mObjLogger.camState.set(camState.toString());
+            mOp.mObjLogger.numAprilDet.set(JavaUtil.listLength(aprilTagDetections));
+            if (JavaUtil.listIsEmpty(aprilTagDetections)) {
+                mOp.mObjLogger.writeLine();
+            }
+        }
         HydraAprilTagPose ret = null;
         for (AprilTagDetection aprilTag : aprilTagDetections) {
             if (aprilTag.metadata != null) {
@@ -146,6 +170,13 @@ public class HydraObjectDetect {
                 pose.mPoseElevation = aprilTag.ftcPose.elevation;
                 if (pose.mId == GetAprilIdForLocation(objLocToFind)) {
                     ret = pose;
+                }
+                if (mOp.mObjLogger != null) {
+                    mOp.mObjLogger.aprilName.set(aprilTag.metadata.name);
+                    mOp.mObjLogger.aprilRange.set(aprilTag.ftcPose.range);
+                    mOp.mObjLogger.aprilBearing.set(aprilTag.ftcPose.bearing);
+                    mOp.mObjLogger.aprilYaw.set(aprilTag.ftcPose.yaw);
+                    mOp.mObjLogger.writeLine();
                 }
             }
         }
@@ -173,9 +204,30 @@ public class HydraObjectDetect {
 
     public void SetObjDetectEnabled(boolean enabled) {
         myVisionPortal.setProcessorEnabled(myTfodProcessor, enabled);
+        if (!enabled && mOp.mObjLogger != null) {
+            mOp.mObjLogger.camState.set(myVisionPortal.getCameraState().toString());
+            ZeroOutLogger();
+            mOp.mObjLogger.writeLine();
+        }
     }
 
     public void SetAprilDetectEnabled(boolean enabled) {
         myVisionPortal.setProcessorEnabled(mAprilTagProcessor, enabled);
+        if (!enabled && mOp.mObjLogger != null) {
+            mOp.mObjLogger.camState.set(myVisionPortal.getCameraState().toString());
+            ZeroOutLogger();
+            mOp.mObjLogger.writeLine();
+        }
+    }
+    private void ZeroOutLogger() {
+        mOp.mObjLogger.numObjDet.set(0);
+        mOp.mObjLogger.objX.set(0);
+        mOp.mObjLogger.objY.set(0);
+        mOp.mObjLogger.objConf.set(0);
+        mOp.mObjLogger.numAprilDet.set(0);
+        mOp.mObjLogger.aprilName.set("");
+        mOp.mObjLogger.aprilRange.set(0);
+        mOp.mObjLogger.aprilBearing.set(0);
+        mOp.mObjLogger.aprilYaw.set(0);
     }
 }

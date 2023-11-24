@@ -8,5 +8,6 @@ public class HydrAuton_BlueBackstage extends HydrAuton_Backstage {
         setTrueForRed = false;
         setTrueForRiggingOnRight = true;
         modelFilename = "Blue_Prop.tflite";
+        mOpModeName = "Blue-Backstage";
     }
 }

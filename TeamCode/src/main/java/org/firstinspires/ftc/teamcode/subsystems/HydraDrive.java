@@ -172,22 +172,22 @@ public class HydraDrive {
             SetAllMotorPower(mCurrentDrivePower);
 
         }
-        if (mOp.mLogger != null) {
-            mOp.mLogger.blposition.set(BLmotPos);
-            mOp.mLogger.bltarget.set(BLmotTarget);
-            mOp.mLogger.brposition.set(BRmotPos);
-            mOp.mLogger.brtarget.set(BRmotTarget);
-            mOp.mLogger.flposition.set(FLmotPos);
-            mOp.mLogger.fltarget.set(FLmotTarget);
-            mOp.mLogger.frposition.set(FRmotPos);
-            mOp.mLogger.frtarget.set(FRmotTarget);
-            mOp.mLogger.drMotPwr.set(mCurrentDrivePower);
+        if (mOp.mDriveLogger != null) {
+            mOp.mDriveLogger.blposition.set(BLmotPos);
+            mOp.mDriveLogger.bltarget.set(BLmotTarget);
+            mOp.mDriveLogger.brposition.set(BRmotPos);
+            mOp.mDriveLogger.brtarget.set(BRmotTarget);
+            mOp.mDriveLogger.flposition.set(FLmotPos);
+            mOp.mDriveLogger.fltarget.set(FLmotTarget);
+            mOp.mDriveLogger.frposition.set(FRmotPos);
+            mOp.mDriveLogger.frtarget.set(FRmotTarget);
+            mOp.mDriveLogger.drMotPwr.set(mCurrentDrivePower);
             for (VoltageSensor battvolt : mOp.mHardwareMap.voltageSensor) {
                 // I assume it's the first battery voltage
-                mOp.mLogger.battVoltage.set(battvolt.getVoltage());
+                mOp.mDriveLogger.battVoltage.set(battvolt.getVoltage());
                 break;
             }
-            mOp.mLogger.writeLine();
+            mOp.mDriveLogger.writeLine();
         }
         // if any motor is still active, we are still busy
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {
