@@ -90,19 +90,19 @@ public final class MecanumDrive {
         Params() {
             if (isDevBot) {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 72.0 / 3108.25;
+                lateralInPerTick = inPerTick;
+                trackWidthTicks = 667.0872781362789;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
-                kA = 0;
+                kS = 0.44724878451749817;
+                kV = 0.004444154205091267;
+                kA = 0.0007;
 
                 // path controller gains
-                axialGain = 0.0;
-                lateralGain = 0.0;
-                headingGain = 0.0; // shared with turn
+                axialGain = 10.0;
+                lateralGain = 10.0;
+                headingGain = 10.0; // shared with turn
             } else {
                 // drive model parameters
                 inPerTick = 0;
@@ -257,10 +257,10 @@ public final class MecanumDrive {
         }
 
         // now has been enabled, encoders are goodge :D
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // disabled for roadrunner
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if (!isDevBot) {
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
