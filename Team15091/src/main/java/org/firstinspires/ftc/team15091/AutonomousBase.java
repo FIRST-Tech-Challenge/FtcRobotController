@@ -38,6 +38,8 @@ public abstract class AutonomousBase extends OpModeBase {
         telemetry.addLine("Sensor | ")
                 .addData("limit", () -> String.format("%s", robot.limitSwitch.getState()))
                 .addData("distance", "%.1f cm", () -> robot.frontSensor.getDistance(DistanceUnit.CM));
+        telemetry.addLine("Autonomous | ")
+                .addData("will go to park", String.format("%b", should_park));
 
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
@@ -54,7 +56,11 @@ public abstract class AutonomousBase extends OpModeBase {
                     }
                 }
                 if (gamepad1.x) {
-                    should_park = false;
+                    if (!x_pressed) {
+                        should_park = !should_park;
+                    }
+                } else {
+                    x_pressed = false;
                 }
             }
 

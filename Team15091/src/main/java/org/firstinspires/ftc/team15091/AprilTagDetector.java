@@ -17,4 +17,13 @@ public class AprilTagDetector {
     public List<AprilTagDetection> scanForAprilTags () {
         return aprilTag.getDetections();
     }
+    public AprilTagDetection scanForAprilTagById (int id) {
+        List<AprilTagDetection> aprilTagDetections = scanForAprilTags();
+        for (AprilTagDetection currentAprilTag : aprilTagDetections) {
+            if (currentAprilTag.id == id) {
+                return currentAprilTag;
+            }
+        }
+        return null;
+    }
 }
