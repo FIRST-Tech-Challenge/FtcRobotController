@@ -10,9 +10,9 @@ public class Constants {
     // This saves all the directions in one place, so we don't have to change directions in all our code if we ever have to change directions.
     // The hashmap lets us keep track of which values go with which wheels.
     public static final HashMap<String, Direction> motorDirections = new HashMap<String, Direction>() {{
-        put("left_front", Direction.FORWARD);
+        put("left_front", Direction.REVERSE);
         put("right_front", Direction.FORWARD);
-        put("left_back", Direction.FORWARD);
+        put("left_back", Direction.REVERSE);
         put("right_back", Direction.FORWARD);
         put("lift", Direction.REVERSE);
     }};
