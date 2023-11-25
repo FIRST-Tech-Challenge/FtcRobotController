@@ -216,6 +216,8 @@ public class Robot {
 
     public void update(){
         updateButtons();
+
+        // Manages Reject mode on Roomba as an override of its current power and state
         if(handlerRightTrigger.Pressed()) {
             intakeMotor.setOverridePower(-1);
         } else if (handlerRightTrigger.Released()) {
