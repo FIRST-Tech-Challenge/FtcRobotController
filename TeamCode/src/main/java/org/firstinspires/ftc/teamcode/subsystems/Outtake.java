@@ -16,12 +16,12 @@ import java.util.Date;
 public class Outtake implements Subsystem{
     //Constants
     private double syncFactor=1.05;
-    private double armResetL = 0.5; private double armResetR = 0.5186; // + means up and towards intake
-    private double armIntakeL = 0.50923; private double armIntakeR = 0.508835;
+    private double armReset_Right = 0.5; private double armReset_Left = 0.5186; // + means up and towards intake
+    private double armIntake_Right = 0.50923; private double armIntake_Left = 0.508835;
     //BELOW NOT TESTED YET
-    private double armTravelL = 0.4381; private double armTravelR=0.583595;
-    private double armDumpL = 0.3756; private double armDumpR = 0.64922;
-    private long travelDelay = 1000; //miliseconds
+    private double armTravel_Right = 0.4381; private double armTravel_Left=0.583595;
+    private double armDump_Right = 0.3756; private double armDump_Left = 0.64922;
+    private long travelDelay = 500; //miliseconds
 
     private double dumpResetPos = 0.5;
     private double dumpIntakePos=0.182;
@@ -39,8 +39,8 @@ public class Outtake implements Subsystem{
     private long moveStartTime;
 
     //Hardware
-    private Servo armServoL;
-    private Servo armServoR;  //    '/[L^R]\'
+    private Servo armServo_Right;
+    private Servo armServo_Left;  //    '/[L^R]\'
     private Servo dumpServo;
     private DualMotorLift lift;
     private Telemetry telemetry;
@@ -49,8 +49,8 @@ public class Outtake implements Subsystem{
     public Outtake(Robot robot) {
         this.telemetry = telemetry;
         //lift = new DualMotorLift(robot, telemetry, DualMotorLift.Mode.RIGHT_FOLLOW_LEFT);
-        armServoL = robot.getServo("armServoL");
-        armServoR = robot.getServo("armServoR");
+        armServo_Right = robot.getServo("armServo_Right");
+        armServo_Left = robot.getServo("armServo_Left");
         dumpServo = robot.getServo("dumpServo");
     }
 
@@ -62,8 +62,8 @@ public class Outtake implements Subsystem{
 
     //Reset Functions
     public void resetArmPos(){
-        armServoL.setPosition(armResetL);
-        armServoR.setPosition(armResetR);
+        armServo_Right.setPosition(armReset_Right);
+        armServo_Left.setPosition(armReset_Left);
     }
 
     public void resetDumpPos(){
@@ -73,11 +73,11 @@ public class Outtake implements Subsystem{
     //Action functions
     public void moveR(double d){
         //TODO: for Servo Sync only
-        armServoR.setPosition(armServoR.getPosition()+(0.001*d));
+        armServo_Left.setPosition(armServo_Left.getPosition()+(0.001*d));
     }
     public void moveArm(double d){
-        armServoL.setPosition(armServoL.getPosition()+(0.001*-d)); //2 degrees??
-        armServoR.setPosition(armServoR.getPosition()+(0.001*d*syncFactor));
+        armServo_Right.setPosition(armServo_Right.getPosition()+(0.001*-d)); //2 degrees??
+        armServo_Left.setPosition(armServo_Left.getPosition()+(0.001*d*syncFactor));
     }
     public void moveDumper(double d){
         dumpServo.setPosition(dumpServo.getPosition()+(0.005*d)); //2 degrees??
@@ -89,12 +89,12 @@ public class Outtake implements Subsystem{
         swingState = 0;
         //lift.goToLevel(0);
         dumpServo.setPosition(dumpIntakePos);
-        armServoL.setPosition(armIntakeL);
-        armServoR.setPosition(armIntakeR);
+        armServo_Right.setPosition(armIntake_Right);
+        armServo_Left.setPosition(armIntake_Left);
     }
     public void toTravelPos(){
-        armServoL.setPosition(armTravelL);
-        armServoR.setPosition(armTravelR);
+        armServo_Right.setPosition(armTravel_Right);
+        armServo_Left.setPosition(armTravel_Left);
         dumpServo.setPosition(dumpTravelPos);
     }
     public void toDumpPos(int level){
@@ -102,8 +102,8 @@ public class Outtake implements Subsystem{
         moveStartTime = System.currentTimeMillis();
         Log.v("StateMach", "start");
         //lift.goToLevel(level);
-        armServoL.setPosition(armDumpL);
-        armServoR.setPosition(armDumpR);
+        armServo_Right.setPosition(armDump_Right);
+        armServo_Left.setPosition(armDump_Left);
     }
     public void dropPixelPos(){
         dumpServo.setPosition(dumpDumpPos);
@@ -113,11 +113,11 @@ public class Outtake implements Subsystem{
     private boolean delayDone(long time){
         return (time - moveStartTime >= travelDelay);
     }
-    public double getRightServoPos() {
-        return armServoR.getPosition();
+    public double get_LeftServoPos() {
+        return armServo_Left.getPosition();
     }
-    public double getLeftServoPos(){
-        return armServoL.getPosition();
+    public double get_RightServoPos(){
+        return armServo_Right.getPosition();
     }
 
     public double getDumperPos(){

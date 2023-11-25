@@ -11,7 +11,7 @@ public class CrabRobot extends Robot {
     public final SimpleMecanumDrive mecanumDrive;
     //public final Intake intake;
     public final Outtake outtake;
-    public final DualMotorLift dualMotorLift;
+    //public final DualMotorLift dualMotorLift;
     public SmartGamepad smartGamepad1;
     public SmartGamepad smartGamepad2;
 
@@ -24,8 +24,8 @@ public class CrabRobot extends Robot {
         //registerSubsystem(intake);
         outtake = new Outtake(this);
         registerSubsystem(outtake);
-        dualMotorLift = new DualMotorLift(this, opMode.telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
-        registerSubsystem(dualMotorLift);
+        //dualMotorLift = new DualMotorLift(this, opMode.telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
+        //registerSubsystem(dualMotorLift);
 
     }
 

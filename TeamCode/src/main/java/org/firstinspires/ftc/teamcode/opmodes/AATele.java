@@ -21,12 +21,11 @@ public class AATele extends LinearOpMode {
         double prevTime = clock.seconds();
 
         while (!isStopRequested()) {
+            telemetry.update();
+            robot.update();
             //EDWARD'S INTAKE
             boolean buttonA = gamepad2.a;
             boolean buttonB = gamepad2.b;
-
-                //telemetry.update();
-                robot.update();
 
             /*
             if(buttonA) {
@@ -58,18 +57,18 @@ public class AATele extends LinearOpMode {
                     robot.outtake.dropPixelPos();
                 }
                 if (smartGamepad2.dpad_up_pressed()) {
-                robot.dualMotorLift.goToRelativeOffset(2);
-                telemetry.addLine("dpad up pressed");
-                //Log.v("PIDLift: gamepad", "dpad up");
+                    //robot.dualMotorLift.goToRelativeOffset(2);
+                    telemetry.addLine("dpad up pressed");
+                    //Log.v("PIDLift: gamepad", "dpad up");
                 }
                 else if (smartGamepad2.dpad_down_pressed()) {
-                    robot.dualMotorLift.goToRelativeOffset(-2);
+                    //robot.dualMotorLift.goToRelativeOffset(-2);
                     telemetry.addLine("dpad down pressed");
                     //Log.v("PIDLift: gamepad", "dpad down");
                 }
 
-                telemetry.addData("right servo position: ", robot.outtake.getRightServoPos());
-                telemetry.addData("left servo position: ", robot.outtake.getLeftServoPos());
+                telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
+                telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
                 telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
                 //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
                 double currentTime = clock.seconds();

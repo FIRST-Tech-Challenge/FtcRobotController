@@ -59,8 +59,8 @@ public class ServoConfig extends LinearOpMode {
             if(rightTrigger>0) {robot.outtake.moveDumper( 0.1);}
 
 
-            telemetry.addData("right servo position: ", robot.outtake.getRightServoPos());
-            telemetry.addData("left servo position: ", robot.outtake.getLeftServoPos());
+            telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
+            telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
 
