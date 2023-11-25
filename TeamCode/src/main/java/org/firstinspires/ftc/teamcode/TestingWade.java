@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-@Disabled
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 @Autonomous
 public class TestingWade extends LinearOpMode {
 
@@ -12,15 +14,19 @@ public class TestingWade extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true);
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessing();
+
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.setMarkerPos(MarkerDetector.MARKER_POSITION.RIGHT);
-            robot.setWantedAprTagId(MarkerDetector.MARKER_POSITION.RIGHT, MarkerDetector.ALLIANCE_COLOR.BLUE);
+            //robot.straightBlockingFixHeading(48, false, 0.8);
+            robot.setHeading(-90, 0.7);
+            this.sleep(3000);
             robot.setHeading(90, 0.7);
-            robot.alignToBoard();
-            this.sleep(100);
+            this.sleep(3000);
+            robot.setHeading(0, 0.7);
+            this.sleep(3000);
+            //robot.straightBlockingFixHeading(84,false, 0.8);
+            robot.setHeading(0, 0.7);
             break;
         }
     }

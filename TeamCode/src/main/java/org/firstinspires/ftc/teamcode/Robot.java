@@ -46,6 +46,8 @@ public class Robot {
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
+
+    double botHeading = 0;
     ElapsedTime elapsedTime = new ElapsedTime();
     public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
@@ -74,16 +76,18 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
         intake = hardwareMap.dcMotor.get("intake");
-        lsFront = hardwareMap.dcMotor.get("lsFront");
+        /*lsFront = hardwareMap.dcMotor.get("lsFront");
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack = hardwareMap.dcMotor.get("lsBack");
-        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
         isRedAlliance = red;
+        /*
         tray = hardwareMap.servo.get("arm");
         clamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
         planeLauncher = hardwareMap.servo.get("planeLauncher");
         spikeServo = hardwareMap.servo.get("spikeServo");
+         */
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
@@ -150,6 +154,7 @@ public class Robot {
     public void trayToIntakePos() {
         setServoPosBlocking(tray, 0.47);
     }
+
     public void trayToOuttakePos() {
         setServoPosBlocking(tray, 0.78);
     }
@@ -324,10 +329,10 @@ public class Robot {
     }
 
     public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
-        this.fLeft.setPower(fLeft);
         this.fRight.setPower(fRight);
         this.bLeft.setPower(bLeft);
         this.bRight.setPower(bRight);
+        this.fLeft.setPower(fLeft);
     }
 
     public void setMotorPower(double[] powers) {
@@ -347,27 +352,25 @@ public class Robot {
 
     //the desired heading must be relative to last imu reset. also, REMEMBER -180 < desired heading <= 180.
     public void setHeading(double targetAbsDegrees, double maxPower) {
-    /*
-        assert(targetAbsDegrees > 180);
-        assert(targetAbsDegrees <= -180);
-
-     */
         if (targetAbsDegrees == 180) {
             setHeading(179.5, maxPower);
         } else {
 
             YawPitchRollAngles robotOrientation;
 
-            double KP = 0.06; //started 0.15
-            double KD = 2_500_000;
-            double ERROR_TOLERANCE = 0.5; //degrees
-
+            double KP = 3; //started 0.15 //started 20
+            double KD = 0;
+            double ERROR_TOLERANCE = 1; //degrees
             double currentHeading = getCurrentHeading();
             double error = targetAbsDegrees - currentHeading;
+            double headingRange = Math.abs(error);
+            double norError = error/headingRange;
             double errorDer;
             double power;
             double currentTime;
             double minPower = 0.15;
+            boolean setPrevTime = false;
+
 
             //while start
             while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
@@ -375,26 +378,47 @@ public class Robot {
                 currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentTime = SystemClock.elapsedRealtimeNanos();
 
+                if (setPrevTime) {
+                    errorDer = (error - prevError) / (currentTime - prevTime);
+                } else {
+                    errorDer = 0;
+                }
+
                 error = targetAbsDegrees - currentHeading; //error is degrees to goal
+                norError = error/headingRange;
                 errorDer = (error - prevError) / (currentTime - prevTime);
-                power = (KP * error) + (KD * errorDer);
+                power = (KP * norError * norError * norError) + (KD * errorDer);
+
+                Log.d("pid", "setHeading: current heading is " + currentHeading);
+                Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
+                Log.d("pid", "setHeading: time is " + currentTime);
+                Log.d("pid", "setHeading: heading error is " + error);
+                Log.d("pid", "setHeading: errorDer is " + errorDer);
+                Log.d("pid", "setHeading: calculated power is " + power);
 
                 if (power > 0 && power < minPower) {
-                    power += minPower;
-                } else if (power < 0 && power > -1 * minPower) {
-                    power -= minPower;
+                    power = minPower;
+                    Log.d("pid", "setHeading: adjusted power is " + power);
+                } else if (power < 0 && power > (-1 * minPower)) {
+                    power = -1 * minPower;
+                    Log.d("pid", "setHeading: adjusted power is " + power);
                 }
 
                 //cap power
                 power = Range.clip(power, -1 * maxPower, maxPower);
+                Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
 
                 setMotorPower(-1 * power, power, -1 * power, power);
 
                 prevError = error;
                 prevTime = currentTime;
+                setPrevTime = true;
             }
             setMotorPower(0, 0, 0, 0);
             opMode.sleep(100);
+            botHeading = targetAbsDegrees;
+            currentHeading = getCurrentHeading();
+            Log.d("pid", "setHeading: final heading is " + currentHeading);
         }
     }
 
@@ -499,11 +523,17 @@ public class Robot {
 
     public void detectMarkerPosition() {
 
+        boolean isTesting = true;
         int visionTimeout = 2; // timeout detection after 2 seconds
         double time;
+        MarkerDetector.MARKER_POSITION position;
 
-        //detect marker position
-        MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
+        if (isTesting) {
+            position = MarkerDetector.MARKER_POSITION.RIGHT;
+        } else{
+            //detect marker position
+            position = markerProcessor.getPosition();
+        }
         elapsedTime.reset();
         time = elapsedTime.seconds();
 
@@ -626,6 +656,7 @@ public class Robot {
             }
         }
     }
+
     /* Deprecated
     public void shortMoveToBoard() { //TODO: add polarity, use in ShortRedAuto.java, and TEST
         Log.d("vision", "moveToMarker: Pos " + markerPos);
@@ -764,13 +795,14 @@ public class Robot {
 
     public void moveStraightChunkingDONT_USE_NEGATIVE(double inches, boolean forward, double maxPower, double globalHeading, double globalHeadingPower) {
         assert inches > 0;
-        int chunkNumber = (int)Math.floor(inches/CHUNK_DISTANCE_INCHES);
+        int chunkNumber = (int) Math.floor(inches / CHUNK_DISTANCE_INCHES);
         for (int i = 0; i < chunkNumber; i++) {
             straightBlocking(CHUNK_DISTANCE_INCHES, forward, maxPower);
             setHeading(globalHeading, globalHeadingPower);
         }
         straightBlocking(inches % CHUNK_DISTANCE_INCHES, forward, maxPower);
     }
+
     public void longMoveToBoard() {
         int polarity;
         double VERTICAL_TOTAL;
@@ -782,6 +814,7 @@ public class Robot {
         double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
         double horizontal5;
         double horizontal7;
+        boolean testingonBert = true;
 
         while (opMode.opModeIsActive()) {
             if (isRedAlliance) {
@@ -790,18 +823,26 @@ public class Robot {
                 polarity = 1;
             }
 
-            setServoPosBlocking(clamp, 0.5);
-            setServoPosBlocking(hook, 0.5);
-            setServoPosBlocking(spikeServo, 0.5);
+            if (!testingonBert) {
+                setServoPosBlocking(clamp, 0.5);
+                setServoPosBlocking(hook, 0.5);
+                setServoPosBlocking(spikeServo, 0.5);
+            }
+
 
             Log.d("vision", "moveToMarker: Pos " + markerPos);
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-            VERTICAL_TOTAL = 68;
-            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+
+            if (!testingonBert) {
+                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+                VERTICAL_TOTAL = 68;
+            } else {
+                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 44;
+                VERTICAL_TOTAL = 76;
+            }
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "moveToMarker: Inner Spike");
-
                 // Calculate distances
                 vertical1 = 0;
                 horizontal2 = 18;
@@ -809,19 +850,24 @@ public class Robot {
                 vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 20;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 16;
 
                 // Start moving
-                straightBlocking(horizontal2, false, 0.7); //go forward FAST
+                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
                 setHeading(45 * polarity, 0.25); //turn right
-                sleeplessStraightBlocking(7, false, 0.25); //forward
-                setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(7, true, 0.7); //dropoff, back
+                straightBlockingFixHeading(7, false, 0.25); //forward
+                if (!testingonBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                }
+                straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
-                mecanumBlocking(2, isRedAlliance, 0.7);
-                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                if (!testingonBert) {
+                    mecanumBlocking(2, isRedAlliance, 0.7);
+                }
+                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                straightBlockingFixHeading(vertical6, false, 0.7);
+                //moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
@@ -925,17 +971,16 @@ public class Robot {
         }
     }
 
-    public void sleeplessStraightBlocking(double inches, boolean forward, double maxPower) {
+    public void straightBlockingFixHeading (double inches, boolean forward, double maxPower) {
 
-        double ERROR_TOLERANCE = 10;
+        double ERROR_TOLERANCE_IN_TICKS = 20;
         double power;
+        double leftPower;
+        double rightPower;
         double endTick;
-        final double KP = 0.01;
-        final double KD = 500_000;
-        final double minPower = 0.2;
-        double currentTick = fLeft.getCurrentPosition();
-        double errorDer;
-        double currentTime;
+        final double KP = 100;
+        final double KD = 0;
+        final double minPower = 0.1;
 
         //inch to tick
         final double wheelDiaMm = 96;
@@ -943,43 +988,115 @@ public class Robot {
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
         final double IN_TO_TICK = 537 / wheelCircIn;
 
+        double errorDer;
+        double currentTime;
+        double currentHeading;
+        double targetHeading = botHeading;
+        double headingError;
+        double currentTick = fLeft.getCurrentPosition();
+        double tickRange = inches * IN_TO_TICK;
+
+        //define desired position
         if (forward) {
-            endTick = currentTick + inches * IN_TO_TICK;
+            endTick = currentTick + tickRange;
         } else {
-            endTick = currentTick - inches * IN_TO_TICK;
+            endTick = currentTick - tickRange;
         }
 
-        double error = endTick - currentTick;
+        double tickError = endTick - currentTick;
+        double error;
+        boolean setPrevTime = false; //this becomes true when previous time has been set
 
-        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
-
+        while (Math.abs(tickError) >= ERROR_TOLERANCE_IN_TICKS && opMode.opModeIsActive()) {
             currentTime = SystemClock.elapsedRealtimeNanos();
-            error = endTick - currentTick;
-            errorDer = (error - prevError) / (currentTime - prevTime);
-            power = (KP * error) + (KD * errorDer);
+            tickError = endTick - currentTick;
+            error = tickError/tickRange;
 
-            if (power > 0 && power < minPower) {
-                power += minPower;
-            } else if (power < 0 && power > -1 * minPower) {
-                power -= minPower;
+            //don't use d component in first loop
+            if (setPrevTime) {
+                errorDer = (error - prevError) / (currentTime - prevTime);
+            } else {
+                errorDer = 0;
             }
 
-            //cap power
+            //find power using PID
+            power = (KP * error * error * error) + (KD * errorDer);
+
+            Log.d("pid", "straightBlockingFixHeading: currentTick is " + currentTick);
+            Log.d("pid", "straightBlockingFixHeading: endTick is " + endTick);
+            Log.d("pid", "straightBlockingFixHeading: time is " + currentTime);
+            Log.d("pid", "straightBlockingFixHeading: error is " + error);
+            Log.d("pid", "straightBlockingFixHeading: errorDer is " + errorDer);
+            Log.d("pid", "straightBlockingFixHeading: calculated power is " + power);
+
+            //make sure there is enough power
+            if (error > 0 && power < minPower) {
+                power = minPower;
+                Log.d("pid", "straightBlockingFixHeading: adjusted to minPower " + power);
+            } else if (error < 0 && power > (-1 * minPower)) {
+                power = (-1 * minPower);
+                Log.d("pid", "straightBlockingFixHeading: adjusted to minPower " + power);
+
+            }
+
+            //clip power
             power = Range.clip(power, -1 * maxPower, maxPower);
 
-            setMotorPower(power, power, power, power);
+            //get heading & heading error
+            currentHeading = getCurrentHeading();
+            headingError = currentHeading - targetHeading;
 
+            Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
+            Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
+            Log.d("pid turn", "straightBlockingFixHeading: targetHeading is " + targetHeading);
+            Log.d("pid turn", "straightBlockingFixHeading: headingError is " + headingError);
+
+            //default l/r power
+            leftPower = power;
+            rightPower = power;
+
+            //correction based on the current heading
+            if (Math.abs(headingError) > 1) {
+                if (headingError < 0) {
+                    //turn left
+                    if (forward) {
+                        leftPower = 0.1;
+                        rightPower = 0.5;
+                    } else {
+                        leftPower = -0.5;
+                        rightPower = -0.1;
+                    }
+                } else if (headingError > 0) {
+                    //turn right
+                    if (forward) {
+                        leftPower = 0.5;
+                        rightPower = 0.1;
+                    } else {
+                        leftPower = -0.1;
+                        rightPower = -0.5;
+                    }
+                }
+            }
+            Log.d("pid turn", "straightBlockingFixHeading: leftPower is " + leftPower);
+            Log.d("pid turn", "straightBlockingFixHeading: rightPower is " + rightPower);
+
+            //set powers
+            setMotorPower(leftPower, rightPower, leftPower, rightPower);
+            opMode.sleep(5);
+
+            //set variables
             currentTick = fLeft.getCurrentPosition();
-            prevTime = currentTime;
             prevError = error;
+            prevTime = currentTime;
+
+            //when prev time is set, d component can be used - 2nd loop onward
+            setPrevTime = true;
         }
+        //stop, sleep
         setMotorPower(0, 0, 0, 0);
+        currentHeading = getCurrentHeading();
+        Log.d("pid", "straightBlockingFixHeading: final currentTick is " + currentTick);
+        Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
         opMode.sleep(100);
     }
-
-    public void straightIMU() {
-
-    }
-
-
 }
