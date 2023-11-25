@@ -40,7 +40,7 @@ public class DualMotorLift implements Subsystem {
     // Public just to allow tuning through Dashboard
     public static double  UP_VELOCITY = 500;
     public static double[] LEVEL_HT = {0, 6.5, 17.0, 29.0}; // in inches, please fine-tune
-    //4 levels: 0 ground, 1 low, 2 middle, 3 high
+    //4 levels: 0 = minimum arm swing height; 1= ground, 2= low, 3= middle, 4= high,
     //0:5.0
 
     private PIDFController pidfController;
@@ -229,6 +229,11 @@ public class DualMotorLift implements Subsystem {
     }
     public double getTargetPos(){
         return slideMotorL.getTargetPosition();
+    }
+
+    public boolean armCanSwing(){
+        //Log.v("Arm: can swing?", ticksToInches(slideMotorL.getCurrentPosition())+"");
+        return slideMotorL.getCurrentPosition()>=inchToTicks(LEVEL_HT[4]);
     }
 
     @Override

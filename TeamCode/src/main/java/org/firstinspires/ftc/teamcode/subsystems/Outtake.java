@@ -17,15 +17,14 @@ public class Outtake implements Subsystem{
     //Constants
     private double syncFactor=1.05;
     private double armReset_Right = 0.5; private double armReset_Left = 0.5186; // + means up and towards intake
-    private double armIntake_Right = 0.50923; private double armIntake_Left = 0.508835;
+    private double armIntake_Right = 0.51513; private double armIntake_Left = 0.50264;
     //BELOW NOT TESTED YET
-    private double armTravel_Right = 0.4381; private double armTravel_Left=0.583595;
+    private double armTravel_Right = 0.51263; private double armTravel_Left=0.505265;
     private double armDump_Right = 0.3756; private double armDump_Left = 0.64922;
-    private long travelDelay = 500; //miliseconds
 
     private double dumpResetPos = 0.5;
-    private double dumpIntakePos=0.182;
-    private double dumpTravelPos = 0.4885;
+    private double dumpIntakePos=0.1785;
+    private double dumpTravelPos = 0.1785;
     private double dumpCarryPos = 0.6793;
     private double dumpDumpPos = 0;
 
@@ -34,9 +33,19 @@ public class Outtake implements Subsystem{
     /*
      * 0: arm is not moving
      * 1: not yet reached height, wait.
-     * 2: height reached, rotate dumper.
      */
-    private long moveStartTime;
+    private int liftState;
+    /* //1. wait for intake to move out; 2. go to travel pos, lift the lift 3. at appropriate height, go to dump pos
+     * 0: safe to do whatever
+     * 1: waiting for intake to lift
+     * 2: waiting to reach height with dumper above intake
+     */
+    private long swingStartTime;
+    private long liftStartTime;
+    private long tempStartTime;
+    private long swingDelay = 500; //miliseconds
+    private long liftDelay = 3000;
+    private long tempDelay = 5000;
 
     //Hardware
     private Servo armServo_Right;
@@ -52,6 +61,8 @@ public class Outtake implements Subsystem{
         armServo_Right = robot.getServo("armServo_Right");
         armServo_Left = robot.getServo("armServo_Left");
         dumpServo = robot.getServo("dumpServo");
+        resetArmPos();
+        resetDumpPos();
     }
 
     //TODO: convert left/right positions?
@@ -71,7 +82,7 @@ public class Outtake implements Subsystem{
     }
 
     //Action functions
-    public void moveR(double d){
+    public void moveL(double d){
         //TODO: for Servo Sync only
         armServo_Left.setPosition(armServo_Left.getPosition()+(0.001*d));
     }
@@ -92,16 +103,19 @@ public class Outtake implements Subsystem{
         armServo_Right.setPosition(armIntake_Right);
         armServo_Left.setPosition(armIntake_Left);
     }
+    public void prepOuttake(){
+        liftState = 1;
+        liftStartTime = System.currentTimeMillis();
+    }
     public void toTravelPos(){
         armServo_Right.setPosition(armTravel_Right);
         armServo_Left.setPosition(armTravel_Left);
         dumpServo.setPosition(dumpTravelPos);
     }
-    public void toDumpPos(int level){
+    public void toDumpPos(){
         swingState = 1;
-        moveStartTime = System.currentTimeMillis();
+        swingStartTime = System.currentTimeMillis();
         Log.v("StateMach", "start");
-        //lift.goToLevel(level);
         armServo_Right.setPosition(armDump_Right);
         armServo_Left.setPosition(armDump_Left);
     }
@@ -110,9 +124,16 @@ public class Outtake implements Subsystem{
     }
 
     //Access functions
-    private boolean delayDone(long time){
-        return (time - moveStartTime >= travelDelay);
+    private boolean liftDelayDone(long time){
+        return (time - liftStartTime >= liftDelay);
     }
+    private boolean swingDelayDone(long time){
+        return (time - swingStartTime >= swingDelay);
+    }
+    private boolean armCanSwing(long time){
+        return (time - tempStartTime >= tempDelay);
+    }
+
     public double get_LeftServoPos() {
         return armServo_Left.getPosition();
     }
@@ -124,6 +145,7 @@ public class Outtake implements Subsystem{
         return dumpServo.getPosition();
     }
 
+
     @Override
     public void update(TelemetryPacket packet) {
         //lift.update(packet);
@@ -134,10 +156,34 @@ public class Outtake implements Subsystem{
          */
         if(swingState == 1){
             long time = System.currentTimeMillis();
-            if(delayDone(time)){
+            if(swingDelayDone(time)){
                 swingState =0;
                 dumpServo.setPosition(dumpCarryPos);
-                Log.v("StateMach", "moving dumper " + (time - moveStartTime));
+                Log.v("StateMach", "moving dumper " + (time - swingStartTime));
+            }
+        }
+
+        /*
+         * 0: safe to do whatever
+         * 1: waiting for intake to move: when done, go to travelPos and raise slide
+         * 2: waiting to reach height with dumper above intake: when done, swing arm to dump pos
+         */
+        if(liftState == 1){
+            long time = System.currentTimeMillis();
+            if(liftDelayDone(time)){
+                liftState = 2;
+                this.toTravelPos();
+                Log.v("StateMach", "moving to travelPos " + (time - liftStartTime));
+                tempStartTime = System.currentTimeMillis();
+                //lift.goToLevel(0);  //go to the level where dumper is above intake
+            }
+        }
+        if(liftState == 2){
+            long time = System.currentTimeMillis();
+            if(armCanSwing(time)){
+                Log.v("StateMach", "going up"+ (time - tempStartTime));
+                liftState=0;
+                this.toDumpPos();
             }
         }
 
