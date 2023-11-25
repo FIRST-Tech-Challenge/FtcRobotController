@@ -70,7 +70,8 @@ public class BlueBackstage extends LinearOpMode {
             }
         });
 
-        telemetry.addLine("Waiting for start");
+
+        telemetry.addLine("Wait until debug");
         telemetry.update();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -180,7 +181,6 @@ public class BlueBackstage extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .strafeLeft(6)
                 .forward(18)
-                .back(8)
                 .turn(Math.toRadians(-190))
                 .forward(34)
                 .strafeRight(6)

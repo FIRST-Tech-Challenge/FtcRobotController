@@ -200,6 +200,7 @@ public class OpenCVBlue extends OpenCvPipeline {
         if(x_pos > 1270)
         {
             result = "RIGHT";
+
         } else if(x_pos < 529) {
             result = "LEFT";
         }
@@ -257,7 +258,8 @@ public class OpenCVBlue extends OpenCvPipeline {
          * pixel from the input Mat that were inside
          * the threshold range.
          */
-        return  croppedimage;
+
+        return croppedimage;
         // return  maskedInputMat;
     }
 
