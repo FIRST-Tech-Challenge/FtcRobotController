@@ -233,6 +233,8 @@ public class BlueBackstage extends LinearOpMode {
         waitForStart();
 
         String result = pipeline.getResult();
+        webcam.stopStreaming();
+        webcam.closeCameraDevice();
 
         if (result == "LEFT") {
             drive.followTrajectorySequence(Left);
@@ -243,8 +245,7 @@ public class BlueBackstage extends LinearOpMode {
         if (result == "RIGHT") {
             drive.followTrajectorySequence(Right);
         }
-        webcam.stopStreaming();
-        webcam.closeCameraDevice();
+
 
         while (opModeIsActive()) {
 
