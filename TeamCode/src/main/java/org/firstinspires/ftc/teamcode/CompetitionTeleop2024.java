@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 @TeleOp(name="Competition Teleop2024", group="Iterative Opmode")
@@ -22,6 +31,7 @@ public class CompetitionTeleop2024 extends OpMode {
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
     private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private IMU imu = null;
 
     //variable for Rev Touch Sensor
     //private TouchSensor touch;
@@ -61,6 +71,14 @@ public class CompetitionTeleop2024 extends OpMode {
         gripper = hardwareMap.get(Servo.class, "gripper");
         elbow = hardwareMap.get(Servo.class, "elbow");
         elbow.setPosition(0.0);
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
+                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT)
+        );
+
+        imu.initialize(parameters);
 
 
         //gripper sensor for pulling arm down
@@ -106,7 +124,11 @@ public class CompetitionTeleop2024 extends OpMode {
 
         //Code for mecanum wheels
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
-        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC,
+                AxesOrder.ZYX,
+                RADIANS);
+        double heading = angles.firstAngle;
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + heading + Math.PI/2;
         double rightX = Math.pow(gamepad1.right_stick_x, 5.0)*(1-gamepad1.right_trigger);
         LBPower = r * Math.cos(robotAngle) - rightX;
         RBPower = r * Math.sin(robotAngle) + rightX;
@@ -163,15 +185,15 @@ public class CompetitionTeleop2024 extends OpMode {
         telemetry.addData("Gripper Position = ", gripper.getPosition());
         telemetry.addData("Elbow Position = ", elbow.getPosition());
         if (gamepad2.a && !changed) {
-            if (gripper.getPosition() == 0.0)
+            if (gripper.getPosition() < 0.001)
             {
                 gripper.setPosition(.1);
                 //arm.setTargetPosition(150);
                 //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //arm.setPower(armPower);
             }
-            //else
-                //arm.setPosition(0.0);
+            else
+                gripper.setPosition(0.0);
             changed = true;
         } else if (!gamepad2.a)
         {

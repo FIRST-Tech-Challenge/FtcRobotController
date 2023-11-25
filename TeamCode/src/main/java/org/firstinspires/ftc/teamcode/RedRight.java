@@ -27,6 +27,7 @@ public class RedRight extends LinearOpMode {
     private actuatorUtils utils;
     private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
 
     static final float MAX_SPEED = 1.0f;
@@ -50,6 +51,8 @@ public class RedRight extends LinearOpMode {
         utils = new actuatorUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
         dump = hardwareMap.get(Servo.class, "Dump");
+        elbow = hardwareMap.get(Servo.class, "elbow");
+        gripper = hardwareMap.get(Servo.class, "gripper");
         Pose2d startPose = new Pose2d(-55, -2,0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
@@ -152,7 +155,7 @@ public class RedRight extends LinearOpMode {
         drive.followTrajectorySequence(seq);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-30, -6, Math.toRadians(-180));
+        pose = new Pose2d(-30, -8, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -160,17 +163,47 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        pose = new Pose2d(-52, -50, Math.toRadians(-90));
+        pose = new Pose2d(-20, -30, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        arm.setTargetPosition(-2850);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        elbow.setPosition(0.222);
+        sleep(2000);
+        pose = new Pose2d(-20, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        sleep(1000);
+        gripper.setPosition(0.1);
+        sleep(1000);
+        elbow.setPosition(0.9);
+        sleep(500);
+        gripper.setPosition(0.0);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        pose = new Pose2d(-52, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-52, -50, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
 
 
+
     }
     private void MiddlePath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-17,-17,Math.toRadians(-180));
+        pose = new Pose2d(-18,-20,Math.toRadians(-180));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -178,19 +211,44 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-17, -22, Math.toRadians(-180));
+        pose = new Pose2d(-18, -24, Math.toRadians(-180));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
-        pose = new Pose2d(-45, -22, Math.toRadians(-180));
+        sleep(1000);
+        pose = new Pose2d(-28.5, -30, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-50, -50, Math.toRadians(-90));
+        arm.setTargetPosition(-2850);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        elbow.setPosition(0.222);
+        sleep(2000);
+        pose = new Pose2d(-28.5, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        sleep(1000);
+        gripper.setPosition(0.1);
+        sleep(1000);
+        elbow.setPosition(0.9);
+        sleep(500);
+        gripper.setPosition(0.0);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        pose = new Pose2d(-52, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-52, -50, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -214,12 +272,36 @@ public class RedRight extends LinearOpMode {
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
-        pose = new Pose2d(-45, -24, Math.toRadians(180));
+        pose = new Pose2d(-34.5, -30, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-50, -50, Math.toRadians(-90));
+        arm.setTargetPosition(-2850);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        elbow.setPosition(0.222);
+        sleep(2000);
+        pose = new Pose2d(-34.5, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        sleep(1000);
+        gripper.setPosition(0.1);
+        sleep(1000);
+        elbow.setPosition(0.9);
+        sleep(500);
+        gripper.setPosition(0.0);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        pose = new Pose2d(-52, -33, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-52, -50, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
