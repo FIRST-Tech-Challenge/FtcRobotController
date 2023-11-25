@@ -10,7 +10,7 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 
 public abstract class BaseOpMode extends LinearOpMode {
-    //Declares LEDs on Devbot
+    //Declares LEDs on DevBot
     public DigitalChannel red;
     public DigitalChannel green;
 
@@ -92,7 +92,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         */
 
         // Waits so the imu can process 
-        sleep(2000);
+        //sleep(2000);
     }
 
     public DigitalChannel initializeDigitalChannel(String channelName, DigitalChannel.Mode mode) {

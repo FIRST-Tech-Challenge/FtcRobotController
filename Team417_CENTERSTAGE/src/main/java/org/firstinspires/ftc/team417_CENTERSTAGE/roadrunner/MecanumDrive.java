@@ -43,16 +43,29 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
+import org.firstinspires.ftc.team417_CENTERSTAGE.competitionprograms.UltimateTeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.TwistWithTimestamp;
 import org.firstinspires.inspection.InspectionState;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    // For the April Tag latency calculation (added by Hank)
+    public ElapsedTime clock = new ElapsedTime();
+
+    // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+    public ArrayList<TwistWithTimestamp> twistList;
+
+    // To detect April Tags to correct drift (added by Hank)
+    public AprilTagPoseEstimator myAprilTagPoseEstimator;
 
     public static String getBotName() {
         InspectionState inspection=new InspectionState();
@@ -227,6 +240,12 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+        // For the April Tag latency calculation (added by Hank)
+        clock.reset();
+
+        // To detect April Tags to correct drift (added by Hank)
+        myAprilTagPoseEstimator = new AprilTagPoseEstimator(new UltimateTeleOp());
+
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -257,6 +276,9 @@ public final class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new DriveLocalizer();
+
+        // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+        twistList = new ArrayList<>();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
@@ -443,7 +465,38 @@ public final class MecanumDrive {
 
     public PoseVelocity2d updatePoseEstimate() {
         Twist2dDual<Time> twist = localizer.update();
-        pose = pose.plus(twist.value());
+
+        // From now on to "END", everything is added by Hank
+        // To keep a record of twists to be used by April Tag latency compensation
+        twistList.add(0, new TwistWithTimestamp(twist, clock.milliseconds()));
+
+        // Keep only twists from less than one second ago
+        if (twistList.size() > 0) {
+            TwistWithTimestamp oldestTwist = twistList.get(twistList.size() - 1);
+            double currentTime = clock.milliseconds();
+            while (oldestTwist.timestamp < currentTime - 1000) {
+                twistList.remove(oldestTwist);
+                oldestTwist = twistList.get(twistList.size() - 1);
+                currentTime = clock.milliseconds();
+            }
+        }
+
+        if (myAprilTagPoseEstimator.detecting && twistList.size() > 1) {
+            pose = myAprilTagPoseEstimator.estimatePose();
+
+            double currentTime = clock.milliseconds();
+            TwistWithTimestamp lastTwist = twistList.get(0);
+            for (int i = 1; lastTwist.timestamp >= currentTime - myAprilTagPoseEstimator.CAMERA_LATENCY; i++) {
+                pose.plus(lastTwist.twist.value());
+                lastTwist = twistList.get(i);
+                currentTime = clock.milliseconds();
+            }
+        } else {
+            pose = pose.plus(twist.value()); // This line was actually in the original code, just moved here by me
+        }
+        // END (for added by Hank)
+
+        //This was the original location of: "pose = pose.plus(twist.value());"
 
         poseHistory.add(pose);
         while (poseHistory.size() > 100) {

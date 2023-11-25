@@ -19,6 +19,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 
 public class AprilTagPoseEstimator {
+    public static final double CAMERA_LATENCY = 640; // latency between april tag shown and detection in ms
+
     public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
@@ -153,6 +155,9 @@ public class AprilTagPoseEstimator {
         return pose;
     }
 
+    // If the program detects an april tag that it recognizes
+    public boolean detecting = false;
+
     /**
      * Add telemetry about AprilTag detections.
      */
@@ -161,14 +166,23 @@ public class AprilTagPoseEstimator {
 
         // Iterates through detections and finds any the the robot "knows"
         // Then it replaces the pose estimate with pose estimate from that april tag
+        // TODO: allow the robot to choose which AprilTag is the best to estimate from instead of blinding choosing the first one
+        detecting = false;
         for (AprilTagDetection detection : currentDetections) {
             AprilTagInfo aprilTagInfo = AprilTagInfoDump.findTagWithId(detection.id);
             if (aprilTagInfo != null) {
                 robotPoseEstimate = calculatePoseEstimate(detection, aprilTagInfo);
-                if (statusLight != null) {
-                    statusLight.setState(false);
-                }
+                detecting = true;
                 break;
+            }
+        }
+
+        // Turn the status light on when it detects an april tag (yes, setState(boolean) is backwards)
+        if (statusLight != null) {
+            if (detecting) {
+                statusLight.setState(false);
+            } else {
+                statusLight.setState(true);
             }
         }
 
@@ -203,7 +217,7 @@ public class AprilTagPoseEstimator {
         */
     }   // end method telemetryAprilTag()
 
-    public Pose estimatePose() {
-        return robotPoseEstimate;
+    public Pose2d estimatePose() {
+        return new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta);
     }
 }
