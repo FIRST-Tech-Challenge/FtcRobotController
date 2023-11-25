@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ActionBuilder;
 import org.firstinspires.ftc.teamcode.Button;
 import org.firstinspires.ftc.teamcode.Lift;
+import org.firstinspires.ftc.teamcode.OverrideMotor;
 
 import java.util.function.BooleanSupplier;
 
@@ -71,7 +72,7 @@ public class Robot {
         testingServo = hardwareMap.servo.get("testingServo");*/
 
         // Motors
-        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+        intakeMotor = new OverrideMotor(hardwareMap.dcMotor.get("intakeMotor"));
         skyHookMotor = hardwareMap.dcMotor.get("skyHookMotor");
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -198,7 +199,8 @@ public class Robot {
 
     // Motors
 
-    public static DcMotor intakeMotor, skyHookMotor;
+    public static OverrideMotor intakeMotor;
+    public static DcMotor skyHookMotor;
     // Servos
     public static Servo clawPitch, clawYaw, clawGrip;
     // TouchSensors
@@ -232,6 +234,13 @@ public class Robot {
 
     public void update(){
         updateButtons();
+
+        // Manages Reject mode on Roomba as an override of its current power and state
+        if(handlerRightTrigger.Pressed()) {
+            intakeMotor.setOverridePower(-1);
+        } else if (handlerRightTrigger.Released()) {
+            intakeMotor.cancelOverridePower();
+        }
         stateMachine.updateState();
         if(stateMachine.getCurrentState() == outTakingPixels){
 
