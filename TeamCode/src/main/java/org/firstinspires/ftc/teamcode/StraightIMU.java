@@ -59,13 +59,16 @@ public class StraightIMU extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            //find heading error
             correction = checkDirection();
 
+            //telemetry
             telemetry.addData("1 imu heading", previousYaw);
             telemetry.addData("2 global heading", globalAngle);
             telemetry.addData("3 correction", correction);
             telemetry.update();
 
+            //set power
             fLeft.setPower(power - correction);
             bLeft.setPower(power - correction);
             fRight.setPower(power + correction);
@@ -73,6 +76,7 @@ public class StraightIMU extends LinearOpMode {
 
         }
 
+        //stop
         fLeft.setPower(0);
         fRight.setPower(0);
         bLeft.setPower(0);
