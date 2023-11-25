@@ -25,13 +25,14 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public static double X_OFFSET = 60;
     public static double Y_OFFSET  = 20;
 
-    static final int STREAM_WIDTH = 1280; // resolution of camera
-    static final int STREAM_HEIGHT = 960; // resolution of camera
+    static final int STREAM_WIDTH = 1184; // resolution of camera   1280
+    static final int STREAM_HEIGHT = 656; // resolution of camera  720
 
     Mat zoomedInput = new Mat();
     Mat HLS = new Mat();
-    public int avgH, avgL, avgS;
-
+    public int avgLH, avgLL, avgLS;
+    public int avgCH, avgCL, avgCS;
+    public int avgRH, avgRL, avgRS;
     // To zoom in (x2)
     Rect viewScope = new Rect(new Point(STREAM_WIDTH/4, STREAM_HEIGHT/4), new Point(STREAM_WIDTH * 3/4, STREAM_HEIGHT * 3/4));
 
@@ -45,6 +46,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 
     boolean stopped = false;
 
+    static final int colorTolerance = 20;
     public ColorDetectionPipeline()
     {
         Log.v("vision", "ColorDetectionPipeline called.");
@@ -79,17 +81,17 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         zoomedInput = input.submat(viewScope);
 
         Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
-        Mat interetedArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
+        Mat leftArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
         Log.v("vision", "submat created.");
 
-        ArrayList<Mat> matInHLS = inputMatToHLS(interetedArea);
-        avgH = (int) Core.mean(matInHLS.get(0)).val[0];
-        avgL = (int) Core.mean(matInHLS.get(1)).val[0];
-        avgS = (int) Core.mean(matInHLS.get(2)).val[0];
-        interetedArea.release(); // don't leak memory!
-        matInHLS.get(0).release(); // don't leak memory!
-        matInHLS.get(1).release(); // don't leak memory!
-        matInHLS.get(2).release(); // don't leak memory!
+        ArrayList<Mat> matInLHLS = inputMatToHLS(leftArea);
+        avgLH = (int) Core.mean(matInLHLS.get(0)).val[0];
+        avgLL = (int) Core.mean(matInLHLS.get(1)).val[0];
+        avgLS = (int) Core.mean(matInLHLS.get(2)).val[0];
+        leftArea.release(); // don't leak memory!
+        matInLHLS.get(0).release(); // don't leak memory!
+        matInLHLS.get(1).release(); // don't leak memory!
+        matInLHLS.get(2).release(); // don't leak memory!
 
         Imgproc.rectangle( // rings
                 zoomedInput, // Buffer to draw on
@@ -98,12 +100,36 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
                 new Scalar(0,0,255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
-        Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgH, avgL, avgS));
+        Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgLH, avgLL, avgLS));
+
+        Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
+        Mat centerArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
+        Log.v("vision", "submat created.");
+
+        ArrayList<Mat> matInCHLS = inputMatToHLS(centerArea);
+        avgCH = (int) Core.mean(matInCHLS.get(0)).val[0];
+        avgCL = (int) Core.mean(matInCHLS.get(1)).val[0];
+        avgCS = (int) Core.mean(matInCHLS.get(2)).val[0];
+        centerArea.release(); // don't leak memory!
+        matInCHLS.get(0).release(); // don't leak memory!
+        matInCHLS.get(1).release(); // don't leak memory!
+        matInCHLS.get(2).release(); // don't leak memory!
+
+        Imgproc.rectangle( // rings
+                zoomedInput, // Buffer to draw on
+                RectATLCorner, // First point which defines the rectangle
+                RectABRCorner, // Second point which defines the rectangle
+                new Scalar(0,0,255), // The color the rectangle is drawn in
+                5); // Thickness of the rectangle lines
+
+        Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgCH, avgCL, avgCS));
+
+
 
         return zoomedInput;
     }
 
-    public int getConeOrientation() {
+    public int getTeamPropOrientation() {
         /*
          * Use YCrCb
          * 1: Green  - Y: 68  Cr: 111 Cb: 125 (with flashlight: 198, 92, 122)
@@ -121,7 +147,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
          * L (0-100, %)     L / 256
          */
 
-        Utilities.getSharedUtility().telemetry.addData("Sleeve Color:", avgH);
+        Utilities.getSharedUtility().telemetry.addData("Sleeve Color:", avgLH);
 
         //algorithm for finding the closest color
         /*if (avgH > 50 && avgH < 80) {
@@ -133,23 +159,19 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         } else {
             return 1; // a guess...
         }*/
-        int purple1 = 124;
-        int orange2 = 15;
-        int green3 = 68;
-        int distFrom1 = Math.abs(avgH-purple1);
-        int distFrom2 = Math.abs(avgH-orange2);
-        int distFrom3 = Math.abs(avgH-green3);
-        if (distFrom1<distFrom2 && distFrom1<distFrom3){
-            Log.v("vision", "detected: " + 1);
+        int red1 = 1;
+        int blue2 = 244;
+        int LdistFrom1 = Math.abs(avgLH-red1);
+        int LdistFrom2 = Math.abs(avgLH-blue2);
+        int RdistFrom1 = Math.abs(avgLH-red1);
+        int RdistFrom2 = Math.abs(avgLH-blue2);
+        if (LdistFrom1<=colorTolerance || LdistFrom2 <= colorTolerance){
+            Log.v("vision", "left " + 1);
             return 1;
         }
-        else if (distFrom2<=distFrom1 && distFrom2<=distFrom3){
-            Log.v("vision", "detected: " + 2);
+        else if (RdistFrom1<=colorTolerance || RdistFrom2 <= colorTolerance){
+            Log.v("vision", "center " + 2);
             return 2;
-        }
-        else if (distFrom3<=distFrom1 && distFrom3<distFrom2){
-            Log.v("vision", "detected: " + 3);
-            return 3;
         }
         else{
             Log.v("vision", "Nothing detected, Default is 3");

@@ -67,11 +67,11 @@ public class DualMotorLift implements Subsystem {
         slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
         if (mode== Mode.RIGHT_FOLLOW_LEFT) {
-            slideMotorL.setTargetPosition(0);
-            slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slideMotorR.setTargetPosition(0);
+            slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //slideMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            slideMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slideMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         else{
             slideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -98,12 +98,12 @@ public class DualMotorLift implements Subsystem {
     public void goToHt(int ticks) {
         targetReached=false;
         if(mode==Mode.RIGHT_FOLLOW_LEFT) {
-            slideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            slideMotorL.setTargetPosition(ticks);
-            slideMotorL.setVelocity(UP_VELOCITY);
+            slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slideMotorR.setTargetPosition(ticks);
+            slideMotorR.setVelocity(UP_VELOCITY);
             //fine tune velocity?
             //In case if i should set right motor right when i set left motor (prob not useful)
-            slideMotorR.setVelocity(UP_VELOCITY);
+            slideMotorL.setVelocity(UP_VELOCITY);
         }
         else {
             pidfController.reset();
@@ -114,7 +114,7 @@ public class DualMotorLift implements Subsystem {
 
     public void goToRelativeOffset(double inches) {
         targetReached=false;
-        int currPosTicks = slideMotorL.getCurrentPosition();
+        int currPosTicks = slideMotorR.getCurrentPosition();
         int targetPosTicks = currPosTicks + inchToTicks(inches);
 
         //Log.v("AUTOCMD DEBUG", "currPosTicks: " + currPosTicks);
@@ -125,12 +125,12 @@ public class DualMotorLift implements Subsystem {
 
     public void applyStaticOffset(int direction, double power) {
         if(mode == Mode.RIGHT_FOLLOW_LEFT) {
-            slideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            slideMotorL.setPower(power*direction);
+            slideMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slideMotorR.setPower(power*direction);
         }
         else{
-            slideMotorL.setPower(power*direction);
             slideMotorR.setPower(power*direction);
+            slideMotorL.setPower(power*direction);
         }
         //Log.v("PIDLift: status: ", "applyStaticOffset");
     }
@@ -142,8 +142,8 @@ public class DualMotorLift implements Subsystem {
             power = FAST_POWER;
         }
         if(mode == Mode.RIGHT_FOLLOW_LEFT) {
-            slideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            slideMotorL.setPower(power*direction);
+            slideMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slideMotorR.setPower(power*direction);
         }
         else{
             double powerFromPIDF = power * direction;
@@ -152,8 +152,8 @@ public class DualMotorLift implements Subsystem {
             } else if (powerFromPIDF < PID_RANGE) {
                 powerFromPIDF = PID_RANGE;
             }
-            slideMotorL.setPower(powerFromPIDF);
             slideMotorR.setPower(powerFromPIDF);
+            slideMotorL.setPower(powerFromPIDF);
         }
         //Log.v("PIDLift: status: ", "adjust lift");
         //for using run-using-encoder mode
@@ -176,13 +176,13 @@ public class DualMotorLift implements Subsystem {
         double motorLVel = Math.abs(slideMotorL.getVelocity());
         double targetPos, currPos;
 
-        motorLVel = Math.abs(slideMotorL.getVelocity());
-        currPos = slideMotorL.getCurrentPosition();
+        motorLVel = Math.abs(slideMotorR.getVelocity());
+        currPos = slideMotorR.getCurrentPosition();
 
 
 
         if (mode == Mode.RIGHT_FOLLOW_LEFT) {
-            targetPos = slideMotorL.getTargetPosition();
+            targetPos = slideMotorR.getTargetPosition();
 
             /*
             this.targetReached = (this.targetReached ||
@@ -216,19 +216,19 @@ public class DualMotorLift implements Subsystem {
     }
 
     public double getPosition(){
-        return slideMotorL.getCurrentPosition() / (TICKS_PER_REV/(PULLEY_DIAMETER_IN * Math.PI));
+        return slideMotorR.getCurrentPosition() / (TICKS_PER_REV/(PULLEY_DIAMETER_IN * Math.PI));
     }
 
     public void resetEncoder(){
-        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double getTargetPos(){
-        return slideMotorL.getTargetPosition();
+        return slideMotorR.getTargetPosition();
     }
 
     public boolean armCanSwing(){
@@ -241,12 +241,12 @@ public class DualMotorLift implements Subsystem {
 
         updateTargetReached();
         if(mode==Mode.RIGHT_FOLLOW_LEFT) {
-            double velocity = slideMotorL.getVelocity();
-            slideMotorR.setVelocity(velocity);
+            double velocity = slideMotorR.getVelocity();
+            slideMotorL.setVelocity(velocity);
         }//if target is reached and not in manual mode, set velocity of right motor to 0
         else{
             if (!isLevelReached()) {
-                double measuredPosition = (double) ticksToInches(slideMotorL.getCurrentPosition());
+                double measuredPosition = (double) ticksToInches(slideMotorR.getCurrentPosition());
                 double powerFromPIDF = pidfController.update(measuredPosition);
                 if (powerFromPIDF < PID_RANGE-SLIDE_HOLD_POWER) {
                     powerFromPIDF += SLIDE_HOLD_POWER;
@@ -264,8 +264,8 @@ public class DualMotorLift implements Subsystem {
         }
         //telemetry.addLine("Slide motor set to " + ticksToInches(slideMotorL.getTargetPosition()));
         //telemetry.addLine("current slide velocity: " + slideMotorL.getVelocity());
-        telemetry.addLine("current slide position: " + ticksToInches(slideMotorL.getCurrentPosition()));
-        packet.put("target pos (inches)", ticksToInches(slideMotorL.getTargetPosition()));
+        telemetry.addLine("current slide position: " + ticksToInches(slideMotorR.getCurrentPosition()));
+        packet.put("target pos (inches)", ticksToInches(slideMotorR.getTargetPosition()));
         if (mode == Mode.BOTH_MOTORS_PID) {
             packet.put("PID target pos", pidfController.getTargetPosition());
         }
