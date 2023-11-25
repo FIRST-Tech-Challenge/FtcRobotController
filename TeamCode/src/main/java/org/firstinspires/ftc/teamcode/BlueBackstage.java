@@ -32,15 +32,20 @@ public class BlueBackstage extends LinearOpMode {
 
     float test = 1;
 
-    private DcMotor Arm = null;
+    private DcMotor Arm, Extend = null;
 
-    private double ArmPower = 0.0;
+    private double ArmPower = 0.5, SlidePower = 0.4;
     @Override
     public void runOpMode()
     {
         Arm = hardwareMap.get(DcMotor.class, "AE");
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        Extend = hardwareMap.get(DcMotor.class, "SE");
+        Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Extend.setDirection(DcMotorSimple.Direction.REVERSE);
+
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using a webcam. Note that you will need to
@@ -119,36 +124,81 @@ public class BlueBackstage extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+
+        //Left
         TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(25, 13, Math.toRadians(0)),
+                .lineToLinearHeading(new Pose2d(25, 12, Math.toRadians(0)),
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
-                .back(3,
+                .back(8,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                 .turn(Math.toRadians(90))
-                .forward(18,
+                .forward(25,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                 .addTemporalMarker(() -> {
-                    Arm.setTargetPosition(50);
+                    Arm.setTargetPosition(700);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Arm.setPower(0.13);
+
+                    Arm.setPower(0.5f);
+                    sleep(1000);
+                    Extend.setTargetPosition(1094);
+                    Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Extend.setPower(0.4f);
+                    sleep(2000);
+                    Arm.setTargetPosition(590);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+
                 })
-                .waitSeconds(3)
+
+                .back(8,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+
+                .addTemporalMarker(() -> {
+
+
+                    Extend.setTargetPosition(0);
+                    Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Extend.setPower(0.5f);
+
+                    sleep(1000);
+
+                    Arm.setTargetPosition(0);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+
+
+                })
+
+
+
                 .build();
+
+
+        //middle
         TrajectorySequence Middle = drive.trajectorySequenceBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)),
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
-                .back(4,
+                .back(8f,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                 .turn(Math.toRadians(90))
-                .forward(30,
+                .forward(38,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+
                 .build();
+
+
+        //right
         TrajectorySequence Right = drive.trajectorySequenceBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(24, 0, Math.toRadians(0)),
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -163,10 +213,14 @@ public class BlueBackstage extends LinearOpMode {
                 .strafeLeft(6,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
-                .lineToLinearHeading(new Pose2d(28, 30, Math.toRadians(90)),
+                .forward(18,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
+                .back(40,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                 .build();
+
 
         /*
          * Wait for the user to press start on the Driver Station
@@ -257,77 +311,6 @@ public class BlueBackstage extends LinearOpMode {
      * if you're doing something weird where you do need it synchronized with your OpMode thread,
      * then you will need to account for that accordingly.
      */
-    class SamplePipeline extends OpenCvPipeline
-    {
-        boolean viewportPaused;
 
-        /*
-         * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
-         * highly recommended to declare them here as instance variables and re-use them for
-         * each invocation of processFrame(), rather than declaring them as new local variables
-         * each time through processFrame(). This removes the danger of causing a memory leak
-         * by forgetting to call mat.release(), and it also reduces memory pressure by not
-         * constantly allocating and freeing large chunks of memory.
-         */
 
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            /*
-             * IMPORTANT NOTE: the input Mat that is passed in as a parameter to this method
-             * will only dereference to the same image for the duration of this particular
-             * invocation of this method. That is, if for some reason you'd like to save a copy
-             * of this particular frame for later use, you will need to either clone it or copy
-             * it to another Mat.
-             */
-
-            /*
-             * Draw a simple box around the middle 1/2 of the entire frame
-             */
-            Imgproc.rectangle(
-                    input,
-                    new Point(
-                            input.cols()/4,
-                            input.rows()/4),
-                    new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
-
-            /**
-             * NOTE: to see how to get data from your pipeline to your OpMode as well as how
-             * to change which stage of the pipeline is rendered to the viewport when it is
-             * tapped, please see {@link PipelineStageSwitchingExample}
-             */
-
-            return input;
-        }
-
-        @Override
-        public void onViewportTapped()
-        {
-            /*
-             * The viewport (if one was specified in the constructor) can also be dynamically "paused"
-             * and "resumed". The primary use case of this is to reduce CPU, memory, and power load
-             * when you need your vision pipeline running, but do not require a live preview on the
-             * robot controller screen. For instance, this could be useful if you wish to see the live
-             * camera preview as you are initializing your robot, but you no longer require the live
-             * preview after you have finished your initialization process; pausing the viewport does
-             * not stop running your pipeline.
-             *
-             * Here we demonstrate dynamically pausing/resuming the viewport when the user taps it
-             */
-
-            viewportPaused = !viewportPaused;
-
-            if(viewportPaused)
-            {
-                webcam.resumeViewport();
-            }
-            else
-            {
-                webcam.resumeViewport();
-            }
-        }
-    }
 }

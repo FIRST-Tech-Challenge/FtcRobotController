@@ -84,6 +84,8 @@ public class OpenCVBlue extends OpenCvPipeline {
     Mat stats_mat = new Mat();
     Mat cens_mat = new Mat();
 
+    Rect roi = new Rect(0,429, 1920, 651);
+
     private Telemetry telemetry = null;
 
     /**
@@ -236,9 +238,9 @@ public class OpenCVBlue extends OpenCvPipeline {
 
         Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
         //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
-        Rect roi = new Rect(0,429, 1920, 651);
 
-        croppedimage = new Mat(maskedInputMat, roi);
+
+        croppedimage =  maskedInputMat.submat(roi);
 
 
         /*

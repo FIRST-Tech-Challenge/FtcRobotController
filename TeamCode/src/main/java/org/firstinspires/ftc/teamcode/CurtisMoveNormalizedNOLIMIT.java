@@ -65,14 +65,20 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
         //-------------------------------------------------------
 
         //set direction for motors not servos(servos do not need pos set)
-//        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 //        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
 //        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Sets em to back or forward
@@ -165,8 +171,9 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
         Arm.setPower(armPower);
         Slides.setPower(slidesPower);
 
-        telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
         telemetry.addData("Extend Encoder Ticks", Slides.getCurrentPosition());
+
+        telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
     }
 
 
