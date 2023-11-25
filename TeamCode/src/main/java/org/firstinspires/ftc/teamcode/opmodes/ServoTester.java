@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
 
 @TeleOp
-public class ServoConfig extends LinearOpMode {
+public class ServoTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         CrabRobot robot = new CrabRobot(this);
@@ -47,7 +47,7 @@ public class ServoConfig extends LinearOpMode {
             } if(dpadLeft) {
                 robot.outtake.moveR(-0.1);
             } if (gamepad1.x) {
-                robot.outtake.resetArmPos();
+                robot.outtake.toIntakePos();
             } if(gamepad1.y) {
                 robot.outtake.toTravelPos();
             } if(gamepad1.b) {
@@ -55,6 +55,11 @@ public class ServoConfig extends LinearOpMode {
             } if(gamepad1.right_bumper){
                 robot.outtake.dropPixelPos();
             }
+
+            if (gamepad1.a) {
+                robot.outtake.resetArmPos();
+            }
+
             if(leftTrigger>0) { robot.outtake.moveDumper(-0.1);}
             if(rightTrigger>0) {robot.outtake.moveDumper( 0.1);}
 
