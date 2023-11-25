@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -13,11 +14,14 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
+import java.util.List;
+
 /**
  * Warren Zhou
  * 9/1
  * Basic robot with basic features that all should have
  */
+
 public class BasicRobot{
     public static Logger logger;
     public static RFLogger LOGGER;
@@ -57,6 +61,8 @@ public class BasicRobot{
         dashboard.setTelemetryTransmissionInterval(25);
         packet=new TelemetryPacket();
         gampad = new RFGamepad();
+        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
     }
 
     /**
@@ -65,11 +71,12 @@ public class BasicRobot{
      */
 
     public void update(){
-
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();
+        for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
+            module.clearBulkCache();
     }
 
     /**

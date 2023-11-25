@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
+import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
@@ -36,7 +37,8 @@ public class AprilTagRRTest extends LinearOpMode {
         roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
         Pose2d startPose = new Pose2d(40, 1.5*23.5, Math.toRadians(0));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RFAprilCam cam = new RFAprilCam();
+        CVMaster cv = new CVMaster();
+        cv.switchToApril();
         roadrun.setPoseEstimate(startPose);
         queuer = new Queuer();
         int loops = 0;
@@ -62,7 +64,7 @@ public class AprilTagRRTest extends LinearOpMode {
             queuer.setFirstLoop(false);
             robot.update();
             roadrun.update();
-           cam.update();
+           cv.update();
         }
     }
     public void followTrajAsync(TrajectorySequence traj){

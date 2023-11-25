@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Config
 public class RFAprilCam {
-    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=10;
+    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=1;
     public static int EXPOSURE_MS= 10, GAIN = 40;
     public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
     private AprilTagProcessor aprilTag;
@@ -76,11 +76,25 @@ public class RFAprilCam {
             principalPoint="316.402f, 176.412f"
             distortionCoefficients="0.111626 , -0.255626, 0, 0, 0.107992, 0, 0, 0"
 
+            size="640 480"
+            focalLength="622.001f, 622.001f"
+            principalPoint="319.803f, 241.251f"
+            distortionCoefficients="0.1208, -0.261599, 0, 0, 0.10308, 0, 0, 0"
 
              size="800 600"
             focalLength="775.79f, 775.79f"
             principalPoint="400.898f, 300.79f"
             distortionCoefficients="0.112507, -0.272067, 0, 0, 0.15775, 0, 0, 0"
+
+            size="864, 480"
+            focalLength="626.909f , 626.909f"
+            principalPoint="426.007f , 236.834f"
+            distortionCoefficients="0.120988, -0.253336 , 0, 0, 0.102445, 0, 0, 0"
+
+            size="1920, 1080"
+            focalLength="1385.92f , 1385.92f"
+            principalPoint="951.982f , 534.084f"
+            distortionCoefficients="0.117627, -0.248549, 0, 0, 0.107441, 0, 0, 0"
          */
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -89,7 +103,7 @@ public class RFAprilCam {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .setLensIntrinsics(755.79f, 775.79f, 500.898f, 300.79f)
+                .setLensIntrinsics(1385.92f, 1385.92f, 951.982f,534.084f)
                 .build();
         aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
         aprilTag.setDecimation((float)UPSAMPLE);
@@ -100,7 +114,7 @@ public class RFAprilCam {
                 .addProcessor(aprilTag)
                 .enableLiveView(false)
                 .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-                .setCameraResolution(new Size(800, 600))
+                .setCameraResolution(new Size(1920, 1080))
                 .build();
         visionPortal.stopLiveView();
         while(visionPortal.getCameraState()!= RFVisionPortal.CameraState.STREAMING){
