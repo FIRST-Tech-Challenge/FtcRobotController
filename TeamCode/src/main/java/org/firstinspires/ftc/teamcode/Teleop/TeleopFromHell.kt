@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.DriveMethods
+import org.firstinspires.ftc.teamcode.Variables.AEROPLANE_CLOSE
+import org.firstinspires.ftc.teamcode.Variables.AEROPLANE_LAUNCH
 import org.firstinspires.ftc.teamcode.Variables.bottom
 import org.firstinspires.ftc.teamcode.Variables.lMax
 import org.firstinspires.ftc.teamcode.Variables.lMin
@@ -92,8 +94,11 @@ class TeleopFromHell: DriveMethods() {
         var slideDeg = 0.0
         var angleFromSlideToClaw = 0.0
         var slideRottarget = 25.0
+        var magicHoldNumber = 0
         var clawClamp = false
         val passiveServo = hardwareMap.get(Servo::class.java, "passiveServo")
+        val aeroplaneLauncherServo = hardwareMap.get(Servo::class.java, "PLANE!")
+        var aeroplaneHasBeenLaunched = false
 
         while (opModeIsActive()) {
             //set gamepad inputs
@@ -219,6 +224,20 @@ class TeleopFromHell: DriveMethods() {
                 telemetry.addData("upOrDown", upOrDown)
                 upOrDown = !upOrDown
                 sleep(500)
+            }
+            if (gamepad2.y && !aeroplaneHasBeenLaunched)  {
+                if (magicHoldNumber >= 25) {
+                    // Launch Aeroplane
+                    aeroplaneLauncherServo.position = AEROPLANE_LAUNCH
+                    magicHoldNumber = 0
+                    aeroplaneHasBeenLaunched = true
+                    sleep(50)
+                    aeroplaneLauncherServo.position = AEROPLANE_CLOSE
+                } else {
+                    magicHoldNumber++
+                }
+            } else if (!gamepad2.y && !aeroplaneHasBeenLaunched) {
+                magicHoldNumber = 0
             }
 
             //claw stuff
