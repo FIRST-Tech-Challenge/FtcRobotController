@@ -113,9 +113,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
-        initializeHardware();
         myColorDetection.init();
         myAprilTagPoseEstimator.init();
+        initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
 
@@ -125,7 +125,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
-        sleep(5000);
+        // Allow the OpenCV to process
+        sleep(500);
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
