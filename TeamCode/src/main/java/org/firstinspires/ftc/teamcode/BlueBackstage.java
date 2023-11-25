@@ -41,10 +41,13 @@ public class BlueBackstage extends LinearOpMode {
         Arm = hardwareMap.get(DcMotor.class, "AE");
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         Extend = hardwareMap.get(DcMotor.class, "SE");
         Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Extend.setDirection(DcMotorSimple.Direction.REVERSE);
+        Extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -195,6 +198,47 @@ public class BlueBackstage extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
 
+                .addTemporalMarker(() -> {
+                    Arm.setTargetPosition(700);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+                    sleep(1000);
+                    Extend.setTargetPosition(1094);
+                    Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Extend.setPower(0.4f);
+                    sleep(2000);
+                    Arm.setTargetPosition(590);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+
+                })
+
+                .back(8,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+
+                .addTemporalMarker(() -> {
+
+
+                    Extend.setTargetPosition(0);
+                    Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Extend.setPower(0.5f);
+
+                    sleep(1000);
+
+                    Arm.setTargetPosition(0);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+
+
+                })
+
+
                 .build();
 
 
@@ -216,10 +260,70 @@ public class BlueBackstage extends LinearOpMode {
                 .forward(18,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
-                .back(40,
+                .back(8,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .turn(Math.toRadians(-190))
+                .forward(34,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
+                .strafeRight(6,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
+
+                .addTemporalMarker(() -> {
+                            Arm.setTargetPosition(700);
+                            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                            Arm.setPower(0.5f);
+                        })
+                        .waitSeconds(1)
+
+                .addTemporalMarker(() -> {
+                    Extend.setTargetPosition(1094);
+                    Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Extend.setPower(0.4f);})
+
+                .waitSeconds(2)
+                .addTemporalMarker(() -> {
+                    Arm.setTargetPosition(590);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+
+                })
+
+                .waitSeconds(1)
+
+
+                .back(8,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+
+                .waitSeconds(1)
+
+                .addTemporalMarker(() -> {
+
+
+                            Extend.setTargetPosition(0);
+                            Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                            Extend.setPower(0.5f);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    Arm.setTargetPosition(0);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    Arm.setPower(0.5f);
+                })
+
+
+                .waitSeconds(1)
+
                 .build();
+
 
 
         /*
