@@ -83,6 +83,19 @@ public class OpenCVBlue extends OpenCvPipeline {
     Mat dest_matrix = new Mat();
     Mat stats_mat = new Mat();
     Mat cens_mat = new Mat();
+    double x_pos = 0;
+    double y_pos = 0;
+    int lineLeftX = 529;
+
+    int lineRightX = 1270;
+
+     Point p1 = new Point(lineLeftX, 0);
+     Point p2 = new Point(lineLeftX, 1079);
+
+     Scalar s1 = new Scalar(0, 255, 0);
+
+    Point p3 = new Point(lineRightX, 0);
+    Point p4 = new Point(lineRightX, 1079);
 
     Rect roi = new Rect(0,429, 1920, 651);
 
@@ -164,9 +177,6 @@ public class OpenCVBlue extends OpenCvPipeline {
 
 
         int output = Imgproc.connectedComponentsWithStats(binaryMat, dest_matrix, stats_mat, cens_mat);
-        int lineLeftX = 529;
-
-        int lineRightX = 1270;
 
 
         double currentmax = 0;
@@ -183,8 +193,8 @@ public class OpenCVBlue extends OpenCvPipeline {
             }
         }
 
-        double x_pos = cens_mat.get(bestmaxblob, 0)[0];
-        double y_pos = cens_mat.get(bestmaxblob, 1)[0];
+        x_pos = cens_mat.get(bestmaxblob, 0)[0];
+        y_pos = cens_mat.get(bestmaxblob, 1)[0];
 
 
         if(x_pos > 1270)
@@ -232,13 +242,8 @@ public class OpenCVBlue extends OpenCvPipeline {
         telemetry.addData("[Upper Scalar]", upper);
         telemetry.update();
 
-        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
-        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
-        Imgproc.line(maskedInputMat, new Point(lineRightX, 0), new Point(lineRightX, input.rows()), new Scalar(0, 255, 0), 20);
-
-        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
-        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
-
+        Imgproc.line(maskedInputMat, p1, p2, s1, 20);
+        Imgproc.line(maskedInputMat, p3, p4, s1, 20);
 
         croppedimage =  maskedInputMat.submat(roi);
 
