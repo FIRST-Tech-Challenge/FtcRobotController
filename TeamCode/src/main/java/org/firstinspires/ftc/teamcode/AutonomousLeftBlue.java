@@ -58,10 +58,11 @@ public class AutonomousLeftBlue extends AutonomousBase {
         // This is the line that determined what auto is run.
         // This is left side blue alliance.
         pipelineLeft = new CenterstageSuperPipeline(true, false );
+// WAS 640, 480
         visionPortalLeft = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam Left"))
                 .addProcessor(pipelineLeft)
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(1280, 720))
                 .build();
 //        pipelineRight = new CenterstageSuperPipeline(false, false);
 //        visionPortalRight = new VisionPortal.Builder()
@@ -222,7 +223,8 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.addData("Motion", "Move to Spike Mark");
             telemetry.update();
             // All 3 positions required forward movement
-            timeDriveStraight( drive_power, 800 );
+//          timeDriveStraight( drive_power, 800 );
+            driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
             // THe final motion depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT

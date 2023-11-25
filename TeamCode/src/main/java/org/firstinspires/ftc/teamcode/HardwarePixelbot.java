@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static java.lang.Thread.sleep;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -85,8 +86,13 @@ public class HardwarePixelbot
     public int          viperMotorsPos  = 0;       // current encoder count
     public double       viperMotorsVel  = 0.0;     // encoder counts per second
     public double       viperMotorsPwr  = 0.0;     // current power setting
+    public double       viperMotorsAmps = 0.0;     // current power draw (Amps)
 
-    public double  VIPER_MOTOR_POWER = 1.0;  // Speed of the viper slide extension/retraction
+    public double  VIPER_RAISE_POWER =  1.00; // Motor power used to RAISE viper slide
+    public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
+    public double  VIPER_LOWER_POWER = -0.25; // Motor power used to LOWER viper slide
+    public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
@@ -185,8 +191,8 @@ public class HardwarePixelbot
         collectorServo = hwMap.servo.get("collectorServo");      // servo port 4 (Expansion Hub)
         collectorServo.setPosition(collectorServoSetPoint);
 
-        viperMotors = hwMap.get(DcMotorEx.class,"ViperMotors");  // Expansion Hub port 2 (REVERSE)
-        viperMotors.setDirection(DcMotor.Direction.REVERSE);
+        viperMotors = hwMap.get(DcMotorEx.class,"ViperMotors");  // Control Hub port 2
+        viperMotors.setDirection(DcMotor.Direction.FORWARD);
         viperMotors.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperMotors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -311,7 +317,7 @@ public class HardwarePixelbot
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
 //      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
 //      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
-//      viperMotorsAmps     = viperMotors.getCurrent(MILLIAMPS);
+        viperMotorsAmps     = viperMotors.getCurrent(MILLIAMPS);
 //      liftMotorAmps       = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
 
     } // readBulkData
@@ -428,6 +434,24 @@ public class HardwarePixelbot
         rearLeftMotor.setMode(   DcMotor.RunMode.RUN_TO_POSITION );
         rearRightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
     } // setRunToPosition
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* viperSlideExtension()                                                                      */
+    public void viperSlideExtension( int targetEncoderCount )
+    {
+        // Range-check the target
+        if( targetEncoderCount < VIPER_EXTEND_ZERO ) targetEncoderCount = VIPER_EXTEND_ZERO;
+        if( targetEncoderCount > VIPER_EXTEND_FULL ) targetEncoderCount = VIPER_EXTEND_FULL;
+        // Are we raising or lowering the lift?
+        boolean directionUpward = (targetEncoderCount > viperMotorsPos)? true : false;
+        // Configure target encoder count
+        viperMotors.setTargetPosition( targetEncoderCount );
+        // Set the power used to get there
+        double motorPower = (directionUpward)? VIPER_RAISE_POWER : VIPER_LOWER_POWER;
+        viperMotors.setPower( motorPower );
+        // Enable RUN_TO_POSITION mode
+        viperMotors.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+    } // viperSlideExtension
 
     public int singleSonarRangeF() {
         //Query the current range sensor reading and wait for a response

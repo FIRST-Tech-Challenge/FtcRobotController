@@ -72,6 +72,7 @@ public abstract class Teleop extends LinearOpMode {
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
     boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior()
+    boolean liftTweaked  = false;  // Reminder to zero power when input stops
 
     Gamepad.RumbleEffect coneRumbleEffect1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect coneRumbleEffect2;    // Use to build a custom rumble sequence.
@@ -118,6 +119,7 @@ public abstract class Teleop extends LinearOpMode {
             globalCoordinatePositionUpdate();
 
             ProcessCollectorControls();
+            ProcessLiftControls();
 
             // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
             if( gamepad1_triangle_now && !gamepad1_triangle_last)
@@ -190,6 +192,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
             telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
+            telemetry.addData("RightTrigger", "%.2f", gamepad2.right_trigger);
             if( batteryVoltsEnabled ) {
                telemetry.addData("Batteries", "CtlHub=%.3f V, ExHub=%.3f V",
                     robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
@@ -266,6 +269,53 @@ public abstract class Teleop extends LinearOpMode {
         }
 
     }  // processCollectorControls
+
+    void ProcessLiftControls() {
+        boolean safeToManuallyLower = (robot.viperMotorsPos > robot.VIPER_EXTEND_ZERO);
+        boolean safeToManuallyRaise = (robot.viperMotorsPos < robot.VIPER_EXTEND_FULL);
+        // Capture user inputs ONCE, in case they change during processing of this code
+        // or we want to scale them down
+        double  gamepad2_left_trigger  = gamepad2.left_trigger  * 1.00;
+        double  gamepad2_right_trigger = gamepad2.right_trigger * 1.00;
+        boolean manual_lift_control = ( (gamepad2_left_trigger  > 0.25) ||
+                                        (gamepad2_right_trigger > 0.25) );
+
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
+        if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
+        {   // Move lift to HIGH-SCORING position
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
+        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
+        {   // Move lift to MID-SCORING position
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
+        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        {   // Move lift to STORED position
+        }
+        //===================================================================
+        else if( manual_lift_control || liftTweaked ) {
+            // Does user want to manually RAISE the lift?
+            if( safeToManuallyRaise && (gamepad2_right_trigger > 0.25) ) {
+                //robot.viperMotors.setPower( robot.VIPER_RAISE_POWER );
+                robot.viperMotors.setPower( gamepad2_right_trigger );
+                liftTweaked = true;
+            }
+            // Does user want to manually LOWER the lift?
+            else if( safeToManuallyLower && (gamepad2_left_trigger > 0.25) ) {
+                robot.viperMotors.setPower( robot.VIPER_LOWER_POWER );
+                liftTweaked = true;
+            }
+            // No more input?  Time to stop lift movement!
+            else if( liftTweaked ) {
+                boolean closeToZero = (Math.abs(robot.viperMotorsPos - robot.VIPER_EXTEND_ZERO) < 20);
+                robot.viperMotors.setPower( closeToZero? 0.0 : robot.VIPER_HOLD_POWER );
+//              robot.viperMotors.setPower( robot.VIPER_HOLD_POWER  );
+                liftTweaked = false;
+            }
+        } // manual_lift_control
+
+    }  // ProcessLiftControls
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
