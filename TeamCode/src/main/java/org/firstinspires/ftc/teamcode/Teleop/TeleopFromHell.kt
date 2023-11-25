@@ -226,7 +226,7 @@ class TeleopFromHell: DriveMethods() {
                 sleep(500)
             }
             if (gamepad2.y && !aeroplaneHasBeenLaunched)  {
-                if (magicHoldNumber >= 25) {
+                if (magicHoldNumber >= 100) {
                     // Launch Aeroplane
                     aeroplaneLauncherServo.position = AEROPLANE_LAUNCH
                     magicHoldNumber = 0
