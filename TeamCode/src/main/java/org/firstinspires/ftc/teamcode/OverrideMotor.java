@@ -103,7 +103,7 @@ public class OverrideMotor implements DcMotor {
         dcMotor.setPower(power);
     }
 
-    public void cancelOverridePower(double power) {
+    public void cancelOverridePower() {
         dcMotor.setPower(overridePower);
     }
 
