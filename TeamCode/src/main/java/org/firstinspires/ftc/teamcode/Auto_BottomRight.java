@@ -25,7 +25,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
-@TeleOp(name = "HornetSquad: AT Top Left", group = "Auto")
+@TeleOp(name = "HornetSquad: AT Bottom Right", group = "Auto")
 public class Auto_BottomRight extends LinearOpMode {
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
