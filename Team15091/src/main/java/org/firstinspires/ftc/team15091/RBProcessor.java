@@ -24,7 +24,7 @@ public class RBProcessor implements VisionProcessor {
     // Define region for left and middle
     static final List<Point> circleCenters = Arrays.asList(
             new Point(30, 315),
-            new Point(350, 285)
+            new Point(360, 285)
     );
     static final int radius = 25;
     public void init(int width, int height, CameraCalibration cameraCalibration) {
@@ -59,10 +59,10 @@ public class RBProcessor implements VisionProcessor {
         }
         temp.release();
 
-        if (isRed(means[0].val[0]) || isBlue(means[0].val[0]) && means[0].val[1] > 100) { // add an additional saturation check
+        if (isRed(means[0].val[0]) || isBlue(means[0].val[0]) && means[0].val[1] > 70) { // add an additional saturation check
             position = PixelPosition.Left;
             canvas.drawCircle((float)circleCenters.get(0).x * scaleBmpPxToCanvasPx, (float)circleCenters.get(0).y * scaleBmpPxToCanvasPx, radius * scaleBmpPxToCanvasPx, greenPaint);
-        } else if (isRed(means[1].val[0]) || isBlue(means[1].val[0]) && means[1].val[1] > 100) {
+        } else if (isRed(means[1].val[0]) || isBlue(means[1].val[0]) && means[1].val[1] > 70) {
             position = PixelPosition.Middle;
             canvas.drawCircle((float)circleCenters.get(1).x * scaleBmpPxToCanvasPx, (float)circleCenters.get(1).y * scaleBmpPxToCanvasPx, radius * scaleBmpPxToCanvasPx, greenPaint);
         } else {
