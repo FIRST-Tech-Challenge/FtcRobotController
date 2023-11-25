@@ -113,6 +113,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         // initial state
         START_TO_DETECT_POS,
         DETECT_LEFT, DETECT_MIDDLE, ASSUME_RIGHT,
+        GO_PARK,
 
         // all TEST states
         TEST_DRAW_TWO_PICK_ONE,
@@ -437,11 +438,18 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         msg = "Cube Found Middle!!!";
                         sendTelemetry(true);
 
-                        driveStraight(DRIVE_SPEED, 3, targetHeading);
+                        driveStraight(DRIVE_SPEED, 2.8, targetHeading);
 
                         dropTwoPickOne();
-                        driveStraight(DRIVE_SPEED, -(3-MOVE_BACK_AFTER_DROP), targetHeading);
-                        nextState = FSMState.DONE;
+                        driveStraight(DRIVE_SPEED, -(2.8-MOVE_BACK_AFTER_DROP), targetHeading);
+
+                        // get ready to park
+                        turnToHeading(TURN_SPEED*5, 90);
+                        holdHeading(TURN_SPEED, 90, 0.1);
+
+                        driveStraight(DRIVE_SPEED*5,-18, 90,false, true);
+
+                        nextState = FSMState.GO_PARK;
 
                     } else {
                         nextState = FSMState.DETECT_LEFT;
@@ -459,32 +467,50 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         msg = "Cube Found Left!!!";
                         sendTelemetry(true);
 
-                        turnToHeading( TURN_SPEED*5, 60);
-                        driveStraight(DRIVE_SPEED, -3, 60);
+                        turnToHeading( TURN_SPEED*1, 90);
+                        holdHeading(TURN_SPEED*1, 90,0.1);
+                        driveStraight(DRIVE_SPEED*1,10, 90,false, true);
+                        driveStraight(DRIVE_SPEED, -3, 90);
 
                         dropTwoPickOne();
-                        driveStraight(DRIVE_SPEED, 3, 60);
 
-                        turnToHeading( TURN_SPEED*5, targetHeading);
-                        driveStraight(DRIVE_SPEED, -(-2-MOVE_BACK_AFTER_DROP), targetHeading);
+                        // set up the place to where it is ready to go park
+                        driveStraight(DRIVE_SPEED*1,3, 90,false, false);
+                        driveStraight(DRIVE_SPEED*2,-27, 90,false, true);
 
-                        nextState = FSMState.DONE;
+                        nextState = FSMState.GO_PARK;
 
                     } else {
-                        driveStraight(DRIVE_SPEED, 2, targetHeading);
                         nextState = FSMState.ASSUME_RIGHT;
                     }
+
+                    driveStraight(DRIVE_SPEED, 2, targetHeading);
                     break;
 
                 case ASSUME_RIGHT:
-                    targetHeading = -75;
+                    targetHeading = -90;
                     turnToHeading( TURN_SPEED*5, targetHeading);
-                    driveStraight(DRIVE_SPEED*5, -2, targetHeading, true, false);
+                    driveStraight(DRIVE_SPEED*2,-6.5, targetHeading,false, true);
+
+                    driveStraight(DRIVE_SPEED*5, -6, targetHeading, true, false);
                     holdHeading(TURN_SPEED, targetHeading, 0.1);
 
                     dropTwoPickOne();
-                    driveStraight(DRIVE_SPEED*5, -(-2-MOVE_BACK_AFTER_DROP), targetHeading, true, false);
+                    turnToHeading( TURN_SPEED*5, 90);
 
+//                    driveStraight(DRIVE_SPEED*5, -(-4-MOVE_BACK_AFTER_DROP), targetHeading, true, false);
+                    driveStraight(DRIVE_SPEED*5, -4.5, 90, true, false);
+
+                    // get ready to go park
+                    // set up the place to where it is ready to go park
+                    driveStraight(DRIVE_SPEED*5,-23.5, 90,false, true);
+
+                    nextState = FSMState.GO_PARK;
+                    break;
+
+                case GO_PARK:
+                    driveStraight(DRIVE_SPEED*4, 30, 90, true, false);
+                    driveStraight(DRIVE_SPEED*5, 61, 90, true, false);
                     nextState = FSMState.DONE;
                     break;
 
