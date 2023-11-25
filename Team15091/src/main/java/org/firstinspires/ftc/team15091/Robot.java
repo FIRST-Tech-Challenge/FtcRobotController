@@ -82,7 +82,8 @@ public class Robot {
         armServo = hardwareMap.servo.get("servo_arm");
         armPosition = armServo.getPosition();
         bowlServo = hardwareMap.servo.get("servo_bowl");
-        bowlPosition = bowlServo.getPosition();
+        // bowlPosition = bowlServo.getPosition();
+        bowlPosition = 0.5;
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(
@@ -212,10 +213,10 @@ public class Robot {
     }
 
     public void toggleBowl() {
-        if (bowlPosition == 0d) {
+        if (bowlPosition == 0.5d) {
             setBowlPosition(1d);
         } else {
-            setBowlPosition(0d);
+            setBowlPosition(0.5d);
         }
     }
 

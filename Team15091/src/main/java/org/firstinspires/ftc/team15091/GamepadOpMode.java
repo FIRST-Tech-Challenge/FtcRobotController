@@ -72,7 +72,7 @@ public class GamepadOpMode extends OpModeBase {
             if (gamepad1.x) {
                 if (!x_pressed) {
                     x_pressed = true;
-                    robot.setBowlPosition(0d);
+                    robot.setBowlPosition(0.5d);
                     robot.setArmPosition(0.7d);
                     loweringInProgress = !loweringInProgress;
                     liftStartTime = System.currentTimeMillis();

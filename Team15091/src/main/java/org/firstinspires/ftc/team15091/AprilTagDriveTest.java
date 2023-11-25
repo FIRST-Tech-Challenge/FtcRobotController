@@ -20,7 +20,7 @@ public class AprilTagDriveTest extends AutonomousBase{
         while(opModeIsActive()) {
             aprilTagDetections = aprilTagDetector.scanForAprilTags();
             if (!aprilTagDetections.isEmpty()) {
-                positionToAprilTag(aprilTagDetections.get(0).id);
+                positionToAprilTag(1);
                 break;
             }
         }
