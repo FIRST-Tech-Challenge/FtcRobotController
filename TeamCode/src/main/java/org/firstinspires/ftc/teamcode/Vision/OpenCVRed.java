@@ -24,6 +24,7 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -34,8 +35,11 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.Rect;
 
-@TeleOp
-public class OpenCVRed extends OpenCvPipeline  {
+//@I2cDeviceType()
+//@TeleOp
+public class OpenCVRed extends OpenCvPipeline {
+
+    private volatile String result = "start";
 
     /*
      * These are our variables that will be
@@ -51,7 +55,7 @@ public class OpenCVRed extends OpenCvPipeline  {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
-    private volatile String result = "start";
+    //public String result = "";
     private Scalar lower = new Scalar(0, 167.2f, 4.3);
     private Scalar upper = new  Scalar(8.5f, 255, 204);
     /**
@@ -59,7 +63,7 @@ public class OpenCVRed extends OpenCvPipeline  {
      * space we want to use on the live field
      * tuner instead of hardcoding it
      */
-    private OpenCVBlue.ColorSpace colorSpace = OpenCVBlue.ColorSpace.HSV;
+    private ColorSpace colorSpace = ColorSpace.HSV;
 
     /*
      * A good practice when typing EOCV pipelines is
@@ -74,12 +78,26 @@ public class OpenCVRed extends OpenCvPipeline  {
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
     public Mat maskedInputMat = new Mat();
-
-    public Mat croppedimageRed = new Mat();
+    public Mat croppedimage = new Mat();
 
     Mat dest_matrix = new Mat();
     Mat stats_mat = new Mat();
     Mat cens_mat = new Mat();
+    double x_pos = 0;
+    double y_pos = 0;
+    int lineLeftX = 529;
+
+    int lineRightX = 1270;
+
+    Point p1 = new Point(lineLeftX, 0);
+    Point p2 = new Point(lineLeftX, 1079);
+
+    Scalar s1 = new Scalar(0, 255, 0);
+
+    Point p3 = new Point(lineRightX, 0);
+    Point p4 = new Point(lineRightX, 1079);
+
+    Rect roi = new Rect(0,429, 1920, 651);
 
     private Telemetry telemetry = null;
 
@@ -159,9 +177,6 @@ public class OpenCVRed extends OpenCvPipeline  {
 
 
         int output = Imgproc.connectedComponentsWithStats(binaryMat, dest_matrix, stats_mat, cens_mat);
-        int lineLeftX = 529;
-
-        int lineRightX = 1270;
 
 
         double currentmax = 0;
@@ -178,13 +193,14 @@ public class OpenCVRed extends OpenCvPipeline  {
             }
         }
 
-        double x_pos = cens_mat.get(bestmaxblob, 0)[0];
-        double y_pos = cens_mat.get(bestmaxblob, 1)[0];
+        x_pos = cens_mat.get(bestmaxblob, 0)[0];
+        y_pos = cens_mat.get(bestmaxblob, 1)[0];
 
 
         if(x_pos > 1270)
         {
             result = "RIGHT";
+
         } else if(x_pos < 529) {
             result = "LEFT";
         }
@@ -227,12 +243,10 @@ public class OpenCVRed extends OpenCvPipeline  {
         telemetry.addData("[Upper Scalar]", upper);
         telemetry.update();
 
-        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
-        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
-        Imgproc.line(maskedInputMat, new Point(lineRightX, 0), new Point(lineRightX, input.rows()), new Scalar(0, 255, 0), 20);
-        Rect roi = new Rect(0,429, 1920, 651);
+        Imgproc.line(maskedInputMat, p1, p2, s1, 20);
+        Imgproc.line(maskedInputMat, p3, p4, s1, 20);
 
-        croppedimageRed = new Mat(maskedInputMat, roi);
+        croppedimage =  maskedInputMat.submat(roi);
 
 
         /*
@@ -244,7 +258,11 @@ public class OpenCVRed extends OpenCvPipeline  {
          * pixel from the input Mat that were inside
          * the threshold range.
          */
-        return croppedimageRed;
-        // return dest_matrix;
+
+        return croppedimage;
+        // return  maskedInputMat;
     }
+
+
+
 }

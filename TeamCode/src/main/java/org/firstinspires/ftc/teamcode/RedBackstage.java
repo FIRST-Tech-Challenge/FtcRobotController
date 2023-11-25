@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.Vision.OpenCVRed;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 
@@ -32,9 +33,6 @@ public class RedBackstage extends LinearOpMode {
     OpenCvWebcam webcam;
 
     OpenCVRed pipeline = new OpenCVRed(telemetry);
-
-    float test = 1;
-
     private DcMotor Arm, Extend = null;
 
     private double ArmPower = 0.5, SlidePower = 0.4;
@@ -44,11 +42,12 @@ public class RedBackstage extends LinearOpMode {
         Arm = hardwareMap.get(DcMotor.class, "AE");
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        Arm.setDirection(DcMotor.Direction.REVERSE);
 
         Extend = hardwareMap.get(DcMotor.class, "SE");
         Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Extend.setDirection((DcMotor.Direction.REVERSE));
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -72,13 +71,13 @@ public class RedBackstage extends LinearOpMode {
         });
 
 
-        telemetry.addLine("Wait until debug");
+        telemetry.addLine("Waiting for start");
         telemetry.update();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
-        //Left
+        //Right
         TrajectorySequence Right = drive.trajectorySequenceBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(25, -12, Math.toRadians(0)))
                 .back(8)
@@ -90,99 +89,100 @@ public class RedBackstage extends LinearOpMode {
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // slides out
                     Extend.setTargetPosition(1094);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(590);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
 
                 .back(8)
 
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // slides in
                     Extend.setTargetPosition(0);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(0);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .build();
 
 
-        //middle
+        //Middle
         TrajectorySequence Middle = drive.trajectorySequenceBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)))
                 .back(8)
                 .turn(Math.toRadians(-90))
                 .forward(38)
+                .strafeLeft(4)
                 .addTemporalMarker(() -> {
                     // arm up
                     Arm.setTargetPosition(700);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // slides out
                     Extend.setTargetPosition(1094);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(590);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
 
                 .back(8)
 
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // slides in
                     Extend.setTargetPosition(0);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(0);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .build();
 
 
-        //right
+        //Left
         TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(24, 0, Math.toRadians(0)))
                 .back(4)
-                .strafeLeft(14)
-                .turn(Math.toRadians(-90))
+                .strafeRight(14)
+                .turn(Math.toRadians(90))
                 .strafeRight(6)
                 .forward(18)
-
+                .back(8)
                 .turn(Math.toRadians(190))
                 .forward(34)
                 .strafeLeft(6)
@@ -192,39 +192,38 @@ public class RedBackstage extends LinearOpMode {
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // slides out
                     Extend.setTargetPosition(1094);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(590);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
 
                 .back(8)
 
-                .waitSeconds(2)
                 .addTemporalMarker(() -> {
                     // slides in
                     Extend.setTargetPosition(0);
                     Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Extend.setPower(SlidePower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     // arm down
                     Arm.setTargetPosition(0);
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(ArmPower);
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .build();
 
 
