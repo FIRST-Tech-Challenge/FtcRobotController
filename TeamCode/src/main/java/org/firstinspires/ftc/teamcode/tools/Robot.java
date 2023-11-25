@@ -216,7 +216,7 @@ public class Robot {
 
     public void update(){
         updateButtons();
-        if(handlerRightTrigger.On()) {
+        if(handlerRightTrigger.Pressed()) {
             intakeMotor.setOverridePower(-1);
         } else if (handlerRightTrigger.Released()) {
             intakeMotor.cancelOverridePower();
