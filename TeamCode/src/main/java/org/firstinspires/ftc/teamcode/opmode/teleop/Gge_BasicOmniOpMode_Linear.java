@@ -72,7 +72,7 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
-    static final int top_linearslide_ticks = 2000;
+    static final int top_linearslide_ticks = 1500; //should be changed to 2000
 
     static final int mid_linearslide_ticks = 1000;
 
@@ -130,16 +130,16 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE); // No idea why this needs to be reversed - debugging
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-        intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip);
+        intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip, telemetry);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
@@ -165,6 +165,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             } else if (gamepad1.x) {
                 intake.FlipDown();
             }
+
             
             if(gamepad1.dpad_down){
                 linearslidemovement.Movelinearslide(low_linearslide_ticks);

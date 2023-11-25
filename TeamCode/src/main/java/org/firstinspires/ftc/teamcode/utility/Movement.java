@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+
 /**
  * This class contains methods to control drive base movement
  */
@@ -17,6 +19,7 @@ public class Movement {
     private DcMotor rfDrive;
     private DcMotor lbDrive;
     private DcMotor rbDrive;
+    private  IMU imu;
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
@@ -31,6 +34,7 @@ public class Movement {
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
         rbDrive = rightBackDrive;
+        //imu = iMu;
     }
 
     /**
@@ -150,6 +154,6 @@ public class Movement {
      * @param degrees - the distance of the rotation in degrees
      */
     public void Rotate(int degrees){
-
+    //imu.get
     }
 }
