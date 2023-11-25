@@ -68,7 +68,7 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@TeleOp(name="GGE Drive T1", group="Linear OpMode")
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
@@ -143,7 +143,9 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
-        double powerFactor = 0.25;
+        double powerFactor = 0.50;
+        double basePowerFacter = 0.50;
+        double boostPowerFacter = 0.50;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -183,25 +185,30 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 conveyor.setPosition(0);
             }
 
+            // Use an analog trigger to add up to a 50% boost to speed
+            powerFactor = basePowerFacter + (gamepad1.right_trigger * boostPowerFacter);
+
+
 
             //adjust drive speed limiter
-            if (gamepad1.back){
+            /*if (gamepad1.back){
                 if (gamepad1.a){
-                    powerFactor = 0.50;
-                } else if (gamepad1.b) {
-                    powerFactor = 0.25;
-                } else if (gamepad1.y) {
                     powerFactor = 0.70;
+                } else if (gamepad1.b) {
+                    powerFactor = 0.50;
+                } else if (gamepad1.y) {
+                    powerFactor = 0.90;
                 } else if (gamepad1.x) {
-                    powerFactor = 0.60;
+                    powerFactor = 0.50;
                 }
             }
+             */
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial   =  gamepad1.left_stick_y;  // Note: on Logitech, pushing stick forward gives negative value, make - then
+            double lateral =  -gamepad1.left_stick_x;
+            double yaw     = -gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
