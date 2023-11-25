@@ -16,19 +16,24 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.*;
 
+// LiveView refers only to the Robot Controller preview (example shown above). It’s completely separate from Driver Station Camera Stream, which still operates normally even if LiveView is stopped (manually or automatically).
 @Autonomous(group="Concept")
 public class Visionportal1 extends LinearOpMode {
 
+    private TfodProcessor myTfodProcessor;
+    private AprilTagProcessor myAprilTagProcessor;
+    private VisionPortal myVisionPortal;
+
     private void initProcessors() {
         // Tfod = tensorflow object detection
-        TfodProcessor myTfodProcessor = new TfodProcessor.Builder()
+        myTfodProcessor = new TfodProcessor.Builder()
                 .setMaxNumRecognitions(10) // max # recognitions
                 .setUseObjectTracker(true) // use object tracker
                 .setTrackerMaxOverlap((float) 0.2) // max % of box overlapped by another box for recognition
                 .setTrackerMinSize(16) // minimum size of a tracked/recognized object (units?)
                 .build();
 
-        AprilTagProcessor myAprilTagProcessor = new AprilTagProcessor.Builder()
+        myAprilTagProcessor = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary()) // currentgametaglibrary = centerstage + sample apriltags
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
@@ -36,7 +41,7 @@ public class Visionportal1 extends LinearOpMode {
                 .setDrawCubeProjection(true) // default = false
                 .build();
 
-        VisionPortal myVisionPortal = new VisionPortal.Builder()
+        myVisionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1")) // change name depending on mech team wants to name it
                 .addProcessor(myAprilTagProcessor) // add apriltag processor
                 .addProcessor(myTfodProcessor) // add tfod processor
@@ -59,6 +64,10 @@ public class Visionportal1 extends LinearOpMode {
                 telemetry.update();
             }
         }
+        myVisionPortal.setProcessorEnabled(myTfodProcessor,false);
+        myVisionPortal.setProcessorEnabled(myAprilTagProcessor,false);
+        myVisionPortal.close();
+
     }
 
 }
