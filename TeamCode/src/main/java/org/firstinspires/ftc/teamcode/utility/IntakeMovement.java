@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import static android.os.SystemClock.sleep;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -22,7 +24,12 @@ public class IntakeMovement {
     // Intake flip
     // The lower the int the higher the wrist goes
     static final double FLIP_MAX_POS     =  1.0;     // Maximum rotational position of the wrist servo
-    static final double FLIP_MIN_POS     =  0.8;     // Minimum rotational position of the wrist servo
+    static final double FLIP_MIN_POS     =  0.4;     // Was 0.35 Minimum rotational position of the wrist servo
+
+    public double servoDelayTime = 1; // safety delay for servo move
+
+    private ElapsedTime servoRuntime = new ElapsedTime();
+
 
     double rightClawPos = RIGHT_MIN_POS;
     double leftClawPos = LEFT_MAX_POS;
@@ -33,6 +40,8 @@ public class IntakeMovement {
     public Servo intakeFlip;
 
     public Telemetry telemetry;
+
+    public boolean intakeIsSafe = false;
 
     /**
      * Gets the hardware map information of the servos.
@@ -47,10 +56,14 @@ public class IntakeMovement {
        telemetry = telemetry1;
    }
 
+   public boolean setSafety(){
+       return intakeIsSafe;
+   }
     /**
      *  Sets both the left and right servos to an open position.
      */
     public void ClawOpen(){
+        intakeIsSafe = false;
         while (rightClawPos<RIGHT_MAX_POS && leftClawPos>LEFT_MIN_POS) {
             rightClawPos += .01;
             leftClawPos -= .01;
@@ -64,12 +77,16 @@ public class IntakeMovement {
             System.out.println(leftClaw.getPosition());
             telemetry.update();
         }
+        intakeIsSafe = true;
+
     }
 
     /**
      * Sets both the left and right servos to a closed position.
      */
     public void ClawClosed(){
+        intakeIsSafe = false;
+
         while (rightClawPos>RIGHT_MIN_POS && leftClawPos<LEFT_MAX_POS) {
             rightClawPos -= .01;
             leftClawPos += .01;
@@ -83,6 +100,8 @@ public class IntakeMovement {
             System.out.println(leftClawPos);
             System.out.println(leftClaw.getPosition());
         }
+        intakeIsSafe = true;
+
     }
 
     /**
@@ -90,20 +109,31 @@ public class IntakeMovement {
      * the claw servos to touch it.
      */
     public void FlipDown() {
-        while (flipPos < FLIP_MAX_POS){
-            flipPos += .01;
-            intakeFlip.setPosition(flipPos);
-            telemetry.addData("flip pos", flipPos);
+        intakeIsSafe = false;
+        double servoMoveEndTime = servoDelayTime + servoRuntime.time();
+        while (servoMoveEndTime >= servoRuntime.time()){
+            intakeFlip.setPosition(FLIP_MAX_POS);
+            telemetry.addData("flip pos", FLIP_MAX_POS);
             telemetry.update();
-            System.out.println(flipPos);
-            System.out.println(intakeFlip.getPosition());
         }
+
+        intakeIsSafe = true;
     }
 
     /**
      * Sets the wrist position upward about 180 degrees from the floor.
      */
     public void FlipUp(){
+        intakeIsSafe = false;
+        double servoMoveEndTime = servoDelayTime + servoRuntime.time();
+        while (servoMoveEndTime >= servoRuntime.time()){
+            intakeFlip.setPosition(FLIP_MIN_POS);
+            telemetry.addData("flip pos", FLIP_MIN_POS);
+            telemetry.update();
+        }
+        intakeIsSafe = true;
+
+        /*intakeIsSafe = true;
         while (flipPos>FLIP_MIN_POS) {
             flipPos -= .01;
             intakeFlip.setPosition(flipPos);
@@ -112,6 +142,7 @@ public class IntakeMovement {
             System.out.println(flipPos);
             System.out.println(intakeFlip.getPosition());
         }
+        */
     }
 
 }

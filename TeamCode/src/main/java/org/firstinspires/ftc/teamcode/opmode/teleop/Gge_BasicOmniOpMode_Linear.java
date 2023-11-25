@@ -135,8 +135,8 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip, telemetry);

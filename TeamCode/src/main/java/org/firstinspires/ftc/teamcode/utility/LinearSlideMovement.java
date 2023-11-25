@@ -33,12 +33,15 @@ public class LinearSlideMovement {
     }
 
     public void Movelinearslide(int ticks){
+        intake.intakeIsSafe = false;
         intake.FlipDown();
-        leftLinearSlide.setTargetPosition(ticks);
-        rightLinearSlide.setTargetPosition(ticks);
-        leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLinearSlide.setPower(0.5);
-        rightLinearSlide.setPower(0.5);
+        if (intake.setSafety() == true){
+            leftLinearSlide.setTargetPosition(ticks);
+            rightLinearSlide.setTargetPosition(ticks);
+            leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLinearSlide.setPower(0.5);
+            rightLinearSlide.setPower(0.5);
+        }
     }
 }
