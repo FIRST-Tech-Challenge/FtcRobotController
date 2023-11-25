@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Developing_Code;
+package org.firstinspires.ftc.teamcode.Developing_Code.Old_Arm_Claw;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V4 Arm Claw")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V2 Arm Claw")
 @Disabled
-public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
+public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -113,14 +113,6 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 3) {
-                    liftTargetPosition = liftPos;
-                    arm.setTargetPosition(liftTargetPosition);
-                    arm.setPower(0.7);
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    sleep(15);
-                }
-
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
                 
@@ -128,19 +120,20 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
                 axle.setPosition(0);
             }
             if (gamepad1.left_bumper) {
-                liftTargetPosition = 10;
+                liftTargetPosition = 5;
                 arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.05);
+                arm.setPower(0.1);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
                 axle.setPosition(0.7);
-            }
 
-            if (arm.isBusy() == false) {
-                arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.7);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while (arm.isBusy()) {}
+                arm.setPower(0);
             }
+            
+            arm.setTargetPosition(liftTargetPosition);
+            arm.setPower(0.7);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             double clawLeftTarget = 0;
 
