@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.ArrayList;
+
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -80,6 +82,13 @@ public class ActionBuilder {
         };
         String name = "test if motor " + motor.getDeviceName() +
                 " is at or below target pos " + expectedPosition;
+        return add(name, function);
+    }
+
+    public ActionBuilder waitForTouchSensorPressed(TouchSensor touchSensor) {
+        ActionFunction function = touchSensor::isPressed;
+        String name = "test touchSensor " + touchSensor.getDeviceName() +
+                " is pressed ";
         return add(name, function);
     }
 

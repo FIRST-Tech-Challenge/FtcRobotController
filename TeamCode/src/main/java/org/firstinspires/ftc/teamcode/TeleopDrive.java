@@ -56,6 +56,16 @@ public class TeleopDrive extends LinearOpMode {
                 if(Robot.handlerRightBumper.Pressed()){
                     Robot.clawGrip.setPosition(Robot.clawOpen);
                 }
+
+                if(Robot.handlerDPad_Left.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawLeft);
+                }
+                if(Robot.handlerDPad_Down.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawIntake);
+                }
+                if(Robot.handlerDPad_Right.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawRight);
+                }
             }
 
         }
