@@ -40,8 +40,8 @@ public class LinearSlideMovement {
             rightLinearSlide.setTargetPosition(ticks);
             leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftLinearSlide.setPower(0.5);
-            rightLinearSlide.setPower(0.5);
+            leftLinearSlide.setPower(0.8);
+            rightLinearSlide.setPower(0.8);
         }
     }
 }

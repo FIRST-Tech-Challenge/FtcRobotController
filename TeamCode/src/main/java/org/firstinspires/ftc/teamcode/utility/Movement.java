@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import static java.lang.Math.abs;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This class contains methods to control drive base movement
@@ -19,7 +24,7 @@ public class Movement {
     private DcMotor rfDrive;
     private DcMotor lbDrive;
     private DcMotor rbDrive;
-    private  IMU imu;
+    private IMU imu;
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
@@ -29,12 +34,24 @@ public class Movement {
      * @param  rightBackDrive  the back right wheels motor
      */
     public Movement(DcMotor leftFrontDrive,DcMotor rightFrontDrive,
-                    DcMotor leftBackDrive, DcMotor rightBackDrive){
+                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1){
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
         rbDrive = rightBackDrive;
-        //imu = iMu;
+        imu = imu1;
+    }
+
+    public void initIMU () {
+        // Initialize the IMU.
+        // For Tiny - Logo UP; USB BACKWARD
+        // For Rosie - Logo BACKWARD; USB UP
+        // For Gge - Logo UP; USB FORWARD;
+        // Initializes the IMU with non-default settings. To use this block,
+        // plug one of the "new IMU.Parameters" blocks into the parameters socket.
+        // Creates a Parameters object for use with an IMU in a REV Robotics Control Hub or Expansion Hub, specifying the hub's orientation on the robot via the direction that the REV Robotics logo is facing and the direction that the USB ports are facing.
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        imu.resetYaw();
     }
 
     /**
@@ -69,12 +86,12 @@ public class Movement {
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lfDrive.setPower(0.5);
-        rfDrive.setPower(0.5);
-        lbDrive.setPower(0.5);
-        rbDrive.setPower(0.5);
-        while(lfDrive.getCurrentPosition()<= (ticks-2)){
-
+        lfDrive.setPower(0.25);
+        rfDrive.setPower(0.25);
+        lbDrive.setPower(0.25);
+        rbDrive.setPower(0.25);
+        // Hold the start of the next command until this movement is within 5 ticks of its position
+        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 10){
         }
     }
 
@@ -96,8 +113,8 @@ public class Movement {
         rfDrive.setPower(0.5);
         lbDrive.setPower(0.5);
         rbDrive.setPower(0.5);
-        while((lfDrive.getCurrentPosition()*-1)<= (ticks-2)){
-
+        // Hold the start of the next command until this movement is within 5 ticks of its position
+        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 10){
         }
     }
 
@@ -120,8 +137,8 @@ public class Movement {
         rfDrive.setPower(0.5);
         lbDrive.setPower(0.5);
         rbDrive.setPower(0.5);
-        while((lfDrive.getCurrentPosition()*-1)<= (ticks-2)){
-
+        // Hold the start of the next command until this movement is within 5 ticks of its position
+        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 10){
         }
     }
 
@@ -144,8 +161,8 @@ public class Movement {
         rfDrive.setPower(0.5);
         lbDrive.setPower(0.5);
         rbDrive.setPower(0.5);
-        while(lfDrive.getCurrentPosition()<= (ticks-2)) {
-
+        // Hold the start of the next command until this movement is within 5 ticks of its position
+        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 10){
         }
     }
 
@@ -154,6 +171,38 @@ public class Movement {
      * @param degrees - the distance of the rotation in degrees
      */
     public void Rotate(int degrees){
-    //imu.get
+        double currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        int stepSize = 500;
+
+        // Loop through these movements until the robot is at the correct degrees
+        while (abs(currentDirection - degrees) > 5){
+            // Move slowly and in increments
+            // Move the right front motor forward
+            rfDrive.setTargetPosition(stepSize);
+            // Move the left front motor backwards
+            lfDrive.setTargetPosition(stepSize * -1);
+            // Move the right back motor forward
+            rbDrive.setTargetPosition(stepSize);
+            // Move the left back motor backward
+            lbDrive.setTargetPosition(stepSize * -1);
+
+            // Slow the speed of the motors as the robot reaches its position
+            if (abs(currentDirection - degrees) < 5){
+                stepSize = 100;
+            } else if (abs(currentDirection - degrees) < 10) {
+                stepSize = 250;
+            }
+
+            lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lfDrive.setPower(0.5);
+            rfDrive.setPower(0.5);
+            lbDrive.setPower(0.5);
+            rbDrive.setPower(0.5);
+
+            currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        }
     }
 }

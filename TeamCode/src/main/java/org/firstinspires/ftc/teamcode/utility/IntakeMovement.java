@@ -16,8 +16,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class IntakeMovement {
 
     // Right claw
-    static final double RIGHT_MAX_POS     =  0.4;    // Maximum rotational position of the right servo
-    static final double RIGHT_MIN_POS     =  0.0;    // Minimum rotational position of the right servo
+    static final double RIGHT_MAX_POS     =  0.4;     // Maximum rotational position of the right servo
+    static final double RIGHT_MIN_POS     =  0.0;     // Minimum rotational position of the right servo
     // Left claw
     static final double LEFT_MAX_POS     =  1.0;     // Maximum rotational position of the left servo
     static final double LEFT_MIN_POS     =  0.6;     // Minimum rotational position of the left servo

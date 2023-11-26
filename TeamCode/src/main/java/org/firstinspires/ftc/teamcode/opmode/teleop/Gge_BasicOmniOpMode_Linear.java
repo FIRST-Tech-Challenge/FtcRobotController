@@ -33,10 +33,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 
@@ -72,7 +76,7 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
-    static final int top_linearslide_ticks = 1500; //should be changed to 2000
+    static final int top_linearslide_ticks = 1800; //should be changed to 2000
 
     static final int mid_linearslide_ticks = 1000;
 
@@ -93,9 +97,9 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
     Servo leftClaw;
     Servo rightClaw;
-    Servo intakeFlip;
-
+    Servo wrist;
     Servo conveyor;
+    private IMU imu;
 
     IntakeMovement intake;
     LinearSlideMovement linearslidemovement;
@@ -115,9 +119,30 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         leftClaw = hardwareMap.get(Servo.class, "left_claw");
         rightClaw = hardwareMap.get(Servo.class, "right_claw");
-        intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
+        wrist = hardwareMap.get(Servo.class, "wrist");
 
         conveyor = hardwareMap.get(Servo.class, "conveyor");
+
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        // Adding in PIDF Config values learned from previous testing
+        // These may need to be tuned anytime the motor weights or config changes.
+        // Set PIDF values thinking of ...
+        // ... P as primary force (set second)
+        // ...I as smoothing (set last)
+        // ...D as deceleration (set third)
+        // ...F as holding / static force (set first)
+        // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
+        // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
+        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(7, 0.2, 0.1, 8);
+        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(7, 0.2, 0.1, 8);
+        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(7, 0.2, 0.1, 8);
+        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(7, 0.2, 0.1, 8);
+        // For Lift, PIDF values set to reduce jitter on high lift
+        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(7, 0.75, 0, 4);
+        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(7, 0.75, 0, 4);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -129,7 +154,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -138,8 +162,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        intake = new IntakeMovement(rightClaw, leftClaw, intakeFlip, telemetry);
+        intake = new IntakeMovement(rightClaw, leftClaw, wrist, telemetry);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
@@ -156,6 +179,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             // Controls the intake
             if (gamepad1.a){
@@ -167,6 +191,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             } else if (gamepad1.x) {
                 intake.FlipDown();
             }
+
 
             
             if(gamepad1.dpad_down){
@@ -262,6 +287,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Drive Power multiplier", powerFactor);
