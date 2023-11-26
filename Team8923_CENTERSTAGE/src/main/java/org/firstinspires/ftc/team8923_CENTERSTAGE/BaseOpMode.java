@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +22,15 @@ abstract public class BaseOpMode extends LinearOpMode {
     static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
     static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
     static final double INTAKE_SPEED = 0.8;
+
+    //imu constants
+    public BNO055IMU imu;
+    public double startAngle;
+    public static final double TURNING_KP = 0.008;
+    public static final int ROBOT_HEADING_TOLERANCE_DEGREES = 1;
+    public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.7;
+    public static final double MINIMUM_TURN_POWER = 0.05;
+
 
     public void initHardware() {
         // drive motors

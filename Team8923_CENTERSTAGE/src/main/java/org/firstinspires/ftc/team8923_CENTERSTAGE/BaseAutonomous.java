@@ -3,6 +3,10 @@ package org.firstinspires.ftc.team8923_CENTERSTAGE;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -114,6 +118,38 @@ abstract public class BaseAutonomous extends BaseOpMode {
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public  void pivot(double targetHeading) {
+        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double angleError = targetHeading - currentAngle + startAngle;
+        double motorPower;
+
+        // while robot hasn't reached target heading
+        while (Math.abs(angleError) >= BaseOpMode.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            angleError = targetHeading - currentAngle + startAngle;
+
+            // prevents angle from gong above 180 degrees and below -180 degrees
+            // makes sure robot takes most optimal path to get to the target heading
+            if (angleError > 180.0) {
+                angleError -= 360.0;
+            } else if (angleError < -180.0) {
+                angleError += 360.0;
+            }
+
+            // proportional motor power based on angle error
+            motorPower = angleError * -BaseOpMode.TURNING_KP;
+            motorPower = Math.max(Math.min(Math.abs(motorPower), BaseOpMode.MAXIMUM_TURN_POWER_AUTONOMOUS), BaseOpMode.MINIMUM_TURN_POWER) * Math.signum(motorPower);
+
+            // gives a power to each motor to make the robot pivot
+            motorFL.setPower(motorPower);
+            motorFR.setPower(-motorPower);
+            motorBL.setPower(motorPower);
+            motorBR.setPower(-motorPower);
+        }
+
+        stopDriving();
     }
 
     private void stopDriving() {
