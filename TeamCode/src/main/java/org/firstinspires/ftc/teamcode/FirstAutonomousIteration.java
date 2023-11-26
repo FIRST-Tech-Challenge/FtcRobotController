@@ -99,8 +99,6 @@ import java.util.List;
  */
 
 
-@Autonomous(name="Robot: Auto V0.2", group="Robot")
-//@Disabled
 
 public class FirstAutonomousIteration extends LinearOpMode {
 
@@ -124,6 +122,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
     private FSMState currState = FSMState.UNINITIALIZED;
     private FSMState prevState = FSMState.UNINITIALIZED;
     private FSMState nextState = FSMState.UNINITIALIZED;
+
+    private int sideMul = 1;
 
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
@@ -210,6 +210,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
+    public FirstAutonomousIteration (int sideMul) {
+        this.sideMul = sideMul;
+    }
 
     public void initHardware() {
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -509,8 +512,11 @@ public class FirstAutonomousIteration extends LinearOpMode {
                     break;
 
                 case GO_PARK:
-                    driveStraight(DRIVE_SPEED*4, 30, 90, true, false);
-                    driveStraight(DRIVE_SPEED*5, 61, 90, true, false);
+                    turnToHeading(TURN_SPEED*10, sideMul * (-90));
+                    driveStraight(DRIVE_SPEED*4, -30, sideMul * (-90), true, false);
+                    driveStraight(DRIVE_SPEED*5, -61, sideMul * (-90), true, false);
+                    arm.moveArmUp();
+
                     nextState = FSMState.DONE;
                     break;
 
