@@ -31,14 +31,11 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
         // slides controlled by up and down dpad
         if (gamepad2.dpad_up) {
-            servoSlideLeft.setPower(1.0);
-            servoSlideRight.setPower(1.0);
+            motorSlides.setPower(1.0);
         } if (gamepad2.dpad_down) {
-            servoSlideLeft.setPower(-1.0);
-            servoSlideRight.setPower(-1.0);
+            motorSlides.setPower(0.0);
         } else {
-            servoSlideLeft.setPower(0.0);
-            servoSlideRight.setPower(0.0);
+            motorSlides.setPower(0.0);
         }
 
         // this does not work lolz anD IDK WHY AAAAAAAAAAAA

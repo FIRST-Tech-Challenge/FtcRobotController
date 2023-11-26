@@ -14,8 +14,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorBR;
 
-    CRServo servoSlideLeft;
-    CRServo servoSlideRight;
+    DcMotor motorSlides;
 
     DcMotor motorIntakeWheels;
 
@@ -43,8 +42,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
 
-        servoSlideLeft = hardwareMap.crservo.get("servoSlideLeft");
-        servoSlideRight = hardwareMap.crservo.get("servoSlideRight");
+        motorSlides = hardwareMap.dcMotor.get("motorSlides");
 
         motorIntakeWheels = hardwareMap.dcMotor.get("motorIntakeWheels");
 
