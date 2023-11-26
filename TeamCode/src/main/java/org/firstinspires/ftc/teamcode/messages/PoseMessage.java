@@ -12,7 +12,7 @@ public final class PoseMessage {
         this.timestamp = System.nanoTime();
         this.x = pose.position.x;
         this.y = pose.position.y;
-        this.heading = pose.heading.log();
+        this.heading = pose.heading.toDouble();
     }
 }
 
