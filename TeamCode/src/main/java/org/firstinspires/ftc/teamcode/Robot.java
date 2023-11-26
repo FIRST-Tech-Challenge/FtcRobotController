@@ -76,18 +76,16 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
         intake = hardwareMap.dcMotor.get("intake");
-        /*lsFront = hardwareMap.dcMotor.get("lsFront");
+        lsFront = hardwareMap.dcMotor.get("lsFront");
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack = hardwareMap.dcMotor.get("lsBack");
-        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         isRedAlliance = red;
-        /*
         tray = hardwareMap.servo.get("arm");
         clamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
-        planeLauncher = hardwareMap.servo.get("planeLauncher");
+        //planeLauncher = hardwareMap.servo.get("planeLauncher");
         spikeServo = hardwareMap.servo.get("spikeServo");
-         */
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
