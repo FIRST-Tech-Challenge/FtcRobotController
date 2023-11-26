@@ -120,12 +120,12 @@ public class CSFullTeleOp extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            if (gamepad2.a) {
+            if (gamepad2.a || gamepad2.x) {
                 carWashMotor.setPower(carWashPower);
             }
 
 
-            if (gamepad2.b) {
+            if (gamepad2.b || gamepad2.y) {
                 carWashMotor.setPower(-carWashPower);
             }
 
@@ -135,10 +135,10 @@ public class CSFullTeleOp extends LinearOpMode {
                 droneServo.setPosition(1);
             }
 
-            if (!gamepad2.a && !gamepad2.b){
+            if (!gamepad2.a && !gamepad2.b && !gamepad2.y && !gamepad2.x){
                 carWashMotor.setPower(0);
             }
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Run Time", runtime.toString());
             if (runtime.seconds() > 90){
                 telemetry.addData("Game Phase","End Game");
             }else {
