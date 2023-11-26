@@ -11,11 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TeleOp extends LinearOpMode {
     Robot robot;
     double trayPos;
-    private static double TRAY_DOWN_POS = 0.47;
-    private static double TRAY_UP_POS = 0.78;
+    private static double TRAY_DOWN_POS = 0.424677;
+    private static double TRAY_UP_POS = 0.1;
     double clampPos;
-    private static double CLAMP_CLOSE_POS = 0.5;
-    private static double CLAMP_OPEN_POS = 0.4;
+    double hookPos = 0.49;
+    private static double CLAMP_CLOSE_POS = 0.522;
+    private static double CLAMP_OPEN_POS = 0.4724;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,8 +47,8 @@ public class TeleOp extends LinearOpMode {
         polarity = 1;
 
         //set launcher and lock positions at start
-        robot.planeLauncher.setPosition(0.25);
-        robot.hook.setPosition(0.5);
+        //robot.planeLauncher.setPosition(0.25);
+        robot.hook.setPosition(hookPos);
 
         while (opModeIsActive()) {
 
@@ -75,9 +76,13 @@ public class TeleOp extends LinearOpMode {
 
             //gamepad 2 dpad locks and unlocks the lock
             if (gamepad2.dpad_up) {
-                robot.hook.setPosition(0.3);
+                robot.hook.setPosition(0.27);
+                telemetry.addData("hook pos", hookPos);
+                //robot.hook.setPosition(0.3);//0.3
             } else if (gamepad2.dpad_down) {
-                robot.hook.setPosition(0.5);
+                robot.hook.setPosition(0.49);
+                telemetry.addData("hook pos", hookPos);
+                //robot.hook.setPosition(0.5);//0.5
             }
 
             //gamepad 2 B changes amount of linear slide motor power (for endgame hanging)
@@ -114,13 +119,13 @@ public class TeleOp extends LinearOpMode {
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                robot.intake.setPower(0.6);
-                //clampPos = CLAMP_OPEN_POS; //TODO UNCOMMENT
+                robot.intake.setPower(-1);
+                clampPos = CLAMP_OPEN_POS;
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper) {
                 //reversed intake
-                robot.intake.setPower(-0.6);
-                //clampPos = CLAMP_OPEN_POS; //TODO UNCOMMENT
+                robot.intake.setPower(0.6);
+                clampPos = CLAMP_OPEN_POS;
             } else {
                 if ((Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1) && !gamepad2.left_bumper) {
                     //if robot moving, keep holder closed
@@ -131,10 +136,13 @@ public class TeleOp extends LinearOpMode {
 
             //right bumper and trigger of gamepad 2 open and close clamp
             if (gamepad2.right_bumper) {
-                clampPos -= 0.025;
+                clampPos = 0.4724;
+                telemetry.addData("clamp pos", clampPos);
                 //open
             } else if (gamepad2.right_trigger > 0) {
-                clampPos += 0.05;
+                clampPos = 0.522;
+                telemetry.addData("clamp pos", clampPos);
+
                 //close
             }
 
@@ -142,6 +150,7 @@ public class TeleOp extends LinearOpMode {
             //gamepad 2 right stick manually pivots tray
             if (Math.abs(gamepad2.right_stick_y) > 0.1) {
                 trayPos -= -(gamepad2.right_stick_y / (1 / 0.004));
+                telemetry.addData("tray pos", trayPos);
                 //Log.d("tray debug", "runOpMode: trayPos = " + trayPos);
             }
 
@@ -227,6 +236,7 @@ public class TeleOp extends LinearOpMode {
             }
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+            telemetry.update();
         }
     }
 
