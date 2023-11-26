@@ -83,37 +83,49 @@ class AutonDriveFactory {
      * can invoke it there by calling "Actions.runBlocking(driveAction);".
      */
     Action getDriveAction(boolean isRed, boolean isFar) {
-        if(isFar) {
+        if (isFar) {
             xOffset = 0;
         } else {
             xOffset = 48;
         }
 
-        if(isRed) {
+        if (isRed) {
             yMultiplier = 1;
         } else {
             yMultiplier = -1;
         }
-        TrajectoryActionBuilder build = this.drive.actionBuilder(xForm(new Pose2d(-38, -60, Math.toRadians(90))));
-        build = build.splineTo(xForm(new Vector2d(-36, -36)), xForm(Math.toRadians(90)));
-//            .splineTo(xForm(new Vector2d(-37, -46)), xForm(Math.toRadians(240)))
-//                .splineTo(xForm(new Vector2d(-37.64, -46.65)), xForm(Math.toRadians(238.45)))
-//                .splineTo(xForm(new Vector2d(-39.71, -50.78)), xForm(Math.toRadians(-77.72)))
-//                .splineTo(xForm(new Vector2d(-10.61, -59.98)), xForm(Math.toRadians(3.58)))
-//                .splineTo(xForm(new Vector2d(25.63, -57.17)), xForm(Math.toRadians(26.97)))
-//                .splineToSplineHeading(xForm(new Pose2d(61.86, -60.17, Math.toRadians(0.36))), xForm(Math.toRadians(0.36)));
 
+        TrajectoryActionBuilder spikeLeft = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        spikeLeft = spikeLeft.splineTo(xForm(new Vector2d(-34, -36)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-38, -34)), xForm(Math.toRadians(180) + (1e-6)))
+                // arm action
+                .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)))
+                .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+       return spikeLeft.build();
 
-//        build = build.lineToX(30)
-//                .turn(Math.toRadians(90))
-//                .lineToY(30);
-//
-//        build = build.splineTo(new Vector2d(0, 30), Math.toRadians(-90))
-//                .lineToY(0)
-//                .turn(Math.toRadians(90));
+//        TrajectoryActionBuilder spikeCenter = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+//        spikeCenter = spikeCenter.splineTo(xForm(new Vector2d(-34, -33)), xForm(Math.toRadians(90)))
+//        // arm action
+//                .splineToConstantHeading(xForm(new Vector2d(-34, -39)), xForm(Math.toRadians(90)))
+//                .splineToConstantHeading(xForm(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
+//                .splineToConstantHeading(xForm(new Vector2d(-55, -10)), xForm(Math.toRadians(90)))
+//                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+//                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+//        return spikeCenter.build();
 
-        return build.build();
+//        TrajectoryActionBuilder spikeRight = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+//        spikeRight = spikeRight.splineToSplineHeading(xForm(new Pose2d(-35, -32, Math.toRadians(0))), xForm(Math.toRadians(90)))
+//                // arm action
+//                .splineToConstantHeading(xForm(new Vector2d(-40, -34)), xForm(Math.toRadians(0)))
+//                .splineTo(xForm(new Vector2d(-36, -30)), xForm(Math.toRadians(90)))
+//                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+//                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+//        return spikeRight.build();
+
     }
+
 
     Pose2d xForm(Pose2d pose) {
         return new Pose2d(pose.position.x + xOffset, pose.position.y * yMultiplier, pose.heading.log() * yMultiplier);
@@ -126,6 +138,7 @@ class AutonDriveFactory {
     double xForm(double angle) {
         return (angle * yMultiplier);
     }
+
 
     /*
      * MeepMeep calls this routine to get a trajectory sequence action to draw. Modify the
