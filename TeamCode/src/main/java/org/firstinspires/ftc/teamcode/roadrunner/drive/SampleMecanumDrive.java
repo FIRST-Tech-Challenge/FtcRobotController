@@ -34,6 +34,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -109,6 +110,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private ArrayList<Servo> servos;
 
+    public com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
                 kA,
@@ -176,6 +179,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
@@ -225,6 +229,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         servos.add(hardwareMap.servo.get("servoRightBack"));
         isButtered=true;
         toggleButtered();
+        Motor frontLeft = new Motor(hardwareMap, "motorLeftFront"),
+        frontRight = new Motor(hardwareMap, "motorRightFront"),
+        backLeft = new Motor(hardwareMap, "motorLeftBack"),
+        backRight = new Motor(hardwareMap, "motorRightBack");
+
+        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
 //
     }
 

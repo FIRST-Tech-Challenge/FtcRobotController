@@ -18,6 +18,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.10'
     implementation 'com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14'
+    implementation 'org.ftclib.ftclib:core:2.1.1'
 
 }
 
