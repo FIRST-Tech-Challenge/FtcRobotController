@@ -21,7 +21,7 @@ public class Autonomous extends LinearOpMode {
     protected DcMotorEx left_back;
     protected DcMotorEx right_back;
     ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
-    protected DcMotor lift;
+    protected DcMotorEx lift;
     protected Servo servo;
     private DcMotor intake = null;
     OpenCvCamera camera;
@@ -53,7 +53,7 @@ public class Autonomous extends LinearOpMode {
         left_back = hardwareMap.get(DcMotorEx.class, "left_back");
         right_back = hardwareMap.get(DcMotorEx.class, "right_back");
 
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
         intake = hardwareMap.get(DcMotor.class, "intake");
         servo = hardwareMap.get(Servo.class, "servo");
 
@@ -74,9 +74,10 @@ public class Autonomous extends LinearOpMode {
         right_back.setDirection(Constants.motorDirections.get("right_back"));
         lift.setDirection(Constants.motorDirections.get("lift"));
 
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        lift.setPower(0.075);
+        lift.setVelocity(1);
+        servo.setPosition(0.1);
 
         while (!isStarted() && !isStopRequested()) {
             telemetry.addLine("Ensure pixel is in right side of box!!");
@@ -84,9 +85,11 @@ public class Autonomous extends LinearOpMode {
             telemetry.addData("Prop area: ", pipeline.getPropAreaAttr());
             telemetry.update();
         }
+
+
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setPower(0.075);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setVelocity(1);
         double propX = pipeline.getJunctionPoint().x;
         double propArea = pipeline.getPropAreaAttr();
 
@@ -113,7 +116,7 @@ public class Autonomous extends LinearOpMode {
             // do a 180
             turn(0.25, 2000);
             forward(0.25, -1000);
-            strafe(0.25, 1000);
+            strafe(0.25, -1000);
             forward(0.25, -1000);
 
         } else if (propX > 600) { // right spike mark
@@ -148,17 +151,19 @@ public class Autonomous extends LinearOpMode {
             turn(0.25, 1000);
             forward(0.25, -2500);
         }
-        /*
-        servo.setPosition(0);
+
         sleep(400);
-        lift.setTargetPosition(700);
+        lift.setTargetPosition(1500);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(1.0/8);
-        sleep(1000);
-        servo.setPosition(0.7);
-
-         */
+        lift.setVelocity(1000);
+        while (lift.isBusy()) telemetry.addData("lift position: ", lift.getCurrentPosition());
+        // wiggle the pixel off
+        for (int i = 0; i < 20; i++) {
+            servo.setPosition(0.19);
+            sleep(100);
+            servo.setPosition(0.1);
+        }
 
 
 

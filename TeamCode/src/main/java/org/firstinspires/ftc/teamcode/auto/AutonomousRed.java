@@ -3,27 +3,17 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.teamcode.auto.BasicPipeline;
 import org.firstinspires.ftc.teamcode.common.Constants;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Red auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Blue auto")
 public class AutonomousRed extends LinearOpMode {
 
     protected DcMotorEx left_front;
@@ -31,7 +21,7 @@ public class AutonomousRed extends LinearOpMode {
     protected DcMotorEx left_back;
     protected DcMotorEx right_back;
     ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
-    protected DcMotor lift;
+    protected DcMotorEx lift;
     protected Servo servo;
     private DcMotor intake = null;
     OpenCvCamera camera;
@@ -63,7 +53,7 @@ public class AutonomousRed extends LinearOpMode {
         left_back = hardwareMap.get(DcMotorEx.class, "left_back");
         right_back = hardwareMap.get(DcMotorEx.class, "right_back");
 
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
         intake = hardwareMap.get(DcMotor.class, "intake");
         servo = hardwareMap.get(Servo.class, "servo");
 
@@ -84,9 +74,10 @@ public class AutonomousRed extends LinearOpMode {
         right_back.setDirection(Constants.motorDirections.get("right_back"));
         lift.setDirection(Constants.motorDirections.get("lift"));
 
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        lift.setPower(0.075);
+        lift.setVelocity(1);
+        servo.setPosition(0.1);
 
         while (!isStarted() && !isStopRequested()) {
             telemetry.addLine("Ensure pixel is in right side of box!!");
@@ -94,9 +85,11 @@ public class AutonomousRed extends LinearOpMode {
             telemetry.addData("Prop area: ", pipeline.getPropAreaAttr());
             telemetry.update();
         }
+
+
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setPower(0.075);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setVelocity(1);
         double propX = pipeline.getJunctionPoint().x;
         double propArea = pipeline.getPropAreaAttr();
 
@@ -105,75 +98,80 @@ public class AutonomousRed extends LinearOpMode {
 
         //goToAprilTagRelative(1000, 1000, 0, 20, 1);
 
-        moveForward(0.25, 1200);
+        forward(0.25, 1200);
         if (propArea < 10000) { // none detected we assume left spike mark
             telemetry.addLine("Left spike mark");
             telemetry.update();
-            moveTurning(-0.25, -1000);
-            moveForward(0.5, -100);
+            turn(-0.25, -1000);
+            forward(0.5, -100);
             // eject pixel
             intake.setPower(-0.2);
             sleep(1000);
             intake.setPower(0);
             // nudge the pixel incase it falls vertically
-            moveForward(0.5, 50);
-            moveForward(0.5, -50);
-            /*
-            moveForward(0.25, 50);
-            moveForward(-0.25, 50);
-             */
+            forward(0.5, 50);
+            forward(0.5, -50);
+            // go to backboard
+            forward(0.25, -2500);
 
         } else if (propX > 600) { // right spike mark
             telemetry.addLine("Right spike mark");
             telemetry.update();
             // line up with mark
-            moveTurning(0.25, 1000);
-            moveForward(0.25, 100);
+            turn(0.25, 1000);
+            forward(0.25, 100);
             // eject pixel
             intake.setPower(-0.25);
             sleep(1000);
             intake.setPower(0);
             // nudge the pixel in case it falls vertically
-            moveForward(0.5, 50);
-            moveForward(0.5, -50);
-            /*
-            //in case it falls vertically
-            moveForward(0.25, 100);
-            // go to backboard and score
-            moveForward(-0.25, 4000);
-             */
+            forward(0.5, 50);
+            forward(0.5, -100);
+
+            strafe(0.25, 1000);
+            // do a 180
+            turn(0.25, 2000);
+            forward(0.25, -1000);
+            strafe(0.25, 1000);
+            forward(0.25, -1000);
+
         } else { // middle spike mark
             telemetry.addLine("Middle spike mark");
             telemetry.update();
             // push prop out of the way
-            moveForward(0.25, 200);
-            moveForward(0.25, -200);
+            forward(0.25, 200);
+            forward(0.25, -200);
             // eject pixel- we're already there
             intake.setPower(-0.25);
             sleep(1000);
             intake.setPower(0);
             // nudge the pixel over in case it falls vertically
-            moveForward(0.5, 50);
-            moveForward(0.5, -50);
+            forward(0.5, 50);
+            forward(0.5, -100);
+            // go to backboard
+            turn(0.25, -1000);
+            forward(0.25, -2500);
         }
-        /*
-        servo.setPosition(0);
+
         sleep(400);
-        lift.setTargetPosition(700);
+        lift.setTargetPosition(1500);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(1.0/8);
-        sleep(1000);
-        servo.setPosition(0.7);
-
-         */
+        lift.setVelocity(1000);
+        while (lift.isBusy()) telemetry.addData("lift position: ", lift.getCurrentPosition());
+        // wiggle the pixel off
+        for (int i = 0; i < 20; i++) {
+            servo.setPosition(0.19);
+            sleep(100);
+            servo.setPosition(0.1);
+        }
 
 
 
         sleep(100000);
     }
 
-    public void moveForward(double power, int setpoint) {
+    public void forward(double power, int setpoint) {
         for (DcMotorEx driveMotor : driveMotors) {
             driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -190,7 +188,7 @@ public class AutonomousRed extends LinearOpMode {
         }
     }
 
-    public void moveStrafing(double power, int setpoint){
+    public void strafe(double power, int setpoint){
         for (DcMotorEx driveMotor : driveMotors) {
             driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -207,7 +205,7 @@ public class AutonomousRed extends LinearOpMode {
 
     }
 
-    public void moveTurning(double power, int setpoint){
+    public void turn(double power, int setpoint){
         for (DcMotorEx driveMotor : driveMotors) {
             driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
