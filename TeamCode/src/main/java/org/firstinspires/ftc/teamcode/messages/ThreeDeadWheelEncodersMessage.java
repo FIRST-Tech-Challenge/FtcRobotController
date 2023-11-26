@@ -4,20 +4,14 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 
 public final class ThreeDeadWheelEncodersMessage {
     public long timestamp;
-    public int rawPar0Position;
-    public int rawPar0Velocity;
-    public int rawPar1Position;
-    public int rawPar1Velocity;
-    public int rawPerpPosition;
-    public int rawPerpVelocity;
+    public PositionVelocityPair par0;
+    public PositionVelocityPair par1;
+    public PositionVelocityPair perp;
 
     public ThreeDeadWheelEncodersMessage(PositionVelocityPair par0, PositionVelocityPair par1, PositionVelocityPair perp) {
         this.timestamp = System.nanoTime();
-        this.rawPar0Position = par0.rawPosition;
-        this.rawPar0Velocity = par0.rawVelocity;
-        this.rawPar1Position = par1.rawPosition;
-        this.rawPar1Velocity = par1.rawVelocity;
-        this.rawPerpPosition = perp.rawPosition;
-        this.rawPerpVelocity = perp.rawVelocity;
+        this.par0 = par0;
+        this.par1 = par1;
+        this.perp = perp;
     }
 }
