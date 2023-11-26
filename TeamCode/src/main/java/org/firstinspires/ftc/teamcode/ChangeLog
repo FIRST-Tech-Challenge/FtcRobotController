@@ -1,0 +1,21 @@
+// named things ( fridge_full_of_root_beer, Abraham_Lincoln, and Bob_The_Tomato )
+// finished autonomous blue out and red out
+// DO NOT USE THE STUPID CASHAUTO OR BLUE OUT
+
+
+
+
+
+
+
+
+// INDEX{
+// sweep speed 150 (cash2024)
+//drive direction 128 (forward + reverse)(cash2024driver)
+// bucket buttons 132 (cash2024driver)
+
+
+// if nolan heart < o == fix problem
+// if ryne heart < 0 == sad
+// if johnny heart < 0 == run
+//}
