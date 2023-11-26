@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class IMUUtility {
-    //private final Robot2021 robot2021;
+
     public Orientation             lastAngles = new Orientation();
     public double                  desiredGlobalAngle_d;
     public BNO055IMU        imu;
