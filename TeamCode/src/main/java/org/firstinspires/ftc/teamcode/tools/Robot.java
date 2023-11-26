@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ActionBuilder;
 import org.firstinspires.ftc.teamcode.Button;
+import org.firstinspires.ftc.teamcode.Hanger;
 import org.firstinspires.ftc.teamcode.Lift;
 import org.firstinspires.ftc.teamcode.OverrideMotor;
 
@@ -62,8 +63,13 @@ public class Robot {
 
         // Motors
         intakeMotor = new OverrideMotor(hardwareMap.dcMotor.get("intakeMotor"));
-        skyHookMotor = hardwareMap.dcMotor.get("skyHookMotor");
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        skyHook = new Hanger(hardwareMap, handlerDPad_Down, handlerDPad_Up);//hardwareMap.dcMotor.get("skyHookMotor");
+
+
+        planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
+        planeLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Servos
         clawPitch = hardwareMap.servo.get("clawPitch");
@@ -76,7 +82,6 @@ public class Robot {
 
         // Touch Sensors
         liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
-        skyHookTouchUp = hardwareMap.touchSensor.get("skyHookTouchUp");
 
         clawOpen = 1;
         clawClose = 0;
@@ -124,11 +129,11 @@ public class Robot {
                         .stopMotor(intakeMotor));
 
         // rejecting pixels
-        holdingPixels.addTransitionTo(idle, handlerDPad_UpPressed,
+        holdingPixels.addTransitionTo(idle, handlerButtonLeftTriggerPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawOpen));
 
-        idle.addTransitionTo(holdingPixels, handlerDPad_UpPressed,
+        idle.addTransitionTo(holdingPixels, handlerButtonLeftTriggerPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose));
 
@@ -136,16 +141,18 @@ public class Robot {
                 new ActionBuilder()
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
-                        //.setMotorPosition(lift.liftMotor, lift.liftEncoderMin, 1)
-                        //.waitFor(3000)
                         .stopMotor(lift.liftMotor)
                         .servoRunToPosition(clawPitch, clawPitchOutTake));
 
+        // in exitingOutTake state, lift cannot be controlled manually
         outTakingPixels.addTransitionTo(exitingOutTake, handlerButtonBPressed,
                 new ActionBuilder());
 
         exitingOutTake.addTransitionTo(idle, alwaysTrue,
                 new ActionBuilder()
+                        // Guarantees lift was not manually put below claw movement limit
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
                         .servoRunToPosition(clawYaw, clawYawIntake)
                         .servoRunToPosition(clawPitch, clawPitchIntake)
                         .startMotor(lift.liftMotor, -1)
@@ -169,11 +176,12 @@ public class Robot {
     // Motors
 
     public static OverrideMotor intakeMotor;
-    public static DcMotor skyHookMotor;
+    public static Hanger skyHook;
+    public static DcMotor planeLauncher;
     // Servos
     public static Servo clawPitch, clawYaw, clawGrip;
     // TouchSensors
-    public static TouchSensor liftTouchDown, skyHookTouchUp;
+    public static TouchSensor liftTouchDown;
 
     public static double clawPitchIntake, clawPitchOutTake;
     public static double clawOpen, clawClose, clawYawIntake, clawYawLeft, clawYawRight;
@@ -210,7 +218,17 @@ public class Robot {
         } else if (handlerRightTrigger.Released()) {
             intakeMotor.cancelOverridePower();
         }
+        if(handlerX.On()) {
+            planeLauncher.setPower(1);
+        }
+        else{
+            planeLauncher.setPower(0);
+        }
+        skyHook.update(handlerDPad_Down);
+
+
         stateMachine.updateState();
+
         if(stateMachine.getCurrentState() == outTakingPixels){
             lift.update();
         }
