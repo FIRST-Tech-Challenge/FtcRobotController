@@ -14,6 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
+
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -57,8 +59,8 @@ public class RobotHardware {
     private Servo   launcher    = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
+    public static final double GRABBER_SPEED   =  0.10 ;
+    public static final double ELBOW_SPEED     =  0.05 ;  // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
 
@@ -146,11 +148,10 @@ public class RobotHardware {
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
-        /* when ready to use the left/right color sensor
-        leftColorSensor =
-        .hardwareMap.get(NormalizedColorSensor.class, "color_left");
+        /* when ready to use the left/right color sensor*/
+        leftColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_left");
         rightColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_right");
-        */
+
 
         // you can use this as a regular DistanceSensor.
         sensorDistance = myOpMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
@@ -254,6 +255,20 @@ public class RobotHardware {
         lbMotor.setPower(leftWheel);
     }
 
+    public void goDiagonal(double num){
+        //rfMotor.setPower(-num);
+        rbMotor.setPower(num);
+        lfMotor.setPower(num);
+        //lbMotor.setPower(-num);
+    }
+
+    public void goStrafe (double num){
+        rfMotor.setPower(-num);
+        rbMotor.setPower(num);
+        lfMotor.setPower(num);
+        lbMotor.setPower(-num);
+    }
+
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
      *      Power is reduced by 25%
@@ -263,6 +278,11 @@ public class RobotHardware {
     public void moveArm (double power) {
         armMotorL.setPower(power * 0.25);
         armMotorR.setPower(power * 0.25);
+    }
+
+    public void moveArmFullSpeed(double power){
+        armMotorL.setPower(power);
+        armMotorR.setPower(power);
     }
 
     /**
@@ -275,9 +295,9 @@ public class RobotHardware {
     }
 
     public void moveElbow(boolean moveUp){
-        if (moveUp && elbowDrive > ELBOW_MIN) elbowDrive -= .01;
+        if (moveUp && elbowDrive > ELBOW_MIN) elbowDrive -= ELBOW_SPEED;
 
-        if (!moveUp && elbowDrive < ELBOW_MAX) elbowDrive += .01;
+        if (!moveUp && elbowDrive < ELBOW_MAX) elbowDrive += ELBOW_SPEED;
 
         elbowServo.setPosition(Range.clip(elbowDrive, ELBOW_MIN, ELBOW_MAX));
     }
@@ -288,11 +308,15 @@ public class RobotHardware {
     }
 
     public void moveGrabber(boolean closeGrabber){
-        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= .01;
+        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= GRABBER_SPEED;
 
-        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += .01;
+        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += GRABBER_SPEED;
 
         grabberServo.setPosition(Range.clip(grabberDrive, GRABBER_MIN, GRABBER_MAX));
+    }
+
+    public void moveGrabberToPosition(double position){
+        grabberServo.setPosition(Range.clip(position, GRABBER_MIN, GRABBER_MAX));
     }
 
     public double getGrabberPoistion(){
@@ -324,5 +348,13 @@ public class RobotHardware {
 
     public double getDistanceFromObject(){
         return sensorDistance.getDistance(DistanceUnit.INCH);
+    }
+
+    public NormalizedRGBA getRightColorSensorData(){
+        return rightColorSensor.getNormalizedColors();
+    }
+
+    public NormalizedRGBA getLeftColorSensorData(){
+        return leftColorSensor.getNormalizedColors();
     }
 }

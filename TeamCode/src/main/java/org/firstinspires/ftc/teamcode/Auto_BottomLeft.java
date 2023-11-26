@@ -25,17 +25,16 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
-@TeleOp(name = "HornetSquad: AT Top Right", group = "Auto")
-public class AT_TopRight extends LinearOpMode {
+@TeleOp(name = "HornetSquad: Auto Bottom Left", group = "Auto")
+public class Auto_BottomLeft extends LinearOpMode {
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
-    static final double TURNSPEED = -0.2;
+    static final double TURNSPEED = 0.2;
     @Override
     public void runOpMode() {
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
-        robot.reverseMotors();
 
         // Send telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)
@@ -44,41 +43,41 @@ public class AT_TopRight extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
 
-                robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5700);
-                robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5500);
-                robot.driveRobot(0, -TURNSPEED);
-                sleep(4600);
-                robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4500);
-                robot.driveRobot(0, TURNSPEED);
-                sleep(4500);
-                robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5*1000);
-                robot.driveRobot(0, TURNSPEED);
-                sleep(5700);
-                robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5700);
-                //robot.driveRobot(0, 0);
-                //telemetry.addData("Reached Target Distance, Drop pixel", "");
-                robot.moveElbowToPosition(0.40);
-                sleep(300);//Move Elbow all the way down
-                //robot.moveGrabber(false); //release grabber to drop pixel
-
-
-
                 robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(12 * 1000);
+                sleep(5900);
+                robot.driveRobot(0,0);
 
-                robot.driveRobot(0, TURNSPEED);
-                sleep(2500);
-                robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(7 * 1000);
+                robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
+                sleep(2700);
+                robot.stopArm();
 
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(4200);
+
+                robot.driveRobot(0,TURNSPEED);
+                sleep(5200);
+
+                robot.driveRobot(FORWARD_SPEED,0);
+                sleep(8000);
+
+                robot.moveElbowToPosition(0.3);
+                sleep(1000);
+
+                robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
+                sleep(500);
+
+                robot.moveElbowToPosition(-0.3);
+                sleep(1000);
+
+                robot.driveRobot(FORWARD_SPEED,0);
+                sleep(1000);
 
                 break;
+
             }
         }
+
+
     }
+
 }

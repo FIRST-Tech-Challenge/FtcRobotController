@@ -40,10 +40,21 @@ public class Manual  extends LinearOpMode{
                 //robot.driveRobot(0,1);
             }
             telemetry.addData("Distance Sensor",  robot.getDistanceFromObject());
-
+            telemetry.addData("Right Color Sensor (blue)", robot.getRightColorSensorData().blue);
+            telemetry.addData("Right Color Sensor (red)", robot.getRightColorSensorData().red);
+            telemetry.addData("Left Color Sensor (blue)", robot.getLeftColorSensorData().blue);
+            telemetry.addData("Left Color Sensor (red)", robot.getLeftColorSensorData().red);
 
             // April Tag detection call
             //telemetryAprilTag();
+
+            if(gamepad2.right_bumper){
+                //robot.goDiagonal(1);
+                robot.goStrafe(-1);
+            }
+            else if (gamepad2.left_bumper){
+                robot.goStrafe(1);
+            }
 
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
