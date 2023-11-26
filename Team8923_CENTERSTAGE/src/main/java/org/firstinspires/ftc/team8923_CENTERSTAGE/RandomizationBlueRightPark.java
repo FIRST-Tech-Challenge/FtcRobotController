@@ -10,32 +10,32 @@ public class RandomizationBlueRightPark extends BaseAutonomous {
             switch (myColorDetection.detectColor()) {
                 case ONE:
                     driveInches(0, 24);
-                    // pivot -90 degrees
-                    // output purple pixel
-                    // pivot 90 degrees
+                    pivot(-90);
+                    runIntake(0.5, 2);
+                    pivot(90);
                     driveInches(0, -24);
-                    // pivot -90 degrees
+                    pivot(-90);
                     driveInches(0, 96);
                     break;
                 case TWO:
                     driveInches(0, 24);
                     // output purple pixel
                     driveInches(0, -24);
-                    // pivot -90 degrees
+                    pivot(-90);
                     driveInches(0, 96);
                     break;
                 case THREE:
                     driveInches(0, 24);
-                    // pivot 90 degrees
-                    // output purple pixel
-                    // pivot -90 degrees
+                    pivot(90);
+                    runIntake(0.5, 2);
+                    pivot(-90);
                     driveInches(0, -24);
-                    // pivor -90 degress
+                    pivot(-90);
                     driveInches(0, 96);
                     break;
                 case FOUR:
                     driveInches(0, 4);
-                    // pivot -90
+                    pivot(-90);
                     driveInches(-96, 0);
             }
 
