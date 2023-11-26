@@ -56,20 +56,9 @@ public class Robot {
         stateMachine.addState(exitingOutTake);
 
 
-        //testing
-        /*readyForIntake = new StateMachine.State("readyForIntake");
-        intaking = new StateMachine.State("intaking");
-        stateMachine.addState(readyForIntake);
-        stateMachine.addState(intaking);*/
-
-
-
         // Set initial state
         stateMachine.setInitialState(idle);
 
-        // testing
-        /*testingMotor = hardwareMap.dcMotor.get("testingMotor");
-        testingServo = hardwareMap.servo.get("testingServo");*/
 
         // Motors
         intakeMotor = new OverrideMotor(hardwareMap.dcMotor.get("intakeMotor"));
@@ -92,10 +81,12 @@ public class Robot {
         clawOpen = 1;
         clawClose = 0;
 
-        clawPitchIntake = 0;
+        clawPitchIntake = 1;
         clawPitchOutTake = 0;
 
-        clawYawIntake = -0.5; // temporary placeholder value, even though servo pos is 0 to 1 still need to reprogram it to turn further
+        clawYawIntake = 0.5;
+        clawYawLeft = 1;
+        clawYawRight = 0;
 
 
 
@@ -118,27 +109,6 @@ public class Robot {
         BooleanSupplier handlerDPad_RightPressed = handlerDPad_Right::Pressed;
 
         BooleanSupplier alwaysTrue = ()-> true;
-
-
-
-        // testing
-        /*readyForIntake.addTransitionTo(intaking, handlerButtonAPressed,
-                new ActionBuilder().addLine("start")
-                                   .setMotorPosition(testingMotor, 300, 0.7)
-                                   .resetTimer(timer)
-                                   .waitUntil(timer, 3000)
-                                   .addLine("servo has not run")
-                                   .servoRunToPosition(testingServo, 1.0)
-                                   .addLine("servo has run"));
-        intaking.addTransitionTo(readyForIntake, handlerButtonBPressed,
-                new ActionBuilder().servoRunToPosition(testingServo, 0.0)
-                                   .addLine("Start Message ")
-                                   .resetTimer(timer)
-                                   .addLine("3rd action ")
-                                   .waitUntil(timer, 7000)
-                                   .addLine("i skipped ")
-                                   .setMotorPosition(testingMotor, 0, 0.7));
-        */
 
 
         // adding transitions
@@ -164,7 +134,11 @@ public class Robot {
 
         holdingPixels.addTransitionTo(outTakingPixels, handlerButtonBPressed,
                 new ActionBuilder()
-                        .setMotorPosition(lift.liftMotor, lift.liftEncoderMin, 1)
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
+                        //.setMotorPosition(lift.liftMotor, lift.liftEncoderMin, 1)
+                        //.waitFor(3000)
+                        .stopMotor(lift.liftMotor)
                         .servoRunToPosition(clawPitch, clawPitchOutTake));
 
         outTakingPixels.addTransitionTo(exitingOutTake, handlerButtonBPressed,
@@ -174,7 +148,7 @@ public class Robot {
                 new ActionBuilder()
                         .servoRunToPosition(clawYaw, clawYawIntake)
                         .servoRunToPosition(clawPitch, clawPitchIntake)
-                        .startMotor(lift.liftMotor, 0.8)
+                        .startMotor(lift.liftMotor, -1)
                         .waitForTouchSensorPressed(liftTouchDown)
                         .stopMotor(lift.liftMotor)
                         .resetMotorEncoder(lift.liftMotor));
@@ -185,17 +159,12 @@ public class Robot {
     // States
     StateMachine stateMachine;
     Lift lift;
-    /*StateMachine.State readyForIntake;
-    StateMachine.State intaking;*/
     public StateMachine.State intakingPixels;
     public StateMachine.State holdingPixels;
     public StateMachine.State idle;
     public StateMachine.State outTakingPixels;
     public StateMachine.State exitingOutTake;
 
-    // testing
-    /*DcMotor testingMotor;
-    Servo testingServo;*/
 
     // Motors
 
@@ -206,7 +175,7 @@ public class Robot {
     // TouchSensors
     public static TouchSensor liftTouchDown, skyHookTouchUp;
 
-    static double clawPitchIntake, clawPitchOutTake;
+    public static double clawPitchIntake, clawPitchOutTake;
     public static double clawOpen, clawClose, clawYawIntake, clawYawLeft, clawYawRight;
     int liftOutTake;
 
@@ -237,15 +206,17 @@ public class Robot {
 
         // Manages Reject mode on Roomba as an override of its current power and state
         if(handlerRightTrigger.Pressed()) {
-            intakeMotor.setOverridePower(-1);
+            intakeMotor.setOverridePower(-0.4);
         } else if (handlerRightTrigger.Released()) {
             intakeMotor.cancelOverridePower();
         }
         stateMachine.updateState();
         if(stateMachine.getCurrentState() == outTakingPixels){
-
             lift.update();
         }
+        //lift.update();
+        TelemetryManager.getTelemetry().addLine(""+lift.liftMotor.getCurrentPosition());
+
     }
 
     public StateMachine.State currentState(){

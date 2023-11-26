@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "FC_square_TO_drive", group = "Testing")
+@TeleOp(name = "TeleOpDrive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
     private SetDriveMotors setDriveMotorsObj;
 
@@ -18,6 +18,9 @@ public class TeleopDrive extends LinearOpMode {
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
 
         robot = new Robot(hardwareMap, gamepad1, gamepad2);
+        Robot.clawPitch.setPosition(Robot.clawPitchIntake);
+        Robot.clawYaw.setPosition(Robot.clawYawIntake);
+        Robot.clawGrip.setPosition(Robot.clawOpen);
 
     }
 
@@ -52,11 +55,6 @@ public class TeleopDrive extends LinearOpMode {
             robot.update();
 
             if(robot.currentState()== robot.outTakingPixels){
-
-                if(Robot.handlerRightBumper.Pressed()){
-                    Robot.clawGrip.setPosition(Robot.clawOpen);
-                }
-
                 if(Robot.handlerDPad_Left.Pressed()){
                     Robot.clawYaw.setPosition(Robot.clawYawLeft);
                 }
@@ -65,6 +63,9 @@ public class TeleopDrive extends LinearOpMode {
                 }
                 if(Robot.handlerDPad_Right.Pressed()){
                     Robot.clawYaw.setPosition(Robot.clawYawRight);
+                }
+                if(Robot.handlerRightBumper.Pressed()){
+                    Robot.clawGrip.setPosition(Robot.clawOpen);
                 }
             }
 

@@ -98,9 +98,15 @@ public class ActionBuilder {
         return add(name, function);
     }
 
-    public ActionBuilder waitUntil(ElapsedTime timer, double targetTime) {
+    public ActionBuilder waitUntilTimestamp(ElapsedTime timer, double targetTime) {
         ActionFunction function = () -> timer.milliseconds() >= targetTime;
         String name = "wait for timer " + timer.toString() + " to exceed " + targetTime;
+        return add(name, function);
+    }
+    public ActionBuilder waitFor(double durationMs) {
+        ElapsedTime timer = new ElapsedTime();
+        ActionFunction function = () -> {return timer.milliseconds() >= durationMs; };
+        String name = "wait for duration in ms " + durationMs;
         return add(name, function);
     }
     public ActionBuilder addLine(String text) {
