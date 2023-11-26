@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static java.lang.Math.copySign;
-import static java.lang.Math.cos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,8 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -119,30 +115,40 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     */
 
     public void handleLift() {
-        double servoSetpoint;
+        // Lift stuff
+        if (gamepad2.a) {
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
         int liftPos = lift.getCurrentPosition();
         telemetry.addData("lift position: ", liftPos);
-        /*
-        double liftPower = 0;
-        if (liftPos > Constants.elevatorPositionTop && -gamepad2.right_stick_y > 0) liftPower = gamepad2.right_stick_y;
-        else if (liftPos < Constants.elevatorPositionBottom && -gamepad2.right_stick_y < 0) liftPower = gamepad2.right_stick_y;
-        else liftPower = gamepad2.right_stick_y;
-        lift.setVelocity(liftPower * 1500 + 1);
-         */
-        lift.setVelocity(gamepad2.right_stick_y * 1500 + 1);
-        intake.setPower(-gamepad2.right_trigger);
-        telemetry.addData("gamepad2 y:" , gamepad2.y);
-        telemetry.addData("gamepad2 dpad up: ", gamepad2.dpad_up);
-        telemetry.addData("gamepad2 right joystick y: ", gamepad2.right_stick_y);
-        // TODO: tilt down for intaking
-        if (gamepad2.a) {
+        double liftPower;
+        if (gamepad2.left_bumper) liftPower = gamepad2.right_stick_y * 1500; // manual override
+        else if (liftPos > Constants.TopLiftPosition && -gamepad2.right_stick_y < 0) liftPower = 0;
+        else if (liftPos < Constants.IntakingLiftPosition && gamepad2.right_trigger > 0.5) liftPower = 1000;
+        else if (liftPos < Constants.groundLiftPosition) liftPower = 200;
+        else liftPower = gamepad2.right_stick_y * 1500;
+        lift.setVelocity(liftPower + 1);
+
+        // Intake stuff
+        if (gamepad2.right_trigger > 0.5) {
+            intake.setPower(-1);
+        } else {
+            intake.setPower(gamepad2.left_trigger);
+        }
+
+        // Servo stuff
+        double servoSetpoint;
+        if (gamepad2.y) {
+            // TODO: find a good value for this or implement allen's hardware fix
             servoSetpoint = 0.19;// 0.1 worked aright 0.13 works better
-        } else if (gamepad2.right_trigger > 0.5){
+        } else if (gamepad2.right_trigger > 0.5 || (lift.getCurrentPosition() < Constants.ClearIntakeLiftPosition && -gamepad2.right_stick_y > 0)){
+            // put pan down if we're intaking or clearing the intake
             servoSetpoint = 0.00;
         } else {
             servoSetpoint = 0.1;
         }
-        sleep(20);
+        // sleep(20);
         telemetry.addData("servoSetpoint: ", servoSetpoint);
         telemetry.addData("Last servo setpoint: ", servo.getPosition());
         if (servo.getPosition() != servoSetpoint) servo.setPosition(servoSetpoint);
@@ -151,8 +157,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     public void handleLiftSetpoints() {
         upButton.update(gamepad1.dpad_up);
         downButton.update(gamepad1.dpad_down);
-        if (upButton.is(Button.State.TAP) && lift.getCurrentPosition() < Constants.elevatorPositionTop) liftSetpoint += 100;
-        else if (downButton.is(Button.State.TAP) && lift.getCurrentPosition() > Constants.elevatorPositionBottom) liftSetpoint -= 100;
+        if (upButton.is(Button.State.TAP) && lift.getCurrentPosition() < Constants.TopLiftPosition) liftSetpoint += 100;
+        else if (downButton.is(Button.State.TAP) && lift.getCurrentPosition() > Constants.IntakingLiftPosition) liftSetpoint -= 100;
         lift.setTargetPosition(liftSetpoint);
         if (lift.getMode() != DcMotor.RunMode.RUN_TO_POSITION) lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(0.5);

@@ -5,11 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
 @TeleOp(name="science to be done", group="Linear OpMode")
@@ -46,8 +43,8 @@ public class BasicOmniOpMode_LinearTest extends LinearOpMode {
             int liftPos = lift.getCurrentPosition();
             telemetry.addData("lift position: ", liftPos);
             double liftPower = 0;
-            if (liftPos > Constants.elevatorPositionTop && -gamepad2.right_stick_y > 0) liftPower = gamepad2.right_stick_y;
-            else if (liftPos < Constants.elevatorPositionBottom && -gamepad2.right_stick_y < 0) liftPower = gamepad2.right_stick_y;
+            if (liftPos > Constants.TopLiftPosition && -gamepad2.right_stick_y > 0) liftPower = gamepad2.right_stick_y;
+            else if (liftPos < Constants.IntakingLiftPosition && -gamepad2.right_stick_y < 0) liftPower = gamepad2.right_stick_y;
             else liftPower = gamepad2.right_stick_y;
             lift.setVelocity(liftPower * 1500 + 1);
             intake.setPower(-gamepad2.right_trigger);

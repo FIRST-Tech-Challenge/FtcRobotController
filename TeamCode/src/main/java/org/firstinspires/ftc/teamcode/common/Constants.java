@@ -16,6 +16,9 @@ public class Constants {
         put("right_back", Direction.FORWARD);
         put("lift", Direction.REVERSE);
     }};
-    public static final int elevatorPositionTop = 3060; //High junction
-    public static final int elevatorPositionBottom = 20; // changed from -10 to -20
+    public static final int TopLiftPosition = 3060; //High junction
+    public static final int ClearIntakeLiftPosition = 800;
+    public static final int IntakingLiftPosition = 0;
+
+    public static final int groundLiftPosition = -120;
 }
