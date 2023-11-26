@@ -348,10 +348,68 @@ public class Robot {
         return currentYaw;
     }
 
-    //the desired heading must be relative to last imu reset. also, REMEMBER -180 < desired heading <= 180.
     public void setHeading(double targetAbsDegrees, double maxPower) {
+    /*
+        assert(targetAbsDegrees > 180);
+        assert(targetAbsDegrees <= -180);
+     */
         if (targetAbsDegrees == 180) {
             setHeading(179.5, maxPower);
+        } else {
+            YawPitchRollAngles robotOrientation;
+            double KP = 0.06; //started 0.15
+            double KD = 2_500_000;
+            double ERROR_TOLERANCE = 0.5; //degrees
+            double currentHeading = getCurrentHeading();
+            double error = targetAbsDegrees - currentHeading;
+            double errorDer;
+            double power;
+            double currentTime;
+            double minPower = 0.15;
+            //while start
+            while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+                currentTime = SystemClock.elapsedRealtimeNanos();
+                error = targetAbsDegrees - currentHeading; //error is degrees to goal
+                errorDer = (error - prevError) / (currentTime - prevTime);
+                power = (KP * error) + (KD * errorDer);
+
+                Log.d("pid", "setHeading: current heading is " + currentHeading);
+                Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
+                Log.d("pid", "setHeading: time is " + currentTime);
+                Log.d("pid", "setHeading: heading error is " + error);
+                Log.d("pid", "setHeading: errorDer is " + errorDer);
+                Log.d("pid", "setHeading: calculated power is " + power);
+
+                if (power > 0 && power < minPower) {
+                    power = minPower;
+                    Log.d("pid", "setHeading: adjusted power is " + power);
+                } else if (power < 0 && power > -1 * minPower) {
+                    power = minPower * -1;
+                    Log.d("pid", "setHeading: adjusted power is " + power);
+                }
+
+                //cap power
+                power = Range.clip(power, -1 * maxPower, maxPower);
+                Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
+
+                setMotorPower(-1 * power, power, -1 * power, power);
+                prevError = error;
+                prevTime = currentTime;
+            }
+            setMotorPower(0, 0, 0, 0);
+            opMode.sleep(100);
+            currentHeading = getCurrentHeading();
+            botHeading = targetAbsDegrees;
+            Log.d("pid", "setHeading: final heading is " + currentHeading);
+        }
+    }
+
+    //the desired heading must be relative to last imu reset. also, REMEMBER -180 < desired heading <= 180.
+    public void setHeading2(double targetAbsDegrees, double maxPower) {
+        if (targetAbsDegrees == 180) {
+            setHeading2(179.5, maxPower);
         } else {
 
             YawPitchRollAngles robotOrientation;
@@ -848,7 +906,7 @@ public class Robot {
                 vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 16;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
 
                 // Start moving
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
@@ -971,28 +1029,39 @@ public class Robot {
 
     public void straightBlockingFixHeading (double inches, boolean forward, double maxPower) {
 
-        double ERROR_TOLERANCE_IN_TICKS = 20;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
         double power;
         double leftPower;
         double rightPower;
+        double prevLeftPower = 0;
+        double prevRightPower = 0;
         double endTick;
-        final double KP = 100;
+        final double KP = 10; //started 100
         final double KD = 0;
-        final double minPower = 0.1;
+        final double minPower = 0.2;
 
         //inch to tick
         final double wheelDiaMm = 96;
         final double PI = 3.14159;
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
-        final double IN_TO_TICK = 537 / wheelCircIn;
+        final double IN_TO_TICK = 537 / wheelCircIn;  //45.24
 
         double errorDer;
         double currentTime;
         double currentHeading;
         double targetHeading = botHeading;
         double headingError;
-        double currentTick = fLeft.getCurrentPosition();
+        double currentTick;
+
+        if (forward) {
+            currentTick = fLeft.getCurrentPosition();
+        } else {
+            currentTick = bRight.getCurrentPosition();
+        }
+
         double tickRange = inches * IN_TO_TICK;
+
+        int counter = 0;
 
         //define desired position
         if (forward) {
@@ -1005,7 +1074,11 @@ public class Robot {
         double error;
         boolean setPrevTime = false; //this becomes true when previous time has been set
 
-        while (Math.abs(tickError) >= ERROR_TOLERANCE_IN_TICKS && opMode.opModeIsActive()) {
+        while (counter < 10 && opMode.opModeIsActive()) {
+            if (Math.abs(tickError) < ERROR_TOLERANCE_IN_TICKS) {
+                counter++;
+            }
+
             currentTime = SystemClock.elapsedRealtimeNanos();
             tickError = endTick - currentTick;
             error = tickError/tickRange;
@@ -1057,7 +1130,7 @@ public class Robot {
             if (Math.abs(headingError) > 1) {
                 if (headingError < 0) {
                     //turn left
-                    if (forward) {
+                    if (currentTick < endTick) {
                         leftPower = 0.1;
                         rightPower = 0.5;
                     } else {
@@ -1066,7 +1139,7 @@ public class Robot {
                     }
                 } else if (headingError > 0) {
                     //turn right
-                    if (forward) {
+                    if (currentTick < endTick) {
                         leftPower = 0.5;
                         rightPower = 0.1;
                     } else {
@@ -1079,11 +1152,21 @@ public class Robot {
             Log.d("pid turn", "straightBlockingFixHeading: rightPower is " + rightPower);
 
             //set powers
-            setMotorPower(leftPower, rightPower, leftPower, rightPower);
-            opMode.sleep(5);
+            if (leftPower != prevLeftPower || rightPower != prevRightPower) {
+                setMotorPower(leftPower, rightPower, leftPower, rightPower);
+            }
+
+            prevRightPower = rightPower;
+            prevLeftPower = leftPower;
 
             //set variables
-            currentTick = fLeft.getCurrentPosition();
+
+            if (forward) {
+                currentTick = fLeft.getCurrentPosition();
+            } else {
+                currentTick = bRight.getCurrentPosition();
+            }
+
             prevError = error;
             prevTime = currentTime;
 
@@ -1092,9 +1175,10 @@ public class Robot {
         }
         //stop, sleep
         setMotorPower(0, 0, 0, 0);
+        opMode.sleep(100);
         currentHeading = getCurrentHeading();
+        currentTick = fLeft.getCurrentPosition();
         Log.d("pid", "straightBlockingFixHeading: final currentTick is " + currentTick);
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
-        opMode.sleep(100);
     }
 }
