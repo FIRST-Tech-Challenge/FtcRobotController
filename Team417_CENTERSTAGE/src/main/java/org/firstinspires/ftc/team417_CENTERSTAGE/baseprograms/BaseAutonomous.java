@@ -7,12 +7,14 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
@@ -32,11 +34,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
+    MecanumDrive drive;
+
 
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         initializeHardware();
@@ -58,6 +64,23 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
+    public void runAuto(boolean red, boolean close) {
+
+        if (red) {
+            myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
+            telemetry.addLine("Looking for red");
+        } else {
+            myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.BLUE);
+            telemetry.addLine("Looking for blue");
+        }
+
+        initializeAuto();
+
+        waitForStart();
+
+        myColorDetection.detectTeamProp();
+
+    }
 
     public Action dropPixel() {
         return new Action() {

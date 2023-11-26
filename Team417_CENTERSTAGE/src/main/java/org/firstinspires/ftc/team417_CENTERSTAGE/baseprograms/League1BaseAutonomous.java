@@ -149,7 +149,6 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         initializeAuto();
 
         waitForStart();
-        Log.d("skid", toString());
 
         double x = 0;
         double y = 0;
@@ -209,27 +208,6 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         } else {
             sleep(5000);
         }
-    }
-
-    public Action dropPixel() {
-        return new Action() {
-            double startTime = 0;  // startTime value to compare to
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                if (startTime == 0) { // does this on first loop
-                    intakeMotor.setPower(-INTAKE_SPEED2);
-                    startTime = nanoTime() * NANO_TO_SECONDS_MULTIPLIER;
-                }
-                // current time - start time has to be greater than the intake time for the motor to stop
-                if(nanoTime() * NANO_TO_SECONDS_MULTIPLIER - startTime > INTAKE_TIME) {
-                    intakeMotor.setPower(0);
-                    startTime = 0; // reset for next run
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        };
     }
 
     @Override
