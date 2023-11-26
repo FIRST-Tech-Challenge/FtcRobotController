@@ -44,6 +44,7 @@ public class CSFullTeleOp extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor carWashMotor = null;
+    private DcMotor pixelLiftingMotor = null;
     private Servo droneServo = null;
     //private DigitalChannel touch;
 
@@ -61,12 +62,15 @@ public class CSFullTeleOp extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
         carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");
         droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -119,6 +123,14 @@ public class CSFullTeleOp extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
+            if (gamepad2.dpad_up){
+                pixelLiftingMotor.setTargetPosition(100);
+            }
+
+            if (gamepad2.dpad_down) {
+                pixelLiftingMotor.setTargetPosition(0);
+            }
 
             if (gamepad2.a || gamepad2.x) {
                 carWashMotor.setPower(carWashPower);
