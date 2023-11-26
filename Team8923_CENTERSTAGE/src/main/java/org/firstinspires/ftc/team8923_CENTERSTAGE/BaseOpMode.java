@@ -13,6 +13,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBL;
     DcMotor motorBR;
+    DcMotor motorIntakeWheels;
 
     // constants
     static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution, 4 * 7 * 19.2 (the calculations)

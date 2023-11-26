@@ -152,6 +152,20 @@ abstract public class BaseAutonomous extends BaseOpMode {
         stopDriving();
     }
 
+    public void runIntake(double power, int rotations) {
+        motorIntakeWheels.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double targetMotorIntakeWheels = rotations * TICKS_PER_REVOLUTION;
+        targetMotorIntakeWheels += motorIntakeWheels.getCurrentPosition();
+        motorIntakeWheels.setTargetPosition((int) targetMotorIntakeWheels);
+        runtime.reset();
+        motorIntakeWheels.setPower(power);
+        while (opModeIsActive() &&
+                (runtime.seconds() < 30) &&
+                (motorFL.isBusy() && motorFR.isBusy() && motorBL.isBusy() && motorBR.isBusy())) {
+        }
+        motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     private void stopDriving() {
         motorFL.setPower(0.0);
         motorFR.setPower(0.0);
