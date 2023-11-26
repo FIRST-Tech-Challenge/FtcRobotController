@@ -21,15 +21,19 @@
 
 package org.firstinspires.ftc.teamcode.teamProp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -39,112 +43,201 @@ import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class TeamPropPipeline extends OpenCvPipeline
 {
     private Mat currentImage = new Mat();
-    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
-    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+    // Matrices for OpenCv
+    //Mat colorImage = new Mat();
+    private Mat blurImage = new Mat();
+    private Mat hsvImage = new Mat();
+    private Mat maskHSVBlue = new Mat();
+    private Mat maskHSVRed1 = new Mat();
+    private Mat maskHSVRed2 = new Mat();
+    private Mat maskedImage = new Mat();
+    private Mat maskHSVRed = new Mat();
+    private Mat grey = new Mat();
     private final Object detectionsUpdateSync = new Object();
 
     Mat cameraMatrix;
 
-    Scalar blue = new Scalar(7,197,235,255);
-    Scalar red = new Scalar(255,0,0,255);
-    Scalar green = new Scalar(0,255,0,255);
-    Scalar white = new Scalar(255,255,255,255);
+    Scalar blue = new Scalar(7,197,235);
+    Scalar red = new Scalar(255,0,0);
+    Scalar green = new Scalar(0,255,0);
+    Scalar white = new Scalar(255,255,255);
 
     double fx;
     double fy;
     double cx;
     double cy;
 
+    private Point position = new Point(0,0);
 
+    Telemetry telemetry;
     //Color specific filtering values
     static final double minBlueInitValues[]= {105, 125, 50};
     static final double maxBlueInitValues[] = {135, 255, 255};
 
+    //It is on 2 different sections in the hsv therefore we need to merge the 2 red sections
     static final double minRedInitValues1[]= {165, 125, 110};
     static final double maxRedInitValues1[] = {255, 255, 255};
     static final double minRedInitValues2[]= {0, 125, 110};
     static final double maxRedInitValues2[] = {15, 255, 255};
 
 
-    // Matrices for OpenCv
-    //Mat colorImage = new Mat();
-    private Mat blurImage;
-    private Mat hsvImage;
-    private Mat maskHSVBlue;
-    private Mat maskHSVRed;
-    private Mat maskedImage;
-
-    public TeamPropPipeline(double fx, double fy, double cx, double cy)
+    public TeamPropPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
     {
         this.fx = fx;
         this.fy = fy;
         this.cx = cx;
         this.cy = cy;
 
+        this.telemetry = telemetry;
         constructMatrix();
 
-        // Allocate a native context object. See the corresponding deletion in the finalizer
-        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 
     @Override
-    public void finalize()
-    {
-
-    }
-
-    @Override
-    public Mat processFrame(Mat colorImage)
-    {
+    public Mat processFrame(Mat colorImage) {
         // Initial blur to filter out some unwanted points
         Imgproc.GaussianBlur(colorImage, blurImage, new Size(9.0, 9.0), 75, 75);
 
         // Convert image in HSV to filter easily on hue for blue and red filtering
         Imgproc.cvtColor(blurImage, hsvImage, Imgproc.COLOR_RGB2HSV);
 
+
         // blue HSV filter
         Core.inRange(hsvImage,new Scalar(minBlueInitValues),new Scalar(maxBlueInitValues), maskHSVBlue);
 
         // red HSV filter
-        Core.inRange(hsvImage,new Scalar(minRedInitValues1),new Scalar(maxRedInitValues1), maskHSVRed);
+        Core.inRange(hsvImage,new Scalar(minRedInitValues1),new Scalar(maxRedInitValues1), maskHSVRed1);
+        Core.inRange(hsvImage,new Scalar(minRedInitValues2),new Scalar(maxRedInitValues2), maskHSVRed2);
 
-        // (red1 or red2 values?)
+        // Merge both red hsv filters
+        Core.max(maskHSVRed1, maskHSVRed2, maskHSVRed);
 
-        //Decide whether we are red or blue alliance based on amount of red or blue in the image
-        long nBluePixels = maskHSVBlue.total();
-        long nRedPixels = maskHSVRed.total();
+        // Blacken out the top of the image, because the team prop can only be in the bottom half
+        int yCoordinate = 200;
+        // Define a rectangle that is the top of the image (it relates to the image)
+        Mat subImg1 = maskHSVRed.submat(new Rect(0,0, maskHSVRed.cols(), yCoordinate));
+        Mat subImg2 = maskHSVBlue.submat(new Rect(0,0, maskHSVBlue.cols(), yCoordinate));
+        Mat subImg3 = colorImage.submat(new Rect(0,0, maskHSVBlue.cols(), yCoordinate));
+        // Set this rectangle to black
+        subImg1.setTo(new Scalar (0,0,0));
+        subImg2.setTo(new Scalar (0,0,0));
+        subImg3.setTo(new Scalar (0,0,0));
 
-        if (nBluePixels > nRedPixels){
 
+        // Decide which mask to treat based on amount of red or blue in the image
+        // (if we are blue alliance, there will be more blue due to the proximity of the team prop and vice versa)
+        int numBluePixels = Core.countNonZero(maskHSVBlue);
+        int numRedPixels = Core.countNonZero(maskHSVRed);
+
+        if (numBluePixels > numRedPixels){
+            currentImage = maskHSVBlue;
         }
-        else if(nRedPixels > nBluePixels){
-
+        else if(numRedPixels > numBluePixels){
+            currentImage = maskHSVRed;
         }
         else {
-
+            currentImage = maskHSVBlue;
         }
 
-        // Blacken pixels not in band
-        maskedImage.setTo(new Scalar(0,0,0));
-        colorImage.copyTo(maskedImage, maskHSVBlue);
-        contours.size();
 
-        synchronized (detectionsUpdateSync)
-        {
-            detectionsUpdate = detections;
+        // Finding contours
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+
+        Imgproc.findContours(currentImage, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        int numContours = contours.size();
+
+        // No rectangle detected
+        if(numContours==0) {
+            setPosition (0, 0);
+            return colorImage;
+        }
+        MatOfPoint2f[] contoursPoly = new MatOfPoint2f[numContours];
+        RotatedRect[] rectangle = new RotatedRect[numContours];
+        double maxArea = 0;
+        int currentBiggestRectangle = -1;
+        // Going through all the contours to find the rectangles
+        for (int i = 0; i < numContours; i++) {
+
+
+            // Getting only the rectangles from the contours
+            contoursPoly[i] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+            rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
+
+            // Filtering out rectangles with too small of an area
+            if(rectangle[i].size.area() <= 100) {
+                continue;
+            }
+
+            // Filtering out rectangles that look too much like lines
+            double rectangleRatio = Math.max(rectangle[i].size.width,rectangle[i].size.height)/Math.min(rectangle[i].size.width,rectangle[i].size.height);
+
+
+            if (rectangleRatio > 4){
+                Point[] vertices = new Point[4];
+                rectangle[i].points(vertices);
+                List<MatOfPoint> box = new ArrayList<>();
+                box.add(new MatOfPoint(vertices));
+
+                Imgproc.drawContours(colorImage, box, -1, red, 3, 0);
+                continue;
+            }
+
+            // Taking only the biggest rectangle area
+            double currentArea = rectangle[i].size.area();
+            if (currentArea > maxArea){
+                maxArea = currentArea;
+                currentBiggestRectangle = i;
+            }
+
+            Point[] vertices = new Point[4];
+            rectangle[currentBiggestRectangle].points(vertices);
+            List<MatOfPoint> box = new ArrayList<>();
+            box.add(new MatOfPoint(vertices));
+
+            Imgproc.drawContours(colorImage, box, -1, green, 3, 0);
+        }
+
+        // Drawing contours is possible for for debugging
+        telemetry.addLine("# of contours" + numContours);
+
+        if (currentBiggestRectangle != -1) {
+
+            Point[] vertices = new Point[4];
+            rectangle[currentBiggestRectangle].points(vertices);
+            List<MatOfPoint> box = new ArrayList<>();
+            box.add(new MatOfPoint(vertices));
+
+            Imgproc.drawContours(colorImage, box, -1, blue, 3, 0);
+
+            setPosition(rectangle[currentBiggestRectangle].center.x, rectangle[currentBiggestRectangle].center.y);
         }
 
         return colorImage;
     }
 
-    public ArrayList<AprilTagDetection> getLatestDetections()
+
+    public void setPosition(double x, double y)
     {
-        return detections;
+        synchronized (detectionsUpdateSync)
+        {
+            position = new Point (x, y);
+        }
+    }
+
+    public Point getLatestPosition()
+    {
+        synchronized (detectionsUpdateSync)
+        {
+            return position;
+        }
     }
 
 
@@ -174,131 +267,6 @@ class TeamPropPipeline extends OpenCvPipeline
         cameraMatrix.put(2,2,1);
     }
 
-    /**
-     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
-     *
-     * @param buf the RGB buffer on which to draw the marker
-     * @param length the length of each of the marker 'poles'
-     * @param rvec the rotation vector of the detection
-     * @param tvec the translation vector of the detection
-     * @param cameraMatrix the camera matrix used when finding the detection
-     */
-    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
-        MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(0,0,0),
-                new Point3(length,0,0),
-                new Point3(0,length,0),
-                new Point3(0,0,-length)
-        );
-
-        // Project those points
-        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
-        Point[] projectedPoints = matProjectedPoints.toArray();
-
-        // Draw the marker!
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[1], red, thickness);
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[2], green, thickness);
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[3], blue, thickness);
-
-        Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
-    }
-
-    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
-        //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
-
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
-        MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(-tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2,-tagHeight/2,-length),
-                new Point3(-tagWidth/2,-tagHeight/2,-length));
-
-        // Project those points
-        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
-        Point[] projectedPoints = matProjectedPoints.toArray();
-
-        // Pillars
-        for(int i = 0; i < 4; i++)
-        {
-            Imgproc.line(buf, projectedPoints[i], projectedPoints[i+4], blue, thickness);
-        }
-
-        // Base lines
-        //Imgproc.line(buf, projectedPoints[0], projectedPoints[1], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[1], projectedPoints[2], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[2], projectedPoints[3], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[3], projectedPoints[0], blue, thickness);
-
-        // Top lines
-        Imgproc.line(buf, projectedPoints[4], projectedPoints[5], green, thickness);
-        Imgproc.line(buf, projectedPoints[5], projectedPoints[6], green, thickness);
-        Imgproc.line(buf, projectedPoints[6], projectedPoints[7], green, thickness);
-        Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
-    }
-
-    Pose aprilTagPoseToOpenCvPose(AprilTagPose aprilTagPose)
-    {
-        Pose pose = new Pose();
-        pose.tvec.put(0,0, aprilTagPose.x);
-        pose.tvec.put(1,0, aprilTagPose.y);
-        pose.tvec.put(2,0, aprilTagPose.z);
-
-        Mat R = new Mat(3, 3, CvType.CV_32F);
-
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                R.put(i,j, aprilTagPose.R.get(i,j));
-            }
-        }
-
-        Calib3d.Rodrigues(R, pose.rvec);
-
-        return pose;
-    }
-
-    /**
-     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
-     * original size of the tag.
-     *
-     * @param points the points which form the trapezoid
-     * @param cameraMatrix the camera intrinsics matrix
-     * @param tagsizeX the original width of the tag
-     * @param tagsizeY the original height of the tag
-     * @return the 6DOF pose of the camera relative to the tag
-     */
-    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
-    {
-        // The actual 2d points of the tag detected in the image
-        MatOfPoint2f points2d = new MatOfPoint2f(points);
-
-        // The 3d points of the tag in an 'ideal projection'
-        Point3[] arrayPoints3d = new Point3[4];
-        arrayPoints3d[0] = new Point3(-tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[1] = new Point3(tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[2] = new Point3(tagsizeX/2, -tagsizeY/2, 0);
-        arrayPoints3d[3] = new Point3(-tagsizeX/2, -tagsizeY/2, 0);
-        MatOfPoint3f points3d = new MatOfPoint3f(arrayPoints3d);
-
-        // Using this information, actually solve for pose
-        Pose pose = new Pose();
-        Calib3d.solvePnP(points3d, points2d, cameraMatrix, new MatOfDouble(), pose.rvec, pose.tvec, false);
-
-        return pose;
-    }
 
     /*
      * A simple container to hold both rotation and translation
