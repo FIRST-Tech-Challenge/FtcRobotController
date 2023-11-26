@@ -177,11 +177,11 @@ public class Robot2024<_opMode> {
         return elevatorCode.getCurrentPostion();
     }
     public void raiseElevatorToPosition (double cmd, int DesiredPos) {
-        elevatorCode.raiseLowerElevatorToPosition(cmd, DesiredPos);
+        elevatorCode.raiseLowerElevatorToPosition_AUTO(cmd, DesiredPos);
     }
 
     public void setDesElevatorPosition(int desHoldPosition){
-        elevatorCode.setHoldPosition(desHoldPosition);
+        elevatorCode.set_elevator_desired_position(desHoldPosition);
     }
     public void elevatorUpdate(double dt){
         elevatorCode.updatePosControl(dt);
@@ -190,12 +190,12 @@ public class Robot2024<_opMode> {
        SweeperCode.rollSweeperOut_T(cmd);
     }
     public void dump_bucket () {
-        elevatorCode.dump_bucket();
+        elevatorCode.dump_pixle();
         RobotLog.d(String.format("inrobot.dumpbucket"));
 
     }
     public void raise_bucket () {
-        elevatorCode.raise_bucket();
+        elevatorCode.reset_buckt();
     }
 
     public void launch_drone () {
