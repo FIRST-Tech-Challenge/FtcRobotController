@@ -2,45 +2,45 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.auto.BasicPipeline;
+import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "red auto")
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Red auto")
 public class AutonomousRed extends LinearOpMode {
 
-    protected DcMotor left_front;
-    protected DcMotor right_front;
-    protected DcMotor left_back;
-    protected DcMotor right_back;
-    protected DcMotor arm;
+    protected DcMotorEx left_front;
+    protected DcMotorEx right_front;
+    protected DcMotorEx left_back;
+    protected DcMotorEx right_back;
+    ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
+    protected DcMotor lift;
     protected Servo servo;
     private DcMotor intake = null;
     OpenCvCamera camera;
-    PipelineRed pipeline = new PipelineRed();
-
-    enum propPosition {
-            LEFT,
-            MIDDLE,
-            RIGHT
-    }
-
+    BasicPipeline pipeline = new BasicPipeline();
+    // private VisionPortal visionPortal;               // Used to manage the video source.
+    // private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
 
     @Override
     public void runOpMode() throws InterruptedException {
-        left_front = hardwareMap.get(DcMotor.class, "left_front");
-        right_front = hardwareMap.get(DcMotor.class, "right_front");
-        left_back = hardwareMap.get(DcMotor.class, "left_back");
-        right_back = hardwareMap.get(DcMotor.class, "right_back");
-
-        arm = hardwareMap.get(DcMotor.class, "arm");
-
-        intake = hardwareMap.get(DcMotor.class, "intake");
-
-        servo = hardwareMap.get(Servo.class, "servo");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
@@ -58,33 +58,35 @@ public class AutonomousRed extends LinearOpMode {
             }
         });
 
-        left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_front = hardwareMap.get(DcMotorEx.class, "left_front");
+        right_front = hardwareMap.get(DcMotorEx.class, "right_front");
+        left_back = hardwareMap.get(DcMotorEx.class, "left_back");
+        right_back = hardwareMap.get(DcMotorEx.class, "right_back");
 
-        left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift = hardwareMap.get(DcMotor.class, "lift");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        servo = hardwareMap.get(Servo.class, "servo");
 
-        left_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveMotors.add(left_front);
+        driveMotors.add(left_back);
+        driveMotors.add(right_front);
+        driveMotors.add(right_back);
 
-        //right_front.setPower(1);
-        //left_front.setPower(1);
-        //right_back.setPower(1);
-        //left_back.setPower(1);
-        //sleep(1000);
-        //right_front.setPower(0);
-        //left_front.setPower(0);
-        //right_back.setPower(0);
-        // left_back.setPower(0);
+        for(DcMotorEx driveMotor: driveMotors) {
+            driveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        arm.setPower(0.075);
+        left_front.setDirection(Constants.motorDirections.get("left_front"));
+        left_back.setDirection(Constants.motorDirections.get("left_back"));
+        right_front.setDirection(Constants.motorDirections.get("right_front"));
+        right_back.setDirection(Constants.motorDirections.get("right_back"));
+        lift.setDirection(Constants.motorDirections.get("lift"));
+
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        lift.setPower(0.075);
 
         while (!isStarted() && !isStopRequested()) {
             telemetry.addLine("Ensure pixel is in right side of box!!");
@@ -92,120 +94,234 @@ public class AutonomousRed extends LinearOpMode {
             telemetry.addData("Prop area: ", pipeline.getPropAreaAttr());
             telemetry.update();
         }
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.setPower(0.075);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setPower(0.075);
         double propX = pipeline.getJunctionPoint().x;
         double propArea = pipeline.getPropAreaAttr();
 
-        moveForward(0.25, 2200);
+        //initAprilTag();
+        //setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
+        //goToAprilTagRelative(1000, 1000, 0, 20, 1);
+
+        moveForward(0.25, 1200);
         if (propArea < 10000) { // none detected we assume left spike mark
             telemetry.addLine("Left spike mark");
             telemetry.update();
-            moveTurning(-0.25, 2200);
-            moveForward(0.5, 100);
+            moveTurning(-0.25, -1000);
+            moveForward(0.5, -100);
             // eject pixel
-            intake.setPower(-1);
+            intake.setPower(-0.2);
             sleep(1000);
             intake.setPower(0);
-            moveForward(0.25, 100);
-            moveForward(-0.25, 100);
-            // go to backboard and score, evading pixel
-
+            // nudge the pixel incase it falls vertically
+            moveForward(0.5, 50);
+            moveForward(0.5, -50);
+            /*
+            moveForward(0.25, 50);
+            moveForward(-0.25, 50);
+             */
 
         } else if (propX > 600) { // right spike mark
             telemetry.addLine("Right spike mark");
             telemetry.update();
             // line up with mark
-            moveTurning(0.25, 2200);
-            moveForward(0.25, 300);
+            moveTurning(0.25, 1000);
+            moveForward(0.25, 100);
             // eject pixel
             intake.setPower(-0.25);
             sleep(1000);
             intake.setPower(0);
+            // nudge the pixel in case it falls vertically
+            moveForward(0.5, 50);
+            moveForward(0.5, -50);
+            /*
             //in case it falls vertically
             moveForward(0.25, 100);
-            moveForward(-0.25, 100);
             // go to backboard and score
+            moveForward(-0.25, 4000);
+             */
         } else { // middle spike mark
             telemetry.addLine("Middle spike mark");
             telemetry.update();
-            moveForward(0.25, 400);
-            moveForward(-0.25, 400);
+            // push prop out of the way
+            moveForward(0.25, 200);
+            moveForward(0.25, -200);
             // eject pixel- we're already there
             intake.setPower(-0.25);
             sleep(1000);
             intake.setPower(0);
-            moveForward(0.25, 100);
-            moveForward(-0.25, 100);
-            // go to backboard
+            // nudge the pixel over in case it falls vertically
+            moveForward(0.5, 50);
+            moveForward(0.5, -50);
         }
-
+        /*
         servo.setPosition(0);
         sleep(400);
-        arm.setTargetPosition(700);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(1.0/8);
+        lift.setTargetPosition(700);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(1.0/8);
         sleep(1000);
         servo.setPosition(0.7);
+
+         */
+
+
 
         sleep(100000);
     }
 
-    public void moveForward(double power, int time) {
-        right_front.setPower(power);
-        left_front.setPower(power);
-        right_back.setPower(power);
-        left_back.setPower(power);
-        sleep(time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
-
+    public void moveForward(double power, int setpoint) {
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            driveMotor.setTargetPosition(setpoint);
+            driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            driveMotor.setPower(power);
+        }
+        while (left_front.isBusy()) {
+            telemetry.addData("lf position: ", left_front.getCurrentPosition());
+            telemetry.addData("lb position: ", left_back.getCurrentPosition());
+            telemetry.addData("rf position: ", right_front.getCurrentPosition());
+            telemetry.addData("rb position: ", right_back.getCurrentPosition());
+            telemetry.update();
+        }
     }
 
-    public void moveStrafing(double power, int time){
+    public void moveStrafing(double power, int setpoint){
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        left_front.setTargetPosition(setpoint);
+        left_back.setTargetPosition(-setpoint);
+        right_front.setTargetPosition(-setpoint);
+        right_back.setTargetPosition(setpoint);
+        for (DcMotorEx driveMotor : driveMotors) driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front.setPower(power);
-        left_front.setPower(power);
+        left_front.setPower(-power);
         right_back.setPower(-power);
-        left_back.setPower(-power);
-        sleep(time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
+        left_back.setPower(power);
 
     }
 
-    public void moveTurning(double power, int time){
+    public void moveTurning(double power, int setpoint){
+        for (DcMotorEx driveMotor : driveMotors) {
+            driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        left_front.setTargetPosition(setpoint);
+        left_back.setTargetPosition(setpoint);
+        right_front.setTargetPosition(-setpoint);
+        right_back.setTargetPosition(-setpoint);
+        for (DcMotorEx driveMotor : driveMotors) driveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front.setPower(-power);
         left_front.setPower(power);
         right_back.setPower(-power);
         left_back.setPower(power);
-        sleep( time);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
+
+        while (left_front.isBusy()) {
+            telemetry.addData("lf position: ", left_front.getCurrentPosition());
+            telemetry.addData("lb position: ", left_back.getCurrentPosition());
+            telemetry.addData("rf position: ", right_front.getCurrentPosition());
+            telemetry.addData("rb position: ", right_back.getCurrentPosition());
+        }
     }
 
 
+    /*
+    public void goToAprilTagRelative(double fwd, double strafe, double rot, double allowedError, int tagID) {
+        double rangeError = 0;
+        double headingError = 0;
+        double bearingError = 0;
+        AprilTagDetection desiredTag;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        // first time around before we start checking if we're within the allowed error
+        for (AprilTagDetection detection : currentDetections) {
+            if ((detection.metadata != null) &&
+                    ((tagID < 0) || (detection.id == tagID))  ){
+                desiredTag = detection;
+                rangeError = desiredTag.ftcPose.range - fwd;
+                bearingError = desiredTag.ftcPose.yaw - strafe;
+                headingError = desiredTag.ftcPose.bearing - rot;
+                telemetry.addData("Good tag found! ", "range: %.2f, yaw: %.2f, bearing/heading: %.2f",
+                        desiredTag.ftcPose.range, desiredTag.ftcPose.yaw, desiredTag.ftcPose.bearing);
+                break;  // don't look any further.
+            } else {
+                telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+            }
+        }
 
-   /*
-    Strafing:
-    lf +
-    rf +
-    lb -
-    rb -
-    Turning
-    lf +
-    rf -
-    lb +
-    rb -
+        while ((rangeError*rangeError) + (bearingError*bearingError) >= allowedError*allowedError) {
+            currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                if ((detection.metadata != null) &&
+                        ((tagID < 0) || (detection.id == tagID))  ){
+                    desiredTag = detection;
+                    rangeError = desiredTag.ftcPose.range - fwd;
+                    bearingError = desiredTag.ftcPose.yaw - strafe;
+                    headingError = desiredTag.ftcPose.bearing - rot;
+                    break;  // don't look any further.
+                } else {
+                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                }
+            }
+            left_front.setPower((rangeError + bearingError + headingError) * 0.01);
+            left_back.setPower((rangeError - bearingError + headingError) * 0.01);
+            right_front.setPower((rangeError - bearingError - headingError) * 0.01);
+            right_back.setPower((rangeError + bearingError - headingError) * 0.01);
+        }
+
+        for (DcMotorEx motor : driveMotors) motor.setPower(0);
+    }
+
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Create the vision portal by using a builder.
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "camera"))
+                .addProcessor(aprilTag)
+                .build();
+    }
+
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
+
      */
 
-    //Drive the robot forward
 }
