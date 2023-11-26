@@ -5,7 +5,6 @@ import static java.lang.Math.min;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -20,17 +19,17 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
-@Disabled
-public class CSMethods extends LinearOpMode {
-    private static final boolean USE_WEBCAM = true;
-    private TfodProcessor tfod;
-    private final ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lf = null;
-    private DcMotor lb = null;
-    private DcMotor rf = null;
-    private DcMotor rb = null;
-    private DcMotor carWashMotor = null;
-    private IMU imu = null;
+
+public abstract class CSMethods extends LinearOpMode {
+    public static final boolean USE_WEBCAM = true;
+    public TfodProcessor tfod;
+    public final ElapsedTime runtime = new ElapsedTime();
+    public DcMotor lf = null;
+    public DcMotor lb = null;
+    public DcMotor rf = null;
+    public DcMotor rb = null;
+    public DcMotor carWashMotor = null;
+    public IMU imu = null;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
      - Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -47,33 +46,8 @@ public class CSMethods extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
-    private VisionPortal visionPortal;
-    public void runOpMode() {
-        // Initialize the drive system variables.
-        lf = hardwareMap.get(DcMotor.class, "leftFront");
-        lb = hardwareMap.get(DcMotor.class, "leftBack");
-        rf = hardwareMap.get(DcMotor.class, "rightFront");
-        rb = hardwareMap.get(DcMotor.class, "rightBack");
-        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        imu = hardwareMap.get(IMU.class, "imu");
+    public VisionPortal visionPortal;
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
-
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
-
-        initTfod();
-    }
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
         int newLeftBackTarget;
         int newRightBackTarget;
