@@ -86,6 +86,8 @@ public class RedRight extends LinearOpMode {
                 //    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
                 //} else {
                 telemetry.addData("Time Delta: ", (currTime - startTime));
+                telemetry.addData("Middle Count", modifyPipeline.getMiddleResult());
+                telemetry.addData("Right Count", modifyPipeline.getRightResult());
                 resultROI = modifyPipeline.getResultROI();
                 if (resultROI == 0) {
                     telemetry.addData("Resulting ROI: ", "Left");
@@ -183,10 +185,11 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         elbow.setPosition(0.9);
         sleep(500);
-        gripper.setPosition(0.0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
+        sleep(1000);
+        gripper.setPosition(0.0);
         pose = new Pose2d(-52, -33, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
@@ -239,10 +242,11 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         elbow.setPosition(0.9);
         sleep(500);
-        gripper.setPosition(0.0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
+        sleep(1000);
+        gripper.setPosition(0.0);
         pose = new Pose2d(-52, -33, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
@@ -292,10 +296,11 @@ public class RedRight extends LinearOpMode {
         sleep(1000);
         elbow.setPosition(0.9);
         sleep(500);
-        gripper.setPosition(0.0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
+        sleep(1000);
+        gripper.setPosition(0.0);
         pose = new Pose2d(-52, -33, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
