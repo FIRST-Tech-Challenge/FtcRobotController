@@ -2,6 +2,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
@@ -87,7 +88,17 @@ class AutonDriveFactory {
         CENTER,
         RIGHT
     }
-    Action getDriveAction(boolean isRed, boolean isFar, SpikeMarks location, Action intake) {
+
+    class PoseAndAction {
+        Action action;
+        Pose2d startPose;
+
+        PoseAndAction(Action action, Pose2d startPose) {
+            this.action = action;
+            this.startPose = startPose;
+        }
+    }
+    PoseAndAction getDriveAction(boolean isRed, boolean isFar, SpikeMarks location, Action intake) {
 
         if (isFar) {
             xOffset = 0;
@@ -101,10 +112,15 @@ class AutonDriveFactory {
             yMultiplier = -1;
         }
 
+        // in MeepMeep, intake needs to be null however .stopAndAdd() can't be null because it will crash so we set to a random sleep
+        if(intake == null) {
+            intake = new SleepAction(3);
+        }
+
         TrajectoryActionBuilder spikeLeft = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
         spikeLeft = spikeLeft.splineTo(xForm(new Vector2d(-34, -36)), xForm(Math.toRadians(90)))
                 .splineTo(xForm(new Vector2d(-38, -34)), xForm(Math.toRadians(180) + (1e-6)))
-                // arm action
+                .stopAndAdd(intake)
                 .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)))
                 .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
                 .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
@@ -112,7 +128,7 @@ class AutonDriveFactory {
 
         TrajectoryActionBuilder spikeCenter = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
         spikeCenter = spikeCenter.splineTo(xForm(new Vector2d(-34, -33)), xForm(Math.toRadians(90)))
-                // arm action
+                // arm
                 .splineToConstantHeading(xForm(new Vector2d(-34, -39)), xForm(Math.toRadians(90)))
                 .splineToConstantHeading(xForm(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
                 .splineToConstantHeading(xForm(new Vector2d(-55, -10)), xForm(Math.toRadians(90)))
@@ -129,11 +145,11 @@ class AutonDriveFactory {
                 .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
 
         if(location == SpikeMarks.LEFT) {
-            return spikeLeft.build();
+            return new PoseAndAction(spikeLeft.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
         } else if(location == SpikeMarks.CENTER) {
-            return spikeCenter.build();
+            return new PoseAndAction(spikeCenter.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
         } else {
-            return spikeRight.build();
+            return new PoseAndAction(spikeRight.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
         }
 
     }
@@ -157,6 +173,6 @@ class AutonDriveFactory {
      * arguments here to test your different code paths.
      */
     Action getMeepMeepAction() {
-        return getDriveAction(true, true, SpikeMarks.LEFT, null);
+        return getDriveAction(true, true, SpikeMarks.LEFT, null).action;
     }
 }
