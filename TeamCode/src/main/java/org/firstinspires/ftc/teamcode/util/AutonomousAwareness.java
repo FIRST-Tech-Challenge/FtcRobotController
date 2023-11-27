@@ -11,12 +11,21 @@ public class AutonomousAwareness {
 
     static final double CENTER_WHEEL_OFFSET = 2.4;
 
-    static MotorEx encoderLeft, encoderRight, encoderBack;
+    private static MotorEx encoderLeft, encoderRight, encoderBack;
     static HolonomicOdometry holOdom;
     
     static OdometrySubsytem odometry;
 
-    public AutonomousAwareness() {
+    public static Waypoint[] currentTask;
+
+    public enum StartingPosition {
+        RED_LEFT, 
+        RED_RIGHT, 
+        BLUE_LEFT, 
+        BLUE_RIGHT
+    }
+
+    public void initOdometry() {
         encoderLeft = new MotorEx(hardwareMap, "encoderLeft");
         encoderRight = new MotorEx(hardwareMap, "encoderRight");
         encoderBack = new MotorEx(hardwareMap, "encoderBack");
@@ -33,5 +42,22 @@ public class AutonomousAwareness {
         );
 
         odometry = new OdometrySubsytem(holOdom);
+    }
+
+    /** 
+     * Constructor for the AutonomousAwareness class
+     * @param startingPosition the starting position of the robot
+     * @param useDistanceSensor whether or not to use the distance sensor for more accurate positioning
+     */
+    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor) {
+        initOdometry();
+    }
+
+    /**
+     * Constructor for the AutonomousAwareness class
+     * @param startingPosition the starting position of the robot
+     */
+    public AutonomousAwareness(StartingPosition startingPosition) {
+        AutonomousAwareness(startingPosition, false);
     }
 }
