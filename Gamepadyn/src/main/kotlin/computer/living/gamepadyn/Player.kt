@@ -31,24 +31,6 @@ sealed class Player<T: Enum<T>> private constructor(
         }
     }
 
-    // look up "elvis operator kotlin"
-    fun getEventAnalog(action: T): ActionEvent<ActionDataAnalog>? {
-        val ev = events[action] ?: return null
-        val shouldBe = ev.type
-        val actuallyIs = parent.actions[action]!!.type
-        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
-        @Suppress("UNCHECKED_CAST")
-        return ev as ActionEvent<ActionDataAnalog>
-    }
-    fun getEventDigital(action: T): ActionEvent<ActionDataDigital>? {
-        val ev = events[action] ?: return null
-        val shouldBe = ev.type
-        val actuallyIs = parent.actions[action]!!.type
-        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
-        @Suppress("UNCHECKED_CAST")
-        return ev as ActionEvent<ActionDataDigital>
-    }
-
     /**
      * The player's configuration.
      */
@@ -58,17 +40,41 @@ sealed class Player<T: Enum<T>> private constructor(
             onConfigChanged();
         }
 
-    internal fun onConfigChanged() {
-        // clear state if config is null
-        if (configuration == null) {
-            state.clear()
-        } /*else { }*/ // TODO: nullify elements if their mappings were removed
+    // look up "elvis operator kotlin"
+    fun getEventAnalog(action: T): ActionEvent<ActionDataAnalog>? {
+        val ev = events[action] ?: return null
+        val shouldBe = ev.type
+        val actuallyIs = parent.actions[action]!!.type
+        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
+        return ev as? ActionEvent<ActionDataAnalog>
+    }
+    fun getEventDigital(action: T): ActionEvent<ActionDataDigital>? {
+        val ev = events[action] ?: return null
+        val shouldBe = ev.type
+        val actuallyIs = parent.actions[action]!!.type
+        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
+        return ev as? ActionEvent<ActionDataDigital>
     }
 
     /**
      * Returns the current state of the provided action (if valid) and `null` if the state doesn't exist or hasn't been updated.
      */
     fun getState(action: T): ActionData? = state[action]
+    fun getStateAnalog(action: T): ActionDataAnalog? {
+        val s = state[action]
+        if (s is ActionDataAnalog) return s; else return null
+    }
+    fun getStateDigital(action: T): ActionDataDigital? {
+        val s = state[action]
+        if (s is ActionDataDigital) return s; else return null
+    }
+
+    internal fun onConfigChanged() {
+        // clear state if config is null
+        if (configuration == null) {
+            state.clear()
+        } /*else { }*/ // TODO: nullify elements if their mappings were removed
+    }
 
 //    internal fun updateState() {
 //        parent.opMode.gamepad1

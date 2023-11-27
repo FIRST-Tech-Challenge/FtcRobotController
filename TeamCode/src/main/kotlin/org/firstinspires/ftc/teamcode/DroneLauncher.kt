@@ -13,12 +13,12 @@ class DroneLauncher(private var op: OpMode, private var motor: HardwareDevice) {
      */
     fun arm(): Boolean {
         TODO("Not yet implemented")
-        return if (!isArmed) {
-            if (false /** catastrophic error */) throw Exception("this will never be called, catastrophic error");
-            true;
-        } else {
-            false;
-        }
+//        return if (!isArmed) {
+//            if (false /** catastrophic error */) throw Exception("this will never be called, catastrophic error");
+//            true;
+//        } else {
+//            false;
+//        }
     }
 
 //    /**
