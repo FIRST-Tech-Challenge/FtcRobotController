@@ -36,7 +36,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
     MecanumDrive drive;
-
+    
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
