@@ -1,23 +1,11 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.tests
 
-import com.acmerobotics.roadrunner.Pose2d
-import com.acmerobotics.roadrunner.PoseVelocity2d
-import com.acmerobotics.roadrunner.Vector2d
-import com.acmerobotics.roadrunner.clamp
-import com.acmerobotics.roadrunner.ftc.power
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.sin
-import kotlin.math.sqrt
+import org.firstinspires.ftc.teamcode.BotShared
 
-@TeleOp(name = "Full Manual Controls (UNSTABLE)")
+@TeleOp(name = "Full Manual Drive Controls", group = "Test")
 class FullManual : OpMode() {
 
     private lateinit var shared: BotShared

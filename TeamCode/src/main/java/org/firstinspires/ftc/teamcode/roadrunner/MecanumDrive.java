@@ -170,10 +170,10 @@ public final class MecanumDrive {
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this(
                 hardwareMap, pose,
-                hardwareMap.get(DcMotorEx.class, "lf"),
-                hardwareMap.get(DcMotorEx.class, "lb"),
-                hardwareMap.get(DcMotorEx.class, "rb"),
-                hardwareMap.get(DcMotorEx.class, "lf")
+                hardwareMap.get(DcMotorEx.class, "fl"),
+                hardwareMap.get(DcMotorEx.class, "bl"),
+                hardwareMap.get(DcMotorEx.class, "br"),
+                hardwareMap.get(DcMotorEx.class, "fr")
         );
     }
 

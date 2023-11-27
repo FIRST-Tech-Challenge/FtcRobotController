@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
  * Intake controls
  */
 @Suppress("unused")
-class Intake(private val opMode: OpMode, private val motorLift: DcMotorEx?, private val motorSpin: DcMotorEx?) {
+class Intake(opMode: OpMode, private val motorLift: DcMotorEx?, private val motorSpin: DcMotorEx?) : BotModule(opMode) {
     init {
         motorLift?.targetPosition = 0
         motorLift?.mode = DcMotor.RunMode.RUN_TO_POSITION
@@ -18,17 +18,13 @@ class Intake(private val opMode: OpMode, private val motorLift: DcMotorEx?, priv
 //        servoRight
     }
 
-    // A is off, B is inwards, C is outwards
-    var active: Ternary = Ternary.A
+    // 0.0 is off, 1.0 is inwards, -1.0 is outwards
+    var active: Double = 0.0
         set(status) {
-            if (motorSpin == null) field = Ternary.A
+            if (motorSpin == null) field = 0.0
             else {
                 field = status
-                motorSpin.power = when (status) {
-                    Ternary.A -> 0.0
-                    Ternary.B -> 1.0
-                    Ternary.C -> -1.0
-                }
+                motorSpin.power = if (field > 1.0) 1.0 else if (field < -1.0) -1.0 else field
             }
         }
 //    var isRaised: Boolean = false;

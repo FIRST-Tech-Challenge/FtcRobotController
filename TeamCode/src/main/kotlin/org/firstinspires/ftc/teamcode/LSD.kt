@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients
 /**
  * Linear Slide Driver
  */
-class LSD(private val opMode: OpMode, private val slide: DcMotorEx) {
+class LSD(opMode: OpMode, private val slide: DcMotorEx) : BotModule(opMode) {
 
     private val coefficients = PIDFCoefficients(
         0.0,
@@ -34,6 +34,7 @@ class LSD(private val opMode: OpMode, private val slide: DcMotorEx) {
     }
 
     init {
+        slide.targetPosition = 0
         slide.mode = RUN_TO_POSITION
         slide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         slide.power = 0.0

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.Range
 
-@TeleOp(name = "Kotlin Basic OpMode", group = "KtTest")
+@TeleOp(name = "Basic OpMode", group = "Test")
 class BasicOpMode : OpMode() {
 
     /**

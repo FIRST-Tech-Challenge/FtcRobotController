@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
+// TODO: should this be a superclass? our codebase has grown so much, and we might want to reconsider
 /**
  * Shared data.
  * Construct during the init phase. Contains HardwareMap definitions, as well as some other classes like the PixelPlacer and MecanumDrive.
@@ -26,22 +27,25 @@ class BotShared(opMode: OpMode) {
     // Get stuff from the hardware map (HardwareMap.get() can be HardwareMap[] in kt)
     val hardwareMap = opMode.hardwareMap!!;
     @JvmField val imu:              IMU         =           hardwareMap[IMU          ::class.java,   "imu"       ]
-    @JvmField val camera:           WebcamName? =   idc {   hardwareMap[WebcamName   ::class.java,   "Webcam 1"  ] }
     @JvmField val motorLeftFront:   DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "fl"        ]
     @JvmField val motorRightFront:  DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "fr"        ]
     @JvmField val motorLeftBack:    DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "bl"        ]
     @JvmField val motorRightBack:   DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "br"        ]
+    @JvmField val camera:           WebcamName? =   idc {   hardwareMap[WebcamName   ::class.java,   "Webcam 1"  ] }
     @JvmField val motorSlide:       DcMotorEx?  =   idc {   hardwareMap[DcMotorEx    ::class.java,   "lsd"       ] }
     @JvmField val motorIntakeSpin:  DcMotorEx?  =   idc {   hardwareMap[DcMotorEx    ::class.java,   "inspin"    ] }
     @JvmField val motorIntakeLift:  DcMotorEx?  =   idc {   hardwareMap[DcMotorEx    ::class.java,   "inlift"    ] }
     @JvmField val motorTruss:       DcMotorEx?  =   idc {   hardwareMap[DcMotorEx    ::class.java,   "hang"      ] }
     @JvmField val servoArm:         Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "arm"       ] }
+    @JvmField val servoClawLeft:    Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "clawl"     ] }
+    @JvmField val servoClawRight:   Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "clawr"     ] }
+
+    @JvmField val march               = camera?.    let {   March(opMode, it)   }
+    @JvmField val lsd                 = motorSlide?.let {   LSD(opMode, it)     }
+    @JvmField val claw                = if (servoClawLeft   != null && servoClawRight != null)    Claw(opMode, servoClawLeft, servoClawRight      )   else null
+    @JvmField val intake              = if (motorIntakeLift != null || motorIntakeSpin != null) Intake(opMode, motorIntakeLift, motorIntakeSpin )   else null
 
     @JvmField var drive: MecanumDrive? = null
-
-    @JvmField var march =                 camera?.let { March(opMode, it) }
-    @JvmField var lsd =               motorSlide?.let { LSD(opMode, it) }
-    @JvmField var intake =       if (motorIntakeLift != null || motorIntakeSpin != null ) Intake(opMode, motorIntakeLift, motorIntakeSpin)  else null
 
     init {
         // IMU orientation/calibration
@@ -51,7 +55,7 @@ class BotShared(opMode: OpMode) {
         imu.initialize(IMU.Parameters(orientationOnRobot))
         imu.resetYaw()
 
-        // Motor directions **(DO NOT CHANGE THESE!!!)**
+        // Drive motor directions **(DO NOT CHANGE THESE!!!)**
         motorLeftFront.     direction =         REVERSE
         motorLeftBack.      direction =         REVERSE
         motorRightFront.    direction =         FORWARD
@@ -67,6 +71,7 @@ class BotShared(opMode: OpMode) {
         motorTruss?.        zeroPowerBehavior = BRAKE
         motorSlide?.        zeroPowerBehavior = BRAKE
     }
+
     /**
      * Should be called every update.
      * Place any reusable update functions here (i.e. for MecanumDrive)
@@ -84,27 +89,3 @@ class BotShared(opMode: OpMode) {
     }
 
 }
-
-// Was originally going to be a subclass of OpMode, but supers are a pain, so it's an object instead.
-//@Suppress("MemberVisibilityCanBePrivate")
-//open class HawkShared: OpMode() {
-//    // Get stuff from the hardware map (HardwareMap.get() can be shorthanded to HardwareMap[] in Kotlin)
-//    lateinit var tagCamera: WebcamName
-//    lateinit var motorFrontRight: DcMotorEx
-//    lateinit var motorFrontLeft: DcMotorEx
-//    lateinit var motorBackRight: DcMotorEx
-//    lateinit var motorBackLeft: DcMotorEx
-//    lateinit var pixelPlacer: PixelPlacer<WebcamName>
-//    var drive: MecanumDrive? = null
-//
-//    override fun init() {
-//        tagCamera =         this.hardwareMap[WebcamName::class.java,    "Webcam 1"]
-//        motorFrontRight =   this.hardwareMap[DcMotorEx::class.java,     "MotorFrontRight"]
-//        motorFrontLeft =    this.hardwareMap[DcMotorEx::class.java,     "MotorFrontLeft"]
-//        motorBackRight =    this.hardwareMap[DcMotorEx::class.java,     "MotorBackRight"]
-//        motorBackLeft =     this.hardwareMap[DcMotorEx::class.java,     "MotorBackLeft"]
-//        pixelPlacer =       PixelPlacer(this, tagCamera)
-//    }
-//
-//    override fun loop() {}
-//}

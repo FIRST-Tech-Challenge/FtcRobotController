@@ -8,13 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import java.lang.Thread.sleep
 
-@Autonomous(name = "Kotlin Auto (Blue Left)", group = "Kt")
+@Autonomous(name = "Kotlin Auto (Blue Left)", group = "Auto Sub-Mode")
 class AutoBlueLeft : AutoSuper(  AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
-@Autonomous(name = "Kotlin Auto (Blue Right)", group = "Kt")
+@Autonomous(name = "Kotlin Auto (Blue Right)", group = "Auto Sub-Mode")
 class AutoBlueRight : AutoSuper(AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
-@Autonomous(name = "Kotlin Auto (Red Left)", group = "Kt")
+@Autonomous(name = "Kotlin Auto (Red Left)", group = "Auto Sub-Mode")
 class AutoRedLeft : AutoSuper(  AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
-@Autonomous(name = "Kotlin Auto (Red Right)", group = "Kt")
+@Autonomous(name = "Kotlin Auto (Red Right)", group = "Auto Sub-Mode")
 class AutoRedRight : AutoSuper( AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
 
 //@Disabled

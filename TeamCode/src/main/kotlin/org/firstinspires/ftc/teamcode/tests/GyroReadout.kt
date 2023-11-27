@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 
-@TeleOp(name = "Gyroscope Readout", group = "KtTest")
+@TeleOp(name = "Gyroscope Readout", group = "Test")
 class GyroReadout : OpMode() {
 
     lateinit var imu: IMU
