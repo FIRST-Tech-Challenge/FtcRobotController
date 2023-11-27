@@ -3,11 +3,12 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.competitionprograms;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseAutonomous;
+import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.League1BaseAutonomous;
 
-@Autonomous (name="Red Far Auto Backup ")
+@Autonomous (name="Red Close Auto ")
 
-public class RedFarAutoBackup extends BaseAutonomous {
+public class RedCloseAuto extends BaseAutonomous {
     public void runOpMode() {
-        runSimpleInchesAuto(true, false);
+      runAuto(true, true);
     }
 }

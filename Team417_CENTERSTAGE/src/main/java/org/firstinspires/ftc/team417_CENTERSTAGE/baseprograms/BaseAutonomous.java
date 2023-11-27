@@ -1,17 +1,28 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
+import static java.lang.System.nanoTime;
+
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
@@ -23,33 +34,18 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public int lastEncoderBL = 0;
     public int lastEncoderBR = 0;
 
-    // Autonomous tuning constants
-    public static double LEFT_Y = 26.0;
-    public static double LEFT_X = -12.0;
-    public static double RIGHT_Y = 26.0;
-    public static double RIGHT_X = 12.0;
-    public static double CENTER_Y = 29.0;
-    public static double CENTER_X = 4.5;
     public static double INTAKE_SPEED = 1;
-    public static double INTAKE_TIME = 3000; // in milliseconds
+    public static double INTAKE_TIME = 2; // in seconds
 
     public static double INTAKE_SPEED2 = 1;
-    public static double INTAKE_TIME2 = 10000; // in milliseconds
-    public static double MOVING_FROM_WALL = 3.0;
-    public static double FAR_PARKING = 96;
-    public static double CLOSE_PARKING = 48;
-    public static double ROBOT_SPEED = 0.5;
-    public static double STRAFE_FACTOR = 1.210719915922228;
-    public static double DISTANCE_FACTOR = 1.032258064516129;
 
-    public static double Y_CALIBRATION_RIGHT = -2.0;
-    public static double Y_CALIBRATION_LEFT = 1.0;
+    public static double INTAKE_TIME2 = 10; // in seconds
 
+    public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
-    public void driveInches(double x, double y) {
-        double xTicks = x * TICKS_PER_INCH * STRAFE_FACTOR;
-        double yTicks = y * TICKS_PER_INCH * DISTANCE_FACTOR;
+    MecanumDrive drive;
 
+<<<<<<< HEAD
         double targetFL = xTicks + yTicks;
         double targetFR = yTicks - xTicks;
         double targetBL = yTicks - xTicks;
@@ -106,11 +102,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+=======
+>>>>>>> cf7e29e2c244efe4c2bc89e2206c768c25fa7b31
 
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
@@ -133,14 +133,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
-    private void stopDriving() {
-        FL.setPower(0.0);
-        FR.setPower(0.0);
-        BL.setPower(0.0);
-        BR.setPower(0.0);
-    }
-
-    public void runSimpleInchesAuto(boolean red, boolean close) {
+    public void runAuto(boolean red, boolean close) {
 
         if (red) {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
@@ -153,96 +146,149 @@ abstract public class BaseAutonomous extends BaseOpMode {
         initializeAuto();
 
         waitForStart();
-        Log.d("skid", toString());
 
-        double x = 0;
-        double y = 0;
-        switch (myColorDetection.detectTeamProp()) {
-            case LEFT:
-                telemetry.addData("Side", "Left");
-                x = LEFT_X;
-                y = LEFT_Y;
-                break;
-            case CENTER:
-                telemetry.addData("Side", "Center");
-                x = CENTER_X;
-                y = CENTER_Y;
-                break;
-            case RIGHT:
-                telemetry.addData("Side", "Right");
-                x = RIGHT_X;
-                y = RIGHT_Y;
-                break;
-            default:
-                telemetry.addData("Side", "Unsure");
-        }
-        telemetry.update();
-        driveInches(0, y);
-        driveInches(x, 0);
+        OpenCvColorDetection.SideDetected result = myColorDetection.detectTeamProp();
+        AutonDriveFactory.SpikeMarks sawarResult;
 
-        if (intakeMotor != null) {
-            intakeMotor.setPower(INTAKE_SPEED);
-            sleep((long) INTAKE_TIME);
-            intakeMotor.setPower(0);
+        if (result == OpenCvColorDetection.SideDetected.LEFT) {
+            sawarResult = AutonDriveFactory.SpikeMarks.LEFT;
+        } else if (result == OpenCvColorDetection.SideDetected.CENTER) {
+            sawarResult = AutonDriveFactory.SpikeMarks.CENTER;
         } else {
-            sleep(5000);
+            sawarResult = AutonDriveFactory.SpikeMarks.RIGHT;
         }
 
-        driveInches(-x, 0);
-        driveInches(0, -y);
-        driveInches(0, MOVING_FROM_WALL);
+        AutonDriveFactory auton = new AutonDriveFactory(drive);
+        AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red,!close, sawarResult, dropPixel());
 
-        if (close) {
-            if (red) {
-                driveInches(CLOSE_PARKING, Y_CALIBRATION_RIGHT);
-            } else {
-                driveInches(-CLOSE_PARKING, Y_CALIBRATION_LEFT);
-            }
-        } else {
-            if (red) {
-                driveInches(FAR_PARKING, Y_CALIBRATION_RIGHT);
-            } else {
-                driveInches(-FAR_PARKING, Y_CALIBRATION_LEFT);
-            }
-        }
-
-        if (intakeMotor != null) {
-            intakeMotor.setPower(-INTAKE_SPEED2);
-            sleep((long) INTAKE_TIME2);
-            intakeMotor.setPower(0);
-        } else {
-            sleep(5000);
-        }
+        drive.pose = poseAndAction.startPose;
+        Actions.runBlocking(poseAndAction.action);
     }
 
-    @Override
-    public String toString() {
-        return "BaseAutonomous{" +
-                "runtime=" + runtime +
-                ", lastEncoderFL=" + lastEncoderFL +
-                ", lastEncoderFR=" + lastEncoderFR +
-                ", lastEncoderBL=" + lastEncoderBL +
-                ", lastEncoderBR=" + lastEncoderBR +
-                ", LEFT_Y=" + LEFT_Y +
-                ", LEFT_X=" + LEFT_X +
-                ", RIGHT_Y=" + RIGHT_Y +
-                ", RIGHT_X=" + RIGHT_X +
-                ", CENTER_Y=" + CENTER_Y +
-                ", CENTER_X=" + CENTER_X +
-                ", INTAKE_SPEED=" + INTAKE_SPEED +
-                ", INTAKE_TIME=" + INTAKE_TIME +
-                ", MOVING_FROM_WALL=" + MOVING_FROM_WALL +
-                ", FAR_PARKING=" + FAR_PARKING +
-                ", CLOSE_PARKING=" + CLOSE_PARKING +
-                ", ROBOT_SPEED=" + ROBOT_SPEED +
-                ", STRAFE_FACTOR=" + STRAFE_FACTOR +
-                ", DISTANCE_FACTOR=" + DISTANCE_FACTOR +
-                ", LOWER_BLUE=" + Constants.BLUE_COLOR_DETECT_MIN_HSV +
-                ", UPPER_BLUE=" + Constants.BLUE_COLOR_DETECT_MAX_HSV +
-                ", LOWER_RED=" + Constants.RED_COLOR_DETECT_MIN_HSV +
-                ", UPPER_RED=" + Constants.RED_COLOR_DETECT_MAX_HSV +
-                ", detectingBlue=" + myColorDetection.myColor +
-                ", sideDetected=" + myColorDetection.sideDetected +
-                '}';
+    public Action dropPixel() {
+        return new Action() {
+            double startTime = 0;  // startTime value to compare to
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                if (startTime == 0) { // does this on first loop
+                    intakeMotor.setPower(INTAKE_SPEED2);
+                    startTime = nanoTime() * NANO_TO_SECONDS_MULTIPLIER;
+                }
+                // current time - start time has to be greater than the intake time for the motor to stop
+                if(nanoTime() * NANO_TO_SECONDS_MULTIPLIER - startTime > INTAKE_TIME) {
+                    intakeMotor.setPower(0);
+                    startTime = 0; // reset for next run
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
+    }
+}
+
+class AutonDriveFactory {
+    MecanumDrive drive;
+    double xOffset;
+    double yMultiplier;
+    AutonDriveFactory(MecanumDrive drive) {
+        this.drive = drive;
+    }
+
+    /*
+     * Call this routine from your robot's competition code to get the sequence to drive. You
+     * can invoke it there by calling "Actions.runBlocking(driveAction);".
+     */
+    enum SpikeMarks {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    class PoseAndAction {
+        Action action;
+        Pose2d startPose;
+
+        PoseAndAction(Action action, Pose2d startPose) {
+            this.action = action;
+            this.startPose = startPose;
+        }
+    }
+    PoseAndAction getDriveAction(boolean isRed, boolean isFar, SpikeMarks location, Action intake) {
+
+        if (isFar) {
+            xOffset = 0;
+        } else {
+            xOffset = 48;
+        }
+
+        if (isRed) {
+            yMultiplier = 1;
+        } else {
+            yMultiplier = -1;
+        }
+
+        // in MeepMeep, intake needs to be null however .stopAndAdd() can't be null because it will crash so we set to a random sleep
+        if(intake == null) {
+            intake = new SleepAction(3);
+        }
+
+        TrajectoryActionBuilder spikeLeft = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        spikeLeft = spikeLeft.splineTo(xForm(new Vector2d(-34, -36)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-38, -34)), xForm(Math.toRadians(180) + (1e-6)))
+                .stopAndAdd(intake)
+                .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)))
+                .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+
+        TrajectoryActionBuilder spikeCenter = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        spikeCenter = spikeCenter.splineTo(xForm(new Vector2d(-34, -33)), xForm(Math.toRadians(90)))
+                // arm
+                .splineToConstantHeading(xForm(new Vector2d(-34, -39)), xForm(Math.toRadians(90)))
+                .splineToConstantHeading(xForm(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
+                .splineToConstantHeading(xForm(new Vector2d(-55, -10)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+
+
+        TrajectoryActionBuilder spikeRight = this.drive.actionBuilder(xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        spikeRight = spikeRight.splineToSplineHeading(xForm(new Pose2d(-35, -32, Math.toRadians(0))), xForm(Math.toRadians(90)))
+                // arm action
+                .splineToConstantHeading(xForm(new Vector2d(-40, -34)), xForm(Math.toRadians(0)))
+                .splineTo(xForm(new Vector2d(-36, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(58, -10)), xForm(Math.toRadians(0)));
+
+        if(location == SpikeMarks.LEFT) {
+            return new PoseAndAction(spikeLeft.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        } else if(location == SpikeMarks.CENTER) {
+            return new PoseAndAction(spikeCenter.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        } else {
+            return new PoseAndAction(spikeRight.build(), xForm(new Pose2d(-34, -60, Math.toRadians(90))));
+        }
+
+    }
+
+
+    Pose2d xForm(Pose2d pose) {
+        return new Pose2d(pose.position.x + xOffset, pose.position.y * yMultiplier, pose.heading.log() * yMultiplier);
+    }
+
+    Vector2d xForm(Vector2d vector) {
+        return new Vector2d(vector.x + xOffset, vector.y * yMultiplier);
+    }
+
+    double xForm(double angle) {
+        return (angle * yMultiplier);
+    }
+
+
+    /*
+     * MeepMeep calls this routine to get a trajectory sequence action to draw. Modify the
+     * arguments here to test your different code paths.
+     */
+    Action getMeepMeepAction() {
+        return getDriveAction(true, true, SpikeMarks.LEFT, null).action;
     }
 }
