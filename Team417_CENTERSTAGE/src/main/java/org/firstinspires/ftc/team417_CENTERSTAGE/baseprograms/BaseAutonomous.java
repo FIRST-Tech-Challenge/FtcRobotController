@@ -2,25 +2,17 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import static java.lang.System.nanoTime;
 
-import android.util.Log;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
-import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
@@ -44,66 +36,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
     MecanumDrive drive;
-
-<<<<<<< HEAD
-        double targetFL = xTicks + yTicks;
-        double targetFR = yTicks - xTicks;
-        double targetBL = yTicks - xTicks;
-        double targetBR = yTicks + xTicks;
-
-        // Determine new target position, and pass to motor controller
-        targetFL += FL.getCurrentPosition();
-        targetFR += FR.getCurrentPosition();
-        targetBL += BL.getCurrentPosition();
-        targetBR += BR.getCurrentPosition();
-
-        FL.setTargetPosition((int) targetFL);
-        FR.setTargetPosition((int) targetFR);
-        BL.setTargetPosition((int) targetBL);
-        BR.setTargetPosition((int) targetBR);
-
-        // Turn On RUN_TO_POSITION
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // reset the timeout time and start motion.
-        runtime.reset();
-        FL.setPower(ROBOT_SPEED);
-        FR.setPower(ROBOT_SPEED);
-        BL.setPower(ROBOT_SPEED);
-        BR.setPower(ROBOT_SPEED);
-
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-        while (opModeIsActive() &&
-                (runtime.seconds() < 30) &&
-                (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
-
-            // Code added to draw the pose, remove before competition, causes lags:
-            TelemetryPacket p = new TelemetryPacket();
-            Canvas c = p.fieldOverlay();
-            myAprilTagPoseEstimator.updatePoseEstimate();
-            FtcDashboard dashboard = FtcDashboard.getInstance();
-            dashboard.sendTelemetryPacket(p);
-        }
-
-        // Stop all motion;
-        stopDriving();
-
-        // Turn off RUN_TO_POSITION
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-=======
->>>>>>> cf7e29e2c244efe4c2bc89e2206c768c25fa7b31
 
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
