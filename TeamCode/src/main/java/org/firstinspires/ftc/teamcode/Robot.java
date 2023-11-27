@@ -51,7 +51,7 @@ public class Robot {
     ElapsedTime elapsedTime = new ElapsedTime();
     public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
-    private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
+    private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     boolean isRedAlliance;
@@ -66,6 +66,7 @@ public class Robot {
     double avgLeftY;
     double avgCenterY;
     double avgRightY;
+    boolean testingOnBert = true;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
@@ -75,17 +76,19 @@ public class Robot {
         AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
-        intake = hardwareMap.dcMotor.get("intake");
-        lsFront = hardwareMap.dcMotor.get("lsFront");
-        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lsBack = hardwareMap.dcMotor.get("lsBack");
-        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         isRedAlliance = red;
-        tray = hardwareMap.servo.get("arm");
-        clamp = hardwareMap.servo.get("holderClamp");
-        hook = hardwareMap.servo.get("linearLocker");
-        //planeLauncher = hardwareMap.servo.get("planeLauncher");
-        spikeServo = hardwareMap.servo.get("spikeServo");
+        if (!testingOnBert) {
+            intake = hardwareMap.dcMotor.get("intake");
+            lsFront = hardwareMap.dcMotor.get("lsFront");
+            lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lsBack = hardwareMap.dcMotor.get("lsBack");
+            lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            tray = hardwareMap.servo.get("arm");
+            clamp = hardwareMap.servo.get("holderClamp");
+            hook = hardwareMap.servo.get("linearLocker");
+            //planeLauncher = hardwareMap.servo.get("planeLauncher");
+            spikeServo = hardwareMap.servo.get("spikeServo");
+        }
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
@@ -585,7 +588,7 @@ public class Robot {
         MarkerDetector.MARKER_POSITION position;
 
         if (isTesting) {
-            position = MarkerDetector.MARKER_POSITION.RIGHT;
+            position = MarkerDetector.MARKER_POSITION.CENTER;
         } else{
             //detect marker position
             position = markerProcessor.getPosition();
@@ -893,7 +896,7 @@ public class Robot {
                 HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
                 VERTICAL_TOTAL = 68;
             } else {
-                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 44;
+                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 51;
                 VERTICAL_TOTAL = 76;
             }
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
@@ -917,11 +920,9 @@ public class Robot {
                 }
                 straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
-                if (!testingonBert) {
-                    mecanumBlocking(2, isRedAlliance, 0.7);
-                }
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
+                opMode.sleep(10000);
                 straightBlockingFixHeading(vertical6, false, 0.7);
                 //moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
@@ -944,15 +945,18 @@ public class Robot {
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
                 setHeading(0, 0.6);
-                straightBlocking(horizontal2, false, 0.7); //go forward FAST
-                setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(horizontal3, true, 1); //move back FAST
+                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
+                if (!testingonBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                }
+                straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
                 mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
                 setHeading(0, 0.7);
-                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                opMode.sleep(10000);
+                straightBlockingFixHeading(vertical6, false, 0.7);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
@@ -967,20 +971,22 @@ public class Robot {
                 vertical4 = 10;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 21;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
                 setHeading(0, 0.7);
-                straightBlocking(horizontal2, false, 0.7); //go forward FAST
-                setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(horizontal3, true, 1); //move back FAST
+                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
+                if (!testingonBert) {
+                    mecanumBlocking(2, isRedAlliance, 0.7);
+                }
+                straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
                 mecanumBlocking(vertical4, isRedAlliance, 0.5); //move left if red
                 setHeading(0, 0.7);
-                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                straightBlockingFixHeading(vertical6, false, 0.7);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
