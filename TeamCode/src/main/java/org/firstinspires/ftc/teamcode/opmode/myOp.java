@@ -13,7 +13,7 @@ public class myOp extends CommandOpMode {
     public void initialize() {
         m_robot= new RobotContainer(hardwareMap, telemetry);
         enable();
-        m_robot.bindCommands(gamepad1);
+        m_robot.bindCommands();
         enable();
 
     }
