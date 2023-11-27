@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.utils.BTController;
@@ -18,7 +17,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
      gripper m_gripper;
     public RobotContainer(HardwareMap map){
         m_controller = new BTController();
-        m_gripper = new gripper(map,telemetry);
+        m_gripper = new gripper(map, BlocksOpModeCompanion.telemetry);
     }
     //bind commands to trigger
     public void bindCommands(){
