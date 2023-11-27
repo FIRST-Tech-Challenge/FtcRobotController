@@ -23,7 +23,7 @@ public class MeepMeepTesting {
                 // Robot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width:
                 new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15),
                 // Robot dimensions: width, height:
-                15, 15,
+                18, 18,
                 new Pose2d(0, 0, 0),
                 meepMeep.getColorManager().getTheme(),
                 0.8f,
@@ -69,6 +69,24 @@ class MecanumDrive {
  * anymore.
  */
 class AutonDriveFactory {
+
+    // used in determining which alliance side to use in auto path
+    public enum AllianceTeam {
+        BLUE,
+        RED,
+    }
+    // used in determining which side of the truss to use in auto path
+    // name represents path length to backstage
+    public enum StartingPosition {
+        SHORT,
+        LONG,
+    }
+    // determines where on the backstage to park
+    public enum ParkLocation {
+        CORNER_SIDE,
+        CENTER_FIELD_SIDE,
+    }
+
     MecanumDrive drive;
     AutonDriveFactory(MecanumDrive drive) {
         this.drive = drive;
@@ -78,17 +96,94 @@ class AutonDriveFactory {
      * Call this routine from your robot's competition code to get the sequence to drive. You
      * can invoke it there by calling "Actions.runBlocking(driveAction);".
      */
-    Action getDriveAction(boolean isRed, boolean isFar) {
-        TrajectoryActionBuilder build = this.drive.actionBuilder(new Pose2d(0, 0, 0));
+    Action getDriveAction(AllianceTeam allianceTeam, StartingPosition startingPosition, ParkLocation parkLocation) {
 
-        build = build.lineToX(30)
-                .turn(Math.toRadians(90))
-                .lineToY(30);
+        // use 1 if blue team, -1 if red
+        int invertSign = allianceTeam == AllianceTeam.BLUE ? 1 : -1;
 
-        build = build.splineTo(new Vector2d(0, 30), Math.toRadians(-90))
-                .lineToY(0)
-                .turn(Math.toRadians(90));
+        // determine the starting pose
+        Pose2d startingPose = new Pose2d(0,0,0);
+        switch (startingPosition) {
+            case SHORT:
 
+                startingPose = new Pose2d (11.6, 61 * invertSign, Math.toRadians(90 * invertSign));
+                break;
+
+            case LONG:
+
+                startingPose = new Pose2d (-35, 61 * invertSign, Math.toRadians(90 * invertSign));
+                break;
+        }
+
+        // start building a trajectory path
+        TrajectoryActionBuilder build = this.drive.actionBuilder(startingPose);
+
+        // drive backwards
+        build = build.lineToY(36 * invertSign);
+
+        // purple pixel placement
+        build = build.endTrajectory();//temp
+
+        // return to starting position while turning to face away from backdrop
+        //build = build.splineTo(new Vector2d(11.6, 61 * invertSign), Math.toRadians(0));
+        build = build.splineToSplineHeading(new Pose2d(11.6, 61 * invertSign, Math.toRadians(180)), Math.toRadians(90 * invertSign));
+
+        // drive towards the backdrop
+        /*switch (startingPosition) {
+            case SHORT:
+                // drive backwards a little
+                build = build.
+                break;
+
+            case LONG:
+                // wait some time
+
+                // drive backwards a lot
+                break;
+        }*/
+        build = build.splineToSplineHeading(new Pose2d(38, 61 * invertSign, Math.toRadians(180)), Math.toRadians(0));
+
+        // strafe to face backdrop
+
+        // drive forward to backdrop
+
+        // place yellow pixel
+
+        switch (parkLocation) {
+            case CORNER_SIDE:
+                // strafe to corner side
+                break;
+
+            case CENTER_FIELD_SIDE:
+                // strafe to center field side
+                break;
+        }
+
+        // drive backwards into backstage
+
+
+
+        /*
+        //this.drive.pose = AutoConstants.backBlue;
+
+        TrajectoryActionBuilder build = this.drive.actionBuilder(AutoConstants.backBlue);
+
+        //drive to spike mark position
+        build = build.lineToY(35);
+
+        //insert spike mark delivering code here
+
+        //move back and reverse
+        build = build.lineToY(45)
+                .setReversed(true);
+
+        //go to scoring area on backboard (change y value to go to different spikemark indicated spot things)
+        build = build.splineTo(new Vector2d(AutoConstants.backBoardDropoffX, AutoConstants.blueBackBoardDropoffY), 0);
+
+        //park
+        build = build.strafeTo(new Vector2d(AutoConstants.backBoardDropoffX, AutoConstants.parkingFarY))
+                .strafeTo(new Vector2d(AutoConstants.parkingX, AutoConstants.parkingFarY));
+        */
         return build.build();
     }
 
@@ -97,6 +192,6 @@ class AutonDriveFactory {
      * arguments here to test your different code paths.
      */
     Action getMeepMeepAction() {
-        return getDriveAction(true, false);
+        return getDriveAction(AllianceTeam.BLUE, StartingPosition.SHORT, ParkLocation.CORNER_SIDE);
     }
 }
