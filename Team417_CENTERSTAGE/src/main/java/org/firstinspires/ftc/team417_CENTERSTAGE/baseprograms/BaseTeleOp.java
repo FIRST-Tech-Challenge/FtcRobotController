@@ -1,21 +1,55 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
+
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
+import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 public abstract class BaseTeleOp extends BaseOpMode {
-    AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
+    public AprilTagPoseEstimator myAprilTagPoseEstimator;
+    public MecanumDrive drive;
 
     @Override
     public void runOpMode() {
+        myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         initializeHardware();
+
         myAprilTagPoseEstimator.init();
 
         waitForStart();
 
         while (opModeIsActive()) {
             driveUsingControllers(false);
-            outputUsingControllers();
-            intakeUsingControllers();
+
+            drive.updatePoseEstimate();
+
+            telemetry.addData("x", drive.pose.position.x);
+            telemetry.addData("y", drive.pose.position.y);
+            telemetry.addData("heading", drive.pose.heading);
+
+            // Code added to draw the pose, remove before competition, causes lags:
+            TelemetryPacket p = new TelemetryPacket();
+            Canvas c = p.fieldOverlay();
+            c.setStroke("#3F5100");
+            MecanumDrive.drawRobot(c, drive.pose);
+
+            myAprilTagPoseEstimator.telemeterAprilTagInfo(c);
+
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            dashboard.sendTelemetryPacket(p);
+
+            if (armMotor != null && dumperServo != null && gateServo != null) {
+                outputUsingControllers();
+                intakeUsingControllers();
+                telemetry.addData("ArmMotor", armMotor.getCurrentPosition());
+                telemetry.addData("DumperServo", dumperServo.getPosition());
+                telemetry.addData("GateServo", gateServo.getPosition());
+            }
             telemetry.addData("FRMotor", FR.getCurrentPosition());
             telemetry.addData("FRMotor", FR.getPowerFloat());
             telemetry.addData("FLMotor", FL.getCurrentPosition());
@@ -24,9 +58,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BRMotor", BR.getPowerFloat());
             telemetry.addData("BLMotor", BL.getCurrentPosition());
             telemetry.addData("BLMotor", BL.getPowerFloat());
-            telemetry.addData("ArmMotor", armMotor.getCurrentPosition());
-            telemetry.addData("DumperServo", dumperServo.getPosition());
-            myAprilTagPoseEstimator.telemeterAprilTagInfo();
             telemetry.update();
         }
     }

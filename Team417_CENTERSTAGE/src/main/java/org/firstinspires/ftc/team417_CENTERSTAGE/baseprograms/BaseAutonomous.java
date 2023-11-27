@@ -4,14 +4,18 @@ import static java.lang.System.nanoTime;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -34,6 +38,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double INTAKE_TIME = 3; // in seconds
 
     public static double INTAKE_SPEED2 = 1;
+
     public static double INTAKE_TIME2 = 10; // in seconds
 
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
@@ -49,9 +54,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
-        initializeHardware();
         myColorDetection.init();
         myAprilTagPoseEstimator.init();
+        initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
 
@@ -61,7 +66,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
-        sleep(5000);
+        // Allow the OpenCV to process
+        sleep(500);
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");

@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -22,9 +23,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 
 /*
-    Concept: most of the code will get encapsulated in another class, but this does well for testing
+    Concept: most of the code has gotten encapsulated in another class, but this does well for testing
 */
 
+@Disabled
 @TeleOp(name = "Concept: AprilTag")
 public class AprilTagDetectionConcept extends BaseTeleOp {
 
