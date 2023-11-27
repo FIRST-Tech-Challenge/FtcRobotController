@@ -324,13 +324,12 @@ public class TeleOPcenterstageRX extends OpMode {
         @Override
         public void run() {
             while (!stop){
-                if (gamepad2.dpad_down) {
+                if (gamepad2.left_bumper) {
                     maceta.setPower(1);
                 }
-                if (gamepad2.dpad_up) {
+                if (gamepad2.right_bumper) {
                     maceta.setPower(-1);
                 }
-
                 if (gamepad2.left_trigger > 0) {
                     plauncher.setPosition(0.5);
                     aLansat = true;
@@ -371,12 +370,12 @@ public class TeleOPcenterstageRX extends OpMode {
                     gherutaR.setPosition(0.15);
                     gherutaL.setPosition(0.63);
                     lastTime = System.currentTimeMillis();
-                    while (lastTime + 150 > System.currentTimeMillis()) {
+                    while (lastTime + 90 > System.currentTimeMillis()) {
                     }
                     gherutaL.setPosition(0.38);
                     gherutaR.setPosition(0.38);
                 }
-                if (potentiometru.getVoltage() > 1.65) {
+                else if (potentiometru.getVoltage() > 1.65) {
                     gherutaR.setPosition(0.38);
                     gherutaL.setPosition(0.38);
                 }

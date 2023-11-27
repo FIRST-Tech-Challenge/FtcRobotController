@@ -110,6 +110,25 @@ public class ChestiiDeAutonom extends LinearOpMode {
             }
         }
     }
+    public void initSasiu(HardwareMap hard){
+        motorBL = hard.get(DcMotorEx.class, "motorBL"); // Motor Back-Left
+        motorBR = hard.get(DcMotorEx.class, "motorBR"); // Motor Back-Left
+        motorFL = hard.get(DcMotorEx.class, "motorFL"); // Motor Back-Left
+        motorFR = hard.get(DcMotorEx.class, "motorFR"); // Motor Back-Left
+
+        motorBR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorFR.setDirection(DcMotorEx.Direction.REVERSE);
+
+        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        motorFR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    }
     public void init(HardwareMap hard) {
         potentiometru = hard.get(AnalogInput.class,"potentiometru");
 
@@ -141,7 +160,14 @@ public class ChestiiDeAutonom extends LinearOpMode {
         melcsus.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
+    public void deschidere(){
+        ghearaR.setPosition(0.15);
+        ghearaL.setPosition(0.63);
+    }
+    public void inchidere(){
+        ghearaR.setPosition(0.38);
+        ghearaL.setPosition(0.38);
+    }
     public void target(double poz, double vel, DcMotorEx motor, double t, int tolerance) {
         if(motor.getCurrentPosition() < poz){
             motor.setVelocity(vel);
@@ -241,19 +267,19 @@ public class ChestiiDeAutonom extends LinearOpMode {
     }
     public void melctarget(double pot, double vel, double t) {
         double lastTime = System.currentTimeMillis();
-        if(potentiometru.getVoltage() < pot) {
+        if(potentiometru.getVoltage() > pot) {
             melcsus.setVelocity(vel);
             melcjos.setVelocity(vel);
             telemetry.addData("lastTime + t:",lastTime + t);
             telemetry.addData("current time:",System.currentTimeMillis());
-            while(potentiometru.getVoltage() < pot && lastTime + t > System.currentTimeMillis()){}
+            while(potentiometru.getVoltage() > pot && lastTime + t > System.currentTimeMillis()){}
         }
         else{
             melcsus.setVelocity(-vel);
             melcjos.setVelocity(-vel);
             telemetry.addData("lastTime + t:",lastTime + t);
             telemetry.addData("current time:",System.currentTimeMillis());
-            while(potentiometru.getVoltage() > pot && lastTime + t > System.currentTimeMillis()){}
+            while(potentiometru.getVoltage() < pot && lastTime + t > System.currentTimeMillis()){}
         }
         melcjos.setVelocity(0);
         melcsus.setVelocity(0);
@@ -317,6 +343,12 @@ public class ChestiiDeAutonom extends LinearOpMode {
         motorBL.setVelocity(0);
         motorFL.setVelocity(0);
         motorFR.setVelocity(0);
+    }
+    public void powerRot(double pow){
+        motorFL.setPower(-pow);
+        motorBL.setPower(-pow);
+        motorBR.setPower(pow);
+        motorFR.setPower(pow);
     }
     public void close() {
         ghearaL.setPosition(0.1);

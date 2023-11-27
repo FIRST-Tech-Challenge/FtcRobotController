@@ -13,13 +13,14 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(73.17330064499293, 73.17330064499293, Math.toRadians(269.0932145503236), Math.toRadians(269.0932145503236), 12.6)
+                .setConstraints(40, 40, Math.toRadians(120), Math.toRadians(120), 12.51)
                 // Option: Set theme. Default = ColorSchemeRedDark()
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(14.783464, -62.73622, Math.toRadians(90)))
-                                .lineTo(new Vector2d(20, -55))
-                                .lineToLinearHeading(new Pose2d(new Vector2d(45,-34),Math.toRadians(0)))
+                                .lineToLinearHeading(new Pose2d(new Vector2d(16, -38),Math.toRadians(45)))
+                                .lineToLinearHeading(new Pose2d(new Vector2d(30,-48),Math.toRadians(90)))
+                                .lineToLinearHeading(new Pose2d(new Vector2d(48, -42),Math.toRadians(180)))
                                 .build()
                 );
 

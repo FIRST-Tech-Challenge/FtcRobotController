@@ -11,6 +11,7 @@ import android.widget.Switch;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class SasiuTeleOP extends OpMode {
@@ -26,6 +27,7 @@ public class SasiuTeleOP extends OpMode {
 
     boolean stop = false, lastx = false, lasty = false, sliderState = true, aIntrat = false,aAjuns = true,aInchis = true;
     double intPoz = 0.4, servoPos = 0.0;
+    public Servo avionas;
     /*Functia de init se ruleaza numai o data, se folosete pentru initializarea motoarelor si chestii :)*/
     @Override
     public void init() {
@@ -34,6 +36,7 @@ public class SasiuTeleOP extends OpMode {
         motorBR = hardwareMap.get(DcMotorEx.class, "motorBR"); // Motor Back-Left
         motorFL = hardwareMap.get(DcMotorEx.class, "motorFL"); // Motor Back-Left
         motorFR = hardwareMap.get(DcMotorEx.class, "motorFR"); // Motor Back-Left
+
 
         motorBR.setDirection(DcMotorEx.Direction.REVERSE);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
@@ -47,6 +50,8 @@ public class SasiuTeleOP extends OpMode {
         motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
 
 
         motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

@@ -49,7 +49,6 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
             public void onOpened() {
                 webcam.startStreaming(Webcam_w, Webcam_h, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode) {
 
@@ -57,7 +56,7 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
         });
         telemetry.addLine("waiting for start:");
         telemetry.update();
-
+        c.melctarget(0.855,1200,5000);
         FtcDashboard.getInstance().startCameraStream(webcam, 60);
         while (!isStopRequested() && !isStarted()) {
             try {
@@ -100,13 +99,29 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
         }
         if(varrez == 1){
             ts = drive.trajectorySequenceBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(new Vector2d(10, -34),Math.toRadians(160)))
+                    .lineTo(new Vector2d(15,-48))
+                    .lineToLinearHeading(new Pose2d(new Vector2d(10,-34),Math.toRadians(160)))
                     .build();
         }
         drive.followTrajectorySequence(ts);
-        TrajectorySequence toTable = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(new Vector2d(45,-36),Math.toRadians(180)))
+        ts = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .splineToLinearHeading(new Pose2d(new Vector2d(45,-36),Math.toRadians(180)),Math.toRadians(0))
                 .build();
-        drive.followTrajectorySequence(toTable);
+        if(varrez == 2){
+            ts = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(new Vector2d(53,-36),Math.toRadians(180)))
+                    .build();
+        }
+        if(varrez == 3){
+            ts = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(new Vector2d(16,-48),Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(new Vector2d(53, -40),Math.toRadians(180)))
+                    .build();
+        }
+        drive.followTrajectorySequence(ts);
+        c.melctarget(0.8,800,3000);
+        c.target(-500,800,c.slider,3000,50);
+        c.deschidere();
+        c.target(0,800,c.slider,4000,5);
     }
 }
