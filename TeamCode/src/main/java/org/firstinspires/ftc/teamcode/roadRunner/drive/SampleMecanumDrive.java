@@ -53,10 +53,10 @@ import static org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 3, 2);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 2);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 1, 1);//8, 3, 2
 
-    public static double LATERAL_MULTIPLIER = 1.42;
+    public static double LATERAL_MULTIPLIER = 1.82;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -118,6 +118,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE); // add if needed
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE); // add if needed
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE); // add if needed
+
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
