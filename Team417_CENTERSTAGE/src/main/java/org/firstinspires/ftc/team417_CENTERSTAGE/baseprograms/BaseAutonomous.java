@@ -45,7 +45,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     MecanumDrive drive;
 
-<<<<<<< HEAD
         double targetFL = xTicks + yTicks;
         double targetFR = yTicks - xTicks;
         double targetBL = yTicks - xTicks;
@@ -102,8 +101,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-=======
->>>>>>> cf7e29e2c244efe4c2bc89e2206c768c25fa7b31
 
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
