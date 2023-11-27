@@ -35,7 +35,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public int lastEncoderBR = 0;
 
     public static double INTAKE_SPEED = 1;
-    public static double INTAKE_TIME = 3; // in seconds
+    public static double INTAKE_TIME = 2; // in seconds
 
     public static double INTAKE_SPEED2 = 1;
 
@@ -112,7 +112,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 if (startTime == 0) { // does this on first loop
-                    intakeMotor.setPower(-INTAKE_SPEED2);
+                    intakeMotor.setPower(INTAKE_SPEED2);
                     startTime = nanoTime() * NANO_TO_SECONDS_MULTIPLIER;
                 }
                 // current time - start time has to be greater than the intake time for the motor to stop
