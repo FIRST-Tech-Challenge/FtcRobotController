@@ -134,8 +134,8 @@ public class CASH2024Driver extends OpMode
         double turn_x = 0.75 * gamepad1.right_stick_x * powerfactor;
         double elevatorCommand = gamepad2.left_stick_y * -1;
 
-        boolean open = gamepad2.left_bumper;
-        boolean close = gamepad2.right_bumper;
+        boolean reset_bucket = gamepad2.left_bumper;
+        boolean dump_pixle = gamepad2.right_bumper;
 
         boolean arm = gamepad2.dpad_down;
         boolean fire = gamepad2.x;
@@ -148,29 +148,33 @@ public class CASH2024Driver extends OpMode
         float in = gamepad1.right_trigger;
         float out = gamepad1.left_trigger;
 
-        if (in > .1){
-            sweeperCmd = 1.0;
-        }else if (out > .1){
-            sweeperCmd = -0.5;
-        }else{
-            sweeperCmd = 0;
-        }
-        robot.sweeperCommand(sweeperCmd);
 
-        //drone control
-        if (arm && fire){
-            robot.launch_drone();
-        }
-        else if (fire){
-            robot.reset_launch();
-        }
+        if (loopTime.milliseconds() > 20) {
+            RobotLog.i(String.format("looptime: %.6f",loopTime.milliseconds()));
+            loopTime.reset();
 
-        if(open){
-            robot.dump_pixle();
-        }
-        if (close){
-            robot.reset_pixle_bucket();
-        }
+            if (in > .1) {
+                sweeperCmd = 1.0;
+            } else if (out > .1) {
+                sweeperCmd = -0.5;
+            } else {
+                sweeperCmd = 0;
+            }
+            robot.sweeperCommand(sweeperCmd);
+
+            //drone control
+            if (arm && fire) {
+                robot.launch_drone();
+            } else if (fire) {
+                robot.reset_launch();
+            }
+
+            if (reset_bucket) {
+                robot.reset_pixle_bucket();
+            }
+            if (dump_pixle) {
+                robot.dump_pixle();
+            }
 
         /*if ( low_elevator == true && AutoRaiseActiveLow == false ) {
             auto_elevator_pos = 500;
@@ -230,32 +234,28 @@ public class CASH2024Driver extends OpMode
 
         */
 
-        //schultz update
-        if ( low_elevator == true) {
-            robot.setDesElevatorPosition_Teliop(0);
-            RobotLog.i(String.format("In Lower."));
+            //schultz update
+            if (low_elevator == true) {
+                robot.setDesElevatorPosition_Teliop(0);
+                RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
-        }
+            } else if (mid_elevator == true) {
+                robot.setDesElevatorPosition_Teliop(1000);
+                RobotLog.i(String.format("In Middle"));
+//            AutoElevatorActive = true;
+            } else if (high_elevator == true) {
+                robot.setDesElevatorPosition_Teliop(1900);
+                RobotLog.i(String.format("In High"));
+//            AutoElevatorActive = true;
+            }
 
-        else if ( mid_elevator == true ) {
-            robot.setDesElevatorPosition_Teliop(1000);
-            RobotLog.i(String.format("In Middle"));
-//            AutoElevatorActive = true;
-        }
-        else if ( high_elevator == true ) {
-            robot.setDesElevatorPosition_Teliop(1900);
-            RobotLog.i(String.format("In High"));
-//            AutoElevatorActive = true;
-        }
-
-        if ( Math.abs(elevatorCommand) > .025){
-            AutoElevatorActive = false;
-            robot.raiseLowerElevator(elevatorCommand);
-            robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
-        }
-        else {
-            robot.elevatorUpdate(loopTime.seconds());
-        }
+            if (Math.abs(elevatorCommand) > .025) {
+                AutoElevatorActive = false;
+                robot.raiseLowerElevator(elevatorCommand);
+                robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
+            } else {
+                robot.elevatorUpdate(loopTime.seconds());
+            }
 
 //        boolean BucketCommand = gamepad2.a;
 //       boolean BucketCommand2 = gamepad2.y;
@@ -288,23 +288,18 @@ public class CASH2024Driver extends OpMode
 //        }
 
 
-                robot.moveRobotteli(drive_y, drive_x, turn_x);
+            robot.moveRobotteli(drive_y, drive_x, turn_x);
 
 
-     telemetry.addData("elevator Commd", elevatorCommand);
-        telemetry.addData("Status", "Running");
-        telemetry.addData("#ofTicks", robot.getTicks() );
-        telemetry.update();
+            telemetry.addData("elevator Commd", elevatorCommand);
+            telemetry.addData("Status", "Running");
+            telemetry.addData("#ofTicks", robot.getTicks());
+            telemetry.update();
 //        loopTime.reset();
 
 
 
-        telemetry.addData("Status", "Running");
-        //telemetry.addData("#ofTicks", robot.getTicks() );
-        telemetry.update();
-        loopTime.reset();
-
-
+        }
     }
 
 }

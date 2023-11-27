@@ -36,11 +36,11 @@ public class ElevatorControl {
     private double UPPERSNUB = 1840; // Encoder value when we slow the motor down when extending to max
     private double UPPERSNUBFACTOR = 0.5; // The factor that we slow the command down by when extending
     private double LOWERSNUB = 500; // Encoder value when we slow the motor down when retracting
-    private double LOWERSNUBFACTOR = 0.5;// The factor that we slow the command down by when retracting
+    private double LOWERSNUBFACTOR = 0.25;// The factor that we slow the command down by when retracting
 
-    private int low_pos = 500;
-    private int mid_pos = 1000;
-    private int high_pos = 2000;
+    public int PIXLE_DELIVER_POSITION = 250;
+    public int MID_POSITION = 1000;
+    public int HIGH_POSITION = 2000;
 
     //Schultz Additions
     //  Added PID controller that will be used to control the teliop to a position the elevator to desired position
@@ -142,11 +142,20 @@ public class ElevatorControl {
         //pos_pid.update:  pass the desired position (set-point) and the current encoder position
         //with the dt and max and min commands to the update method will do the math to figure out
         //what the elevCmd needs to be to get to and hold to the desired position.
+
+        int elevator_current_position = elevator_motor.getCurrentPosition();
+        double minCmd=-1;
+        double maxCmd=1;
+        if (elevator_current_position < LOWERSNUB){
+            minCmd = -.2;
+            maxCmd = .2;
+        }
+
         double elevCmd = pos_pid.update(
                 hold_position_setpoint,
                 elevator_motor.getCurrentPosition(),
-                -1,
-                1,
+                minCmd,
+                maxCmd,
                 dt);
 
         RobotLog.i(String.format("setPoint %.2f, actual postition: %d, dt: %.2f",
@@ -163,12 +172,12 @@ public class ElevatorControl {
     //Pixle Bucket Controls.
     //Dump_pixle - rotates the bucket so pixle drops out of bucket.
     public void dump_pixle() {
-        bucket.setPosition(.98);
+        bucket.setPosition(-.1);
 //       RobotLog.d(String.format("inrobot.dumpbucket"));
     }
     //Reset_bucket - returns the bucket to position to receive another pixle
     public void reset_pixle_bucket() {
-        bucket.setPosition(-.1);
+        bucket.setPosition(.98);
     }
 
 

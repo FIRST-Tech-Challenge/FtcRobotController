@@ -55,6 +55,10 @@ public class Robot2024<_opMode> {
     public double TURN_RIGHT = CASHDriveLibrary.TURN_RIGHT;
     public double TURN_LEFT = CASHDriveLibrary.TURN_LEFT;
 
+    public int DELIVER_PIXLE_POSITION = elevatorCode.PIXLE_DELIVER_POSITION;
+    public int ELEVATOR_MID_POSITION = elevatorCode.MID_POSITION;
+    public int ELEVATOR_HIGH_POSITION = elevatorCode.HIGH_POSITION;
+
     //This is the initialization for this years robot.
     //It initializes the following:
     // All drive motors
@@ -111,7 +115,7 @@ public class Robot2024<_opMode> {
 
     ////////////////////////////////////////New Navigation Methods////////////////////////////////
     public void moveRobotteli(double leftjoyx, double leftjoyy, double rightjoyx) {
-        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  false, false);
+        CASHDriveLibrary.MoveRobotTeliOp(leftjoyx, leftjoyy, rightjoyx,  true, false);
     }
 
     //Used to move the robot forward/revers/left/right.  This also uses fore/aft encoder and imu
