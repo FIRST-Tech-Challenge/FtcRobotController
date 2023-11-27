@@ -52,7 +52,7 @@ public class CASH_Drive_Library {
     double prev_XCMD = 0;
     double prev_YCMD=0;
     double  prev_TCMD=0;
-    double RATELIMIT=.175;  //NOTE:  This value depends on the loop time of the main loop
+    double RATELIMIT=.055;  //NOTE:  This value depends on the loop time of the main loop
     double DEADBAND = .025;  //Not used yet
 
     private boolean IsOpModeActive()
@@ -148,9 +148,11 @@ public class CASH_Drive_Library {
     public void MoveRobotTeliOp(double directionStick_y,double directionStick_x, double turnStick_x, boolean use_rate_limit, boolean use_exponent_smoothing)
     {
         double YCMD, XCMD, TCMD;
-        XCMD = rateLimitCmds(directionStick_x,prev_XCMD,use_rate_limit,false);
-        YCMD = rateLimitCmds(directionStick_y,prev_YCMD,use_rate_limit,false);
-        TCMD = turnStick_x; //rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,use_exponent_smoothing);
+//        XCMD = directionStick_x;
+        XCMD = rateLimitCmds(directionStick_x,prev_XCMD,false,false);
+//        YCMD = directionStick_y;
+        YCMD = rateLimitCmds(directionStick_y,prev_YCMD,false,false);
+//        TCMD = turnStick_x; //rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,use_exponent_smoothing);
         TCMD = rateLimitCmds(turnStick_x,prev_TCMD,use_rate_limit,false);
 
 //        RobotLog.d(String.format("INT THE XCMD GT RL: XCMD: %.03f prev_XCMD: %.03f Diff :  %.03f ",XCMD,prev_XCMD,prev_XCMD-X_sign*RATELIMIT)));
@@ -166,7 +168,7 @@ public class CASH_Drive_Library {
         double fullSpeedFactor = 1.4144;
         angle = Math.atan2(YCMD, XCMD);
         magnitude = Math.sqrt((XCMD * XCMD) + (YCMD * YCMD))*fullSpeedFactor;
-//        RobotLog.d(String.format("CASH: X: %.03f Y: %.03f Angle:  %.03f Magnitued: %.03f",directionStick_x,directionStick_y,angle,magnitude));
+        RobotLog.d(String.format("CASH: X: %.03f Y: %.03f Angle:  %.03f Magnitued: %.03f",directionStick_x,directionStick_y,angle,magnitude));
 
         motorCommands[0] = (Math.sin(angle + (.25 * 3.14)) * magnitude) - TCMD;//LF_motorPower
         motorCommands[1] = (Math.sin(angle - (.25 * 3.14)) * magnitude) + TCMD;//RF_motorPower
@@ -496,7 +498,7 @@ public class CASH_Drive_Library {
         }
 //        RobotLog.d(String.format("RawCMD %f.03  ExpCMD: %f.03", raw_value,smoothedCMD));
         double deltaCMD = raw_value - prev_cmd;
-        double rateLimitedCmd;
+        double rateLimitedCmd = raw_value;
 
         if (use_rate_limiting) {
 
@@ -533,8 +535,9 @@ public class CASH_Drive_Library {
                     deltaCMD = -RATELIMIT;
                 }
             }
+            rateLimitedCmd = prev_cmd + deltaCMD;
         }
-        rateLimitedCmd = prev_cmd + deltaCMD;
+
         return rateLimitedCmd;
     }
 
