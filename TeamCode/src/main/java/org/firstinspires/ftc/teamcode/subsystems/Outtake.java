@@ -17,13 +17,13 @@ public class Outtake implements Subsystem{
     //Constants
     private double syncFactor=1.05;
     private double armReset_Right = 0.5; private double armReset_Left = 0.5186; // + means up and towards intake
-    private double armIntake_Right = 0.51513; private double armIntake_Left = 0.50264;
+    private double armIntake_Right = 0.51923; private double armIntake_Left = 0.498335;
     //BELOW NOT TESTED YET
     private double armTravel_Right = 0.51263; private double armTravel_Left=0.505265;
     private double armDump_Right = 0.3756; private double armDump_Left = 0.64922;
 
     private double dumpResetPos = 0.5;
-    private double dumpIntakePos=0.1785;
+    private double dumpIntakePos= 0.1855;
     private double dumpTravelPos = 0.1785;
     private double dumpCarryPos = 0.6793;
     private double dumpDumpPos = 0;
@@ -51,18 +51,17 @@ public class Outtake implements Subsystem{
     private Servo armServo_Right;
     private Servo armServo_Left;  //    '/[L^R]\'
     private Servo dumpServo;
-    private DualMotorLift lift;
+    public DualMotorLift lift;
     private Telemetry telemetry;
 
 
-    public Outtake(Robot robot) {
+    public Outtake(Robot robot, Telemetry telemetry) {
         this.telemetry = telemetry;
-        //lift = new DualMotorLift(robot, telemetry, DualMotorLift.Mode.RIGHT_FOLLOW_LEFT);
+        lift = new DualMotorLift(robot, telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
         armServo_Right = robot.getServo("armServo_Right");
         armServo_Left = robot.getServo("armServo_Left");
         dumpServo = robot.getServo("dumpServo");
-        resetArmPos();
-        resetDumpPos();
+        toIntakePos();
     }
 
     //TODO: convert left/right positions?
@@ -93,8 +92,8 @@ public class Outtake implements Subsystem{
     public void moveDumper(double d){
         dumpServo.setPosition(dumpServo.getPosition()+(0.005*d)); //2 degrees??
     }
-    public void moveSlide(double inches){ //INCHES
-        lift.goToHt(lift.inchToTicks(inches));
+    public void moveSlide(double inches){ //outputs ticks to REL offset
+        lift.goToRelativeOffset(inches);
     }
     public void toIntakePos(){
         swingState = 0;
@@ -144,10 +143,12 @@ public class Outtake implements Subsystem{
     public double getDumperPos(){
         return dumpServo.getPosition();
     }
-
+    public double getLiftPos(){ return lift.getPosition(); }
+    public double getLiftPower() {return lift.getPIDPower(); }
 
     @Override
     public void update(TelemetryPacket packet) {
+        lift.update(packet);
         //lift.update(packet);
         //state machine
         /*
@@ -175,13 +176,13 @@ public class Outtake implements Subsystem{
                 this.toTravelPos();
                 Log.v("StateMach", "moving to travelPos " + (time - liftStartTime));
                 tempStartTime = System.currentTimeMillis();
-                //lift.goToLevel(0);  //go to the level where dumper is above intake
+                lift.goToLevel(1);  //go to the level where dumper is above intake
             }
         }
         if(liftState == 2){
             long time = System.currentTimeMillis();
-            if(armCanSwing(time)){
-                Log.v("StateMach", "going up"+ (time - tempStartTime));
+            if(lift.armCanSwing()){
+                //Log.v("StateMach", "going up"+ (time - tempStartTime));
                 liftState=0;
                 this.toDumpPos();
             }

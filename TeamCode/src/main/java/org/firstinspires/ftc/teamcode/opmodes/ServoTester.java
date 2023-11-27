@@ -62,8 +62,10 @@ public class ServoTester extends LinearOpMode {
             */
             if (gamepad1.x) {
                 robot.outtake.toIntakePos();
+                robot.intake.toIntakePos();
             } if(gamepad1.b) {
                 robot.outtake.toDumpPos();
+                robot.intake.toOuttakePos();
             } if(gamepad1.y) {
                 robot.outtake.toTravelPos();
             }
@@ -83,6 +85,8 @@ public class ServoTester extends LinearOpMode {
             telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
             telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
+            telemetry.addData("intake left arm position: ", robot.intake.getLeftServoPos());
+            telemetry.addData("intake right arm position: ", robot.intake.getRightServoPos());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
 
         }

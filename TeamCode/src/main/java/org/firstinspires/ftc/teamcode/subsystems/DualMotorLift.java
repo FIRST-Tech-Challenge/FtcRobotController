@@ -39,7 +39,7 @@ public class DualMotorLift implements Subsystem {
     public Mode mode;
     // Public just to allow tuning through Dashboard
     public static double  UP_VELOCITY = 500;
-    public static double[] LEVEL_HT = {0, 6.5, 17.0, 29.0}; // in inches, please fine-tune
+    public static double[] LEVEL_HT = {6, 8, 17.0, 29.0}; // in inches, please fine-tune
     //4 levels: 0 = minimum arm swing height; 1= ground, 2= low, 3= middle, 4= high,
     //0:5.0
 
@@ -52,6 +52,7 @@ public class DualMotorLift implements Subsystem {
     public static double kS = 0.002;
     public static double PID_RANGE = 0.9;
     public static double SLIDE_HOLD_POWER = 0.1;
+    private double powerFromPIDF;
 
 
     //TODO: fine-tune LEVEL-HT values.
@@ -65,7 +66,7 @@ public class DualMotorLift implements Subsystem {
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
+        //slideMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
         if (mode== Mode.RIGHT_FOLLOW_LEFT) {
             slideMotorR.setTargetPosition(0);
             slideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -146,7 +147,7 @@ public class DualMotorLift implements Subsystem {
             slideMotorR.setPower(power*direction);
         }
         else{
-            double powerFromPIDF = power * direction;
+            powerFromPIDF = power * direction;
             if (powerFromPIDF < PID_RANGE-SLIDE_HOLD_POWER) {
                 powerFromPIDF += SLIDE_HOLD_POWER;
             } else if (powerFromPIDF < PID_RANGE) {
@@ -232,8 +233,11 @@ public class DualMotorLift implements Subsystem {
     }
 
     public boolean armCanSwing(){
-        //Log.v("Arm: can swing?", ticksToInches(slideMotorL.getCurrentPosition())+"");
-        return slideMotorL.getCurrentPosition()>=inchToTicks(LEVEL_HT[4]);
+        Log.v("StateMach Arm: can swing?", ticksToInches(slideMotorR.getCurrentPosition())+"");
+        return slideMotorR.getCurrentPosition()>=inchToTicks(LEVEL_HT[0]);
+    }
+    public double getPIDPower(){
+        return powerFromPIDF;
     }
 
     @Override
@@ -247,7 +251,7 @@ public class DualMotorLift implements Subsystem {
         else{
             if (!isLevelReached()) {
                 double measuredPosition = (double) ticksToInches(slideMotorR.getCurrentPosition());
-                double powerFromPIDF = pidfController.update(measuredPosition);
+                powerFromPIDF = pidfController.update(measuredPosition);
                 if (powerFromPIDF < PID_RANGE-SLIDE_HOLD_POWER) {
                     powerFromPIDF += SLIDE_HOLD_POWER;
                 } else if (powerFromPIDF < PID_RANGE) {
@@ -271,13 +275,13 @@ public class DualMotorLift implements Subsystem {
         }
         packet.put("left velocity", slideMotorL.getVelocity());
         packet.put("right velocity", slideMotorR.getVelocity());
-        packet.put("L pos (inches)", ticksToInches(slideMotorL.getCurrentPosition()));
-        packet.put("R pos (inches)", ticksToInches(slideMotorR.getCurrentPosition()));
+        Log.v("SLIDE L pos (inches)", ""+ticksToInches(slideMotorL.getCurrentPosition()));
+        Log.v("SLIDE R pos (inches)", ""+ticksToInches(slideMotorR.getCurrentPosition()));
         //Log.v("PIDLift: power", String.format("Left power: %f, Right power: %f",slideMotorL.getPower(), slideMotorR.getPower()));
         //Log.v("PIDLift: modes", String.format("left mode: %s, right mode: %s", slideMotorL.getMode().toString(), slideMotorR.getMode().toString()));
         //packet.put("motor power", slideMotorL.getPower());
         packet.put("R motor mode", slideMotorR.getMode());
         //FtcDashboard.getInstance().sendTelemetryPacket(packet);
-        telemetry.update();
+        //telemetry.update();
     }
 }

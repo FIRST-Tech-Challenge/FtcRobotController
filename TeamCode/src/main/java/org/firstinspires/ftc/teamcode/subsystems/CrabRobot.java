@@ -21,7 +21,7 @@ public class CrabRobot extends Robot {
         registerSubsystem(mecanumDrive);
         intake = new Intake(this);
         registerSubsystem(intake);
-        outtake = new Outtake(this);
+        outtake = new Outtake(this, opMode.telemetry);
         registerSubsystem(outtake);
         //dualMotorLift = new DualMotorLift(this, opMode.telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
         //registerSubsystem(dualMotorLift);

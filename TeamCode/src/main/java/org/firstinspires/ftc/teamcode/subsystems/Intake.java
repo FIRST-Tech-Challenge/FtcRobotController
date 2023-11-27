@@ -31,6 +31,7 @@ public class Intake implements Subsystem {
         intakeMotor = robot.getMotor("intakeMotor");
         intakeServoL = robot.getServo("intakeServoL");
         intakeServoR = robot.getServo("intakeServoR");
+        toBasePos();
     }
     public void reset(){
         intakeServoL.setPosition(baseposl);
@@ -67,7 +68,7 @@ public class Intake implements Subsystem {
 
 
     public void setPower(double power) {
-        this.motorPosition = power;
+        this.motorPosition = -power;
 
 
         // set encode to new position
