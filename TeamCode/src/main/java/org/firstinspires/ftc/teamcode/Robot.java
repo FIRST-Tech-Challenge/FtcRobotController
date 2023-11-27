@@ -974,21 +974,19 @@ public class Robot {
                 horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
 
                 // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
+                mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
                 setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
-                if (!testingonBert) {
-                    mecanumBlocking(2, isRedAlliance, 0.7);
-                }
+                straightBlockingFixHeading(horizontal2, false, 0.8); //go forward FAST
+                setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
-                mecanumBlocking(vertical4, isRedAlliance, 0.5); //move left if red
+                mecanumBlocking(vertical4, isRedAlliance, 0.7); //move left if red
                 setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
+                straightBlockingFixHeading(horizontal5, false, 0.8); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlockingFixHeading(vertical6, false, 0.7);
+                straightBlockingFixHeading(vertical6, false, 0.8);
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
+                mecanumBlocking(horizontal7, !isRedAlliance, 0.7); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
                 break;
             }
