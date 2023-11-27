@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 // imports | do not touch
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 // VVV replace with @Autonomous for an autonomous program
 @TeleOp //Declares the program to be a TeleOp
+@Disabled
+
 public class example extends LinearOpMode {
 
     //Private variables | These are directly tied to the DS configuration menu

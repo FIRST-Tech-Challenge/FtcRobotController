@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "robotCentricDrive (Scorpion)")
-@Disabled
-
-public class robotCentricDrive extends LinearOpMode {
+@TeleOp(name = "Rear Centric Drive (Scorpion)")
+public class RearCentricDrive extends LinearOpMode {
 
   private Servo leftGrip;
   private Servo rightGrip;
@@ -24,7 +21,6 @@ public class robotCentricDrive extends LinearOpMode {
    * This function is executed when this OpMode is selected from the Driver Station.
    */
   @Override
-
   public void runOpMode() {
 
     //Initialize Variables
@@ -33,8 +29,10 @@ public class robotCentricDrive extends LinearOpMode {
     //Tracks the extension of the arm
     int ext;
     //X and Y values of stick inputs to compile drive outputs
-    double y;
-    double x;
+    double yI;
+    double xI;
+    //Value for armLock
+    boolean armLocked;
 
     leftGrip = hardwareMap.get(Servo.class, "leftGrip");
     rightGrip = hardwareMap.get(Servo.class, "rightGrip");
@@ -52,6 +50,7 @@ public class robotCentricDrive extends LinearOpMode {
     //Sets variables to 0 on initialization
     rotation = 0;
     ext = 0;
+    armLocked = false;
     waitForStart();
 
     if (opModeIsActive()) {
@@ -60,6 +59,7 @@ public class robotCentricDrive extends LinearOpMode {
         //ArmExtension and ArmRotate are set to brake when receiving zero power
         //Arm Extension is set to run using encoder outputs and inputs
       armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       armExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -72,36 +72,63 @@ public class robotCentricDrive extends LinearOpMode {
         ext = armExt.getCurrentPosition();
         rotation = armRotate.getCurrentPosition();
         //Multipliers are applied to X and Y and they are tied to sticks on the gamepads
-        y = gamepad1.left_stick_y;
-        x = gamepad1.right_stick_x;
-
-
+        yI = gamepad1.left_stick_y;
+        xI = gamepad1.right_stick_x;
 
         //Sets power for driving wheels
-        if(y > 0.2 || y < -0.2){
-          backLeftMotor.setPower((y-0.1)*-1);
-          backRightMotor.setPower(y);
-        } else if (x > 0.2) {
-          backLeftMotor.setPower(x-0.1);
-          backRightMotor.setPower(x);
-        } else if (x < -0.2) {
-          backLeftMotor.setPower(x-0.1);
-          backRightMotor.setPower(x);
-        } else {
-          backLeftMotor.setPower(0);
-          backRightMotor.setPower(0);
+        //low power mode
+        if(gamepad1.x){
+            if(yI > 0.2 || yI < -0.2){
+            backLeftMotor.setPower(((yI-0.1)*-1)*0.25);
+            backRightMotor.setPower(yI*0.25);
+          } else if (xI > 0.2) {
+            backLeftMotor.setPower((xI-0.1)*0.25);
+            backRightMotor.setPower(xI*0.25);
+          } else if (xI < -0.2) {
+            backLeftMotor.setPower((xI-0.1)*0.25);
+            backRightMotor.setPower(xI*0.25);
+          } else {
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+          }
+        }else {
+          //normal driving
+          backLeftMotor.setPower(-yI+xI);
+          backRightMotor.setPower(yI+xI);
         }
 
         //Arm rotation controls
           //Rotates up when Right Bumper is pressed
           //Rotates down when Left Bumper is pressed
           //Otherwise power is set to 0 (BRAKE)
-        if (gamepad2.right_bumper) {
-          armRotate.setPower(0.4);
-        } else if (gamepad2.left_bumper) {
-          armRotate.setPower(-0.2);
-        } else {
-          armRotate.setPower(0);
+          
+        //if(armLocked == false){
+          if (gamepad2.right_bumper) {
+            armRotate.setPower(0.4);
+          } else if (gamepad2.left_bumper) {
+            armRotate.setPower(-0.2);
+          } else {
+            armRotate.setPower(0);
+          }
+        //}else if (armLocked == true){
+         //if(armRotate.getCurrentPosition()<1200){
+           //armRotate.setPower(0.3);
+         //} else{
+           //armRotate.setPower(0);
+         //}
+        //}
+          
+        
+        
+      
+        if(armLocked == false){
+          if(gamepad2.y){
+            armLocked = true;
+          }
+        } else if (armLocked == true){
+          if(gamepad2.x){
+            armLocked = false;
+          }
         }
 
         //Arm extension controls
@@ -151,9 +178,11 @@ public class robotCentricDrive extends LinearOpMode {
 
         //Telemetry for debugging
         telemetry.addData("Current Arm Extension", ext);
-        telemetry.addData("Current Arm Rotation", rotation);
+        telemetry.addData("Current Arm Rotation", armRotate.getCurrentPosition());
+        telemetry.addData("Arm lift Power", armRotate.getPower());
         telemetry.addData("Right Wheel Power", backRightMotor.getPower());
         telemetry.addData("Left Wheel Power", backLeftMotor.getPower());
+        telemetry.addData("Arm Locked: ", armLocked);
         telemetry.update();
       }
     }
