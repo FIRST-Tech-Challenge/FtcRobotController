@@ -112,7 +112,7 @@ public class CASH2024DriverTest extends OpMode
          */
 
 
-        robot.raiseElevatorToPosition(1,1000);
+        robot.raiseElevatorToPosition_Autonomous(1,1000);
 
 
 

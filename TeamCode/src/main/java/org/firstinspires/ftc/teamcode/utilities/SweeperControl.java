@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.RobotLog;
 
 //Sweeper Control.  This is a simple control of the sweeper that pulls in pixles
 public class SweeperControl {
@@ -31,7 +28,7 @@ public class SweeperControl {
 
     //Sweeper Control:  Simply turns on the sweeper based on the command that is passed
     //Params:  cmd - the value of the input desired motor speed.
-    public void rollSweeperOut_T(double cmd) {
+    public void setSweeperCommand(double cmd) {
         sweeper_motor.setPower(cmd);
     }
 }

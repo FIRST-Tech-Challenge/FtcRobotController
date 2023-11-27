@@ -105,24 +105,24 @@ public class AutoRedIn extends LinearOpMode {
                      robot.moveRobotAuto(robot.LEFT, 0.5, 2);
                      robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
                      if ( initimpliments = true ) {
-                         robot.dump_bucket();
+                         robot.dump_pixle();
                          sleep(1000);
                      }
 
                     robot.moveRobotAuto(robot.FORWARD, 0.5, 3);
                      if ( initimpliments = true ) {
-                         robot.raise_bucket();
-                         robot.rollSweeperOut(0.5);
+                         robot.reset_pixle_bucket();
+                         robot.sweeperCommand(0.5);
                      }
 
                      robot.moveRobotAuto(robot.LEFT, 0.5, 18);
                      robot.moveRobotAuto(robot.REVERSE, 0.5, 11);
                      robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                      if ( initimpliments = true ) {
-                         robot.raiseElevatorToPosition(1, 3500);
-                         robot.dump_bucket();
+                         robot.raiseElevatorToPosition_Autonomous(1, 3500);
+                         robot.dump_pixle();
                          sleep(1000);
-                         robot.raiseElevatorToPosition(1, 0);
+                         robot.raiseElevatorToPosition_Autonomous(1, 0);
                      }
 
                      robot.moveRobotAuto(robot.LEFT, 0.5, 15);
@@ -148,24 +148,24 @@ public class AutoRedIn extends LinearOpMode {
              if (Average<27) {
                  robot.moveRobotAuto(robot.REVERSE, 0.3, 19);
                  if ( initimpliments = true ) {
-                     robot.dump_bucket();
+                     robot.dump_pixle();
                      sleep(1000);
                  }
 
                  robot.moveRobotAuto(robot.FORWARD, 0.5, 3);
                  if ( initimpliments = true ) {
-                     robot.raise_bucket();
-                     robot.rollSweeperOut(0.5);
+                     robot.reset_pixle_bucket();
+                     robot.sweeperCommand(0.5);
                  }
 
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 0.3, 28);
                  if ( initimpliments = true ) {
-                     robot.raiseElevatorToPosition(1, 3500);
-                     robot.dump_bucket();
+                     robot.raiseElevatorToPosition_Autonomous(1, 3500);
+                     robot.dump_pixle();
                      sleep(1000);
-                     robot.raise_bucket();
-                     robot.raiseElevatorToPosition(1, 0);
+                     robot.reset_pixle_bucket();
+                     robot.raiseElevatorToPosition_Autonomous(1, 0);
                  }
 
                  robot.moveRobotAuto(robot.LEFT, 0.3, 15);
@@ -174,24 +174,24 @@ public class AutoRedIn extends LinearOpMode {
              robot.moveRobotAuto(robot.REVERSE, 0.3, 19);
              robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
              if ( initimpliments = true ) {
-                 robot.dump_bucket();
+                 robot.dump_pixle();
                  sleep(1000);
              }
 
              robot.moveRobotAuto(robot.FORWARD, 0.3, 29);
              if ( initimpliments = true ) {
-                 robot.raise_bucket();
-                 robot.rollSweeperOut(0.5);
+                 robot.reset_pixle_bucket();
+                 robot.sweeperCommand(0.5);
              }
 
              robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
-             robot.raiseElevatorToPosition(1, 3500);
+             robot.raiseElevatorToPosition_Autonomous(1, 3500);
              if ( initimpliments = true ) {
-                 robot.dump_bucket();
+                 robot.dump_pixle();
                  sleep(1000);
              }
 
-             robot.raiseElevatorToPosition(1, 0);
+             robot.raiseElevatorToPosition_Autonomous(1, 0);
              robot.moveRobotAuto(robot.LEFT, 0.3, 15);
              robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
 

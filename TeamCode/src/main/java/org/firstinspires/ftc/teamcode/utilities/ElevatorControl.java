@@ -167,7 +167,7 @@ public class ElevatorControl {
 //       RobotLog.d(String.format("inrobot.dumpbucket"));
     }
     //Reset_bucket - returns the bucket to position to receive another pixle
-    public void reset_buckt() {
+    public void reset_pixle_bucket() {
         bucket.setPosition(-.1);
     }
 
@@ -179,7 +179,7 @@ public class ElevatorControl {
     }
 
     // load - sets the servo to reset position.
-    public void load(){
+    public void reset_launch_pin(){
         launch.setPosition(1);
     }
 }

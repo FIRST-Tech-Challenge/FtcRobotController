@@ -81,7 +81,7 @@ public class AutoRedTest extends LinearOpMode {
         runtime.reset();
          while (opModeIsActive()) {
              sleep(1000);
-             robot.raiseElevatorToPosition(.5,250);
+             robot.raiseElevatorToPosition_Autonomous(.5,250);
              robot.moveRobotAuto(robot.RIGHT, 0.3, 12);
              robot.moveRobotAuto(robot.REVERSE, 0.3, 10);
              double NumberOfSamples=0;
@@ -103,10 +103,10 @@ public class AutoRedTest extends LinearOpMode {
              /// if distance < 30 = drive foward x drop pixel, else, move next location, and repeat. Else, go to third location, repeat.
              distance = sensorRange.getDistance(DistanceUnit.INCH);
              if (Average<40) {
-                 robot.raiseElevatorToPosition(.5,10);
+                 robot.raiseElevatorToPosition_Autonomous(.5,10);
                  robot.moveRobotAuto(robot.LEFT, 0.5, 5);
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
-                 robot.rollSweeperOut(.5);
+                 robot.sweeperCommand(.5);
                  sleep(1000);
 
                //  if ( initimpliments = true ) {
@@ -122,12 +122,12 @@ public class AutoRedTest extends LinearOpMode {
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 73);
                  robot.moveRobotAuto(robot.RIGHT, 0.5, 35);
                 // if ( initimpliments = true ) {
-                     robot.raiseElevatorToPosition(1, 1000);
+                     robot.raiseElevatorToPosition_Autonomous(1, 1000);
                      sleep(1000);
-                     robot.dump_bucket();
+                     robot.dump_pixle();
                      sleep(2000);
-                     robot.raise_bucket();
-                 robot.raiseElevatorToPosition(1, 10);
+                     robot.reset_pixle_bucket();
+                 robot.raiseElevatorToPosition_Autonomous(1, 10);
                //  }
                  sleep(30000);
              }
@@ -150,26 +150,26 @@ public class AutoRedTest extends LinearOpMode {
              if (Average<50) {
                  robot.moveRobotAuto(robot.REVERSE, 0.3, 18);
                  if ( initimpliments = true ) {
-                     robot.dump_bucket();
+                     robot.dump_pixle();
                      sleep(1000);
                  }
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 28);
                  if ( initimpliments = true ) {
-                     robot.raise_bucket();
-                     robot.rollSweeperOut(0.5);
+                     robot.reset_pixle_bucket();
+                     robot.sweeperCommand(0.5);
                  }
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 73);
                  if ( initimpliments = true ) {
-                     robot.rollSweeperOut(0);
+                     robot.sweeperCommand(0);
                  }
                  robot.moveRobotAuto(robot.RIGHT, 0.5, 29);
                  if ( initimpliments = true ) {
-                     robot.raiseElevatorToPosition(1, 4000);
+                     robot.raiseElevatorToPosition_Autonomous(1, 4000);
                      sleep(3000);
-                     robot.dump_bucket();
+                     robot.dump_pixle();
                      sleep(1000);
-                     robot.raise_bucket();
+                     robot.reset_pixle_bucket();
                  }
                  sleep(30000);
              }
@@ -177,26 +177,26 @@ public class AutoRedTest extends LinearOpMode {
              robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
              robot.moveRobotAuto(robot.REVERSE, 0.5, 3);
              if ( initimpliments = true ) {
-                 robot.dump_bucket();
+                 robot.dump_pixle();
                  sleep(1000);
              }
              robot.moveRobotAuto(robot.FORWARD, 0.5, 5);
              if ( initimpliments = true ) {
-                 robot.raise_bucket();
-                 robot.rollSweeperOut(1);
+                 robot.reset_pixle_bucket();
+                 robot.sweeperCommand(1);
              }
              robot.moveRobotAuto(robot.LEFT, 0.5, 26);
              robot.moveRobotAuto(robot.REVERSE, 0.5, 70);
              if ( initimpliments = true ) {
-                 robot.rollSweeperOut(0);
+                 robot.sweeperCommand(0);
              }
              robot.moveRobotAuto(robot.RIGHT, 0.5, 29);
              if ( initimpliments = true ) {
-                 robot.raiseElevatorToPosition(1, 4000);
+                 robot.raiseElevatorToPosition_Autonomous(1, 4000);
                  sleep(3000);
-                 robot.dump_bucket();
+                 robot.dump_pixle();
                  sleep(1000);
-                 robot.raise_bucket();
+                 robot.reset_pixle_bucket();
              }
              sleep(30000);
 

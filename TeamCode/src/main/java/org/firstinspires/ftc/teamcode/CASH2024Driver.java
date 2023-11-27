@@ -91,7 +91,7 @@ public class CASH2024Driver extends OpMode
         robot.robotIMU.resetAngle();
 
         telemetry.addData("Status", "Initialized");
-        robot.setDesElevatorPosition(robot.getElevatorPositition());
+        robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
     }
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -155,7 +155,7 @@ public class CASH2024Driver extends OpMode
         }else{
             sweeperCmd = 0;
         }
-        robot.rollSweeperOut(sweeperCmd);
+        robot.sweeperCommand(sweeperCmd);
 
         //drone control
         if (arm && fire){
@@ -166,10 +166,10 @@ public class CASH2024Driver extends OpMode
         }
 
         if(open){
-            robot.dump_bucket();
+            robot.dump_pixle();
         }
         if (close){
-            robot.raise_bucket();
+            robot.reset_pixle_bucket();
         }
 
         /*if ( low_elevator == true && AutoRaiseActiveLow == false ) {
@@ -232,18 +232,18 @@ public class CASH2024Driver extends OpMode
 
         //schultz update
         if ( low_elevator == true) {
-            robot.setDesElevatorPosition(0);
+            robot.setDesElevatorPosition_Teliop(0);
             RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
         }
 
         else if ( mid_elevator == true ) {
-            robot.setDesElevatorPosition(1000);
+            robot.setDesElevatorPosition_Teliop(1000);
             RobotLog.i(String.format("In Middle"));
 //            AutoElevatorActive = true;
         }
         else if ( high_elevator == true ) {
-            robot.setDesElevatorPosition(1900);
+            robot.setDesElevatorPosition_Teliop(1900);
             RobotLog.i(String.format("In High"));
 //            AutoElevatorActive = true;
         }
@@ -251,7 +251,7 @@ public class CASH2024Driver extends OpMode
         if ( Math.abs(elevatorCommand) > .025){
             AutoElevatorActive = false;
             robot.raiseLowerElevator(elevatorCommand);
-            robot.setDesElevatorPosition(robot.getElevatorPositition());
+            robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
         }
         else {
             robot.elevatorUpdate(loopTime.seconds());
