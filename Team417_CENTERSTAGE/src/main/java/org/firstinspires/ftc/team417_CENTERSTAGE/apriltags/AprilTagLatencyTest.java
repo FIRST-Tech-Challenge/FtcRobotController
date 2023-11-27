@@ -37,7 +37,7 @@ public class AprilTagLatencyTest extends BaseOpMode {
             TelemetryPacket p = new TelemetryPacket();
             Canvas c = p.fieldOverlay();
 
-            myATPE.telemeterAprilTagInfo(c);
+            myATPE.updatePoseEstimate();
 
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);

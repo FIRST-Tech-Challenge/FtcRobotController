@@ -199,8 +199,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         armMotor.setPower(speed);
     }
 
-    public double epsilon = 0.0001;
-    public boolean isEpsilonEquals(double a, double b) {
-        return (Math.abs(a) + epsilon >= Math.abs(b) && Math.abs(a) - epsilon <= Math.abs(b));
+    public final static double EPSILON = 0.0001;
+    public static boolean isEpsilonEquals(double a, double b) {
+        return (Math.abs(a) + EPSILON >= Math.abs(b) && Math.abs(a) - EPSILON <= Math.abs(b));
     }
 }

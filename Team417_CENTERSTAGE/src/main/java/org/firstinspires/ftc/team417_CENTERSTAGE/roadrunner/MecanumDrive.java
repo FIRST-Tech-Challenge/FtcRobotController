@@ -47,7 +47,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
-import org.firstinspires.ftc.team417_CENTERSTAGE.competitionprograms.UltimateTeleOp;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.TwistWithTimestamp;
 import org.firstinspires.inspection.InspectionState;
 
@@ -244,7 +243,9 @@ public final class MecanumDrive {
         clock.reset();
 
         // To detect April Tags to correct drift (added by Hank)
-        myAprilTagPoseEstimator = new AprilTagPoseEstimator(new UltimateTeleOp());
+        myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
+
+        myAprilTagPoseEstimator.init();
 
         this.pose = pose;
 
@@ -481,16 +482,23 @@ public final class MecanumDrive {
             }
         }
 
-        if (myAprilTagPoseEstimator.detecting && twistList.size() > 1) {
+        myAprilTagPoseEstimator.updatePoseEstimate();
+
+        System.out.println("Mecanum Drive: " + myAprilTagPoseEstimator.estimatePose() != null);
+
+        if (myAprilTagPoseEstimator.estimatePose() != null && twistList.size() > 1) {
+
             pose = myAprilTagPoseEstimator.estimatePose();
 
+            // Latency compensation code (add only when thoroughly tested)
             double currentTime = clock.milliseconds();
             TwistWithTimestamp lastTwist = twistList.get(0);
-            for (int i = 1; lastTwist.timestamp >= currentTime - myAprilTagPoseEstimator.CAMERA_LATENCY; i++) {
+            for (int i = 1; lastTwist.timestamp >= currentTime - myAprilTagPoseEstimator.CAMERA_LATENCY && i < twistList.size(); i++) {
                 pose.plus(lastTwist.twist.value());
                 lastTwist = twistList.get(i);
                 currentTime = clock.milliseconds();
             }
+
         } else {
             pose = pose.plus(twist.value()); // This line was actually in the original code, just moved here by me
         }

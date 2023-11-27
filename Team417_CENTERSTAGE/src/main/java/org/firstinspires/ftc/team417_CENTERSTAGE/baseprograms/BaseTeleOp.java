@@ -38,7 +38,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
             c.setStroke("#3F5100");
             MecanumDrive.drawRobot(c, drive.pose);
 
-            myAprilTagPoseEstimator.telemeterAprilTagInfo(c);
+            myAprilTagPoseEstimator.updatePoseEstimate();
 
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);

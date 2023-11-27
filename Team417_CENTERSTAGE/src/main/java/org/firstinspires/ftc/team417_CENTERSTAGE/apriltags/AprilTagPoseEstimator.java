@@ -2,15 +2,17 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.apriltags;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseOpMode;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.AprilTagInfo;
+import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.InfoWithDetection;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.Pose;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -22,6 +24,8 @@ public class AprilTagPoseEstimator {
     public static final double CAMERA_LATENCY = 640; // latency between april tag shown and detection in ms
 
     public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    public HardwareMap myHardwareMap;   // gain access to camera in hardwareMap
 
     public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
@@ -47,6 +51,10 @@ public class AprilTagPoseEstimator {
     //   in order to allow this class to access the camera hardware
     public AprilTagPoseEstimator(LinearOpMode opmode) {
         myOpMode = opmode;
+    }
+
+    public AprilTagPoseEstimator(HardwareMap hardwareMap) {
+        myHardwareMap = hardwareMap;
     }
 
     /**
@@ -86,14 +94,22 @@ public class AprilTagPoseEstimator {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(myOpMode.hardwareMap.get(WebcamName.class, "webcam"));
+            if (myOpMode != null) {
+                builder.setCamera(myOpMode.hardwareMap.get(WebcamName.class, "webcam"));
+            } else if (myHardwareMap != null) {
+                builder.setCamera(myHardwareMap.get(WebcamName.class, "webcam"));
+            }
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
 
         // Sets the status light for latency testing, etc.
         if (MecanumDrive.isDevBot) {
-            statusLight = myOpMode.hardwareMap.get(DigitalChannel.class, "green");
+            if (myOpMode != null) {
+                statusLight = myOpMode.hardwareMap.get(DigitalChannel.class, "green");
+            } else if (myHardwareMap != null) {
+                statusLight = myHardwareMap.get(DigitalChannel.class, "green");
+            }
             statusLight.setMode(DigitalChannel.Mode.OUTPUT);
         }
 
@@ -134,11 +150,11 @@ public class AprilTagPoseEstimator {
         //See November notebook 11/20/2023 for more info on the math used here
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
-        d = Math.hypot(detection.ftcPose.x + + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
+        d = Math.hypot(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
         
         gamma = Math.atan2(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
         
-        beta = gamma + Math.toRadians(detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT) if that doesn't work)
+        beta = gamma + Math.toRadians(detection.ftcPose.yaw + Constants.DEVBOT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT) if that doesn't work)
         
         relativeX = d * Math.cos(beta) + aprilTagInfo.x;
         
@@ -155,26 +171,96 @@ public class AprilTagPoseEstimator {
         return pose;
     }
 
-    // If the program detects an april tag that it recognizes
-    public boolean detecting = false;
+    public InfoWithDetection chooseBestAprilTag(ArrayList<InfoWithDetection> iwdList) {
+        // If list is empty, return null
+        if (iwdList.size() < 1) {
+            return null;
+        }
+
+        // Remove iwds that are more than two tiles away
+        int iwdListSize = iwdList.size();
+        InfoWithDetection currentIwd = iwdList.get(0);
+        for (int i = 1; i < iwdListSize; i++) {
+            currentIwd = iwdList.get(i);
+            if (Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y) > 48) {
+                iwdList.remove(i);
+                i--;
+            }
+            iwdListSize = iwdList.size();
+        }
+
+        // NOW if list is empty, return null
+        if (iwdList.size() < 1) {
+            return null;
+        }
+
+        // Find the largest size of April Tag
+        currentIwd = iwdList.get(0);
+        double largestSize = currentIwd.info.sideLength;
+        for (int i = 1; i < iwdList.size(); i++) {
+            currentIwd = iwdList.get(i);
+            if (currentIwd.info.sideLength > largestSize) {
+                largestSize = currentIwd.info.sideLength;
+            }
+        }
+
+        // Remove iwds that are not the largest
+        iwdListSize = iwdList.size();
+        currentIwd = iwdList.get(0);
+        for (int i = 1; i < iwdListSize; i++) {
+            currentIwd = iwdList.get(i);
+            if (!BaseOpMode.isEpsilonEquals(currentIwd.info.sideLength, largestSize) && currentIwd.info.sideLength < largestSize) {
+                iwdList.remove(i);
+                i--;
+            }
+            iwdListSize = iwdList.size();
+        }
+
+        // List should not be empty
+        // TODO: Remove this assert before competition
+        assert iwdList.size() >= 1;
+
+        // Choose the april tag that has the least distance
+        currentIwd = iwdList.get(0);
+        double leastDistance = Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y);
+        int leastDistanceIndex = 0;
+        for (int i = 1; i < iwdList.size(); i++) {
+            currentIwd = iwdList.get(i);
+            if (Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y) < leastDistance) {
+                leastDistance = Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y);
+                leastDistanceIndex = i;
+            }
+        }
+
+        return iwdList.get(leastDistanceIndex);
+    }
+
+    ArrayList<InfoWithDetection> knownAprilTagsDetected = new ArrayList<>();
 
     /**
      * Add telemetry about AprilTag detections.
      */
-    public void telemeterAprilTagInfo(Canvas c) {
+    public void updatePoseEstimate() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         // Iterates through detections and finds any the the robot "knows"
         // Then it replaces the pose estimate with pose estimate from that april tag
-        // TODO: allow the robot to choose which AprilTag is the best to estimate from instead of blinding choosing the first one
-        detecting = false;
+        knownAprilTagsDetected.clear();
         for (AprilTagDetection detection : currentDetections) {
             AprilTagInfo aprilTagInfo = AprilTagInfoDump.findTagWithId(detection.id);
             if (aprilTagInfo != null) {
-                robotPoseEstimate = calculatePoseEstimate(detection, aprilTagInfo);
-                detecting = true;
-                break;
+                knownAprilTagsDetected.add(new InfoWithDetection(aprilTagInfo, detection));
             }
+        }
+
+        boolean detecting;
+        InfoWithDetection best = chooseBestAprilTag(knownAprilTagsDetected);
+        if (best != null) {
+            robotPoseEstimate = calculatePoseEstimate(best.detection, best.info);
+            detecting = true;
+        } else {
+            robotPoseEstimate = null;
+            detecting = false;
         }
 
         // Turn the status light on when it detects an april tag (yes, setState(boolean) is backwards)
@@ -187,12 +273,13 @@ public class AprilTagPoseEstimator {
         }
 
         // Telemeters the current pose estimate
-        myOpMode.telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
+        if (myOpMode != null) {
+            myOpMode.telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
 
-        // Telemeters the pose info to FTC dashboard so that it draws the robot pose
-        // Remove before competition, could cause lags
-        c.setStroke("#3F51B5");
-        MecanumDrive.drawRobot(c, new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta));
+            // Telemeters the pose info to FTC dashboard so that it draws the robot pose
+            // Remove before competition, could cause lags
+            //c.setStroke("#3F51B5");
+            //MecanumDrive.drawRobot(c, new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta));
 
         /*
         myOpMode.telemetry.addData("\n# AprilTags Detected", currentDetections.size());
@@ -215,7 +302,8 @@ public class AprilTagPoseEstimator {
         myOpMode.telemetry.addLine("PRY = Pitch, Roll & yaw) (XYZ Rotation)");
         myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
         */
-    }   // end method telemetryAprilTag()
+        }
+    } // end method telemetryAprilTag()
 
     public Pose2d estimatePose() {
         return new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta);

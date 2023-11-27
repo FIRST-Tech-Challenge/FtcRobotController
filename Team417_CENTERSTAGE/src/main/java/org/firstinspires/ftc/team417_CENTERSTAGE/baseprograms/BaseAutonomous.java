@@ -92,7 +92,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             // Code added to draw the pose, remove before competition, causes lags:
             TelemetryPacket p = new TelemetryPacket();
             Canvas c = p.fieldOverlay();
-            myAprilTagPoseEstimator.telemeterAprilTagInfo(c);
+            myAprilTagPoseEstimator.updatePoseEstimate();
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);
         }
