@@ -112,25 +112,26 @@ public class TELEOPtest1 extends LinearOpMode {
             armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
             telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
 
-            if (gamepad2.left_trigger>5) {
+            if (gamepad2.left_bumper) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(1); // Adjust the position value as needed
 
-            } else if (gamepad2.left_bumper) {
+            } else if (gamepad2.left_trigger>0.5) {
                 // Return servos to the center position when "x" is pressed
-                leftGripper.setPosition(0.9); // Adjust the position value for the center position
+                leftGripper.setPosition(0.95); // Adjust the position value for the center position
             }
-                if (gamepad2.right_trigger>5) {
+                if (gamepad2.right_bumper) {
                     // Move servo in opposite directions when "y" is pressed
                     rightGripper.setPosition(0); // Adjust the position value as needed
-                } else if (gamepad2.right_bumper) {
+
+                } else if (gamepad2.right_trigger>0.5) {
                     // Return servos to the center position when "x" is pressed
-                    rightGripper.setPosition(0.1); // Adjust the position value for the center position
+                    rightGripper.setPosition(0.05); // Adjust the position value for the center position
                 }
                 if (gamepad2.a) {
-                    wristServo.setPosition(.4 ); // Adjust the position value as needed
+                    wristServo.setPosition(0.4); // Adjust the position value as needed
                 } else if (gamepad2.b) {
-                    wristServo.setPosition(0); // Adjust the position value for the center position
+                    wristServo.setPosition(0.3); // Adjust the position value for the center position
                 }
             telemetry.update();
             }
