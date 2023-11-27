@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pre-Build",
+      "type": "shell",
+      "command": "bash",
+      "args":[
+        ".vscode/prebuild.sh"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": "clean", // Replace with the name of your main build task if needed
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}
