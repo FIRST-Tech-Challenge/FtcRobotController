@@ -124,13 +124,13 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         }
 
         // For fun, use OpenCV to draw 6DOF markers on the image.
-        for(AprilTagDetection detection : detections)
+        /*for(AprilTagDetection detection : detections)
         {
             Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
             //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
-        }
+        }*/
 
         return input;
     }
@@ -147,16 +147,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     public ArrayList<AprilTagDetection> getLatestDetections()
     {
         return detections;
-    }
-
-    public ArrayList<AprilTagDetection> getDetectionsUpdate()
-    {
-        synchronized (detectionsUpdateSync)
-        {
-            ArrayList<AprilTagDetection> ret = detectionsUpdate;
-            detectionsUpdate = null;
-            return ret;
-        }
     }
 
     void constructMatrix()

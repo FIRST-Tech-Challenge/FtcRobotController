@@ -85,6 +85,8 @@ class TeamPropPipeline extends OpenCvPipeline
     static final double minRedInitValues2[]= {0, 125, 110};
     static final double maxRedInitValues2[] = {15, 255, 255};
 
+    // Blacken out the top of the image, because the team prop can only be in the bottom half
+    static final int Y_BLACK_COORDINATE = 200;
 
     public TeamPropPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
     {
@@ -117,12 +119,10 @@ class TeamPropPipeline extends OpenCvPipeline
         // Merge both red hsv filters
         Core.max(maskHSVRed1, maskHSVRed2, maskHSVRed);
 
-        // Blacken out the top of the image, because the team prop can only be in the bottom half
-        int yCoordinate = 200;
         // Define a rectangle that is the top of the image (it relates to the image)
-        Mat subImg1 = maskHSVRed.submat(new Rect(0,0, maskHSVRed.cols(), yCoordinate));
-        Mat subImg2 = maskHSVBlue.submat(new Rect(0,0, maskHSVBlue.cols(), yCoordinate));
-        Mat subImg3 = colorImage.submat(new Rect(0,0, maskHSVBlue.cols(), yCoordinate));
+        Mat subImg1 = maskHSVRed.submat(new Rect(0,0, maskHSVRed.cols(), Y_BLACK_COORDINATE));
+        Mat subImg2 = maskHSVBlue.submat(new Rect(0,0, maskHSVBlue.cols(), Y_BLACK_COORDINATE));
+        Mat subImg3 = colorImage.submat(new Rect(0,0, maskHSVBlue.cols(), Y_BLACK_COORDINATE));
         // Set this rectangle to black
         subImg1.setTo(new Scalar (0,0,0));
         subImg2.setTo(new Scalar (0,0,0));
