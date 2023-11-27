@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.McDonald;
 
 import android.util.Size;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -67,6 +69,8 @@ public class VisionLFM2 extends LinearOpMode {
     private Servo leftGripper;
     private Servo rightGripper;
 
+    private DcMotor armMotor;
+
     private Servo wrist;
 
     private enum StartQuad {
@@ -107,11 +111,6 @@ public class VisionLFM2 extends LinearOpMode {
         double  drive           = 0;        // Desired forward power/speed (-1 to +1) +ve is forward
         double  turn            = 0;        // Desired turning power/speed (-1 to +1) +ve is CounterClockwise
 
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -121,6 +120,7 @@ public class VisionLFM2 extends LinearOpMode {
 
         leftGripper = hardwareMap.get(Servo.class, "leftGripper");
         rightGripper = hardwareMap.get(Servo.class, "rightGripper");
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         wrist = hardwareMap.servo.get("wristServo");
         wrist.setPosition(.4);
         leftGripper.setPosition(1); // Adjust the position value as needed
@@ -362,6 +362,18 @@ public class VisionLFM2 extends LinearOpMode {
                 break;
         }
     }
+    //private void placepixel(PropPosition)
+
+       // switch(PropPosition)
+           // case LEFT:
+                //moveRobot("fwd_opp_field", MOVE_FWD_OPP_FIELD-.6);
+               // turnRobot("left", MOVE_RIGHT_LINE);
+               // moveRobot("fwd_opp_field", MOVE_FWD_OPP_FIELD)
+               // leftGripper();
+               // rightGripper();
+
+
+
 
 
 
