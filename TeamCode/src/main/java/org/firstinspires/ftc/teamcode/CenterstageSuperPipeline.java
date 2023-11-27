@@ -33,11 +33,19 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgcodecs.Imgcodecs;
+import android.os.Environment;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 class CenterstageSuperPipeline implements VisionProcessor {
     protected static boolean leftSide;
     protected static boolean redAlliance;
     public static int spikeMark = 1;
+    protected String storageFolder = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//Default";
+    protected boolean saveNextSpikeMark = false;
     protected Point sub1PointA = new Point(0, 350);
     protected Point sub1PointB = new Point(60, 410);
     protected Point sub2PointA = new Point(460, 320);
@@ -148,11 +156,49 @@ class CenterstageSuperPipeline implements VisionProcessor {
 //      subMat3Hue.release();
 //      subMat3Hue = null;
 
+        if(saveNextSpikeMark)
+        {
+            saveSpikeMarkAutoImage(frame);
+            saveNextSpikeMark = false;
+        }
         return frame;
     }
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
 
+    }
+    public void saveSpikeMarkAutoImage() { saveNextSpikeMark = true; }
+    public void setStorageFolder(String storageDir) {
+        storageFolder = storageDir;
+    }
+    protected void saveSpikeMarkAutoImage(Mat detectedSpikeMark ) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        String filePath = storageFolder + "/" + "AutoImage_" + timeString + ".png";
+        saveImage(filePath, detectedSpikeMark);
+    }
+    protected void saveImage(String filePath, Mat image) {
+        Mat cloneBaby = image.clone();
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Imgproc.cvtColor(cloneBaby, cloneBaby, Imgproc.COLOR_RGB2BGR);
+                    Imgcodecs.imwrite(filePath, cloneBaby);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    cloneBaby.release();
+                }
+            }
+        }).start();
     }
 } // CenterstageSuperPipeline
