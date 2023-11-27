@@ -34,13 +34,14 @@ public class AutoTestAprilTag extends LinearOpMode {
         telemetry.addData("starting program","now");
         telemetry.update();
 
-        AprilTagDetection myDetection = myReader.GetAprilTag(1);
+     //   AprilTagDetection myDetection = myReader.GetAprilTag(1);
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
 
         if (opModeIsActive()) {
+            AprilTagDetection myDetection = myReader.GetAprilTag(1);
             sleep(10000);
 
         }

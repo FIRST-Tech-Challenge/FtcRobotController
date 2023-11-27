@@ -66,7 +66,7 @@ public class SpikeCam {
     public location getSpikeLocation() {
         return spikeLocation;
     }
-
+    public void closeStream() {webcam1.stopStreaming();}
     class spikePipeline extends OpenCvPipeline {
 
         Mat mat = new Mat();
