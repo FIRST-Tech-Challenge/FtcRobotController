@@ -37,11 +37,11 @@ public class SetDriveMotors extends OpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-
+        imu.resetYaw();
         backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
@@ -54,8 +54,10 @@ public class SetDriveMotors extends OpMode {
 
         // Reverse right side motor directions
         // This may need to be flipped to the left side depending on your motor rotation direction
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         double deadzone = 0.1;
 
@@ -80,15 +82,19 @@ public class SetDriveMotors extends OpMode {
         // This button choice was made so that it is hard to hit on accident,
         // it can be freely changed based on preference.
         // The equivalent button is start on Xbox-style controllers.
-        if (gamepad1.a) {
+        /*if (gamepad1.a) {
             imu.resetYaw(); // Reset the IMU yaw angle when the 'options' button is pressed.
-        }
+        }*/
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.PI;
-
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         // Rotate the movement direction counter to the bot's rotation
+
         double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
         double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
+//        double rotX = horizontal;
+//        double rotY = vertical;
+
         double rotationalCorrection = 1.1; // original value of code on site was 1.1
 
         rotX = rotX * rotationalCorrection;  // Counteract imperfect strafing

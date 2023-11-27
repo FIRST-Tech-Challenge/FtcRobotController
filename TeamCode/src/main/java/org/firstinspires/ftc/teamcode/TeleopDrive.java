@@ -1,27 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
+import org.firstinspires.ftc.teamcode.tools.Robot;
+import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name = "FC_square_TO_drive", group = "Testing")
+@TeleOp(name = "TeleOpDrive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
     private SetDriveMotors setDriveMotorsObj;
-    //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-    private TouchSensor touchDown;
 
-    private SlideLift slideLiftObj = new SlideLift();
-    private Intake intakeObj = new Intake();
-    private Hanger hangerObj = new Hanger();
-
-    private Button buttonA;
-    private Button buttonB;
+    Robot robot;
 
     public void Setup(){
+        TelemetryManager.setTelemetry(telemetry);
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
-        touchDown = hardwareMap.touchSensor.get("touchDown");
+
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
+        Robot.clawPitch.setPosition(Robot.clawPitchIntake);
+        Robot.clawYaw.setPosition(Robot.clawYawIntake);
+        Robot.clawGrip.setPosition(Robot.clawOpen);
+
     }
 
     public boolean atRest(){
@@ -34,13 +34,14 @@ public class TeleopDrive extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         Setup();
         waitForStart();
         while(opModeIsActive()){
 //            if(drive.isBusy()&& atRest()){
 //                drive.update();
 //            }
+            telemetry.update();
             double horizontal = gamepad1.left_stick_x;
             double vertical = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
@@ -50,12 +51,25 @@ public class TeleopDrive extends LinearOpMode {
 //            }
             setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast);
 
-            //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); not ready to test yet
 
-            intakeObj.setIntakePower(buttonA);
-            buttonA.updateButton(gamepad2);
-            hangerObj.setHangerPower(buttonB);
-            buttonB.updateButton(gamepad2);
+            robot.update();
+
+            if(robot.currentState()== robot.outTakingPixels){
+                if(Robot.handlerDPad_Left.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawLeft);
+                }
+                if(Robot.handlerDPad_Down.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawIntake);
+                }
+                if(Robot.handlerDPad_Right.Pressed()){
+                    Robot.clawYaw.setPosition(Robot.clawYawRight);
+                }
+                if(Robot.handlerRightBumper.Pressed()){
+                    Robot.clawGrip.setPosition(Robot.clawOpen);
+                }
+            }
+
         }
     }
+
 }

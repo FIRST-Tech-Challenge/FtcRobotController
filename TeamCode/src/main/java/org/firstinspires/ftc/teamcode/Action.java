@@ -1,24 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-
-// This is what an action is: a function with no input parameters which returns
-// true/false when evaluate.
-interface ActionFunction {
-    Boolean evaluate();
-}
+import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
 public class Action {
-    // Message is for debugging purpose, function is what is being evaluated here.
-    Action(String msg, ActionFunction function) {
-        this.message = msg;
-        this.action = function;
-    }
+        private final ActionFunction performAction; // A function that performs the action and returns true if the action is complete
+        private final String msg;
 
-    Boolean performAction() {
-        System.err.println("  Evaluate action " + message);
-        return action.evaluate();
-    }
+        // Constructor that sets the action
+        public Action(String msg, ActionFunction performAction) {
+            this.performAction = performAction;
+            this.msg = msg;
+        }
 
-    private ActionFunction action;
-    private String message;
-}
+        // Method to determine if the action is complete based on the BooleanSupplier
+        public boolean evaluate() {
+            if (msg != null){
+                TelemetryManager.getTelemetry().addLine(msg);
+            }
+            return performAction.evaluate();
+        }
+    }

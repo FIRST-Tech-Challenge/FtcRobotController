@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.tools;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.Action;
+import org.firstinspires.ftc.teamcode.ActionBuilder;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -10,7 +10,7 @@ import java.util.function.BooleanSupplier;
 public class StateMachine {
 
     // Inner State class representing an individual state within the StateMachine
-    public class State {
+    public static class State {
         private final ArrayList<Transition> transitions = new ArrayList<>(); // List of transitions from this state
         private Transition currentTransition = null; // The transition that is currently being processed
         public String name; // Name identifier for the state
@@ -21,8 +21,9 @@ public class StateMachine {
         }
 
         // Method to add a transition to this state
-        public void addTransition(Transition transition) {
-            transitions.add(transition);
+        public void addTransitionTo(State nextState, BooleanSupplier trigger, ActionBuilder actionBuilder)
+        {
+            transitions.add(new Transition(nextState, trigger, actionBuilder.getList()));
         }
 
         // Inner Transition class representing a possible change from the current state to another
@@ -37,21 +38,7 @@ public class StateMachine {
                 this.nextState = nextState;
                 this.trigger = trigger;
                 this.actions = actions;
-            }
-
-            // Inner Action class representing a single actionable item within a transition
-            public class Action {
-                private final BooleanSupplier performAction; // A function that performs the action and returns true if the action is complete
-
-                // Constructor that sets the action
-                public Action(BooleanSupplier performAction) {
-                    this.performAction = performAction;
-                }
-
-                // Method to determine if the action is complete based on the BooleanSupplier
-                public boolean actionComplete() {
-                    return performAction.getAsBoolean();
-                }
+                currentActionIndex = 0;
             }
 
             // Method to determine if this transition's condition is met
@@ -59,11 +46,15 @@ public class StateMachine {
                 return trigger.getAsBoolean();
             }
 
+
             // Method to determine if all actions for this transition are complete
-            public boolean transitionComplete() {
+
+            public boolean isTransitionComplete() {
+
+
                 // Iterate through all actions to see if they are complete
-                for (currentActionIndex = 0; currentActionIndex < actions.size(); currentActionIndex++) {
-                    if (!(actions.get(currentActionIndex).actionComplete())) {
+                for (; currentActionIndex < actions.size(); currentActionIndex++) {
+                    if (!(actions.get(currentActionIndex).evaluate())) {
                         return false;
                     }
                 }
@@ -74,17 +65,6 @@ public class StateMachine {
             // Method to get the state that this transition leads to
             public State getDestinationState() {
                 return nextState;
-            }
-            private State.Transition.Action setMotor(DcMotor motor, int position){
-                return new State.Transition.Action(()->{motor.setTargetPosition(position);
-                    return true;
-                });
-            }
-
-            private State.Transition.Action setServo(Servo servo, int position){
-                return new State.Transition.Action(()->{servo.setPosition(position);
-                    return true;
-                });
             }
 
         }
@@ -101,8 +81,9 @@ public class StateMachine {
                 }
                 return this; // No transition triggered, stay in this state
             }
+
             // If the current transition is complete, move to the next state
-            if (currentTransition.transitionComplete()) {
+            if (currentTransition.isTransitionComplete()) {
                 State destinationState = currentTransition.getDestinationState();
                 currentTransition = null;
                 return destinationState; // Transition to the next state
@@ -112,12 +93,14 @@ public class StateMachine {
     }
 
     private final ArrayList<State> states = new ArrayList<>(); // List of all states in the state machine
-    private State currentState = null; // The state machine's current state
+    public State currentState = null; // The state machine's current state
 
     // Method to add a new state to the state machine
     public void addState(State state) {
         states.add(state);
     }
+
+    //TODO: Find the equivalent of an assert that gives an error message, and doesn't crash the code.
 
     // Method to set the initial state of the state machine. Can only be done once.
     public void setInitialState(State state) {
@@ -129,6 +112,10 @@ public class StateMachine {
     public void updateState() {
         assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
         currentState = currentState.update(); // Update the current state, which may cause a state transition
+    }
+
+    public State getCurrentState(){
+        return currentState;
     }
 }
 
