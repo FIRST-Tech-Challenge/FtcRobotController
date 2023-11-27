@@ -7,8 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous
 public class AutonRedRight extends LinearOpMode {
@@ -29,6 +35,45 @@ public class AutonRedRight extends LinearOpMode {
                 .splitLayoutForMultipleViewports(cameraMonitorViewId,2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
         spikeCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,"Webcam 1"),viewportContainerIds[0]);
         tagCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,"Webcam 2"),viewportContainerIds[1]);
+
+        spikeCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                spikeCamera.setPipeline(new UselessGreenBoxDrawingPipeline());
+                spikeCamera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
+
+        tagCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                tagCamera.setPipeline(new UselessGreenBoxDrawingPipeline());
+                tagCamera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
+
+
+
 
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
         CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.RIGHT;
@@ -103,6 +148,25 @@ public class AutonRedRight extends LinearOpMode {
          */   //mySparky.SetLiftToZero();
             sleep(13000);
          //   mySparky.LowerArmAtAutonEnd();
+        }
+    }
+
+    class UselessGreenBoxDrawingPipeline extends OpenCvPipeline
+    {
+        @Override
+        public Mat processFrame(Mat input)
+        {
+            Imgproc.rectangle(
+                    input,
+                    new Point(
+                            input.cols()/4,
+                            input.rows()/4),
+                    new Point(
+                            input.cols()*(3f/4f),
+                            input.rows()*(3f/4f)),
+                    new Scalar(0, 255, 0), 4);
+
+            return input;
         }
     }
 }
