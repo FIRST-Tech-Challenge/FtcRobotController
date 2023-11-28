@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
@@ -69,7 +70,7 @@ public class lm1teleop1driver extends LinearOpMode {
     @Override
     public void runOpMode() {
         plane=hardwareMap.get(Servo.class,"plane");
-        plane.setPosition(1);
+     //   plane.setPosition(0);
         boolean half = false;//half speed
         boolean open = false;
         boolean state = false;
@@ -108,8 +109,8 @@ public class lm1teleop1driver extends LinearOpMode {
             }else if(gamepad1.touchpad_finger_2){
                planeb=false;
             }if(planeb){
-                extend.setTilt((int)((gamepad1.touchpad_finger_1_y+0.5)*400));
-                plane.setPosition(1);
+                extend.setTilt(((int)Range.scale(gamepad1.touchpad_finger_1_y,-1,1,0,400)));
+                if(gamepad1.touchpad_finger_2)plane.setPosition(0);
             }
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.update();

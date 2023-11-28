@@ -241,8 +241,8 @@ public class blue_leftlm1 extends LinearOpMode {
 //        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
         driveStraight(DRIVE_SPEED, -50, 0.0,true);
         holdHeading( TURN_SPEED, 0, 0.5);
-        turnToHeading( TURN_SPEED, 90);
-        driveStraight(DRIVE_SPEED, 80, 90.0,true);
+        turnToHeading( TURN_SPEED, -90);
+        driveStraight(DRIVE_SPEED, -80, -90.0,true);
         //holdHeading( TURN_SPEED, 180, 0.5);
 
 //        holdHeadingandscan( TURN_SPEED, 0, 4);
@@ -255,7 +255,7 @@ public class blue_leftlm1 extends LinearOpMode {
 //        turnToHeading( TURN_SPEED, driveturn);
 //        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
 //        turnToHeading( TURN_SPEED, drive2t);
-        holdHeadingandplace(TURN_SPEED,45,4);
+        holdHeadingandplace(TURN_SPEED,-45,4);
 //
 //        turnToHeading( TURN_SPEED, 0);
 //        holdHeading(TURN_SPEED,0,0.5);
