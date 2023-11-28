@@ -133,8 +133,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // initialize servos
-        arm = hardwareMap.servo.get("armServo");
-        droneLauncher = hardwareMap.servo.get("droneLauncher");
+//        arm = hardwareMap.servo.get("armServo");
+//        droneLauncher = hardwareMap.servo.get("droneLauncher");
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();

@@ -7,14 +7,12 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.MovingStatistics;
-import com.qualcomm.robotcore.hardware.Servo;
-
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "drive")
-public class TeleOpPhase1 extends LinearOpMode {
+public class TeleOpPhase2 extends LinearOpMode {
     // "Exponentially weighted moving average". This class can be used to create ramping for translations and heading.
     // Essentially, the EWMA function creates returns an exponential curve given an jump
     // Currently, we are using EWMA for our translation ramping.
@@ -55,6 +53,9 @@ public class TeleOpPhase1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        // Hardware map
+        DcMotor liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
@@ -70,7 +71,7 @@ public class TeleOpPhase1 extends LinearOpMode {
 
         while (!isStopRequested()) {
 
-            double turnCommand = gamepad1.right_stick_x;
+            double turnCommand = -gamepad1.right_stick_x;
 
             // This if statement essentially toggles holdHeading if a button is pressed and no joystick motion is detected
             if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && Math.abs(turnCommand) <= 0.03 ) {
@@ -114,13 +115,30 @@ public class TeleOpPhase1 extends LinearOpMode {
 
             drive.update();
 
+            // Arm stuff beyond this point:
+            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            if (gamepad1.dpad_up || gamepad1.dpad_down) {
+                liftMotor.setPower(0.7);
+            } else {
+                liftMotor.setPower(0);
+            }
+
+            if (gamepad1.dpad_up) {
+                liftMotor.setDirection(DcMotor.Direction.FORWARD);
+            } else if (gamepad1.dpad_down) {
+                liftMotor.setDirection(DcMotor.Direction.REVERSE);
+            }
+
+
             // Here were any values that need to be broadcast on the drive station are declare
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("headingToHold", Math.toDegrees(headingToHold.getHeading()));
             telemetry.addData("isHolding", isHolding);
-            telemetry.addData("joystick", gamepad1.right_stick_x);
+            telemetry.addData("joystick", -gamepad1.right_stick_x);
             telemetry.update();
         }
     }
