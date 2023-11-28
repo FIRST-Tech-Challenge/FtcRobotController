@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 public class TeamPropOpMode extends LinearOpMode {
-    TeamProp teamProp = new TeamProp();
+    TeamPropDetection teamPropDetection = new TeamPropDetection();
     @Override
     public void runOpMode() {
 
-        teamProp.Setup(hardwareMap, telemetry);
+        teamPropDetection.Setup(hardwareMap, telemetry);
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -21,7 +21,7 @@ public class TeamPropOpMode extends LinearOpMode {
         while (!isStarted() && !isStopRequested())
         {
 
-            teamProp.GetPropLocation();
+            teamPropDetection.GetPropLocation();
         }
 
 

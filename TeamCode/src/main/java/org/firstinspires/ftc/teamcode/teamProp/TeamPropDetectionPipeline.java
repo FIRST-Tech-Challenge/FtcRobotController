@@ -22,30 +22,23 @@
 package org.firstinspires.ftc.teamcode.teamProp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
-import org.opencv.core.Point3;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.apriltag.AprilTagDetectorJNI;
-import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class TeamPropPipeline extends OpenCvPipeline
+class TeamPropDetectionPipeline extends OpenCvPipeline
 {
     private Mat currentImage = new Mat();
     // Matrices for OpenCv
@@ -88,7 +81,7 @@ class TeamPropPipeline extends OpenCvPipeline
     // Blacken out the top of the image, because the team prop can only be in the bottom half
     static final int Y_BLACK_COORDINATE = 200;
 
-    public TeamPropPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
+    public TeamPropDetectionPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
     {
         this.fx = fx;
         this.fy = fy;

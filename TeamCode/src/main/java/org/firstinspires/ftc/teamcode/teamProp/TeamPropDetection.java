@@ -33,9 +33,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Objects;
 
-public class TeamProp {
+public class TeamPropDetection {
     OpenCvCamera camera;
-    TeamPropPipeline teamPropPipeline;
+    TeamPropDetectionPipeline teamPropDetectionPipeline;
 
     static final int CAMERA_WIDTH = 800;
     static final int CAMERA_HEIGHT = 600;
@@ -71,15 +71,15 @@ public class TeamProp {
 
 
     public propLocation GetPropLocation() {
-        telemetry.addLine("X Position is:" + teamPropPipeline.getLatestPosition().x + "Y Position is:" + teamPropPipeline.getLatestPosition().y);
+        telemetry.addLine("X Position is:" + teamPropDetectionPipeline.getLatestPosition().x + "Y Position is:" + teamPropDetectionPipeline.getLatestPosition().y);
 
-        if (Objects.equals(teamPropPipeline.getLatestPosition(), ORIGIN)){
+        if (Objects.equals(teamPropDetectionPipeline.getLatestPosition(), ORIGIN)){
             return propLocation.NULL;
         }
-        if (teamPropPipeline.getLatestPosition().x < LEFT_BOUNDING_BOX_X){
+        if (teamPropDetectionPipeline.getLatestPosition().x < LEFT_BOUNDING_BOX_X){
                 return propLocation.LEFT;
             }
-        if (teamPropPipeline.getLatestPosition().x > RIGHT_BOUNDING_BOX_X){
+        if (teamPropDetectionPipeline.getLatestPosition().x > RIGHT_BOUNDING_BOX_X){
                 return propLocation.RIGHT;
             }
         else {
@@ -93,9 +93,9 @@ public class TeamProp {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
-        teamPropPipeline = new TeamPropPipeline(fx, fy, cx, cy, telemetry);
+        teamPropDetectionPipeline = new TeamPropDetectionPipeline(fx, fy, cx, cy, telemetry);
 
-        camera.setPipeline(teamPropPipeline);
+        camera.setPipeline(teamPropDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

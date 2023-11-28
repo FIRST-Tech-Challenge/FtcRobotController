@@ -23,15 +23,15 @@ package org.firstinspires.ftc.teamcode.aprilTags;
 
 import android.annotation.SuppressLint;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -39,7 +39,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagDetectionInit extends LinearOpMode
+public class AprilTagDetection
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -62,38 +62,10 @@ public class AprilTagDetectionInit extends LinearOpMode
     double tagsize_meters = 0.051; // This is the Centerstage 2023-2024 standard april tag size on the backdrop
     private double z = 0.0;
     int numberOfZeroValuesSinceNonZero = 0;
+    private Telemetry telemetry;
 
-    @Override
-    public void runOpMode()
-    {
-        Setup();
-
-        telemetry.setMsTransmissionInterval(50);
-
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
-
-        while (!isStarted() && !isStopRequested()) {
-
-            telemetry.addLine("Value is:" + GetDistanceAwayFromTheBackdrop());
-            telemetry.update();
-
-            //Orientation rot = Orientation.getOrientation(currentDetections.get().pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-
-            // Debugging
-            /*if (!(currentDetections.isEmpty())) {
-                tagToTelemetry(currentDetections.get(0));
-                telemetry.update();
-            }*/
-        }
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
-    }
-
-    private double GetDistanceAwayFromTheBackdrop() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+    public double GetDistanceAwayFromTheBackdrop() {
+        ArrayList<org.openftc.apriltag.AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
         // Default is 0 if robot is too far to see
         double zNew = 0.0;
         numberOfZeroValuesSinceNonZero += 1;
@@ -101,7 +73,7 @@ public class AprilTagDetectionInit extends LinearOpMode
         // Calcaulate average distance to AprilTag
         if (!(currentDetections.isEmpty())) {
             numberOfZeroValuesSinceNonZero = 0;
-            for (AprilTagDetection aprilTag : currentDetections) {
+            for (org.openftc.apriltag.AprilTagDetection aprilTag : currentDetections) {
                 zNew += zPos(aprilTag);
             }
         zNew /= currentDetections.size();
@@ -114,7 +86,9 @@ public class AprilTagDetectionInit extends LinearOpMode
         return z;
     }
 
-    private void Setup() {
+    public void Setup(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //telemetry.addData("cameraMonitorViewId", cameraMonitorViewId);
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
@@ -138,7 +112,7 @@ public class AprilTagDetectionInit extends LinearOpMode
     }
 
     @SuppressLint("DefaultLocale")
-    void tagToTelemetry(AprilTagDetection detection)
+    void tagToTelemetry(org.openftc.apriltag.AprilTagDetection detection)
     {
         Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
 
@@ -153,15 +127,15 @@ public class AprilTagDetectionInit extends LinearOpMode
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
     }
 
-    public double xPos(AprilTagDetection detection) { return detection.pose.x ; }
-    public double yPos(AprilTagDetection detection) { return detection.pose.y ; }
-    public double zPos(AprilTagDetection detection) { return detection.pose.z ; }
+    public double xPos(org.openftc.apriltag.AprilTagDetection detection) { return detection.pose.x ; }
+    public double yPos(org.openftc.apriltag.AprilTagDetection detection) { return detection.pose.y ; }
+    public double zPos(org.openftc.apriltag.AprilTagDetection detection) { return detection.pose.z ; }
 
     Orientation rot;
 
-    public double yaw(AprilTagDetection detection) { return rot.firstAngle ; }
-    public double pitch(AprilTagDetection detection) { return rot.secondAngle ; }
-    public double roll(AprilTagDetection detection) { return rot.thirdAngle ; }
+    public double yaw(org.openftc.apriltag.AprilTagDetection detection) { return rot.firstAngle ; }
+    public double pitch(org.openftc.apriltag.AprilTagDetection detection) { return rot.secondAngle ; }
+    public double roll(org.openftc.apriltag.AprilTagDetection detection) { return rot.thirdAngle ; }
 
 
 

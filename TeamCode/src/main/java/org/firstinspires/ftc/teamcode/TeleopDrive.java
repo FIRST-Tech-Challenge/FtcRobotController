@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.aprilTags.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
@@ -12,12 +13,17 @@ public class TeleopDrive extends LinearOpMode {
     private SetDriveMotors setDriveMotorsObj;
 
     Robot robot;
+    AprilTagDetection aprilTagDetection;
 
     public void Setup(){
         TelemetryManager.setTelemetry(telemetry);
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
 
         robot = new Robot(hardwareMap, gamepad1, gamepad2);
+
+        aprilTagDetection = new AprilTagDetection();
+        aprilTagDetection.Setup(hardwareMap, telemetry);
+
         Robot.clawPitch.setPosition(Robot.clawPitchIntake);
         Robot.clawYaw.setPosition(Robot.clawYawIntake);
         Robot.clawGrip.setPosition(Robot.clawOpen);
@@ -46,10 +52,17 @@ public class TeleopDrive extends LinearOpMode {
             double vertical = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             boolean goFast = gamepad1.left_bumper;
+            boolean emergencyBrakeOverride = gamepad1.right_bumper;
 //            if (!drive.isBusy() || !atRest()) {
 //                setMotorsObj.driveCommands(hardwareMap, horizontal, vertical, turn, goFast);
 //            }
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast);
+
+            double distanceToWall = aprilTagDetection.GetDistanceAwayFromTheBackdrop();
+            if (emergencyBrakeOverride){
+                // A little bit of a monkey patch, but it works to override, because distance 0 corresponds to "too far to detect"
+                distanceToWall = 0;
+            }
+            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall);
 
 
             robot.update();
