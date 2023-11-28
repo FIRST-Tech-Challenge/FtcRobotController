@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -14,7 +15,8 @@ public class PlaceAndPark extends LinearOpMode {
     private DcMotor frontRight  = null;
     private DcMotor backLeft   = null;
     private DcMotor backRight   = null;
-
+    public Servo arm1 = null;
+    public Servo  claw = null;
     private ElapsedTime runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -28,7 +30,7 @@ public class PlaceAndPark extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.3;
+    static final double     DRIVE_SPEED             = 0.15;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -39,6 +41,8 @@ public class PlaceAndPark extends LinearOpMode {
         backLeft  = hardwareMap.get(DcMotor.class, "LB");
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
+        arm1  = hardwareMap.get(Servo.class, "Arm1");
+        claw = hardwareMap.get(Servo.class, "Claw");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -46,7 +50,8 @@ public class PlaceAndPark extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-
+        arm1.setDirection(Servo.Direction.REVERSE);
+        arm1.scaleRange(0,1);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -70,7 +75,10 @@ public class PlaceAndPark extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        arm1.setPosition(0.6);
+        claw.setPosition(-0.2);
+        sleep(2000);
+        encoderDrive(DRIVE_SPEED,  6,  6, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
