@@ -240,11 +240,11 @@ public class CASH2024Driver extends OpMode
                 RobotLog.i(String.format("In Lower."));
 //            AutoElevatorActive = true;
             } else if (mid_elevator == true) {
-                robot.setDesElevatorPosition_Teliop(1000);
+                robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_MID_POSITION);
                 RobotLog.i(String.format("In Middle"));
 //            AutoElevatorActive = true;
             } else if (high_elevator == true) {
-                robot.setDesElevatorPosition_Teliop(1900);
+                robot.setDesElevatorPosition_Teliop(robot.ELEVATOR_HIGH_POSITION);
                 RobotLog.i(String.format("In High"));
 //            AutoElevatorActive = true;
             }
