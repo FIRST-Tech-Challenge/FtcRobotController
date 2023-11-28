@@ -13,7 +13,7 @@ public class RFDualMotor extends RFMotor{
         super(p_motorName, p_resetPos);
         motor2 = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName2);
         motor2.setMotorEnable();
-        motor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     @Override

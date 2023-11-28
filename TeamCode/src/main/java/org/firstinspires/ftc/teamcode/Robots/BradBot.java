@@ -228,18 +228,25 @@ public class BradBot extends BasicRobot {
     }
   }
   public void followPPPath(Path p_path){
-    if (queuer.queue(false, path.equals(p_path) &&(path.isFinished() || path.timedOut()))) {
+    boolean equals = false;
+    if(path.size()>0){
+      equals = path.get(0).getPose().equals (p_path.get(0).getPose());
+    }
+    if (queuer.queue(false, equals && (((path.isFinished() || path.timedOut())) || currentPose.vec().
+            distTo(new Vector2d(path.get(path.size()-1).getPose().getX(), path.get(path.size()-1).getPose().getY()))< 3))) {
       if (!queuer.isExecuted()) {
         if(!p_path.equals(path))
           path=p_path;
         path.init();
       }
       double[] speeds =
-          path.loop(currentPose.getX(), currentPose.getY(), currentPose.getHeading());
+          path.loop(currentPose.getX(), currentPose.getY(), -currentPose.getHeading());
       packet.put("xSpeed", speeds[0]);
       packet.put("ySpeed", speeds[1]);
       packet.put("aSpeed", speeds[2]);
       packet.put("timedOUt", path.timedOut());
+      packet.put("isFinished", path.isFinished());
+      packet.put("equals", equals);
       roadrun.setDrivePower(new Pose2d(speeds[0], speeds[1], speeds[2]));
       }
   }
