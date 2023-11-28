@@ -181,7 +181,7 @@ public class HydraDrive {
             mOp.mDriveLogger.fltarget.set(FLmotTarget);
             mOp.mDriveLogger.frposition.set(FRmotPos);
             mOp.mDriveLogger.frtarget.set(FRmotTarget);
-            mOp.mDriveLogger.drMotPwr.set(mCurrentDrivePower);
+            mOp.mDriveLogger.drMotPwr.set(mCurrentDrivePower * 100);
             for (VoltageSensor battvolt : mOp.mHardwareMap.voltageSensor) {
                 // I assume it's the first battery voltage
                 mOp.mDriveLogger.battVoltage.set(battvolt.getVoltage());
