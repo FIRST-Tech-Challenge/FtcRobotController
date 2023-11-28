@@ -31,6 +31,9 @@ public class ElevatorControl {
     private double RAISE_LIMIT =2130;  // encoder value that is the highest we want the elevator to go.
     private double LOWER_LIMIT = 0;  // encoder value for the lowest we want the elevator to go.
 
+    private double RESET_BUCKET_POSITION_HIGH = 1200;
+    private double RESET_BUCKET_LOW = 660;
+
     //This is the area that we create the snubbing of the end of travel for the elevator.
     //Snubbing is slowing the motor close to the end of travel so that we don't slam the elevator to the ends.
     private double UPPERSNUB = 1840; // Encoder value when we slow the motor down when extending to max
@@ -39,7 +42,7 @@ public class ElevatorControl {
     private double LOWERSNUBFACTOR = 0.25;// The factor that we slow the command down by when retracting
 
     public int PIXLE_DELIVER_POSITION = 250;
-    public int MID_POSITION = 1000;
+    public int MID_POSITION = 660;
     public int HIGH_POSITION = 2000;
 
     //Schultz Additions
@@ -106,7 +109,11 @@ public class ElevatorControl {
 
     //This method is used to set the position of the elevator in auto mode.
     public void raiseLowerElevatorToPosition_AUTO(double cmd, int desiredPos) {
-        while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()) < desiredPos)) {
+        boolean extend = false;
+
+        while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()-desiredPos) > 5))
+        //while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()) < desiredPos))
+        {
             this.raiseLowerElevator_T(cmd);
             RobotLog.d(String.format("COMMAND: %.03f DESIRED POSITION :  %d ",cmd,desiredPos));
         }
@@ -144,11 +151,18 @@ public class ElevatorControl {
         //what the elevCmd needs to be to get to and hold to the desired position.
 
         int elevator_current_position = elevator_motor.getCurrentPosition();
-        double minCmd=-1;
+        double minCmd=-.75;
         double maxCmd=1;
-        if (elevator_current_position < LOWERSNUB){
-            minCmd = -.2;
-            maxCmd = .2;
+        if (elevator_current_position < LOWERSNUB  && hold_position_setpoint == 0){
+            minCmd = -LOWERSNUBFACTOR;
+            maxCmd = 1.0;
+        }
+
+
+        if (hold_position_setpoint == 0 &&
+                bucket.getPosition() < 10  &&
+                elevator_current_position >= RESET_BUCKET_POSITION_HIGH){
+            reset_pixle_bucket();
         }
 
         double elevCmd = pos_pid.update(
@@ -177,7 +191,7 @@ public class ElevatorControl {
     }
     //Reset_bucket - returns the bucket to position to receive another pixle
     public void reset_pixle_bucket() {
-        bucket.setPosition(.98);
+        bucket.setPosition(.97);
     }
 
 
