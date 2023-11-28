@@ -34,7 +34,7 @@ public class Lift extends RFDualMotor {
   /** Constructor */
   public Lift() {
     super("rightLiftMotor", "leftLiftMotor", !isTeleop);
-    super.setDirection(DcMotorSimple.Direction.REVERSE);
+    super.setDirection(DcMotorSimple.Direction.FORWARD);
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     super.setTarget(0);

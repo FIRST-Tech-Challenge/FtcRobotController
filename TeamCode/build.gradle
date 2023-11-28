@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.10'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'org.openftc:apriltag:2.0.0'
+    implementation 'org.ftclib.ftclib:core:2.1.1'
 }
 repositories {
     // Add this line
@@ -48,4 +49,5 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
+    mavenCentral()
 }
