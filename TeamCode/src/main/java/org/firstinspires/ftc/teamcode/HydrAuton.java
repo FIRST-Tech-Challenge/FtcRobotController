@@ -83,6 +83,11 @@ public class HydrAuton extends LinearOpMode {
         for (LynxModule mod : hubs) {
             mod.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+        while (!ObjDet.CameraIsReady()) {
+            if (isStopRequested()) {
+                break;
+            }
+        }
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION

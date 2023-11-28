@@ -214,6 +214,15 @@ public class HydraObjectDetect {
         }
     }
 
+    public boolean CameraIsReady() {
+        switch (myVisionPortal.getCameraState()) {
+            case STREAMING:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public void SetAprilDetectEnabled(boolean enabled) {
         myVisionPortal.setProcessorEnabled(mAprilTagProcessor, enabled);
         if (!enabled && mOp.mObjLogger != null) {
