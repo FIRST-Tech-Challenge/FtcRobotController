@@ -129,7 +129,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                     robot.dump_pixle();
                     sleep(1000);
                     robot.reset_pixle_bucket();
-                    robot.raiseElevatorToPosition_Autonomous(.5, 0);
+                    robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
                 robot.moveRobotAuto(robot.LEFT, 0.5, 15);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
@@ -163,7 +163,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                     robot.dump_pixle();
                     sleep(1000);
                     robot.reset_pixle_bucket();
-                    robot.raiseElevatorToPosition_Autonomous(.5, 0);
+                    robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
 
                 robot.moveRobotAuto(robot.LEFT, 0.3, 15);
@@ -190,7 +190,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                 robot.dump_pixle();
                 sleep(1000);
                 robot.reset_pixle_bucket();
-                robot.raiseElevatorToPosition_Autonomous(.5, 0);
+                robot.raiseElevatorToPosition_Autonomous(-.5, 0);
             }
 
             robot.moveRobotAuto(robot.LEFT, 0.3, 15);
