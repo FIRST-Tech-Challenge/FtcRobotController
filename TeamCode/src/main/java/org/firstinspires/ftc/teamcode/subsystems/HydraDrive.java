@@ -40,17 +40,16 @@ public class HydraDrive {
         mMotDrFrRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgFrRt);
         mMotDrBkLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgBkLt);
         mMotDrBkRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgBkRt);
-        // Grab the PID coefficients so we can play with them
-        PIDFCoefficients pid = mMotDrFrLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-        mOp.mTelemetry.addData("FrLft PID", pid.toString());
-        pid = mMotDrFrRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-        mOp.mTelemetry.addData("FrRt PID", pid.toString());
-        pid = mMotDrBkLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-        mOp.mTelemetry.addData("BkLft PID", pid.toString());
-        pid = mMotDrBkRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-        mOp.mTelemetry.addData("BkRt PID", pid.toString());
         if (false) {
             // todo try setting new PID values
+            PIDFCoefficients pid = mMotDrFrLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            mOp.mTelemetry.addData("FrLft PID", pid.toString());
+            pid = mMotDrFrRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            mOp.mTelemetry.addData("FrRt PID", pid.toString());
+            pid = mMotDrBkLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            mOp.mTelemetry.addData("BkLft PID", pid.toString());
+            pid = mMotDrBkRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            mOp.mTelemetry.addData("BkRt PID", pid.toString());
             PIDFCoefficients newPIDF = new PIDFCoefficients(pid.p, pid.i, pid.d, pid.f, MotorControlAlgorithm.PIDF);
             mMotDrBkLt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
             mMotDrBkRt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
