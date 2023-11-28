@@ -122,10 +122,10 @@ public class HydraDrive {
         } else {
             mCurrentDriveMaxPower = cDriveNormal;
         }
-        // Set power
-        SetAllMotorPower(mCurrentDrivePower);
         // Run to position
         SetAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Set power
+        SetAllMotorPower(mCurrentDrivePower);
     }
 
     /**
