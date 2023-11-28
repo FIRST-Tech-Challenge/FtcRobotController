@@ -57,7 +57,7 @@ public class HydraObjectDetect {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        mAprilTagProcessor.setDecimation(2);
+        mAprilTagProcessor.setDecimation(3);
         /*
          * Create the vision portal that handles all of the processing
          */
