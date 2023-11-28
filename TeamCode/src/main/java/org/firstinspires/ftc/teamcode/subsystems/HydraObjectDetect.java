@@ -142,7 +142,10 @@ public class HydraObjectDetect {
     }
 
     public HydraAprilTagPose FindAprilTag(HydraObjectLocations objLocToFind) {
-        List<AprilTagDetection> aprilTagDetections = mAprilTagProcessor.getDetections();
+        List<AprilTagDetection> aprilTagDetections = mAprilTagProcessor.getFreshDetections();
+        if (aprilTagDetections == null) {
+            return null;
+        }
         VisionPortal.CameraState camState = myVisionPortal.getCameraState();
         mOp.mTelemetry.addData("Camera State", camState);
         if (mOp.mObjLogger != null) {
