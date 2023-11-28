@@ -25,6 +25,10 @@ public class Movement {
     private DcMotor lbDrive;
     private DcMotor rbDrive;
     private IMU imu;
+
+    // Tracks if it's quicker to turn right or left
+    double turnError = 0;
+
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
@@ -170,39 +174,54 @@ public class Movement {
      * turns the robot in place a distance in degrees
      * @param degrees - the distance of the rotation in degrees
      */
-    public void Rotate(int degrees){
+    public void Rotate(double degrees){
         double currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        int stepSize = 500;
 
-        // Loop through these movements until the robot is at the correct degrees
-        while (abs(currentDirection - degrees) > 5){
+        turnError = degrees + 5; // This works starting with +5 degrees (possibly inertia)
+
+        // Closed loop turn.  Stay in the while loop until the desired bering is acheived.
+        while (abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) < 2){
+            // Through measurement, Gge takes 1500 ticks to complete a full rotation
+            // Set the initial stepSize to what we expect the rotation to need
+            int stepSize = (int) (turnError / 360 * 1500);
+
             // Move slowly and in increments
             // Move the right front motor forward
-            rfDrive.setTargetPosition(stepSize);
+            rfDrive.setTargetPosition(rfDrive.getCurrentPosition() + (stepSize * -1));
             // Move the left front motor backwards
-            lfDrive.setTargetPosition(stepSize * -1);
+            lfDrive.setTargetPosition(lfDrive.getCurrentPosition() + (stepSize));
             // Move the right back motor forward
-            rbDrive.setTargetPosition(stepSize);
+            rbDrive.setTargetPosition(rbDrive.getCurrentPosition() + (stepSize * -1));
             // Move the left back motor backward
-            lbDrive.setTargetPosition(stepSize * -1);
+            lbDrive.setTargetPosition(lbDrive.getCurrentPosition() + (stepSize));
 
-            // Slow the speed of the motors as the robot reaches its position
-            if (abs(currentDirection - degrees) < 5){
-                stepSize = 100;
-            } else if (abs(currentDirection - degrees) < 10) {
-                stepSize = 250;
-            }
-
-            lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lfDrive.setPower(0.5);
+            lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             rfDrive.setPower(0.5);
-            lbDrive.setPower(0.5);
+            lfDrive.setPower(0.5);
             rbDrive.setPower(0.5);
+            lbDrive.setPower(0.5);
 
             currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            turnError = degrees - currentDirection;
         }
+    }
+
+    /**
+     * Calculates the turn error and contains it within 180 and -180
+     * @param desiredDirection - which direction you want to go to
+     * @param currentDirection - your current direction
+     */
+    public double CalcTurnError(double desiredDirection, double currentDirection){
+        turnError = desiredDirection - currentDirection;
+        if (turnError < -180) {
+            turnError = turnError + 360;
+        } else if (turnError > 180) {
+            turnError = turnError - 360;
+        }
+        return turnError;
     }
 }

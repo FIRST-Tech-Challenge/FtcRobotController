@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -229,47 +231,49 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Motor is 28 ticks per revolution
             // Gear Ratio is 12:1
             // Wheel diameter is 100mm
-            double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
-            /*// move forward 2 inches
+            /*double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
+            // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94)); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
             moveTo.Left((int)((9 * ticksPerInch)* 1.04)); // Calculated ticks by distance * 104% (from last year)
-            // move forward 13 inches
-            moveTo.Forward((int)((13 * ticksPerInch) * 0.94)); // Calculated ticks by distance * 94% (from last year)
+            // move forward 11 inches
+            moveTo.Forward((int)((11 * ticksPerInch) * 0.94)); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
+            sleep (500);
             // Open the claw
             intake.ClawOpen();
             // Move the claw up
             intake.FlipUp();
-            // Add telemetry
 
              */
+
             moveTo.Rotate(90);
 
+            // Add telemetry
             telemetry.addData("run", state);
             telemetry.update();
 
 
                 state = 1;
-            } else if (gamepieceLocation == "center" && state == 0) {
+        } else if (gamepieceLocation == "center" && state == 0) {
 
 
                 state = 2;
-            }
-
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
-            telemetry.addData("Target Position", leftFrontDrive.getTargetPosition());
-            telemetry.addData("Left Front Pos", leftFrontDrive.getCurrentPosition());
-            telemetry.addData("Right Front Pos", rightFrontDrive.getCurrentPosition());
-            telemetry.addData("Left Back Pos", leftBackDrive.getCurrentPosition());
-            telemetry.addData("Right Back Pos", rightBackDrive.getCurrentPosition());
-            telemetry.addData("state", state);
-            telemetry.addData("location", gamepieceLocation);
-            telemetry.update();
-
         }
-    }
+
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
+        telemetry.addData("Target Position", leftFrontDrive.getTargetPosition());
+        telemetry.addData("Left Front Pos", leftFrontDrive.getCurrentPosition());
+        telemetry.addData("Right Front Pos", rightFrontDrive.getCurrentPosition());
+        telemetry.addData("Left Back Pos", leftBackDrive.getCurrentPosition());
+        telemetry.addData("Right Back Pos", rightBackDrive.getCurrentPosition());
+        telemetry.addData("state", state);
+        telemetry.addData("location", gamepieceLocation);
+        telemetry.update();
+
+
+    }}

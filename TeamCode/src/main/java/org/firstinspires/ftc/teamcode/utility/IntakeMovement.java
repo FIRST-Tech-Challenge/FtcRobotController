@@ -23,11 +23,11 @@ public class IntakeMovement {
     static final double LEFT_MIN_POS     =  0.6;     // Minimum rotational position of the left servo
     // Intake flip
     // The lower the int the higher the wrist goes
-    static final double FLIP_MAX_POS     =  1.00;     // Maximum rotational position of the wrist servo
+    static final double FLIP_MAX_POS     =  0.98;     // Maximum rotational position of the wrist servo
     static final double FLIP_MIN_POS     =  0.35;     // Was 0.35 Minimum rotational position of the wrist servo
 
     // Tracks the amount of time a servo moving into position will take
-    public double servoDelayTime = 1; // safety delay for servo move
+    public double servoDelayTime = 0.5; // safety delay for servo move
 
     private ElapsedTime servoRuntime = new ElapsedTime();
 
@@ -164,6 +164,31 @@ public class IntakeMovement {
             System.out.println(intakeFlip.getPosition());
         }
         */
+    }
+
+    /**
+     * A higher level "ease of use" fusion of several functions designed to let the
+     * driver open the claw, lower the claw, close the claw, flip the claw, drop a
+     * gamepiece and retun to the FLIP_MID_POS in a single step.
+     */
+    public void GrabAndStowPixel() {
+        intakeIsSafe = false;
+
+        double servoMoveEndTime = servoDelayTime + servoRuntime.time();
+        while (servoMoveEndTime >= servoRuntime.time()){
+            telemetry.addData("Running GrabAndSlowSequence...", FLIP_MIN_POS);
+            telemetry.update();
+            ClawOpen();
+            FlipDown();
+            sleep(500);
+            ClawClosed();
+            sleep(500);
+            FlipUp();
+            sleep(500);
+            ClawOpen();
+        }
+
+        intakeIsSafe = true;
     }
 
 }

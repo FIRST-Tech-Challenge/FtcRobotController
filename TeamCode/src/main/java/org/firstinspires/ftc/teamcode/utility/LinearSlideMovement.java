@@ -34,7 +34,7 @@ public class LinearSlideMovement {
 
     public void Movelinearslide(int ticks){
         intake.intakeIsSafe = false;
-        intake.FlipDown();
+        intake.ClawOpen();
         if (intake.setSafety() == true){
             leftLinearSlide.setTargetPosition(ticks);
             rightLinearSlide.setTargetPosition(ticks);

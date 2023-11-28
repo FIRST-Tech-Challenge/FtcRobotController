@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -183,7 +185,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Controls the intake
             if (gamepad1.a){
-                intake.ClawOpen();
+                intake.GrabAndStowPixel();  /// was intake.ClawOpen();
+                conveyor.setPosition(0);
+                SystemClock.sleep (1500);
+                conveyor.setPosition(0.5);
             } else if (gamepad1.b) {
                 intake.ClawClosed();
             } else if (gamepad1.y) {
@@ -191,7 +196,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             } else if (gamepad1.x) {
                 intake.FlipDown();
             }
-
 
             
             if(gamepad1.dpad_down){
@@ -291,6 +295,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Drive Power multiplier", powerFactor);
+            telemetry.addData("Left Back Ticks", leftBackDrive.getCurrentPosition());
             telemetry.update();
         }
     }}

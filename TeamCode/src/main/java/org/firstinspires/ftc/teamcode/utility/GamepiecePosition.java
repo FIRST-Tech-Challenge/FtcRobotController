@@ -10,9 +10,9 @@ public class GamepiecePosition {
 
     public String getPOS(){
         String location;
-        if (gamepieceLocation.x <60 && gamepieceLocation.x > 0 ){
+        if (gamepieceLocation.x <80 && gamepieceLocation.x > 0 ){
             location = "left";
-        } else if (gamepieceLocation.x >= 60) {
+        } else if (gamepieceLocation.x >= 80) {
             location = "center";
         }else{
             location = "right";
