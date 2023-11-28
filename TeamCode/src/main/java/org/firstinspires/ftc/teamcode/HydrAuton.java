@@ -24,6 +24,7 @@ import java.util.List;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends LinearOpMode {
+    protected final int mWaitTimeAtRigging = 13000;
     protected IMU imu;
     protected HydraArm Arm;
     protected HydraDrive Drive;
@@ -32,6 +33,7 @@ public class HydrAuton extends LinearOpMode {
     protected HydraObjectLocations ObjLoc;
     protected HydraObjectDetect ObjDet;
     protected ElapsedTime pixelDropTimer;
+    protected ElapsedTime opModeTimer;
     protected int autonState;
     protected String modelFilename = "Blue_Prop.tflite";
     protected String mOpModeName = "HydrAuton";
@@ -55,7 +57,7 @@ public class HydrAuton extends LinearOpMode {
         autonState = 0;
         ObjLoc = HydraObjectLocations.ObjLocUnknown;
         pixelDropTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         mDriveLogger = new HydraDriveDatalogger("drive-log-" + mOpModeName);
@@ -331,6 +333,9 @@ public class HydrAuton extends LinearOpMode {
         }
         switch (autonState) {
             case 200:
+                if (opModeTimer.milliseconds() < mWaitTimeAtRigging) {
+                    break;
+                }
                 switch (ObjLoc) {
                     // jump to the correct state based on the detected location
                     case ObjLocBlueLeftSpike:
