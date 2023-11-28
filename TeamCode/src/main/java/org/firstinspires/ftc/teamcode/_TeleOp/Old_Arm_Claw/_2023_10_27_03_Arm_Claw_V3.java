@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Developing_Code.Old_Arm_Claw;
+package org.firstinspires.ftc.teamcode._TeleOp.Old_Arm_Claw;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

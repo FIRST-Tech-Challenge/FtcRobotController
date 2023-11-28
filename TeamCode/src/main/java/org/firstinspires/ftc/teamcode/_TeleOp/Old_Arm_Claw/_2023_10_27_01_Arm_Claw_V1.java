@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Developing_Code.Old_Arm_Claw;
+package org.firstinspires.ftc.teamcode._TeleOp.Old_Arm_Claw;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V4 Arm Claw")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V1 Arm Claw")
 @Disabled
-public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
+public class _2023_10_27_01_Arm_Claw_V1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -24,7 +24,6 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
         Servo droneServo = hardwareMap.servo.get("drone");
         Servo clawLeft = hardwareMap.servo.get("clawLeft");
         Servo clawRight = hardwareMap.servo.get("clawRight");
-        Servo axle = hardwareMap.servo.get("axle");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -53,9 +52,6 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
 
         clawLeft.scaleRange(0, 1);
         clawRight.scaleRange(0, 1);
-        
-        axle.scaleRange(0, 1);
-        axle.setPosition(0.7);
 
         //clawRight.setPosition(0);
         //clawLeft.setPosition(0);
@@ -101,64 +97,39 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
             double liftPower = arm.getPower();
 
             if (gamepad1.right_trigger > 0) {
-                liftTargetPosition += 2.5;
+                liftTargetPosition += 5;
             } else if (gamepad1.left_trigger > 0) {
-                liftTargetPosition -= 2.5;
+                liftTargetPosition -= 5;
             }
-            if (liftTargetPosition > 700) {
-                liftTargetPosition = 695;
+            if (liftTargetPosition > 967) {
+                liftTargetPosition = 962;
             }
-            if (liftTargetPosition < 5) {
-                liftTargetPosition = 5;
+            if (liftTargetPosition < 0) {
+                liftTargetPosition = 0;
             }
 
             if (gamepad1.right_bumper) {
-                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 3) {
-                    liftTargetPosition = liftPos;
-                    arm.setTargetPosition(liftTargetPosition);
-                    arm.setPower(0.7);
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    sleep(15);
-                }
-
-                clawLeft.setPosition(openClaw);
-                clawRight.setPosition(openClaw);
-                
-                sleep(300);
-                axle.setPosition(0);
+                liftTargetPosition = 962;
             }
             if (gamepad1.left_bumper) {
-                liftTargetPosition = 10;
-                arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.05);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                
-                axle.setPosition(0.7);
+                liftTargetPosition = 0;
             }
 
-            if (arm.isBusy() == false) {
-                arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.7);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
+            arm.setTargetPosition(liftTargetPosition);
+            arm.setPower(1);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             double clawLeftTarget = 0;
+
+            //wrist code
 
             if (gamepad1.b) {
                 clawLeft.setPosition(closeClaw);
                 clawRight.setPosition(closeClaw);
-                axle.setPosition(0.7);
             }
-            if (gamepad1.a) {
+            if (gamepad1.y) {
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
-            }
-
-            if (gamepad1.dpad_up) {
-                axle.setPosition(0);
-            }
-            if (gamepad1.dpad_down) {
-                axle.setPosition(0.7);
             }
 
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
@@ -166,7 +137,7 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
 
             double droneServoPosition = droneServo.getPosition();
 
-            if (gamepad1.y) {
+            if (gamepad1.a) {
                 droneServo.setPosition(1);
                 sleep(1500);
                 droneServo.setPosition(0.85);
@@ -177,8 +148,7 @@ public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
 
             telemetry.addData("Claw Left Position: ", clawLeft.getPosition());
             telemetry.addData("Claw Right Position: ", clawRight.getPosition());
-
-            telemetry.addData("Axle Position:", axle.getPosition());
+            //telemetry.addData("Claw Target: ", claw);555 iirj dc
 
             telemetry.addData("Arm position: ", arm.getCurrentPosition());
             telemetry.addData("Arm power: ", liftPower);

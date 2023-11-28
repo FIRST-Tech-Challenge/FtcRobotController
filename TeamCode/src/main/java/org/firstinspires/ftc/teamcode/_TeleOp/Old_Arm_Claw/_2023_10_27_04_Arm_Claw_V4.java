@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.Developing_Code.Old_Arm_Claw;
+package org.firstinspires.ftc.teamcode._TeleOp.Old_Arm_Claw;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,8 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V7 Arm Claw + Telemetry")
-public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V4 Arm Claw")
+@Disabled
+public class _2023_10_27_04_Arm_Claw_V4 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -42,16 +44,18 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
 
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB backward
         imu.initialize(parameters);
         droneServo.scaleRange(0, 1);
+        droneServo.setPosition(0.85);
 
         clawLeft.scaleRange(0, 1);
         clawRight.scaleRange(0, 1);
         
         axle.scaleRange(0, 1);
+        axle.setPosition(0.7);
 
         //clawRight.setPosition(0);
         //clawLeft.setPosition(0);
@@ -61,11 +65,6 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
         double closeClaw = 0.2; //decrease to close more
 
         waitForStart();
-
-        axle.setPosition(0.8);
-        droneServo.setPosition(0.7);
-        clawLeft.setPosition(openClaw);
-        clawRight.setPosition(openClaw);
 
         while (opModeIsActive()) {
             //gamepad 1 - drive base
@@ -94,10 +93,10 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
             double frontRightPower = ((rotY - rotX - rx) / denominator);
             double backRightPower = ((rotY + rotX - rx) / denominator);
 
-            frontLeftMotor.setPower(frontLeftPower * 0.8);
-            backLeftMotor.setPower(backLeftPower * 0.8);
-            frontRightMotor.setPower(frontRightPower * 0.8);
-            backRightMotor.setPower(backRightPower * 0.8);
+            frontLeftMotor.setPower(frontLeftPower * 0.65);
+            backLeftMotor.setPower(backLeftPower * 0.65);
+            frontRightMotor.setPower(frontRightPower * 0.65);
+            backRightMotor.setPower(backRightPower * 0.65);
 
             double liftPower = arm.getPower();
 
@@ -114,14 +113,14 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                axle.setPosition(0.8);
-                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 4) {
+                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 3) {
                     liftTargetPosition = liftPos;
                     arm.setTargetPosition(liftTargetPosition);
                     arm.setPower(0.7);
                     arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    sleep(12);
+                    sleep(15);
                 }
+
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
                 
@@ -131,10 +130,10 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 liftTargetPosition = 10;
                 arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.07);
+                arm.setPower(0.05);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
-                axle.setPosition(0.8);
+                axle.setPosition(0.7);
             }
 
             if (arm.isBusy() == false) {
@@ -148,7 +147,7 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
             if (gamepad1.b) {
                 clawLeft.setPosition(closeClaw);
                 clawRight.setPosition(closeClaw);
-                axle.setPosition(0.8);
+                axle.setPosition(0.7);
             }
             if (gamepad1.a) {
                 clawLeft.setPosition(openClaw);
@@ -159,36 +158,7 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
                 axle.setPosition(0);
             }
             if (gamepad1.dpad_down) {
-                axle.setPosition(0.8);
-            }
-            if (gamepad1.dpad_left) {
-                axle.setPosition(0.8);
-                clawLeft.setPosition(openClaw);
-                clawRight.setPosition(openClaw);
-                sleep(200);
-
-                backLeftMotor.setPower(0.3);
-                backRightMotor.setPower(0.3);
-                frontLeftMotor.setPower(0.3);
-                frontRightMotor.setPower(0.3);
-                sleep(200);
-                backLeftMotor.setPower(0);
-                backRightMotor.setPower(0);
-                frontLeftMotor.setPower(0);
-                frontRightMotor.setPower(0);
-
-                clawLeft.setPosition(closeClaw);
-                clawRight.setPosition(closeClaw);
-
-                backLeftMotor.setPower(-0.3);
-                backRightMotor.setPower(-0.3);
-                frontLeftMotor.setPower(-0.3);
-                frontRightMotor.setPower(-0.3);
-                sleep(200);
-                backLeftMotor.setPower(0);
-                backRightMotor.setPower(0);
-                frontLeftMotor.setPower(0);
-                frontRightMotor.setPower(0);
+                axle.setPosition(0.7);
             }
 
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
@@ -199,12 +169,10 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
             if (gamepad1.y) {
                 droneServo.setPosition(1);
                 sleep(1500);
-                droneServo.setPosition(0.7);
+                droneServo.setPosition(0.85);
             }
 
             // ADDED CODE - sends info about current servo position to driver station
-            telemetry.addData("Bot Heading: ", botHeading);
-
             telemetry.addData("Drone Servo Position: ", droneServoPosition);
 
             telemetry.addData("Claw Left Position: ", clawLeft.getPosition());
