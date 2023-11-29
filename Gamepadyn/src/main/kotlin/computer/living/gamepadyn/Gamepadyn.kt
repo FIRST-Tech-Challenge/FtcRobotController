@@ -32,6 +32,7 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     @JvmField val useInputThread: Boolean = false,
     internal val actions: Map<T, ActionDescriptor?>
 ) {
+
     @JvmOverloads constructor(
         opMode: OpMode,
         useInputThread: Boolean = false,
@@ -42,10 +43,55 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     val lastUpdateTime: Double = 0.0
 
     internal fun update() {
-        for (player in arrayOf(player0, player1)) {
-            for (bind in player.configuration?.binds!!) {
-                bind.dataType
+        val players = arrayOf(player0, player1)
+        for (i in players.indices) {
+            val player = players[i]
+
+            val llgp = when (i) {
+                0 -> opMode.gamepad1
+                1 -> opMode.gamepad2
+                else -> { TODO("there are more than 2 gamepads somehow") }
             }
+
+            for (bind in player.configuration?.binds!!) {
+                val descriptor = actions[bind.targetAction]!!
+                val prev = player.statePrevious
+
+                val llstate: InputData = when (bind.input) {
+                    RawInput.FACE_DOWN          -> InputDataDigital(llgp.a)
+                    RawInput.FACE_A             -> InputDataDigital(llgp.a)
+                    RawInput.FACE_B             -> InputDataDigital(llgp.b)
+                    RawInput.FACE_RIGHT         -> InputDataDigital(llgp.b)
+                    RawInput.FACE_LEFT          -> InputDataDigital(llgp.x)
+                    RawInput.FACE_X             -> InputDataDigital(llgp.x)
+                    RawInput.FACE_UP            -> InputDataDigital(llgp.y)
+                    RawInput.FACE_Y             -> InputDataDigital(llgp.y)
+                    RawInput.FACE_CROSS         -> InputDataDigital(llgp.cross)
+                    RawInput.FACE_CIRCLE        -> InputDataDigital(llgp.circle)
+                    RawInput.FACE_SQUARE        -> InputDataDigital(llgp.square)
+                    RawInput.FACE_TRIANGLE      -> InputDataDigital(llgp.triangle)
+                    RawInput.BUMPER_LEFT        -> InputDataDigital(llgp.left_bumper)
+                    RawInput.BUMPER_RIGHT       -> InputDataDigital(llgp.right_bumper)
+                    RawInput.DPAD_UP            -> InputDataDigital(llgp.dpad_up)
+                    RawInput.DPAD_DOWN          -> InputDataDigital(llgp.dpad_down)
+                    RawInput.DPAD_LEFT          -> InputDataDigital(llgp.dpad_left)
+                    RawInput.DPAD_RIGHT         -> InputDataDigital(llgp.dpad_right)
+                    RawInput.STICK_LEFT_BUTTON  -> InputDataDigital(llgp.left_stick_button)
+                    RawInput.STICK_RIGHT_BUTTON -> InputDataDigital(llgp.right_stick_button)
+                    RawInput.STICK_LEFT         -> InputDataAnalog(-llgp.left_stick_x, -llgp.left_stick_y)
+                    RawInput.STICK_RIGHT        -> InputDataAnalog(-llgp.right_stick_x, -llgp.right_stick_y)
+                    RawInput.TRIGGER_LEFT       -> InputDataAnalog(llgp.left_trigger)
+                    RawInput.TRIGGER_RIGHT      -> InputDataAnalog(llgp.right_trigger)
+                }
+                val newData: InputData = bind.transform(llstate, descriptor)
+                player.state[bind.targetAction] = newData
+                // changes in state trigger events
+                if (player.statePrevious[bind.targetAction] != newData) {
+//                    @Suppress("UNCHECKED_CAST")
+                    (player.events[bind.targetAction] as? ActionEvent<InputData>)?.trigger(newData)
+                }
+            }
+            player.statePrevious = player.state.toMap()
         }
     }
 
