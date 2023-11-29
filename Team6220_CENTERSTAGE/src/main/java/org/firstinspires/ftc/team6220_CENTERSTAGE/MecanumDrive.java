@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -152,6 +153,7 @@ public final class MecanumDrive {
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
     public DcMotorEx intakeMotor;
+    public Servo droneServo;
 
     public final VoltageSensor voltageSensor;
 
@@ -243,6 +245,7 @@ public final class MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "motFR");
         if (!isDevBot) {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+            droneServo = hardwareMap.get(Servo.class, "droneServo");
         }
 
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -254,6 +257,11 @@ public final class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (!isDevBot) {
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        // preset servo positions
+        if(!isDevBot) {
+            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
         }
 
         // now has been enabled, encoders are goodge :D

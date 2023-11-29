@@ -16,6 +16,8 @@ public class Constants {
     public static final double TELEOP_MIN_HEADING_ACCURACY = 5.0; // degrees off from target
     public static final double SLOWMODE_MULTIPLIER = 0.3;
     public static final double INTAKE_POWER_MULTIPLIER = 0.8;
+    public static final double DRONE_SERVO_PRIMED_POS = 1;
+    public static final double DRONE_SERVO_LAUNCHING_POS = 0.3;
 
   
   

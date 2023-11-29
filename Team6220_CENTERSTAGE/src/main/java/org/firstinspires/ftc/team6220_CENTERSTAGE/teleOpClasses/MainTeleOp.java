@@ -16,9 +16,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
 @TeleOp(name="League1_TeleOp", group ="amogus")
-public class League1_TeleOp extends LinearOpMode {
+public class MainTeleOp extends LinearOpMode {
 
     // define states for turning, using slides, outtaking
+
+    // i dislike this strongly - gavin
 
     TurnStates curTurningState = TurnStates.TURNING_MANUAL;
     enum TurnStates {
@@ -168,6 +170,12 @@ public class League1_TeleOp extends LinearOpMode {
 
                 // apply clamped intakePower
                 drive.intakeMotor.setPower(Utilities.clamp(intakePower));
+
+                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.X)){
+                    drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+                }
             }
 
 
