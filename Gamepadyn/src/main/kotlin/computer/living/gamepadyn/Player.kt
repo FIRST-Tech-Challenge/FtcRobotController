@@ -5,16 +5,18 @@ package computer.living.gamepadyn
 import computer.living.gamepadyn.InputType.ANALOG
 import computer.living.gamepadyn.InputType.DIGITAL
 
-sealed class Player<T: Enum<T>> private constructor(
-    internal val parent: Gamepadyn<T>
+class Player<T: Enum<T>> internal constructor(
+    internal val parent: Gamepadyn<T>,
+    internal var rawGamepad: InputSystem.RawGamepad
 ) {
 
     /**
      * The state of the Player at the end of the last update.
      */
     internal var statePrevious: Map<T, InputData> = mapOf()
+
     /**
-     * The current state of the Player.
+     * The current state of every action tracked by the Player.
      */
     internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk

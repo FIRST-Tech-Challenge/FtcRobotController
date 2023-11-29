@@ -11,6 +11,7 @@ import computer.living.gamepadyn.Gamepadyn
 import computer.living.gamepadyn.InputData
 import computer.living.gamepadyn.InputType
 import computer.living.gamepadyn.RawInput
+import computer.living.gamepadyn.ftc.InputSystemFtc
 import org.firstinspires.ftc.teamcode.KtGamepadynImpl.TestAction.MOVEMENT
 import org.firstinspires.ftc.teamcode.KtGamepadynImpl.TestAction.ROTATION
 import org.firstinspires.ftc.teamcode.KtGamepadynImpl.TestAction.CLAW
@@ -37,7 +38,7 @@ class KtGamepadynImpl : OpMode() {
     private var useBotRelativity: Boolean = false
 
     override fun init() {
-        gamepadyn = Gamepadyn(this, false, testActionDescription)
+        gamepadyn = Gamepadyn(InputSystemFtc(this), false, testActionDescription)
 
         gamepadyn.p0.configuration = Configuration(
             ActionBind(RawInput.FACE_A, DEBUG_ACTION)

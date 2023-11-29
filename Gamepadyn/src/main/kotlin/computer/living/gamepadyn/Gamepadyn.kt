@@ -1,6 +1,5 @@
 package computer.living.gamepadyn
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import computer.living.gamepadyn.InputType.ANALOG
 import computer.living.gamepadyn.InputType.DIGITAL
 import kotlin.collections.toMap
@@ -30,61 +29,33 @@ typealias GAD = ActionDescriptor
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
-    internal val opMode: OpMode,
+    internal val inputSystem: InputSystem,
     @JvmField val useInputThread: Boolean = false,
     internal val actions: Map<T, ActionDescriptor?>
 ) {
 
     @JvmOverloads constructor(
-        opMode: OpMode,
+        inputSystem: InputSystem,
         useInputThread: Boolean = false,
         vararg actions: Pair<T, ActionDescriptor?>
-    ) : this(opMode, useInputThread, actions.toMap())
+    ) : this(inputSystem, useInputThread, actions.toMap())
 
     // for calculating delta time
     val lastUpdateTime: Double = 0.0
 
+    var players: ArrayList<Player<T>> = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+
     internal fun update() {
-        val players = arrayOf(player0, player1)
         for (i in players.indices) {
             val player = players[i]
-
-            val llgp = when (i) {
-                0 -> opMode.gamepad1
-                1 -> opMode.gamepad2
-                else -> { TODO("there are more than 2 gamepads somehow") }
-            }
-
-            for (bind in player.configuration?.binds!!) {
+            val config = player.configuration
+            if (config != null) for (bind in config.binds) {
                 val descriptor = actions[bind.targetAction]!!
 
-                val llstate: InputData = when (bind.input) {
-                    RawInput.FACE_DOWN          -> InputDataDigital(llgp.a)
-                    RawInput.FACE_A             -> InputDataDigital(llgp.a)
-                    RawInput.FACE_B             -> InputDataDigital(llgp.b)
-                    RawInput.FACE_RIGHT         -> InputDataDigital(llgp.b)
-                    RawInput.FACE_LEFT          -> InputDataDigital(llgp.x)
-                    RawInput.FACE_X             -> InputDataDigital(llgp.x)
-                    RawInput.FACE_UP            -> InputDataDigital(llgp.y)
-                    RawInput.FACE_Y             -> InputDataDigital(llgp.y)
-                    RawInput.FACE_CROSS         -> InputDataDigital(llgp.cross)
-                    RawInput.FACE_CIRCLE        -> InputDataDigital(llgp.circle)
-                    RawInput.FACE_SQUARE        -> InputDataDigital(llgp.square)
-                    RawInput.FACE_TRIANGLE      -> InputDataDigital(llgp.triangle)
-                    RawInput.BUMPER_LEFT        -> InputDataDigital(llgp.left_bumper)
-                    RawInput.BUMPER_RIGHT       -> InputDataDigital(llgp.right_bumper)
-                    RawInput.DPAD_UP            -> InputDataDigital(llgp.dpad_up)
-                    RawInput.DPAD_DOWN          -> InputDataDigital(llgp.dpad_down)
-                    RawInput.DPAD_LEFT          -> InputDataDigital(llgp.dpad_left)
-                    RawInput.DPAD_RIGHT         -> InputDataDigital(llgp.dpad_right)
-                    RawInput.STICK_LEFT_BUTTON  -> InputDataDigital(llgp.left_stick_button)
-                    RawInput.STICK_RIGHT_BUTTON -> InputDataDigital(llgp.right_stick_button)
-                    RawInput.STICK_LEFT         -> InputDataAnalog(-llgp.left_stick_x, -llgp.left_stick_y)
-                    RawInput.STICK_RIGHT        -> InputDataAnalog(-llgp.right_stick_x, -llgp.right_stick_y)
-                    RawInput.TRIGGER_LEFT       -> InputDataAnalog(llgp.left_trigger)
-                    RawInput.TRIGGER_RIGHT      -> InputDataAnalog(llgp.right_trigger)
-                }
+                val llstate: InputData = inputSystem.getGamepads()[i].getState(bind.input)
+
                 val newData: InputData = bind.transform(llstate, descriptor)
+
                 if (newData.type != descriptor.type) throw Exception("Mismatched transformation result (expected ${descriptor.type.name.lowercase()}, got ${newData.type.name.lowercase()})")
                 player.state[bind.targetAction] = newData
                 // changes in state trigger events
@@ -122,23 +93,8 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     //   1: pigs will fly
     //   2: this code will need to be rewritten
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    internal lateinit var player0: Player<T>
-    @Suppress("MemberVisibilityCanBePrivate")
-    internal lateinit var player1: Player<T>
-
     // TODO: multithread input (remove this line)
     init { if (useInputThread) throw Exception("Gamepadyn has no multithreading implementation yet!") }
-
-    /**
-     * Alias for Player 0
-     */
-    val p0: Player<T> = player0 // getPlayer(0)!!
-
-    /**
-     * Alias for Player 1
-     */
-    val p1: Player<T> = player1// getPlayer(1)!!
 
     /**
      * Returns a reference to the player (virtual device controlled by one person) at the specified index, returning null if
@@ -147,10 +103,6 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     @Suppress("unused")
     fun getPlayer(@PositiveOrZero i: Int): Player<T>? {
         assert (i >= 0)
-        return when (i) {
-            0 -> player0
-            1 -> player1
-            else -> null
-        }
+        return players.getOrNull(i)
     }
 }

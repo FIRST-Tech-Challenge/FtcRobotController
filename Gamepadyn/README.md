@@ -10,8 +10,6 @@ TODO: add real documentation
 
 ## Generic Terminology
 
-- FTC = First Tech Challenge
-- FTC &lt;something&gt; class = A Java class from the FTC SDK
 - Gamepad = A "video game controller" (you know what that is)
 - Input device = A source of raw input, always (for now) a gamepad
 - Analog input = An input represented as a number or a set of numbers 
@@ -19,18 +17,17 @@ TODO: add real documentation
 
 ## Architecture
 
-### Gamepadyn (manager)
+### Gamepadyn
 
-NOTE: maybe consider renaming the class to "Manager"? it makes more sense from a high-level standpoint.
+TODO: maybe consider renaming the class to "Manager"? it makes more sense from a high-level standpoint.
 
 To start using Gamepadyn, create an instance of the Gamepadyn class.
 You should probably store the instance as a member of the OpMode/superclass using it,
 but we're not stopping you from doing something different.
 
-### Actions
+- An Action is something your robot can do.
 
-An Action is something your robot can do.
-This is broad and ambiguous on purpose, as to afford more flexibility for FTC developers.
+This is broad and ambiguous on purpose, as to afford more flexibility for developers.
 Here's an example of what your actions could look like:
 
 ```kotlin
@@ -42,21 +39,12 @@ enum class TestAction {
 }
 ```
 
-### Configurations and Bindings
+- A Player is a physical controller that controls Actions using a Configuration.
+- A Configuration is a set of Bindings.
+- A Binding is a map between a raw gamepad input to an action/actions.
+  - A simple Binding is a good Binding- don't overcomplicate things. 
+  - Try to operate under the philosophy of "one button per action," because stacking multiple inputs for single actions may confuse the input handler.
 
-A Configuration is a set of Bindings.
-A Binding is a map between a raw gamepad input to an action/actions.
-A simple Binding is a good Binding- don't overcomplicate things.
-Try to operate under the philosophy of "one button per action,"
-as stacking multiple inputs for single actions may confuse the input handler.
-
-### Player
-
-The Player class is an abstraction of an FTC Gamepad class.
-It can reasonably be assumed that two players won't be using the same controller,
-so we operate under that.
-
-Each player instance holds a Configuration. Configurations can be used by multiple players, as they're really just data.
 
 ## Type Details
 
