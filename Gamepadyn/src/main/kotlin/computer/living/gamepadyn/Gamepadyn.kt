@@ -1,13 +1,15 @@
 package computer.living.gamepadyn
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import computer.living.gamepadyn.InputType.ANALOG
+import computer.living.gamepadyn.InputType.DIGITAL
 import kotlin.collections.toMap
 import javax.validation.constraints.PositiveOrZero
 
 /**
  * Description of an action. This typename is long; it is recommended to use the alias if you are using Kotlin, importable via `gamepadyn.GAD`.
  */
-data class ActionDescriptor @JvmOverloads constructor(val type: InputType = InputType.DIGITAL, val axis: Int = 0) {
+data class ActionDescriptor @JvmOverloads constructor(val type: InputType = DIGITAL, val axis: Int = 0) {
 //    init {
 //        // NOTE: runtime errors SUCK! ALL GAMEPADYN CODE WILL BE WRITTEN SO THAT AXIS IS IGNORED UNLESS THE ACTION TYPE IS ANALOG!
 //        //       HOWEVER, IF AXIS IS NOT 0 FOR A DIGITAL ACTION, THAT IS STILL MALFORMED! This is just for the sake of debugging!
@@ -55,7 +57,6 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
 
             for (bind in player.configuration?.binds!!) {
                 val descriptor = actions[bind.targetAction]!!
-                val prev = player.statePrevious
 
                 val llstate: InputData = when (bind.input) {
                     RawInput.FACE_DOWN          -> InputDataDigital(llgp.a)
@@ -84,11 +85,14 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
                     RawInput.TRIGGER_RIGHT      -> InputDataAnalog(llgp.right_trigger)
                 }
                 val newData: InputData = bind.transform(llstate, descriptor)
+                if (newData.type != descriptor.type) throw Exception("Mismatched transformation result (expected ${descriptor.type.name.lowercase()}, got ${newData.type.name.lowercase()})")
                 player.state[bind.targetAction] = newData
                 // changes in state trigger events
                 if (player.statePrevious[bind.targetAction] != newData) {
-//                    @Suppress("UNCHECKED_CAST")
-                    (player.events[bind.targetAction] as? ActionEvent<InputData>)?.trigger(newData)
+                    when (descriptor.type) {
+                        DIGITAL -> player.eventsDigital[bind.targetAction]?.trigger(newData as InputDataDigital)
+                        ANALOG -> player.eventsAnalog[bind.targetAction]?.trigger(newData as InputDataAnalog)
+                    }
                 }
             }
             player.statePrevious = player.state.toMap()

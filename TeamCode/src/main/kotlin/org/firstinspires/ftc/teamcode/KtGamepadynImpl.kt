@@ -48,9 +48,7 @@ class KtGamepadynImpl : OpMode() {
         super.start()
 
         gamepadyn.p0.getEventDigital(DEBUG_ACTION)!!.addListener {
-            if (it.digitalData) {
-                useBotRelativity = !useBotRelativity
-            }
+            if (it.digitalData) useBotRelativity = !useBotRelativity
         }
     }
 

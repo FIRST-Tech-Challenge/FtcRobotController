@@ -10,11 +10,11 @@ sealed class Player<T: Enum<T>> private constructor(
 ) {
 
     /**
-     * The last state of the Player
+     * The state of the Player at the end of the last update.
      */
     internal var statePrevious: Map<T, InputData> = mapOf()
     /**
-     * The current state of the Player
+     * The current state of the Player.
      */
     internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
@@ -24,13 +24,22 @@ sealed class Player<T: Enum<T>> private constructor(
         }
     }.toMutableMap()
 
-    // for some reason, association inherently applies site-varied type projections to ActionEvent's parameter. I don't know how to stop this.
-    internal val events: Map<T, ActionEvent<InputData>> = parent.actions.entries.associate {
-        when (it.value!!.type) {
-            ANALOG ->    (it.key to ActionEvent<InputDataAnalog>(ANALOG))
-            DIGITAL ->   (it.key to ActionEvent<InputDataDigital>(DIGITAL))
-        }
-    } as Map<T, ActionEvent<InputData>>
+    /**
+     * These two maps have to be separate due to Kotlin's rules on generics.
+     * This doesn't really affect the user, but here it means that you need to put a bit more work into type checking.
+     * In short, generics cannot be checked at runtime unless reified, but you can't reify class generic parameters.
+     * If we had 1 map with both analog and digital events, we would need to create a mechanism for type-checking at runtime.
+     * Previously, this came in the form of a "dataType" parameter on the ActionEvent. It no longer exists.
+     *
+     *
+     * As much as I'd like for us to have everything work perfectly at runtime and compile-time, we have to make compromises.
+     */
+
+    internal val eventsDigital: Map<T, ActionEvent<InputDataDigital>> = parent.actions.entries.filter { it.value!!.type == DIGITAL }
+        .associate { it.key to ActionEvent() }
+
+    internal val eventsAnalog: Map<T, ActionEvent<InputDataAnalog>> = parent.actions.entries.filter { it.value!!.type == ANALOG }
+        .associate { it.key to ActionEvent() }
 
     /**
      * The player's configuration.
@@ -41,24 +50,21 @@ sealed class Player<T: Enum<T>> private constructor(
             onConfigChanged();
         }
 
-    // look up "elvis operator kotlin"
-    fun getEventAnalog(action: T): ActionEvent<out InputDataAnalog>? {
-        val ev: ActionEvent<*> = events[action] ?: return null
-        val shouldBe = ev.type
-        val actuallyIs = parent.actions[action]!!.type
-        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
 
-        @Suppress("UNCHECKED_CAST")
-        return ev as? ActionEvent<out InputDataAnalog>
+    fun getEvent(action: T): ActionEvent<*>? {
+        val descriptor = parent.actions[action]
+        return if (descriptor == null) null; else when (descriptor.type) {
+                ANALOG -> eventsAnalog[action]
+                DIGITAL -> eventsDigital[action]
+        }
     }
-    fun getEventDigital(action: T): ActionEvent<out InputDataDigital>? {
-        val ev: ActionEvent<*> = events[action] ?: return null
-        val shouldBe = ev.type
-        val actuallyIs = parent.actions[action]!!.type
-        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
 
-        @Suppress("UNCHECKED_CAST")
-        return ev as? ActionEvent<out InputDataDigital>
+    // look up "elvis operator kotlin"
+    fun getEventAnalog(action: T): ActionEvent<InputDataAnalog>? {
+        return eventsAnalog[action]
+    }
+    fun getEventDigital(action: T): ActionEvent<InputDataDigital>? {
+        return eventsDigital[action]
     }
 
     /**

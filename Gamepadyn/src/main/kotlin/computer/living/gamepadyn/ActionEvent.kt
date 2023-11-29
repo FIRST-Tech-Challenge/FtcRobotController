@@ -3,7 +3,7 @@ package computer.living.gamepadyn
 /**
  * An instance of an Event represents *one event* to which listeners are added and called when the event is triggered.
  */
-class ActionEvent<T: InputData> internal constructor(val type: InputType) {
+class ActionEvent<T: InputData> internal constructor(/*val type: InputType*/) {
     private val listeners = mutableSetOf<((T) -> Unit)>();
 
     /**
