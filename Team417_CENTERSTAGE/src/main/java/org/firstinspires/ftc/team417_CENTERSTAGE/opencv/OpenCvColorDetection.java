@@ -48,7 +48,7 @@ import java.util.List;
  */
 
 public class OpenCvColorDetection {
-    OpenCvCamera robotCamera;
+    public OpenCvCamera robotCamera;
     /* Declare OpMode members. */
     public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
@@ -91,10 +91,12 @@ public class OpenCvColorDetection {
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
             public void onOpened() {
                 startStreaming();
             }
 
+            @Override
             public void onError(int errorCode) {
             }
         });

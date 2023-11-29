@@ -36,7 +36,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
     MecanumDrive drive;
-    
+
     public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
@@ -95,6 +95,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         drive.pose = poseAndAction.startPose;
         Actions.runBlocking(poseAndAction.action);
+
+        // Close cameras to avoid errors
+        myColorDetection.robotCamera.closeCameraDevice();
+        myAprilTagPoseEstimator.visionPortal.close();
     }
 
     public Action dropPixel() {

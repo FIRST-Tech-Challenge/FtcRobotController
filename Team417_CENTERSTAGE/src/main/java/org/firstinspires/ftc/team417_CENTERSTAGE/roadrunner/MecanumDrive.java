@@ -255,10 +255,17 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        if (isDevBot) {
+            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+            leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+            rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        } else {
+            leftFront = hardwareMap.get(DcMotorEx.class, "FLMotor");
+            leftBack = hardwareMap.get(DcMotorEx.class, "BLMotor");
+            rightBack = hardwareMap.get(DcMotorEx.class, "BRMotor");
+            rightFront = hardwareMap.get(DcMotorEx.class, "FRMotor");
+        }
 
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
@@ -484,11 +491,13 @@ public final class MecanumDrive {
 
         myAprilTagPoseEstimator.updatePoseEstimate();
 
-        System.out.println("Mecanum Drive: " + myAprilTagPoseEstimator.estimatePose() != null);
+        Pose2d poseEstimation = myAprilTagPoseEstimator.estimatePose();
 
-        if (myAprilTagPoseEstimator.estimatePose() != null && twistList.size() > 1) {
+        System.out.println("Mecanum Drive: " + poseEstimation != null);
 
-            pose = myAprilTagPoseEstimator.estimatePose();
+        if (poseEstimation != null && twistList.size() > 1) {
+
+            pose = poseEstimation;
 
             // Latency compensation code (add only when thoroughly tested)
             double currentTime = clock.milliseconds();

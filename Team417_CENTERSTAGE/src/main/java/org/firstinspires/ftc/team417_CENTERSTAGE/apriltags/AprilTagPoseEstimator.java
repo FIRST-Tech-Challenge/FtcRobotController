@@ -273,7 +273,7 @@ public class AprilTagPoseEstimator {
         }
 
         // Telemeters the current pose estimate
-        if (myOpMode != null) {
+        if (myOpMode != null && robotPoseEstimate != null) {
             myOpMode.telemetry.addLine(String.format("Robot XYθ %6.1f %6.1f %6.1f  (inch) (degrees)", robotPoseEstimate.x, robotPoseEstimate.y, Math.toDegrees(robotPoseEstimate.theta)));
 
             // Telemeters the pose info to FTC dashboard so that it draws the robot pose
@@ -306,6 +306,10 @@ public class AprilTagPoseEstimator {
     } // end method telemetryAprilTag()
 
     public Pose2d estimatePose() {
-        return new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta);
+        if (robotPoseEstimate != null) {
+            return new Pose2d(robotPoseEstimate.x, robotPoseEstimate.y, robotPoseEstimate.theta);
+        } else {
+            return null;
+        }
     }
 }

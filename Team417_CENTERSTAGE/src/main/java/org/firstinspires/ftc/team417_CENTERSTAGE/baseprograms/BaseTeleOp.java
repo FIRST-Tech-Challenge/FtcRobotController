@@ -60,6 +60,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
+
+        // Close camera to avoid errors
+        myAprilTagPoseEstimator.visionPortal.close();
     }
 
     public boolean sensitive = false;
