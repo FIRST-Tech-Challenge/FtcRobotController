@@ -19,7 +19,15 @@ public class Constants {
     public static final double DRONE_SERVO_PRIMED_POS = 1;
     public static final double DRONE_SERVO_LAUNCHING_POS = 0.3;
 
-  
+    public static final int[] SLIDE_POSITIONS =  {
+      0,
+      16,
+      32,
+      64,
+    };
+    public static final double SLIDE_RETURN_MOTOR_POWER = -0.05;
+    public static final double SLIDE_P_GAIN = 0.01;
+
   
     /* Constants used in AutoFramework */
 
