@@ -119,71 +119,50 @@ class AutonDriveFactory {
         TrajectoryActionBuilder build = this.drive.actionBuilder(startingPose);
 
         // drive backwards
-        build = build.lineToY(36 * invertSign);
+        build = build.lineToY(36 * invertSign)
+                     .endTrajectory();
 
         // purple pixel placement
-        build = build.endTrajectory();//temp
+        build = build.waitSeconds(1); // PLACEHOLDER
 
         // return to starting position while turning to face away from backdrop
-        //build = build.splineTo(new Vector2d(11.6, 61 * invertSign), Math.toRadians(0));
-        build = build.splineToSplineHeading(new Pose2d(11.6, 61 * invertSign, Math.toRadians(180)), Math.toRadians(90 * invertSign));
+        build = build.lineToY(55 * invertSign)
+                     .lineToYLinearHeading(59 * invertSign, Math.toRadians(180))
+                     .endTrajectory();
 
         // drive towards the backdrop
-        /*switch (startingPosition) {
-            case SHORT:
-                // drive backwards a little
-                build = build.
-                break;
+        if (startingPosition == StartingPosition.LONG) {
+            // wait
+            build = build.waitSeconds(1); // temp wait time
+        }
+        build = build.lineToX(20);
 
-            case LONG:
-                // wait some time
-
-                // drive backwards a lot
-                break;
-        }*/
-        build = build.splineToSplineHeading(new Pose2d(38, 61 * invertSign, Math.toRadians(180)), Math.toRadians(0));
-
-        // strafe to face backdrop
-
-        // drive forward to backdrop
+        // go to face backdrop
+        build = build.splineToLinearHeading(new Pose2d(48, 36 * invertSign, Math.toRadians(180)), Math.toRadians(0));
 
         // place yellow pixel
+        build = build.waitSeconds(1); // PLACEHOLDER
 
+        // drive in front of park location
         switch (parkLocation) {
             case CORNER_SIDE:
                 // strafe to corner side
+                build = build.setTangent(Math.toRadians(90 * invertSign))
+                             .lineToY(59 * invertSign);
                 break;
 
             case CENTER_FIELD_SIDE:
                 // strafe to center field side
+                build = build.setTangent(Math.toRadians(-90 * invertSign))
+                             .lineToY(12 * invertSign);
                 break;
         }
 
         // drive backwards into backstage
+        build = build.setTangent(Math.toRadians(0))
+                .lineToX(60);
 
-
-
-        /*
-        //this.drive.pose = AutoConstants.backBlue;
-
-        TrajectoryActionBuilder build = this.drive.actionBuilder(AutoConstants.backBlue);
-
-        //drive to spike mark position
-        build = build.lineToY(35);
-
-        //insert spike mark delivering code here
-
-        //move back and reverse
-        build = build.lineToY(45)
-                .setReversed(true);
-
-        //go to scoring area on backboard (change y value to go to different spikemark indicated spot things)
-        build = build.splineTo(new Vector2d(AutoConstants.backBoardDropoffX, AutoConstants.blueBackBoardDropoffY), 0);
-
-        //park
-        build = build.strafeTo(new Vector2d(AutoConstants.backBoardDropoffX, AutoConstants.parkingFarY))
-                .strafeTo(new Vector2d(AutoConstants.parkingX, AutoConstants.parkingFarY));
-        */
+        // finish build
         return build.build();
     }
 

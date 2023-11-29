@@ -12,5 +12,5 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.1'
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.2'
 }
