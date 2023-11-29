@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -154,6 +155,7 @@ public final class MecanumDrive {
     public DcMotorEx intakeMotor;
     public DcMotorEx slideMotor;
     public DcMotorEx returnMotor;
+    public Servo intakeServo;
     public Servo droneServo;
 
     public final VoltageSensor voltageSensor;
@@ -249,6 +251,7 @@ public final class MecanumDrive {
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
             droneServo = hardwareMap.get(Servo.class, "droneServo");
+            intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
         }
 
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
