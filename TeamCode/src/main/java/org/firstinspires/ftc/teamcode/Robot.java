@@ -66,7 +66,7 @@ public class Robot {
     double avgLeftY;
     double avgCenterY;
     double avgRightY;
-    boolean testingOnBert = true;
+    boolean testingOnBert = false;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
@@ -873,7 +873,6 @@ public class Robot {
         double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
         double horizontal5;
         double horizontal7;
-        boolean testingonBert = true;
 
         while (opMode.opModeIsActive()) {
             if (isRedAlliance) {
@@ -882,7 +881,7 @@ public class Robot {
                 polarity = 1;
             }
 
-            if (!testingonBert) {
+            if (!testingOnBert) {
                 setServoPosBlocking(clamp, 0.5);
                 setServoPosBlocking(hook, 0.5);
                 setServoPosBlocking(spikeServo, 0.5);
@@ -892,7 +891,7 @@ public class Robot {
             Log.d("vision", "moveToMarker: Pos " + markerPos);
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
 
-            if (!testingonBert) {
+            if (!testingOnBert) {
                 HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
                 VERTICAL_TOTAL = 68;
             } else {
@@ -915,7 +914,7 @@ public class Robot {
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
                 setHeading(45 * polarity, 0.25); //turn right
                 straightBlockingFixHeading(7, false, 0.25); //forward
-                if (!testingonBert) {
+                if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                 }
                 straightBlockingFixHeading(7, true, 0.7); //dropoff, back
@@ -946,7 +945,7 @@ public class Robot {
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
                 setHeading(0, 0.6);
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
-                if (!testingonBert) {
+                if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                 }
                 straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
