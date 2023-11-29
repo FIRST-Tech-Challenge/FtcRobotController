@@ -40,6 +40,8 @@ public class MiniPID{
 
 	private double setpointRange=0;
 
+	public double derivativeOfError = 0;
+
 	//**********************************
 	// Constructor functions
 	//**********************************
@@ -283,7 +285,12 @@ public class MiniPID{
 
 		// Calculate D Term
 		// Note, this is negative. This actually "slows" the system if it's doing
-		// the correct thing, and small values helps prevent output spikes and overshoot 
+		// the correct thing, and small values helps prevent output spikes and overshoot
+
+		//Added this to get access to dE for use elsewhere
+		derivativeOfError = actual - lastActual;
+		//
+
 		Doutput= -D*(actual-lastActual);
 		lastActual=actual;
 

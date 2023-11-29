@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import android.widget.Switch;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
@@ -67,7 +60,7 @@ public class DrivetrainSubsystem {
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //PIDs
-        drivePID = new MiniPID(Constants.driveP, Constants.driveI, Constants.driveD);
+        drivePID = new MiniPID(Constants.driveK, Constants.driveI, Constants.driveD);
         drivePID.setOutputLimits(-0.2, 0.2);
 
         turnPID = new MiniPID(Constants.turnP, Constants.turnI, Constants.turnD);

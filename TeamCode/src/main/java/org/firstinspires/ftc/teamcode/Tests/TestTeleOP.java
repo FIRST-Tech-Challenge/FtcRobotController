@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -59,12 +59,13 @@ public class TestTeleOP extends LinearOpMode {
         telemetry.update();
 
         //Initialize Subsystems
-        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
-                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
+        DrivetrainSubsystemReimplementationTest drivetrainSubsystem = new DrivetrainSubsystemReimplementationTest(
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
+                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
-                hardwareMap.get(IMU.class, "imu"));
+                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
+                hardwareMap.get(IMU.class, "imu"),
+                runtime, telemetry);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -73,7 +74,11 @@ public class TestTeleOP extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y / 2, gamepad1.left_stick_x / 2, gamepad1.right_stick_x / 2);
+            if (gamepad1.a) {
+                drivetrainSubsystem.resetGyro();
+            }
+
+            drivetrainSubsystem.driveManual(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -82,6 +87,7 @@ public class TestTeleOP extends LinearOpMode {
                     drivetrainSubsystem.getBackLeftPower(),
                     drivetrainSubsystem.getFrontRightPower(),
                     drivetrainSubsystem.getBackRightPower());
+            telemetry.addData("Angle", drivetrainSubsystem.getAngle());
             telemetry.update();
         }
     }

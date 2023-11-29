@@ -2,6 +2,24 @@ package org.firstinspires.ftc.teamcode.Utilities;
 
 public class Constants {
 
+    //JSON Config (Nonstatic, instance of Constants must be made)
+/*
+    JsonParser parser = new JsonParser();
+    Object configObject = parser.parse(new FileReader("Config.json"));
+    JSONObject config = (JSONObject) configObject;
+
+
+    public boolean driveModePID = config.getBoolean("DriveModePID");
+    public boolean unlockDriveSpeed = config.getBoolean("UnlockDriveSpeed");
+    public boolean radianTurning = config.getBoolean("RadianTurning");
+    public boolean relativeDirectionDrive = config.getBoolean("RelativeDirectionDrive");
+
+ */
+
+    public static boolean unlockDriveSpeed = false;
+    public static boolean radianTurning = false;
+    public static boolean fieldOrientation = true;
+
     //Hardware IDs
     public static final String backLeftDriveID = "backLeftDrive";
     public static final String backRightDriveID = "backRightDrive";
@@ -25,6 +43,7 @@ public class Constants {
 
     public static double launcherPower = 1.0;
 
+    public static double maxDrivePower = 0.5;
 
     //Drive Encoder/Position Values (FrontLeft Motor is Leader)
     public static final double  driveMotorCPR = 28;
@@ -69,7 +88,7 @@ public class Constants {
     public static double flywheelVelocity = 1;
 
     //PID Values
-    public static double driveP = 0.01;
+    public static double driveK = 0.01;
     public static double driveI = 0.0;
     public static double driveD = 0.0;
 
@@ -95,4 +114,12 @@ public class Constants {
 
     public static double spikeLeftCameraPosition = 426;
     public static double spikeRightCameraPosition = 853;
+/*
+    public Constants() throws FileNotFoundException, JSONException {
+        driveModePID = true;
+        unlockDriveSpeed = false;
+        radianTurning = false;
+        relativeDirectionDrive = false;
+    }
+ */
 }

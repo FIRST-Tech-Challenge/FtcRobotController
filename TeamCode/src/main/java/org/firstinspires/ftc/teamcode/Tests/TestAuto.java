@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -51,12 +51,13 @@ public class TestAuto extends LinearOpMode {
         telemetry.update();
 
         //Initialize Subsystems
-        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
-                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
+        DrivetrainSubsystemReimplementationTest drivetrainSubsystem = new DrivetrainSubsystemReimplementationTest(
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
+                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
-                hardwareMap.get(IMU.class, "imu"));
+                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
+                hardwareMap.get(IMU.class, "imu"),
+                runtime, telemetry);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -64,36 +65,21 @@ public class TestAuto extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
 
-        drivetrainSubsystem.autoDrive(12);
-        sleep(2000);
-        //drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 12);
-        //sleep(4000);
-        telemetry.addData("angle", drivetrainSubsystem.getAngle());
-        telemetry.update();
-        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
-        sleep(2000);
-        telemetry.addData("angle", drivetrainSubsystem.getAngle());
-        telemetry.update();
-        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
-        sleep(2000);
-        telemetry.addData("angle", drivetrainSubsystem.getAngle());
-        telemetry.update();
-        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 180);
-        sleep(2000);
-        telemetry.addData("angle", drivetrainSubsystem.getAngle());
-        telemetry.update();
-        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 540);
-
+        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystemReimplementationTest.Directions.FORWARD);
+        sleep(1000);
+        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystemReimplementationTest.Directions.RIGHT);
+        sleep(1000);
+        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystemReimplementationTest.Directions.LEFT);
+        sleep(1000);
+        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystemReimplementationTest.Directions.RIGHT);
+        sleep(1000);
+        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystemReimplementationTest.Directions.FORWARD);
+        sleep(1000);
+        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystemReimplementationTest.Directions.LEFT);
 
             // Show the elapsed game time and wheel power.
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Drive Motors", "frontLeft (%.2f), backLeft (%.2f), frontRight (%.2f), backRight (%.2f)",
-                    drivetrainSubsystem.getFrontLeftPower(),
-                    drivetrainSubsystem.getBackLeftPower(),
-                    drivetrainSubsystem.getFrontRightPower(),
-                    drivetrainSubsystem.getBackRightPower());
-            telemetry.update();
+
         }
 
     }
