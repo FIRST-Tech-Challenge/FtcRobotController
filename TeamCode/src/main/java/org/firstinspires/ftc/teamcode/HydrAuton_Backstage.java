@@ -66,10 +66,16 @@ public class HydrAuton_Backstage extends HydrAuton {
                                 break;
                         }
                         Drive.Start(0, dist * flip, 0);
-                        autonState += 501;
+                        autonState += 1;
                     }
                     break;
                 case 501:
+                    if (!Drive.Busy()) {
+                        Drive.Start(-14, 0, 0);
+                        autonState += 1;
+                    }
+                    break;
+                case 502:
                     if (!Drive.Busy()) {
                         autonState = 600;
                     }
