@@ -265,7 +265,6 @@ public class HydrAuton extends LinearOpMode {
             case 10:
                 // LEFT RIGGING RIGHT SPIKE
                 // RIGHT RIGGING LEFT SPIKE
-                // todo this is a 13 drive and -15 strafe in blue backstage blocks
                 Drive.Start(16, 13 * flip, 0);
                 autonState = 99;
                 break;
@@ -293,7 +292,6 @@ public class HydrAuton extends LinearOpMode {
             case 30:
                 // LEFT RIGGING LEFT SPIKE
                 // RIGHT RIGGING RIGHT SPIKE
-                // todo this is 28 and 3 for blue backstage
                 Drive.Start(30, 3 * flip, 0);
                 autonState += 1;
                 break;
@@ -333,9 +331,6 @@ public class HydrAuton extends LinearOpMode {
         }
         switch (autonState) {
             case 200:
-                if (opModeTimer.milliseconds() < mWaitTimeAtRigging) {
-                    break;
-                }
                 switch (ObjLoc) {
                     // jump to the correct state based on the detected location
                     case ObjLocBlueLeftSpike:
@@ -380,8 +375,7 @@ public class HydrAuton extends LinearOpMode {
             case 213:
                 // BLUE RIGHT
                 // RED LEFT
-                // todo this drive is 73 in blue wing blocks and 76 in red wing blocks
-                if (!Drive.Busy()) {
+                if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     Drive.Start(73, 0, 0);
                     autonState += 1;
                 }
@@ -389,7 +383,6 @@ public class HydrAuton extends LinearOpMode {
             case 214:
                 // BLUE RIGHT
                 // RED LEFT
-                // todo this strafe is 24 in blue wing blocks and 27 in red wing blocks
                 if (!Drive.Busy()) {
                     Drive.Start(0, -24 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToFront);
@@ -406,7 +399,7 @@ public class HydrAuton extends LinearOpMode {
                 break;
             case 221:
                 // CENTER
-                if (!Drive.Busy()) {
+                if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     Drive.Start(90, 0, 0);
                     autonState += 1;
                 }
@@ -431,7 +424,7 @@ public class HydrAuton extends LinearOpMode {
             case 231:
                 // BLUE LEFT
                 // RED RIGHT
-                if (!Drive.Busy()) {
+                if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     Drive.Start(76, 0, 0);
                     autonState += 1;
                 }
@@ -513,7 +506,6 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    // todo this was -22 for blue backstage
                     Drive.Start(-16, 0, 0);
                     autonState += 1;
                 }
@@ -522,7 +514,6 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    // todo negative or positive?
                     Drive.Start(0, -10 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
@@ -532,7 +523,6 @@ public class HydrAuton extends LinearOpMode {
             case 220:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    // todo this was 12 for blue backstage
                     Drive.Start(0, 10 * flip, 0);
                     autonState += 1;
                 }
@@ -550,7 +540,6 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE RIGHT SPIKE
                 // RED LEFT SPIKE
                 if (!Drive.Busy()) {
-                    // todo this was -31 for blue backstage
                     Drive.Start(-28, 0, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
