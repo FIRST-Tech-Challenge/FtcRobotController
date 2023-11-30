@@ -54,6 +54,8 @@ public class HydraArm {
         mMotUprArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mMotLwrArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mMotUprArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        mMotLwrArm.setTargetPosition(0);
+        mMotUprArm.setTargetPosition(0);
     }
 
     /**
