@@ -48,9 +48,9 @@ public class Hardware
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
         //odom
-        leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
-        rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
-        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+        leftOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
+        rightOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+        centerOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
     }
 
     //robot-oriented drive method
