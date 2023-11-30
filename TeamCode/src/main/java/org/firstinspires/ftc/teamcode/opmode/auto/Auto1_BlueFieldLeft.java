@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -46,6 +47,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
+import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -100,6 +102,8 @@ public class Auto1_BlueFieldLeft extends OpMode {
     Servo conveyor;
     private IMU imu;
 
+    static final int low_linearslide_ticks = 200; // Low position for the linear slides
+    static final int bottom_linearslide_ticks = 0; // Bottom position for the linear slides
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
@@ -108,6 +112,8 @@ public class Auto1_BlueFieldLeft extends OpMode {
     Movement moveTo;
 
     IntakeMovement intake;
+
+    LinearSlideMovement linearSlideMove;
 
     private String gamepieceLocation;
 
@@ -179,10 +185,10 @@ public class Auto1_BlueFieldLeft extends OpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(7, 0.1, 0.2, 8);
-        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(7, 0.1, 0.2, 8);
-        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(7, 0.1, 0.2, 8);
-        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(7, 0.1, 0.2, 8);
+        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
         // For Lift, PIDF values set to reduce jitter on high lift
         ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(7, 0.75, 0, 4);
         ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(7, 0.75, 0, 4);
@@ -202,9 +208,12 @@ public class Auto1_BlueFieldLeft extends OpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        intake = new IntakeMovement(rightClaw, leftClaw, wrist, telemetry);
-        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        intake = new IntakeMovement(rightClaw, leftClaw, wrist, telemetry);
+        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, telemetry);
+        linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         state = 0;
         //drive speed limiter
@@ -225,19 +234,18 @@ public class Auto1_BlueFieldLeft extends OpMode {
         //moveTo.Forward(200);
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        // Motor is 28 ticks per revolution
+        // Gear Ratio is 12:1
+        // Wheel diameter is 100mm
+        double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
         if (gamepieceLocation == "left" && state == 0){
-
-            // Motor is 28 ticks per revolution
-            // Gear Ratio is 12:1
-            // Wheel diameter is 100mm
-            /*double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
             // move forward 2 inches
-            moveTo.Forward((int)((2 * ticksPerInch) * 0.94)); // Calculated ticks by distance * 94% (from last year)
+            moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
-            moveTo.Left((int)((9 * ticksPerInch)* 1.04)); // Calculated ticks by distance * 104% (from last year)
-            // move forward 11 inches
-            moveTo.Forward((int)((11 * ticksPerInch) * 0.94)); // Calculated ticks by distance * 94% (from last year)
+            moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+            // move forward 12 inches
+            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
             sleep (500);
@@ -245,23 +253,119 @@ public class Auto1_BlueFieldLeft extends OpMode {
             intake.ClawOpen();
             // Move the claw up
             intake.FlipUp();
-
-             */
-
+            // Rotate 90 degrees
             moveTo.Rotate(90);
+            sleep(700);
+            // Backwards 18 inches
+            moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
+            // Left 6 inches
+            moveTo.Left((int)((6 * ticksPerInch) * 1.04), 0.5);
+            // Move backwards 10.5 inches
+            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);
+            // Move the linear slide to the low scoring position
+            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            // Moves the conveyor forward
+            conveyor.setPosition(0);
+            // Runs the conveyor for 4 seconds
+            sleep(4000);
+            // Stops the conveyor
+            conveyor.setPosition(0.5);
+            // Moves the linear slide to the bottom position
+            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            // Forward 12 inches
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
+            // Moves right 18 inches
+            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
+            // Backward 12 inches
+            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
+
+
 
             // Add telemetry
             telemetry.addData("run", state);
             telemetry.update();
 
 
-                state = 1;
+            state = 1;
         } else if (gamepieceLocation == "center" && state == 0) {
+            // move forward 18 inches
+            moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+            // Move the claw down
+            intake.FlipDown();
+            sleep (500);
+            // Move forward 4 inches
+            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
+            // Open the claw
+            intake.ClawOpen();
+            // Move the claw up
+            intake.FlipUp();
+            // Rotate 90 degrees
+            moveTo.Rotate(90);
+            sleep(700);
+            // Left 3 inches
+            moveTo.Left((int)((3 * ticksPerInch) * 0.94), 0.5);
+            // Backwards 36.5 inches
+            moveTo.Backwards((int)((36.5 * ticksPerInch) * 0.94), 0.25);
+            // Move the linear slide to the low scoring position
+            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            // Moves the conveyor forward
+            conveyor.setPosition(0);
+            // Runs the conveyor for 4 seconds
+            sleep(4000);
+            // Stops the conveyor
+            conveyor.setPosition(0.5);
+            // Moves the linear slide to the bottom position
+            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            // Forward 6 inches
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
+            // Moves right 26 inches
+            moveTo.Right((int)((26 * ticksPerInch) * 1.04), 0.5);
+            // Backward 6 inches
+            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
 
 
                 state = 2;
-        }
+        } else if (gamepieceLocation=="right"&& state == 0) {
+            // move forward 2 inches
+            moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+            // move sideways 9 inches
+            moveTo.Right((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+            // move forward 12 inches
+            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+            // Move the claw down
+            intake.FlipDown();
+            sleep (500);
+            // Open the claw
+            intake.ClawOpen();
+            // Move the claw up
+            intake.FlipUp();
+            // Rotate 90 degrees
+            moveTo.Rotate(90);
+            sleep(700);
+            // Backwards 18 inches
+            moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);// needs to go further
+            // Left 6 inches
+            moveTo.Left((int)((6 * ticksPerInch) * 1.04), 0.5);
+            // Move backwards 10.5 inches
+            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);// needs to go further
+            // Move the linear slide to the low scoring position
+            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            // Moves the conveyor forward
+            conveyor.setPosition(0);
+            // Runs the conveyor for 4 seconds
+            sleep(4000);
+            // Stops the conveyor
+            conveyor.setPosition(0.5);
+            // Moves the linear slide to the bottom position
+            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            // Forward 12 inches
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
+            // Moves right 18 inches
+            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
+            // Backward 12 inches
+            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
 
+        }
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());

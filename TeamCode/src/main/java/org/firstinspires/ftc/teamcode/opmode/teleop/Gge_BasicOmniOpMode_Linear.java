@@ -37,12 +37,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 
@@ -78,7 +80,7 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
-    static final int top_linearslide_ticks = 1800; //should be changed to 2000
+    static final int top_linearslide_ticks = 18250; //should be changed to 2000
 
     static final int mid_linearslide_ticks = 1000;
 
@@ -126,6 +128,8 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         conveyor = hardwareMap.get(Servo.class, "conveyor");
 
         imu = hardwareMap.get(IMU.class, "imu");
+
+
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -295,6 +299,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Drive Power multiplier", powerFactor);
+
             telemetry.addData("Left Back Ticks", leftBackDrive.getCurrentPosition());
             telemetry.update();
         }
