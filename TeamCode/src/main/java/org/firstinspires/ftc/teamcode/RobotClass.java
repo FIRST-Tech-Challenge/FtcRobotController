@@ -12,10 +12,22 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Thread.sleep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 public class RobotClass {
 
@@ -29,12 +41,17 @@ public class RobotClass {
     public DcMotor frontRight = null;
     public DcMotor backLeft = null;
     public DcMotor backRight = null;
+    public BNO055IMU imu = null;
+    public Orientation angles = null;
+
+    public AprilTagProcessor aprilTag;
+    public VisionPortal visionPortal;
 
     public RobotClass(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
-    public void init(HardwareMap ahsMap) {
+    public void init(HardwareMap ahsMap) throws InterruptedException {
         //assigning motor variables to configuration name
         frontLeft = ahsMap.get(DcMotor.class, "frontLeft");
         frontRight = ahsMap.get(DcMotor.class, "frontRight");
@@ -42,10 +59,44 @@ public class RobotClass {
         backRight = ahsMap.get(DcMotor.class, "backRight");
 
         //setting direction of motors
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        //setting zero power behavior to brake
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                ahsMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+
+
+        //initializing imu
+        // Set up the parameters with which we will use our IMU.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        //hardware mapping and initializing imu
+        imu = ahsMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        while(!imu.isGyroCalibrated()){
+            sleep(10);
+        }
+        myOpMode.telemetry.addData("Status", imu.isGyroCalibrated());
+        myOpMode.telemetry.update();
     }
 
     public void resetEncoders() {
@@ -90,7 +141,7 @@ public class RobotClass {
     //Moving using encoders
     public void move(double power, double cm) throws InterruptedException{
         //setting number of ticks per 10 cm to get number of ticks per cm
-        int ticksPer10cm = 0;
+        int ticksPer10cm = 64;
         int ticksPerCm = ticksPer10cm / 10;
         int target = (int) Math.round(cm * ticksPerCm);
 
@@ -98,16 +149,21 @@ public class RobotClass {
         resetEncoders();
 
         //setting motor mode
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //setting target position of motors
         frontLeft.setTargetPosition(target);
         frontRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
         backRight.setTargetPosition(target);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //waiting while the motors are busy
         while (frontLeft.isBusy()){
@@ -119,6 +175,103 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning(double targetAngle){
+    public void gyroTurning(double targetAngleDeg) throws InterruptedException{
+        boolean run = true;
+        while (run) {
+            angles = imu.getAngularOrientation();
+            //using gyro
+            if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                sleep(500);
+                if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+                    run = false;
+                    return;
+                }
+            } else if (angles.firstAngle >= targetAngleDeg) {
+                if (angles.firstAngle <= targetAngleDeg + 10) {
+                    frontLeft.setPower(0.15);
+                    frontRight.setPower(-0.15);
+                    backLeft.setPower(0.15);
+                    backRight.setPower(-0.15);
+                } else {
+                    frontLeft.setPower(0.25);
+                    frontRight.setPower(-0.25);
+                    backLeft.setPower(0.25);
+                    backRight.setPower(-0.25);
+                }
+            } else if (angles.firstAngle <= targetAngleDeg) {
+                if (angles.firstAngle >= targetAngleDeg - 10) {
+                    frontLeft.setPower(-0.15);
+                    frontRight.setPower(0.15);
+                    backLeft.setPower(-0.15);
+                    backRight.setPower(0.15);
+
+                } else {
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
+                }
+            }
+            stopMotors();
+        }
+    }
+
+    //strafing class with power and direction as parameters
+    public void strafing (String direction, double power){
+        if (direction == "left") {
+            frontLeft.setPower(-power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(-power);
+        } else if (direction == "right"){
+            frontLeft.setPower(power);
+            frontRight.setPower(-power);
+            backLeft.setPower(-power);
+            backRight.setPower(power);
+        } else {
+            myOpMode.telemetry.addData("Error", "Invalid direction");
+            myOpMode.telemetry.update();
+        }
+    }
+
+    public int getDetection(int tagID) {
+        //initiallzes current detection variable
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        //defines bounds of ROIs
+        int [] leftROI = new int[2];
+        int [] rightROI = new int[2];
+        int [] centerROI = new int[2];
+
+        leftROI[0] = 0;
+        leftROI[1] = 0;
+
+        rightROI[0] = 0;
+        rightROI[1] = 0;
+
+        centerROI[0] = 0;
+        centerROI[1] = 0;
+
+        //goes through a for loop of all detections and will search for the id 502.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.id == tagID) {
+                if((detection.ftcPose.x > leftROI[0]) ||(detection.ftcPose.x < leftROI[1])){
+                    return 1;
+                } else if ((detection.ftcPose.x > rightROI[0]) ||(detection.ftcPose.x < rightROI[1])){
+                    return 3;
+                } else if ((detection.ftcPose.x > centerROI[0]) ||(detection.ftcPose.x < centerROI[1])){
+                    return 2;
+                } else {
+                    return 4;
+                }
+            } else {
+                return 4;
+            }
+        }
+        return 4;
     }
 }
