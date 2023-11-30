@@ -1,6 +1,6 @@
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.*;
+import computer.living.gamepadyn.InputType.*
 
 enum class RawInput(val type: InputType, val axes: Int = 0) {
     FACE_DOWN           (DIGITAL), // Generic face button (= A)

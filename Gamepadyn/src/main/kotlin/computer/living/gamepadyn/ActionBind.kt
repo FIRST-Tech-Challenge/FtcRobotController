@@ -1,20 +1,11 @@
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.InputType.ANALOG
-import computer.living.gamepadyn.InputType.DIGITAL
-
+@Suppress("unused", "unused", "unused", "unused")
 open class ActionBind<T: Enum<T>>(val input: RawInput, internal val targetAction: T) {
 
     /**
-     * Performs a transformation on the input data. The output is validated at runtime (be careful!)
+     * Performs a transformation on the input data. The return value of this function
      */
-    open fun transform(data: InputData, targetDescriptor: ActionDescriptor): InputData {
-        return data
-    }
+    open fun transform(data: InputData, targetDescriptor: ActionDescriptor): InputData = data
 
-//    /**
-//     * Specialization functions.
-//     */
-//    open fun transformAnalog(input: RawInput, data: InputDataAnalog): InputData = transform(input, data)
-//    open fun transformDigital(input: RawInput, data: InputDataDigital): InputData = transform(input, data)
 }

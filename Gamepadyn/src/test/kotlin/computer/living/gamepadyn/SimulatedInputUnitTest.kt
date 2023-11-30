@@ -20,16 +20,15 @@ class SimulatedInputUnitTest {
         val sysTest = InputSystemTesting()
         InputSystemTesting.manipulableState = false
 
-        val gamepadyn = Gamepadyn(sysTest, false, actions)
+        val gamepadyn = Gamepadyn(sysTest, strict = true, useInputThread = false, actions)
 
         var stateChangeCount = 0
 
-        val p0 = gamepadyn.getPlayer(0)!!
-
+        val p0 = gamepadyn.players[0]
 
         gamepadyn.update()
 
-        p0.configuration = Configuration(
+        gamepadyn.players[0].configuration = Configuration(
             ActionBind(RawInput.FACE_A, DEBUG_ACTION)
         )
 

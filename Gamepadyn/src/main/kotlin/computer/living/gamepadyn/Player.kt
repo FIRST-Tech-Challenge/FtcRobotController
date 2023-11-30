@@ -48,26 +48,20 @@ class Player<T: Enum<T>> internal constructor(
      */
     var configuration: Configuration<T>? = null
         set(cfg) {
-            field = cfg;
-            onConfigChanged();
+            field = cfg
+            onConfigChanged()
         }
 
 
     fun getEvent(action: T): ActionEvent<*>? {
         val descriptor = parent.actions[action]
         return if (descriptor == null) null; else when (descriptor.type) {
-                ANALOG -> eventsAnalog[action]
-                DIGITAL -> eventsDigital[action]
+            ANALOG -> eventsAnalog[action]
+            DIGITAL -> eventsDigital[action]
         }
     }
-
-    // look up "elvis operator kotlin"
-    fun getEventAnalog(action: T): ActionEvent<InputDataAnalog>? {
-        return eventsAnalog[action]
-    }
-    fun getEventDigital(action: T): ActionEvent<InputDataDigital>? {
-        return eventsDigital[action]
-    }
+    fun getEventAnalog(action: T): ActionEvent<InputDataAnalog>? = eventsAnalog[action]
+    fun getEventDigital(action: T): ActionEvent<InputDataDigital>? = eventsDigital[action]
 
     /**
      * Returns the current state of the provided action (if valid) and `null` if the state doesn't exist or hasn't been updated.
@@ -84,14 +78,9 @@ class Player<T: Enum<T>> internal constructor(
 
     internal fun onConfigChanged() {
         // clear state if config is null
-        if (configuration == null) {
-            state.clear()
-        } /*else { }*/ // TODO: nullify elements if their mappings were removed
+//        if (configuration == null) {
+//            state.clear()
+//        }
     }
-
-//    internal fun updateState() {
-//        parent.opMode.gamepad1
-//    }
-//    val onUpdate: Event<>
 
 }
