@@ -40,9 +40,10 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -152,6 +153,10 @@ public final class MecanumDrive {
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
     public DcMotorEx intakeMotor;
+    public DcMotorEx slideMotor;
+    public DcMotorEx returnMotor;
+    public Servo intakeServo;
+    public Servo droneServo;
 
     public final VoltageSensor voltageSensor;
 
@@ -243,6 +248,10 @@ public final class MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "motFR");
         if (!isDevBot) {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+            slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
+            returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
+            droneServo = hardwareMap.get(Servo.class, "droneServo");
+            intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
         }
 
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -254,6 +263,13 @@ public final class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (!isDevBot) {
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        // preset servo positions
+        if(!isDevBot) {
+            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
         }
 
         // now has been enabled, encoders are goodge :D
@@ -264,6 +280,8 @@ public final class MecanumDrive {
 
         if (!isDevBot) {
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            returnMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         imu = hardwareMap.get(IMU.class, "imu");

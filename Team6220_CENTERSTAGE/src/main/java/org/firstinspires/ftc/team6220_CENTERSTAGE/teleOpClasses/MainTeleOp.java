@@ -16,9 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
 @TeleOp(name="League1_TeleOp", group ="amogus")
-public class League1_TeleOp extends LinearOpMode {
+public class MainTeleOp extends LinearOpMode {
 
     // define states for turning, using slides, outtaking
+
+    // i dislike this strongly - gavin
+
+    private int slidePreset = 0;
 
     TurnStates curTurningState = TurnStates.TURNING_MANUAL;
     enum TurnStates {
@@ -67,10 +71,12 @@ public class League1_TeleOp extends LinearOpMode {
             GamepadKeys.Button.DPAD_RIGHT
     };
 
+    MecanumDrive drive;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
@@ -160,19 +166,30 @@ public class League1_TeleOp extends LinearOpMode {
 
 
             if (!drive.isDevBot) {
-                // reverse if bumpers are held
-                if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
-                        gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    intakePower = -Math.abs(intakePower);
+
+                // drive Drone Launcher 📄📄✈✈✈
+                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.X)){
+                    drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
                 }
 
-                // apply clamped intakePower
-                drive.intakeMotor.setPower(Utilities.clamp(intakePower));
+                // Slides stuff 😎📈📈📈
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER))
+                    if (slidePreset > 0) {
+                        slidePreset--;
+                    }
+
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
+                    if (slidePreset > Constants.SLIDE_POSITIONS.length) {
+                        slidePreset++;
+                    }
+
+                moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
             }
 
 
             // telemetry
-
             telemetry.addData("current turning state", curTurningState);
             telemetry.addData("imu reading", currentHeading);
             telemetry.addData("target heading", targetHeading);
@@ -187,5 +204,11 @@ public class League1_TeleOp extends LinearOpMode {
 
             telemetry.update();
         }
+    }
+
+    private void moveSlides(int targetPos) {
+        double power = (targetPos - drive.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        drive.slideMotor.setPower(power);
+        drive.returnMotor.setPower(power + Constants.SLIDE_RETURN_MOTOR_POWER);
     }
 }
