@@ -29,6 +29,8 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public DcMotor  frontRight = null;
     public DcMotor  backLeft = null;
     public DcMotor  backRight = null;
+
+    public DcMotor  climberMotor = null;
     public Servo  claw = null;
     public Servo arm1 = null;
     public Servo arm2 = null;
@@ -53,6 +55,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft  = hardwareMap.get(DcMotor.class, "LB");
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
+        climberMotor  = hardwareMap.get(DcMotor.class, "Climber");
         claw = hardwareMap.get(Servo.class, "Claw");
         arm1  = hardwareMap.get(Servo.class, "Arm1");
         arm2  = hardwareMap.get(Servo.class, "Arm2");
@@ -70,6 +73,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+        climberMotor.setDirection(DcMotor.Direction.FORWARD);
         arm1.setDirection(Servo.Direction.REVERSE);
         arm1.scaleRange(0,1);
         arm2.setDirection(Servo.Direction.FORWARD);
@@ -77,6 +81,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        climberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -190,6 +195,12 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         if (gamepad2.y) {
             arm1.setPosition(0.4);
 
+        }
+        if (gamepad2.dpad_down) {
+            climberMotor.setPower(-0.25);
+        }
+        if (gamepad2.dpad_up) {
+            climberMotor.setPower(0.25);
         }
         // "0" position is at the closed poesition
         // furthest right is to the side of robot
