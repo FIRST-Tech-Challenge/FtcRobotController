@@ -44,36 +44,51 @@ public class MonPremierModeOp extends LinearOpMode {
 
 
 
-            if (varY > 0) {
-                if (varX > deadZone) {
-                    tgtPowerA = speed;
-                    tgtPowerB = -speed;
-                } else if (varX < -deadZone) {
-                    tgtPowerA = -speed;
-                    tgtPowerB = speed;
-                } else {
-                    tgtPowerA = speed;
-                    tgtPowerB = speed;
-                }
+            if(varY > 0) //Forward
+            {
+                tgtPowerA=varYpos;
+                tgtPowerB=varYpos;
 
-            } else if (varY < 0) {
-                if (varX > deadZone) {
-                    tgtPowerA = -speed;
-                    tgtPowerB = speed;
-                } else if (varX < -deadZone) {
-                    tgtPowerA = speed;
-                    tgtPowerB = -speed;
-                } else {
-                    tgtPowerA = -speed;
-                    tgtPowerB = -speed;
+                if (varX < 0) {
+                    tgtPowerA=tgtPowerA-varXpos;
+                }
+                else if (varX > 0) {
+                    tgtPowerB=tgtPowerB-varXpos;
                 }
 
             }
+            else if(varY < 0) //Backward
+            {
+                tgtPowerA=-varYpos;
+                tgtPowerB=-varYpos;
 
-            if (varX==0 && varY==0) {
-                tgtPowerA = 0;
-                tgtPowerB = 0;
+                if (varX < 0) {
+                    tgtPowerA=tgtPowerA+varXpos;
+                }
+                else if (varX > 0) {
+                    tgtPowerB=tgtPowerB+varXpos;
+                }
+
             }
+            //joyValue Between joyValueMidLower - joyValueMidUpper.
+            //Need some range here, because joystick sometime not in  exact center.
+            else if (varY==0)
+            {
+                tgtPowerA=0;
+                tgtPowerB=0;
+            }
+
+            if (varX>0 && varY==0) {
+                tgtPowerA=-1;
+                tgtPowerA=1;
+            }
+
+            if (varX>0 && varY==0) {
+                tgtPowerA=1;
+                tgtPowerA=-1;
+            }
+
+
 
             motorA.setPower(tgtPowerA);
             motorB.setPower(-tgtPowerB);
