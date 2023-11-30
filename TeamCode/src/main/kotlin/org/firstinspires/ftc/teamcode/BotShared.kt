@@ -25,7 +25,7 @@ class BotShared(opMode: OpMode) {
     // TODO: i wish the hardware would stop changing so that I could keep the code the same for 5 minutes
 
     // Get stuff from the hardware map (HardwareMap.get() can be HardwareMap[] in kt)
-    val hardwareMap = opMode.hardwareMap!!;
+    val hardwareMap = opMode.hardwareMap!!
     @JvmField val imu:              IMU         =           hardwareMap[IMU          ::class.java,   "imu"       ]
     @JvmField val motorLeftFront:   DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "fl"        ]
     @JvmField val motorRightFront:  DcMotorEx   =           hardwareMap[DcMotorEx    ::class.java,   "fr"        ]
@@ -42,7 +42,7 @@ class BotShared(opMode: OpMode) {
 
     @JvmField val march               = camera?.    let {   March(opMode, it)   }
     @JvmField val lsd                 = motorSlide?.let {   LSD(opMode, it)     }
-    @JvmField val claw                = if (servoClawLeft   != null && servoClawRight != null)    Claw(opMode, servoClawLeft, servoClawRight      )   else null
+    @JvmField val claw                = if (servoClawLeft   != null && servoClawRight != null)  Claw(opMode, servoClawLeft, servoClawRight      )   else null
     @JvmField val intake              = if (motorIntakeLift != null || motorIntakeSpin != null) Intake(opMode, motorIntakeLift, motorIntakeSpin )   else null
 
     @JvmField var drive: MecanumDrive? = null
