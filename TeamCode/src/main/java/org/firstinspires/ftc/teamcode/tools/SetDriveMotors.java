@@ -30,6 +30,8 @@ public class SetDriveMotors extends OpMode {
     private final IMU imu;
     public double powerValues[] = new double[4];
 
+    static final double BACKDROP_APPROACH_SPEED = 0.3;
+
     //map the motors and run the op mode
     public SetDriveMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
         this.gamepad1 = gamepad1;
@@ -66,7 +68,14 @@ public class SetDriveMotors extends OpMode {
         horizontalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_X, 0.5);
         verticalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_Y, 0.4);
     }
-    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast) {
+    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters) {
+        //Driver assistance: takes over if too close to wall
+        if (distanceToWallMeters != 0 && distanceToWallMeters < 0.4){
+            if (vertical > BACKDROP_APPROACH_SPEED) {
+                vertical = BACKDROP_APPROACH_SPEED;
+            }
+        }
+
         //deadzones
         if (goFast) {
             horizontal = horizontalFastDeadzone.computePower(horizontal);
