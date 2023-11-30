@@ -55,9 +55,9 @@ public class Hardware
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
         //Odom
-        leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
-        rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
-        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+        leftOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
+        rightOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+        centerOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
 
         //Transfer Motor Config -- Raise motor
         TransferM1 = hardwareMap.get(DcMotorEx.class, "Transfer Motor 1");
