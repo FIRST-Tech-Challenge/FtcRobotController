@@ -115,7 +115,7 @@ public class DumpTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
-        actuatorUtils.initializeActuator(arm, gripper, dump);
+        actuatorUtils.initializeActuator(arm, gripper, dump, null);
 
 
         Long startTime = System.currentTimeMillis();

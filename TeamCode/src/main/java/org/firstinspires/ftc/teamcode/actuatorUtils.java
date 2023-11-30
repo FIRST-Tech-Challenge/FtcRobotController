@@ -14,6 +14,7 @@ public class actuatorUtils {
     private static DcMotor arm = null; //declare arm
     private static Servo gripper = null; //declare gripper
     private static Servo dump = null; //declare dump
+    private static Servo elbow = null; //declare dump
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
@@ -41,10 +42,11 @@ public class actuatorUtils {
     }
 
     //Initialize actuators
-    public static void initializeActuator(DcMotor arm, Servo gripper, Servo dump) {
+    public static void initializeActuator(DcMotor arm, Servo gripper, Servo dump, Servo elbow) {
         actuatorUtils.arm = arm;
         actuatorUtils.gripper = gripper;
         actuatorUtils.dump = dump;
+        actuatorUtils.elbow = elbow;
 
     }
     public static void initializeActuator(DcMotor arm, Servo gripper) {
@@ -113,6 +115,12 @@ public class actuatorUtils {
     public static void gripperOpen(boolean liftDown) throws InterruptedException {
         gripperOpen(liftDown, true);
     }
+    public static void gripperOpen() {
+        gripper.setPosition(0.1);
+    }
+    public static void gripperClose() {
+        gripper.setPosition(0.0);
+    }
     public static void gripperOpen(boolean liftDown, boolean doSleep) throws InterruptedException {
         if (doSleep)
             sleep(500);
@@ -151,6 +159,22 @@ public class actuatorUtils {
         else
             newHeight = ArmLevel.HIGH_POLE;
         armPole(newHeight, true);
+    }
+    public static void armBoard() {
+        arm.setTargetPosition(-2850);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+    }
+    public static void noArmBoard() {
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+    }
+    public static void noElbowBoard() {
+        elbow.setPosition(0.9);
+    }
+    public static void elbowBoard() {
+        elbow.setPosition(0.17);
     }
     public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == ArmLevel.LOW_POLE)

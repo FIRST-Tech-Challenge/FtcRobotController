@@ -91,13 +91,15 @@ public class Pipeline2023 extends OpenCvPipeline {
         // 2 - Right
         middleResult = findWhiteCount(mask, 0, mask.width()*2/3);
         rightResult = findWhiteCount(mask, mask.width()*2/3, mask.width()/3);
-        int duckiePixels = 10000;
-        if (useBlue)
-            duckiePixels = 7000;
+        int duckieMiddle = 1800;
+        int duckieRight = 2400;
+        if (useBlue) {
+            duckieMiddle = 600;
+            duckieRight = 1200;
+        }
+        if  (rightResult > duckieRight)         return 2;
 
-        if  (rightResult > duckiePixels)         return 2;
-
-        else if (middleResult > duckiePixels)    return 1;
+        else if (middleResult > duckieMiddle)    return 1;
 
         else return 0;
     }

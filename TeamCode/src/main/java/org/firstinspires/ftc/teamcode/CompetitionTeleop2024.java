@@ -211,15 +211,15 @@ public class CompetitionTeleop2024 extends OpMode {
         double elbowPosition = elbow.getPosition();
         double elbowDelta = 0.005;
         if (gamepad2.left_stick_y > (0.1)) {
-            if (elbowPosition < (0.9))
+            //if (elbowPosition < (0.9))
 
-            {
+            //{
                 elbow.setPosition(elbowPosition + (elbowDelta));
 
-            }
+            //}
         } else if (gamepad2.left_stick_y < (-0.1))
         {
-            if (elbowPosition > (0.0))
+            //if (elbowPosition > (0.0))
                 elbow.setPosition(elbowPosition - (elbowDelta));
         }
     // Show the elapsed game time and wheel power.

@@ -63,7 +63,7 @@ public class BlueLeft extends LinearOpMode {
 
         desiredHeading = getHeading();
 
-        utils.initializeActuator(arm, gripper, dump);
+        utils.initializeActuator(arm, gripper, dump, elbow);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -192,11 +192,7 @@ public class BlueLeft extends LinearOpMode {
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-52, -50, Math.toRadians(-
-
-
-
-                +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++90));
+        pose = new Pose2d(-52, -50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();

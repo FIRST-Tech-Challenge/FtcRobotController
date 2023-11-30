@@ -63,7 +63,7 @@ public class RedRight extends LinearOpMode {
 
         desiredHeading = getHeading();
 
-        utils.initializeActuator(arm, gripper, dump);
+        utils.initializeActuator(arm, gripper, dump, elbow);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -91,13 +91,13 @@ public class RedRight extends LinearOpMode {
                 resultROI = modifyPipeline.getResultROI();
                 if (resultROI == 0) {
                     telemetry.addData("Resulting ROI: ", "Left");
-                    done = true;
+                    //done = true;
                 } else if (resultROI == 1) {
                     telemetry.addData("Resulting ROI: ", "Middle");
-                    done = true;
+                    //done = true;
                 } else if (resultROI == 2) {
                     telemetry.addData("Resulting ROI: ", "Right");
-                    done = true;
+                    //done = true;
                 } else {
                     telemetry.addData("Resulting ROI: ", "Something went wrong.");
                 }
@@ -327,7 +327,7 @@ public class RedRight extends LinearOpMode {
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(960, 544, OpenCvCameraRotation.UPRIGHT);
+                webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;
