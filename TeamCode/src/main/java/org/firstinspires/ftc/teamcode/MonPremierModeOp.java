@@ -80,12 +80,12 @@ public class MonPremierModeOp extends LinearOpMode {
 
             if (varX>0 && varY==0) {
                 tgtPowerA=-1;
-                tgtPowerA=1;
+                tgtPowerB=1;
             }
 
             if (varX>0 && varY==0) {
                 tgtPowerA=1;
-                tgtPowerA=-1;
+                tgtPowerB=-1;
             }
 
 

@@ -37,7 +37,7 @@ public class testmoteurmateo extends LinearOpMode {
 
 
             motorA.setPower(varY1);
-            motorB.setPower(varY1);
+            motorB.setPower(-varY1);
 
 
             telemetry.addData("Target Power A", tgtPowerA);
