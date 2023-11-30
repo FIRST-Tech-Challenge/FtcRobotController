@@ -24,7 +24,11 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.VisionPortal;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 public class RobotClass {
 
@@ -76,14 +80,15 @@ public class RobotClass {
 
 
         //initializing imu
-            // Set up the parameters with which we will use our IMU.
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
-            parameters.loggingEnabled      = true;
-            parameters.loggingTag          = "IMU";
-            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Set up the parameters with which we will use our IMU.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         //hardware mapping and initializing imu
         imu = ahsMap.get(BNO055IMU.class, "imu");
@@ -233,5 +238,42 @@ public class RobotClass {
             myOpMode.telemetry.addData("Error", "Invalid direction");
             myOpMode.telemetry.update();
         }
+    }
+
+    public int getDetection(int tagID) {
+        //initiallzes current detection variable
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        //defines bounds of ROIs
+        int [] leftROI = new int[2];
+        int [] rightROI = new int[2];
+        int [] centerROI = new int[2];
+
+        leftROI[0] = 0;
+        leftROI[1] = 0;
+
+        rightROI[0] = 0;
+        rightROI[1] = 0;
+
+        centerROI[0] = 0;
+        centerROI[1] = 0;
+
+        //goes through a for loop of all detections and will search for the id 502.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.id == tagID) {
+                if((detection.ftcPose.x > leftROI[0]) ||(detection.ftcPose.x < leftROI[1])){
+                    return 1;
+                } else if ((detection.ftcPose.x > rightROI[0]) ||(detection.ftcPose.x < rightROI[1])){
+                    return 3;
+                } else if ((detection.ftcPose.x > centerROI[0]) ||(detection.ftcPose.x < centerROI[1])){
+                    return 2;
+                } else {
+                    return 4;
+                }
+            } else {
+                return 4;
+            }
+        }
+
     }
 }
