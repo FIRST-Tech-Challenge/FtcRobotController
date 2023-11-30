@@ -35,6 +35,8 @@ public class IntakeTest extends MainTeleOp {
 
     double intakeServoPosition = 0.5;
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -43,11 +45,15 @@ public class IntakeTest extends MainTeleOp {
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
+        telemetry.addData("Servo Position: ", 0.5);
+
         waitForStart();
 
         while (opModeIsActive()) {
             intakeServoPosition = Utilities.clamp(intakeServoPosition + (gamepad2.right_stick_y * 0.01), 0.0, 1.0);
             drive.intakeServo.setPosition(intakeServoPosition);
+
+            telemetry.update();
         }
     }
 }
