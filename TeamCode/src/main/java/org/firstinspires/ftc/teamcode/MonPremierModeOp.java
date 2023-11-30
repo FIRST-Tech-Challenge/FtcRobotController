@@ -27,84 +27,56 @@ public class MonPremierModeOp extends LinearOpMode {
         double tgtPowerA = 0;
         double tgtPowerB = 0;
 
-        double deadZone = 0.2;
+        double deadZone = 0.1;
         double varY = 0;
         double varX = 0;
+        double varYpos = 0;
+        double varXpos = 0;
+        double speed = 0;
+
         while (opModeIsActive()) {
             varY = this.gamepad1.left_stick_y;
             varX = this.gamepad1.left_stick_x;
 
-            double motorSpeed  = Math.sqrt(varY*varY + varX*varX);
+            varYpos = Math.abs(varY);
+            varXpos = Math.abs(varX);
+            speed = Math.sqrt(varXpos*varXpos+varYpos*varYpos);
 
-            if ((varY > deadZone && varX > deadZone))
-            {
-                motorA.setPower(motorSpeed - (-1*varX));
-                analogWrite(M1_Right, 0);
 
-                analogWrite(M2_Left, motorSpeed);
-                analogWrite(M2_Right, 0);
+
+            if (varY > 0) {
+                if (varX > deadZone) {
+                    tgtPowerA = speed;
+                    tgtPowerB = -speed;
+                } else if (varX < -deadZone) {
+                    tgtPowerA = -speed;
+                    tgtPowerB = speed;
+                } else {
+                    tgtPowerA = speed;
+                    tgtPowerB = speed;
+                }
+
+            } else if (varY < 0) {
+                if (varX > deadZone) {
+                    tgtPowerA = -speed;
+                    tgtPowerB = speed;
+                } else if (varX < -deadZone) {
+                    tgtPowerA = speed;
+                    tgtPowerB = -speed;
+                } else {
+                    tgtPowerA = -speed;
+                    tgtPowerB = -speed;
+                }
+
             }
 
-            // forward left
-            else if ((varY > deadZone && varX < -deadZone))
-            {
-                analogWrite(M1_Left, motorSpeed);
-                analogWrite(M1_Right, 0);
-
-                analogWrite(M2_Left, motorSpeed - varX);
-                analogWrite(M2_Right, 0);
-            }
-
-            // forward
-            else if ((varY > deadZone && varX > -deadZone && varX < deadZone))
-            {
-                analogWrite(M1_Left, motorSpeed);
-                analogWrite(M1_Right, 0);
-
-                analogWrite(M2_Left, motorSpeed);
-                analogWrite(M2_Right, 0);
-            }
-
-            //back right
-            else if ((varY < -deadZone && varX > deadZone))
-            {
-                analogWrite(M1_Left, 0);
-                analogWrite(M1_Right,motorSpeed - (-1*varX));
-
-                analogWrite(M2_Left, 0);
-                analogWrite(M2_Right, motorSpeed);
-            }
-
-            // back left
-            else if ((varY < -deadZone && varX < -deadZone))
-            {
-                analogWrite(M1_Left, 0);
-                analogWrite(M1_Right, motorSpeed);
-
-                analogWrite(M2_Left, 0);
-                analogWrite(M2_Right, motorSpeed - varX);
-            }
-
-            // backwards
-            else if ((varY < -deadZone && varX > -deadZone && varX < deadZone))
-            {
-                analogWrite(M1_Left, 0);
-                analogWrite(M1_Right, motorSpeed);
-
-                analogWrite(M2_Left, 0);
-                analogWrite(M2_Right, motorSpeed);
-            }
-            else
-            {
-                analogWrite(M1_Left, 0);
-                analogWrite(M1_Right, 0);
-
-                analogWrite(M2_Left, 0);
-                analogWrite(M2_Right, 0);
+            if (varX==0 && varY==0) {
+                tgtPowerA = 0;
+                tgtPowerB = 0;
             }
 
             motorA.setPower(tgtPowerA);
-            motorB.setPower(tgtPowerB);
+            motorB.setPower(-tgtPowerB);
 
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
