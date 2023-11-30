@@ -25,8 +25,18 @@ public class Constants {
       32,
       64,
     };
-    public static final double SLIDE_RETURN_MOTOR_POWER = -0.05;
+    public static final double SLIDE_RETURN_MOTOR_POWER_MUL = 0.6;
+    public static final double SLIDE_RETURN_MOTOR_POWER_OFFSET = -0.05;
     public static final double SLIDE_P_GAIN = 0.01;
+
+    public static final double[] INTAKE_POSITIONS = {
+        0.325,
+        0.34,
+        0.36,
+        0.39,
+        0.41,
+        0.81,
+    };
 
   
     /* Constants used in AutoFramework */

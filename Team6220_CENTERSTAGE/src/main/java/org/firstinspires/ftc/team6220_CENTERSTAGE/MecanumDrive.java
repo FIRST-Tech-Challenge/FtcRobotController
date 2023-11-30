@@ -250,7 +250,7 @@ public final class MecanumDrive {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
-            droneServo = hardwareMap.get(Servo.class, "droneServo");
+            //droneServo = hardwareMap.get(Servo.class, "droneServo");
             intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
         }
 
@@ -269,7 +269,7 @@ public final class MecanumDrive {
 
         // preset servo positions
         if(!isDevBot) {
-            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            //droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
         }
 
         // now has been enabled, encoders are goodge :D

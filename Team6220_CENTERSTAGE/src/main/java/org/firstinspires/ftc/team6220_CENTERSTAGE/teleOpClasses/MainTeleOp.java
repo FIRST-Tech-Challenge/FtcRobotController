@@ -15,14 +15,21 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
-@TeleOp(name="League1_TeleOp", group ="amogus")
+@TeleOp(name="League2_TeleOp", group ="vazkiiIsANeatByMod")
 public class MainTeleOp extends LinearOpMode {
 
     // define states for turning, using slides, outtaking
 
-    // i dislike this strongly - gavin
+    // stop posting about ENUMS im TIRED of SEEING IT
+    // my friends on discord send me ENUMS
+    // in person its hecking ENUMS
+    // i was in this server right?
+    // and ALLLL the channels were just "STATE MACHINE"
+    // ENUMS
+    // GRAAAAHH
 
     private int slidePreset = 0;
+    private int intakePreset = 0;
 
     TurnStates curTurningState = TurnStates.TURNING_MANUAL;
     enum TurnStates {
@@ -180,12 +187,32 @@ public class MainTeleOp extends LinearOpMode {
                         slidePreset--;
                     }
 
+                // slides stuff 2: the greg
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
                     if (slidePreset > Constants.SLIDE_POSITIONS.length) {
                         slidePreset++;
                     }
 
+                // moves the slides to a preset (theoretically)
                 moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
+
+                // move intake bar down to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+                    if (intakePreset > 0) {
+                        intakePreset--;
+                    }
+
+                // move intake bar up to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+                    if (intakePreset < Constants.INTAKE_POSITIONS.length - 1) {
+                        intakePreset++;
+                    }
+
+                // drive the servo to position set by dpad using above code
+                drive.intakeServo.setPosition(Constants.INTAKE_POSITIONS[intakePreset]);
+
+                // go go gadget intake motor
+                drive.intakeMotor.setPower(-gp2.getLeftY());
             }
 
 
@@ -197,6 +224,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("drive power X", drivePowerX);
             telemetry.addData("drive power Y", drivePowerY);
             telemetry.addData("intake power", intakePower);
+            telemetry.addData("intake preset", intakePreset);
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
@@ -206,9 +234,16 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
+    /**
+     * Calculates error then sets the slide powers to drive the slides to the target.
+     *
+     * Note: Does not actually go until the slides hit the target, this method is meant to be
+     * used in conjunction with a outside loop ♻
+     * @param targetPos the position to target in encoder ticks
+     */
     private void moveSlides(int targetPos) {
         double power = (targetPos - drive.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         drive.slideMotor.setPower(power);
-        drive.returnMotor.setPower(power + Constants.SLIDE_RETURN_MOTOR_POWER);
+        drive.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
     }
 }
