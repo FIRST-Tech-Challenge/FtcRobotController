@@ -27,13 +27,16 @@ class Intake(opMode: OpMode, private val motorLift: DcMotorEx?, private val moto
                 motorSpin.power = if (field > 1.0) 1.0 else if (field < -1.0) -1.0 else field
             }
         }
-//    var isRaised: Boolean = false;
+    var raised: Boolean = false
+        private set
 
     fun lower() {
         motorLift?.targetPosition = 10
+        raised = false
     }
 
     fun raise() {
         motorLift?.targetPosition = 0
+        raised = true
     }
 }

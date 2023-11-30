@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.DriverControlBase.Action.MOVEMENT
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.ROTATION
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.SPIN_INTAKE
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.TOGGLE_DRIVER_RELATIVITY
+import org.firstinspires.ftc.teamcode.DriverControlBase.Action.TOGGLE_INTAKE_HEIGHT
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.math.PI
 import kotlin.math.abs
@@ -76,9 +77,10 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
     enum class Action {
         MOVEMENT,
         ROTATION,
-        TOGGLE_DRIVER_RELATIVITY,
         SPIN_INTAKE,
         CLAW,
+        TOGGLE_DRIVER_RELATIVITY,
+        TOGGLE_INTAKE_HEIGHT,
         DEBUG_ACTION
     }
 
@@ -97,17 +99,22 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             SPIN_INTAKE                 to GAD(ANALOG, 1),
             CLAW                        to GAD(ANALOG, 1),
             TOGGLE_DRIVER_RELATIVITY    to GAD(DIGITAL),
+            TOGGLE_INTAKE_HEIGHT        to GAD(DIGITAL),
             DEBUG_ACTION                to GAD(DIGITAL)
         )
 
         // Configuration
         gamepadyn.players[0].configuration = Configuration(
             ActionBind(RawInput.FACE_X, TOGGLE_DRIVER_RELATIVITY),
+            ActionBind(RawInput.FACE_A, TOGGLE_INTAKE_HEIGHT),
         )
 
+        val intake = shared.intake!!
 
         // toggle driver-relative controls
         gamepadyn.players[0].getEventDigital(TOGGLE_DRIVER_RELATIVITY)!!.addListener { useBotRelative = !useBotRelative }
+        // toggle intake height
+        gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!.addListener { if (intake.raised) intake.lower() else intake.raise() }
     }
 
     override fun start() {
@@ -121,9 +128,6 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         deltaTime = (time - lastLoopTime)
         lastLoopTime = time
 
-        // nullables
-        val drive = shared.drive!!
-        val intake = shared.intake!!
 
         /**
          * Run the various update functions
@@ -236,19 +240,6 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 //        claw.state +=
 //        clawLeft.position +=    Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
 //        clawRight.position +=   Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
-
-        // intake lift
-        if (intake != null) {
-            // toggle intake lift
-            if (gamepad2.a) {
-                if (!hasToggledIntakeLift) {
-                    isIntakeLiftRaised = !isIntakeLiftRaised
-                    // kotlin noticed I forgot to finish this line BECAUSE OF ITS INDENTATION!!! HOW?!?! thanks compiler
-                    if (isIntakeLiftRaised) intake.raise() else intake.lower()
-                    hasToggledIntakeLift = true
-                }
-            } else hasToggledIntakeLift = false
-        }
 
         // spinner
         intake?.active =
