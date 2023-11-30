@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
 
-@Autonomous(name = "Addie's RoadRunner Test", group = "KtTest")
+@Autonomous(name = "Addie's RoadRunner Test", group = "Test")
 class AddieRunner : LinearOpMode() {
 
     lateinit var drive: MecanumDrive
