@@ -48,7 +48,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         servoFlipGondola = hardwareMap.servo.get("servoFlipGondola");
 
-        // servoReleasePixel = hardwareMap.crservo.get("servoReleasePixel");
+        servoReleasePixel = hardwareMap.crservo.get("servoReleasePixel");
 
         servoReleaseDrone = hardwareMap.servo.get("servoReleaseDrone");
 

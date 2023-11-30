@@ -20,13 +20,13 @@ abstract public class BaseTeleOp extends BaseOpMode {
         // intake and servo inside gondola rotate together inside when left bumper, out when right bumper
         if (gamepad2.left_bumper) {
             motorIntakeWheels.setPower(0.5);
-            //servoReleasePixel.setPower(-1.0);
+            servoReleasePixel.setPower(-1.0);
         } else if (gamepad2.right_bumper) {
             motorIntakeWheels.setPower(-1.0);
-            //servoReleasePixel.setPower(1.0);
+            servoReleasePixel.setPower(1.0);
         } else {
             motorIntakeWheels.setPower(0.0);
-            //servoReleasePixel.setPower(0.0);
+            servoReleasePixel.setPower(0.0);
         }
 
         // slides controlled by up and down dpad
@@ -51,12 +51,12 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.a) {
             // servoLeftFlipGondola.setPosition(0.96);
             servoFlipGondola.setPosition(0.04);
-            servoRotateGondola.setPosition(0.0);
+            // servoRotateGondola.setPosition(0.0);
         // button B flips arms back
         } else if (gamepad2.b) {
             // servoLeftFlipGondola.setPosition(0.04);
             servoFlipGondola.setPosition(0.96);
-            servoFlipGondola.setPosition(1.0);
+            // servoFlipGondola.setPosition(1.0);
         }
 
         // release drone with pushing down right joystick, servo should rotate counter-clockwise
