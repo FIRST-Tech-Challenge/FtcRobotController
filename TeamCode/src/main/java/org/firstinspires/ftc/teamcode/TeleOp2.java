@@ -86,14 +86,12 @@ public class TeleOp2 extends LinearOpMode {
                 if (gamepad1.y) {
                     if (liftState == 0) {
                         encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                        liftMotor.setPower(.12);
+                        liftPower = .6;
                         liftState++;
                     } else if (liftState == 1) {
                         liftState++;
                         encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                        liftMotor.setPower(-.02);
-                    } else {
-                        liftMotor.setPower(-.02);
+                        liftPower = -.03;
                     }
                 }
             }
