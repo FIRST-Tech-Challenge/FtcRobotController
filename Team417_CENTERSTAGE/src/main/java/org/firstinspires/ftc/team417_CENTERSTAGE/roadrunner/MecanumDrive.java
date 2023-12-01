@@ -70,6 +70,9 @@ public final class MecanumDrive {
     // To detect the motion of the motors (added by Hank)
     public DcMotorEx[] motors;
 
+    // Whether or not to do April Tags (added by Hank)
+    public final static boolean USE_APRIL_TAGS = true;
+
     public static String getBotName() {
         InspectionState inspection=new InspectionState();
         inspection.initializeLocal();
@@ -246,9 +249,11 @@ public final class MecanumDrive {
         // For the April Tag latency calculation (added by Hank)
         clock.reset();
 
-        // To detect April Tags to correct drift (added by Hank)
-        myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
-        myAprilTagPoseEstimator.init();
+        if (USE_APRIL_TAGS) {
+            // To detect April Tags to correct drift (added by Hank)
+            myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
+            myAprilTagPoseEstimator.init();
+        }
 
         this.pose = pose;
 
