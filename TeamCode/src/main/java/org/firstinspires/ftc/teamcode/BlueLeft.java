@@ -75,7 +75,7 @@ public class BlueLeft extends LinearOpMode {
         waitForStart();
         currTime = System.currentTimeMillis();
         startTime = currTime;
-        sleep(5000);
+        //sleep(5000);
         if (resultROI == 3) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -162,48 +162,33 @@ public class BlueLeft extends LinearOpMode {
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
-        pose = new Pose2d(-50, 40, Math.toRadians(-90));
+        sleep(1000);
+        pose = new Pose2d(-36, 38, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        arm.setTargetPosition(-2850);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.5);
-        elbow.setPosition(0.222);
+        utils.elbowBoard();
+        utils.armBoard();
         sleep(2000);
-        pose = new Pose2d(-14, 42, Math.toRadians(-90));
+        pose = new Pose2d(-36, 39.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         sleep(1000);
-        gripper.setPosition(0.1);
+        utils.gripperOpen();
         sleep(1000);
-        elbow.setPosition(0.9);
-        sleep(500);
-        arm.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.5);
+        utils.noElbowBoard();
+        utils.noArmBoard();
         sleep(1000);
-        gripper.setPosition(0.0);
-        pose = new Pose2d(-52, 40, Math.toRadians(-90));
+        utils.gripperClose();
+        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-52, -50, Math.toRadians(-90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(1000);
-        pose = new Pose2d(-50, 40, Math.toRadians(0));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-50, 50, Math.toRadians(-90));
+        pose = new Pose2d(-56, 50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -228,12 +213,32 @@ public class BlueLeft extends LinearOpMode {
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
-        pose = new Pose2d(-50, 40, Math.toRadians(0));
+        pose = new Pose2d(-30, 38, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-50, 50, Math.toRadians(-90));
+        utils.elbowBoard();
+        utils.armBoard();
+        sleep(2000);
+        pose = new Pose2d(-30, 39.75, Math.toRadians(-90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        sleep(1000);
+        utils.gripperOpen();
+        sleep(1000);
+        utils.noElbowBoard();
+        utils.noArmBoard();
+        sleep(1000);
+        utils.gripperClose();
+        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-56, 50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -242,14 +247,14 @@ public class BlueLeft extends LinearOpMode {
     }
     private void RightPath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-27,8.5,Math.toRadians(0));
+        pose = new Pose2d(-29,8.5,Math.toRadians(0));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-27,12.5,Math.toRadians(0));
+        pose = new Pose2d(-29,12.5,Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -257,12 +262,32 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        pose = new Pose2d(-50, 40, Math.toRadians(0));
+        pose = new Pose2d(-24, 38, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-50, 50, Math.toRadians(-90));
+        utils.elbowBoard();
+        utils.armBoard();
+        sleep(2000);
+        pose = new Pose2d(-24, 39.75, Math.toRadians(-90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        sleep(1000);
+        utils.gripperOpen();
+        sleep(1000);
+        utils.noElbowBoard();
+        utils.noArmBoard();
+        sleep(1000);
+        utils.gripperClose();
+        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-56, 50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -283,7 +308,7 @@ public class BlueLeft extends LinearOpMode {
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(960, 544, OpenCvCameraRotation.UPRIGHT);
+                webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;
