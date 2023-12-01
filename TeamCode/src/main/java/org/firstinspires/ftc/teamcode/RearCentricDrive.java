@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Rear Centric Drive (Scorpion)")
+@TeleOp(name = "Robot Centric Drive (Scorpion)")
 public class RearCentricDrive extends LinearOpMode {
 
   private Servo leftGrip;
@@ -81,20 +81,30 @@ public class RearCentricDrive extends LinearOpMode {
             if(yI > 0.2 || yI < -0.2){
             backLeftMotor.setPower(((yI-0.1)*-1)*0.25);
             backRightMotor.setPower(yI*0.25);
+            frontLeftMotor.setPower(((yI-0.1)*-1)*0.25);
+            frontRightMotor.setPower(yI*0.25);
           } else if (xI > 0.2) {
             backLeftMotor.setPower((xI-0.1)*0.25);
             backRightMotor.setPower(xI*0.25);
+            frontLeftMotor.setPower((xI-0.1)*0.25);
+            frontRightMotor.setPower(xI*0.25);
           } else if (xI < -0.2) {
             backLeftMotor.setPower((xI-0.1)*0.25);
             backRightMotor.setPower(xI*0.25);
+            frontLeftMotor.setPower((xI-0.1)*0.25);
+            frontRightMotor.setPower(xI*0.25);
           } else {
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
           }
         }else {
           //normal driving
           backLeftMotor.setPower(-yI+xI);
           backRightMotor.setPower(yI+xI);
+          frontLeftMotor.setPower(-yI+xI);
+          frontRightMotor.setPower(yI+xI);
         }
 
         //Arm rotation controls
@@ -104,7 +114,7 @@ public class RearCentricDrive extends LinearOpMode {
           
         //if(armLocked == false){
           if (gamepad2.right_bumper) {
-            armRotate.setPower(0.4);
+            armRotate.setPower(0.3);
           } else if (gamepad2.left_bumper) {
             armRotate.setPower(-0.2);
           } else {
@@ -158,7 +168,7 @@ public class RearCentricDrive extends LinearOpMode {
           } else {
             armExt.setPower(0);
           }
-        } if(gamepad1.right_trigger > 0.5 && gamepad1.left_trigger > 0.5){
+        } if(gamepad2.right_trigger > 0.5 && gamepad2.left_trigger > 0.5){
           armExt.setPower(-1);
           sleep(1000000);
         }
