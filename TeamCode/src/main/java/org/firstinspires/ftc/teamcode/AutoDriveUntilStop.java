@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="Robot: Auto Drive until stop", group="Robot")
+@Disabled
 public class AutoDriveUntilStop  extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);

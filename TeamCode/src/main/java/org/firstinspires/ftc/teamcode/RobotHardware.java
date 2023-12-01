@@ -53,6 +53,8 @@ public class RobotHardware {
     private DcMotor armMotorR   = null;
     private DcMotor leftHand    = null;
     private DcMotor rightHand   = null;
+    private double ticksPerRotationOfLeft;
+    private double ticksPerRotationOfRight;
 
     private Servo   elbowServo  = null;
     private Servo   grabberServo= null;
@@ -116,6 +118,9 @@ public class RobotHardware {
         rbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorRB");
         lfMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLF");
         lbMotor = myOpMode.hardwareMap.get(DcMotor.class, "motorLB");
+
+        ticksPerRotationOfLeft = lfMotor.getMotorType().getTicksPerRev();
+        ticksPerRotationOfRight = rfMotor.getMotorType().getTicksPerRev();
 
         lfMotor.setDirection(DcMotor.Direction.REVERSE);
         lbMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -203,6 +208,46 @@ public class RobotHardware {
 
     public AprilTagProcessor getAprilTag(){
         return aprilTag;
+    }
+
+    public void setMotorsMode(DcMotor.RunMode MotorRunMode) {
+        rfMotor.setMode(MotorRunMode);
+        rbMotor.setMode(MotorRunMode);
+        lfMotor.setMode(MotorRunMode);
+        lbMotor.setMode(MotorRunMode);
+    }
+
+    public int getLeftMotorCurrentPosition(){
+        return lfMotor.getCurrentPosition() ;
+    }
+    public int getRightMotorCurrentPosition(){
+        return rfMotor.getCurrentPosition();
+    }
+    public double getLeftMotorRotations(){
+        return lfMotor.getCurrentPosition() / ticksPerRotationOfLeft;
+    }
+    public double getRightMotorRotations(){
+        return rfMotor.getCurrentPosition() / ticksPerRotationOfRight;
+    }
+
+    public void setLeftTargetPosition(int leftTarget){
+        lfMotor.setTargetPosition(leftTarget);
+        lbMotor.setTargetPosition(leftTarget);
+    }
+
+    public void setRightTargetPosition(int rightTarget){
+        rfMotor.setTargetPosition(rightTarget);
+        rbMotor.setTargetPosition(rightTarget);
+    }
+
+    public boolean isLeftMotorBusy()
+    {
+        return lfMotor.isBusy();
+    }
+
+    public boolean isRightMotorBusy()
+    {
+        return rfMotor.isBusy();
     }
 
     public void reverseMotors(){
