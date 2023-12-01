@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="Energize V2 TeleOp", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class EnergizeV2TeleOp extends LinearOpMode {
 
     // Declares OpMode members for needed motors.
