@@ -122,7 +122,7 @@ public class CASH2024Driver extends OpMode
          */
         double powerfactor;
         if (gamepad1.right_bumper == true ) {
-            powerfactor = 0.25;
+            powerfactor = 0.5;
         }
         else {
             powerfactor = 1;
