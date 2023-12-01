@@ -17,7 +17,7 @@ public class TeleOp2 extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor liftMotor = null;
-
+    private int liftState = 0;
     @Override
     public void runOpMode() {
 
@@ -33,7 +33,7 @@ public class TeleOp2 extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -73,22 +73,26 @@ public class TeleOp2 extends LinearOpMode {
             }
 
             leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-
-            if (gamepad1.x){
-                encoderLift(0.2, 0.25, LIFT_DIRECTION.UP);
-                liftMotor.setPower(.12);
-            }
+            rightFrontDrive.setPower((.8)*rightFrontPower);
+            leftBackDrive.setPower((.8)*leftBackPower);
+            rightBackDrive.setPower((.77)*rightBackPower);
 
             if (gamepad1.y){
-                encoderLift(0.2, .6, LIFT_DIRECTION.UP);
-                liftMotor.setPower(-.12);
+                if (liftState == 0) {
+                    encoderLift(0.5, 8, LIFT_DIRECTION.UP);
+                    liftMotor.setPower(.12);
+                    sleep(500);
+                    liftState++;
+                }
+                if (liftState == 1){
+                    liftState++;
+                    encoderLift(0.5, 7, LIFT_DIRECTION.UP);
+                    liftMotor.setPower(.06);
+                }
             }
 
             if (gamepad1.left_bumper){
-                encoderLift(0.2, 1, LIFT_DIRECTION.DOWN);
+                encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
                 liftMotor.setPower(0);
             }
 
