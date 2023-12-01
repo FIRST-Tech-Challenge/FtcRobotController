@@ -63,7 +63,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runAuto(boolean red, boolean close) {
-
         if (red) {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
             telemetry.addLine("Looking for red");
@@ -79,6 +78,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
         OpenCvColorDetection.SideDetected result = myColorDetection.detectTeamProp();
         AutonDriveFactory.SpikeMarks sawarResult;
 
+        // Close cameras to avoid errors
+        myColorDetection.robotCamera.closeCameraDevice();
+
         if (result == OpenCvColorDetection.SideDetected.LEFT) {
             sawarResult = AutonDriveFactory.SpikeMarks.LEFT;
         } else if (result == OpenCvColorDetection.SideDetected.CENTER) {
@@ -92,9 +94,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         drive.pose = poseAndAction.startPose;
         Actions.runBlocking(poseAndAction.action);
-
-        // Close cameras to avoid errors
-        myColorDetection.robotCamera.closeCameraDevice();
     }
 
     public Action dropPixel() {
