@@ -80,7 +80,7 @@ public class TeleOp2 extends LinearOpMode {
             rightFrontDrive.setPower((.8)*rightFrontPower);
             leftBackDrive.setPower((.8)*leftBackPower);
             rightBackDrive.setPower((.77)*rightBackPower);
-            liftMotor.setPower(liftPower * 0.5);
+
             if (gamepad1.right_trigger <= 0.05 && gamepad1.left_trigger <= 0.05)
             {
                 if (gamepad1.y) {
@@ -96,13 +96,18 @@ public class TeleOp2 extends LinearOpMode {
                         liftMotor.setPower(-.02);
                     }
                 }
-
+            }
+            else
+            {
+                liftMotor.setPower(liftPower * 0.3);
+            }
                 if (gamepad1.left_bumper) {
                     encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
                     liftMotor.setPower(0);
                     liftState = 0;
                 }
-            }
+
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
