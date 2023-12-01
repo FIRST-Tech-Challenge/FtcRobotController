@@ -121,7 +121,7 @@ public class Robot {
         // intaking pixels
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
-                        .startMotor(intakeMotor, 0.2));
+                        .startMotor(intakeMotor, 0.15));
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
                 new ActionBuilder()
