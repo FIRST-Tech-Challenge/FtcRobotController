@@ -120,7 +120,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public  void pivot(double targetHeading) {
+    /*public  void pivot(double targetHeading) {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleError = targetHeading - currentAngle + startAngle;
         double motorPower;
@@ -150,7 +150,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
 
         stopDriving();
-    }
+    }*/
 
     public void runIntake(double power, int rotations) {
         motorIntakeWheels.setMode(DcMotor.RunMode.RUN_TO_POSITION);
