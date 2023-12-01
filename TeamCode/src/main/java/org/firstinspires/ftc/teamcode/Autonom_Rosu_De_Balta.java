@@ -4,9 +4,6 @@ import static org.firstinspires.ftc.teamcode.Var_Red.CV_detectionType;
 import static org.firstinspires.ftc.teamcode.Var_Red.Webcam_h;
 import static org.firstinspires.ftc.teamcode.Var_Red.Webcam_w;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -18,15 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 @Autonomous
 public class Autonom_Rosu_De_Balta extends LinearOpMode {
@@ -56,7 +47,6 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
         });
         telemetry.addLine("waiting for start:");
         telemetry.update();
-        c.melctarget(0.855,1200,5000);
         FtcDashboard.getInstance().startCameraStream(webcam, 60);
         while (!isStopRequested() && !isStarted()) {
             try {
@@ -66,7 +56,7 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
                 telemetry.addData("rectangle width:", rectx);
                 telemetry.addData("rectangle height:", recty);
                 telemetry.addData("height / width:", hperw);
-                x = pipelineRosu.getRect().x + pipelineRosu.getRect().width/2;
+                x = pipelineRosu.getRect().x + pipelineRosu.getRect().width/2.0;
                 telemetry.addData("x:",pipelineRosu.getRect().x + pipelineRosu.getRect().width/2);
                 if (x < 350 && x > 100) {
                     varrez = 2;
@@ -120,8 +110,8 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
         }
         drive.followTrajectorySequence(ts);
         c.melctarget(0.8,800,3000);
-        c.target(-500,800,c.slider,3000,50);
+        c.target(-500,800,c.getSlider(),3000,50);
         c.deschidere();
-        c.target(0,800,c.slider,4000,5);
+        c.target(0,800,c.getSlider(),4000,5);
     }
 }
