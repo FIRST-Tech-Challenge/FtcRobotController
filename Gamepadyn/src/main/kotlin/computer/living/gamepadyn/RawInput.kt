@@ -2,7 +2,7 @@ package computer.living.gamepadyn
 
 import computer.living.gamepadyn.InputType.*
 
-enum class RawInput(val type: InputType, val axes: Int = 0) {
+enum class RawInput(val descriptor: InputDescriptor) {
     FACE_DOWN           (DIGITAL), // Generic face button (= A)
     FACE_RIGHT          (DIGITAL), // Generic face button (= B)
     FACE_LEFT           (DIGITAL), // Generic face button (= X)
@@ -40,6 +40,8 @@ enum class RawInput(val type: InputType, val axes: Int = 0) {
 //    SPECIAL_SHARE(DIGITAL),
 //    SPECIAL_OPTIONS(DIGITAL),
     ;
+
+    constructor(type: InputType = DIGITAL, axes: Int = 0) : this(InputDescriptor(type, axes))
 
 //    constructor() : this(ActionType.DIGITAL, 0);
 }

@@ -20,8 +20,8 @@ class Tak<T : Enum<T>> private constructor(val action: T, val type: InputType, v
             return Tak(action, InputType.DIGITAL, 0)
         }
 
-        @JvmStatic fun <T : Enum<T>> makeActionMap(items: List<Tak<T>>): Map<T, ActionDescriptor> {
-            return items.associate { it.action to ActionDescriptor(it.type, it.axis) }
+        @JvmStatic fun <T : Enum<T>> makeActionMap(items: List<Tak<T>>): Map<T, InputDescriptor> {
+            return items.associate { it.action to InputDescriptor(it.type, it.axis) }
         }
     }
 }

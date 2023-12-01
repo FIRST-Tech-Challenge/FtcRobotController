@@ -5,7 +5,7 @@ package computer.living.gamepadyn
 import computer.living.gamepadyn.InputType.ANALOG
 import computer.living.gamepadyn.InputType.DIGITAL
 
-class Player<T: Enum<T>> internal constructor(
+class Player<T : Enum<T>> internal constructor(
     internal val parent: Gamepadyn<T>,
     internal var rawGamepad: InputSystem.RawGamepad
 ) {
@@ -20,9 +20,13 @@ class Player<T: Enum<T>> internal constructor(
      */
     internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
-        when (it.value!!.type) {
-            ANALOG ->    (it.key to InputDataAnalog())
-            DIGITAL ->   (it.key to InputDataDigital())
+        return@associate when (it.value!!.type) {
+            ANALOG -> (it.key to (if (it.value!!.axes == 1) InputDataAnalog(0f) else InputDataAnalog(
+                0f,
+                *FloatArray(-1).toTypedArray()
+            )))
+
+            DIGITAL -> (it.key to InputDataDigital())
         }
     }.toMutableMap()
 
@@ -37,29 +41,28 @@ class Player<T: Enum<T>> internal constructor(
      * As much as I'd like for us to have everything work perfectly at runtime and compile-time, we have to make compromises.
      */
 
-    internal val eventsDigital: Map<T, ActionEvent<InputDataDigital>> = parent.actions.entries.filter { it.value!!.type == DIGITAL }
-        .associate { it.key to ActionEvent() }
+    internal val eventsDigital: Map<T, ActionEvent<InputDataDigital>> =
+        parent.actions.entries.filter { it.value!!.type == DIGITAL }
+            .associate { it.key to ActionEvent() }
 
-    internal val eventsAnalog: Map<T, ActionEvent<InputDataAnalog>> = parent.actions.entries.filter { it.value!!.type == ANALOG }
-        .associate { it.key to ActionEvent() }
+    internal val eventsAnalog: Map<T, ActionEvent<InputDataAnalog>> =
+        parent.actions.entries.filter { it.value!!.type == ANALOG }
+            .associate { it.key to ActionEvent() }
 
     /**
      * The player's configuration.
      */
     var configuration: Configuration<T>? = null
-        set(cfg) {
-            field = cfg
-            onConfigChanged()
-        }
 
 
     fun getEvent(action: T): ActionEvent<*>? {
         val descriptor = parent.actions[action]
         return if (descriptor == null) null; else when (descriptor.type) {
-            ANALOG -> eventsAnalog[action]
-            DIGITAL -> eventsDigital[action]
+            ANALOG ->   eventsAnalog[action]
+            DIGITAL ->  eventsDigital[action]
         }
     }
+
     fun getEventAnalog(action: T): ActionEvent<InputDataAnalog>? = eventsAnalog[action]
     fun getEventDigital(action: T): ActionEvent<InputDataDigital>? = eventsDigital[action]
 
@@ -69,18 +72,11 @@ class Player<T: Enum<T>> internal constructor(
     fun getState(action: T): InputData? = state[action]
     fun getStateAnalog(action: T): InputDataAnalog? {
         val s = state[action]
-        return if (s is InputDataAnalog) s; else null
+        return if (s != null && s is InputDataAnalog) s; else null
     }
     fun getStateDigital(action: T): InputDataDigital? {
         val s = state[action]
-        return if (s is InputDataDigital) s; else null
-    }
-
-    internal fun onConfigChanged() {
-        // clear state if config is null
-//        if (configuration == null) {
-//            state.clear()
-//        }
+        return if (s != null && s is InputDataDigital) s; else null
     }
 
 }

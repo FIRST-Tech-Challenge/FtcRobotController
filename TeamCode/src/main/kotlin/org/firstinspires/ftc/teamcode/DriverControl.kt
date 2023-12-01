@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER
 import com.qualcomm.robotcore.hardware.Servo
 import computer.living.gamepadyn.ActionBind
 import computer.living.gamepadyn.Configuration
-import computer.living.gamepadyn.GAD
+import computer.living.gamepadyn.GDesc
 import computer.living.gamepadyn.Gamepadyn
-import computer.living.gamepadyn.InputType
 import computer.living.gamepadyn.InputType.ANALOG
 import computer.living.gamepadyn.InputType.DIGITAL
 import computer.living.gamepadyn.RawInput
@@ -94,13 +93,13 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         shared = BotShared(this)
         shared.drive = MecanumDrive(hardwareMap, initialPose)
         gamepadyn = Gamepadyn(InputSystemFtc(this), strict = true, useInputThread = false,
-            MOVEMENT                    to GAD(ANALOG, 2),
-            ROTATION                    to GAD(ANALOG, 1),
-            SPIN_INTAKE                 to GAD(ANALOG, 1),
-            CLAW                        to GAD(ANALOG, 1),
-            TOGGLE_DRIVER_RELATIVITY    to GAD(DIGITAL),
-            TOGGLE_INTAKE_HEIGHT        to GAD(DIGITAL),
-            DEBUG_ACTION                to GAD(DIGITAL)
+            MOVEMENT                    to GDesc(ANALOG, 2),
+            ROTATION                    to GDesc(ANALOG, 1),
+            SPIN_INTAKE                 to GDesc(ANALOG, 1),
+            CLAW                        to GDesc(ANALOG, 1),
+            TOGGLE_DRIVER_RELATIVITY    to GDesc(DIGITAL),
+            TOGGLE_INTAKE_HEIGHT        to GDesc(DIGITAL),
+            DEBUG_ACTION                to GDesc(DIGITAL)
         )
 
         // Configuration

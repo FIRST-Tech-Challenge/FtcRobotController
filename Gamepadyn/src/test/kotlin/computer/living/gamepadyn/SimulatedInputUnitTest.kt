@@ -10,8 +10,8 @@ class SimulatedInputUnitTest {
         DEBUG_ACTION
     }
 
-    private val actions: Map<TestAction, GAD> = mapOf(
-        DEBUG_ACTION to GAD(InputType.DIGITAL)
+    private val actions: Map<TestAction, GDesc> = mapOf(
+        DEBUG_ACTION to GDesc(InputType.DIGITAL)
     )
 
     @Test
@@ -39,7 +39,11 @@ class SimulatedInputUnitTest {
             stateChangeCount++
         }
 
+        assertEquals(false, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
+
         gamepadyn.update()
+
+        assertEquals(false, p0.getStateDigital(DEBUG_ACTION)?.digitalData)
 
         // one state change
         InputSystemTesting.manipulableState = true
