@@ -493,15 +493,7 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(-16, 0, 0);
-                    autonState += 1;
-                }
-                break;
-            case 213:
-                // BLUE LEFT SPIKE
-                // RED RIGHT SPIKE
-                if (!Drive.Busy()) {
-                    Drive.Start(0, -10 * flip, 0);
+                    Drive.Start(-20, -10 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }

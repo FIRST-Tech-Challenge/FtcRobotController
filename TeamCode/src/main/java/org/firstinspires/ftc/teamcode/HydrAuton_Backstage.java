@@ -51,7 +51,7 @@ public class HydrAuton_Backstage extends HydrAuton {
                                 dist = 34;
                                 break;
                             case ObjLocBlueLeftSpike:
-                                dist = 26;
+                                dist = 24;
                                 break;
                             case ObjLocBlueCenterSpike:
                             case ObjLocRedCenterSpike:
@@ -59,7 +59,7 @@ public class HydrAuton_Backstage extends HydrAuton {
                                 break;
                             case ObjLocRedRightSpike:
                             default:
-                                dist = 26;
+                                dist = 24;
                                 break;
                             case ObjLocBlueRightSpike:
                                 dist = 34;
