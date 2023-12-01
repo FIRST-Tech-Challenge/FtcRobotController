@@ -40,8 +40,6 @@ public class AprilTagLatencyCompensation {
             }
 
             if (poseEstimation != null && mecanumDrive.twistList.size() > 1 && !anyMotorRunning) {
-                System.out.println("USE APRIL TAGS!");
-
                 if (mecanumDrive.isDevBot) {
                     mecanumDrive.myAprilTagPoseEstimator.statusLight.setState(false);
                 }
@@ -57,12 +55,9 @@ public class AprilTagLatencyCompensation {
                 }
 
             } else {
-                System.out.println("NOT USE APRIL TAGS!");
-
                 if (mecanumDrive.isDevBot) {
                     mecanumDrive.myAprilTagPoseEstimator.statusLight.setState(true);
                 }
-                System.out.println(twist.value().toString());
                 mecanumDrive.pose = mecanumDrive.pose.plus(twist.value()); // This line was actually in the original MecanumDrive class, just moved here by me
             }
         } else {

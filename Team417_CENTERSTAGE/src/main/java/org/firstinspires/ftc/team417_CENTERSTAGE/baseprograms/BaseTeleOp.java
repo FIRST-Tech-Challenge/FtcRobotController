@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
@@ -25,6 +30,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("y", drive.pose.position.y);
             telemetry.addData("heading", drive.pose.heading);
 
+            // Code added to draw the pose, remove before competition, causes lags:
+            TelemetryPacket p = new TelemetryPacket();
+            Canvas c = p.fieldOverlay();
+            c.setStroke("#3F5100");
+            MecanumDrive.drawRobot(c, drive.pose);
+
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            dashboard.sendTelemetryPacket(p);
+
             if (armMotor != null && dumperServo != null && gateServo != null) {
                 outputUsingControllers();
                 intakeUsingControllers();
@@ -48,7 +62,16 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     public void resetIMUIfNeeded() {
         if (gamepad1.left_bumper && !leftBumperIsPressed) {
-            drive.imu.resetYaw();
+            IMU.Parameters parameters;
+            if (drive.isDevBot) {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            } else {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP)); }
+            drive.imu.initialize(parameters);
         }
         leftBumperIsPressed = gamepad1.left_bumper;
     }
