@@ -81,19 +81,22 @@ public class TeleOp2 extends LinearOpMode {
                 if (liftState == 0) {
                     encoderLift(0.5, 8, LIFT_DIRECTION.UP);
                     liftMotor.setPower(.12);
-                    sleep(500);
                     liftState++;
                 }
-                if (liftState == 1){
+                else if (liftState == 1){
                     liftState++;
-                    encoderLift(0.5, 7, LIFT_DIRECTION.UP);
-                    liftMotor.setPower(.06);
+                    encoderLift(0.5, 8.5, LIFT_DIRECTION.UP);
+                    liftMotor.setPower(-.03);
+                }
+                else{
+
                 }
             }
 
             if (gamepad1.left_bumper){
                 encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
                 liftMotor.setPower(0);
+                liftState = 0;
             }
 
 
