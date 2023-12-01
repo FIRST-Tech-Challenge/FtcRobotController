@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -47,7 +46,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -99,8 +97,7 @@ import java.util.List;
  */
 
 
-
-public class FirstAutonomousIteration extends LinearOpMode {
+public class AutoSpeedIncreases extends LinearOpMode {
 
     public enum FoundTeamProp {
         FOUND_NONE, FOUND_LEFT, FOUND_MIDDLE, FOUND_RIGHT;
@@ -163,7 +160,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2/DRIVE_GEAR_REDUCTION;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED             = 0.5/DRIVE_GEAR_REDUCTION;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.1/DRIVE_GEAR_REDUCTION;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -210,7 +207,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    public FirstAutonomousIteration (int sideMul) {
+    public AutoSpeedIncreases(int sideMul) {
         this.sideMul = sideMul;
     }
 
@@ -283,36 +280,63 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     private void initTfod() {
 
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
+//        // Create the TensorFlow processor by using a builder.
+//        tfod = new TfodProcessor.Builder()
+//
+//                // With the following lines commented out, the default TfodProcessor Builder
+//                // will load the default model for the season. To define a custom model to load,
+//                // choose one of the following:
+//                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+//                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+////                .setModelAssetName(TFOD_MODEL_ASSET)
+//                //.setModelFileName(TFOD_MODEL_FILE)
+//
+//                // The following default settings are available to un-comment and edit as needed to
+//                // set parameters for custom models.
+////                .setModelLabels(LABELS)
+//                //.setIsModelTensorFlow2(true)
+//                //.setIsModelQuantized(true)
+//                //.setModelInputSize(300)
+//                //.setModelAspectRatio(16.0 / 9.0)
+//                .build();
 
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
+        tfod = TfodProcessor.easyCreateWithDefaults();
 
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                .setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
+
+        // add the april tag
+        aprilTag = new AprilTagProcessor.Builder()
+
+                // The following default settings are available to un-comment and edit as needed.
+                //.setDrawAxes(false)
+                //.setDrawCubeProjection(false)
+                //.setDrawTagOutline(true)
+                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                // ... these parameters are fx, fy, cx, cy.
 
                 .build();
 
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        // Set the camera (webcam vs. built-in RC phone camera).
+
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessors(tfod, aprilTag)
+                    .build();
         } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessors(tfod, aprilTag)
+
+                    .build();
         }
+
 
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
@@ -328,11 +352,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         // If set "false", monitor shows camera view without annotations.
         //builder.setAutoStopLiveView(false);
 
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
 
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
         //tfod.setMinResultConfidence(0.75f);
@@ -405,7 +425,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
             switch (currState) {
                 case START_TO_DETECT_POS:
-                    driveStraight(DRIVE_SPEED*3, 22, 0.0);
+                    driveStraight(DRIVE_SPEED*3, 18, 0.0);
                     holdHeading(TURN_SPEED, 0, 0.1);
                     nextState = FSMState.DETECT_MIDDLE;
                     break;
@@ -418,7 +438,6 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         msg = "Cube Found Middle!!!";
                         sendTelemetry(true);
 
-                        driveStraight(DRIVE_SPEED, 2, targetHeading, false, true);
                         driveStraight(DRIVE_SPEED, 2.8, targetHeading);
 
                         dropTwoPickOne();
@@ -451,7 +470,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         turnToHeading( TURN_SPEED*1, 90);
                         holdHeading(TURN_SPEED*1, 90,0.1);
                         driveStraight(DRIVE_SPEED*1,10, 90,false, true);
-                        driveStraight(DRIVE_SPEED, -1, 90);
+                        driveStraight(DRIVE_SPEED, -3, 90);
 
                         dropTwoPickOne();
 
@@ -484,15 +503,16 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
                     // get ready to go park
                     // set up the place to where it is ready to go park
-                    driveStraight(DRIVE_SPEED*5,-24.5, 90,false, true);
+                    driveStraight(DRIVE_SPEED*5,-23.5, 90,false, true);
 
                     nextState = FSMState.GO_PARK;
                     break;
 
                 case GO_PARK:
                     turnToHeading(TURN_SPEED*10, sideMul * (-90));
-                    driveStraight(DRIVE_SPEED*10, -30, sideMul * (-90), true, false);
-                    driveStraight(DRIVE_SPEED*11, -61, sideMul * (-90), true, false);
+                    driveStraight(DRIVE_SPEED*4, -30, sideMul * (-90), true, false);
+                    driveStraight(DRIVE_SPEED*5, -61, sideMul * (-90), true, false);
+                    arm.moveArmUp();
 
                     nextState = FSMState.DONE;
                     break;
