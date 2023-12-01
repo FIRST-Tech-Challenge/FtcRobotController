@@ -93,6 +93,7 @@ public class TeleOp2 extends LinearOpMode {
                         encoderLift(0.5, 8, LIFT_DIRECTION.UP);
                         liftPower = -.03;
                     }
+                    liftMotor.setPower(liftPower*.3);
                 }
             }
             else
