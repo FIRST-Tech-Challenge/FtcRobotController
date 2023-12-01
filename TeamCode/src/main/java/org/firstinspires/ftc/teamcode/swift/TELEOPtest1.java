@@ -129,9 +129,9 @@ public class TELEOPtest1 extends LinearOpMode {
                     rightGripper.setPosition(0.05); // Adjust the position value for the center position
                 }
                 if (gamepad2.a) {
-                    wristServo.setPosition(0.4); // Adjust the position value as needed
+                    wristServo.setPosition(0.6); // Adjust the position value as needed
                 } else if (gamepad2.b) {
-                    wristServo.setPosition(0.3); // Adjust the position value for the center position
+                    wristServo.setPosition(0); // Adjust the position value for the center position
                 }
             telemetry.update();
             }
