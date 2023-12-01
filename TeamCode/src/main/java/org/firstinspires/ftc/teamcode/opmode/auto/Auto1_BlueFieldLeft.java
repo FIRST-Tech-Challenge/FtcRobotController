@@ -44,6 +44,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
@@ -107,7 +108,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
-    GripPipelineGreenPixelRGB pipeline;
+    GripPipelineBlueGamepieceRGB pipeline;
 
     Movement moveTo;
 
@@ -122,7 +123,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord());
+        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "left");
         gamepieceLocation = gamepiecePOS.getPOS();
         Point avgLoc = pipeline.avgContourCoord();
         telemetry.addData("AvgContour.x",avgLoc.x);
@@ -138,7 +139,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new GripPipelineGreenPixelRGB();
+        pipeline = new GripPipelineBlueGamepieceRGB();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
