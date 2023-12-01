@@ -123,13 +123,13 @@ public final class MecanumDrive {
                 headingGain = 8.0; // shared with turn
             } else {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 0.00057006;
+                lateralInPerTick = 0.00043717549671991654;
+                trackWidthTicks = 23590.365722507802;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
+                kS = 0.7728626336483462;
+                kV = 0.00011028881238241981;
                 kA = 0;
 
                 // path controller gains
@@ -523,7 +523,9 @@ public final class MecanumDrive {
         }
 
         if (poseEstimation != null && twistList.size() > 1 && !anyMotorRunning) {
-            myAprilTagPoseEstimator.statusLight.setState(false);
+            if (isDevBot) {
+                myAprilTagPoseEstimator.statusLight.setState(false);
+            }
             pose = poseEstimation;
 
             // Latency compensation code (add only when thoroughly tested)
@@ -536,7 +538,10 @@ public final class MecanumDrive {
             }
 
         } else {
-            myAprilTagPoseEstimator.statusLight.setState(true);
+
+            if (isDevBot) {
+                myAprilTagPoseEstimator.statusLight.setState(true);
+            }
             System.out.println(twist.value().toString());
             pose = pose.plus(twist.value()); // This line was actually in the original code, just moved here by me
         }
