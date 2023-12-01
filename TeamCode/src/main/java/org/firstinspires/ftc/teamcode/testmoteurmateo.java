@@ -35,13 +35,12 @@ public class testmoteurmateo extends LinearOpMode {
             varY1 = this.gamepad1.left_stick_y;
             varY2 = this.gamepad1.right_stick_y;
 
-
             motorA.setPower(varY1);
             motorB.setPower(-varY2);
 
 
-            telemetry.addData("Target Power A", tgtPowerA);
-            telemetry.addData("Target Power B", tgtPowerB);
+            telemetry.addData("Target Power A", varY1);
+            telemetry.addData("Target Power B", -varY2);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
