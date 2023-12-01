@@ -83,7 +83,6 @@ public class Movement {
 
     /**
      * Moves all wheel motors forward a distance in ticks
-     * @param ticks  the distance the motors move in ticks, should be positive.
      * @param power  the power given to the motors
      */
     public void Forward(int ticks, double power){
@@ -107,7 +106,6 @@ public class Movement {
 
     /**
      * Moves all wheel motors backwards a distance in ticks
-     * @param ticks  the distance the motors move in ticks, should be positive.
      * @param power  the power given to the motors
      */
     public void Backwards(int ticks, double power){
@@ -132,7 +130,7 @@ public class Movement {
     /**
      * Moves the front right and the back left motor forwards, and the front left and the back right
      * motors backwards in order to move left a distance in ticks
-     * @param ticks  the distance the motors move in ticks, should be positive.
+     * 
      * @param power  the power given to the motors
      */
     public void Left(int ticks, double power){
@@ -157,7 +155,6 @@ public class Movement {
     /**
      * Moves the front left and the back right motor forwards, and the front right and the back left
      * motors backwards in order to move left a distance in ticks
-     * @param ticks  the distance the motors move in ticks, should be positive.
      * @param power  the power given to the motors
      */
     public void Right(int ticks, double power){
