@@ -29,29 +29,11 @@ public class TeleOp2 extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
         liftMotor = hardwareMap.get(DcMotor.class,"liftMotor");
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-
-        //13784
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        liftMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        //7604
-//        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-//        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-//        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-//        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -75,39 +57,6 @@ public class TeleOp2 extends LinearOpMode {
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
-            double liftMotorPower = 0;
-            liftMotorPower += gamepad1.right_trigger /3;
-            liftMotorPower += (gamepad1.left_trigger /3) * -1;
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            //max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            //max = Math.max(max, Math.abs(leftBackPower));
-            //max = Math.max(max, Math.abs(rightBackPower));
-
-            /*if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
-            }*/
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             if (leftFrontPower <= -.05){
@@ -127,14 +76,68 @@ public class TeleOp2 extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            liftMotor.setPower(liftMotorPower);
+
+            if (gamepad1.x){
+                encoderLift(0.2, 0.25, LIFT_DIRECTION.UP);
+                liftMotor.setPower(.12);
+            }
+
+            if (gamepad1.y){
+                encoderLift(0.2, .6, LIFT_DIRECTION.UP);
+                liftMotor.setPower(-.12);
+            }
+
+            if (gamepad1.left_bumper){
+                encoderLift(0.2, 1, LIFT_DIRECTION.DOWN);
+                liftMotor.setPower(0);
+            }
+
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("lifter power:", "%4.2f,", liftMotorPower);
             telemetry.update();
         }
+    }
+
+    public void encoderLift(double power, double inches, LIFT_DIRECTION lift_direction) {
+
+        //Specifications of hardware
+        final double wheelDiameter = 1.5;
+        final double wheelCircumference = (wheelDiameter * 3.141592653589793);
+        final double ticksPerRotation = 28;
+        final double ticksPerInch = (ticksPerRotation / wheelCircumference);
+
+        int liftTarget;
+
+
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        liftTarget = liftMotor.getCurrentPosition() + (int) (inches * ticksPerInch);
+
+
+        if (lift_direction == LIFT_DIRECTION.UP) {
+            liftMotor.setTargetPosition(liftTarget);
+
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            liftMotor.setPower(power);
+
+
+            while (liftMotor.isBusy() && opModeIsActive()) {
+
+            }
+
+            //Kills the motors to prepare for next call of method
+            liftMotor.setPower(0);
+
+        }
+    }
+
+    enum LIFT_DIRECTION {
+        DOWN,
+        UP
     }
 }
