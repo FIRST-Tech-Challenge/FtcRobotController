@@ -97,17 +97,24 @@ public class Robot {
 
         //target distance negative when going up
         double remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
-        double remainingDistanceZero = -lsFront.getCurrentPosition();
 
         while (opMode.opModeIsActive() && Math.abs(targetDistanceInTicks - lsFront.getCurrentPosition()) > 100) {
             remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
-            remainingDistanceZero = -lsFront.getCurrentPosition();
 
-            telemetry.addData("linear slide pos in ticks", lsFront.getCurrentPosition());
-            telemetry.addData("linear slides power", remainingDistanceLow * 0.02);
+            double power =  remainingDistanceLow * 0.002;
 
-            lsFront.setPower(remainingDistanceLow * 0.002);
-            lsBack.setPower(remainingDistanceLow * 0.002);
+            Log.d("pid", "linear slide pos in ticks" + lsFront.getCurrentPosition());
+            Log.d("pid", "linear slides power" + power);
+
+            double minPower = 0.4;
+            if (power > 0 && power < minPower) {
+                power = minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power = -1 * minPower;
+            }
+
+            lsFront.setPower(power);
+            lsBack.setPower(power);
 
             telemetry.update();
 
@@ -153,30 +160,29 @@ public class Robot {
     }
 
     public void trayToIntakePos() {
-        setServoPosBlocking(tray, 0.47);
+        setServoPosBlocking(tray, 0.424);
     }
 
     public void trayToOuttakePos() {
-        setServoPosBlocking(tray, 0.78);
+        setServoPosBlocking(tray, 0.1);
     }
 
     public void autoOuttake() {
         trayToIntakePos();
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.6); // close clamp
+        setServoPosBlocking(clamp, 0.522); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicksBlocking(-1700); // move linear slide up
+        moveLinearSlideByTicksBlocking(-1650); // move linear slide up
         opMode.sleep(100);
         trayToOuttakePos();
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.45); // open clamp
+        setServoPosBlocking(clamp, 0.472); // open clamp
         opMode.sleep(100);
-        moveLinearSlideByTicksBlocking(-1900); // move slide up more
         straightBlocking(2, true, 0.7); //move back 2
         opMode.sleep(100);
         trayToIntakePos(); //intake
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.5); // close clamp
+        setServoPosBlocking(clamp, 0.522); // close clamp
         opMode.sleep(100);
         moveLinearSlideByTicksBlocking(0); // linear slide down
         opMode.sleep(500);
@@ -841,6 +847,8 @@ public class Robot {
             }
 
             Log.d("vision", "alignToBoard: broken out of !aligned while loop");
+            Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
+
             straightBlocking(distanceToBoard, false, 0.6);
             if (isRedAlliance) {
                 setHeading(-90, 0.75);
@@ -882,7 +890,7 @@ public class Robot {
             }
 
             if (!testingOnBert) {
-                setServoPosBlocking(clamp, 0.5);
+                setServoPosBlocking(clamp, 0.4724);
                 setServoPosBlocking(hook, 0.5);
                 setServoPosBlocking(spikeServo, 0.5);
             }
@@ -891,13 +899,9 @@ public class Robot {
             Log.d("vision", "moveToMarker: Pos " + markerPos);
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
 
-            if (!testingOnBert) {
-                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
-                VERTICAL_TOTAL = 68;
-            } else {
-                HORIZONTAL_TOTAL_BEFORE_CHUNKING = 51;
-                VERTICAL_TOTAL = 76;
-            }
+            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 51;
+            VERTICAL_TOTAL = 76;
+
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "moveToMarker: Inner Spike");
@@ -965,8 +969,8 @@ public class Robot {
 
                 // Calculate distances
                 vertical1 = 6;
-                horizontal2 = 26;
-                horizontal3 = 6;
+                horizontal2 = 30;
+                horizontal3 = 10;
                 vertical4 = 10;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
@@ -975,8 +979,10 @@ public class Robot {
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
                 setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal2, false, 0.8); //go forward FAST
-                setHeading(0, 0.7);
+                straightBlockingFixHeading(horizontal2, false, 0.5); //go forward
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                }
                 straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
                 mecanumBlocking(vertical4, isRedAlliance, 0.7); //move left if red

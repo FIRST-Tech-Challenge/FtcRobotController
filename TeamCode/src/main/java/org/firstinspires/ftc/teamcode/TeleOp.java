@@ -236,6 +236,9 @@ public class TeleOp extends LinearOpMode {
             }
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+            telemetry.addLine("lsfront pos" + robot.lsFront.getCurrentPosition());
+            telemetry.addLine("lsback pos" + robot.lsBack.getCurrentPosition());
             telemetry.update();
         }
     }
