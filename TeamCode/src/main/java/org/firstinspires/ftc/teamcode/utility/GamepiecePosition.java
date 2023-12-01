@@ -26,12 +26,13 @@ public class GamepiecePosition {
                 location = "right";
             }
         } else if (robotPOS =="right") {
-            if (gamepieceLocation.x > 450 && gamepieceLocation.x <750) {
+            if (gamepieceLocation.x > 270) {
                 location = "right";
-            } else if (gamepieceLocation.x <= 450) {
+            } else if (gamepieceLocation.x <= 270 && gamepieceLocation.x > 0) {
                 location = "center";
             } else {
                 location = "left";
+            }
         }
         return location;
 
