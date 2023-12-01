@@ -47,9 +47,10 @@ public class CalibrageDirection extends LinearOpMode {
                 tgtPowerB += 0.01;
             }
 
-
-            telemetry.addData("Moteur 1 diff : ", tgtPowerA);
-            telemetry.addData("Moteur 2 diff : ", tgtPowerB);
+            telemetry.addData("Moteur 1 Puissance : ", tgtPowerA);
+            telemetry.addData("Moteur 1 difference : ", abs(varY1)-abs(tgtPowerA));
+            telemetry.addData("Moteur 2 Puissance : ", tgtPowerB);
+            telemetry.addData("Moteur 2 difference : ", abs(varY1)-abs(tgtPowerB));
             telemetry.addData("Status", "Running");
             telemetry.update();
 
