@@ -181,7 +181,7 @@ public class MainTeleOp extends LinearOpMode {
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
                 }
 
-                // Slides stuff 😎📈📈📈
+                /*// Slides stuff 😎📈📈📈
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER))
                     if (slidePreset > 0) {
                         slidePreset--;
@@ -191,11 +191,11 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
                     if (slidePreset > Constants.SLIDE_POSITIONS.length) {
                         slidePreset++;
-                    }
+                    }*/
                 slidePreset += -gp2.getRightY() * 10;
 
                 // moves the slides to a preset (theoretically)
-                drive.moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
+                drive.moveSlides(slidePreset);
 
                 // move intake bar down to preset value with dpad but only if it can
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
