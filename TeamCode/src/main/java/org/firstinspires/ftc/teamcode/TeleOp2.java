@@ -57,6 +57,9 @@ public class TeleOp2 extends LinearOpMode {
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
+            double liftPower = 0;
+            liftPower += gamepad1.right_trigger;
+            liftPower += gamepad1.left_trigger * -1;
 
 
             // Send calculated power to wheels
@@ -77,29 +80,29 @@ public class TeleOp2 extends LinearOpMode {
             rightFrontDrive.setPower((.8)*rightFrontPower);
             leftBackDrive.setPower((.8)*leftBackPower);
             rightBackDrive.setPower((.77)*rightBackPower);
+            liftMotor.setPower(liftPower * 0.5);
+            if (gamepad1.right_trigger <= 0.05 && gamepad1.left_trigger <= 0.05)
+            {
+                if (gamepad1.y) {
+                    if (liftState == 0) {
+                        encoderLift(0.5, 8, LIFT_DIRECTION.UP);
+                        liftMotor.setPower(.12);
+                        liftState++;
+                    } else if (liftState == 1) {
+                        liftState++;
+                        encoderLift(0.5, 8, LIFT_DIRECTION.UP);
+                        liftMotor.setPower(-.02);
+                    } else {
+                        liftMotor.setPower(-.02);
+                    }
+                }
 
-            if (gamepad1.y){
-                if (liftState == 0) {
-                    encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                    liftMotor.setPower(.12);
-                    liftState++;
-                }
-                else if (liftState == 1){
-                    liftState++;
-                    encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                    liftMotor.setPower(-.02);
-                }
-                else{
-                    liftMotor.setPower(-.02);
+                if (gamepad1.left_bumper) {
+                    encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
+                    liftMotor.setPower(0);
+                    liftState = 0;
                 }
             }
-
-            if (gamepad1.left_bumper){
-                encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
-                liftMotor.setPower(0);
-                liftState = 0;
-            }
-
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
