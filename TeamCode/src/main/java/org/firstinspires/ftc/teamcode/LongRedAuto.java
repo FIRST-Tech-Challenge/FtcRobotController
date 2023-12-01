@@ -19,11 +19,11 @@ public class LongRedAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
             robot.alignToBoard();
-            //robot.autoOuttake();
+            robot.autoOuttake();
             //robot.parkBot(true);
 
-            this.sleep(100);
-
+            /*
+            //second trip
             robot.mecanumBlocking(24, true, 0.7); //mecanum directly in front of board left if blue
             robot.setHeading(-90, 0.7);
             robot.straightBlockingFixHeading(97, true, 0.8);
@@ -35,6 +35,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.setHeading(-90, 0.7);
             robot.mecanumBlocking(24, false, 0.7); //mecanum directly in front of board left if blue
             robot.setHeading(-90, 0.7);
+            */
 
             break;
         }
