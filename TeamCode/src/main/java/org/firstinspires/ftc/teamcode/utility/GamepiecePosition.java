@@ -32,9 +32,9 @@ public class GamepiecePosition {
                 location = "center";
             } else {
                 location = "left";
-            }
         }
         return location;
 
     }
 }
+
