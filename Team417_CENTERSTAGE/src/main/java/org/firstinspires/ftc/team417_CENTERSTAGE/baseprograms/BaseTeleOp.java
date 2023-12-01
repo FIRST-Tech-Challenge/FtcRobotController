@@ -19,6 +19,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            resetIMUIfNeeded();
             driveUsingControllers(false);
 
             drive.updatePoseEstimate();
@@ -53,6 +54,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
+    }
+
+    boolean leftBumperIsPressed = false;
+
+    public void resetIMUIfNeeded() {
+        if (gamepad1.left_bumper && !leftBumperIsPressed) {
+            drive.imu.resetYaw();
+        }
+        leftBumperIsPressed = gamepad1.left_bumper;
     }
 
     public boolean sensitive = false;
@@ -114,10 +124,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void outputUsingControllers() {
-        //controlArmUsingControllers();
+        controlArmUsingControllers();
         controlDumperUsingControllers();
         controlGateUsingControllers();
-        controlArmUsingControllers();
     }
 
     private double armTargetLocation = 0;  //where the arm should currently move to.
