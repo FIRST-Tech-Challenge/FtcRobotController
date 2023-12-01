@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
 
 public class DrivetrainSubsystem {
-    //Variable Declarations;
+    private ElapsedTime runtime;
+    private Telemetry telemetry;
 
     //Drive Powers
     private double backLeftPower;
@@ -19,35 +21,39 @@ public class DrivetrainSubsystem {
     private double frontLeftPower;
     private double frontRightPower;
 
-    private double forwardDrive;
-    private double shuffleDrive;
-    private double turnDrive;
-
     //Drive Motors
     private DcMotor backRightDrive;
     private DcMotor backLeftDrive;
     private DcMotor frontRightDrive;
     private DcMotor frontLeftDrive;
 
-    //PIDs
-    private MiniPID drivePID, turnPID;
-
-    //IMU
     private IMU imu;
 
-    public DrivetrainSubsystem(DcMotor backLeftDrive, DcMotor backRightDrive, DcMotor frontLeftDrive, DcMotor frontRightDrive, IMU imu) {
-        this.backLeftDrive = backLeftDrive;
-        this.backRightDrive = backRightDrive;
-        this.frontLeftDrive = frontLeftDrive;
-        this.frontRightDrive= frontRightDrive;
+    private MiniPID drivePID = new MiniPID(Constants.driveK, Constants.driveI, Constants.driveD);
+    private MiniPID turnPID = new MiniPID(0.01, 0.001, 0.001);
 
+    public enum Directions {
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT
+    }
+
+    public DrivetrainSubsystem(DcMotor backRightDrive, DcMotor backLeftDrive, DcMotor frontRightDrive,
+                               DcMotor frontLeftDrive, IMU imu, ElapsedTime runtime, Telemetry telemetry) {
+        this.backRightDrive = backRightDrive;
+        this.backLeftDrive = backLeftDrive;
+        this.frontRightDrive = frontRightDrive;
+        this.frontLeftDrive = frontLeftDrive;
         this.imu = imu;
+        this.runtime = runtime;
+        this.telemetry = telemetry;
 
         initialize();
     }
 
-    //Initializes the subsystem and its members. Call while the OpMode is running.
-    public void initialize() {
+    //Initializes Hardware
+    private void initialize() {
         //Drive Motors
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -59,371 +65,222 @@ public class DrivetrainSubsystem {
         backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //PIDs
-        drivePID = new MiniPID(Constants.driveK, Constants.driveI, Constants.driveD);
-        drivePID.setOutputLimits(-0.2, 0.2);
-
-        turnPID = new MiniPID(Constants.turnP, Constants.turnI, Constants.turnD);
-        turnPID.setOutputLimits(-0.2, 0.2);
-
-        //IMU
         RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoFacingDirection, usbFacingDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
         imu.resetYaw();
+
+        if (Constants.unlockDriveSpeed) {
+            drivePID.setOutputLimits(-1.0, 1.0);
+            turnPID.setOutputLimits(-1.0, 1.0);
+        }
+        else {
+            drivePID.setOutputLimits(-0.25, 0.25);
+            turnPID.setOutputLimits(-0.25, 0.25);
+        }
+        boolean drivePIDReversed = false;
+        drivePID.setDirection(drivePIDReversed);
     }
 
-    //Moves the motors according to joystick input. Written for mecanum drivetrains.
-    public void teleOPDrive(double gamepad1LeftStickY, double gamepad1LeftStickX, double gamepad1RightStickX) {
-        forwardDrive = -gamepad1LeftStickY;
-        shuffleDrive = gamepad1LeftStickX;
-        turnDrive = gamepad1RightStickX;
+    //General Drive / Motor Methods
 
-        frontLeftPower = Range.clip(shuffleDrive + forwardDrive + turnDrive, -1.0, 1.0);
-        frontRightPower = Range.clip(-shuffleDrive + forwardDrive - turnDrive, -1.0, 1.0);
-        backLeftPower = Range.clip(-shuffleDrive + forwardDrive + turnDrive, -1.0, 1.0);
-        backRightPower = Range.clip(shuffleDrive + forwardDrive - turnDrive, -1.0, 1.0);
+    //Drive Not Utilizing Field Orientation
+    protected void drive(double shuffleDrive, double forwardDrive, double turnDrive) {
 
+        if (Constants.unlockDriveSpeed) {
+            frontLeftPower = Range.clip(shuffleDrive + forwardDrive + turnDrive, -1.0, 1.0);
+            frontRightPower = Range.clip(-shuffleDrive + forwardDrive - turnDrive, -1.0, 1.0);
+            backLeftPower = Range.clip(-shuffleDrive + forwardDrive + turnDrive, -1.0, 1.0);
+            backRightPower = Range.clip(shuffleDrive + forwardDrive - turnDrive, -1.0, 1.0);
+        }
+        else {
+            frontLeftPower = Range.clip(shuffleDrive + forwardDrive + turnDrive, -Constants.maxDrivePower, Constants.maxDrivePower);
+            frontRightPower = Range.clip(-shuffleDrive + forwardDrive - turnDrive, -Constants.maxDrivePower, Constants.maxDrivePower);
+            backLeftPower = Range.clip(-shuffleDrive + forwardDrive + turnDrive, -Constants.maxDrivePower, Constants.maxDrivePower);
+            backRightPower = Range.clip(shuffleDrive + forwardDrive - turnDrive, -Constants.maxDrivePower, Constants.maxDrivePower);
+        }
+
+        moveMotors();
+    }
+
+    //Drive Utilizing Field Orientation
+    protected void drive(double shuffleDrive, double forwardDrive, double turnDrive, double a, double b) {
+
+        frontLeftPower = turnDrive + (shuffleDrive * b) + (forwardDrive * a);
+        frontRightPower = -turnDrive + (-shuffleDrive * a) + (forwardDrive * b);
+        backLeftPower = turnDrive + (-shuffleDrive * a) + (forwardDrive * b);
+        backRightPower = -turnDrive + (shuffleDrive * b) + (forwardDrive * a);
+
+        if (Constants.unlockDriveSpeed) {
+            frontLeftPower = Range.clip(frontLeftPower, -1.0, 1.0);
+            frontRightPower = Range.clip(frontRightPower, -1.0, 1.0);
+            backLeftPower = Range.clip(backLeftPower, -1.0, 1.0);
+            backRightPower = Range.clip(backRightPower, -1.0, 1.0);
+        }
+        else {
+            frontLeftPower = Range.clip(frontLeftPower, -Constants.maxDrivePower, Constants.maxDrivePower);
+            frontRightPower = Range.clip(frontRightPower, -Constants.maxDrivePower, Constants.maxDrivePower);
+            backLeftPower = Range.clip(backLeftPower, -Constants.maxDrivePower, Constants.maxDrivePower);
+            backRightPower = Range.clip(backRightPower, -Constants.maxDrivePower, Constants.maxDrivePower);
+        }
+
+        moveMotors();
+    }
+
+    protected void moveMotors() {
         backLeftDrive.setPower(backLeftPower);
         backRightDrive.setPower(backRightPower);
         frontLeftDrive.setPower(frontLeftPower);
         frontRightDrive.setPower(frontRightPower);
     }
 
-    //Utilizes the drive PID and a target position to drive forwards or backwards. Ends when the distance between positions becomes minimal.
-    public void autoDrive(double targetPositionInches) {
-        Long targetPositionLong = Math.round(Constants.driveMotorCPI * targetPositionInches);
-        double targetPosition = targetPositionLong.doubleValue() + frontLeftDrive.getCurrentPosition();
-
-        boolean inRange = false;
-
-        android.util.Range<Double> endRange = android.util.Range.create(-0.005, 0.005);
-
-        //Runs when target position is not within the motor stop range.
-        while (!inRange) {
-            double driveInput = drivePID.getOutput(frontLeftDrive.getCurrentPosition(), targetPosition);
-
-            if (endRange.contains(driveInput)) {
-                inRange = true;
-            }
-
-            frontLeftDrive.setPower(driveInput);
-            frontRightDrive.setPower(driveInput);
-            backLeftDrive.setPower(driveInput);
-            backRightDrive.setPower(driveInput);
-        }
-
-        //Fully stops the motors once distance is reached
-        frontLeftDrive.setPower(0.0);
-        frontRightDrive.setPower(0.0);
+    //Stop Motors
+    protected void stopMotors() {
         backLeftDrive.setPower(0.0);
         backRightDrive.setPower(0.0);
+        frontLeftDrive.setPower(0.0);
+        frontRightDrive.setPower(0.0);
     }
 
-    //Autonomously shuffles the robot left or right to a target position without changing orientation.
-    public void autoShuffle(Directions direction, double targetPositionInches) {
-        //Variable Declaration
-        Long targetPositionLong;
-        double forwardsTargetPosition;
-        double backwardsTargetPosition;
-        double forwardsDriveInput;
-        double backwardsDriveInput;
+    //Specific Actions
 
-        boolean inRange = false;
+    //Calculates Joystick Inputs into Drive Commands
+    public void driveManual(double leftStickX, double leftStickY, double rightStickX) {
+        if (Constants.fieldOrientation) {
+            double angleRadians = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double a = Math.cos(angleRadians) - Math.sin(angleRadians);
+            double b = Math.cos(angleRadians) + Math.sin(angleRadians);
+            drive(leftStickX, -leftStickY, rightStickX, a, b);
+        }
+        else {
+            drive(leftStickX, -leftStickY, rightStickX);
+        }
+    }
 
-        android.util.Range<Double> endRange = android.util.Range.create(-0.05, 0.05);
+    public void driveAuto(double distanceInches, Directions direction) {
+        drivePID.reset();
+        int startPosition = backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()
+                + frontLeftDrive.getCurrentPosition() + frontRightDrive.getCurrentPosition();
+        int currentPosition = startPosition;
+
+        int targetPosition;
+        double motorPower;
+        boolean motorsActive = true;
 
         switch (direction) {
-            case SHUFFLE_LEFT:
-                //Calculates target positions for the forward and backward moving motors. The variable backwardsTargetPosition is negated to reverse the motors' directions.
-                targetPositionLong = Math.round(Constants.driveMotorCPI * targetPositionInches);
-                forwardsTargetPosition = targetPositionLong.doubleValue();
-                backwardsTargetPosition = -forwardsTargetPosition;
+            case FORWARD:
+                targetPosition = (int) (4 * Constants.driveMotorCPI * distanceInches) + startPosition;
+                break;
+            case BACKWARD:
+                targetPosition = (int) (4 * Constants.driveMotorCPI * distanceInches) - startPosition;
+                break;
+            default:
+                return;
+        }
 
-                //Runs while neither forward or backward moving motors are within the motor stop range.
-                //Note: Shuffling left requires forward movement from (frontRightDrive, backLeftDrive) and backwards movement from (frontLeftDrive, backRightDrive).
-                while (!inRange) {
-                    forwardsDriveInput = drivePID.getOutput(frontRightDrive.getCurrentPosition(), forwardsTargetPosition);
-                    backwardsDriveInput = drivePID.getOutput(frontLeftDrive.getCurrentPosition(), backwardsTargetPosition);
+        drivePID.setSetpoint(targetPosition);
+        double startTime = runtime.seconds();
+        //Need to make sure that this will actually always stop eventually... don't want any infinite loops.
+        while (motorsActive) {
+            motorPower = drivePID.getOutput(currentPosition);
 
-                    if (endRange.contains(forwardsDriveInput) & endRange.contains(backwardsDriveInput)) {
-                        inRange = true;
-                    }
+            double derivative = drivePID.derivativeOfError;
+            if (-1 < derivative && derivative < 1 & runtime.seconds() - startTime > 1) {
+                motorsActive = false;
+            }
+            drive(0.0, motorPower, 0.0);
 
-                    frontLeftDrive.setPower(backwardsDriveInput);
-                    frontRightDrive.setPower(forwardsDriveInput);
-                    backLeftDrive.setPower(forwardsDriveInput);
-                    backRightDrive.setPower(backwardsDriveInput);
-                }
+            if (runtime.seconds() - startTime > 8) {
+                motorsActive = false;
+            }
+        }
+        //Once motorsActive is false, stop motors.
+        stopMotors();
+    }
 
-                //Fully stops motors once distance is reached.
-                frontLeftDrive.setPower(0.0);
-                frontRightDrive.setPower(0.0);
-                backLeftDrive.setPower(0.0);
-                backRightDrive.setPower(0.0);
+    public void autoTurn(double turnAngleDegrees, Directions directions) {
+        turnPID.reset();
+        double turnAngleRadians = turnAngleDegrees * (Math.PI / 180);
+        turnAngleRadians = Range.clip(turnAngleRadians, -Math.PI, Math.PI);
+        double startAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double currentAngle = startAngle;
+        double targetAngle;
+        boolean motorsActive = true;
+        boolean overshoot = false;
+        double distance;
+        double turnPower;
+        boolean turningRight;
+        double startTime = runtime.seconds();
+
+
+        switch (directions) {
+            case RIGHT:
+                targetAngle = startAngle + turnAngleRadians;
+                currentAngle += 0.01;
+                turningRight = true;
                 break;
 
-            case SHUFFLE_RIGHT:
-                //Calculates target positions for the forward and backward moving motors. The variable backwardsTargetPosition is negated to reverse the motors' directions.
-                targetPositionLong = Math.round(Constants.driveMotorCPI * targetPositionInches);
-                forwardsTargetPosition = targetPositionLong.doubleValue();
-                backwardsTargetPosition = -forwardsTargetPosition;
-
-                //Runs while neither forward or backward moving motors are within the motor stop range.
-                //Note: Shuffling right requires forward movement from (frontLeftDrive, backRightDrive) and backwards movement from (frontRightDrive, backLeftDrive).
-                while (inRange) {
-                    forwardsDriveInput = drivePID.getOutput(frontLeftDrive.getCurrentPosition(), forwardsTargetPosition);
-                    backwardsDriveInput = drivePID.getOutput(frontRightDrive.getCurrentPosition(), backwardsTargetPosition);
-
-                    if (endRange.contains(forwardsDriveInput) & endRange.contains(backwardsDriveInput)) {
-                        inRange = true;
-                    }
-
-                    frontLeftDrive.setPower(forwardsDriveInput);
-                    frontRightDrive.setPower(backwardsDriveInput);
-                    backLeftDrive.setPower(backwardsDriveInput);
-                    backRightDrive.setPower(forwardsDriveInput);
-                }
-
-                //Fully stops motors once distance is reached.
-                frontLeftDrive.setPower(0.0);
-                frontRightDrive.setPower(0.0);
-                backLeftDrive.setPower(0.0);
-                backRightDrive.setPower(0.0);
+            case LEFT:
+                targetAngle = startAngle - turnAngleRadians;
+                currentAngle += -0.01;
+                turningRight = false;
                 break;
 
             default:
-                //Does nothing if provided enum matches no possible directions.
-                break;
+                return;
         }
+
+        if (targetAngle < 0) {
+            targetAngle += 2*Math.PI;
+        }
+        else if (targetAngle >= 2*Math.PI) {
+            targetAngle -= 2*Math.PI;
+        }
+
+        turnPID.setSetpoint(0.0);
+        while (motorsActive) {
+            distance = calculateAngleDistance(currentAngle, targetAngle, turningRight, overshoot);
+            turnPower = turnPID.getOutput(distance);
+
+            if (Math.abs(turnPID.derivativeOfError) >= Math.PI && !overshoot) {
+                distance = calculateAngleDistance(currentAngle, targetAngle, turningRight, true);
+                turnPID.reset();
+                turnPower = turnPID.getOutput(distance);
+
+                overshoot = true;
+            }
+
+            else if (Math.abs(turnPID.derivativeOfError) <= 0.005 && overshoot) {
+                motorsActive = false;
+            }
+
+            if (runtime.seconds() - startTime > 8) {
+                motorsActive = false;
+            }
+
+            drive(0.0, 0.0, turnPower * (turningRight ? 1 : -1));
+        }
+        stopMotors();
     }
 
-    public void autoTurn(Directions direction, double turnAngle) {
-        double leftDriveInput, rightDriveInput;
-        double currentAngle, targetAngle, distance, lastDistance;
-        double lastTime = System.currentTimeMillis();
-        boolean inRange = false;
-
-        switch (direction) {
-            case TURN_RIGHT:
-                currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                targetAngle = (currentAngle + turnAngle) % 360;
-                if (targetAngle > 180) {
-                    targetAngle -= 360;
-                }
-
-                distance = calculateLargeAngleDistance(currentAngle, targetAngle);
-                lastDistance = distance;
-                turnPID.setSetpoint(0);
-
-                while (!inRange) {
-                    if (distance > 20) {
-                        leftDriveInput = -turnPID.getOutput(distance);
-                        rightDriveInput = turnPID.getOutput(distance);
-
-                        frontLeftDrive.setPower(leftDriveInput);
-                        backLeftDrive.setPower(leftDriveInput);
-                        frontRightDrive.setPower(rightDriveInput);
-                        backRightDrive.setPower(rightDriveInput);
-
-                        currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                        lastDistance = distance;
-                        distance = calculateLargeAngleDistance(currentAngle, targetAngle);
-                        lastTime = System.currentTimeMillis();
-
-                    }
-
-                    else if (distance <= 20 && distance > 5) {
-                        leftDriveInput = -turnPID.getOutput(distance);
-                        rightDriveInput = turnPID.getOutput(distance);
-
-                        frontLeftDrive.setPower(leftDriveInput);
-                        backLeftDrive.setPower(leftDriveInput);
-                        frontRightDrive.setPower(rightDriveInput);
-                        backRightDrive.setPower(rightDriveInput);
-
-                        currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                        lastDistance = distance;
-                        distance = calculateSmallAngleDistance(currentAngle, targetAngle);
-                        lastTime = System.currentTimeMillis();
-                    }
-
-                    else {
-                        inRange = true;
-                        /*
-                        double deltaDistance = distance - lastDistance;
-                        double timeElapsed = System.currentTimeMillis() - lastTime;
-                        double dSdT = deltaDistance / timeElapsed;
-
-                        if (-0.05 < dSdT && dSdT < 0.05) {
-                            inRange = true;
-                        }
-
-                        leftDriveInput = -turnPID.getOutput(distance);
-                        rightDriveInput = turnPID.getOutput(distance);
-
-                        frontLeftDrive.setPower(leftDriveInput);
-                        backLeftDrive.setPower(leftDriveInput);
-                        frontRightDrive.setPower(rightDriveInput);
-                        backRightDrive.setPower(rightDriveInput);
-
-                        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                        lastDistance = distance;
-                        distance = calculateSmallAngleDistance(currentAngle, targetAngle);
-                        lastTime = System.currentTimeMillis();
-                         */
-                    }
-                }
-
-                frontLeftDrive.setPower(0);
-                backLeftDrive.setPower(0);
-                frontRightDrive.setPower(0);
-                backRightDrive.setPower(0);
-        }
-    }
-
-    private double calculateLargeAngleDistance(double currentAngle, double targetAngle) {
-        if (currentAngle > targetAngle) {
-            return (180 - currentAngle) + (180 + targetAngle);
-        }
-        else if (currentAngle < targetAngle) {
-            return (180 + targetAngle) - (180 + currentAngle);
+    public double calculateAngleDistance(double currentAngle, double targetAngle, boolean turningRight, boolean overshoot) {
+        double distance;
+        if (overshoot) {
+            distance = targetAngle - currentAngle;
         }
         else {
-            return 0;
-        }
-    }
-
-    private double calculateSmallAngleDistance(double currentAngle, double targetAngle) {
-        double distance = Math.abs(targetAngle - currentAngle);
-        if (distance > 20) {
-            distance =  Math.abs(distance - 360);
+            distance = targetAngle + (turningRight ? -currentAngle : (-2 * targetAngle) + currentAngle);
         }
         return distance;
     }
 
-    //Autonomously turns the robot a degree amount in the provided direction. Utilizes a PID on inputted IMU gyroscope angles.
-    public void autoTurnOld(Directions direction, double turnAngle) {
-        //Variable Declaration
-        double leftDriveInput;
-        double rightDriveInput;
-        double targetAngle;
-        double targetAngleDistance;
-        double previousTargetAngleDistance;
-        double loopAmount = 0;
-
-        boolean inRange = false;
-
-        android.util.Range<Double> endRange = android.util.Range.create(-0.05, 0.05);;
-
-        switch (direction) {
-            case TURN_LEFT:
-                //Calculates the target angle on the IMU's gyroscope.
-                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - turnAngle;
-
-                //Calculates the distance between the current gyroscope value and the target value.
-                //Gyroscope measures from -180 to 180 degrees. If a target angle crosses over this value , it would loop over (20 degrees left of -170 degrees is 170 degrees).
-                //Inputting 170 degrees would cause the robot to turn violently to the right, the opposite of the wanted direction.
-                //By finding the distance between the two angles, a vector value is turned to a scalar one, allowing manual decision over the turn direction.
-                targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                previousTargetAngleDistance = targetAngleDistance;
-
-                //Runs when motors are not within endRange.
-                while (!inRange) {
-                    //Right input is negated to make right motors move forward (PID will return negative values, since distance will be greater than 0).
-                    leftDriveInput = turnPID.getOutput(targetAngleDistance, 0);
-                    rightDriveInput = -turnPID.getOutput(targetAngleDistance, 0);
-
-                    if (endRange.contains(leftDriveInput) & endRange.contains(rightDriveInput)) {
-                        inRange = true;
-                    }
-
-                    frontLeftDrive.setPower(leftDriveInput);
-                    frontRightDrive.setPower(rightDriveInput);
-                    backLeftDrive.setPower(leftDriveInput);
-                    backRightDrive.setPower(rightDriveInput);
-
-                    //Distance is recalculated so PID outputs can be adjusted on next loop.
-                    //If gyro loops over, the regular distance calculation breaks.
-                    //If change in distance is substantially negative, a loop over occurred in the gyroscope readings.
-                    //Negative values can happen when robot briefly passes over target distance or skips over Gryoscope value. Thus, a very low value is needed.
-                    if (previousTargetAngleDistance - targetAngleDistance < -300) {
-                        loopAmount += 1;
-
-                        //Need to reset previous target angle distance, don't want it inheriting a bad value.
-                        targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                        previousTargetAngleDistance = targetAngleDistance;
-                    }
-
-                    else {
-                        previousTargetAngleDistance = targetAngleDistance;
-                        targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                    }
-                }
-
-                //Fully stops motors once angle is reached.
-                frontLeftDrive.setPower(0.0);
-                frontRightDrive.setPower(0.0);
-                backLeftDrive.setPower(0.0);
-                backRightDrive.setPower(0.0);
-                break;
-
-            case TURN_RIGHT:
-                //Calculates the target angle on the IMU's gyroscope.
-                targetAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + turnAngle;
-
-                //Calculates the distance between the current gyroscope value and the target value.
-                targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                previousTargetAngleDistance = targetAngleDistance;
-
-                //Runs when the target angle distance is not within motor stop range.
-                while (inRange) {
-                    //Left input is negated to make left motors move forward (PID will return negative values, since distance will be greater than 0).
-                    leftDriveInput = -turnPID.getOutput(targetAngleDistance, 0);
-                    rightDriveInput = turnPID.getOutput(targetAngleDistance, 0);
-
-                    if (endRange.contains(leftDriveInput) & endRange.contains(rightDriveInput)) {
-                        inRange = true;
-                    }
-
-                    frontLeftDrive.setPower(leftDriveInput);
-                    frontRightDrive.setPower(rightDriveInput);
-                    backLeftDrive.setPower(leftDriveInput);
-                    backRightDrive.setPower(rightDriveInput);
-
-                    //If change in distance is substantially negative, a loop over occurred in the gyroscope readings.
-                    //Negative values can happen when robot briefly passes over target distance or skips over Gryo value. Thus, a very low value is needed.
-                    if (previousTargetAngleDistance - targetAngleDistance < -300) {
-                        loopAmount += 1;
-
-                        //Need to reset previous target angle distance, don't want it inheriting a bad value.
-                        targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                        previousTargetAngleDistance = targetAngleDistance;
-                    }
-
-                    else {
-                        previousTargetAngleDistance = targetAngleDistance;
-                        targetAngleDistance = Math.abs(targetAngle - (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - (loopAmount * 360)));
-                    }
-                }
-
-                //Fully stops motors once angle is reached.
-                frontLeftDrive.setPower(0.0);
-                frontRightDrive.setPower(0.0);
-                backLeftDrive.setPower(0.0);
-                backRightDrive.setPower(0.0);
-                break;
-
-            default:
-                break;
-        }
+    public void resetGyro() {
+        imu.resetYaw();
     }
 
 
-
-    //Variable Gets
+    //Get Methods
     public double getBackLeftPower() {
         return backLeftDrive.getPower();
     }
@@ -437,19 +294,15 @@ public class DrivetrainSubsystem {
     }
 
     public double getFrontRightPower() {
-        return frontRightDrive.getPower();
+        return  frontRightDrive.getPower();
     }
 
     public double getAngle() {
-        return -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
-    //Directions for Autonomous Commands
-    public enum Directions {
-        SHUFFLE_LEFT,
-        SHUFFLE_RIGHT,
-        TURN_LEFT,
-        TURN_RIGHT
+    public int[] getDriveMotorCounts() {
+        return new int[] {backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition(),
+                frontLeftDrive.getCurrentPosition(), frontRightDrive.getCurrentPosition()};
     }
 }
-

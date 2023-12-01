@@ -51,7 +51,7 @@ public class TestAuto extends LinearOpMode {
         telemetry.update();
 
         //Initialize Subsystems
-        DrivetrainSubsystemReimplementationTest drivetrainSubsystem = new DrivetrainSubsystemReimplementationTest(
+        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
                 hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
@@ -65,18 +65,21 @@ public class TestAuto extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
 
-        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystemReimplementationTest.Directions.FORWARD);
+        /*
+        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystem.Directions.FORWARD);
         sleep(1000);
-        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystemReimplementationTest.Directions.RIGHT);
+        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystem.Directions.RIGHT);
         sleep(1000);
-        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystemReimplementationTest.Directions.LEFT);
+        drivetrainSubsystem.turnMax180Auto(90, DrivetrainSubsystem.Directions.LEFT);
         sleep(1000);
-        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystemReimplementationTest.Directions.RIGHT);
+        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystem.Directions.RIGHT);
         sleep(1000);
-        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystemReimplementationTest.Directions.FORWARD);
+        drivetrainSubsystem.driveAuto(12, DrivetrainSubsystem.Directions.FORWARD);
         sleep(1000);
-        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystemReimplementationTest.Directions.LEFT);
+        drivetrainSubsystem.turnMax180Auto(180, DrivetrainSubsystem.Directions.LEFT);
 
+
+         */
             // Show the elapsed game time and wheel power.
         while (opModeIsActive()) {
 

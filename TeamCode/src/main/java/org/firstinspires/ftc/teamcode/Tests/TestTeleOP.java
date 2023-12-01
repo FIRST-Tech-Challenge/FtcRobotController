@@ -33,17 +33,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.ExtenderSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.VisionSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
 @TeleOp(name="Test TeleOp", group="Linear OpMode")
@@ -59,7 +51,7 @@ public class TestTeleOP extends LinearOpMode {
         telemetry.update();
 
         //Initialize Subsystems
-        DrivetrainSubsystemReimplementationTest drivetrainSubsystem = new DrivetrainSubsystemReimplementationTest(
+        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
                 hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),

@@ -27,39 +27,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.Utilities.Constants;
+import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
 
-
-@TeleOp(name="Subsystem Test", group="Linear OpMode")
+@TeleOp(name="PID Test", group="Linear OpMode")
 @Disabled
-public class SubsystemTest extends LinearOpMode {
+public class PIDTest extends LinearOpMode {
 
     // Declare OpMode members.
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor testMotor;
+    MiniPID testPID;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables.
-        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
-                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
-                hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
-                hardwareMap.get(IMU.class, "imu"));
-        drivetrainSubsystem.initialize();
+        testMotor  = hardwareMap.get(DcMotor.class, "test");
+        testMotor.setDirection(DcMotor.Direction.FORWARD);
+        testMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double p = 0.0125;
+        double i = 0.0002;
+        double d = 0.0;
+
+        testPID = new MiniPID(p, i, d);
+        testPID.setOutputLimits(-1.0, 1.0);
+        double targetPos = 0;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -67,19 +70,29 @@ public class SubsystemTest extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            double testPower;
 
-            //Drive Code
-            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 24);
-            drivetrainSubsystem.autoTurnOld(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+
+            if (gamepad1.x) {
+                targetPos = 1000;
+            }
+            else if (gamepad1.a) {
+                targetPos = 0;
+            }
+
+            double inputPower = testPID.getOutput(testMotor.getCurrentPosition(), targetPos);
+            testMotor.setPower(inputPower);
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Drive Motors", "frontLeft (%.2f), backLeft (%.2f), frontRight (%.2f), backRight (%.2f)",
-                    drivetrainSubsystem.getFrontLeftPower(),
-                    drivetrainSubsystem.getBackLeftPower(),
-                    drivetrainSubsystem.getFrontRightPower(),
-                    drivetrainSubsystem.getBackRightPower());
+            telemetry.addData("Motor", testMotor.getPower());
+            telemetry.addData("P", p);
+            telemetry.addData("I", i);
+            telemetry.addData("D", d);
+            telemetry.addData("Input Power", inputPower);
+            telemetry.addData("Target Position", targetPos);
+            telemetry.addData("Actual Position", testMotor.getCurrentPosition());
             telemetry.update();
         }
     }

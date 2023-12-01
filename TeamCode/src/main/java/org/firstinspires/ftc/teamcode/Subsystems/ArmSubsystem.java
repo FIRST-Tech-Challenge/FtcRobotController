@@ -4,13 +4,15 @@ import android.util.Range;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
 
 public class ArmSubsystem {
     //Variable Declarations
-    private DcMotor armMotor;
+    private DcMotor arm;
     private double armMotorPower;
     private int armZeroPosition;
 
@@ -18,31 +20,44 @@ public class ArmSubsystem {
 
     MiniPID armMotorPID;
 
+    ElapsedTime runtime;
+    Telemetry telemetry;
+
+    public enum Position {
+        UP,
+        HALFWAY,
+        DOWN
+    }
+
     //Constructor Class
-    public ArmSubsystem(DcMotor armMotor, TouchSensor limitSwitch) {
-        this.armMotor = armMotor;
+    public ArmSubsystem(DcMotor arm, TouchSensor limitSwitch, ElapsedTime runtime, Telemetry telemetry) {
+        this.arm = arm;
         this.limitSwitch = limitSwitch;
+        this.runtime = runtime;
+        this.telemetry = telemetry;
         initialize();
     }
 
     //Initializes arm motor and PID controller. Finds starting position.
     public void initialize() {
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         armMotorPID = new MiniPID(Constants.armP, Constants.armI, Constants.armD);
-        armMotorPID.setOutputLimits(-1.0, 1.0);
+        armMotorPID.setOutputLimits(-Constants.teleOPArmPower, Constants.teleOPArmPower);
+        zeroPosition();
     }
 
-    private void autoPositionArm(Position position) {
+    public void autoPositionArm(Position position) {
+        armMotorPID.reset();
         int targetPosition;
         switch (position) {
             case UP:
-                targetPosition = Constants.armMotorMaxPosition;
+                targetPosition = armZeroPosition + Constants.armMotor120Position;
                 break;
 
             case HALFWAY:
-                targetPosition = Constants.armMotorHalfwayPosition;
+                targetPosition = armZeroPosition + Constants.armMotor90Position;
                 break;
 
             case DOWN:
@@ -53,35 +68,36 @@ public class ArmSubsystem {
                 return;
         }
 
-        boolean inRange = false;
-        while (!inRange) {
-            armMotorPower = armMotorPID.getOutput(armMotor.getCurrentPosition(), targetPosition);
+        boolean motorActive = true;
+        double startTime = runtime.seconds();
+        while (motorActive) {
+            armMotorPower = armMotorPID.getOutput(arm.getCurrentPosition(), targetPosition);
             if (-0.05 < armMotorPower && armMotorPower < 0.05) {
-                inRange = true;
+                motorActive = false;
             }
-            armMotor.setPower(armMotorPower);
+            if (runtime.seconds() - startTime > 8) {
+                motorActive = false;
+            }
+            arm.setPower(armMotorPower);
         }
-        armMotor.setPower(0.0);
+        arm.setPower(0.0);
     }
 
     private void zeroPosition() {
         while (!limitSwitch.isPressed()) {
-            armMotor.setPower(Constants.armZeroingPower);
+            arm.setPower(Constants.armZeroingPower);
         }
-        armMotor.setPower(0.0);
-        armZeroPosition = (int) (armMotor.getCurrentPosition() + 56);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setTargetPosition(armZeroPosition);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setPower(0.0);
+        armZeroPosition = (int) (arm.getCurrentPosition() + 56);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setTargetPosition(armZeroPosition);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-
-
 
     //Rotates the arm based off DPad input.
     public void ManualPositionArm(boolean gamepad2_DPadLeft, boolean gamepad2_DPadRight) {
-        Range<Integer> rangeOfMotion = Range.create(armZeroPosition, Constants.armMotorMaxPosition);
-        if (rangeOfMotion.contains(armMotor.getCurrentPosition())) {
+        Range<Integer> rangeOfMotion = Range.create(armZeroPosition, armZeroPosition + Constants.armMotor120Position);
+        if (rangeOfMotion.contains(arm.getCurrentPosition())) {
             if (gamepad2_DPadRight) {
                 armMotorPower = Constants.teleOPArmPower;
             }
@@ -96,7 +112,7 @@ public class ArmSubsystem {
         }
 
         //Moves the arm up or down to correct position if arm moves out of range.
-        else if (armMotor.getCurrentPosition() < armZeroPosition) {
+        else if (arm.getCurrentPosition() < armZeroPosition) {
             armMotorPower = Constants.teleOPArmPower;
         }
 
@@ -107,28 +123,32 @@ public class ArmSubsystem {
 
     //Moves the arm to the desired angle utilizing the arm PID.
     public void autoCustomPositionArm (double desiredAngle) {
-        double targetPosition = (desiredAngle / 360) * Constants.armMotorCPR;
-        com.qualcomm.robotcore.util.Range.clip(targetPosition, armZeroPosition, Constants.armMotorMaxPosition);
+        armMotorPID.reset();
+        double targetPosition = (desiredAngle / 360) * Constants.armMotorCPR * Constants.armGearRatio;
+        com.qualcomm.robotcore.util.Range.clip(targetPosition, armZeroPosition, armZeroPosition + Constants.armMotor120Position);
 
-        boolean inRange = false;
+        boolean motorActive = true;
         Range<Double> endRange = Range.create(-0.05, 0.05);
 
-        while (inRange) {
-            armMotorPower = armMotorPID.getOutput(armMotor.getCurrentPosition(), targetPosition);
+        double startTime = runtime.seconds();
+        while (motorActive) {
+            armMotorPower = armMotorPID.getOutput(arm.getCurrentPosition(), targetPosition);
 
             if (endRange.contains(armMotorPower)) {
-                inRange = true;
+                motorActive = false;
             }
 
-            armMotor.setPower(armMotorPower);
+            if (runtime.seconds() - startTime > 8) {
+                motorActive = false;
+            }
+
+            arm.setPower(armMotorPower);
         }
 
-        armMotor.setPower(0.0);
+        arm.setPower(0.0);
     }
 
-    private enum Position {
-        UP,
-        HALFWAY,
-        DOWN
+    public int getArmPosition() {
+        return arm.getCurrentPosition();
     }
 }

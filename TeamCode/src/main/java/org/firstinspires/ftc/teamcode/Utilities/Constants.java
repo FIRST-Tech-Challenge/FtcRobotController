@@ -75,8 +75,8 @@ public class Constants {
     //Arm Encoder/Position Values
     public static double armMotorCPR = 28;
     public static double armGearRatio = 240;
-    public static int armMotorMaxPosition = (int) (120 / (armMotorCPR * armGearRatio));
-    public static int armMotorHalfwayPosition = (int) (90 / (armMotorCPR * armGearRatio));
+    public static int armMotor120Position = (int) ((120 / 360) * (armMotorCPR * armGearRatio));
+    public static int armMotor90Position = (int) ((90 / 360) * (armMotorCPR * armGearRatio));
 
     public static double armZeroingPower = -0.05;
 

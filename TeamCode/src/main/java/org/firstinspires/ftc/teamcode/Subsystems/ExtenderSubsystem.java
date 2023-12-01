@@ -3,28 +3,41 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
-import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
 
 public class ExtenderSubsystem {
-    private DcMotor extenderMotor;
+
+    private DcMotor extender;
     private TouchSensor limitSwitch;
 
-    private double extenderMotorPower;
     private int extenderZeroPosition;
 
-    public ExtenderSubsystem(DcMotor extenderMotor, TouchSensor limitSwitch) {
-        this.extenderMotor = extenderMotor;
+    ElapsedTime runtime;
+    Telemetry telemetry;
+
+    public enum Position {
+        EXTENDED,
+        RETRACTED,
+        HALFWAY
+    }
+
+    public ExtenderSubsystem(DcMotor extender, TouchSensor limitSwitch, ElapsedTime runtime, Telemetry telemetry) {
+        this.extender = extender;
         this.limitSwitch = limitSwitch;
 
-        this.extenderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.extenderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.extender.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        this.runtime = runtime;
+        this.telemetry = telemetry;
         zeroPosition();
     }
 
-    public void extendToPosition(ExtensionPosition extensionPosition) {
+    public void extendToPosition(Position extensionPosition) {
         int targetPosition;
 
         switch (extensionPosition) {
@@ -40,29 +53,32 @@ public class ExtenderSubsystem {
             default:
                 return;
         }
-        extenderMotor.setTargetPosition(targetPosition);
+        extender.setTargetPosition(targetPosition);
     }
 
     public void extendToCustomPosition(double targetPositionInches) {
         int extenderMaxPosition = (int) (Constants.extenderMaxPositionInches * Constants.extenderMotorCPI);
         int targetPosition = Range.clip((int) (targetPositionInches * Constants.extenderMotorCPI), extenderZeroPosition, extenderMaxPosition);
 
-        extenderMotor.setTargetPosition(targetPosition);
+        extender.setTargetPosition(targetPosition);
     }
 
     private void zeroPosition() {
+        double startTime = runtime.seconds();
         while (!limitSwitch.isPressed()) {
-            extenderMotor.setPower(Constants.extenderZeroingPower);
+            extender.setPower(Constants.extenderZeroingPower);
+
+            if (runtime.seconds() - startTime > 8) {
+                break;
+            }
         }
-        extenderMotor.setPower(0.0);
-        extenderZeroPosition = (int) (extenderMotor.getCurrentPosition() + (1/8 * Constants.extenderMotorCPI));
-        extenderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extenderMotor.setTargetPosition(extenderZeroPosition);
+        extender.setPower(0.0);
+        extenderZeroPosition = (int) (extender.getCurrentPosition() + (1/8 * Constants.extenderMotorCPI));
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extender.setTargetPosition(extenderZeroPosition);
     }
 
-    public enum ExtensionPosition {
-        EXTENDED,
-        RETRACTED,
-        HALFWAY
+    public int getExtenderPosition() {
+        return extender.getCurrentPosition();
     }
 }

@@ -4,20 +4,28 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
 public class WristSubsystem {
-    private Servo wristHardwareMap, wrist;
+    private Servo wrist;
     private double wristPosition;
     private ElapsedTime runtime;
+    Telemetry telemetry;
 
-    public WristSubsystem(Servo wristHardwareMap, ElapsedTime runtime) {
-        this.wristHardwareMap = wristHardwareMap;
+    public enum Positions {
+        DOWN,
+        UP
+    }
+
+    public WristSubsystem(Servo wrist, ElapsedTime runtime, Telemetry telemetry) {
+        this.wrist = wrist;
         this.runtime = runtime;
+        this.telemetry = telemetry;
+        initialize();
     }
 
     public void initialize() {
-        wrist = wristHardwareMap;
         wrist.setDirection(Servo.Direction.FORWARD);
         wrist.scaleRange(Constants.wristMinPosition, Constants.wristMaxPosition);
         wristPosition = 0.0;
@@ -53,8 +61,7 @@ public class WristSubsystem {
         wrist.setPosition(wristPosition);
     }
 
-    public enum Positions {
-        DOWN,
-        UP
+    public double getWristPosition() {
+        return wrist.getPosition();
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.To_Be_Removed;
 
 import android.util.Size;
 
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-public class VisionSubsystem {
+public class VisionSubsystemOld {
     //Declares TensorFlow and Vision Portal Variables
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
@@ -18,7 +18,7 @@ public class VisionSubsystem {
     //Declares webcam hardware name.
     private WebcamName webcamName;
 
-    public VisionSubsystem (WebcamName webcamName) {
+    public VisionSubsystemOld(WebcamName webcamName) {
         this.webcamName = webcamName;
         initialize();
     }
