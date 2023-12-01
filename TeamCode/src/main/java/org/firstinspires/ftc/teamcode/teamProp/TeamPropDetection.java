@@ -61,7 +61,7 @@ public class TeamPropDetection {
     double cy = 221.506;
     private Telemetry telemetry;
 
-    private enum propLocation {
+    public enum propLocation {
         LEFT,
         RIGHT,
         CENTER,

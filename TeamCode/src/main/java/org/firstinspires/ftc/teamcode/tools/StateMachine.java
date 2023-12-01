@@ -69,6 +69,13 @@ public class StateMachine {
 
         }
 
+        public State updateSync() {
+            State latestState = update(); //Do one call to process potential trigger
+            while(currentTransition!=null){ // Let's wait until transitions are fully executed
+                latestState = update();
+            }
+            return latestState;
+        }
         // Method called every update cycle to determine if the state should transition
         State update() {
             // If there is no active transition, check for a triggered transition
@@ -79,7 +86,9 @@ public class StateMachine {
                         break;
                     }
                 }
-                return this; // No transition triggered, stay in this state
+                if(currentTransition == null) {
+                    return this; // Still no transition triggered, stay in this state
+                }
             }
 
             // If the current transition is complete, move to the next state
@@ -112,6 +121,11 @@ public class StateMachine {
     public void updateState() {
         assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
         currentState = currentState.update(); // Update the current state, which may cause a state transition
+    }
+
+    public void updateStateSync() {
+        assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
+        currentState = currentState.updateSync(); // Update the current state, which may cause a state transition
     }
 
     public State getCurrentState(){

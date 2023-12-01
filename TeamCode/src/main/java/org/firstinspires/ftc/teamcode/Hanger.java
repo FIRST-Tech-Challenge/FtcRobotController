@@ -20,12 +20,13 @@ public class Hanger {
         hangerTouchUp = hardwareMap.touchSensor.get("skyHookTouchUp");
         hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         this.handlerDPadDown = handlerDPadDown;
         this.handlerDPadUp = handlerDPadUp;
     }
 
     public void update(Button button) {
-        TelemetryManager.getTelemetry().addData("Hanger Pos: ", hangerMotor.getCurrentPosition());
+        //TelemetryManager.getTelemetry().addData("Hanger Pos: ", hangerMotor.getCurrentPosition());
         if(handlerDPadUp.On()){
             if(hangerTouchUp.isPressed()) {
                 hangerMotor.setPower(0);
