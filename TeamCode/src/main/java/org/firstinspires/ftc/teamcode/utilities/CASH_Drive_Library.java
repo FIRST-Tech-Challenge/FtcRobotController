@@ -52,7 +52,7 @@ public class CASH_Drive_Library {
     double prev_XCMD = 0;
     double prev_YCMD=0;
     double  prev_TCMD=0;
-    double RATELIMIT=.055;  //NOTE:  This value depends on the loop time of the main loop
+    double RATELIMIT=.025;  //NOTE:  This value depends on the loop time of the main loop
     double DEADBAND = .025;  //Not used yet
 
     private boolean IsOpModeActive()
