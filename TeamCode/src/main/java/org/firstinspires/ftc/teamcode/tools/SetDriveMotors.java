@@ -99,10 +99,10 @@ public class SetDriveMotors extends OpMode {
         TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         // Rotate the movement direction counter to the bot's rotation
 
-        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
-        double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
-//        double rotX = horizontal;
-//        double rotY = vertical;
+//        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
+//        double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
+        double rotX = horizontal;
+        double rotY = vertical;
 
         double rotationalCorrection = 1.1; // original value of code on site was 1.1
 

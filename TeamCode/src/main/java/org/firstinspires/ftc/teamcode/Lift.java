@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
 
-    public final int liftEncoderMin = 1000; // Set your minimum encoder value here
+    public final int liftEncoderMin = 1200; // Set your minimum encoder value here
     private final int liftEncoderMax = 3500;
     public DcMotor liftMotor;
     Gamepad gamepad2;
