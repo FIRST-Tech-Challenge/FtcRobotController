@@ -175,13 +175,13 @@ public class MainTeleOp extends LinearOpMode {
             if (!drive.isDevBot) {
 
                 // drive Drone Launcher 📄📄✈✈✈
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.X)){
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y)){
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
                 }
 
-                // Slides stuff 😎📈📈📈
+                /*// Slides stuff 😎📈📈📈
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER))
                     if (slidePreset > 0) {
                         slidePreset--;
@@ -191,40 +191,56 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
                     if (slidePreset > Constants.SLIDE_POSITIONS.length) {
                         slidePreset++;
-                    }
+                    }*/
+                slidePreset += -gp2.getRightY() * 10;
 
                 // moves the slides to a preset (theoretically)
-                moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
+                drive.moveSlides(slidePreset);
 
                 // move intake bar down to preset value with dpad but only if it can
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
                     if (intakePreset > 0) {
                         intakePreset--;
                     }
 
                 // move intake bar up to preset value with dpad but only if it can
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
                     if (intakePreset < Constants.INTAKE_POSITIONS.length - 1) {
                         intakePreset++;
                     }
+
+                // move intake bar down to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+                        intakePreset = 0;
+
+                // move intake bar up to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+                        intakePreset = Constants.INTAKE_POSITIONS.length - 1;
 
                 // drive the servo to position set by dpad using above code
                 drive.intakeServo.setPosition(Constants.INTAKE_POSITIONS[intakePreset]);
 
                 // go go gadget intake motor
                 drive.intakeMotor.setPower(-gp2.getLeftY());
+
+                /*if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    VERY WIP
+                }*/
             }
 
 
             // telemetry
-            telemetry.addData("current turning state", curTurningState);
+            /* telemetry.addData("current turning state", curTurningState);
             telemetry.addData("imu reading", currentHeading);
             telemetry.addData("target heading", targetHeading);
             telemetry.addData("turn power", turnPower);
             telemetry.addData("drive power X", drivePowerX);
             telemetry.addData("drive power Y", drivePowerY);
             telemetry.addData("intake power", intakePower);
-            telemetry.addData("intake preset", intakePreset);
+            telemetry.addData("intake preset", intakePreset); */
+
+            telemetry.addData("slide target", slidePreset);
+            telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
@@ -234,16 +250,4 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-    /**
-     * Calculates error then sets the slide powers to drive the slides to the target.
-     *
-     * Note: Does not actually go until the slides hit the target, this method is meant to be
-     * used in conjunction with a outside loop ♻
-     * @param targetPos the position to target in encoder ticks
-     */
-    private void moveSlides(int targetPos) {
-        double power = (targetPos - drive.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
-        drive.slideMotor.setPower(power);
-        drive.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
-    }
 }

@@ -46,6 +46,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.inspection.InspectionState;
 
@@ -267,9 +268,14 @@ public final class MecanumDrive {
             returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        // preset servo positions
         if(!isDevBot) {
+            // preset servo positions
             //droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            intakeServo.setPosition(Constants.INTAKE_POSITIONS[Constants.INTAKE_POSITIONS.length - 1]);
+
+            // preset motor positions (slides mainly)
+            moveSlides(Constants.SLIDE_POSITIONS[0]);
+
         }
 
         // now has been enabled, encoders are goodge :D
@@ -302,6 +308,19 @@ public final class MecanumDrive {
         localizer = new DriveLocalizer();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    /**
+     * Calculates error then sets the slide powers to drive the slides to the target.
+     *
+     * Note: Does not actually go until the slides hit the target, this method is meant to be
+     * used in conjunction with a outside loop ♻
+     * @param targetPos the position to target in encoder ticks
+     */
+    public void moveSlides(int targetPos) {
+        double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        this.slideMotor.setPower(power);
+        this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
