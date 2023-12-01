@@ -36,10 +36,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWheelLoca
  * satisfactory result is produced.
  */
 @Config
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/MotorConfig
 @Autonomous(group= "org/firstinspires/ftc/teamcode/roadRunner/drive")
 public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
     public static double ANGLE = 180; // deg
