@@ -22,9 +22,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         initializeHardware();
 
-        arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
-
-        resetDumper();
+        if (armMotor != null) {
+            arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
+            resetDumper();
+        }
 
         waitForStart();
 
@@ -145,7 +146,8 @@ public abstract class BaseTeleOp extends BaseOpMode {
     public void outputUsingControllers() {
         controlDumperUsingControllers();
         controlGateUsingControllers();
-        arm.armControl();
+        if (arm != null)
+            arm.armControl();
     }
 
     public boolean dumperDumped = false;
