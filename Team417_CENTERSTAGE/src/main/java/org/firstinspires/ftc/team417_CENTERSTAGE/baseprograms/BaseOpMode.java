@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
-
+@Config
 public abstract class BaseOpMode extends LinearOpMode {
     //Declares LEDs on DevBot
     public DigitalChannel red;
@@ -22,17 +23,15 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     public DcMotor intakeMotor ;
     public DcMotor armMotor ;
-    final public int ARM_MOTOR_MIN_POSITION = 0;
-    final public int ARM_MOTOR_MAX_POSITION = 4200;
-    final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND = 100;
-    final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_UPPER_BOUND = 200;
+    static final public double ARM_MOTOR_MIN_POSITION = 0;
+    static final public double ARM_MOTOR_MAX_POSITION = 4200;
     public Servo dumperServo;
-    public final double DUMPER_SERVO_TILT_POSITION = 0.32;
-    public final double DUMPER_SERVO_RESET_POSITION = 0.48;
-    public final double DUMPER_SERVO_DUMP_POSITION = 0;
+    public static final double DUMPER_SERVO_TILT_POSITION = 0.4;
+    public static final double DUMPER_SERVO_RESET_POSITION = 0.527;
+    public static final double DUMPER_SERVO_DUMP_POSITION = 0.2;
     public Servo gateServo;
-    public final double GATE_SERVO_OPEN_POSITION = 0.5;
-    public final double GATE_SERVO_CLOSE_POSITION = 1;
+    public final double GATE_SERVO_OPEN_POSITION = 0;
+    public final double GATE_SERVO_CLOSE_POSITION = 0.55;
 
     public static final double TICKS_PER_REVOLUTION = 537.7 * (24.0/27); // 5203 Series Yellow Jacket Motor, robot was overshooting so
     public static final double GEAR_RATIO = 1.0;
@@ -60,14 +59,14 @@ public abstract class BaseOpMode extends LinearOpMode {
             red.setState(true);
             green.setState(true);
         } else {
-            FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
-            FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD);
-            BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
-            BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
+            FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             //Mechanism Motors
             intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
-            armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);//DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);//DcMotor.RunMode.RUN_TO_POSITION);
 
             //Mechanism Servos
             dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
@@ -182,13 +181,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         gateServo.setPosition(GATE_SERVO_CLOSE_POSITION);
     }
 
-    public int[] armPositions = new int[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MIN_POSITION + ((ARM_MOTOR_MAX_POSITION - ARM_MOTOR_MIN_POSITION) / 2), ARM_MOTOR_MAX_POSITION};
-
-    public void positionArm(int armPositionIndex) {
-        if (armPositionIndex >= 0 && armPositionIndex <= armPositions.length - 1) {
-            armMotor.setTargetPosition(armPositions[armPositionIndex]);
-        }
-    }
+    public double[] armPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MIN_POSITION + ((ARM_MOTOR_MAX_POSITION - ARM_MOTOR_MIN_POSITION) / 2), ARM_MOTOR_MAX_POSITION};
 
     public void moveArm(double speed) {
         if (armMotor.getCurrentPosition() > ARM_MOTOR_MAX_POSITION) {
