@@ -223,7 +223,7 @@ public class RobotClass {
     }
 
     //strafing class with power and direction as parameters
-    public void strafing (String direction, double power){
+    public void strafing (String direction, double power, int timeInMs) throws InterruptedException{
         if (direction == "left") {
             frontLeft.setPower(-power);
             frontRight.setPower(power);
@@ -238,6 +238,8 @@ public class RobotClass {
             myOpMode.telemetry.addData("Error", "Invalid direction");
             myOpMode.telemetry.update();
         }
+        sleep(timeInMs);
+        stopMotors();
     }
 
     public int getDetection(int tagID) {
@@ -274,6 +276,6 @@ public class RobotClass {
                 return 4;
             }
         }
-
+        return 0;
     }
 }
