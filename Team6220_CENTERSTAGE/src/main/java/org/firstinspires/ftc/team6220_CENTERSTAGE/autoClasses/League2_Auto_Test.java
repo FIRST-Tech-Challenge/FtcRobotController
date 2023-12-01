@@ -8,41 +8,39 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
 @Autonomous(name="League2_Auto_Test", group ="amogus2")
 public class League2_Auto_Test extends LinearOpMode {
+    ColorDetection colorDetector = new ColorDetection(this);
     @Override
     public void runOpMode() throws InterruptedException {
         AutonDriveFactory autoDrive = new AutonDriveFactory(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
 
+        AutoParams params = new AutoParams();
+        params.allianceTeam = AutoParams.AllianceTeam.BLUE;
+        params.startingPosition = AutoParams.StartingPosition.SHORT;
 
+        params.parkLocation = AutoParams.ParkLocation.CORNER_SIDE;
+
+        colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
+        //colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
 
         waitForStart();
 
-        Action driveAction = autoDrive.getDriveAction(AutonDriveFactory.AllianceTeam.BLUE, AutonDriveFactory.StartingPosition.SHORT, AutonDriveFactory.ParkLocation.CORNER_SIDE);
+        params.propPosition = colorDetector.returnZone();
+        telemetry.addData("pos",params.propPosition);
+        telemetry.update();
+
+        Action driveAction = autoDrive.getDriveAction(params);
         Actions.runBlocking(driveAction);
     }
 
 }
-class AutonDriveFactory {
 
-    // used in determining which alliance side to use in auto path
-    public enum AllianceTeam {
-        BLUE,
-        RED,
-    }
-    // used in determining which side of the truss to use in auto path
-    // name represents path length to backstage
-    public enum StartingPosition {
-        SHORT,
-        LONG,
-    }
-    // determines where on the backstage to park
-    public enum ParkLocation {
-        CORNER_SIDE,
-        CENTER_FIELD_SIDE,
-    }
+class AutonDriveFactory {
 
     MecanumDrive drive;
     AutonDriveFactory(MecanumDrive drive) {
@@ -53,14 +51,14 @@ class AutonDriveFactory {
      * Call this routine from your robot's competition code to get the sequence to drive. You
      * can invoke it there by calling "Actions.runBlocking(driveAction);".
      */
-    Action getDriveAction(AllianceTeam allianceTeam, StartingPosition startingPosition, ParkLocation parkLocation) {
+    Action getDriveAction(AutoParams params) {
 
         // use 1 if blue team, -1 if red
-        int invertSign = allianceTeam == AllianceTeam.BLUE ? 1 : -1;
+        int invertSign = params.allianceTeam == AutoParams.AllianceTeam.BLUE ? 1 : -1;
 
         // determine the starting pose
         Pose2d startingPose = new Pose2d(0,0,0);
-        switch (startingPosition) {
+        switch (params.startingPosition) {
             case SHORT:
 
                 startingPose = new Pose2d (11.6, 61 * invertSign, Math.toRadians(90 * invertSign));
@@ -72,7 +70,7 @@ class AutonDriveFactory {
                 break;
         }
 
-        this.drive.pose = startingPose; // DISABLE THIS WHEN DOING MEEPMEEP!!
+        this.drive.pose = startingPose;
 
         // start building a trajectory path
         TrajectoryActionBuilder build = this.drive.actionBuilder(startingPose);
@@ -82,21 +80,32 @@ class AutonDriveFactory {
                 .endTrajectory();
 
         // purple pixel placement
-        build = build.waitSeconds(1); // PLACEHOLDER
+        switch (params.propPosition) {
+            case LEFT:
+                build = build.turnTo(Math.toRadians(90 + 90 * invertSign));
+                build = build.waitSeconds(1); // PLACEHOLDER
+                build = build.turnTo(Math.toRadians(90 * invertSign));
+                break;
+
+            case MIDDLE:
+                build = build.turnTo(Math.toRadians(90 * invertSign));
+                build = build.waitSeconds(1); // PLACEHOLDER
+                break;
+
+            case RIGHT:
+                build = build.turnTo(Math.toRadians(90 - 90 * invertSign));
+                build = build.waitSeconds(1); // PLACEHOLDER
+                build = build.turnTo(Math.toRadians(90 * invertSign));
+                break;
+        }
 
         // return to starting position while turning to face away from backdrop
-        /*
-        build = build.lineToY(55 * invertSign)
-                .lineToYLinearHeading(59 * invertSign, Math.toRadians(180))
-                .endTrajectory();
-
-         */
         build = build.lineToY(55 * invertSign)
                 .turnTo(Math.toRadians(180))
                 .endTrajectory();
 
         // drive towards the backdrop
-        if (startingPosition == StartingPosition.LONG) {
+        if (params.startingPosition == AutoParams.StartingPosition.LONG) {
             // wait
             build = build.waitSeconds(1); // temp wait time
         }
@@ -109,7 +118,7 @@ class AutonDriveFactory {
         build = build.waitSeconds(1); // PLACEHOLDER
 
         // drive in front of park location
-        switch (parkLocation) {
+        switch (params.parkLocation) {
             case CORNER_SIDE:
                 // strafe to corner side
                 build = build.setTangent(Math.toRadians(90 * invertSign))
@@ -136,6 +145,41 @@ class AutonDriveFactory {
      * arguments here to test your different code paths.
      */
     Action getMeepMeepAction() {
-        return getDriveAction(AllianceTeam.BLUE, StartingPosition.SHORT, ParkLocation.CORNER_SIDE);
+
+        AutoParams params = new AutoParams();
+        params.allianceTeam = AutoParams.AllianceTeam.RED;
+        params.startingPosition = AutoParams.StartingPosition.SHORT;
+        params.parkLocation = AutoParams.ParkLocation.CORNER_SIDE;
+        params.propPosition = ColorDetection.PropPosition.LEFT;
+
+        return getDriveAction(params);
     }
+}
+
+class AutoParams {
+
+    // used in determining which alliance side to use in auto path
+    public static enum AllianceTeam {
+        BLUE,
+        RED,
+    }
+    // used in determining which side of the truss to use in auto path
+    // name represents path length to backstage
+    public static enum StartingPosition {
+        SHORT,
+        LONG,
+    }
+    // determines where on the backstage to park
+    public static enum ParkLocation {
+        CORNER_SIDE,
+        CENTER_FIELD_SIDE,
+    }
+
+    public AllianceTeam allianceTeam;
+    public StartingPosition startingPosition;
+    public ParkLocation parkLocation;
+    public ColorDetection.PropPosition propPosition;
+
+    public AutoParams() {}
+
 }
