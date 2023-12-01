@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 
@@ -85,7 +84,7 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         while (opModeIsActive() &&
                 (runtime.seconds() < 30) &&
                 (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
-            myAprilTagPoseEstimator.updatePoseEstimate();
+            // Do nothing;
         }
 
 
@@ -99,15 +98,13 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
-        initializeHardware();
         myColorDetection.init();
-        myAprilTagPoseEstimator.init();
+        initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
 
