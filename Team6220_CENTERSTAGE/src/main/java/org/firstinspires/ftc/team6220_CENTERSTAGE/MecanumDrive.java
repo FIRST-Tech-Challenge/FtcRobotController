@@ -46,6 +46,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.inspection.InspectionState;
 
@@ -309,7 +310,13 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
-    // Moves the slides. Yonked this from MainTeleOp because I wanted to use it elsewhere
+    /**
+     * Calculates error then sets the slide powers to drive the slides to the target.
+     *
+     * Note: Does not actually go until the slides hit the target, this method is meant to be
+     * used in conjunction with a outside loop ♻
+     * @param targetPos the position to target in encoder ticks
+     */
     public void moveSlides(int targetPos) {
         double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         this.slideMotor.setPower(power);

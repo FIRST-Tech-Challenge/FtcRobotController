@@ -192,21 +192,30 @@ public class MainTeleOp extends LinearOpMode {
                     if (slidePreset > Constants.SLIDE_POSITIONS.length) {
                         slidePreset++;
                     }
+                slidePreset += -gp2.getRightY() * 10;
 
                 // moves the slides to a preset (theoretically)
                 drive.moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
 
                 // move intake bar down to preset value with dpad but only if it can
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
                     if (intakePreset > 0) {
                         intakePreset--;
                     }
 
                 // move intake bar up to preset value with dpad but only if it can
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
                     if (intakePreset < Constants.INTAKE_POSITIONS.length - 1) {
                         intakePreset++;
                     }
+
+                // move intake bar down to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+                        intakePreset = 0;
+
+                // move intake bar up to preset value with dpad but only if it can
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+                        intakePreset = Constants.INTAKE_POSITIONS.length - 1;
 
                 // drive the servo to position set by dpad using above code
                 drive.intakeServo.setPosition(Constants.INTAKE_POSITIONS[intakePreset]);
@@ -221,14 +230,17 @@ public class MainTeleOp extends LinearOpMode {
 
 
             // telemetry
-            telemetry.addData("current turning state", curTurningState);
+            /* telemetry.addData("current turning state", curTurningState);
             telemetry.addData("imu reading", currentHeading);
             telemetry.addData("target heading", targetHeading);
             telemetry.addData("turn power", turnPower);
             telemetry.addData("drive power X", drivePowerX);
             telemetry.addData("drive power Y", drivePowerY);
             telemetry.addData("intake power", intakePower);
-            telemetry.addData("intake preset", intakePreset);
+            telemetry.addData("intake preset", intakePreset); */
+
+            telemetry.addData("slide target", slidePreset);
+            telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
@@ -237,13 +249,5 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
         }
     }
-
-    /**
-     * Calculates error then sets the slide powers to drive the slides to the target.
-     *
-     * Note: Does not actually go until the slides hit the target, this method is meant to be
-     * used in conjunction with a outside loop ♻
-     * @param targetPos the position to target in encoder ticks
-     */
 
 }
