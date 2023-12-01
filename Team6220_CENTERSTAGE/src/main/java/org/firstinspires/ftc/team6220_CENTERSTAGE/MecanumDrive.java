@@ -269,7 +269,8 @@ public final class MecanumDrive {
 
         // preset servo positions
         if(!isDevBot) {
-            //droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            intakeServo.setPosition(Constants.INTAKE_POSITIONS[Constants.INTAKE_POSITIONS.length - 1]);
         }
 
         // now has been enabled, encoders are goodge :D
