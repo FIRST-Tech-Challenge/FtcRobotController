@@ -52,9 +52,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="UpdatedRedOut", group="Autonomous LinearOpMode")
+@Autonomous(name="AutoRedOut_Final", group="Autonomous LinearOpMode")
 //@Disabled
-public class AutoRedTest extends LinearOpMode {
+public class AutoRedOut_Final extends LinearOpMode {
     Robot2024 robot;
     private DistanceSensor sensorRange;
     private ElapsedTime runtime = new ElapsedTime();
@@ -79,131 +79,137 @@ public class AutoRedTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-         while (opModeIsActive()) {
-             sleep(1000);
+         while (opModeIsActive()) {                                                         //
+             //First step is to reset the bucket so that it is held into position.
+             robot.reset_pixle_bucket();
+
+             //Step 1:  Setup robot to scan the first position for the team prop
+             robot.moveRobotAuto(robot.LEFT, 0.5, 4);
+             robot.moveRobotAuto(robot.REVERSE, 0.3, 6);
+
+             //Get Ave Distance from distance sensor
+             double Average = getAverageDistanceFromSensor(sensorRange);
+
+             //If the Average is less than the below value we have determined that the robot found the
+             // team prop
+             double MIN_DISTANCE_TO_PROP = 24;
+
              robot.raiseElevatorToPosition_Autonomous(.5,250);
              robot.moveRobotAuto(robot.RIGHT, 0.3, 12);
              robot.moveRobotAuto(robot.REVERSE, 0.3, 10);
-             double NumberOfSamples=0;
-         //    NumberOfSamples = 0;
-             double Sum=0;
-             Sum = 0;
-             double Average =0;
-
-             while (NumberOfSamples<50) {
-                 distance = sensorRange.getDistance(DistanceUnit.INCH);
-                 Sum = Sum + distance;
-                 NumberOfSamples = NumberOfSamples + 1;
-                 Average = Sum/NumberOfSamples;
-                 telemetry.addData("AverageDistance:", Average);
-                 telemetry.addData("distance: ", distance);
+             sleep(1000);
+             //If it is at location 1
+             if (Average<MIN_DISTANCE_TO_PROP) {
+                 telemetry.addLine("Found Team Prop at Location:  #1");
                  telemetry.update();
-             }
-             Average = Sum / NumberOfSamples;
-             /// if distance < 30 = drive foward x drop pixel, else, move next location, and repeat. Else, go to third location, repeat.
-             distance = sensorRange.getDistance(DistanceUnit.INCH);
-             if (Average<40) {
+
                  robot.raiseElevatorToPosition_Autonomous(.5,10);
                  robot.moveRobotAuto(robot.LEFT, 0.5, 5);
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
-                 robot.sweeperCommand(.5);
-                 sleep(1000);
-
-               //  if ( initimpliments = true ) {
-                   //  robot.dump_bucket();
-                    // sleep(1000);
-               //  }
+                 if ( initimpliments == true ) {
+                     robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
+                     robot.sweeperCommand(1.0);
+                     sleep(1000);
+                     robot.sweeperCommand(0.0);
+                 }
                  robot.moveRobotAuto(robot.FORWARD, 0.5, 15);
-                // if ( initimpliments = true ) {
-                 //    robot.raise_bucket();
-                 //    robot.rollSweeperOut(1);
-                // }
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 0.5, 73);
                  robot.moveRobotAuto(robot.RIGHT, 0.5, 35);
-                // if ( initimpliments = true ) {
-                     robot.raiseElevatorToPosition_Autonomous(1, 1000);
-                     sleep(1000);
+
+                 if ( initimpliments == true ) {
+                     robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
-                     sleep(2000);
+                     sleep(1000);
                      robot.reset_pixle_bucket();
-                 robot.raiseElevatorToPosition_Autonomous(1, 10);
-               //  }
+                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
+                 }
+
+
                  sleep(30000);
-             }
+             }//end of poistion 1 work
+
+             telemetry.addLine("Didn't find team prop at location 1. Moving to chech number 2");
+             telemetry.update();
 
              robot.moveRobotAuto(robot.LEFT, 0.3, 11);
              sleep(1000);
-            NumberOfSamples = 0;
-            Sum = 0;
-            Average = 0;
-                         while (NumberOfSamples<50) {
-                 distance = sensorRange.getDistance(DistanceUnit.INCH);
-                 Sum = Sum + distance;
-                 NumberOfSamples = NumberOfSamples + 1;
-                 Average = Sum/NumberOfSamples;
-                 telemetry.addData("AverageDistance:", Average);
-                 telemetry.addData("distance: ", distance);
+             Average = getAverageDistanceFromSensor(sensorRange);
+
+             if (Average<27) {
+                 telemetry.addLine("Found Team Prop at Location:  #2");
                  telemetry.update();
-             }
-             Average = Sum / NumberOfSamples;
-             if (Average<50) {
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 18);  //
-                 if ( initimpliments = true ) {
-                     robot.dump_pixle();
+                 robot.moveRobotAuto(robot.REVERSE, 0.3, 18);
+                 if ( initimpliments == true ) {
+                     robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
+                     robot.sweeperCommand(1.0);
                      sleep(1000);
+                     robot.sweeperCommand(0.0);
                  }
-                robot.moveRobotAuto(robot.FORWARD, 0.5, 28);
-                 if ( initimpliments = true ) {
-                     robot.reset_pixle_bucket();
-                     robot.sweeperCommand(0.5);
-                 }
+
+                 robot.moveRobotAuto(robot.REVERSE, 0.5, 10);
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 73);
-                 if ( initimpliments = true ) {
-                     robot.sweeperCommand(0);
-                 }
-                 robot.moveRobotAuto(robot.RIGHT, 0.5, 29);
-                 if ( initimpliments = true ) {
-                     robot.raiseElevatorToPosition_Autonomous(1, 4000);
-                     sleep(3000);
+                 robot.moveRobotAuto(robot.REVERSE, 0.5, 3);
+                 if ( initimpliments == true ) {
+                     robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
                      sleep(1000);
                      robot.reset_pixle_bucket();
+                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                  }
+
+                 robot.moveRobotAuto(robot.LEFT, 0.3, 15);
+                 robot.moveRobotAuto(robot.REVERSE, 0.5, 6);  //
                  sleep(30000);
-             }
-             robot.moveRobotAuto(robot.REVERSE, 0.5, 10);
-             robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-             robot.moveRobotAuto(robot.REVERSE, 0.5, 3);
-             if ( initimpliments = true ) {
-                 robot.dump_pixle();
+             }//end of second position
+
+             telemetry.addLine("Didn't find 1 or 2 so assume #3");
+             telemetry.update();
+             //Now we know that the pixel is at the last location so just go there and drop pixle
+             robot.moveRobotAuto(robot.REVERSE, 0.3, 19);
+             robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
+             if ( initimpliments == true ) {
+                 robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
+                 robot.sweeperCommand(1.0);
                  sleep(1000);
+                 robot.sweeperCommand(0.0);
              }
-             robot.moveRobotAuto(robot.FORWARD, 0.5, 5);
-             if ( initimpliments = true ) {
-                 robot.reset_pixle_bucket();
-                 robot.sweeperCommand(1);
-             }
-             robot.moveRobotAuto(robot.LEFT, 0.5, 26);
-             robot.moveRobotAuto(robot.REVERSE, 0.5, 70);
-             if ( initimpliments = true ) {
-                 robot.sweeperCommand(0);
-             }
-             robot.moveRobotAuto(robot.RIGHT, 0.5, 29);
-             if ( initimpliments = true ) {
-                 robot.raiseElevatorToPosition_Autonomous(1, 4000);
-                 sleep(3000);
+
+             robot.moveRobotAuto(robot.FORWARD, 0.3, 29);
+             robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
+             if ( initimpliments == true ) {
+                 robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                  robot.dump_pixle();
                  sleep(1000);
                  robot.reset_pixle_bucket();
+                 robot.raiseElevatorToPosition_Autonomous(-.5, 0);
              }
+
+
+
+             telemetry.addData("Done ", robot.getTicks());
+             telemetry.update();
              sleep(30000);
-
-
-                  telemetry.addData("RUNNING ", robot.getTicks());
-           telemetry.update();
          }
 
-   }
+    }
+
+    //This method is what is used to get the average from the desired sensor.
+    double getAverageDistanceFromSensor(DistanceSensor dist_sensor){
+        double NumberOfSamples=0;
+        double Sum=0;
+        double Average;
+        double dist;
+        while ( NumberOfSamples <= 100  && opModeIsActive() ) {
+            dist = dist_sensor.getDistance(DistanceUnit.INCH);
+            Sum = Sum + dist;
+            NumberOfSamples = NumberOfSamples + 1;
+            telemetry.addData("distance: ", dist);
+            telemetry.update();
+        }
+        Average = Sum / NumberOfSamples;
+        telemetry.addData("Average: ", Average);
+        telemetry.update();
+        return Average;
+    }
 }

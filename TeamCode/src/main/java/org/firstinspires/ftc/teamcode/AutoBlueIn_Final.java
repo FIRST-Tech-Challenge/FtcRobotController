@@ -52,9 +52,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoRedIn_Schultz", group="Autonomous LinearOpMode")
+@Autonomous(name="AutoBlueIn_Final", group="Autonomous LinearOpMode")
 //@Disabled
-public class AutoRedIn_Schultz extends LinearOpMode {
+public class AutoBlueIn_Final extends LinearOpMode {
     Robot2024 robot;
     //This sensor is used to detect the team prop.  There are two of them, one on left and one on
     //right.  The each sensor is used for a different start location of the robot depending on
@@ -97,7 +97,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
             robot.reset_pixle_bucket();
 
             //Step 1:  Setup robot to scan the first position for the team prop
-            robot.moveRobotAuto(robot.LEFT, 0.5, 4);
+            robot.moveRobotAuto(robot.RIGHT, 0.5, 4);
             robot.moveRobotAuto(robot.REVERSE, 0.3, 6);
 
             //Get Ave Distance from distance sensor
@@ -112,7 +112,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                 telemetry.addLine("Found Team Prop at Location:  #1");
                 telemetry.update();
 
-                robot.moveRobotAuto(robot.LEFT, 0.5, 2);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 2);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
                 if ( initimpliments == true ) {
                     robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
@@ -121,9 +121,9 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                     robot.sweeperCommand(0.0);
                 }
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 3);
-                robot.moveRobotAuto(robot.LEFT, 0.5, 18);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 18);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 11);
-                robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
+                robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
                 if ( initimpliments == true ) {
                     robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                     robot.dump_pixle();
@@ -131,7 +131,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                     robot.reset_pixle_bucket();
                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
-                robot.moveRobotAuto(robot.LEFT, 0.5, 15);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 15);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
 
                 sleep(30000);
@@ -140,7 +140,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
             telemetry.addLine("Didn't find team prop at location 1. Moving to chech number 2");
             telemetry.update();
 
-            robot.moveRobotAuto(robot.RIGHT, 0.3, 10);
+            robot.moveRobotAuto(robot.LEFT, 0.3, 10);
             sleep(1000);
             Average = getAverageDistanceFromSensor(sensorRange);
 
@@ -156,7 +156,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                 }
 
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 3);
-                robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
+                robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
                 robot.moveRobotAuto(robot.REVERSE, 0.3, 28);
                 if ( initimpliments == true ) {
                     robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
@@ -166,7 +166,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
 
-                robot.moveRobotAuto(robot.LEFT, 0.3, 15);
+                robot.moveRobotAuto(robot.RIGHT, 0.3, 15);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
                 sleep(30000);
             }//end of second position
@@ -175,7 +175,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
             telemetry.update();
             //Now we know that the pixel is at the last location so just go there and drop pixle
             robot.moveRobotAuto(robot.REVERSE, 0.3, 19);
-            robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
+            robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                 robot.sweeperCommand(1.0);
@@ -184,7 +184,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
             }
 
             robot.moveRobotAuto(robot.FORWARD, 0.3, 29);
-            robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
+            robot.rotateRobotAuto2(robot.TURN_RIGHT, 180, 0.5);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                 robot.dump_pixle();
@@ -193,7 +193,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
                 robot.raiseElevatorToPosition_Autonomous(-.5, 0);
             }
 
-            robot.moveRobotAuto(robot.LEFT, 0.3, 15);
+            robot.moveRobotAuto(robot.RIGHT, 0.3, 15);
             robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
 
             telemetry.addData("Done ", robot.getTicks());

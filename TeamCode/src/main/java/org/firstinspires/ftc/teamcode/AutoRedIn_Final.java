@@ -52,9 +52,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoRedIn_Schultz", group="Autonomous LinearOpMode")
+@Autonomous(name="AutoRedIn_Final", group="Autonomous LinearOpMode")
 //@Disabled
-public class AutoRedIn_Schultz extends LinearOpMode {
+public class AutoRedIn_Final extends LinearOpMode {
     Robot2024 robot;
     //This sensor is used to detect the team prop.  There are two of them, one on left and one on
     //right.  The each sensor is used for a different start location of the robot depending on
