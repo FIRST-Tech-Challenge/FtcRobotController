@@ -175,9 +175,9 @@ public class MainTeleOp extends LinearOpMode {
             if (!drive.isDevBot) {
 
                 // drive Drone Launcher 📄📄✈✈✈
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
-                } else if (gp2.wasJustReleased(GamepadKeys.Button.X)){
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.Y)){
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
                 }
 
@@ -194,7 +194,7 @@ public class MainTeleOp extends LinearOpMode {
                     }
 
                 // moves the slides to a preset (theoretically)
-                moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
+                drive.moveSlides(Constants.SLIDE_POSITIONS[slidePreset]);
 
                 // move intake bar down to preset value with dpad but only if it can
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
@@ -213,6 +213,10 @@ public class MainTeleOp extends LinearOpMode {
 
                 // go go gadget intake motor
                 drive.intakeMotor.setPower(-gp2.getLeftY());
+
+                /*if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    VERY WIP
+                }*/
             }
 
 
@@ -241,9 +245,5 @@ public class MainTeleOp extends LinearOpMode {
      * used in conjunction with a outside loop ♻
      * @param targetPos the position to target in encoder ticks
      */
-    private void moveSlides(int targetPos) {
-        double power = (targetPos - drive.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
-        drive.slideMotor.setPower(power);
-        drive.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
-    }
+
 }

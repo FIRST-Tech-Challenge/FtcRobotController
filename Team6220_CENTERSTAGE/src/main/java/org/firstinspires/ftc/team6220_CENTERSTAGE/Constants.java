@@ -25,6 +25,13 @@ public class Constants {
       32,
       64,
     };
+
+    public static final double[] DUMPER_POSITIONS = {
+     0, // default
+     0.5, // scoring
+     1, // vertical
+    };
+
     public static final double SLIDE_RETURN_MOTOR_POWER_MUL = 0.6;
     public static final double SLIDE_RETURN_MOTOR_POWER_OFFSET = -0.05;
     public static final double SLIDE_P_GAIN = 0.01;

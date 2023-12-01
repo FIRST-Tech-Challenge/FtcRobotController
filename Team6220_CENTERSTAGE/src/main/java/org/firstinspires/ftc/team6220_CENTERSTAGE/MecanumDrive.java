@@ -267,10 +267,14 @@ public final class MecanumDrive {
             returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        // preset servo positions
         if(!isDevBot) {
-            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            // preset servo positions
+            //droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
             intakeServo.setPosition(Constants.INTAKE_POSITIONS[Constants.INTAKE_POSITIONS.length - 1]);
+
+            // preset motor positions (slides mainly)
+            moveSlides(Constants.SLIDE_POSITIONS[0]);
+
         }
 
         // now has been enabled, encoders are goodge :D
@@ -303,6 +307,13 @@ public final class MecanumDrive {
         localizer = new DriveLocalizer();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    // Moves the slides. Yonked this from MainTeleOp because I wanted to use it elsewhere
+    public void moveSlides(int targetPos) {
+        double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        this.slideMotor.setPower(power);
+        this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
