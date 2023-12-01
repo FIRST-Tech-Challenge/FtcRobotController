@@ -43,7 +43,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
@@ -83,9 +82,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="BlueFieldLeft", group="OpMode")
+@Autonomous(name="RedFieldLeft", group="OpMode")
 //@Disabled
-public class Auto1_BlueFieldLeft extends OpMode {
+public class Auto2_RedFieldLeft extends OpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -253,33 +252,6 @@ public class Auto1_BlueFieldLeft extends OpMode {
             intake.ClawOpen();
             // Move the claw up
             intake.FlipUp();
-            // Rotate 90 degrees
-            moveTo.Rotate(90);
-            sleep(700);
-            // Backwards 18 inches
-            moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
-            // Left 6 inches
-            moveTo.Left((int)((6 * ticksPerInch) * 1.04), 0.5);
-            // Move backwards 10.5 inches
-            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
-            // Forward 12 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves right 18 inches
-            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
-            // Backward 12 inches
-            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
-
-
 
             // Add telemetry
             telemetry.addData("run", state);
@@ -299,61 +271,25 @@ public class Auto1_BlueFieldLeft extends OpMode {
             intake.ClawOpen();
             // Move the claw up
             intake.FlipUp();
+
+            state = 2;
+        } else if (gamepieceLocation=="right"&& state == 0) {
+            // Move forward 25 inches
+            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
             // Rotate 90 degrees
             moveTo.Rotate(90);
             sleep(700);
-            // Left 3 inches
-            //moveTo.Left((int)((1 * ticksPerInch) * 0.94), 0.5);
-            // Backwards 36.5 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves right 26 inches
-            moveTo.Right((int)((26 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
-
-
-                state = 2;
-        } else if (gamepieceLocation=="right"&& state == 0) {
-            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
-            moveTo.Rotate(90);
-            sleep(700);
+            // Move the claw down
             intake.FlipDown();
             sleep(1500);
+            // Move forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.4);
+            // Open the claw
             intake.ClawOpen();
             sleep(500);
+            // Move the claw up
             intake.FlipUp();
-            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
-            moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
-            moveTo.Backwards((int)((19.25 * ticksPerInch) * 0.94), 0.25);
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
-            sleep(2000);
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves right 26 inches
-            moveTo.Right((int)((28 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((7 * ticksPerInch) * 0.94), 0.25);
+
             state = 3;
         }
 
