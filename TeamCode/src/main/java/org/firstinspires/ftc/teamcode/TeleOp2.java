@@ -58,6 +58,7 @@ public class TeleOp2 extends LinearOpMode {
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
 
+
             // Send calculated power to wheels
             if (leftFrontPower <= -.05){
                 leftFrontPower += -.12;
@@ -100,7 +101,6 @@ public class TeleOp2 extends LinearOpMode {
             }
 
 
-
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -118,7 +118,6 @@ public class TeleOp2 extends LinearOpMode {
         final double ticksPerInch = (ticksPerRotation / wheelCircumference);
 
         int liftTarget;
-
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
