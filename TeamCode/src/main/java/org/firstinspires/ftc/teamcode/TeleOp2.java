@@ -85,11 +85,11 @@ public class TeleOp2 extends LinearOpMode {
                 }
                 else if (liftState == 1){
                     liftState++;
-                    encoderLift(0.5, 8.5, LIFT_DIRECTION.UP);
-                    liftMotor.setPower(-.03);
+                    encoderLift(0.5, 8, LIFT_DIRECTION.UP);
+                    liftMotor.setPower(-.02);
                 }
                 else{
-
+                    liftMotor.setPower(-.02);
                 }
             }
 
