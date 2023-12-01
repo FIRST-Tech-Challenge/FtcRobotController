@@ -83,7 +83,7 @@ public class HydrAuton extends LinearOpMode {
         mOp.mTelemetry.update();
         // manual caching mode
         for (LynxModule mod : hubs) {
-            mod.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         while (!ObjDet.CameraIsReady()) {
             if (isStopRequested()) {
@@ -116,11 +116,6 @@ public class HydrAuton extends LinearOpMode {
         }
         // Find the object so we can drive to it
         while (opModeIsActive()) {
-            // clear the hardware read cache
-            // we probably don't need this here, but just in case..
-            for (LynxModule mod : hubs) {
-                mod.clearBulkCache();
-            }
             // Run tensorflow to see if we can find the object
             ObjLoc = ObjDet.GetObjectLocation(setTrueForRed);
             // UNCOMMENT THIS TO HARDCODE THE OBJECT LOCATION
@@ -153,10 +148,6 @@ public class HydrAuton extends LinearOpMode {
         ObjDet.SetObjDetectEnabled(false);
         // Run the proper auton for the object location
         while (opModeIsActive()) {
-            // clear the hardware read cache
-            for (LynxModule mod : hubs) {
-                mod.clearBulkCache();
-            }
             telemetry.addData("Location", ObjLoc);
             // The auton returns true when it's done
             if (RunAuton()) {
@@ -186,10 +177,6 @@ public class HydrAuton extends LinearOpMode {
         }
         // if we had to abort, we allow the arm to return home
         while (autonAbort && opModeIsActive()) {
-            // clear the hardware read cache
-            for (LynxModule mod : hubs) {
-                mod.clearBulkCache();
-            }
             ArmToHome();
             if (autonState >= 500) {
                 break;
