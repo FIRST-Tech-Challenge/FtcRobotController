@@ -324,8 +324,8 @@ public class TuneRoadRunner extends LinearOpMode {
                 (MecanumDrive.PARAMS.lateralInPerTick == 1) ||
                 (MecanumDrive.PARAMS.trackWidthTicks == 0)) {
 
-            MecanumDrive.PARAMS.inPerTick = 0.1;
-            MecanumDrive.PARAMS.lateralInPerTick = 0.1;
+            MecanumDrive.PARAMS.inPerTick = 0.001;
+            MecanumDrive.PARAMS.lateralInPerTick = 0.001;
             MecanumDrive.PARAMS.trackWidthTicks = 100;
         }
 

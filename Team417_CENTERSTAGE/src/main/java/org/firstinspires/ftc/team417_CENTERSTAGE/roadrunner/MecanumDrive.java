@@ -46,8 +46,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagLatencyCompensation;
 import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
-import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseOpMode;
 import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.TwistWithTimestamp;
 import org.firstinspires.inspection.InspectionState;
 
@@ -69,6 +69,9 @@ public final class MecanumDrive {
 
     // To detect the motion of the motors (added by Hank)
     public DcMotorEx[] motors;
+
+    // Whether or not to use April Tags (added by Hank)
+    public final static boolean USE_APRIL_TAGS = true;
 
     public static String getBotName() {
         InspectionState inspection=new InspectionState();
@@ -120,13 +123,13 @@ public final class MecanumDrive {
                 headingGain = 8.0; // shared with turn
             } else {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 0.00057006;
+                lateralInPerTick = 0.00043717549671991654;
+                trackWidthTicks = 23590.365722507802;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
+                kS = 0.7728626336483462;
+                kV = 0.00011028881238241981;
                 kA = 0;
 
                 // path controller gains
@@ -246,9 +249,11 @@ public final class MecanumDrive {
         // For the April Tag latency calculation (added by Hank)
         clock.reset();
 
-        // To detect April Tags to correct drift (added by Hank)
-        myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
-        myAprilTagPoseEstimator.init();
+        if (USE_APRIL_TAGS) {
+            // To detect April Tags to correct drift (added by Hank)
+            myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
+            myAprilTagPoseEstimator.init();
+        }
 
         this.pose = pose;
 
@@ -490,52 +495,7 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         Twist2dDual<Time> twist = localizer.update();
 
-        // From now on to "END", everything is added by Hank
-        // To keep a record of twists to be used by April Tag latency compensation
-        twistList.add(0, new TwistWithTimestamp(twist, clock.milliseconds()));
-
-        // Keep only twists from less than five seconds ago
-        if (twistList.size() > 0) {
-            TwistWithTimestamp oldestTwist = twistList.get(twistList.size() - 1);
-            double currentTime = clock.milliseconds();
-            while (oldestTwist.timestamp < currentTime - 5000) {
-                twistList.remove(oldestTwist);
-                oldestTwist = twistList.get(twistList.size() - 1);
-                currentTime = clock.milliseconds();
-            }
-        }
-
-        myAprilTagPoseEstimator.updatePoseEstimate();
-
-        Pose2d poseEstimation = myAprilTagPoseEstimator.estimatePose();
-
-        boolean anyMotorRunning = false;
-        for (DcMotorEx motor : motors) {
-            if (!BaseOpMode.isEpsilonEquals(motor.getPower(), 0)) {
-                anyMotorRunning = true;
-                break;
-            }
-        }
-
-        if (poseEstimation != null && twistList.size() > 1 && !anyMotorRunning) {
-            myAprilTagPoseEstimator.statusLight.setState(false);
-            pose = poseEstimation;
-
-            // Latency compensation code (add only when thoroughly tested)
-            double currentTime = clock.milliseconds();
-            TwistWithTimestamp lastTwist = twistList.get(0);
-            for (int i = 1; lastTwist.timestamp >= currentTime - myAprilTagPoseEstimator.CAMERA_LATENCY && i < twistList.size(); i++) {
-                pose.plus(lastTwist.twist.value());
-                lastTwist = twistList.get(i);
-                currentTime = clock.milliseconds();
-            }
-
-        } else {
-            myAprilTagPoseEstimator.statusLight.setState(true);
-            System.out.println(twist.value().toString());
-            pose = pose.plus(twist.value()); // This line was actually in the original code, just moved here by me
-        }
-        // END (for added by Hank)
+        AprilTagLatencyCompensation.compensateForLatency(this, twist);
 
         //This was the original location of: "pose = pose.plus(twist.value());"
 

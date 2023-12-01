@@ -5,25 +5,23 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmTeleOp;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseTeleOp extends BaseOpMode {
-    public AprilTagPoseEstimator myAprilTagPoseEstimator;
     public MecanumDrive drive;
     private ArmTeleOp arm;
 
     @Override
     public void runOpMode() {
-        myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         initializeHardware();
 
-        myAprilTagPoseEstimator.init();
         arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
 
         resetDumper();
@@ -31,6 +29,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            resetIMUIfNeeded();
             driveUsingControllers(false);
 
             drive.updatePoseEstimate();
@@ -44,8 +43,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F5100");
             MecanumDrive.drawRobot(c, drive.pose);
-
-            myAprilTagPoseEstimator.updatePoseEstimate();
 
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);
@@ -67,9 +64,24 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
+    }
 
-        // Close camera to avoid errors
-        myAprilTagPoseEstimator.visionPortal.close();
+    boolean leftBumperIsPressed = false;
+
+    public void resetIMUIfNeeded() {
+        if (gamepad1.left_bumper && !leftBumperIsPressed) {
+            IMU.Parameters parameters;
+            if (drive.isDevBot) {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            } else {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP)); }
+            drive.imu.initialize(parameters);
+        }
+        leftBumperIsPressed = gamepad1.left_bumper;
     }
 
     public boolean sensitive = false;
