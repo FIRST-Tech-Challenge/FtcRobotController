@@ -35,11 +35,13 @@ public class drivesample extends LinearOpMode
         Servo PixelGrabberWrist2 = hardwareMap.get(Servo.class, "PixelGrabberWrist2");
         Servo PixelGrabber = hardwareMap.get(Servo.class, "PixelGrabber");
 
+        PixelGrabberWrist2.setDirection(Servo.Direction.REVERSE);
+        PixelGrabber.setDirection(Servo.Direction.REVERSE);
+
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.2);
-        PixelGrabberWrist2.setPosition(0.2);
-        PixelGrabber.setDirection(Servo.Direction.REVERSE);
+        PixelGrabberWrist1.setPosition(0.21);
+        PixelGrabberWrist2.setPosition(0.21);
         PixelGrabber.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -79,78 +81,42 @@ public class drivesample extends LinearOpMode
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
 
-            if(gamepad1.dpad_down)
-            {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE);
-            }
+            if(gamepad1.right_bumper){
+                intakeMotor.setPower(0.5);
+                ArmWrist.setPosition(0.1);
+                PixelGrabberWrist1.setPosition(0.1);
+                PixelGrabberWrist2.setPosition(0.1);
 
-            if(gamepad1.dpad_up)
-            {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
-
-            if(gamepad1.dpad_left)
-            {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+            if (gamepad1.dpad_right){
+                ArmWrist.setPosition(0.2);
+                PixelGrabberWrist1.setPosition(0.1);
+                PixelGrabberWrist2.setPosition(0.1);
             }
-
-            if(gamepad1.dpad_right)
-            {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-            }
-
-            if(gamepad1.right_bumper)
-            {
-                IntakeRaiser.setPosition(0.55);
-                intakeMotor.setPower(1);
-                ArmWrist.setPosition(1);
-                PixelGrabberWrist1.setPosition(0);
-                PixelGrabberWrist2.setPosition(0);
-            }
-
-            if(gamepad1.left_bumper)
-            {
-                IntakeRaiser.setPosition(0);
+            if(gamepad1.left_bumper){
+                IntakeRaiser.setPosition(0.4);
                 intakeMotor.setPower(0);
-            }
+//                ArmWrist.setPosition(0.08);
+//                PixelGrabberWrist1.setPosition(0.15);
+//                PixelGrabberWrist2.setPosition(0.15);
+//                PixelGrabberWrist1.setPosition(0.1);
+//                PixelGrabberWrist2.setPosition(0.1);
 
-            if(gamepad1.b)
-            {
-                ArmWrist.setPosition(1);
-                intakeMotor.setPower(0);
-                IntakeRaiser.setPosition(0.3);
-                PixelGrabberWrist1.setPosition(0);
-                PixelGrabberWrist2.setPosition(0);
-            }
-
-            if(gamepad1.x)
-            {
-                PixelGrabberWrist1.setPosition(0.23);
-                PixelGrabberWrist2.setPosition(0.23);
-
+                }
+            if(gamepad1.x){
+                PixelGrabberWrist1.setPosition(0.21);
+                PixelGrabberWrist2.setPosition(0.21);
                 ArmWrist.setPosition(0.1);
             }
-
-            if(gamepad1.y)
-            {
-                PixelGrabber.setPosition(0.5);
+            if(gamepad1.a){
+                PixelGrabber.setPosition(0.3);
+            }
+            if(gamepad1.b){
+                PixelGrabber.setPosition(0);
             }
 
-            if(gamepad1.a)
-            {
-                PixelGrabber.setPosition(0.2);
-            }
 
-            if(gamepad1.dpad_up)
-            {
-                slideL.setPower(1);
-            }
-
-            if(gamepad1.dpad_down)
-            {
-                slideL.setPower(-1);
             }
 
         }
     }
-}
