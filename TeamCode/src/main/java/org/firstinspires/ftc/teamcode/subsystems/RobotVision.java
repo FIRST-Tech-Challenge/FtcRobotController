@@ -15,7 +15,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 public class RobotVision {
 
     static final int STREAM_WIDTH = 1280; // modify for your camera
-    static final int STREAM_HEIGHT = 960; // modify for your camera
+    static final int STREAM_HEIGHT = 720; // modify for your camera
 
     OpenCvWebcam webcam;
     ColorDetectionPipeline cdPipeline;
