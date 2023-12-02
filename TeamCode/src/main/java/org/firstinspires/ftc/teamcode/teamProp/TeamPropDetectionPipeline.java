@@ -69,7 +69,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline
 
     Telemetry telemetry;
     //Color specific filtering values
-    static final double minBlueInitValues[]= {105, 125, 50};
+    static final double minBlueInitValues[]= {90, 90, 20};
     static final double maxBlueInitValues[] = {135, 255, 255};
 
     //It is on 2 different sections in the hsv therefore we need to merge the 2 red sections

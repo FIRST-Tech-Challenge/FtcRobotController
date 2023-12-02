@@ -12,14 +12,17 @@ import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 //@Autonomous(name="Autonomous Base")
 public abstract class AutoBase extends LinearOpMode {
 
-    public class Coordinates{
-        //left backdrop
+    protected StandardTrackingWheelLocalizer myLocalizer;
 
-        Pose2d leftBackdropLeft = new Pose2d(-42, 48, Math.toRadians(270.00));
-        Pose2d leftBackdropCenter = new Pose2d(-36, 48, Math.toRadians(270.00));
-        Pose2d leftBackdropRight = new Pose2d(-30, 48, Math.toRadians(270.00));
+    public class Coordinates{
+        Pose2d rightParkIntermediateBlueLeft = new Pose2d(-21, 45, Math.toRadians(270.00));
+        Pose2d rightParkFinalBlueLeft = new Pose2d(-10, 57, Math.toRadians(270.00));
+        //left backdrop
+        Pose2d leftBackdropLeft = new Pose2d(-42, 50, Math.toRadians(270.00));
+        Pose2d leftBackdropCenter = new Pose2d(-36, 50, Math.toRadians(270.00));
+        Pose2d leftBackdropRight = new Pose2d(-30, 50, Math.toRadians(270.00));
         Pose2d leftBackdropIntermediateLeft = new Pose2d(-42, 30, Math.toRadians(270));
-        Pose2d leftBackdropIntermediateCenter = new Pose2d(-36, 30, Math.toRadians(270));
+        Pose2d leftBackdropIntermediateCenter = new Pose2d(-36, 35, Math.toRadians(270));
         Pose2d leftBackdropIntermediateRight = new Pose2d(-30, 30, Math.toRadians(270));
 
         //right backdrop
@@ -33,17 +36,17 @@ public abstract class AutoBase extends LinearOpMode {
 
         //Blue Left
         Pose2d preStartPoseBlueLeft = new Pose2d(-63, 9.5, Math.toRadians(180)); //robot needs to strafe 2 inches to the actual start pose
-        Pose2d startPoseBlueLeft = new Pose2d(-63, 12, Math.toRadians(180));
-        Pose2d rightTeamPropBlueLeft = new Pose2d(-35, 9.5, Math.toRadians(90.00));
-        Pose2d centerTeamPropBlueLeft = new Pose2d(-32, 12, Math.toRadians(90.00));
-        Pose2d leftTeamPropBlueLeft = new Pose2d(-42, 20, Math.toRadians(90.00));
+        Pose2d startPoseBlueLeft = new Pose2d(-63, 13, Math.toRadians(180));
+        Pose2d rightTeamPropBlueLeft = new Pose2d(-32, 11, Math.toRadians(90.00));
+        Pose2d centerTeamPropBlueLeft = new Pose2d(-34.5, 12, Math.toRadians(180.00));
+        Pose2d leftTeamPropBlueLeft = new Pose2d(-30, 10.5, Math.toRadians(270.00));
 
         //Blue right
         Pose2d preStartPoseBlueRight = new Pose2d(-63, -9.5, Math.toRadians(180));
-        Pose2d startPoseBlueRight = new Pose2d(-63, -12, Math.toRadians(180));
-        Pose2d rightTeamPropBlueRight = new Pose2d(-35, -9.5, Math.toRadians(90.00));
-        Pose2d centerTeamPropBlueRight = new Pose2d(-32, -12, Math.toRadians(90.00));
-        Pose2d leftTeamPropBlueRight = new Pose2d(-42, -20, Math.toRadians(90.00));
+        Pose2d startPoseBlueRight = new Pose2d(-63, -16, Math.toRadians(180));
+        Pose2d leftTeamPropBlueRight = new Pose2d(-28, -13, Math.toRadians(270.00));
+        Pose2d centerTeamPropBlueRight = new Pose2d(-35, -12, Math.toRadians(180.00));
+        Pose2d rightTeamPropBlueRight = new Pose2d(-39, -13, Math.toRadians(90.00));
 
         //Red left
         Pose2d preStartPoseRedLeft = new Pose2d(63, -9.5, Math.toRadians(180));
@@ -55,8 +58,8 @@ public abstract class AutoBase extends LinearOpMode {
         //Red right
         Pose2d preStartPoseRedRight = new Pose2d(63, 10.5, Math.toRadians(180));
         Pose2d startPoseRedRight = new Pose2d(63, 12, Math.toRadians(0));
-        Pose2d rightTeamPropRedRight = new Pose2d(35, 9.5, Math.toRadians(90.00));
-        Pose2d centerTeamPropRedRight = new Pose2d(32, 12, Math.toRadians(90.00));
+        Pose2d rightTeamPropRedRight = new Pose2d(35, 9.5, Math.toRadians(270.00));
+        Pose2d centerTeamPropRedRight = new Pose2d(32, 12, Math.toRadians(0.00));
         Pose2d leftTeamPropRedRight = new Pose2d(42, 20, Math.toRadians(90.00));
 
 
@@ -78,17 +81,12 @@ public abstract class AutoBase extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         // hardware map for odometry encoders
-        StandardTrackingWheelLocalizer myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap, null, null);
+        myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap, null, null);
         // start location (coordinate)
-
-        //We must never forget these two lines of code ever again as per midnight of 11/26/2023
-        myLocalizer.setPoseEstimate(c.startPoseBlueLeft);
-        drive.setPoseEstimate(c.startPoseBlueLeft); // !!!!!
-
 
 
         // Let's have at list 33% chance to pick it right if nothing works
-        TeamPropDetection.propLocation propLoc = TeamPropDetection.propLocation.RIGHT;
+        TeamPropDetection.propLocation propLoc = TeamPropDetection.propLocation.CENTER;
 
         Robot.clawGrip.setPosition(Robot.clawClose);
         Robot.clawPitch.setPosition(Robot.clawPitchIntake);
@@ -100,6 +98,8 @@ public abstract class AutoBase extends LinearOpMode {
             TeamPropDetection.propLocation currentPropLoc = teamPropDetection.GetPropLocation();
             if(currentPropLoc!=TeamPropDetection.propLocation.NULL) {
                 propLoc = currentPropLoc;
+                telemetry.addLine("Detected:" + propLoc);
+                telemetry.update();
             }
         }
 

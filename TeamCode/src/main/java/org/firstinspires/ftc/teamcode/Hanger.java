@@ -33,21 +33,21 @@ public class Hanger {
             }
             else {
                 int targetPosition = (int) (countsPerRev * HANGER_REVOLUTIONS); // cast to int
-                hangerMotor.setTargetPosition(-targetPosition);
-                hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                hangerMotor.setPower(0.2);
+                /*hangerMotor.setTargetPosition(targetPosition);
+                hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
+                hangerMotor.setPower(1);
             }
         }
         else if(handlerDPadDown.On()){ // button is pressed
             //int targetPosition = (int)(countsPerRev * HANGER_REVOLUTIONS); // cast to int
-            hangerMotor.setTargetPosition(0);
-            hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangerMotor.setPower(0.2);
+            //hangerMotor.setTargetPosition(0);
+            //hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangerMotor.setPower(-1);
         }
         else {
             hangerMotor.setPower(0);
             //hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 

@@ -57,7 +57,7 @@ public class Robot {
         clawGrip = hardwareMap.servo.get("clawGrip");
 
        // clawGrip.scaleRange(0.02, 0.22);  //old values
-        clawGrip.scaleRange(0.15, 0.35);
+        clawGrip.scaleRange(0.05, 0.35);
         clawPitch.scaleRange(0.755, 0.973);
         clawYaw.scaleRange(0.125, 0.675);
 
@@ -65,8 +65,8 @@ public class Robot {
         liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
 
         clawOpen = 1;
-        clawClose = 0;
-
+        clawClose = 0.30;
+        clawCloseOnePixel = 0;
         clawPitchIntake = 1;
         clawPitchOutTake = 0;
 
@@ -112,18 +112,13 @@ public class Robot {
     private void createAutoStateTransitions() {
         // button triggers
         BooleanSupplier closeClawSupplier = () -> closeClaw;
-        BooleanSupplier openClawSupplier = () -> !closeClaw;
+        BooleanSupplier openClawSupplier = () -> (!closeClaw);
         BooleanSupplier outtakePixelsSupplier = () -> outtakePixels;
 
-
-        BooleanSupplier alwaysTrue = ()-> true;
-
-
         // adding transitions
-
         idle.addTransitionTo(holdingPixels, closeClawSupplier,
                 new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawClose)
+                        .servoRunToPosition(clawGrip, clawCloseOnePixel)
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
                         .stopMotor(lift.liftMotor));
@@ -136,15 +131,21 @@ public class Robot {
         holdingPixels.addTransitionTo(outTakingPixels, outtakePixelsSupplier,
                 new ActionBuilder()
                         .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin+200)
                         .stopMotor(lift.liftMotor)
                         .servoRunToPosition(clawPitch, clawPitchOutTake));
 
 
         exitingOutTake.addTransitionTo(idle, openClawSupplier,
                 new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawClose));
+                        .servoRunToPosition(clawGrip, clawOpen)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 1000));
     }
+
+
+
+
 
     private void createTeleopStateTransitions() {
         // button triggers
@@ -234,7 +235,7 @@ public class Robot {
     public static TouchSensor liftTouchDown;
 
     public static double clawPitchIntake, clawPitchOutTake;
-    public static double clawOpen, clawClose, clawYawIntake, clawYawLeft, clawYawRight;
+    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake, clawYawLeft, clawYawRight;
     int liftOutTake;
 
     public static Button handlerA, handlerB, handlerX, handlerY, handlerLeftBumper,

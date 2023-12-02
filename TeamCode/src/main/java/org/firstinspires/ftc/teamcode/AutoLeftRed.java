@@ -19,6 +19,9 @@ import org.firstinspires.ftc.teamcode.tools.Robot;
 public class AutoLeftRed extends AutoBase {
     @Override
     public void runAutonomous(Robot robot, SampleMecanumDrive drive, TeamPropDetection.propLocation propLoc) {
+        myLocalizer.setPoseEstimate(c.preStartPoseRedLeft);
+        drive.setPoseEstimate(c.preStartPoseRedLeft); // !!!!!
+
         // hardware map to get motors and sensors
         TrajectorySequence dropPropPixelRight = drive.trajectorySequenceBuilder(c.preStartPoseRedLeft)
                 //.lineTo(c.leftTeamProp)
