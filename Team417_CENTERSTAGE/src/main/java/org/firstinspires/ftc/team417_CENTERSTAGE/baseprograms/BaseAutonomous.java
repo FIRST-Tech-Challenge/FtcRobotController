@@ -90,10 +90,14 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
 
         AutonDriveFactory auton = new AutonDriveFactory(drive);
-        AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red,!close, sawarResult, dropPixel());
+        AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red, !close, sawarResult, dropPixel());
 
         drive.pose = poseAndAction.startPose;
         Actions.runBlocking(poseAndAction.action);
+
+        //if (drive.myAprilTagPoseEstimator != null) {
+        //    drive.myAprilTagPoseEstimator.visionPortal.close();
+        //}
     }
 
     public Action dropPixel() {

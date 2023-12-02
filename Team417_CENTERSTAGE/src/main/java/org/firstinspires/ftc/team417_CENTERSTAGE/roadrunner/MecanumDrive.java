@@ -71,7 +71,7 @@ public final class MecanumDrive {
     public DcMotorEx[] motors;
 
     // Whether or not to use April Tags (added by Hank)
-    public final static boolean USE_APRIL_TAGS = true;
+    public final static boolean USE_APRIL_TAGS = false;
 
     public static String getBotName() {
         InspectionState inspection=new InspectionState();
@@ -139,7 +139,7 @@ public final class MecanumDrive {
             }
 
             // path profile parameters (in inches)
-            maxWheelVel = 50;
+            maxWheelVel = 10;
             minProfileAccel = -30;
             maxProfileAccel = 50;
 
