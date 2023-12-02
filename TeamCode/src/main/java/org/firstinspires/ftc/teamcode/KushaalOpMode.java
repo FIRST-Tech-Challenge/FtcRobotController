@@ -80,7 +80,12 @@
      Arm arm = new Arm(this);
      Claw claw       = new Claw(this);
      Wrist wrist = new Wrist(this);
- 
+     public void waitRuntime(double sec) {
+         runtime.reset();
+         while (opModeIsActive() && (runtime.seconds() < sec)) {
+             telemetry.update();
+         }
+     }
      @Override
      public void runOpMode() throws InterruptedException {
  
@@ -180,20 +185,22 @@
     
                 }
     
-            if(gamepad1.Dpad_right){
+            if(gamepad1.dpad_right){
                 mulPower+=0.1;
+                waitRuntime(0.2);
             }
     // This part of this code is to increase the speed of the motor a little.
-            if(gamepad1.Dpad_left){
+            if(gamepad1.dpad_left){
                 mulPower-=0.1;
+                waitRuntime(0.2);
             }
     
             if (mulPower > 1) {
                 mulPower = 1;
             }
     
-            if (mulPower < 0.1) {
-                mulPower = 0.1;
+            if (mulPower < 0.2) {
+                mulPower = 0.2;
          }
  
              
@@ -235,6 +242,7 @@
              telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
              telemetry.addData("Strafe Value", StrafeToString);
              telemetry.addData("Drone Launcher Value:", drone_launcher_pos);
+             telemetry.addData("Speed Value:", mulPower);
              telemetry.update();
          }
  
