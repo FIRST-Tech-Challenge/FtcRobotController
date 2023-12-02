@@ -17,6 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
+import org.firstinspires.ftc.teamcode.fileUtils;
 
 @Autonomous(name = "BlueRight", group = "")
 public class BlueRight extends LinearOpMode {
@@ -45,7 +46,7 @@ public class BlueRight extends LinearOpMode {
     private int resultROI = 3;
 
     private boolean done = false;
-
+    private fileUtils fUtils;
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive2024(hardwareMap);
@@ -67,6 +68,7 @@ public class BlueRight extends LinearOpMode {
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        fUtils = new fileUtils();
         desiredHeading = getHeading();
 
         utils.initializeActuator(arm, gripper, dump, elbow);
@@ -150,6 +152,11 @@ public class BlueRight extends LinearOpMode {
             currTime = System.currentTimeMillis();
             done = true;
         }
+        Pose2d pose = drive.getPoseEstimate();
+        fUtils.setPose(pose);
+        fUtils.writeConfig(hardwareMap.appContext, this);
+        telemetry.addData("Final Heading: ", "Heading: "+ pose.getHeading());
+        telemetry.update();
     }
 
     private void LeftPath() {

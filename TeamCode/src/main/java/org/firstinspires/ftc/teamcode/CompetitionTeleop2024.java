@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.fileUtils;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 @TeleOp(name="Competition Teleop2024", group="Iterative Opmode")
 public class CompetitionTeleop2024 extends OpMode {
@@ -32,6 +34,7 @@ public class CompetitionTeleop2024 extends OpMode {
     private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private IMU imu = null;
+    private fileUtils fUtils;
 
     //variable for Rev Touch Sensor
     //private TouchSensor touch;
@@ -51,6 +54,7 @@ public class CompetitionTeleop2024 extends OpMode {
     boolean game2back = false; //Used to override switch for arm in case of failure
     boolean game1back = false; //Used to override minEncode for arm in case of bad encoding
     boolean gamebpush = false; //To go through intervals one at a time
+    Double initHeading = 0.0;
 
     //boolean touchIsPressed = false;
 
@@ -80,6 +84,11 @@ public class CompetitionTeleop2024 extends OpMode {
         );
 
         imu.initialize(parameters);
+
+        fUtils = new fileUtils();
+        fUtils.readConfig(hardwareMap.appContext, this);
+        Pose2d pose = fUtils.getPose();
+        initHeading = pose.getHeading();
 
 
         //gripper sensor for pulling arm down
@@ -128,9 +137,9 @@ public class CompetitionTeleop2024 extends OpMode {
         Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
                 RADIANS);
-        double heading = (disableIMU) ? 0.0 : angles.firstAngle + Math.PI/2;
+        double heading = (disableIMU) ? 0.0 : angles.firstAngle + Math.PI/2 + initHeading;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + heading;
-        double rightX = Math.pow(gamepad1.right_stick_x, 5.0)*(1-gamepad1.right_trigger);
+        double rightX = Math.pow(gamepad1.right_stick_x, 2.0)*(1-gamepad1.right_trigger);
         LBPower = r * Math.cos(robotAngle) - rightX;
         RBPower = r * Math.sin(robotAngle) + rightX;
         LFPower = r * Math.sin(robotAngle) - rightX;
@@ -156,6 +165,7 @@ public class CompetitionTeleop2024 extends OpMode {
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
         telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
+        telemetry.addData("Initial Heading", "Heading: "+initHeading);
 
         //Code for gamepad2
         //Toggle auto and manual mode
@@ -196,7 +206,7 @@ public class CompetitionTeleop2024 extends OpMode {
         if (gamepad2.a && !changed) {
             if (gripper.getPosition() < 0.001)
             {
-                gripper.setPosition(.1);
+                gripper.setPosition(.09);
                 //arm.setTargetPosition(150);
                 //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //arm.setPower(armPower);

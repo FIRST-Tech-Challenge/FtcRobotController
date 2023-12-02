@@ -116,7 +116,7 @@ public class actuatorUtils {
         gripperOpen(liftDown, true);
     }
     public static void gripperOpen() {
-        gripper.setPosition(0.1);
+        gripper.setPosition(0.09);
     }
     public static void gripperClose() {
         gripper.setPosition(0.0);

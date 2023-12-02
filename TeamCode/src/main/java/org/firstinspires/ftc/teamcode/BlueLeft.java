@@ -17,6 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
+import org.firstinspires.ftc.teamcode.fileUtils;
 
 @Autonomous(name = "BlueLeft", group = "")
 public class BlueLeft extends LinearOpMode {
@@ -44,7 +45,7 @@ public class BlueLeft extends LinearOpMode {
     private int resultROI = 3;
 
     private boolean done = false;
-
+    private fileUtils fUtils;
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive2024(hardwareMap);
@@ -61,6 +62,7 @@ public class BlueLeft extends LinearOpMode {
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
 
+        fUtils = new fileUtils();
         desiredHeading = getHeading();
 
         utils.initializeActuator(arm, gripper, dump, elbow);
@@ -139,6 +141,11 @@ public class BlueLeft extends LinearOpMode {
             currTime = System.currentTimeMillis();
             done = true;
         }
+        Pose2d pose = drive.getPoseEstimate();
+        fUtils.setPose(pose);
+        fUtils.writeConfig(hardwareMap.appContext, this);
+        telemetry.addData("Final Heading: ", "Heading: "+ pose.getHeading());
+        telemetry.update();
     }
 
     private void LeftPath() {
@@ -171,7 +178,7 @@ public class BlueLeft extends LinearOpMode {
         utils.elbowBoard();
         utils.armBoard();
         sleep(2000);
-        pose = new Pose2d(-36, 39.75, Math.toRadians(-90));
+        pose = new Pose2d(-36, 38.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -183,7 +190,7 @@ public class BlueLeft extends LinearOpMode {
         utils.noArmBoard();
         sleep(1000);
         utils.gripperClose();
-        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
+        pose = new Pose2d(-56, 38.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -221,7 +228,7 @@ public class BlueLeft extends LinearOpMode {
         utils.elbowBoard();
         utils.armBoard();
         sleep(2000);
-        pose = new Pose2d(-30, 39.75, Math.toRadians(-90));
+        pose = new Pose2d(-30, 38.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -233,12 +240,12 @@ public class BlueLeft extends LinearOpMode {
         utils.noArmBoard();
         sleep(1000);
         utils.gripperClose();
-        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
+        pose = new Pose2d(-58, 38.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-56, 50, Math.toRadians(-90));
+        pose = new Pose2d(-58, 50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -282,12 +289,12 @@ public class BlueLeft extends LinearOpMode {
         utils.noArmBoard();
         sleep(1000);
         utils.gripperClose();
-        pose = new Pose2d(-56, 39.75, Math.toRadians(-90));
+        pose = new Pose2d(-58, 39.75, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-56, 50, Math.toRadians(-90));
+        pose = new Pose2d(-58, 50, Math.toRadians(-90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
