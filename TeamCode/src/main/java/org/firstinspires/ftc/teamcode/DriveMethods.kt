@@ -13,15 +13,23 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
 import org.firstinspires.ftc.teamcode.Variables.clawAngle
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
+import org.firstinspires.ftc.teamcode.Variables.leftX
+import org.firstinspires.ftc.teamcode.Variables.leftY
 import org.firstinspires.ftc.teamcode.Variables.motorBL
+import org.firstinspires.ftc.teamcode.Variables.motorBLPower
 import org.firstinspires.ftc.teamcode.Variables.motorBR
+import org.firstinspires.ftc.teamcode.Variables.motorBRPower
 import org.firstinspires.ftc.teamcode.Variables.motorFL
+import org.firstinspires.ftc.teamcode.Variables.motorFLPower
 import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.motorFRPower
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
+import org.firstinspires.ftc.teamcode.Variables.rightX
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideLength
+import org.firstinspires.ftc.teamcode.Variables.speedDiv
 import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.teamcode.Variables.touchyL
@@ -353,6 +361,9 @@ open class DriveMethods: LinearOpMode() {
         motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
         motorFL!!.direction = DcMotorSimple.Direction.REVERSE
         motorBL!!.direction = DcMotorSimple.Direction.REVERSE
+        leftY = (-gamepad1.left_stick_y).toDouble()
+        leftX = -gamepad1.left_stick_x.toDouble()
+        rightX = -gamepad1.right_stick_x.toDouble()
     }
 
 
@@ -424,5 +435,23 @@ open class DriveMethods: LinearOpMode() {
         clawAngle = 60 - slideAngle
     }
 
+    fun robotMovement() {
+        //set gamepad inputs
+        leftY = (-gamepad1.left_stick_y).toDouble()
+        leftX = -gamepad1.left_stick_x.toDouble()
+        rightX = -gamepad1.right_stick_x.toDouble()
 
+        telemetry.addLine("Power of motorFL: $motorFLPower")
+        telemetry.addLine("Power of motorFR: $motorFRPower")
+        telemetry.addLine("Power of motorBL: $motorBLPower")
+        telemetry.addLine("Power of motorBR: $motorBRPower")
+
+        //set motor speeds
+        motorFLPower = (leftY - leftX - rightX) / speedDiv
+        motorBLPower = (leftY + leftX - rightX) / speedDiv
+        motorFRPower = (leftY + leftX + rightX) / speedDiv
+        motorBRPower = (leftY - leftX + rightX) / speedDiv
+
+        setMotorPowers(motorFLPower, motorFRPower, motorBLPower, motorBRPower)
+    }
 }

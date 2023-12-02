@@ -18,10 +18,19 @@ object Variables {
     var servoRelease = 0.0
     var servoClamp = 0.0
 
+    var speedDiv: Double = 3.0
+    var leftY: Double = 0.0
+    var leftX: Double = 0.0
+    var rightX: Double = 0.0
+
     var motorFL: DcMotor? = null
     var motorBL: DcMotor? = null
     var motorFR: DcMotor? = null
     var motorBR: DcMotor? = null
+    var motorFLPower: Double = 0.0
+    var motorBLPower: Double = 0.0
+    var motorFRPower: Double = 0.0
+    var motorBRPower: Double = 0.0
     var slideGate: Servo? = null
     var pomPomServo: CRServo? = null
     var leftFlyWheel: CRServo? = null
