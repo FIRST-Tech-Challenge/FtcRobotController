@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -30,6 +32,11 @@ public class TeleOpPhase1 extends LinearOpMode {
             return mLastValue;
         }
     }
+
+    final int kMAX_LIFT_POS = 600;
+    final int kMIN_LIFT_POS = 0;
+    final double kLIFT_POWER = 0.3;
+    final double kLIFT_HOLDING_POWER = 0.05;
 
     Pose2d headingToHold = new Pose2d();
     boolean isHolding = false;
@@ -57,7 +64,15 @@ public class TeleOpPhase1 extends LinearOpMode {
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//sets encoder position to 0 at init
+
         waitForStart();
+
+        if (isStopRequested()) return;
+
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //running with set power [-1,1]
 
         // Ramping for x and y translation
         Ewma statsX = new Ewma(0.3); // Raising alpha will make the ramp more drastic but more potentially create slip
@@ -67,8 +82,10 @@ public class TeleOpPhase1 extends LinearOpMode {
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0.019, 0, 0.001), 0, 0);
         headingPID.setInputBounds(0, 360);
 
+        double liftPower = 0.0;
 
         while (!isStopRequested()) {
+            double liftPos = liftMotor.getCurrentPosition();
 
             double turnCommand = gamepad1.right_stick_x;
 
@@ -114,6 +131,19 @@ public class TeleOpPhase1 extends LinearOpMode {
 
             drive.update();
 
+
+            if(gamepad1.dpad_up && liftPos < kMAX_LIFT_POS){
+                liftPower = kLIFT_POWER;
+            } else if (gamepad1.dpad_down && liftPos > kMIN_LIFT_POS){
+                liftPower = -kLIFT_POWER;
+            } else if(liftPos > kMIN_LIFT_POS) {
+                liftPower = kLIFT_HOLDING_POWER;
+            } else {
+                liftPower = 0;
+            }
+
+            liftMotor.setPower(liftPower);
+
             // Here were any values that need to be broadcast on the drive station are declare
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
@@ -121,6 +151,7 @@ public class TeleOpPhase1 extends LinearOpMode {
             telemetry.addData("headingToHold", Math.toDegrees(headingToHold.getHeading()));
             telemetry.addData("isHolding", isHolding);
             telemetry.addData("joystick", gamepad1.right_stick_x);
+            telemetry.addData("lift motor pos", liftMotor.getCurrentPosition());
             telemetry.update();
         }
     }
