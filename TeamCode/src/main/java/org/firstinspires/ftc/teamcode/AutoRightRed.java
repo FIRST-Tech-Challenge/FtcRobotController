@@ -22,19 +22,44 @@ public class AutoRightRed extends AutoBase {
         myLocalizer.setPoseEstimate(c.preStartPoseRedRight);
         drive.setPoseEstimate(c.preStartPoseRedRight); // !!!!!
 
+        Pose2d teamPropCoordinate;
+        Pose2d backdropCoordinate;
+        if (propLoc == TeamPropDetection.propLocation.LEFT) {
+            teamPropCoordinate = c.leftTeamPropRedRight;
+            backdropCoordinate = c.rightBackdropLeft;
+        }
+        else if (propLoc == TeamPropDetection.propLocation.CENTER) {
+            teamPropCoordinate = c.centerTeamPropRedRight;
+            backdropCoordinate = c.rightBackdropCenter;
+        }
+        else {
+            teamPropCoordinate = c.rightTeamPropRedRight;
+            backdropCoordinate = c.rightBackdropRight;
+        }
+
         // hardware map to get motors and sensors
         TrajectorySequence dropPropPixelRight = drive.trajectorySequenceBuilder(c.preStartPoseRedRight)
                 //.lineTo(c.leftTeamProp)
                 //.lineTo(c.centerTeamProp)
                 .lineToLinearHeading(c.startPoseRedRight)
-                .lineToLinearHeading(c.leftTeamPropRedRight)
+                .lineToLinearHeading(teamPropCoordinate)
                 .back(3.5)
+                .forward(3)
+                .lineTo(new Vector2d(32, 11))
+                .lineTo(new Vector2d(50, 11))
+                .lineTo(new Vector2d(50, 35))
                 .build();
 
         TrajectorySequence goToBackdrop = drive.trajectorySequenceBuilder(dropPropPixelRight.end())
                 .lineToLinearHeading(c.rightBackdropIntermediateCenter)
-                .lineToLinearHeading(c.rightBackdropRight, SampleMecanumDrive.getVelocityConstraint(SLOWERVELOCITY, SLOWERANGULARVELOCITY, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(backdropCoordinate, SampleMecanumDrive.getVelocityConstraint(SLOWERVELOCITY, SLOWERANGULARVELOCITY, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        TrajectorySequence parkRight = drive.trajectorySequenceBuilder(goToBackdrop.end())
+                .forward(4)
+                .lineToLinearHeading(c.leftParkIntermediateRedRight)
+                .lineToLinearHeading(c.leftParkFinalRedRight)
                 .build();
 
         robot.closeClaw = true;
@@ -47,5 +72,6 @@ public class AutoRightRed extends AutoBase {
         drive.followTrajectorySequence(goToBackdrop);
         robot.closeClaw = false;
         robot.updateSync();
+        drive.followTrajectorySequence(parkRight);
     }
 }
