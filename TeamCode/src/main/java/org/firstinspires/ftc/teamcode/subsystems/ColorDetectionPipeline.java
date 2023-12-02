@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Random;
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double L_X_OFFSET = 0;
-    public static double L_Y_OFFSET  = 0;
-    public static double R_X_OFFSET = 0;
-    public static double R_Y_OFFSET  = 0;
+    public static double L_X_OFFSET = 500;
+    public static double L_Y_OFFSET  = -80;
+    public static double R_X_OFFSET = 350;
+    public static double R_Y_OFFSET  = 50;
 
     static final int STREAM_WIDTH = 1280; // resolution of camera   1280
     static final int STREAM_HEIGHT = 720; // resolution of camera  720
@@ -36,12 +36,15 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public int avgCH, avgCL, avgCS;
     public int avgRH, avgRL, avgRS;
     // To zoom in (x2)
+    public static int red1 = 160;
+
+    public static int blue2 = 100;
     Rect viewScope = new Rect(new Point(STREAM_WIDTH/4, STREAM_HEIGHT/4), new Point(STREAM_WIDTH * 3/4, STREAM_HEIGHT * 3/4));
 
     public static int WidthRectA = 200; //180
-    public static int HeightRectA = 100; //100
+    public static int HeightRectA = 175; //100
 
-    public static int WidthRectB = 200; //180
+    public static int WidthRectB = 100; //180
     public static int HeightRectB = 100; //100
 
 static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIGHT/2));
@@ -52,7 +55,7 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
 
     Point RectBTLCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET, RectATopLeftAnchor.y - R_Y_OFFSET);
 
-    Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
+    Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
     boolean stopped = false;
 
     static final int colorTolerance = 20;
@@ -169,8 +172,6 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
         } else {
             return 1; // a guess...
         }*/
-        int red1 = 1;
-        int blue2 = 244;
         int LdistFrom1 = Math.abs(avgLH-red1);
         int LdistFrom2 = Math.abs(avgLH-blue2);
         int CdistFrom1 = Math.abs(avgCH-red1);
