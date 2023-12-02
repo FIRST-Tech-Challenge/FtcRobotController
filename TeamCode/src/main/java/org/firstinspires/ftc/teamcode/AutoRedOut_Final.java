@@ -84,8 +84,8 @@ public class AutoRedOut_Final extends LinearOpMode {
              robot.reset_pixle_bucket();
 
              //Step 1:  Setup robot to scan the first position for the team prop
-             robot.moveRobotAuto(robot.LEFT, 0.5, 4);
-             robot.moveRobotAuto(robot.REVERSE, 0.3, 6);
+             robot.moveRobotAuto(robot.RIGHT, 0.3, 13);
+             robot.moveRobotAuto(robot.REVERSE, 0.3, 20);
 
              //Get Ave Distance from distance sensor
              double Average = getAverageDistanceFromSensor(sensorRange);
@@ -95,8 +95,8 @@ public class AutoRedOut_Final extends LinearOpMode {
              double MIN_DISTANCE_TO_PROP = 24;
 
              robot.raiseElevatorToPosition_Autonomous(.5,250);
-             robot.moveRobotAuto(robot.RIGHT, 0.3, 12);
-             robot.moveRobotAuto(robot.REVERSE, 0.3, 10);
+             robot.moveRobotAuto(robot.LEFT, 0.3, 5);
+
              sleep(1000);
              //If it is at location 1
              if (Average<MIN_DISTANCE_TO_PROP) {
@@ -104,30 +104,32 @@ public class AutoRedOut_Final extends LinearOpMode {
                  telemetry.update();
 
                  robot.raiseElevatorToPosition_Autonomous(.5,10);
-                 robot.moveRobotAuto(robot.LEFT, 0.5, 5);
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
+
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                      robot.sweeperCommand(1.0);
                      sleep(1000);
                      robot.sweeperCommand(0.0);
                  }
-                 robot.moveRobotAuto(robot.FORWARD, 0.5, 15);
-                 robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 73);
-                 robot.moveRobotAuto(robot.RIGHT, 0.5, 35);
 
+                 robot.moveRobotAuto(robot.FORWARD, 0.3, 15);
+                 robot.raiseElevatorToPosition_Autonomous(-.5, 0);
+                 robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
+                 robot.moveRobotAuto(robot.REVERSE, 1, 65);
+                 robot.moveRobotAuto(robot.RIGHT, 0.8, 35);
+                 robot.moveRobotAuto(robot.REVERSE, 0.3, 20);
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
-                     sleep(1000);
+                     sleep(2000);
                      robot.reset_pixle_bucket();
+                     sleep(2000);
                      robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                  }
 
 
                  sleep(30000);
-             }//end of poistion 1 work
+             }//end of position 1 work
 
              telemetry.addLine("Didn't find team prop at location 1. Moving to chech number 2");
              telemetry.update();
