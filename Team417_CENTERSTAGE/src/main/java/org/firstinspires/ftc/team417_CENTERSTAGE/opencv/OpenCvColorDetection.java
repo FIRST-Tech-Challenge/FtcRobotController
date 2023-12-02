@@ -141,7 +141,6 @@ public class OpenCvColorDetection {
 
         @Override
         public Mat processFrame(Mat inputMat) {
-            System.out.println("Start new process");
             // resize the image to the roi so that stuff like volunteer's shirts aren't detected
             roiMat = inputMat.submat(Constants.roi);
 
@@ -179,10 +178,7 @@ public class OpenCvColorDetection {
             targetPoint.x = -1;
             targetPoint.y = -1;
             targetDetected = false;
-            System.out.println("Contour list: " + contoursList.size());
             if (contoursList.size() > 0) {
-                System.out.println("After if: Contour list: " + contoursList.size());
-
                 // Code for offsetting the contours if full image is relayed to scrcpy
                 //    (doesn't work and throws an exception)
                 /*
@@ -217,15 +213,11 @@ public class OpenCvColorDetection {
                 }
                 targetDetected = true;
 
-                System.out.println("Before drawing: " + contoursList.size());
-
                 // Draw the max area contour at index maxAreaContourIndex for debugging in scrcpy
                 Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, Constants.borderColor, 2, -1);
 
                 // draw rectangular bounding box around roi (use if using full image)
                 //Imgproc.rectangle(outputMat, Constants.roi, Constants.roiColor);
-
-                System.out.println("After drawing: " + contoursList.size());
 
                 //   draw rectangular bounding box around the max area contour
                 //   and draw circle at the center of rectangular bounding box

@@ -20,6 +20,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    public static double APRIL_TAG_SLEEP_TIME = 500;
+    public static double NO_APRIL_TAG_SLEEP_TIME = 2500;
+
     public int lastEncoderFL = 0;
     public int lastEncoderFR = 0;
     public int lastEncoderBL = 0;
@@ -36,14 +39,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     MecanumDrive drive;
 
-    public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
+    public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);;
 
     public void initializeAuto() {
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
@@ -55,14 +57,18 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBR = BR.getCurrentPosition();
 
         // Allow the OpenCV to process
-        sleep(500);
+        if (drive.USE_APRIL_TAGS) {
+            sleep((long) APRIL_TAG_SLEEP_TIME);
+        } else {
+            sleep((long) NO_APRIL_TAG_SLEEP_TIME);
+        }
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
     }
 
-    public void runAuto(boolean red, boolean close) {
+    public void runAuto(boolean red, boolean close, boolean test) {
         if (red) {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
             telemetry.addLine("Looking for red");
@@ -77,6 +83,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         OpenCvColorDetection.SideDetected result = myColorDetection.detectTeamProp();
         AutonDriveFactory.SpikeMarks sawarResult;
+
+        telemetry.addData("Side detected", result);
+        telemetry.update();
 
         // Close cameras to avoid errors
         myColorDetection.robotCamera.closeCameraDevice();
@@ -93,11 +102,18 @@ abstract public class BaseAutonomous extends BaseOpMode {
         AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red, !close, sawarResult, dropPixel());
 
         drive.pose = poseAndAction.startPose;
-        Actions.runBlocking(poseAndAction.action);
+
+        if (!test) {
+            Actions.runBlocking(poseAndAction.action);
+        }
 
         //if (drive.myAprilTagPoseEstimator != null) {
         //    drive.myAprilTagPoseEstimator.visionPortal.close();
         //}
+    }
+
+    public void runAuto(boolean red, boolean close) {
+        runAuto(red, close, false);
     }
 
     public Action dropPixel() {

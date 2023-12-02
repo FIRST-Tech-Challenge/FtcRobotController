@@ -83,10 +83,7 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (opModeIsActive() &&
                 (runtime.seconds() < 30) &&
-                (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
-            // Do nothing;
-        }
-
+                (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy()));
 
         // Stop all motion;
         stopDriving();
@@ -114,6 +111,7 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
+        // Sleep for OpenCv to process
         sleep(5000);
 
         telemetry.clear();
