@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class BasicAutonomous extends LinearOpMode
 {
+
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
@@ -22,30 +24,88 @@ public class BasicAutonomous extends LinearOpMode
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private void moveSideways(String teamColor, String parkPos)
+    private void moveSideways()
     {
-        if (teamColor == "red")
+        double moveDir;
+        if (teamColor == "blue")
         {
-            double moveDir = 1;
+            moveDir = 1;
         }
         else
         {
-            double moveDir = -1;
+            moveDir = -1;
         }
 
+        double time;
         if (parkPos == "close")
         {
-
-
-            while (opModeIsActive() && (runtime.seconds() < time))
-            {
-            }
+            time = 0.15;
         }
+        else
+        {
+            time = 0.4;
+        }
+
+        leftFront.setPower(STRAFE_SPEED * moveDir);
+        leftBack.setPower(STRAFE_SPEED * -(moveDir));
+        rightFront.setPower(STRAFE_SPEED * -(moveDir));
+        rightBack.setPower(STRAFE_SPEED + moveDir);
+
+        while (opModeIsActive() && (runtime.seconds() < time))
+        {
+        }
+
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }
+
+    private void moveForward()
+    {
+        double time;
+        if (startPos == "close")
+        {
+            time = 1.5;
+        }
+        else
+        {
+            time = 3.0;
+        }
+
+        leftFront.setPower(FORWARD_SPEED);
+        leftBack.setPower(FORWARD_SPEED);
+        rightFront.setPower(FORWARD_SPEED);
+        rightBack.setPower(FORWARD_SPEED);
+
+        while (opModeIsActive() && (runtime.seconds() < time))
+        {
+        }
+
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }
+
+    @Override
+    public void waitForStart() {
+        super.waitForStart();
     }
 
     @Override
     public void runOpMode() throws InterruptedException
     {
+        waitForStart();
+        leftFront = hardwareMap.dcMotor.get("FLeft");
+        leftBack = hardwareMap.dcMotor.get("BLeft");
+        rightFront = hardwareMap.dcMotor.get("FRight");
+        rightBack = hardwareMap.dcMotor.get("BRight");
 
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        moveSideways();
+        moveForward();
     }
 }
