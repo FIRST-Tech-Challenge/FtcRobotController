@@ -41,11 +41,11 @@ public class AutoMethods {
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorRight2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeft.setPower(0.05);
-        motorRight.setPower(0.05);
-        motorRight2.setPower(0.05);
-        motorLeft2.setPower(0.05);
-        Thread.sleep(200);
+        motorLeft.setPower(0.1);
+        motorRight.setPower(0.1);
+        motorRight2.setPower(0.1);
+        motorLeft2.setPower(0.1);
+        Thread.sleep(500);
         motorLeft.setPower(motorPower);
         motorRight.setPower(motorPower);
         motorRight2.setPower(motorPower);

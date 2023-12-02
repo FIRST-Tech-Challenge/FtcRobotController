@@ -36,21 +36,21 @@ public class BlueLeft extends LinearOpMode {
         sleep(3000);
         autoMethods.StrafeByInch(4, false, 0.2);
         sleep(1000);
-        motorIntake.setPower(-0.6);
+        motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         autoMethods.Turn90(true, 0.2);
-        sleep(5000);
-        autoMethods.StrafeByInch(2, true, 0.2);
+        sleep(4000);
+        autoMethods.StrafeByInch(3, true, 0.2);
         sleep(1000);
         autoMethods.RunMotors(36, 0.2);
         autoMethods.RunMotorHang(6.5,0.75);
         sleep(6000);
         motorHang.setPower(0);
-        autoMethods.RunMotorHang(-6.5,0.2);
-        autoMethods.RunMotors(-2,0.2);
+        autoMethods.RunMotorHang(-6.5,0.75);
+        autoMethods.RunMotors(-4,0.5);
         sleep(1000);
-        autoMethods.StrafeByInch(24, true, 0.2);
+        autoMethods.StrafeByInch(24, false, 0.2);
         sleep(4000);
         motorHang.setPower(0);
     }
