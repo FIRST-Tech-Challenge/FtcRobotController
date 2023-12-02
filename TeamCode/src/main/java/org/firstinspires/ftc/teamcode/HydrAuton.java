@@ -364,7 +364,7 @@ public class HydrAuton extends LinearOpMode {
                 // RED LEFT
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     if (parkOnly) {
-                        Drive.Start(80, 0, 0);
+                        Drive.Start(86, 0, 0);
                         autonState = 299;
                     }
                     else {
@@ -394,7 +394,7 @@ public class HydrAuton extends LinearOpMode {
                 // CENTER
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     if (parkOnly) {
-                        Drive.Start(97, 0, 0);
+                        Drive.Start(103, 0, 0);
                         autonState = 299;
                     }
                     else {
@@ -425,7 +425,7 @@ public class HydrAuton extends LinearOpMode {
                 // RED RIGHT
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
                     if (parkOnly) {
-                        Drive.Start(83, 0, 0);
+                        Drive.Start(89, 0, 0);
                         autonState = 299;
                     }
                     else {
