@@ -46,6 +46,7 @@ public class StandardTrackingWheelLocalizer implements Localizer {
 
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 1.3779/2; // in
+    public static double wheelrad2 = 1;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 13.12*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
@@ -131,18 +132,23 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1], nowTicks[2] - lastTicks[2]};
         lastTicks = nowTicks;
         double deltaAngle = (deltaTicks[1] - deltaTicks[0]) / ticks_per_radian;
-        if(deltaAngle==0){
-            deltaAngle=0.00000000001;
-        }
+
         double [][] initalAngle = {{cos(angle),-sin(angle),0},
                 {sin(angle),cos(angle),0},
                 {0,0,1}};
-        double [][] deltaMatrix = {{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
-                {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
-                {0,0,1}};
+
         double [][] robotDelta = {{(deltaTicks[0]+deltaTicks[1])*0.5/ticks_per_inch},
-                {deltaTicks[2]/ticks_per_inch - (FORWARD_OFFSET*deltaAngle)},
+                {deltaTicks[2]*2/1.3779/ticks_per_inch - (FORWARD_OFFSET*deltaAngle)},
                 {deltaAngle}};
+        double [][] deltaMatrix;
+
+        if(deltaAngle==0){
+            deltaMatrix = new double[][]{{1,0,0},{0,1,0},{0,0,1}};
+        }else{
+            deltaMatrix = new double[][]{{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
+                    {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
+                    {0,0,1}};
+        }
         double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
 
         double [][] finalSolve = multiplyMatrix(3,3, partialSolve, 3,1, robotDelta);
@@ -158,7 +164,7 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         ypos += deltaY;
         currentPose = new Pose2d(xpos,ypos,angle);
         double[] velo = {leftEncoder.getCorrectedVelocity()/ticks_per_inch, rightEncoder.getCorrectedVelocity()/ticks_per_inch,
-                frontEncoder.getCorrectedVelocity()/ticks_per_inch};
+                frontEncoder.getCorrectedVelocity()*2/1.3779/ticks_per_inch};
         double headingVelo = (velo[0]-velo[1])/LATERAL_DISTANCE;
         currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]+headingVelo*LATERAL_DISTANCE, -headingVelo);
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
@@ -169,7 +175,7 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         packet.put("leftTicks", nowTicks[0]);
         packet.put("rightTicks", nowTicks[1]);
         packet.put("backTicks", nowTicks[2]);
-        setPoseEstimate(currentPose);
+//        setPoseEstimate(currentPose);
         if(currentPose!=null) {
             fieldOverlay.setStrokeWidth(1);
             fieldOverlay.setStroke("#4CAF50");

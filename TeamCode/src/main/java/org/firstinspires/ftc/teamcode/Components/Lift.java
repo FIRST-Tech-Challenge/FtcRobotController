@@ -166,7 +166,7 @@ public class Lift extends RFDualMotor {
    *     state machine.
    */
   public void setPosition(double p_target) {
-    if (!Wrist.WristStates.FLAT.state) {
+    if (!Wrist.WristStates.INTAKE.state) {
       super.setPosition(p_target, 0);
       if (target != p_target) {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
@@ -180,11 +180,10 @@ public class Lift extends RFDualMotor {
   }
 
   public void setPosition(LiftPositionStates p_state) {
-    if (!Wrist.WristStates.FLAT.state) {
+    if (!Wrist.WristStates.INTAKE.state) {
       if (p_state.equals(LiftPositionStates.AT_ZERO)) {
         if (Arm.ArmStates.UNFLIPPED.getState()
-            && Arm.ArmTargetStates.UNFLIPPED.getState()
-            && Wrist.WristStates.HOLD.state) {
+            && Arm.ArmTargetStates.UNFLIPPED.getState()) {
           super.setPosition(p_state.position - 15, 0);
         } else {
           super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
@@ -208,7 +207,7 @@ public class Lift extends RFDualMotor {
    *     level. Updates LiftMovingStates state machine.
    */
   public void manualExtend(double p_power) {
-    if (!Wrist.WristStates.FLAT.state) {
+    if (!Wrist.WristStates.INTAKE.state) {
       super.setPower(p_power);
       lastManualTime = time;
       if (p_power != lastPower) {
