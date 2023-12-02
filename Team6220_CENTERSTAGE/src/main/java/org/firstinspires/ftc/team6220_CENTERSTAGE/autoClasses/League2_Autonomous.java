@@ -34,10 +34,8 @@ public class League2_Autonomous extends LinearOpMode {
                 .add()
                 .add("Alliance team:")
                 .add("select-team", AutoParams.AllianceTeam.class)
-                .add()
                 .add("Starting position:")
                 .add("start-select", AutoParams.StartingPosition.class)
-                .add()
                 .add("Park destination:")
                 .add("park-select", AutoParams.ParkLocation.class)
                 .add()
@@ -46,7 +44,6 @@ public class League2_Autonomous extends LinearOpMode {
                 .add()
                 .add("Place purple pixel?")
                 .add("purple-switch", new MenuSwitch(true))
-                .add()
                 .add("Place yellow pixel?")
                 .add("yellow-switch", new MenuSwitch(true))
                 .add()
@@ -54,7 +51,7 @@ public class League2_Autonomous extends LinearOpMode {
         ;
 
         // let user access menu
-        while (!menu.isCompleted()) {
+        while (!menu.isCompleted() && !isStopRequested()) {
             // print menu
             for (String line : menu.toListOfStrings()) {
                 telemetry.addLine(line);

@@ -20,10 +20,10 @@ public class MenuInput {
     }
 
     // a constant for stick deadzone
-    public static final double INPUT_DEADZONE = 0.05;
+    public static final double INPUT_DEADZONE = 0.5;
     // constants for spacing out sustained input (in seconds)
-    private static final double STICK_TAP_COOLDOWN = 0.5;
-    private static final double STICK_HOLD_COOLDOWN = 0.2;
+    private static final double STICK_TAP_COOLDOWN = 0.3;
+    private static final double STICK_HOLD_COOLDOWN = 0.1;
 
     // processed values
     private int x, y;
@@ -112,7 +112,7 @@ public class MenuInput {
                 // (sustained input -> repeated but spaced out input after an initial pause)
 
                 // if it's the initial stick input:
-                if (!this.isHoldingStick && this.stickTimer == 0) {
+                if (!this.isHoldingStick && this.stickTimer <= this.deltaTime) {
                     this.stickTimer += this.deltaTime;
                     // allows the x and y values to pass through
                 } else {
