@@ -17,15 +17,20 @@ public class GamepiecePosition {
 
     public String getPOS(){
         String location="";
+        //determines the game piece position when the robot is starting on the left side of their
+        // alliance from the perspective of the drivers
         if (robotPOS == "left") {
-            if (gamepieceLocation.x < 90 && gamepieceLocation.x > 0) {
+            if (gamepieceLocation.x < 180 && gamepieceLocation.x > 0) {
                 location = "left";
-            } else if (gamepieceLocation.x >= 90) {
+            } else if (gamepieceLocation.x >= 180) {
                 location = "center";
             } else {
                 location = "right";
             }
-        } else if (robotPOS =="right") {
+        }
+        //determines the game piece position when the robot is starting on the right side of their
+        //alliance from the perspective of the drivers
+        else if (robotPOS =="right") {
             if (gamepieceLocation.x > 260) {
                 location = "right";
             } else if (gamepieceLocation.x <= 260 && gamepieceLocation.x > 0) {

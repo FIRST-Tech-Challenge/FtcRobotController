@@ -145,6 +145,9 @@ public class Auto1_BlueFieldLeft extends OpMode {
         }
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
+        telemetry.addData("Left Probability", leftCount / (leftCount+rightCount+centerCount));
+        telemetry.addData("Center Probability", centerCount / (leftCount+rightCount+centerCount));
+        telemetry.addData("Right Probability", rightCount / (leftCount+rightCount+centerCount));
         telemetry.addData("location", gamepieceLocation);
         telemetry.addData("state", state);
         telemetry.update();
@@ -290,11 +293,11 @@ public class Auto1_BlueFieldLeft extends OpMode {
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
             linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
-            // Forward 12 inches
+            // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 18 inches
             moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
-            // Backward 12 inches
+            // Backward 6 inches
             moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
 
 
