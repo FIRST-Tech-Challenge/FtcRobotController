@@ -186,12 +186,12 @@ public class ElevatorControl {
     //Pixle Bucket Controls.
     //Dump_pixle - rotates the bucket so pixle drops out of bucket.
     public void dump_pixle() {
-        bucket.setPosition(-.1);
+        bucket.setPosition(0);
 //       RobotLog.d(String.format("inrobot.dumpbucket"));
     }
     //Reset_bucket - returns the bucket to position to receive another pixle
     public void reset_pixle_bucket() {
-        bucket.setPosition(.97);
+        bucket.setPosition(1);
     }
 
 
