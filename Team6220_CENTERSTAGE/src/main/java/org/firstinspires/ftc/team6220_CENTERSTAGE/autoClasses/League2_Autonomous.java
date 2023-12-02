@@ -1,80 +1,70 @@
-package com.example.meepmeeptesting;
+package org.firstinspires.ftc.team6220_CENTERSTAGE.autoClasses;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.VelConstraint;
-import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.roadrunner.Constraints;
-import com.noahbres.meepmeep.roadrunner.DriveShim;
-import com.noahbres.meepmeep.roadrunner.DriveTrainType;
-import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Wrapper class for MeepMeep testing. Modify the 'myBot' constructor settings to reflect your
- * own robot. You shouldn't need to modify any other code here.
- */
-public class MeepMeepTesting {
-    public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+@Autonomous(name="League2_Autonomous", group ="amogus2")
+public class League2_Autonomous extends LinearOpMode {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        AutonDriveFactory autoDrive = new AutonDriveFactory(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
 
-        RoadRunnerBotEntity myBot = new RoadRunnerBotEntity(
-                meepMeep,
-                // Robot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width:
-                new Constraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15),
-                // Robot dimensions: width, height:
-                18, 18,
-                new Pose2d(0, 0, 0),
-                meepMeep.getColorManager().getTheme(),
-                0.8f,
-                DriveTrainType.MECANUM,
-                false);
+        // setup auto parameters
+        AutoParams params = new AutoParams();
+        params.allianceTeam = AutoParams.AllianceTeam.BLUE;
+        params.startingPosition = AutoParams.StartingPosition.LONG;
+        params.parkLocation = AutoParams.ParkLocation.CENTER_FIELD_SIDE;
+        //params.propPosition = ColorDetection.PropPosition.LEFT; // we get it after wait for start
+        params.placePurplePixel = true;
+        params.placeYellowPixel = true;
+        params.startLongWaitTime = 1;
 
-        MecanumDrive drive = new MecanumDrive(myBot.getDrive());
-        AutonDriveFactory auton = new AutonDriveFactory(drive);
+        
 
-        myBot.runAction(auton.getMeepMeepAction());
+        // init color detector after determining which alliance we're on
+        ColorDetection colorDetector = new ColorDetection(this);
+        switch (params.allianceTeam) {
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
-                .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
-                .start();
+            case BLUE:
+                colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
+                break;
+
+            case RED:
+                colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
+                break;
+        }
+
+        // wait until we hit start auto
+        waitForStart();
+
+        // capture the position of the prop
+        params.propPosition = colorDetector.returnZone();
+
+        telemetry.addData("prop position", params.propPosition);
+        telemetry.update();
+
+        // run the path with the chosen parameters
+        Action driveAction = autoDrive.getDriveAction(params);
+        Actions.runBlocking(driveAction);
     }
+
 }
 
-/**
- * Shim so that the AutonDriveFactory can refer to the drive using a MecanumDrive type both
- * here in MeepMeep and also in the competition code.
- */
-class MecanumDrive {
-    DriveShim shim;
-    Pose2d pose;
-    MecanumDrive(DriveShim shim) {
-        this.shim = shim;
-    }
-    TrajectoryActionBuilder actionBuilder(Pose2d pose) {
-        return this.shim.actionBuilder(pose);
-    }
-}
-
-class ColorDetection {
-    // mini class to represent prop detector class
-    public enum PropPosition {
-        LEFT,
-        MIDDLE,
-        RIGHT
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////
 
 class AutonDriveFactory {
 
