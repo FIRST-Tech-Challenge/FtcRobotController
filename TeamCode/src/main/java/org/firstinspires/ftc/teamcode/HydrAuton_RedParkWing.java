@@ -9,5 +9,6 @@ public class HydrAuton_RedParkWing extends HydrAuton_WingParkOnly{
         setTrueForRiggingOnRight = true;
         modelFilename = "Red_Prop.tflite";
         mOpModeName = "Red-Wing-Park";
+        mWaitTimeAtRigging = 18000;
     }
 }

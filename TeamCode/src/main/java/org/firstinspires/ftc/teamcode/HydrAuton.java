@@ -24,7 +24,7 @@ import java.util.List;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends LinearOpMode {
-    protected final int mWaitTimeAtRigging = 13000;
+    protected int mWaitTimeAtRigging = 13000;
     protected IMU imu;
     protected HydraArm Arm;
     protected HydraDrive Drive;
