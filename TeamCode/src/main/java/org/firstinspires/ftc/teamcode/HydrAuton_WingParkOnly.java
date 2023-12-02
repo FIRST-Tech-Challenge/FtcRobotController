@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-public class HydrAuton_Wing extends HydrAuton {
+import org.firstinspires.ftc.teamcode.HydrAuton;
+
+public class HydrAuton_WingParkOnly extends HydrAuton {
+    protected boolean secondDrop = false;
     public boolean RunAuton() {
         if (autonState < 100) {
             // These states handle driving to the correct spike
@@ -12,30 +15,34 @@ public class HydrAuton_Wing extends HydrAuton {
         else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike
             // this is the same for all autons
-            if (!PixelDrop(false)) {
+            if (!PixelDrop(secondDrop)) {
                 BadState();
                 return true;
             }
         }
         else if (autonState < 300) {
-            // These 200 level states handle driving to the backdrop
-            if (!AutonDriveToBackdropFromWing(setTrueForRed, false)) {
-                BadState();
+            if (!secondDrop) {
+                // These 200 level states handle driving to the backstage
+                if (!AutonDriveToBackdropFromWing(setTrueForRed, true)) {
+                    BadState();
+                    return true;
+                }
+            }
+            else {
+                // the second time we get here we don't drive again, we are now done
+                autonState = 500;
                 return true;
             }
         }
         else if (autonState < 400) {
-            // These 300 level states handle scoring forwards at the backdrop
-            // this is the same for two autons
-            if (!ScoreFront()) {
-                BadState();
-                return true;
-            }
+            // Now we need to go back to the pixel drop states, so make sure we skip to the end later
+            secondDrop = true;
+            autonState = 100;
         }
         else if (autonState < 500) {
-            // These 400 level states handle returning the arm home
-            // this is the same for all autons
-            ArmToHome();
+            // We should not have these states in this auton
+            BadState();
+            return true;
         }
         else if (autonState == 500) {
             // this auton is complete
@@ -44,11 +51,6 @@ public class HydrAuton_Wing extends HydrAuton {
         else {
             BadState();
             return true;
-        }
-        if (autonState >= 200) {
-            // now that we are driving towards the backdrop, start looking for the AprilTag
-            // this just prints to telemetry for now
-            ObjDet.FindAprilTag(ObjLoc);
         }
         return false;
     }

@@ -310,7 +310,7 @@ public class HydrAuton extends LinearOpMode {
      * @param flipWhenRed is set to true if we are running a red team auton
      * @return false iff there is a problem
      */
-    protected boolean AutonDriveToBackdropFromWing(boolean flipWhenRed) {
+    protected boolean AutonDriveToBackdropFromWing(boolean flipWhenRed, boolean parkOnly) {
         // multiply strafes and rotates by -1 based on the starting orientation
         int flip = 1;
         if (flipWhenRed) {
@@ -363,8 +363,14 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE RIGHT
                 // RED LEFT
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
-                    Drive.Start(73, 0, 0);
-                    autonState += 1;
+                    if (parkOnly) {
+                        Drive.Start(80, 0, 0);
+                        autonState = 299;
+                    }
+                    else {
+                        Drive.Start(73, 0, 0);
+                        autonState += 1;
+                    }
                 }
                 break;
             case 214:
@@ -387,8 +393,14 @@ public class HydrAuton extends LinearOpMode {
             case 221:
                 // CENTER
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
-                    Drive.Start(90, 0, 0);
-                    autonState += 1;
+                    if (parkOnly) {
+                        Drive.Start(97, 0, 0);
+                        autonState = 299;
+                    }
+                    else {
+                        Drive.Start(90, 0, 0);
+                        autonState += 1;
+                    }
                 }
                 break;
             case 222:
@@ -412,8 +424,14 @@ public class HydrAuton extends LinearOpMode {
                 // BLUE LEFT
                 // RED RIGHT
                 if (!Drive.Busy() && opModeTimer.milliseconds() >= mWaitTimeAtRigging) {
-                    Drive.Start(76, 0, 0);
-                    autonState += 1;
+                    if (parkOnly) {
+                        Drive.Start(83, 0, 0);
+                        autonState = 299;
+                    }
+                    else {
+                        Drive.Start(76, 0, 0);
+                        autonState += 1;
+                    }
                 }
                 break;
             case 232:
@@ -428,7 +446,10 @@ public class HydrAuton extends LinearOpMode {
             ////////////////////////////////////////////////////////////////////////////////////////
             case 299:
                 boolean drivecomplete = !Drive.Busy();
-                boolean armcomplete = Arm.RunAction(HydraArmMovements.ArmMoveToFront);
+                boolean armcomplete = true;
+                if (!parkOnly) {
+                    armcomplete = Arm.RunAction(HydraArmMovements.ArmMoveToFront);
+                }
                 if (drivecomplete && armcomplete) {
                     autonState = 300;
                 }
@@ -625,22 +646,32 @@ public class HydrAuton extends LinearOpMode {
      * Drop a pixel at the current location
      * @return false iff something bad happens
      */
-    protected boolean PixelDrop() {
+    protected boolean PixelDrop(boolean secondPixel) {
         // Drop the pixel on the spike
         switch (autonState) {
             case 100:
                 // Reverse the intake
                 Intake.StartOut();
-                // Run one pixel out of the cassette
-                PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront,
-                        HydraPixelPalaceActions.PixelPalaceStop, false);
+                HydraPixelPalaceActions position2Direction = HydraPixelPalaceActions.PixelPalaceStop;
+                // if we are dropping the second pixel, we need both servos to turn
+                if (secondPixel) {
+                    position2Direction = HydraPixelPalaceActions.PixelPalaceBackToFront;
+                }
+                // Run the pixel out of the cassette
+                PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront, position2Direction,
+                        false);
                 // Start a timer since we can't easily detect whether a pixel has exited the intake
                 pixelDropTimer.reset();
                 autonState += 1;
                 break;
             case 101:
+                int waitTime = cPixelDropRunTimeMs;
+                // Give the second pixel more time to get out
+                if (secondPixel) {
+                    waitTime *= 2;
+                }
                 // Wait for our hardcoded timer to elapse
-                if (pixelDropTimer.milliseconds() >= cPixelDropRunTimeMs) {
+                if (pixelDropTimer.milliseconds() >= waitTime) {
                     // Stop the intake and cassette
                     Intake.Stop();
                     PixelPalace.Stop();

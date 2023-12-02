@@ -12,7 +12,7 @@ public class HydrAuton_Backstage extends HydrAuton {
         else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike
             // this is the same for all autons
-            if (!PixelDrop()) {
+            if (!PixelDrop(false)) {
                 BadState();
                 return true;
             }
