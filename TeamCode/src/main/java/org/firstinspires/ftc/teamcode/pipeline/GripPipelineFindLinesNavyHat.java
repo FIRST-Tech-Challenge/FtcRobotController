@@ -11,6 +11,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.LineSegmentDetector;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -34,6 +35,7 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 	private Mat maskOutput = new Mat();
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
+	private ArrayList<Line> findLinesOutput = new ArrayList<Line>();
 
 	private Point avgCentroid = new Point();
 	private Point maxCentroid = new Point();
@@ -47,16 +49,16 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 		// Step CV_resize0:
 		Mat cvResizeSrc = source0;
 		Size cvResizeDsize = new Size(0, 0);
-		double cvResizeFx = 0.55;
-		double cvResizeFy = 0.55;
+		double cvResizeFx = 0.25;
+		double cvResizeFy = 0.25;
 		int cvResizeInterpolation = Imgproc.INTER_LINEAR;
 		cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = cvResizeOutput;
-		double[] rgbThresholdRed = {0, 100};
-		double[] rgbThresholdGreen = {109, 167};
-		double[] rgbThresholdBlue = {128, 198};
+		double[] rgbThresholdRed = {6.879496402877698, 70.05972696245736};
+		double[] rgbThresholdGreen = {18.345323741007192, 61.35665529010239};
+		double[] rgbThresholdBlue = {32.10431654676259, 100.52047781569966};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step CV_erode0:
@@ -73,81 +75,13 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 		Mat maskMask = cvErodeOutput;
 		mask(maskInput, maskMask, maskOutput);
 
-		// Step Find_Contours0:
-		Mat findContoursInput = cvErodeOutput;
-		boolean findContoursExternalOnly = false;
-		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
+		// Step Find_Lines0:
+		Mat findLinesInput = maskOutput;
+		findLines(findLinesInput, findLinesOutput);
 
-		// Step Filter_Contours0:
-		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 0.0;
-		double filterContoursMinPerimeter = 0.0;
-		double filterContoursMinWidth = 0.0;
-		double filterContoursMaxWidth = 1000.0;
-		double filterContoursMinHeight = 0.0;
-		double filterContoursMaxHeight = 20.0;
-		double[] filterContoursSolidity = {0, 100};
-		double filterContoursMaxVertices = 1000000.0;
-		double filterContoursMinVertices = 0.0;
-		double filterContoursMinRatio = 0.0;
-		double filterContoursMaxRatio = 1000.0;
-		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
-
-		ArrayList<Point> allCentroids = new ArrayList<Point>();
-		Iterator<MatOfPoint> contourIterator = filterContoursOutput.iterator();
-		while(contourIterator.hasNext()) {
-			// calculate the moments of all the contours
-			// a moment is just the x,y coordinates of the 'centre of the contour'
-
-			Moments moments = Imgproc.moments(contourIterator.next());
-
-			Point centroid = new Point();
-
-			centroid.x = moments.get_m10() / moments.get_m00();
-			centroid.y = moments.get_m01() / moments.get_m00();
-
-			allCentroids.add(centroid);
-		}
-
-		// calculate the average of the centroids, this should be the centre of the collection of
-		// contours that make up the pixel
-		avgCentroid.x = allCentroids.stream()
-				.mapToInt((p -> (int) p.x))
-				.average()
-				.orElse(0);
-
-
-		avgCentroid.y = allCentroids.stream()
-				.mapToInt((p -> (int) p.y))
-				.average()
-				.orElse(0);
-
-		maxCentroid.x = allCentroids.stream()
-				.mapToInt((p -> (int) p.x))
-				.max()
-				.orElse(0);
-
-
-		maxCentroid.y = allCentroids.stream()
-				.mapToInt((p -> (int) p.y))
-				.max()
-				.orElse(0);
-
-		minCentroid.x = allCentroids.stream()
-				.mapToInt((p -> (int) p.x))
-				.min()
-				.orElse(0);
-
-
-		minCentroid.y = allCentroids.stream()
-				.mapToInt((p -> (int) p.y))
-				.min()
-				.orElse(0);
-
-		//double sizeFact = Core.norm(new Mat(minCentroid), new Mat(maxCentroid));
-
-		return findContoursInput;
-
+		// return findLinesInput because this is the last Mat that was processed
+		//  the findLines output is an array of lines that can't be further processed by opencv
+		return findLinesInput;
 	}
 
 	/**
@@ -183,32 +117,12 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 	}
 
 	/**
-	 * This method is a generated getter for the output of a Find_Contours.
-	 * @return ArrayList<MatOfPoint> output from Find_Contours.
+	 * This method is a generated getter for the output of a Find_Lines.
+	 * @return ArrayList<Line> output from Find_Lines.
 	 */
-	public ArrayList<MatOfPoint> findContoursOutput() {
-		return findContoursOutput;
+	public ArrayList<Line> findLinesOutput() {
+		return findLinesOutput;
 	}
-
-	/**
-	 * This method is a generated getter for the output of a Filter_Contours.
-	 * @return ArrayList<MatOfPoint> output from Filter_Contours.
-	 */
-	public ArrayList<MatOfPoint> filterContoursOutput() {
-		return filterContoursOutput;
-	}
-
-	public Point avgContourCoord() {
-		return avgCentroid;
-	}
-
-	public Point maxContourCoord() {
-		return maxCentroid;
-	}
-	public Point minContourCoord() {
-		return minCentroid;
-	}
-
 
 
 	/**
@@ -221,7 +135,7 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 	 * @param dst output image.
 	 */
 	private void cvResize(Mat src, Size dSize, double fx, double fy, int interpolation,
-		Mat dst) {
+						  Mat dst) {
 		if (dSize==null) {
 			dSize = new Size(0,0);
 		}
@@ -237,10 +151,10 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 	 * @param output The image in which to store the output.
 	 */
 	private void rgbThreshold(Mat input, double[] red, double[] green, double[] blue,
-		Mat out) {
+							  Mat out) {
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2RGB);
 		Core.inRange(out, new Scalar(red[0], green[0], blue[0]),
-			new Scalar(red[1], green[1], blue[1]), out);
+				new Scalar(red[1], green[1], blue[1]), out);
 	}
 
 	/**
@@ -254,7 +168,7 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 	 * @param dst Output Image.
 	 */
 	private void cvErode(Mat src, Mat kernel, Point anchor, double iterations,
-		int borderType, Scalar borderValue, Mat dst) {
+						 int borderType, Scalar borderValue, Mat dst) {
 		if (kernel == null) {
 			kernel = new Mat();
 		}
@@ -279,77 +193,47 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 		input.copyTo(output, mask);
 	}
 
-	/**
-	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
-	 * @param input The image on which to perform the Distance Transform.
-	 * @param type The Transform.
-	 * @param maskSize the size of the mask.
-	 * @param output The image in which to store the output.
-	 */
-	private void findContours(Mat input, boolean externalOnly,
-		List<MatOfPoint> contours) {
-		Mat hierarchy = new Mat();
-		contours.clear();
-		int mode;
-		if (externalOnly) {
-			mode = Imgproc.RETR_EXTERNAL;
+	public static class Line {
+		public final double x1, y1, x2, y2;
+		public Line(double x1, double y1, double x2, double y2) {
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
 		}
-		else {
-			mode = Imgproc.RETR_LIST;
+		public double lengthSquared() {
+			return Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
 		}
-		int method = Imgproc.CHAIN_APPROX_SIMPLE;
-		Imgproc.findContours(input, contours, hierarchy, mode, method);
+		public double length() {
+			return Math.sqrt(lengthSquared());
+		}
+		public double angle() {
+			return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
+		}
 	}
-
-
 	/**
-	 * Filters out contours that do not meet certain criteria.
-	 * @param inputContours is the input list of contours
-	 * @param output is the the output list of contours
-	 * @param minArea is the minimum area of a contour that will be kept
-	 * @param minPerimeter is the minimum perimeter of a contour that will be kept
-	 * @param minWidth minimum width of a contour
-	 * @param maxWidth maximum width
-	 * @param minHeight minimum height
-	 * @param maxHeight maximimum height
-	 * @param Solidity the minimum and maximum solidity of a contour
-	 * @param minVertexCount minimum vertex Count of the contours
-	 * @param maxVertexCount maximum vertex Count
-	 * @param minRatio minimum ratio of width to height
-	 * @param maxRatio maximum ratio of width to height
+	 * Finds all line segments in an image.
+	 * @param input The image on which to perform the find lines.
+	 * @param lineList The output where the lines are stored.
 	 */
-	private void filterContours(List<MatOfPoint> inputContours, double minArea,
-		double minPerimeter, double minWidth, double maxWidth, double minHeight, double
-		maxHeight, double[] solidity, double maxVertexCount, double minVertexCount, double
-		minRatio, double maxRatio, List<MatOfPoint> output) {
-		final MatOfInt hull = new MatOfInt();
-		output.clear();
-		//operation
-		for (int i = 0; i < inputContours.size(); i++) {
-			final MatOfPoint contour = inputContours.get(i);
-			final Rect bb = Imgproc.boundingRect(contour);
-			if (bb.width < minWidth || bb.width > maxWidth) continue;
-			if (bb.height < minHeight || bb.height > maxHeight) continue;
-			final double area = Imgproc.contourArea(contour);
-			if (area < minArea) continue;
-			if (Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true) < minPerimeter) continue;
-			Imgproc.convexHull(contour, hull);
-			MatOfPoint mopHull = new MatOfPoint();
-			mopHull.create((int) hull.size().height, 1, CvType.CV_32SC2);
-			for (int j = 0; j < hull.size().height; j++) {
-				int index = (int)hull.get(j, 0)[0];
-				double[] point = new double[] { contour.get(index, 0)[0], contour.get(index, 0)[1]};
-				mopHull.put(j, 0, point);
+	private void findLines(Mat input, ArrayList<Line> lineList) {
+		final LineSegmentDetector lsd = Imgproc.createLineSegmentDetector();
+		final Mat lines = new Mat();
+		lineList.clear();
+		if (input.channels() == 1) {
+			lsd.detect(input, lines);
+		} else {
+			final Mat tmp = new Mat();
+			Imgproc.cvtColor(input, tmp, Imgproc.COLOR_BGR2GRAY);
+			lsd.detect(tmp, lines);
+		}
+		if (!lines.empty()) {
+			for (int i = 0; i < lines.rows(); i++) {
+				lineList.add(new Line(lines.get(i, 0)[0], lines.get(i, 0)[1],
+						lines.get(i, 0)[2], lines.get(i, 0)[3]));
 			}
-			final double solid = 100 * area / Imgproc.contourArea(mopHull);
-			if (solid < solidity[0] || solid > solidity[1]) continue;
-			if (contour.rows() < minVertexCount || contour.rows() > maxVertexCount)	continue;
-			final double ratio = bb.width / (double)bb.height;
-			if (ratio < minRatio || ratio > maxRatio) continue;
-			output.add(contour);
 		}
 	}
-
 
 
 
