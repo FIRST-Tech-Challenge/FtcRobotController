@@ -77,18 +77,19 @@ public class League2_Autonomous extends LinearOpMode {
         params.placePurplePixel = menu.getResult("purple-switch", Boolean.class);
         params.placeYellowPixel = menu.getResult("yellow-switch", Boolean.class);
 
-
-        // init color detector after determining which alliance we're on
         ColorDetection colorDetector = new ColorDetection(this);
-        switch (params.allianceTeam) {
+        if (!autoDrive.drive.isDevBot) {
+            // init color detector after determining which alliance we're on
+            switch (params.allianceTeam) {
 
-            case BLUE:
-                colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
-                break;
+                case BLUE:
+                    colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
+                    break;
 
-            case RED:
-                colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
-                break;
+                case RED:
+                    colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
+                    break;
+            }
         }
 
         // wait until we hit start auto
@@ -104,8 +105,14 @@ public class League2_Autonomous extends LinearOpMode {
 
         waitForStart();
 
-        // capture the position of the prop
-        params.propPosition = colorDetector.returnZone();
+        if (!autoDrive.drive.isDevBot) {
+            // capture the position of the prop
+            params.propPosition = colorDetector.returnZone();
+        } else {
+            telemetry.addLine("isDevBot: choosing random prop position");
+            ColorDetection.PropPosition[] propPositions = {ColorDetection.PropPosition.RIGHT, ColorDetection.PropPosition.MIDDLE, ColorDetection.PropPosition.LEFT};
+            params.propPosition = propPositions[(int)Math.floor(Math.random()*3)];
+        }
 
         telemetry.addData("Captured prop position:", params.propPosition);
         telemetry.update();
