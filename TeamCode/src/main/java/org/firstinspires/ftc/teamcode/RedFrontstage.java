@@ -86,7 +86,7 @@ public class RedFrontstage extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)))
                 .back(7)
                 .strafeLeft(20)
-                .forward(23)
+                .forward(25)
                 .turn(Math.toRadians(-92))
                 .forward(109)
                 .build();
