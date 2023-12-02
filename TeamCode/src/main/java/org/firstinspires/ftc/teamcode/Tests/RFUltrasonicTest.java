@@ -36,7 +36,7 @@ public class RFUltrasonicTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         LED ultras = op.hardwareMap.get(LED.class, "ultras");
         RFUltrasonic ultra = new RFUltrasonic("ultra");
-        RFLEDStrip leds = new RFLEDStrip();
+        RFLEDStrip leds = new RFLEDStrip("blinkin");
 
         double lastEnabled = 0;
         drive.setPoseEstimate(new Pose2d(24, -12, toRadians(0)));
