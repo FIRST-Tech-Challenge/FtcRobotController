@@ -51,13 +51,13 @@ public class AprilTagDetection extends LinearOpMode
 
     // Lens intrinsics
     // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C270 webcam at 640 x 480.
+    // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
     // Calibration data is here: https://github.com/FIRST-Tech-Challenge/FtcRobotController/blob/master/TeamCode/src/main/res/xml/teamwebcamcalibrations.xml
-    double fx = 822.317;
-    double fy = 822.317;
-    double cx = 319.495;
-    double cy = 242.502;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
 
     double tagsize_meters = 0.051; // This is the Centerstage 2023-2024 standard april tag size on the backdrop

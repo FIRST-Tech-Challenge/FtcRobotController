@@ -56,7 +56,8 @@ public class Robot {
         clawYaw = hardwareMap.servo.get("clawYaw");
         clawGrip = hardwareMap.servo.get("clawGrip");
 
-        clawGrip.scaleRange(0.02, 0.22);
+       // clawGrip.scaleRange(0.02, 0.22);  //old values
+        clawGrip.scaleRange(0.15, 0.35);
         clawPitch.scaleRange(0.755, 0.973);
         clawYaw.scaleRange(0.125, 0.675);
 
