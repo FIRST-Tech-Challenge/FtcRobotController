@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.McDonald;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -11,8 +10,8 @@ import org.firstinspires.ftc.teamcode.shared.VisionHardware;
 import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
 
 @Config
-@Autonomous(name = "Auto - RA Right", group = "Auto")
-public class AutoTest extends LinearOpMode {
+@Autonomous(name = "Auto - BA Right", group = "Auto")
+public class AutoBR extends LinearOpMode {
 
     MotionHardware robot = new MotionHardware(this);
     VisionHardware vision = new VisionHardware(this);
@@ -30,7 +29,7 @@ public class AutoTest extends LinearOpMode {
         // - Forward: 31.75
         // - Reverse: -44.75
         while(opModeIsActive()) {
-            PropPosition propPosition = PropPosition.RIGHT;
+            PropPosition propPosition = PropPosition.LEFT;
 
             switch(propPosition) {
                 case MIDDLE:
@@ -38,45 +37,49 @@ public class AutoTest extends LinearOpMode {
                     robot.moveRobot(.5, -43.75, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
-                    sleep(1000);
+                    //sleep(1000);
                     //Backup and clear pixel
-                    robot.moveRobot(.5, -5, 5);
+                    //robot.moveRobot(.5, -5, 5);
                     //Turn to parking location
-                    robot.turnRobot(Direction.LEFT, 16, .5, 10);
+                    //robot.turnRobot(Direction.LEFT, 16, .5, 10);
                     //Park
-                    robot.moveRobot(.5, 30, 10);
+                    //robot.moveRobot(.5, 30, 10);
                     break;
-                case RIGHT:
+                case LEFT:
                     //Drop off pixel
                     robot.moveRobot(.5, -43.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.LEFT, 10, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 10, .5, 10);
                     //Move to line
-                    robot.moveRobot(.5, 8, 5);
+                    robot.moveRobot(.5, 9, 5);
                     //Drop pixel
                     robot.dropPixel();
                     //Park
-                    robot.moveRobot(.5, 40, 10);
-                    robot.turnRobot(Direction.LEFT, 14, 5, 10);
-                    robot.moveRobot(.5, 15, 5);
+                    //robot.moveRobot(.5, 45, 10);
+                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
+                    //robot.moveRobot(.5, 13, 5);
                     break;
                 default:
                     //Drop off pixel
-                    robot.moveRobot(.5, -43.75, 10);
-                    //Pretend to drop pixel
+                    robot.moveRobot(.5, -36.75, 10);
+                    //Turn left
+                    robot.turnRobot(Direction.LEFT, 10, .5, 10);
+                    //Move to line
+                    robot.moveRobot(.5, 9, 5);
+                    //Drop pixel
                     robot.dropPixel();
-                    sleep(1000);
-                    //Backup and clear pixel
-                    robot.moveRobot(.5, -5, 5);
-                    //Turn to parking location
-                    robot.turnRobot(Direction.LEFT, 16, .5, 10);
+                    //Move awayn from line
+                    //robot.moveRobot(.5, -9, 5);
+                    //Turn to park
+                    //robot.turnRobot(Direction.RIGHT, 19, 5, 10);
                     //Park
-                    robot.moveRobot(.5, 30, 10);
+                    //robot.moveRobot(.5, 45, 10);
+                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
+                    //robot.moveRobot(.5, 13, 5);
                     break;
+
             }
-
-
-
+            
             sleep(20);
             break;
         }
