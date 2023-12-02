@@ -226,9 +226,6 @@ public class MainTeleOp extends LinearOpMode {
                 /*if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                     VERY WIP
                 }*/
-
-                telemetry.addData("slide target", slidePreset);
-                telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
             }
 
 
@@ -241,6 +238,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("drive power Y", drivePowerY);
             telemetry.addData("intake power", intakePower);
             telemetry.addData("intake preset", intakePreset); */
+
+            telemetry.addData("slide target", slidePreset);
+            telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);

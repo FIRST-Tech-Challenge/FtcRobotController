@@ -9,8 +9,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -27,8 +25,6 @@ public class League2_Autonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         AutonDriveFactory autoDrive = new AutonDriveFactory(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
-
-        GamepadEx gp1 = new GamepadEx(gamepad1);
 
         // setup menu
         TextMenu menu = new TextMenu();
@@ -63,15 +59,8 @@ public class League2_Autonomous extends LinearOpMode {
             telemetry.update();
 
             // update with input
-            gp1.readButtons();
-            //menuInput.update(gp1.getLeftX(), gp1.getLeftY(), gp1.getButton(GamepadKeys.Button.A));
-            menuInput.update(
-                    gp1.getLeftX() + (gp1.getButton(GamepadKeys.Button.DPAD_LEFT) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0),
-                    gp1.getLeftY() + (gp1.getButton(GamepadKeys.Button.DPAD_DOWN) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_UP) ? 1 : 0),
-                    gp1.getButton(GamepadKeys.Button.A)
-            );
+            menuInput.update(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.a);
             menu.updateWithInput(menuInput);
-            sleep(17); // 60 fps, helps telemetry not get spammed as much
         }
 
 
@@ -103,12 +92,12 @@ public class League2_Autonomous extends LinearOpMode {
         // wait until we hit start auto
         telemetry.addLine("Waiting for start...");
         telemetry.addLine();
-        telemetry.addData("Team", params.allianceTeam);
-        telemetry.addData("Start", params.startingPosition);
-        telemetry.addData("Park", params.parkLocation);
-        telemetry.addData("Start long wait", params.startLongWaitTime);
-        telemetry.addData("Place purple", params.placePurplePixel);
-        telemetry.addData("Place purple", params.placeYellowPixel);
+        telemetry.addData("Team:", params.allianceTeam);
+        telemetry.addData("Start:", params.startingPosition);
+        telemetry.addData("Park:", params.parkLocation);
+        telemetry.addData("Start long wait:", params.startLongWaitTime);
+        telemetry.addData("Place purple:", params.placePurplePixel);
+        telemetry.addData("Place purple:", params.placeYellowPixel);
         telemetry.update();
 
         waitForStart();
