@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Robot Centric Drive (Scorpion)")
@@ -11,6 +12,7 @@ public class RearCentricDrive extends LinearOpMode {
   private Servo leftGrip;
   private Servo rightGrip;
   private DcMotor armRotate;
+  private DcMotor armBrace;
   private DcMotor armExt;
   private DcMotor frontLeftMotor;
   private DcMotor backLeftMotor;
@@ -37,6 +39,7 @@ public class RearCentricDrive extends LinearOpMode {
     leftGrip = hardwareMap.get(Servo.class, "leftGrip");
     rightGrip = hardwareMap.get(Servo.class, "rightGrip");
     armRotate = hardwareMap.get(DcMotor.class, "armRotate");
+    armBrace = hardwareMap.get(DcMotor.class, "armBrace");
     armExt = hardwareMap.get(DcMotor.class, "armExt");
     frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
     backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
@@ -46,6 +49,7 @@ public class RearCentricDrive extends LinearOpMode {
     //Sets initial positions and directions for grip servos
     leftGrip.setDirection(Servo.Direction.REVERSE);
     rightGrip.setDirection(Servo.Direction.FORWARD);
+    frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
     //Sets variables to 0 on initialization
     rotation = 0;
@@ -62,6 +66,8 @@ public class RearCentricDrive extends LinearOpMode {
       armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       armExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      armBrace.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      armBrace.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
       frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -101,9 +107,9 @@ public class RearCentricDrive extends LinearOpMode {
           }
         }else {
           //normal driving
-          backLeftMotor.setPower(-yI+xI);
+          backLeftMotor.setPower((-yI+xI)*0.9);
           backRightMotor.setPower(yI+xI);
-          frontLeftMotor.setPower(-yI+xI);
+          frontLeftMotor.setPower((-yI+xI)*0.9);
           frontRightMotor.setPower(yI+xI);
         }
 
@@ -113,28 +119,30 @@ public class RearCentricDrive extends LinearOpMode {
           //Otherwise power is set to 0 (BRAKE)
           
         //if(armLocked == false){
-          if (gamepad2.right_bumper) {
-            armRotate.setPower(0.3);
-          } else if (gamepad2.left_bumper) {
-            armRotate.setPower(-0.2);
-          } else {
-            armRotate.setPower(0);
-          }
-        //}else if (armLocked == true){
-         //if(armRotate.getCurrentPosition()<1200){
-           //armRotate.setPower(0.3);
-         //} else{
-           //armRotate.setPower(0);
-         //}
-        //}
+
+           if(armLocked == true){
+             armRotate.setPower(0.05);
+             armBrace.setPower(0.05);
+           } else{
+             if (gamepad2.right_bumper) {
+               armRotate.setPower(0.3);
+               armBrace.setPower(0.3);
+             } else if (gamepad2.left_bumper) {
+               armRotate.setPower(-0.2);
+               armBrace.setPower(-0.2);
+             } else {
+               armRotate.setPower(0);
+               armBrace.setPower(0);
+             }
+           }
           
         
         
       
-        if(armLocked == false){
-          if(gamepad2.y){
-            armLocked = true;
-          }
+       if(armLocked == false){
+         if(gamepad2.y){
+           armLocked = true;
+         }
         } else if (armLocked == true){
           if(gamepad2.x){
             armLocked = false;

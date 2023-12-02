@@ -32,10 +32,10 @@ public class AutoRed extends LinearOpMode {
         waitForStart();
         if(opModeIsActive()){
             while(opModeIsActive()){
-                backRightMotor.setPower(1);
-                backLeftMotor.setPower(-0.5);
-                frontRightMotor.setPower(1);
-                frontLeftMotor.setPower(-0.5);
+                backRightMotor.setPower(-1);
+                backLeftMotor.setPower(0.4);
+                frontRightMotor.setPower(-1);
+                frontLeftMotor.setPower(0.4);
                 sleep(1000);
                 backRightMotor.setPower(0);
                 backLeftMotor.setPower(0);
