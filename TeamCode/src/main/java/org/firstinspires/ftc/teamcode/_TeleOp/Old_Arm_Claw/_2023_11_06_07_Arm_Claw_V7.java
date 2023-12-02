@@ -137,7 +137,7 @@ public class _2023_11_06_07_Arm_Claw_V7 extends LinearOpMode {
                 axle.setPosition(0.8);
             }
 
-            if (arm.isBusy() == false) {
+            if (!arm.isBusy()) {
                 arm.setTargetPosition(liftTargetPosition);
                 arm.setPower(0.7);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
