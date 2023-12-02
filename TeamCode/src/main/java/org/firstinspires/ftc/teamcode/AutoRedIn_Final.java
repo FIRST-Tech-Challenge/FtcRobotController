@@ -185,7 +185,7 @@ robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
 
             telemetry.addLine("Didn't find 1 or 2 so assume #3");
             telemetry.update();
-            //Now we know that the pixel is at the last location so just go there and drop pixle
+            //Now we know that the pixel is at the last location so just go there and drop pixel
 
             robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
             robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
@@ -196,20 +196,20 @@ robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
                 sleep(1000);
                 robot.sweeperCommand(0.0);
             }
-            robot.moveRobotAuto(robot.FORWARD, 1, 27);
+            robot.moveRobotAuto(robot.FORWARD, 1, 25);
             robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
-            robot.moveRobotAuto(robot.REVERSE,.5,7);
-
+            robot.moveRobotAuto(robot.REVERSE,.5,5);
+            robot.moveRobotAuto(robot.RIGHT,.5,4);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                 robot.dump_pixle();
-                sleep(1000);
+                sleep(2000);
                 robot.reset_pixle_bucket();
                 sleep(2000);
                 robot.raiseElevatorToPosition_Autonomous(-.5, 0);
             }
 
-            robot.moveRobotAuto(robot.LEFT, 0.3, 15);
+            robot.moveRobotAuto(robot.LEFT, 0.8, 39);
             robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
 
             telemetry.addData("Done ", robot.getTicks());

@@ -111,10 +111,18 @@ public class ElevatorControl {
     public void raiseLowerElevatorToPosition_AUTO(double cmd, int desiredPos) {
         boolean extend = false;
 
-        while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()-desiredPos) > 5))
-        //while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()) < desiredPos))
+        this.raiseLowerElevator_T(cmd);
+
+        // if current position is less then desired position keep going
+
+      //  while (((LinearOpMode) _opMode).opModeIsActive() && (abs(elevator_motor.getCurrentPosition()-desiredPos) > 5))
+        while ( ( ( (LinearOpMode) _opMode).opModeIsActive() )
+                &&
+                (   (elevator_motor.getCurrentPosition() < desiredPos && cmd > 0 )
+                ||
+                (  elevator_motor.getCurrentPosition() > desiredPos && cmd < 0) ) )
         {
-            this.raiseLowerElevator_T(cmd);
+
             RobotLog.d(String.format("COMMAND: %.03f DESIRED POSITION :  %d ",cmd,desiredPos));
         }
         this.raiseLowerElevator_T(0);
