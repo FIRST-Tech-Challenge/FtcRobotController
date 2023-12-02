@@ -1,0 +1,15 @@
+---
+startPose:
+  x: 36.0
+  y: 12.0
+  heading: -2.356194490192345
+startTangent: -2.356194490192345
+waypoints:
+- position:
+    x: 30.0
+    y: 4.5
+  heading: 0.0
+  tangent: -2.356194490192345
+  interpolationType: "CONSTANT"
+resolution: 0.25
+version: 1
