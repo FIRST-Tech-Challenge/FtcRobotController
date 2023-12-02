@@ -30,27 +30,24 @@ public class drivesample extends LinearOpMode
         DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
         DcMotor slideL = hardwareMap.dcMotor.get("slideL");
 
-        Servo arm = hardwareMap.get(Servo.class, "IntakeRaiser");
-        Servo wrist = hardwareMap.get(Servo.class, "ArmWrist"); // no clue, find out later
-        Servo out = hardwareMap.get(Servo.class, "PixelPickerUpper");
-        Servo bla = hardwareMap.get(Servo.class, "PixelGrabber");
+        Servo IntakeRaiser = hardwareMap.get(Servo.class, "IntakeRaiser");
+        Servo ArmWrist = hardwareMap.get(Servo.class, "ArmWrist");
+        Servo PixelGrabberWrist1 = hardwareMap.get(Servo.class, "PixelGrabberWrist1");
+        Servo PixelGrabberWrist2 = hardwareMap.get(Servo.class, "PixelGrabberWrist2");
+        Servo PixelGrabber = hardwareMap.get(Servo.class, "PixelGrabber");
 
-        bla.setDirection(Servo.Direction.REVERSE);
-        arm.setPosition(0);
-        wrist.setPosition(0);
-        out.setPosition(0);
-        bla.setPosition(0);
+        IntakeRaiser.setPosition(0);
+        ArmWrist.setPosition(0);
+        PixelGrabberWrist1.setPosition(0);
+        PixelGrabberWrist2.setPosition(0);
+        PixelGrabber.setDirection(Servo.Direction.REVERSE);
+        PixelGrabber.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
-
-        out.setPosition(0.1);
-        arm.setPosition(0);
-        bla.setPosition(0.5);
-        wrist.setPosition(0.2);
 
         waitForStart();
 
@@ -105,41 +102,44 @@ public class drivesample extends LinearOpMode
 
             if(gamepad1.right_bumper)
             {
-                arm.setPosition(0.55);
+                IntakeRaiser.setPosition(0.55);
                 intakeMotor.setPower(1);
-                out.setPosition(1);
-                wrist.setPosition(0);
+                ArmWrist.setPosition(1);
+                PixelGrabberWrist1.setPosition(0);
+                PixelGrabberWrist2.setPosition(0);
             }
 
             if(gamepad1.left_bumper)
             {
-                arm.setPosition(0);
+                IntakeRaiser.setPosition(0);
                 intakeMotor.setPower(0);
             }
 
             if(gamepad1.b)
             {
-                out.setPosition(1);
+                ArmWrist.setPosition(1);
                 intakeMotor.setPower(0);
-                arm.setPosition(0.3);
-                wrist.setPosition(0);
+                IntakeRaiser.setPosition(0.3);
+                PixelGrabberWrist1.setPosition(0);
+                PixelGrabberWrist2.setPosition(0);
             }
 
             if(gamepad1.x)
             {
-                wrist.setPosition(0.23);
+                PixelGrabberWrist1.setPosition(0.23);
+                PixelGrabberWrist2.setPosition(0.23);
 
-                out.setPosition(0.1);
+                ArmWrist.setPosition(0.1);
             }
 
             if(gamepad1.y)
             {
-                bla.setPosition(0.5);
+                PixelGrabber.setPosition(0.5);
             }
 
             if(gamepad1.a)
             {
-                bla.setPosition(0.2);
+                PixelGrabber.setPosition(0.2);
             }
 
             if(gamepad1.dpad_up)
