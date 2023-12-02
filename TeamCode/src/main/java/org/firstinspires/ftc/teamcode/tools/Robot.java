@@ -139,8 +139,8 @@ public class Robot {
         outTakingPixels.addTransitionTo(idle, openClawSupplier,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawOpen)
-                        //.resetTimer(timer)
-                        //.waitUntil(timer, 1000)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 300)
                 );
     }
 

@@ -47,23 +47,23 @@ public abstract class AutoBase extends LinearOpMode {
         //Blue right
         Pose2d preStartPoseBlueRight = new Pose2d(-63, -9.5, Math.toRadians(180));
         Pose2d startPoseBlueRight = new Pose2d(-63, -16, Math.toRadians(180));
-        Pose2d leftTeamPropBlueRight = new Pose2d(-28, -13, Math.toRadians(270.00));
+        Pose2d leftTeamPropBlueRight = new Pose2d(-28, -13, Math.toRadians(270));
         Pose2d centerTeamPropBlueRight = new Pose2d(-35, -12, Math.toRadians(180.00));
-        Pose2d rightTeamPropBlueRight = new Pose2d(-39, -13, Math.toRadians(90.00));
+        Pose2d rightTeamPropBlueRight = new Pose2d(-39, -13, Math.toRadians(90));
 
         //Red left
-        Pose2d preStartPoseRedLeft = new Pose2d(63, -9.5, Math.toRadians(180));
+        Pose2d preStartPoseRedLeft = new Pose2d(63, -9.5, Math.toRadians(0));
         Pose2d startPoseRedLeft = new Pose2d(63, -13, Math.toRadians(0));
-        Pose2d rightTeamPropRedLeft = new Pose2d(32, -11, Math.toRadians(90.00));
-        Pose2d centerTeamPropRedLeft = new Pose2d(34.5, -12, Math.toRadians(90.00));
-        Pose2d leftTeamPropRedLeft = new Pose2d(30, -10.5, Math.toRadians(90.00));
+        Pose2d rightTeamPropRedLeft = new Pose2d(32, -11, Math.toRadians(270.00));
+        Pose2d centerTeamPropRedLeft = new Pose2d(34.5, -12, Math.toRadians(0));
+        Pose2d leftTeamPropRedLeft = new Pose2d(30, -10.5, Math.toRadians(90));
 
         //Red right
-        Pose2d preStartPoseRedRight = new Pose2d(63, 9.5, Math.toRadians(180));
+        Pose2d preStartPoseRedRight = new Pose2d(63, 9.5, Math.toRadians(0));
         Pose2d startPoseRedRight = new Pose2d(63, 16, Math.toRadians(0));
-        Pose2d rightTeamPropRedRight = new Pose2d(28, 13, Math.toRadians(270.00));
-        Pose2d centerTeamPropRedRight = new Pose2d(35, 12, Math.toRadians(0.00));
-        Pose2d leftTeamPropRedRight = new Pose2d(39, 13, Math.toRadians(90.00));
+        Pose2d rightTeamPropRedRight = new Pose2d(28, 13, Math.toRadians(270));
+        Pose2d centerTeamPropRedRight = new Pose2d(35, 12, Math.toRadians(0));
+        Pose2d leftTeamPropRedRight = new Pose2d(39, 13, Math.toRadians(90));
 
 
     }
