@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "BasicGoBildaStraferOp")
 public class BasicGoBildaStraferOp extends LinearOpMode {
@@ -11,6 +12,11 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
     private DcMotor rightRearDrive;
     private DcMotor leftRearDrive;
     private DcMotor leftFrontDrive;
+    private DcMotor clawArm;
+
+    private Servo clawClose;
+    private Servo clawLift;
+
 
     /**
      * powerAdjust - Adjust the power based on the percent passed in.
@@ -36,11 +42,16 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
         double driveValue;
         double strafeValue;
         double rotateValue;
+        double clawArmPower;
 
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightRearDrive = hardwareMap.get(DcMotor.class, "rightRearDrive");
         leftRearDrive = hardwareMap.get(DcMotor.class, "leftRearDrive");
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+
+        clawArm = hardwareMap.get(DcMotor.class, "claw_arm");
+        clawLift = hardwareMap.get(Servo.class, "claw_lift");
+        clawClose = hardwareMap.get(Servo.class, "claw_close");
 
         // Set motor directions
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -71,14 +82,19 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
                 } else {
                     rotateValue = powerAdjust(0, rotatePercentage);
                 }
+                // Read the y value of the left thumbstick of gamepad2
+                clawArmPower = -gamepad2.left_stick_y;
+
 
                 // Execute Actions
                 moveRobot(driveValue, strafeValue, rotateValue);
+                clawArm.setPower(clawArmPower);
 
                 // Telemetry Data
                 telemetry.addData("drive", driveValue);
                 telemetry.addData("strafe", strafeValue);
                 telemetry.addData("rotate", rotateValue);
+                telemetry.addData("clawArmPower", clawArmPower);
                 telemetry.update();
             }
         }
