@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 8/16/23
  * Easily find which motor is right or wrong configured
  */
-@Disabled
 
 @Autonomous(name = "MotorTest")
 public class MotorTest extends LinearOpMode {

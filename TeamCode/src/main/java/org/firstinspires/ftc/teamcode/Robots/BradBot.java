@@ -61,7 +61,7 @@ public class BradBot extends BasicRobot {
     lift = new Lift();
     preloader = new Preloader();
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
-    //        ultras = new Ultrasonics();
+    ultras = new Ultrasonics();
     wrist = new Wrist();
   }
 
@@ -201,6 +201,10 @@ public class BradBot extends BasicRobot {
         liftAuto(p_position);
       }
     }
+  }
+
+  public boolean checkAlliance() {
+    return ultras.checkAlliance();
   }
 
   /**
@@ -364,6 +368,7 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
+    ultras.update();
   }
 
   public void stop() {

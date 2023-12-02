@@ -27,51 +27,50 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * William
  * Program to tune the constants of an RFUltrasonic(x,y,a offset), must have inputable expected obstacle in the form of a linear equation
  */
-@Disabled
+
 
 @Autonomous
 public class RFUltrasonicTest extends LinearOpMode {
     public void runOpMode() {
         BasicRobot robot = new BasicRobot(this, false);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        LED ultras = op.hardwareMap.get(LED.class, "ultras");
-        RFUltrasonic ultra = new RFUltrasonic("ultra");
-        RFLEDStrip leds = new RFLEDStrip();
+        RFUltrasonic ultra = new RFUltrasonic("ultra", "ultras");
 
-        double lastEnabled = 0;
         drive.setPoseEstimate(new Pose2d(24, -12, toRadians(0)));
         waitForStart();
-        ultras.enable(ultras.isLightOn());
         sleep(50);
         while(!isStopRequested()&&opModeIsActive()) {
-            if (op.getRuntime() - lastEnabled >= 0.05) {
-                ultras.enable(ultras.isLightOn());
-            }
-
-            if (op.getRuntime() - lastEnabled >= 0.1) {
-
-                if (!ultras.isLightOn()) {
-                    LOGGER.log(RFLogger.Severity.INFO, "enabled");
-                    LOGGER.log(RFLogger.Severity.INFO, ultra.getDist() + "");
-                }
-                else {
+//            if (op.getRuntime() - lastEnabled >= 0.05) {
+//                ultras.enable(ultras.isLightOn());
+//            }
+//
+//            if (op.getRuntime() - lastEnabled >= 0.1) {
+//
+//                if (!ultras.isLightOn()) {
+//                    LOGGER.log(RFLogger.Severity.INFO, "enabled");
+//                    LOGGER.log(RFLogger.Severity.INFO, ultra.getDist() + "");
+//                }
+//                else {
                     LOGGER.log(RFLogger.Severity.INFO, "disabled");
                     LOGGER.log("dist: " + ultra.getDist());
+                    op.telemetry.addData("dist: ", ultra.getDist());
+                    op.telemetry.update();
                     packet.put("dist: ", ultra.getDist());
                     packet.put("posx", drive.getPoseEstimate().getX());
                     packet.put("posy", drive.getPoseEstimate().getY());
-                    packet.put("checked?: >_< <3", ultra.check(new Line(1,0,56,
-                            new Vector2d(56,-54), new Vector2d(56,-18))));
-
-                }
-                ultras.enable(ultras.isLightOn());
+                    ultra.setLine(new Line(1,0,56,
+                                    new Vector2d(56,-54), new Vector2d(56,-18)));
+                    packet.put("checked?: >_< <3", ultra.isDetected());
+//
+//                }
+//                ultras.enable(ultras.isLightOn());
 
 //                op.telemetry.addData("voltage: ", ultra.getVoltage());
 //                LOGGER.log(RFLogger.Severity.INFO, currentPose.getX() + "");
 //                LOGGER.log(RFLogger.Severity.INFO, currentPose.getY() + "");
-
-                lastEnabled = op.getRuntime();
-            }
+//
+//                lastEnabled = op.getRuntime();
+//            }
             drive.update();
             robot.update();
         }
