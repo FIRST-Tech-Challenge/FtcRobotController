@@ -150,10 +150,10 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left1y = gamepad1.left_stick_y;
-        left1x = -gamepad1.left_stick_x * 1.1;
+        left1x = -gamepad1.left_stick_x;
         right1x = -gamepad1.right_stick_x;
 
-        double baseSpeed = 0.3;
+        double baseSpeed = 0.15;
 
         if (gamepad1.a){
             baseSpeed = 0.25;
@@ -189,18 +189,22 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         if (gamepad2.right_bumper) {
             arm1.setPosition(0.6);
         }
-        if (gamepad2.left_bumper) {
-            arm1.setPosition(0.8);
+        if (gamepad2.right_trigger > 0) {
+            arm2.setPosition(0.2);
+        }
+        if (gamepad2.left_trigger > 0) {
+            arm2.setPosition(1);
         }
         if (gamepad2.y) {
             arm1.setPosition(0.4);
 
         }
-        if (gamepad2.dpad_down) {
-            climberMotor.setPower(-0.25);
-        }
-        if (gamepad2.dpad_up) {
-            climberMotor.setPower(0.25);
+        if (gamepad2.right_stick_y > 0) {
+            climberMotor.setPower(-1);
+        } else if (gamepad2.right_stick_y < 0) {
+            climberMotor.setPower(1);
+        } else {
+            climberMotor.setPower(0);
         }
         // "0" position is at the closed poesition
         // furthest right is to the side of robot
