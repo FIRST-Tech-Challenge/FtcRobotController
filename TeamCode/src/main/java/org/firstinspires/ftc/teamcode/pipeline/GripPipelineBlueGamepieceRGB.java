@@ -54,9 +54,9 @@ public class GripPipelineBlueGamepieceRGB extends OpenCvPipeline {
 
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = cvResizeOutput;
-		double[] rgbThresholdRed = {55, 126};
-		double[] rgbThresholdGreen = {84, 162};
-		double[] rgbThresholdBlue = {127, 193};
+		double[] rgbThresholdRed = {0, 129};
+		double[] rgbThresholdGreen = {116, 191};
+		double[] rgbThresholdBlue = {144, 255};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step CV_erode0:
