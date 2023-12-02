@@ -76,7 +76,8 @@ public class VisionHardware {
         if (USE_WEBCAM) {
             visionPortalBuilder = new VisionPortal.Builder();
             visionPortalBuilder.setCamera(myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
-            visionPortalBuilder.setCameraResolution(new Size(640, 480));
+            //visionPortalBuilder.setCameraResolution(new Size(640, 480));
+            visionPortalBuilder.setCameraResolution(new Size(1280, 720));
             visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
             visionPortalBuilder.enableLiveView(true);
             visionPortalBuilder.addProcessors(tfod);
@@ -113,22 +114,22 @@ public class VisionHardware {
                         double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
                         double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-                        if (x < 300) {
+                        if (x < 500) {
                             myOpMode.telemetry.addData("Prop Left", "");
                             myOpMode.telemetry.update();
                             debugWait();
                             return PropPosition.LEFT;
-                        } else if (x > 300) {
+                        } else if (x > 1000) {
                             myOpMode.telemetry.addData("Prop Right", "");
                             myOpMode.telemetry.update();
                             debugWait();
                             //return PropPosition.RIGHT;
-                            return PropPosition.MIDDLE;
+                            return PropPosition.RIGHT;
                         } else {
                             myOpMode.telemetry.addData("Prop Middle", "");
                             myOpMode.telemetry.update();
                             debugWait();
-                            return PropPosition.RIGHT;
+                            return PropPosition.MIDDLE;
                         }
                     }
                 }
