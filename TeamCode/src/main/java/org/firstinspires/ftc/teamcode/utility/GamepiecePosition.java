@@ -18,17 +18,17 @@ public class GamepiecePosition {
     public String getPOS(){
         String location="right";
         if (robotPOS == "left") {
-            if (gamepieceLocation.x < 80 && gamepieceLocation.x > 0) {
+            if (gamepieceLocation.x < 180 && gamepieceLocation.x > 0) {
                 location = "left";
-            } else if (gamepieceLocation.x >= 80) {
+            } else if (gamepieceLocation.x >= 180) {
                 location = "center";
             } else {
                 location = "right";
             }
         } else if (robotPOS =="right") {
-            if (gamepieceLocation.x > 270) {
+            if (gamepieceLocation.x > 260) {
                 location = "right";
-            } else if (gamepieceLocation.x <= 270 && gamepieceLocation.x > 0) {
+            } else if (gamepieceLocation.x <= 260 && gamepieceLocation.x > 0) {
                 location = "center";
             } else {
                 location = "left";

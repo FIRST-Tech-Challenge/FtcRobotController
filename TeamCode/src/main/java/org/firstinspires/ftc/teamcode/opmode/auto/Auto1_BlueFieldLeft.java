@@ -120,15 +120,32 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
     int state;
 
+    int rightCount = 0;
+    int centerCount = 0;
+    int leftCount = 0;
+
     @Override
     public void init_loop(){
         state = 0;
         GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "left");
-        gamepieceLocation = gamepiecePOS.getPOS();
         Point avgLoc = pipeline.avgContourCoord();
+        if (gamepiecePOS.getPOS() == "right"){
+            rightCount += 1;
+        } else if (gamepiecePOS.getPOS() == "center"){
+            centerCount += 1;
+        } else {
+            leftCount += 1;
+        }
+        if (rightCount > centerCount) {
+            gamepieceLocation = "right";
+        } else if (centerCount > leftCount) {
+            gamepieceLocation = "center";
+        } else {
+            gamepieceLocation = "left";
+        }
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
-        telemetry.addData("location", gamepiecePOS.getPOS());
+        telemetry.addData("location", gamepieceLocation);
         telemetry.addData("state", state);
         telemetry.update();
     }
@@ -303,10 +320,10 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Rotate 90 degrees
             moveTo.Rotate(90);
             sleep(700);
-            // Left 3 inches
-            //moveTo.Left((int)((1 * ticksPerInch) * 0.94), 0.5);
+            // Right 2 inches
+            moveTo.Right((int)((2 * ticksPerInch) * 0.94), 0.5);
             // Backwards 36.5 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((36.75 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward

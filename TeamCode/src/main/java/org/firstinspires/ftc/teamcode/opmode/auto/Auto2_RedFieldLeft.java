@@ -119,15 +119,32 @@ public class Auto2_RedFieldLeft extends OpMode {
 
     int state;
 
+    int rightCount = 0;
+    int centerCount = 0;
+    int leftCount = 0;
+
     @Override
     public void init_loop(){
         state = 0;
         GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "left");
-        gamepieceLocation = gamepiecePOS.getPOS();
         Point avgLoc = pipeline.avgContourCoord();
+        if (gamepiecePOS.getPOS() == "right"){
+            rightCount += 1;
+        } else if (gamepiecePOS.getPOS() == "center"){
+            centerCount += 1;
+        } else {
+            leftCount += 1;
+        }
+        if (rightCount > centerCount) {
+            gamepieceLocation = "right";
+        } else if (centerCount > leftCount) {
+            gamepieceLocation = "center";
+        } else {
+            gamepieceLocation = "left";
+        }
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
-        telemetry.addData("location", gamepiecePOS.getPOS());
+        telemetry.addData("location", gamepieceLocation);
         telemetry.addData("state", state);
         telemetry.update();
     }

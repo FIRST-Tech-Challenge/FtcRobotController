@@ -118,15 +118,32 @@ public class Auto1_RedFieldRight extends OpMode {
 
     int state;
 
+    int rightCount = 0;
+    int centerCount = 0;
+    int leftCount = 0;
+
     @Override
     public void init_loop(){
         state = 0;
         GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "right");
-        gamepieceLocation = gamepiecePOS.getPOS();
         Point avgLoc = pipeline.avgContourCoord();
+        if (gamepiecePOS.getPOS() == "right"){
+            rightCount += 1;
+        } else if (gamepiecePOS.getPOS() == "center"){
+            centerCount += 1;
+        } else {
+            leftCount += 1;
+        }
+        if (rightCount > centerCount) {
+            gamepieceLocation = "right";
+        } else if (centerCount > leftCount) {
+            gamepieceLocation = "center";
+        } else {
+            gamepieceLocation = "left";
+        }
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
-        telemetry.addData("location", gamepiecePOS.getPOS());
+        telemetry.addData("location", gamepieceLocation);
         telemetry.addData("state", state);
         telemetry.update();
     }
@@ -258,9 +275,9 @@ public class Auto1_RedFieldRight extends OpMode {
             // Backwards 18 inches
             moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
             // Left 6 inches
-            moveTo.Right((int)((6 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Right((int)((5 * ticksPerInch) * 1.04), 0.5);
             // Move backwards 10.5 inches
-            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((10 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward
@@ -276,7 +293,7 @@ public class Auto1_RedFieldRight extends OpMode {
             // Moves right 18 inches
             moveTo.Left((int)((18 * ticksPerInch) * 1.04), 0.5);
             // Backward 12 inches
-            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
 
 
 
@@ -304,7 +321,7 @@ public class Auto1_RedFieldRight extends OpMode {
             // Left 3 inches
             //moveTo.Left((int)((1 * ticksPerInch) * 0.94), 0.5);
             // Backwards 36.5 inches
-            moveTo.Backwards((int)((35 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((34 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward
@@ -318,41 +335,41 @@ public class Auto1_RedFieldRight extends OpMode {
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
-            moveTo.Right((int)((23 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Left((int)((21 * ticksPerInch) * 1.04), 0.5);
             // Backward 6 inches
-            moveTo.Backwards((int)((10 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((13 * ticksPerInch) * 0.94), 0.25);
 
 
                 state = 2;
-        } else if (gamepieceLocation=="left"&& state == 0) {
-//            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
-//            moveTo.Rotate(-90);
-//            sleep(700);
-//            intake.FlipDown();
-//            sleep(1500);
-//            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.4);
-//            intake.ClawOpen();
-//            sleep(500);
-//            intake.FlipUp();
-//            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
-//            moveTo.Right((int)((3 * ticksPerInch) * 1.04), 0.5);
-//            moveTo.Backwards((int)((19.25 * ticksPerInch) * 0.94), 0.25);
-//            linearSlideMove.Movelinearslide(low_linearslide_ticks);
-//            sleep(2000);
-//            // Moves the conveyor forward
-//            conveyor.setPosition(0);
-//            // Runs the conveyor for 4 seconds
-//            sleep(4000);
-//            // Stops the conveyor
-//            conveyor.setPosition(0.5);
-//            // Moves the linear slide to the bottom position
-//            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
-//            // Forward 6 inches
-//            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-//            // Moves right 26 inches
-//            moveTo.Left((int)((28 * ticksPerInch) * 1.04), 0.5);
-//            // Backward 6 inches
-//            moveTo.Backwards((int)((7 * ticksPerInch) * 0.94), 0.25);
+        } else if (state == 0) {
+            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Rotate(-95);
+            sleep(700);
+            intake.FlipDown();
+            sleep(1500);
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.4);
+            intake.ClawOpen();
+            sleep(500);
+            intake.FlipUp();
+            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Right((int)((6.5 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Backwards((int)((17.5 * ticksPerInch) * 0.94), 0.25);
+            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            sleep(700);
+            // Moves the conveyor forward
+            conveyor.setPosition(0);
+            // Runs the conveyor for 4 seconds
+            sleep(4000);
+            // Stops the conveyor
+            conveyor.setPosition(0.5);
+            // Moves the linear slide to the bottom position
+            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            // Forward 6 inches
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
+            // Moves right 26 inches
+            moveTo.Left((int)((30 * ticksPerInch) * 1.04), 0.5);
+            // Backward 6 inches
+            moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
             state = 3;
         }
 

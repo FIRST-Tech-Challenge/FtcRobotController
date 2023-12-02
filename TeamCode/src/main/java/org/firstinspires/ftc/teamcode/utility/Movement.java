@@ -33,6 +33,8 @@ public class Movement {
     // Tracks if it's quicker to turn right or left
     double turnError = 0;
 
+    double moveStartDirection = 0.0;
+
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
@@ -79,6 +81,8 @@ public class Movement {
 
         rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
+        moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     /**
@@ -101,6 +105,13 @@ public class Movement {
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
+            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+                lfDrive.setPower(power * 0.9);
+                lbDrive.setPower(power * 0.9);
+            } else {
+                lfDrive.setPower(power * 1.1);
+                lbDrive.setPower(power * 1.1);
+            }
         }
     }
 
@@ -124,6 +135,13 @@ public class Movement {
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
+            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+                lfDrive.setPower(power * 0.9);
+                lbDrive.setPower(power * 0.9);
+            } else {
+                lfDrive.setPower(power * 1.1);
+                lbDrive.setPower(power * 1.1);
+            }
         }
     }
 
@@ -149,6 +167,13 @@ public class Movement {
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
+            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+                lfDrive.setPower(power * 0.9);
+                lbDrive.setPower(power * 0.9);
+            } else {
+                lfDrive.setPower(power * 1.1);
+                lbDrive.setPower(power * 1.1);
+            }
         }
     }
 
@@ -173,6 +198,13 @@ public class Movement {
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
+            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+                lfDrive.setPower(power * 0.9);
+                lbDrive.setPower(power * 0.9);
+            } else {
+                lfDrive.setPower(power * 1.1);
+                lbDrive.setPower(power * 1.1);
+            }
         }
     }
 
@@ -184,12 +216,11 @@ public class Movement {
 
         double currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-
         turnError = degrees + 2.5; // This works starting with +2.5 degrees (possibly inertia)
 
         // Through measurement, Gge takes 1500 ticks to complete a full rotation
         // Set the initial stepSize to what we expect the rotation to need
-        int stepSize = (int) (turnError / 360 * 1500);
+        int stepSize = (int) (turnError / 360 * 1580);
 
         // Move slowly and in increments
         //Move the right front motor forward
