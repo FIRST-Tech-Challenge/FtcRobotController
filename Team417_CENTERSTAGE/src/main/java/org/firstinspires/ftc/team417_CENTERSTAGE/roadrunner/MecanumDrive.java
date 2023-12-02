@@ -125,12 +125,12 @@ public final class MecanumDrive {
                 // drive model parameters
                 inPerTick = 0.00057006;
                 lateralInPerTick = 0.00043717549671991654;
-                trackWidthTicks = 23590.365722507802;
+                trackWidthTicks = 23590.63804655905;
 
                 // feedforward parameters (in tick units)
                 kS = 0.7728626336483462;
                 kV = 0.00011028881238241981;
-                kA = 0;
+                kA = 0.0000009;
 
                 // path controller gains
                 axialGain = 0.0;
