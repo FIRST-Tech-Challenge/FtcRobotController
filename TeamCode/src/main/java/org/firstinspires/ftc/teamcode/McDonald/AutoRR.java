@@ -29,7 +29,7 @@ public class AutoRR extends LinearOpMode {
         // - Forward: 31.75
         // - Reverse: -44.75
         while(opModeIsActive()) {
-            PropPosition propPosition = PropPosition.LEFT;
+            PropPosition propPosition = vision.detectProp();
 
             switch(propPosition) {
                 case MIDDLE:
