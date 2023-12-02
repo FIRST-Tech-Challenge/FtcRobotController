@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 /**
 * GripPipelineGreenPixelRGB class.
 *
@@ -79,9 +80,49 @@ public class GripPipelineFindLinesNavyHat extends OpenCvPipeline {
 		Mat findLinesInput = maskOutput;
 		findLines(findLinesInput, findLinesOutput);
 
+		// This is the custom code to find a single point for the collection of lines that
+		// GRIP finds.
+		ArrayList<Point> allCentroids = new ArrayList<Point>();
+		Iterator<Line> lineIterator = findLinesOutput.iterator();
+		double sum_x = 0;
+		double sum_y = 0;
+		Line nextLine;
+		while(lineIterator.hasNext()) {
+			nextLine = lineIterator.next();
+			sum_x += nextLine.x1 + nextLine.x2;
+			sum_y += nextLine.y1 + nextLine.y2;
+		}
+
+		// init to -1 since that is impossible
+		double avg_line_x = -1;
+		double avg_line_y  = -1;
+
+		int  num_points = countLines(lineIterator);
+		if ((sum_x > 0) && (sum_y >0)){
+			avg_line_x = sum_x/num_points;
+			avg_line_y = sum_y/num_points;
+		}
+
+		avgCentroid.x = avg_line_x;
+		avgCentroid.y = avg_line_y;
+
 		// return findLinesInput because this is the last Mat that was processed
 		//  the findLines output is an array of lines that can't be further processed by opencv
 		return findLinesInput;
+	}
+
+	public Point avgLineCoordinate() {
+		return avgCentroid;
+	}
+
+	private int countLines(Iterator<Line> lineIterator) {
+		int count = 0;
+		while(lineIterator.hasNext()){
+			lineIterator.next();
+			count++;
+		}
+
+		return count;
 	}
 
 	/**
