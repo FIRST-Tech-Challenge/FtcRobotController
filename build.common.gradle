@@ -57,6 +57,7 @@ android {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
+        multiDexEnabled = true
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
@@ -126,5 +127,6 @@ repositories {
         dirs rootProject.file('libs')
 //        maven { url = "https://maven.0x778.tk" }
     }
+    mavenCentral()
 }
 

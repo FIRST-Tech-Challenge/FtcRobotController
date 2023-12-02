@@ -34,6 +34,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -73,7 +74,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
-    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1);
+    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.1, 1);
 
     public static final double LATERAL_MULTIPLIER = 1;
 
@@ -108,6 +109,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private boolean isButtered = false, isFieldCentric = false;
 
     private ArrayList<Servo> servos;
+
+    public com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
@@ -176,6 +179,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
@@ -225,6 +229,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         servos.add(hardwareMap.servo.get("servoRightBack"));
         isButtered=true;
         toggleButtered();
+        Motor frontLeft = new Motor(hardwareMap, "motorLeftFront"),
+        frontRight = new Motor(hardwareMap, "motorRightFront"),
+        backLeft = new Motor(hardwareMap, "motorLeftBack"),
+        backRight = new Motor(hardwareMap, "motorRightBack");
+
+        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
 //
     }
 

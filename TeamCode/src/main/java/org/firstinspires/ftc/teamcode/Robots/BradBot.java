@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
+import com.acmerobotics.roadrunner.drive.Drive;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.purepursuit.Path;
+import com.arcrobotics.ftclib.purepursuit.types.PathType;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Arm;
@@ -38,6 +44,8 @@ public class BradBot extends BasicRobot {
   public SampleMecanumDrive roadrun;
   Ultrasonics ultras;
   Wrist wrist;
+  Path path;
+
 
   /**
    * Instatiates all the hardware and sets up initial states of some software Logs that this
@@ -63,6 +71,7 @@ public class BradBot extends BasicRobot {
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
     ultras = new Ultrasonics();
     wrist = new Wrist();
+    path = new Path();
   }
 
   public int getSpikePos() {
@@ -222,6 +231,29 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+  public void followPPPath(Path p_path){
+    boolean equals = false;
+    if(path.size()>0){
+      equals = path.get(0).getPose().equals (p_path.get(0).getPose());
+    }
+    if (queuer.queue(false, equals && (((path.isFinished() || path.timedOut())) || currentPose.vec().
+            distTo(new Vector2d(path.get(path.size()-1).getPose().getX(), path.get(path.size()-1).getPose().getY()))< 3))) {
+      if (!queuer.isExecuted()) {
+        if(!p_path.equals(path))
+          path=p_path;
+        path.init();
+      }
+      double[] speeds =
+          path.loop(currentPose.getX(), currentPose.getY(), -currentPose.getHeading());
+      packet.put("xSpeed", speeds[0]);
+      packet.put("ySpeed", speeds[1]);
+      packet.put("aSpeed", speeds[2]);
+      packet.put("timedOUt", path.timedOut());
+      packet.put("isFinished", path.isFinished());
+      packet.put("equals", equals);
+      roadrun.setDrivePower(new Pose2d(speeds[0], speeds[1], speeds[2]));
+      }
+  }
   public void followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
     if (queuer.isFirstLoop()) {
       queuer.queue(false, false, true);
@@ -363,6 +395,8 @@ public class BradBot extends BasicRobot {
     arm.update();
     if (!isTeleop) {
       cv.update();
+      if(op.isStarted())
+        queuer.setFirstLoop(false);
     }
     intake.update();
     lift.update();
