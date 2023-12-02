@@ -12,7 +12,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
@@ -37,7 +36,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     MecanumDrive drive;
 
-    public AprilTagPoseEstimator myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
@@ -46,7 +44,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
-        myAprilTagPoseEstimator.init();
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
@@ -66,7 +63,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runAuto(boolean red, boolean close) {
-
         if (red) {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
             telemetry.addLine("Looking for red");
@@ -82,6 +78,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
         OpenCvColorDetection.SideDetected result = myColorDetection.detectTeamProp();
         AutonDriveFactory.SpikeMarks sawarResult;
 
+        // Close cameras to avoid errors
+        myColorDetection.robotCamera.closeCameraDevice();
+
         if (result == OpenCvColorDetection.SideDetected.LEFT) {
             sawarResult = AutonDriveFactory.SpikeMarks.LEFT;
         } else if (result == OpenCvColorDetection.SideDetected.CENTER) {
@@ -91,14 +90,14 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
 
         AutonDriveFactory auton = new AutonDriveFactory(drive);
-        AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red,!close, sawarResult, dropPixel());
+        AutonDriveFactory.PoseAndAction poseAndAction = auton.getDriveAction(red, !close, sawarResult, dropPixel());
 
         drive.pose = poseAndAction.startPose;
         Actions.runBlocking(poseAndAction.action);
 
-        // Close cameras to avoid errors
-        myColorDetection.robotCamera.closeCameraDevice();
-        myAprilTagPoseEstimator.visionPortal.close();
+        //if (drive.myAprilTagPoseEstimator != null) {
+        //    drive.myAprilTagPoseEstimator.visionPortal.close();
+        //}
     }
 
     public Action dropPixel() {

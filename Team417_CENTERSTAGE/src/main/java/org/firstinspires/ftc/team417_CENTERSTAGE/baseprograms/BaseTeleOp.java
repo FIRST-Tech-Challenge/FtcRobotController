@@ -2,28 +2,35 @@ package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
+import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmTeleOp;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
+@Config
 public abstract class BaseTeleOp extends BaseOpMode {
-    public AprilTagPoseEstimator myAprilTagPoseEstimator;
     public MecanumDrive drive;
+    private ArmTeleOp arm;
 
     @Override
     public void runOpMode() {
-        myAprilTagPoseEstimator = new AprilTagPoseEstimator(this);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         initializeHardware();
 
-        myAprilTagPoseEstimator.init();
+        if (armMotor != null) {
+            arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
+            resetDumper();
+        }
 
         waitForStart();
 
         while (opModeIsActive()) {
+            resetIMUIfNeeded();
             driveUsingControllers(false);
 
             drive.updatePoseEstimate();
@@ -37,8 +44,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
             Canvas c = p.fieldOverlay();
             c.setStroke("#3F5100");
             MecanumDrive.drawRobot(c, drive.pose);
-
-            myAprilTagPoseEstimator.updatePoseEstimate();
 
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);
@@ -60,9 +65,24 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
+    }
 
-        // Close camera to avoid errors
-        myAprilTagPoseEstimator.visionPortal.close();
+    boolean leftBumperIsPressed = false;
+
+    public void resetIMUIfNeeded() {
+        if (gamepad1.left_bumper && !leftBumperIsPressed) {
+            IMU.Parameters parameters;
+            if (drive.isDevBot) {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            } else {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP)); }
+            drive.imu.initialize(parameters);
+        }
+        leftBumperIsPressed = gamepad1.left_bumper;
     }
 
     public boolean sensitive = false;
@@ -124,116 +144,38 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void outputUsingControllers() {
-        //controlArmUsingControllers();
         controlDumperUsingControllers();
         controlGateUsingControllers();
-        controlArmUsingControllers();
-    }
-
-    private double armTargetLocation = 0;  //where the arm should currently move to.
-    private boolean dpadDownPressed = false;
-    private boolean dpadUpPressed = false;
-    private void controlArmUsingControllers(){
-        double rStickSensitivity = 35; //how much moving right stick will effect the movement of the arm.
-        double armVelocity = -gamepad2.right_stick_y * rStickSensitivity; //how fast the arm moves based off of the right stick and sensitivity.
-        double[] armPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
-                                                    ARM_MOTOR_MAX_POSITION * (3.0/4.0), ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
-        armTargetLocation += armVelocity; //change the current arm position by the velocity.
-
-        /*if (armLocation < ARM_MOTOR_MIN_POSITION) {
-            armLocation = ARM_MOTOR_MIN_POSITION;
-        }
-        if (armLocation > ARM_MOTOR_MAX_POSITION) {
-            armLocation = ARM_MOTOR_MAX_POSITION;
-        }*/
-
-        if (gamepad2.dpad_up && gamepad2.dpad_down)
-            ; //if both dpad buttons are being pressed do nothing.
-        else if (gamepad2.dpad_up && !dpadUpPressed){ //if dpad up is being pressed change the arm location to the next location in the arm positions array.
-            for (int i = 0; i < armPositions.length; i++)
-            {
-                if (armPositions[i] > armTargetLocation) {
-                    armTargetLocation = armPositions[i];
-                    break;
-                }
-            }
-        } else if (gamepad2.dpad_down && !dpadDownPressed){ //if dpad down is being pressed change the arm location to the last location in the arm positions array.
-            for (int i = armPositions.length - 1; i >= 0; i--)
-            {
-                if (armPositions[i] > armTargetLocation) {
-                    armTargetLocation = armPositions[i];
-                    break;
-                }
-            }
-        }
-
-        dpadDownPressed = gamepad2.dpad_down;
-        dpadUpPressed = gamepad2.dpad_up;
-
-
-        if (armMotor.getCurrentPosition() < armTargetLocation + 50 && armMotor.getCurrentPosition() > armTargetLocation - 50) {
-            armMotor.setPower(0);
-        } else if (armMotor.getCurrentPosition() > armTargetLocation) {
-            armMotor.setPower(-0.7);
-        } else if (armMotor.getCurrentPosition() < armTargetLocation) {
-            armMotor.setPower(0.7);
-        }
-
-        telemetry.addData("arm target position", armTargetLocation);
-        //armMotor.setTargetPosition((int) Math.round(armLocation)); //tell the motor to move to arm location.
-        //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (arm != null)
+            arm.armControl();
     }
 
     public boolean dumperDumped = false;
     public boolean bIsPressed = false;
+    public boolean yIsPressed = false;
 
     public void controlDumperUsingControllers() {
-        /*
-        double dumperSpeed = -gamepad2.right_stick_y;
-
-        if (isEpsilonEquals(dumperSpeed, 0)) {
-            moveDumper(DumperAction.STOPPING);
-        } else if (dumperSpeed > 0) {
-            moveDumper(DumperAction.DUMPING);
-        } else if (dumperSpeed < 0) {
-            moveDumper(DumperAction.RESETTING);
-        }
-        */
-
-        if (armMotor.getCurrentPosition() >= ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND && armMotor.getCurrentPosition() <= ARM_MOTOR_DUMPER_HITTING_INTAKE_UPPER_BOUND) {
-            if (dumperServo.getPosition() > DUMPER_SERVO_TILT_POSITION) {
-                tiltDumper();
-            }
-        } else if (armMotor.getCurrentPosition() < ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND) {
-            if (dumperServo.getPosition() < DUMPER_SERVO_RESET_POSITION) {
-                resetDumper();
-            }
-        }
-
         if (!bIsPressed && gamepad2.b) {
             if (dumperDumped) {
-                resetDumper();
-                dumperDumped = false;
-            } else {
                 dumpDumper();
-                dumperDumped = true;
+            } else {
+                resetDumper();
             }
+            dumperDumped = !dumperDumped;
         }
+
         bIsPressed = gamepad2.b;
 
-        /*
-        if (!xIsPressed && gamepad2.x) {
-            if (dumperTilted) {
-                resetDumper();
-                dumperDumped = false;
-            } else {
+        if (!yIsPressed && gamepad2.y) {
+            if (dumperDumped) {
                 tiltDumper();
-                dumperDumped = true;
+            } else {
+                resetDumper();
             }
-            dumperTilted = !dumperTilted;
+            dumperDumped = !dumperDumped;
         }
-        xIsPressed = gamepad2.x;
-        */
+
+        yIsPressed = gamepad2.y;
     }
 
     public boolean gateOpen = false;
