@@ -34,11 +34,14 @@ public class drivesample extends LinearOpMode
         Servo PixelGrabberWrist1 = hardwareMap.get(Servo.class, "PixelGrabberWrist1");
         Servo PixelGrabberWrist2 = hardwareMap.get(Servo.class, "PixelGrabberWrist2");
         Servo PixelGrabber = hardwareMap.get(Servo.class, "PixelGrabber");
+//        PixelGrabberWrist1.setDirection(Servo.Direction.REVERSE)
+//        PixelGrabberWrist2.setDirection(Servo.Direction.REVERSE);
 
-        IntakeRaiser.setPosition(0);
+        IntakeRaiser.setPosition(0.55);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.2);
-        PixelGrabberWrist2.setPosition(0.2);
+        PixelGrabberWrist1.setPosition(0.21);
+        PixelGrabberWrist2.setDirection(Servo.Direction.REVERSE);
+        PixelGrabberWrist2.setPosition(0.21);
         PixelGrabber.setDirection(Servo.Direction.REVERSE);
         PixelGrabber.setPosition(0);
 
