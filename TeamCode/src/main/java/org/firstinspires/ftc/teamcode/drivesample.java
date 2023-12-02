@@ -24,9 +24,8 @@ public class drivesample extends LinearOpMode
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("FRight");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("BRight");
 
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
         DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
         DcMotor slideL = hardwareMap.dcMotor.get("slideL");
 
@@ -38,8 +37,8 @@ public class drivesample extends LinearOpMode
 
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0);
-        PixelGrabberWrist2.setPosition(0);
+        PixelGrabberWrist1.setPosition(0.2);
+        PixelGrabberWrist2.setPosition(0.2);
         PixelGrabber.setDirection(Servo.Direction.REVERSE);
         PixelGrabber.setPosition(0);
 
