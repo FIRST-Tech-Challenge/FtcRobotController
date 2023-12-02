@@ -217,7 +217,7 @@ public class Robot {
 
     // States
     StateMachine stateMachine;
-    Lift lift;
+    public static Lift lift;
     public StateMachine.State intakingPixels;
     public StateMachine.State holdingPixels;
     public StateMachine.State idle;

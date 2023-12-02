@@ -79,7 +79,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline
     static final double maxRedInitValues2[] = {15, 255, 255};
 
     // Blacken out the top of the image, because the team prop can only be in the bottom half
-    static final int Y_BLACK_COORDINATE = 200;
+    static final int Y_BLACK_COORDINATE = 290;
 
     public TeamPropDetectionPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
     {

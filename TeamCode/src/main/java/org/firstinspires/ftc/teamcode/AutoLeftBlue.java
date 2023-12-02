@@ -52,7 +52,7 @@ public class AutoLeftBlue extends AutoBase {
                 .build();
 
         TrajectorySequence parkRight = drive.trajectorySequenceBuilder(goToBackdrop.end())
-                .forward(4)
+                .forward(8)
                 .lineToLinearHeading(c.rightParkIntermediateBlueLeft)
                 .lineToLinearHeading(c.rightParkFinalBlueLeft)
                 .build();

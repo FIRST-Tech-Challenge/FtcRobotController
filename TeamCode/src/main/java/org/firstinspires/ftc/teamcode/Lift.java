@@ -24,7 +24,7 @@ public class Lift {
         setLiftPowerBasedOnGamepad(gamepad2);
     }
 
-    private void setLiftPowerBasedOnGamepad(Gamepad gamepad){
+    public void setLiftPowerBasedOnGamepad(Gamepad gamepad){
         double power = -gamepad.right_stick_y;
         // Set your maximum encoder value here
         if ((power > 0 && liftMotor.getCurrentPosition() < liftEncoderMax) ||

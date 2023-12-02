@@ -15,21 +15,21 @@ public abstract class AutoBase extends LinearOpMode {
     protected StandardTrackingWheelLocalizer myLocalizer;
 
     public class Coordinates{
-        Pose2d rightParkIntermediateBlueLeft = new Pose2d(-21, 45, Math.toRadians(270.00));
-        Pose2d rightParkFinalBlueLeft = new Pose2d(-10, 57, Math.toRadians(270.00));
-        Pose2d leftParkIntermediateRedRight = new Pose2d(21, 45, Math.toRadians(270.00));
-        Pose2d leftParkFinalRedRight = new Pose2d(10, 57, Math.toRadians(270.00));
+        Pose2d rightParkIntermediateBlueLeft = new Pose2d(-11.5, 42, Math.toRadians(270.00));
+        Pose2d rightParkFinalBlueLeft = new Pose2d(-11.5, 50, Math.toRadians(270.00));
+        Pose2d leftParkIntermediateRedRight = new Pose2d(11.5, 42, Math.toRadians(270.00));
+        Pose2d leftParkFinalRedRight = new Pose2d(11.5, 50, Math.toRadians(270.00));
 
         //left backdrop
         Pose2d leftBackdropLeft = new Pose2d(-42, 50, Math.toRadians(270.00));
         Pose2d leftBackdropCenter = new Pose2d(-36, 50, Math.toRadians(270.00));
-        Pose2d leftBackdropRight = new Pose2d(-30, 50, Math.toRadians(270.00));
+        Pose2d leftBackdropRight = new Pose2d(-28, 50, Math.toRadians(270.00));
         Pose2d leftBackdropIntermediateLeft = new Pose2d(-42, 30, Math.toRadians(270));
         Pose2d leftBackdropIntermediateCenter = new Pose2d(-36, 35, Math.toRadians(270));
         Pose2d leftBackdropIntermediateRight = new Pose2d(-30, 30, Math.toRadians(270));
 
         //right backdrop
-        Pose2d rightBackdropLeft = new Pose2d(30, 50, Math.toRadians(270.00));
+        Pose2d rightBackdropLeft = new Pose2d(28, 50, Math.toRadians(270.00));
         Pose2d rightBackdropCenter = new Pose2d(36, 50, Math.toRadians(270.00));
         Pose2d rightBackdropRight = new Pose2d(42, 50, Math.toRadians(270.00));
         Pose2d rightBackdropIntermediateLeft = new Pose2d(30, 30, Math.toRadians(270));
@@ -39,10 +39,10 @@ public abstract class AutoBase extends LinearOpMode {
 
         //Blue Left
         Pose2d preStartPoseBlueLeft = new Pose2d(-63, 9.5, Math.toRadians(180)); //robot needs to strafe 2 inches to the actual start pose
-        Pose2d startPoseBlueLeft = new Pose2d(-63, 13, Math.toRadians(180));
-        Pose2d rightTeamPropBlueLeft = new Pose2d(-32, 11, Math.toRadians(90.00));
+        Pose2d startPoseBlueLeft = new Pose2d(-63, 14, Math.toRadians(180));
+        Pose2d rightTeamPropBlueLeft = new Pose2d(-32, 10.5, Math.toRadians(90.00));
         Pose2d centerTeamPropBlueLeft = new Pose2d(-34.5, 12, Math.toRadians(180.00));
-        Pose2d leftTeamPropBlueLeft = new Pose2d(-30, 10.5, Math.toRadians(270.00));
+        Pose2d leftTeamPropBlueLeft = new Pose2d(-28, 9.5, Math.toRadians(270.00));
 
         //Blue right
         Pose2d preStartPoseBlueRight = new Pose2d(-63, -9.5, Math.toRadians(180));

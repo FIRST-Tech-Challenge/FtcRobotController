@@ -57,7 +57,7 @@ public class AutoRightRed extends AutoBase {
                 .build();
 
         TrajectorySequence parkRight = drive.trajectorySequenceBuilder(goToBackdrop.end())
-                .forward(4)
+                .forward(8)
                 .lineToLinearHeading(c.leftParkIntermediateRedRight)
                 .lineToLinearHeading(c.leftParkFinalRedRight)
                 .build();
