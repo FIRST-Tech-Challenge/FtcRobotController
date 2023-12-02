@@ -111,6 +111,21 @@ public class HardwarePixelbot
 
     public boolean collectorServoChanged = false;
 
+    //====== SERVOS FOR PIXEL FINGERS ====================================================================
+    public Servo  elbowServo = null;
+    public double ELBOW_SERVO_INIT = 0.500;
+	
+    public Servo  wristServo = null;
+    public double WRIST_SERVO_INIT = 0.500;
+    
+	public Servo  fingerServo1 = null;
+    public double FINGER1_SERVO_DROP = 0.455;
+    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.300;
+
+	public Servo  fingerServo2 = null;
+    public double FINGER2_SERVO_DROP = 0.455;
+    public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.300 + 0.010;
+
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
     public int          rightOdometerCount = 0;       // current encoder count
@@ -212,6 +227,19 @@ public class HardwarePixelbot
         strafeOdometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         strafeOdometer.setPower( 0.0 );
 
+        /*--------------------------------------------------------------------------------------------*/
+
+//        elbowServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
+//        elbowServo.setPosition(ELBOW_SERVO_INIT);
+
+//        wristServo = hwMap.servo.get("WristServo");           // servo port 1 (Expansion Hub)
+//        wristServo.setPosition(WRIST_SERVO_INIT);
+
+        fingerServo1 = hwMap.servo.get("Finger1Servo");       // servo port 2 (Expansion Hub)
+        fingerServo1.setPosition(FINGER1_SERVO_DROP);
+
+        fingerServo2 = hwMap.servo.get("Finger2Servo");       // servo port 3 (Expansion Hub)
+        fingerServo2.setPosition(FINGER2_SERVO_DROP);
         // Initialize REV Control Hub IMU
         initIMU();
 

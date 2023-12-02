@@ -119,6 +119,7 @@ public abstract class Teleop extends LinearOpMode {
             globalCoordinatePositionUpdate();
 
             ProcessCollectorControls();
+            ProcessFingerControls();
             ProcessLiftControls();
 
             // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
@@ -239,36 +240,54 @@ public abstract class Teleop extends LinearOpMode {
     } // captureGamepad2Buttons
 
     void ProcessCollectorControls() {
-        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button (turns off collector motor)
+        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
+        // - turns off collector motor
+        // - raises collector for driving
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
             robot.collectorMotor.setPower(0.0);
             robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
         }
-
+        // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
+        // - left enables the collector motor in REVERSE mode
+        // - right enables the collector motor in FORWARD mode
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
         {
             robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
         }
-
-        if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
+        else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
             robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
         }
-
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
+        // - lowers collector for grabbing pixels
+        // - turns on the collector motor in FORWARD mode
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
             robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_GROUND);
+            robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
         }
+
+    }  // processCollectorControls
+
+
+    void ProcessFingerControls() {
 
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
         if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
+            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
+            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
         }
 
-    }  // processCollectorControls
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
+        else if( gamepad2_square_now && !gamepad2_square_last)
+        {
+            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
+            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
+        }
+
+    } // ProcessFingerControls
 
     void ProcessLiftControls() {
         boolean safeToManuallyLower = (robot.viperMotorsPos > robot.VIPER_EXTEND_ZERO);
