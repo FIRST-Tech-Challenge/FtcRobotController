@@ -1,34 +1,45 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-public class drivesample extends LinearOpMode {
+public class drivesample extends LinearOpMode
+{
     RevBlinkinLedDriver lights;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FLeft");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("RLeft");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BLeft");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("FRight");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("RRight");
-        DcMotor intakeMotor = hardwareMap.dcMotor.get("spinwoo");
-        Servo arm = hardwareMap.get(Servo.class, "intaker");
-        Servo wrist = hardwareMap.get(Servo.class, "hahah");
-        Servo out = hardwareMap.get(Servo.class, "armo");
-        Servo bla = hardwareMap.get(Servo.class, "grab");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("BRight");
+
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
+        DcMotor slideL = hardwareMap.dcMotor.get("slideL");
+
+        Servo arm = hardwareMap.get(Servo.class, "IntakeRaiser");
+        Servo wrist = hardwareMap.get(Servo.class, "ArmWrist"); // no clue, find out later
+        Servo out = hardwareMap.get(Servo.class, "PixelPickerUpper");
+        Servo bla = hardwareMap.get(Servo.class, "PixelGrabber");
+
         bla.setDirection(Servo.Direction.REVERSE);
+        arm.setPosition(0);
+        wrist.setPosition(0);
+        out.setPosition(0);
+        bla.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -45,13 +56,15 @@ public class drivesample extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
-            if (gamepad1.options) {
+            if (gamepad1.options)
+            {
                 imu.resetYaw();
             }
 
@@ -69,48 +82,74 @@ public class drivesample extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            if(gamepad1.dpad_down){
+
+            if(gamepad1.dpad_down)
+            {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE);
             }
-            if(gamepad1.dpad_up){
+
+            if(gamepad1.dpad_up)
+            {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
-            if(gamepad1.dpad_left){
+
+            if(gamepad1.dpad_left)
+            {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
             }
-            if(gamepad1.dpad_right){
+
+            if(gamepad1.dpad_right)
+            {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
             }
-            if(gamepad1.right_bumper){
+
+            if(gamepad1.right_bumper)
+            {
                 arm.setPosition(0.55);
                 intakeMotor.setPower(1);
                 out.setPosition(1);
                 wrist.setPosition(0);
-
             }
-            if(gamepad1.left_bumper){
+
+            if(gamepad1.left_bumper)
+            {
                 arm.setPosition(0);
                 intakeMotor.setPower(0);
             }
-            if(gamepad1.b){
+
+            if(gamepad1.b)
+            {
                 out.setPosition(1);
                 intakeMotor.setPower(0);
                 arm.setPosition(0.3);
                 wrist.setPosition(0);
-
-
-
             }
-            if(gamepad1.x){
+
+            if(gamepad1.x)
+            {
                 wrist.setPosition(0.23);
 
                 out.setPosition(0.1);
             }
-            if(gamepad1.y){
+
+            if(gamepad1.y)
+            {
                 bla.setPosition(0.5);
             }
-            if(gamepad1.a){
+
+            if(gamepad1.a)
+            {
                 bla.setPosition(0.2);
+            }
+
+            if(gamepad1.dpad_up)
+            {
+                slideL.setPower(1);
+            }
+
+            if(gamepad1.dpad_down)
+            {
+                slideL.setPower(-1);
             }
 
         }
