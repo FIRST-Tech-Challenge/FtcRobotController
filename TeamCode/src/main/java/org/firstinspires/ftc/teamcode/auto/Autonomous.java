@@ -170,6 +170,43 @@ public class Autonomous extends LinearOpMode {
         sleep(100000);
     }
 
+    public void go(double forward, double strafe, double yaw, double speed, boolean waitToFinish){
+        left_front.setTargetPosition((int) (forward + strafe + yaw));
+        left_back.setTargetPosition((int) (forward - strafe - yaw));
+        right_front.setTargetPosition((int) (forward - strafe + yaw));
+        right_back.setTargetPosition((int) (forward + strafe - yaw));
+
+        left_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        double leftFrontPower = (forward + strafe + yaw);
+        double rightFrontPower =(forward - strafe - yaw);
+        double leftBackPower = (forward - strafe + yaw);
+        double rightBackPower = (forward + strafe - yaw);
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        left_front.setPower(speed * leftFrontPower);
+        left_back.setPower(speed * leftBackPower);
+        right_front.setPower(speed * rightFrontPower);
+        right_back.setPower(speed * rightBackPower);
+
+        if (waitToFinish) while (left_front.isBusy()) telemetry.addLine("Running coolest drive"); telemetry.update();
+    }
+
     public void forward(double power, int setpoint) {
         for (DcMotorEx driveMotor : driveMotors) {
             driveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

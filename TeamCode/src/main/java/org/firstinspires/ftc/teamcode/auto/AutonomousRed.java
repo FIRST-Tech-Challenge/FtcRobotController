@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Blue auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Red auto")
 public class AutonomousRed extends LinearOpMode {
 
     protected DcMotorEx left_front;

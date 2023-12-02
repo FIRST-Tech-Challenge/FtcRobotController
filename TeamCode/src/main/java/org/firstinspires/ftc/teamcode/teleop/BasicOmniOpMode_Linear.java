@@ -28,7 +28,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotorEx lift = null;
     private IMU imu = null;
     private Servo servo = null;
-    // private Servo crossbow = null;
+    private Servo crossbow = null;
     double powercoef = 0.5;
 
     private Button upButton = new Button();
@@ -51,7 +51,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         servo = hardwareMap.get(Servo.class, "servo");
-        // crossbow = hardwareMap.get(Servo.class, "crossbow");
+        crossbow = hardwareMap.get(Servo.class, "crossbow");
 
         leftFrontDrive.setDirection(Constants.motorDirections.get("left_front"));
         leftBackDrive.setDirection(Constants.motorDirections.get("left_back"));
@@ -83,7 +83,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // intake.setPower(-gamepad2.right_trigger);
 
             // crossbow
-            /*
             double crossbowSetpoint;
             if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
                 telemetry.addLine("crossbowing!!");
@@ -93,8 +92,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
             telemetry.addData("crossbow setpoint", crossbowSetpoint);
             if (crossbowSetpoint != crossbow.getPosition()) crossbow.setPosition(crossbowSetpoint);
-
-             */
 
             if (gamepad1.b) imu.resetYaw();
 
