@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
 public class Right {
 
     @Config
-    @Autonomous(name = "Auto - RA Right", group = "Auto")
+    @Autonomous(name = "Auto - Right", group = "Auto")
     public class AutoTest extends LinearOpMode {
 
         MotionHardware robot = new MotionHardware(this);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
-
+import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 @TeleOp
 public class TELEOPtest1 extends LinearOpMode {
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
@@ -17,6 +17,8 @@ public class TELEOPtest1 extends LinearOpMode {
     private Servo rightGripper;
     private Servo launcherServo = null;
     private Servo DroneCoverServo = null;
+    MotionHardware robot = new MotionHardware(this);
+
 
     @Override
     public void runOpMode() {
@@ -38,6 +40,7 @@ public class TELEOPtest1 extends LinearOpMode {
 
 
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wristServo = hardwareMap.servo.get("wristServo");
         launcherServo = hardwareMap.get(Servo.class, "launcherServo");
         DroneCoverServo = hardwareMap.get(Servo.class, "DroneCoverServo");
@@ -129,9 +132,15 @@ public class TELEOPtest1 extends LinearOpMode {
                     rightGripper.setPosition(0.05); // Adjust the position value for the center position
                 }
                 if (gamepad2.a) {
-                    wristServo.setPosition(0.6); // Adjust the position value as needed
+                    wristServo.setPosition(0.7); // Adjust the position value as needed
                 } else if (gamepad2.b) {
-                    wristServo.setPosition(0); // Adjust the position value for the center position
+                    wristServo.setPosition(0.3); // Adjust the position value for the center position
+                }
+                if (gamepad2.y) {
+                    robot.moveRobot(.5, 2, 8);
+                }
+                else if (gamepad2.x) {
+                    robot.moveRobot(.5, -2, 8);
                 }
             telemetry.update();
             }

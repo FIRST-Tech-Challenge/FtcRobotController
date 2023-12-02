@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
 public class Left {
 
     @Config
-    @Autonomous(name = "Auto - RA Right", group = "Auto")
+    @Autonomous(name = "Auto - Left", group = "Auto")
     public class AutoTest extends LinearOpMode {
 
         MotionHardware robot = new MotionHardware(this);
@@ -49,9 +49,9 @@ public class Left {
                         sleep(1000);
 
                 if (gamepad2.a) {
-                    wristServo.setPosition(0.6); // Adjust the position value as needed
+                    //wristServo.setPosition(0.6); // Adjust the position value as needed
                 } else if (gamepad2.b) {
-                    wristServo.setPosition(0); // Adjust the position value for the center position
+                    //wristServo.setPosition(0); // Adjust the position value for the center position
                 }
                         //Backup and clear pixel
                         robot.moveRobot(.5, -5, 5);
