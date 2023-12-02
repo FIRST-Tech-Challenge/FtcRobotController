@@ -213,7 +213,14 @@ public class BradBot extends BasicRobot {
   }
 
   public boolean checkAlliance() {
-    return ultras.checkAlliance();
+    if (queuer.queue(true, !ultras.checkAlliance(), currentPose.getY() > -28, false)) {
+      if (ultras.checkAlliance()) {
+        roadrun.breakFollowing();
+        roadrun.setMotorPowers(0, 0, 0, 0);
+      }
+      return ultras.checkAlliance();
+    }
+    return false;
   }
 
   /**
