@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.utilities.CASH_Drive_Library;
-
 /**
  * This is the TeleOp Mode control class for 2021 robot.
  */
@@ -122,7 +121,7 @@ public class CASH2024Driver extends OpMode
          */
         double powerfactor;
         if (gamepad1.right_bumper == true ) {
-            powerfactor = 0.25;
+            powerfactor = 0.5;
         }
         else {
             powerfactor = 1;
