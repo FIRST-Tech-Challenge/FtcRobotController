@@ -11,23 +11,20 @@ public class Wrist extends RFServo {
 
   public Wrist() {
     super("wristServo", 1.0);
-    target = WristStates.FLAT.position;
-    flipTo(WristTargetStates.FLAT);
-    super.setPosition(WristTargetStates.FLAT.position);
+    target = WristStates.INTAKE.position;
+    flipTo(WristTargetStates.INTAKE);
+    super.setPosition(WristTargetStates.INTAKE.position);
     LOGGER.log("initializing hardware");
     super.setFlipTime(FLIP_TIME);
     super.setLastTime(-100);
     lastTime=-100;
-    WristTargetStates.FLAT.setStateTrue();
-    WristStates.FLAT.setStateTrue();
+    WristTargetStates.INTAKE.setStateTrue();
+    WristStates.INTAKE.setStateTrue();
   }
 
   public enum WristStates {
-    FLAT(0.88, true),
-    HOLD(1-0.2*24/26, false),
-    FLIP(0.5*26/24, false),
-
-    DROP(0.01, false);
+    INTAKE(0, true),
+    DROP(1, false);
     double position;
     boolean state;
 
@@ -54,11 +51,8 @@ public class Wrist extends RFServo {
   }
 
   public enum WristTargetStates {
-    FLAT(0.88, true),
-    HOLD(1-0.2*24/26, false),
-    FLIP(0.5*26/24, false),
-
-    DROP(0.01, false);
+    INTAKE(0, true),
+    DROP(1, false);
     double position;
     public boolean state;
 
@@ -80,50 +74,30 @@ public class Wrist extends RFServo {
       }
     }
   }
-  public void flatten(){
+
+  public void setIntake(){
     super.superSetPosition(1);
   }
-  public void unflatten(){
-    super.superSetPosition(0.88);
+
+  public void setDrop(){
+    super.superSetPosition(0);
   }
 
   public void flipTo(WristTargetStates p_state) {
     if (target != p_state.position) {
-      if (p_state == WristTargetStates.FLAT) {
-        if (Arm.ArmStates.UNFLIPPED.state
-            && Lift.LiftPositionStates.AT_ZERO.state) {
-          LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
-          super.setPosition(p_state.position);
-          target = super.getTarget();
-        } else if (Arm.ArmStates.UNFLIPPED.state) {
-          LOGGER.log(
-              "flipping to : "
-                  + WristTargetStates.HOLD.name()
-                  + ", "
-                  + WristTargetStates.HOLD.position);
-          super.setPosition(WristTargetStates.HOLD.position);
-          target = super.getTarget();
-        } else {
-          LOGGER.log("slides not in right position, can't flip to flat");
-        }
-      } else if (p_state == WristTargetStates.HOLD) {
-        if (Arm.ArmStates.UNFLIPPED.state&&super.getPosition()!=p_state.position) {
-          LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
-          super.setPosition(p_state.position);
-          target = super.getTarget();
-        } else LOGGER.log("arm not in right position, can't flip to hold");
-      } else if (p_state == WristTargetStates.DROP) {
-        if (!Lift.LiftPositionStates.AT_ZERO.state) {
-          LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
-          super.setPosition(p_state.position);
-          target = super.getTarget();
-        } else LOGGER.log("lift not in right position, can't flip to drop");
-      } else if (p_state == WristTargetStates.FLIP) {
+      if (p_state == WristTargetStates.INTAKE) {
           LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
           super.setPosition(p_state.position);
           target = super.getTarget();
       }
-      p_state.setStateTrue();
+      else if (p_state == WristTargetStates.DROP) {
+        if (!Lift.LiftPositionStates.AT_ZERO.state) {
+          LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
+          super.setPosition(p_state.position);
+          target = super.getTarget();
+        }
+        p_state.setStateTrue();
+      }
     }
   }
 
@@ -136,7 +110,7 @@ public class Wrist extends RFServo {
       }
     }
     for (var i : WristTargetStates.values()) {
-      if (i.state && super.getPosition() != i.position) {
+      if (i.state && super.getTarget() != i.position) {
         flipTo(i);
       }
     }

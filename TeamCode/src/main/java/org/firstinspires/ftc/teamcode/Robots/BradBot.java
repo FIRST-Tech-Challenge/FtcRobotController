@@ -16,9 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.Arm;
 import org.firstinspires.ftc.teamcode.Components.Arm.ArmStates;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
-import org.firstinspires.ftc.teamcode.Components.Clamp;
-import org.firstinspires.ftc.teamcode.Components.FutureComponents.Extendo;
-import org.firstinspires.ftc.teamcode.Components.FutureComponents.FlippingIntake;
+import org.firstinspires.ftc.teamcode.Components.Magazine;
 import org.firstinspires.ftc.teamcode.Components.Hanger;
 import org.firstinspires.ftc.teamcode.Components.Hopper;
 import org.firstinspires.ftc.teamcode.Components.Intake;
@@ -34,7 +32,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 /** Warren Robot class to contain all the season's functions */
 public class BradBot extends BasicRobot {
   Arm arm;
-  Clamp clamp;
+  Magazine magazine;
   CVMaster cv;
   Hanger hanger;
   Intake intake;
@@ -62,7 +60,7 @@ public class BradBot extends BasicRobot {
     if (!isTeleop) {
       cv = new CVMaster();
     }
-    clamp = new Clamp();
+    magazine = new Magazine();
     hanger = new Hanger();
     intake = new Intake();
     launcher = new Launcher();
@@ -123,9 +121,9 @@ public class BradBot extends BasicRobot {
   public void flipAuto() {
     if (queuer.queue(true, ArmStates.FLIPPED.getState())) {
       if (!queuer.isExecuted()) {
-        clamp.clamp();
+        magazine.clamp();
         arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
         lift.iterateUp();
       }
     }
@@ -137,7 +135,7 @@ public class BradBot extends BasicRobot {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         arm.flipTo(UNFLIPPED);
         wrist.update();
-        wrist.flipTo(Wrist.WristTargetStates.FLAT);
+        wrist.flipTo(Wrist.WristTargetStates.INTAKE);
       }
     }
   }
@@ -153,16 +151,15 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(false, Wrist.WristStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        //        clamp.unclamp();
+        //        magazine.unmagazine();
       }
     }
   }
 
   public void drop() {
-    if (queuer.queue(false, !clamp.getClamped())) {
+    if (queuer.queue(false, !magazine.getClamped())) {
       if (!queuer.isExecuted()) {
-        //        wrist.flipTo(Wrist.WristTargetStates.DROP);
-        clamp.unclamp();
+        magazine.unclamp();
       }
     }
   }
@@ -232,7 +229,7 @@ public class BradBot extends BasicRobot {
     if(path.size()>0){
       equals = path.get(0).getPose().equals (p_path.get(0).getPose());
     }
-    if (queuer.queue(false, equals && (currentPose.vec().
+    if (queuer.queue(false, equals && (((path.isFinished() || path.timedOut())) || currentPose.vec().
             distTo(new Vector2d(path.get(path.size()-1).getPose().getX(), path.get(path.size()-1).getPose().getY()))< 3))) {
       if (!queuer.isExecuted()) {
         if(!p_path.equals(path))
@@ -293,7 +290,7 @@ public class BradBot extends BasicRobot {
       arm.flipTo(UNFLIPPED);
       lift.update();
       wrist.update();
-      wrist.flipTo(Wrist.WristTargetStates.FLAT);
+      wrist.flipTo(Wrist.WristTargetStates.INTAKE);
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
@@ -309,37 +306,37 @@ public class BradBot extends BasicRobot {
         if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
           wrist.flatten();
           arm.flatten();
-          clamp.unclamp();
+          magazine.unclamp();
         }
         intake.intake();
       } else {
-        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
-          clamp.clamp();
-          wrist.unflatten();
+        if (Wrist.WristTargetStates.INTAKE.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
+          magazine.clamp();
+          wrist.setIntake();
           arm.unflatten();
         }
         intake.stopIntake();
       }
     }
     if (left) {
-      if (clamp.getClamped()) clamp.unclamp();else clamp.clamp();
+      if (magazine.getClamped()) magazine.unclamp();else magazine.clamp();
     }
     if (leftBumper) {
       intake.reverseIntake();
-      clamp.clamp();
+      magazine.clamp();
     }
     if (up) {
-      if (Wrist.WristTargetStates.FLAT.state) {
+      if (Wrist.WristTargetStates.INTAKE.state) {
         arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
       }
       lift.iterateUp();
       intake.stopIntake();
     }
     if (down) {
-      if (Wrist.WristTargetStates.FLAT.state) {
+      if (Wrist.WristTargetStates.INTAKE.state) {
         arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
       }
       lift.iterateDown();
       intake.stopIntake();

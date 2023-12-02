@@ -17,8 +17,8 @@ public class RFLEDStrip {
             RevBlinkinLedDriver.BlinkinPattern.YELLOW, RevBlinkinLedDriver.BlinkinPattern.ORANGE};
 
     //constructor, hwMap blinkin
-    public RFLEDStrip(){
-        blinkIn = op.hardwareMap.get(RevBlinkinLedDriver.class, "blinkIn");
+    public RFLEDStrip(String p_deviceName){
+        blinkIn = op.hardwareMap.get(RevBlinkinLedDriver.class, p_deviceName);
     }
 
     //change leds w/ passed in integer stack level

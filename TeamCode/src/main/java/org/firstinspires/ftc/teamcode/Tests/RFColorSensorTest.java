@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFColorSensor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-@Disabled
 
 /**
  * Harry
@@ -26,7 +25,8 @@ public class RFColorSensorTest extends LinearOpMode{
         waitForStart();
         if(isStopRequested()) return;
         while(opModeIsActive() && !isStopRequested()){
-            packet.put("Hue", colorSensor.getHSV()[0]);
+            packet.put("Color", colorSensor.getColor());
+            packet.put("Dist(in.)", colorSensor.getDist());
             robot.update();
         }
     }

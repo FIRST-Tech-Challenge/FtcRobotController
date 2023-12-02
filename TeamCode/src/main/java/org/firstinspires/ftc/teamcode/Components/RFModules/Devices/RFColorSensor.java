@@ -10,12 +10,15 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 /**
  * Harry
  * Class to contain all RFColorSensor functions
  */
 public class RFColorSensor {
     NormalizedColorSensor colorSensor;
+    RevColorSensorV3 distSensor;
     private double white = 156, purple = 214, green = 127, yellow = 81;
     private float HSV[] = {0,0,0};
 
@@ -25,12 +28,17 @@ public class RFColorSensor {
      */
     public RFColorSensor(String p_deviceName){
         colorSensor = op.hardwareMap.get(NormalizedColorSensor.class, p_deviceName);
+        distSensor = op.hardwareMap.get(RevColorSensorV3.class, p_deviceName);
     }
 
     public float[] getHSV(){
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), HSV);
         return HSV;
+    }
+
+    public double getDist(){
+        return distSensor.getDistance(DistanceUnit.INCH);
     }
 
     public String getColor(){
