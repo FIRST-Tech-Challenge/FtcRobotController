@@ -133,15 +133,15 @@ public class Auto1_BlueFieldLeft extends OpMode {
             rightCount += 1;
         } else if (gamepiecePOS.getPOS() == "center"){
             centerCount += 1;
-        } else {
+        } else if (gamepiecePOS.getPOS() == "left") {
             leftCount += 1;
         }
-        if (rightCount > centerCount) {
-            gamepieceLocation = "right";
-        } else if (centerCount > leftCount) {
+        if (leftCount > centerCount) {
+            gamepieceLocation = "left";
+        } else if (centerCount > rightCount) {
             gamepieceLocation = "center";
         } else {
-            gamepieceLocation = "left";
+            gamepieceLocation = "right";
         }
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
