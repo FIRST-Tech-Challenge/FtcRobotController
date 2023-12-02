@@ -25,20 +25,26 @@ public class RedLeftPathTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-        robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -62, Math.toRadians(-90)));
+        robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -61, Math.toRadians(-90)));
     Waypoint start =
         new StartWaypoint(
-            new com.arcrobotics.ftclib.geometry.Pose2d(-38.5, -62, new Rotation2d(toRadians(-90))));
-    EndWaypoint spike = new EndWaypoint(-55,-32, toRadians(-160), 0.7,0.7, 15,5,toRadians(10));
+            new com.arcrobotics.ftclib.geometry.Pose2d(-38.5, -61, new Rotation2d(toRadians(-90))));
+    EndWaypoint spike = new EndWaypoint(-55,-32, toRadians(-160), 0.8,0.7, 15,5,toRadians(10));
 
     Path dropPath = new Path(start, spike);
         Path toTruss = new Path();
-        toTruss.add(new StartWaypoint(dropPath.get(dropPath.size()-1).getPose()));
-    toTruss.add(new EndWaypoint(-40, -59, toRadians(180), 0.5,0.8, 15, 4,toRadians(10)));
+        toTruss.add(new StartWaypoint(dropPath.get(dropPath.size()-1).getPose().getTranslation()));
+    toTruss.add(new EndWaypoint(-40, -57, toRadians(180), 0.8,0.8, 15, 4,toRadians(10)));
         Path toBackdrop = new Path();
-        toBackdrop.add(new StartWaypoint(toTruss.get(toTruss.size()-1).getPose()));
-        toBackdrop.add(new GeneralWaypoint(20,-57, Math.toRadians(180), 0.5,0.8,30));
-        toBackdrop.add(new EndWaypoint(50, -36, toRadians(180), 0.5, 0.8, 30, 4, toRadians(10)));
+        toBackdrop.add(new StartWaypoint(toTruss.get(toTruss.size()-1).getPose().getTranslation()));
+        toBackdrop.add(new GeneralWaypoint(10,-57, toRadians(185), 1.0,0.8,10));
+        toBackdrop.add(new EndWaypoint(45, -36, toRadians(180), 0.7, 0.8, 10, 4, toRadians(10)));
+        Path backToTruss = new Path();
+        backToTruss.add(new StartWaypoint(toBackdrop.get(toBackdrop.size()-1).getPose().getTranslation()));
+        backToTruss.add(new GeneralWaypoint(20,-55, toRadians(180), 0.8,0.8,5));
+        backToTruss.add(new GeneralWaypoint(-35,-55, toRadians(180), 1.0,0.8,10));
+        backToTruss.add(new EndWaypoint(-50, -34, toRadians(180), 0.8,0.8, 15, 4,toRadians(10)));
+
 
         TrajectorySequence tradegy = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -62, Math.toRadians(-90)))
                 .setReversed(true)
@@ -76,6 +82,11 @@ public class RedLeftPathTest extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()&&!isStopRequested()&&!robot.queuer.isFullfilled()){
             robot.followPPPath(dropPath);
+      for (int i = 0; i < 2; i++) {
+        robot.followPPPath(toTruss);
+        robot.followPPPath(toBackdrop);
+        robot.followPPPath(backToTruss);
+            }
             robot.followPPPath(toTruss);
             robot.followPPPath(toBackdrop);
             robot.update();

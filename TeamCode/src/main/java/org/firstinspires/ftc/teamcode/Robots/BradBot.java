@@ -232,7 +232,7 @@ public class BradBot extends BasicRobot {
     if(path.size()>0){
       equals = path.get(0).getPose().equals (p_path.get(0).getPose());
     }
-    if (queuer.queue(false, equals && (((path.isFinished() || path.timedOut())) || currentPose.vec().
+    if (queuer.queue(false, equals && (currentPose.vec().
             distTo(new Vector2d(path.get(path.size()-1).getPose().getX(), path.get(path.size()-1).getPose().getY()))< 3))) {
       if (!queuer.isExecuted()) {
         if(!p_path.equals(path))
