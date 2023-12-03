@@ -71,7 +71,6 @@ public class CSFullTeleOp extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
         pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Initialized");
@@ -127,11 +126,20 @@ public class CSFullTeleOp extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
 
             if (gamepad2.dpad_up){
+                pixelLiftingMotor.setPower(1);
                 pixelLiftingMotor.setTargetPosition(1000);
+                pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             if (gamepad2.dpad_down) {
+                pixelLiftingMotor.setPower(1);
                 pixelLiftingMotor.setTargetPosition(0);
+                pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+
+            if(!gamepad2.dpad_up && !gamepad2.dpad_down){
+                pixelLiftingMotor.setPower(0);
+                pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (gamepad2.a || gamepad2.x) {
