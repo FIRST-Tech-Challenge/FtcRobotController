@@ -197,7 +197,7 @@ public class Robot {
         straightBlocking(6, true, 0.7); //move back 2
         setHeading(-90, 0.7);
         trayToIntakePos(); //intake
-        opMode.sleep(2000);
+        opMode.sleep(100);
         moveLinearSlideByTicksBlocking(0); // linear slide down
     }
 
