@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class testmoteurmateo extends LinearOpMode {
+public class MoteursIndividuels extends LinearOpMode {
 
     private DcMotor motorA;
     private DcMotor motorB;
