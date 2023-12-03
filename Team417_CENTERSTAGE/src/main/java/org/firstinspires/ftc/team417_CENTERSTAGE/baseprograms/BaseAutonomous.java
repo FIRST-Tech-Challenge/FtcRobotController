@@ -47,8 +47,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         initializeHardware();
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
 
         telemetry.addData("Init State", "Init Finished");
 
