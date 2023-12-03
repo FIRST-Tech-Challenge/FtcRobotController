@@ -29,7 +29,6 @@ public class SlideTest extends LinearOpMode {
         while (!isStopRequested()) {
             telemetry.update();
             robot.update();
-            elementPos = rvis.getTeamPropOrientation();
             //EDWARD'S INTAKE
             boolean buttonA = gamepad2.a;
             boolean buttonB = gamepad2.b;
@@ -95,7 +94,6 @@ public class SlideTest extends LinearOpMode {
             telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
             telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
-            telemetry.addData("team prop pos: ", elementPos);
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
             double currentTime = clock.seconds();
             telemetry.addData("Update time: ", currentTime - prevTime);

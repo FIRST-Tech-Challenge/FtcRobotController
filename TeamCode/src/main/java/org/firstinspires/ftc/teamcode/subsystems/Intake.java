@@ -74,6 +74,10 @@ public class Intake implements Subsystem {
         // set encode to new position
     }
 
+    public double getPower() {
+        return intakeMotor.getPower();
+    }
+
 
     @Override
     public void update(TelemetryPacket packet) {

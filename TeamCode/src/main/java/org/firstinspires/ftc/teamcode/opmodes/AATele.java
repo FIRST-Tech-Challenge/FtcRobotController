@@ -75,9 +75,11 @@ public class AATele extends LinearOpMode {
             // INTAKE
             if(smartGamepad1.a_pressed()){
                 if(intakeState == 0) {
+                    robot.intake.setPower(1);
                     robot.intake.toIntakePos();
                     intakeState=1;
                 } else if (intakeState == 1){
+                    robot.intake.setPower(0);
                     robot.intake.toOuttakePos();
                     robot.outtake.toIntakePos();
                     intakeState=0;
@@ -109,6 +111,7 @@ public class AATele extends LinearOpMode {
             telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
             telemetry.addData("intake pos", intakeState);
+            telemetry.addData("intake motor power", robot.intake.getPower());
             telemetry.addData("slide pos", robot.outtake.getLiftPos());
             telemetry.addData("slide power", robot.outtake.getLiftPower());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());

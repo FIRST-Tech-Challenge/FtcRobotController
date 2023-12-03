@@ -49,9 +49,9 @@ public class RobotVision {
         });
     }
 
-    public int getTeamPropOrientation()
+    public int getTeamPropOrientation(boolean isred)
     {
-        return cdPipeline.getTeamPropOrientation();
+        return cdPipeline.getTeamPropOrientation(isred);
     }
 
     public void stopDetection()

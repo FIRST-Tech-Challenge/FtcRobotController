@@ -22,13 +22,15 @@ import java.util.List;
 import java.util.Random;
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double L_X_OFFSET = 500;
-    public static double L_Y_OFFSET  = -80;
-    public static double R_X_OFFSET = 350;
-    public static double R_Y_OFFSET  = 50;
+    public static double L_X_OFFSET = 625;
+    public static double L_Y_OFFSET = -100;
+    public static double R_X_OFFSET = 100;
+    public static double R_Y_OFFSET = 175;
 
     static final int STREAM_WIDTH = 1280; // resolution of camera   1280
     static final int STREAM_HEIGHT = 720; // resolution of camera  720
+
+    int propPos = 3;
 
     Mat zoomedInput = new Mat();
     Mat HLS = new Mat();
@@ -36,18 +38,18 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public int avgCH, avgCL, avgCS;
     public int avgRH, avgRL, avgRS;
     // To zoom in (x2)
-    public static int red1 = 160;
+    public static int red1 = 190;
 
-    public static int blue2 = 100;
-    Rect viewScope = new Rect(new Point(STREAM_WIDTH/4, STREAM_HEIGHT/4), new Point(STREAM_WIDTH * 3/4, STREAM_HEIGHT * 3/4));
+    public static int blue2 = 155;
+    Rect viewScope = new Rect(new Point(STREAM_WIDTH / 4, STREAM_HEIGHT / 4), new Point(STREAM_WIDTH * 3 / 4, STREAM_HEIGHT * 3 / 4));
 
-    public static int WidthRectA = 200; //180
-    public static int HeightRectA = 175; //100
+    public static int WidthRectA = 50; //180
+    public static int HeightRectA = 50; //100
 
-    public static int WidthRectB = 100; //180
-    public static int HeightRectB = 100; //100
+    public static int WidthRectB = 50; //180
+    public static int HeightRectB = 50; //100
 
-static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIGHT/2));
+    static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH / 2), (STREAM_HEIGHT / 2));
 
     Point RectATLCorner = new Point(RectATopLeftAnchor.x - L_X_OFFSET, RectATopLeftAnchor.y + L_Y_OFFSET);
 
@@ -58,9 +60,9 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
     Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
     boolean stopped = false;
 
-    static final int colorTolerance = 20;
-    public ColorDetectionPipeline()
-    {
+    static final int colorTolerance = 10;
+
+    public ColorDetectionPipeline() {
         Log.v("vision", "ColorDetectionPipeline called.");
     }
 
@@ -109,7 +111,7 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
                 zoomedInput, // Buffer to draw on
                 RectATLCorner, // First point which defines the rectangle
                 RectABRCorner, // Second point which defines the rectangle
-                new Scalar(0,0,255), // The color the rectangle is drawn in
+                new Scalar(0, 0, 255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
         Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgLH, avgLL, avgLS));
@@ -131,17 +133,16 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
                 zoomedInput, // Buffer to draw on
                 RectBTLCorner, // First point which defines the rectangle
                 RectBBRCorner, // Second point which defines the rectangle
-                new Scalar(0,0,255), // The color the rectangle is drawn in
+                new Scalar(0, 0, 255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
         Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgCH, avgCL, avgCS));
 
 
-
         return zoomedInput;
     }
 
-    public int getTeamPropOrientation() {
+    public int getTeamPropOrientation(boolean isred) {
         /*
          * Use YCrCb
          * 1: Green  - Y: 68  Cr: 111 Cb: 125 (with flashlight: 198, 92, 122)
@@ -161,6 +162,8 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
 
         Utilities.getSharedUtility().telemetry.addData("Left Hue:", avgLH);
         Utilities.getSharedUtility().telemetry.addData("Center Hue:", avgCH);
+        Utilities.getSharedUtility().telemetry.addData("Left Sat:", avgLS);
+        Utilities.getSharedUtility().telemetry.addData("Center Sat:", avgCS);
 
         //algorithm for finding the closest color
         /*if (avgH > 50 && avgH < 80) {
@@ -172,23 +175,39 @@ static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIG
         } else {
             return 1; // a guess...
         }*/
-        int LdistFrom1 = Math.abs(avgLH-red1);
-        int LdistFrom2 = Math.abs(avgLH-blue2);
-        int CdistFrom1 = Math.abs(avgCH-red1);
-        int CdistFrom2 = Math.abs(avgCH-blue2);
-        if (LdistFrom1<=colorTolerance || LdistFrom2 <= colorTolerance){
-            Log.v("vision", "left " + 1);
-            return 1;
+        int LdistFrom1 = Math.abs(avgLS - red1);
+        int LdistFrom2 = Math.abs(avgLS - blue2);
+        int CdistFrom1 = Math.abs(avgCS - red1);
+        int CdistFrom2 = Math.abs(avgCS - blue2);
+        if (isred) {
+            if(LdistFrom1 <= colorTolerance){
+                propPos = 1;
+            }
+            if(CdistFrom1 <= colorTolerance){
+                if(LdistFrom1 < CdistFrom1){
+                    propPos = 1;
+                }
+                else{
+                    propPos = 2;
+                }
+            }
         }
-        if ((CdistFrom1>=colorTolerance && CdistFrom1 < LdistFrom1)  || (CdistFrom2 >= colorTolerance && CdistFrom2 < LdistFrom2)){
-            Log.v("vision", "center " + 2);
-            return 2;
+        if(!isred){
+            if(LdistFrom2 <= colorTolerance){
+                propPos = 1;
+            }
+            if(CdistFrom2 <= colorTolerance){
+                if(LdistFrom2 < CdistFrom2){
+                    propPos = 1;
+                }
+                else{
+                    propPos = 2;
+                }
+            }
         }
-        else{
-            Log.v("vision", "Nothing detected, Default is 3");
-            return 3;
-        }
+        return propPos;
     }
+
 
     public void stop() {
         stopped = true;

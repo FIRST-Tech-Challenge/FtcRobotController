@@ -25,7 +25,7 @@ public class CameraTest extends LinearOpMode {
 
         while (!isStopRequested()) {
             telemetry.update();
-            elementPos = rvis.getTeamPropOrientation();
+            elementPos = rvis.getTeamPropOrientation(false);
             telemetry.addData("team prop pos: ", elementPos);
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
             double currentTime = clock.seconds();
