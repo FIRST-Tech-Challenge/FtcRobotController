@@ -36,49 +36,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name = "Full", group = "CenterStage")
-public class CSFullTeleOp extends LinearOpMode {
+public class CSFullTeleOp extends CSMethods {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor carWashMotor = null;
-    private DcMotor pixelLiftingMotor = null;
-    private Servo droneServo = null;
-    //private DigitalChannel touch;
-
-    //declare servos for clasper, as looking down on robot from behind, servoCW is the servo on the
-    // left that moves clockwise to clasp, servoCCW is on the right and moves counter-clockwise to clasp
-    private Servo servoCW;
-    private Servo servoCCW;
-
 
     @Override
     public void runOpMode() {
-
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");
-        droneServo = hardwareMap.get(Servo.class, "droneServo");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
-        pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        waitForStart();
-        runtime.reset();
+        inititalization();
 
         double slow = 1.0;
         double turnSpeed = 2.0;
@@ -121,10 +85,10 @@ public class CSFullTeleOp extends LinearOpMode {
             }
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            lf.setPower(leftFrontPower);
+            rf.setPower(rightFrontPower);
+            lb.setPower(leftBackPower);
+            rb.setPower(rightBackPower);
 
             if (gamepad2.dpad_up){
                 pixelLiftingMotor.setPower(1);

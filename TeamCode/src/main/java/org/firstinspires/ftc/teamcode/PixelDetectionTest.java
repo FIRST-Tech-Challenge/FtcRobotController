@@ -107,6 +107,6 @@ public class PixelDetectionTest extends LinearOpMode {
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
 
-    }   // end method telemetryTfod()
+    }   // end method detectProp()
 
 }   // end class

@@ -3,20 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
-import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
 import java.util.List;
 
 /*
@@ -50,36 +40,7 @@ public class CSAutoBlueBack extends CSMethods {
 
 
     public void runOpMode() {
-        // Initialize the drive system variables.
-        lf = hardwareMap.get(DcMotor.class, "leftFront");
-        lb = hardwareMap.get(DcMotor.class, "leftBack");
-        rf = hardwareMap.get(DcMotor.class, "rightFront");
-        rb = hardwareMap.get(DcMotor.class, "rightBack");
-        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
-
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
-
-        initTfod();
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        waitForStart();
-        runtime.reset();
+        inititalization();
 
 
         // Main code
@@ -87,14 +48,14 @@ public class CSAutoBlueBack extends CSMethods {
         drive(13.5);
         //drive(1);
         //*
-        List<Recognition> pixels = telemetryTfod();
+        List<Recognition> pixels = detectProp();
         if (pixels.size() > 0) {
             drive(6);
             ejectPixel();
             drive(-6);
         } else {
             turn(-30);
-            pixels = telemetryTfod();
+            pixels = detectProp();
             if (pixels.size() > 0) {
                 drive(6);
                 ejectPixel();

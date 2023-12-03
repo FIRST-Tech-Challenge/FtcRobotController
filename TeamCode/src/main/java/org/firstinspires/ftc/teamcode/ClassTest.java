@@ -41,7 +41,6 @@ public class ClassTest extends CSMethods {
 
         waitForStart();
 
-        telemetryTest();
         turn(90.0);
     }
 }
