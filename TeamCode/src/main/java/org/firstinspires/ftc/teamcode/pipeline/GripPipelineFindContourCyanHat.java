@@ -25,7 +25,7 @@ import java.util.List;
 *
 * @author GRIP
 */
-public class GripPipelineRedGamepieceRGB extends OpenCvPipeline {
+public class GripPipelineFindContourCyanHat extends OpenCvPipeline {
 
 	//Outputs
 	private Mat cvResizeOutput = new Mat();
@@ -54,9 +54,9 @@ public class GripPipelineRedGamepieceRGB extends OpenCvPipeline {
 
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = cvResizeOutput;
-		double[] rgbThresholdRed = {0, 43};
-		double[] rgbThresholdGreen = {0, 75};
-		double[] rgbThresholdBlue = {55, 107};
+		double[] rgbThresholdRed = {0, 100};
+		double[] rgbThresholdGreen = {109, 167};
+		double[] rgbThresholdBlue = {128, 198};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step CV_erode0:

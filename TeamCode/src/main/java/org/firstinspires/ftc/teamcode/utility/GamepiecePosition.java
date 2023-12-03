@@ -16,7 +16,9 @@ public class GamepiecePosition {
     }
 
     public String getPOS(){
-        String location="right";
+        String location="";
+        //determines the game piece position when the robot is starting on the left side of their
+        // alliance from the perspective of the drivers
         if (robotPOS == "left") {
             if (gamepieceLocation.x < 280 && gamepieceLocation.x > 0) {
                 location = "left";
