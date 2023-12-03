@@ -2,11 +2,13 @@ package org.firstinspires.ftc.team6220_CENTERSTAGE.teleOpClasses;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
+@Disabled
 @TeleOp(name =
         "IntakeTestPoggersGaming")
 public class IntakeTest extends MainTeleOp {

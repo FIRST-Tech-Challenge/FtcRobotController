@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.JavaTextMenu.*;
 
+@Disabled
 @Autonomous(name="League2_Autonomous", group ="amogus2")
 public class League2_Autonomous extends LinearOpMode {
     @Override

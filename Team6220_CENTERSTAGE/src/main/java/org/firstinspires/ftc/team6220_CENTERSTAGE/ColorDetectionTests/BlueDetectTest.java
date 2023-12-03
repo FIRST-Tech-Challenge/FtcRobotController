@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetectionTests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 
+@Disabled
 @Autonomous(name = "BlueDetectTest")
 public class BlueDetectTest extends LinearOpMode {
 

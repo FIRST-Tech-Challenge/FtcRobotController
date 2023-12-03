@@ -3,12 +3,14 @@ package org.firstinspires.ftc.team6220_CENTERSTAGE.tuning;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
+@Disabled
 @TeleOp
 public final class StrafeTest extends LinearOpMode {
     @Override

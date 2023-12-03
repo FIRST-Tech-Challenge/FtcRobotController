@@ -15,6 +15,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.team6220_CENTERSTAGE.TwoDeadWheelLocalizer;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
     // Member fields referenced by every test:
