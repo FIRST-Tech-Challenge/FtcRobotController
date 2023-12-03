@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -21,13 +18,13 @@ public class Drivetrain {
         initMotors();
     }
     public void initMotors() {
-        motors.put(DriveMotors.D1, myHardwarmap.dcMotor.get("D1"));
-        motors.put(DriveMotors.D2, myHardwarmap.dcMotor.get("D2"));
-        motors.put(DriveMotors.D3, myHardwarmap.dcMotor.get("D3"));
-        motors.put(DriveMotors.D4, myHardwarmap.dcMotor.get("D4"));
+        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight`"));
+        motors.put(DriveMotors.BACK_LEFT, myHardwarmap.dcMotor.get("backLeft"));
+        motors.put(DriveMotors.FRONT_RIGHT, myHardwarmap.dcMotor.get("frontRight"));
+        motors.put(DriveMotors.FRONT_LEFT, myHardwarmap.dcMotor.get("frontLeft"));
 
-        motors.get(DriveMotors.D2).setDirection(DcMotorSimple.Direction.REVERSE);
-        motors.get(DriveMotors.D4).setDirection(DcMotorSimple.Direction.REVERSE);
+        motors.get(DriveMotors.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+        motors.get(DriveMotors.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void drive() {
@@ -44,10 +41,10 @@ public class Drivetrain {
         double cosA = Math.cos(theta - Math.PI / 4);
         double max = Math.max(Math.abs(sinA), Math.abs(cosA));
 
-        motors.get(DriveMotors.D1).setPower(power * cosA/max + turn);
-        motors.get(DriveMotors.D2).setPower(power * sinA/max - turn);
-        motors.get(DriveMotors.D3).setPower(power * sinA/max + turn);
-        motors.get(DriveMotors.D4).setPower(power * cosA/max - turn);
+        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + turn);
+        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - turn);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + turn);
+        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - turn);
 
         if ((power + Math.abs(turn)) > 1) {
             motors.forEach((name, motor) -> {
@@ -65,10 +62,10 @@ public class Drivetrain {
         double cosA = Math.cos(theta - Math.PI / 4);
         double max = Math.max(Math.abs(sinA), Math.abs(cosA));
 
-        motors.get(DriveMotors.D1).setPower(power * cosA/max + turn);
-        motors.get(DriveMotors.D2).setPower(power * sinA/max - turn);
-        motors.get(DriveMotors.D3).setPower(power * sinA/max + turn);
-        motors.get(DriveMotors.D4).setPower(power * cosA/max - turn);
+        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + turn);
+        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - turn);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + turn);
+        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - turn);
 
         if ((power + Math.abs(turn)) > 1) {
             motors.forEach((name, motor) -> {
@@ -87,10 +84,10 @@ public class Drivetrain {
         double cosA = Math.cos(theta - Math.PI / 4);
         double max = Math.max(Math.abs(sinA), Math.abs(cosA));
 
-        motors.get(DriveMotors.D1).setPower(power * cosA/max + .5);
-        motors.get(DriveMotors.D2).setPower(power * sinA/max - .5);
-        motors.get(DriveMotors.D3).setPower(power * sinA/max + .5);
-        motors.get(DriveMotors.D4).setPower(power * cosA/max - .5);
+        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + .5);
+        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - .5);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + .5);
+        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - .5);
     }
 
 }

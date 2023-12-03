@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 public enum DriveMotors {
-    D1,
-    D2,
-    D3,
-    D4
+    BACK_RIGHT,
+    BACK_LEFT,
+    FRONT_RIGHT,
+    FRONT_LEFT
 }

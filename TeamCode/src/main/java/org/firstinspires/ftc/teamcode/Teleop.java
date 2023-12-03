@@ -29,9 +29,9 @@ public class Teleop extends OpMode {
         mecanum = new Drivetrain(gamepad1, hardwareMap);
         motorA = hardwareMap.get(DcMotorEx.class, "A1");
         motorB = hardwareMap.get(DcMotorEx.class, "A2");
-        claw1 = hardwareMap.get(ServoImplEx.class, "C1");
-        claw2 = hardwareMap.get(ServoImplEx.class, "C2");
-        wrist = hardwareMap.get(ServoImplEx.class, "W1");
+        claw1 = hardwareMap.get(ServoImplEx.class, "leftPixel");
+        claw2 = hardwareMap.get(ServoImplEx.class, "rightPixel");
+        wrist = hardwareMap.get(ServoImplEx.class, "wrist");
 
         motorB.setDirection(DcMotorSimple.Direction.REVERSE);
         motorA.setDirection(DcMotorSimple.Direction.FORWARD);
