@@ -56,9 +56,6 @@ public class MainTeleOp extends LinearOpMode {
         OUTTAKE_DROP_2
     }
 
-    // toggle for tilting outtake forward and back
-    boolean outtakeTiltedForward = false;
-
     // drive powers, read from input and then manipulated every loop
     double drivePowerX = 0.0;
     double drivePowerY = 0.0;
@@ -74,6 +71,7 @@ public class MainTeleOp extends LinearOpMode {
             GamepadKeys.Button.LEFT_BUMPER,
             GamepadKeys.Button.RIGHT_BUMPER
     };
+
     final GamepadKeys.Button[] DPAD_KEYCODES = {
             GamepadKeys.Button.DPAD_UP,
             GamepadKeys.Button.DPAD_LEFT,
@@ -85,7 +83,6 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
@@ -98,7 +95,6 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             // update gamepads and read inputs
             gp1.readButtons();
             gp2.readButtons();
@@ -110,7 +106,6 @@ public class MainTeleOp extends LinearOpMode {
             intakePower = Math.max(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                                    gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
                                 * Constants.INTAKE_POWER_MULTIPLIER;
-            
 
             // get heading from imu in degrees
             currentHeading = drive.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -191,10 +186,7 @@ public class MainTeleOp extends LinearOpMode {
                 // Slides stuff
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     drive.moveSlides(-0.5);
-                }
-
-                // slides stuff 2: the greg
-                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     drive.moveSlides(0.5);
                 }
 
@@ -234,21 +226,21 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 // Manual control for the dumper
-                drive.dumperServo.setPosition(0.6 - gp2.getRightY()*0.6);
+                drive.dumperServo.setPosition(0.6 - Math.min(0.0, gp2.getRightY())*0.6);
 
                 // Determines whether to open or close the front pixel latch
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                     drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
-                }/* else if (gp2.wasJustReleased(GamepadKeys.Button.A)) {
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.A)) {
                     drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
-                } */
+                }
 
                 // Determines whether to open or close the back pixel latch
                 if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
                     drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
-                }/* else if (gp2.wasJustReleased(GamepadKeys.Button.B)) {
+                } else if (gp2.wasJustReleased(GamepadKeys.Button.B)) {
                     drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
-                }*/
+                }
             }
 
 
@@ -262,7 +254,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("intake power", intakePower);
             telemetry.addData("intake preset", intakePreset); */
 
-            telemetry.addData("slide target", slidePreset);
             telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
 
             //telemetry.addData("x", drive.pose.position.x);
