@@ -19,25 +19,19 @@ public class Constants {
     public static final double DRONE_SERVO_PRIMED_POS = 1;
     public static final double DRONE_SERVO_LAUNCHING_POS = 0.3;
 
-    public static final int[] SLIDE_POSITIONS =  {
-      0,
-      16,
-      32,
-      64,
+    public static final double DUMPER_INITIALIZATION_POS = 0.6;
+
+    public static final double[] PIXEL_LATCH_POSITIONS = {
+            0, // closed
+            1, // open
     };
 
-    public static final double[] DUMPER_POSITIONS = {
-     0, // default
-     0.5, // scoring
-     1, // vertical
-    };
-
-    public static final double SLIDE_RETURN_MOTOR_POWER_MUL = 0.6;
+    public static final double SLIDE_RETURN_MOTOR_POWER_MUL = 0.8;
     public static final double SLIDE_RETURN_MOTOR_POWER_OFFSET = -0.05;
-    public static final double SLIDE_P_GAIN = 0.01;
+    public static final double SLIDE_P_GAIN = 0.3;
 
     public static final double[] INTAKE_POSITIONS = {
-        0.325,
+        0.33,
         0.34,
         0.36,
         0.39,

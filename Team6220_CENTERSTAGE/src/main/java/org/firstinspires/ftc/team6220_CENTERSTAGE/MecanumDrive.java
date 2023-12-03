@@ -46,7 +46,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.inspection.InspectionState;
 
@@ -160,6 +159,10 @@ public final class MecanumDrive {
     public DcMotorEx returnMotor;
     public Servo intakeServo;
     public Servo droneServo;
+    public Servo dumperServo;
+    public Servo pixelLatchFront;
+    public Servo pixelLatchBack;
+
 
     public final VoltageSensor voltageSensor;
 
@@ -253,8 +256,11 @@ public final class MecanumDrive {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
-            //droneServo = hardwareMap.get(Servo.class, "droneServo");
+            droneServo = hardwareMap.get(Servo.class, "droneServo");
             intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
+            dumperServo = hardwareMap.get(ServoImplEx.class, "outtakeServo");
+            pixelLatchFront = hardwareMap.get(ServoImplEx.class, "pixelLatchFront");
+            pixelLatchBack = hardwareMap.get(ServoImplEx.class, "pixelLatchBack");
         }
 
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -272,12 +278,11 @@ public final class MecanumDrive {
 
         if(!isDevBot) {
             // preset servo positions
-            //droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+            droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
             intakeServo.setPosition(Constants.INTAKE_POSITIONS[Constants.INTAKE_POSITIONS.length - 1]);
-
-            // preset motor positions (slides mainly)
-            moveSlides(Constants.SLIDE_POSITIONS[0]);
-
+            dumperServo.setPosition((Constants.DUMPER_INITIALIZATION_POS));
+            pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
+            pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
         }
 
         // now has been enabled, encoders are goodge :D
@@ -321,6 +326,11 @@ public final class MecanumDrive {
      */
     public void moveSlides(int targetPos) {
         double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        this.slideMotor.setPower(power);
+        this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
+    }
+
+    public void moveSlides(double power) {
         this.slideMotor.setPower(power);
         this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
     }
