@@ -165,28 +165,32 @@ public class Robot {
     }
 
     public void trayToOuttakePos() {
-        setServoPosBlocking(tray, 0.1);
+        setServoPosBlocking(tray, 0.375);
     }
 
-    public void autoOuttake() {
+    public void autoOuttake(boolean lowOuttake) {
+
+        //precautionary
         trayToIntakePos();
+        closeClamp();
+
+        // move linear slide up
+        if (lowOuttake) {
+            moveLinearSlideByTicksBlocking(-1550);
+        } else {
+            moveLinearSlideByTicksBlocking(-1800);
+        }
+
+        trayToOuttakePos(); // pivot tray to outtake position
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.522); // close clamp
+        openClamp(); // drop pixel
         opMode.sleep(100);
-        moveLinearSlideByTicksBlocking(-1650); // move linear slide up
+        moveLinearSlideByTicksBlocking(-2010); // move linear slide up
         opMode.sleep(100);
-        trayToOuttakePos();
-        opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.472); // open clamp
-        opMode.sleep(100);
-        straightBlocking(2, true, 0.7); //move back 2
-        opMode.sleep(100);
+        straightBlocking(6, true, 0.7); //move back 2
+        setHeading(-90, 0.7);
         trayToIntakePos(); //intake
-        opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.522); // close clamp
-        opMode.sleep(100);
         moveLinearSlideByTicksBlocking(0); // linear slide down
-        opMode.sleep(500);
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -381,24 +385,26 @@ public class Robot {
                 errorDer = (error - prevError) / (currentTime - prevTime);
                 power = (KP * error) + (KD * errorDer);
 
+                /*
                 Log.d("pid", "setHeading: current heading is " + currentHeading);
                 Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
                 Log.d("pid", "setHeading: time is " + currentTime);
                 Log.d("pid", "setHeading: heading error is " + error);
                 Log.d("pid", "setHeading: errorDer is " + errorDer);
                 Log.d("pid", "setHeading: calculated power is " + power);
+                */
 
                 if (power > 0 && power < minPower) {
                     power = minPower;
-                    Log.d("pid", "setHeading: adjusted power is " + power);
+                    // Log.d("pid", "setHeading: adjusted power is " + power);
                 } else if (power < 0 && power > -1 * minPower) {
                     power = minPower * -1;
-                    Log.d("pid", "setHeading: adjusted power is " + power);
+                    // Log.d("pid", "setHeading: adjusted power is " + power);
                 }
 
                 //cap power
                 power = Range.clip(power, -1 * maxPower, maxPower);
-                Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
+                // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
 
                 setMotorPower(-1 * power, power, -1 * power, power);
                 prevError = error;
@@ -591,8 +597,8 @@ public class Robot {
         MarkerDetector.MARKER_POSITION position;
 
         if (isTesting) {
-            position = MarkerDetector.MARKER_POSITION.CENTER;
-        } else{
+            position = MarkerDetector.MARKER_POSITION.LEFT;
+        } else {
             //detect marker position
             position = markerProcessor.getPosition();
         }
@@ -794,9 +800,9 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 15;
+        double distanceToBoard = 12;
         int polarity = isRedAlliance ? -1 : 1;
-        int PIXEL_SIZE = 4;
+        int PIXEL_SIZE = 3;
         int inchesMovedBack = 0;
 
         while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
@@ -837,7 +843,7 @@ public class Robot {
 
                 if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
                     Log.d("vision", "alignToBoard: apriltag detection timed out");
-                    distanceToBoard = distanceToBoard + inchesMovedBack - 3;
+                    distanceToBoard = distanceToBoard + inchesMovedBack;
                     Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
                     break;
                 }
@@ -887,8 +893,8 @@ public class Robot {
             }
 
             if (!testingOnBert) {
-                setServoPosBlocking(clamp, 0.4724);
-                setServoPosBlocking(hook, 0.5);
+                closeClamp();
+                openHook();
                 setServoPosBlocking(spikeServo, 0.5);
             }
 
@@ -935,12 +941,12 @@ public class Robot {
 
                 // Calculate distances
                 vertical1 = 11;
-                horizontal2 = 18;
-                horizontal3 = 10;
+                horizontal2 = 20;
+                horizontal3 = 12;
                 vertical4 = vertical1; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -955,7 +961,6 @@ public class Robot {
                 setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                opMode.sleep(10000);
                 straightBlockingFixHeading(vertical6, false, 0.7);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
@@ -1005,10 +1010,10 @@ public class Robot {
          * Park near wall
          * Park near center
          */
+
         int parkDistance = 25; // distance from center tag in inches
         int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
-            straightBlocking(2, true, 0.7);
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
                 // move left to park
                 if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
