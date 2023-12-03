@@ -112,8 +112,11 @@ public class MenuInput {
                 // (sustained input -> repeated but spaced out input after an initial pause)
 
                 // if it's the initial stick input:
-                if (!this.isHoldingStick && this.stickTimer <= this.deltaTime) {
-                    this.stickTimer += this.deltaTime;
+                if (!this.isHoldingStick && this.stickTimer <= 0) {
+                    if (Math.hypot(x, y) > INPUT_DEADZONE) {
+                        // only starting adding deltatime if the stick is held
+                        this.stickTimer += this.deltaTime;
+                    }
                     // allows the x and y values to pass through
                 } else {
                     this.stickTimer += this.deltaTime;
