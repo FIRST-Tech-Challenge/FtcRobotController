@@ -14,6 +14,7 @@ public class CrabRobot extends Robot {
     //public final DualMotorLift dualMotorLift;
     public SmartGamepad smartGamepad1;
     public SmartGamepad smartGamepad2;
+    public DroneLauncher droneLauncher;
 
     public CrabRobot(LinearOpMode opMode) {
         super(opMode);
@@ -23,6 +24,8 @@ public class CrabRobot extends Robot {
         registerSubsystem(intake);
         outtake = new Outtake(this, opMode.telemetry);
         registerSubsystem(outtake);
+        droneLauncher = new DroneLauncher(this, opMode.telemetry);
+        registerSubsystem(droneLauncher);
         //dualMotorLift = new DualMotorLift(this, opMode.telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
         //registerSubsystem(dualMotorLift);
 
@@ -41,3 +44,38 @@ public class CrabRobot extends Robot {
         }
     }
 }
+
+/*
+CONFIG
+
+CONTROL HUB
+    Motors
+    0 - DriveRF
+    1 - DriveLF
+    2 - DriveLR
+    3 - DriveRR
+
+    Servos
+    0 - droneTrigger
+    1
+    2 - intakeServoR
+    3 - intakeServoL
+    4
+
+
+EXPANSION HUB
+    Motors
+    0 - intakeMotor
+    1
+    2 - slideLt
+    3 - slideRt
+
+    Servos
+    0 - armServo_Left
+    1 - armServo_Right
+    2 - dumpServo
+    3
+    4
+
+
+ */

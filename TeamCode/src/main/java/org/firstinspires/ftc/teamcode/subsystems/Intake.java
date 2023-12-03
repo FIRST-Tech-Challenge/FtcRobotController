@@ -15,8 +15,8 @@ public class Intake implements Subsystem {
     private Servo intakeServoR;
     private double baseposl = 0.217;
     private double baseposr = 0.76715;
-    private double intakeposL = 0.814;
-    private double intakeposR = 0.1403;
+    private double intakeposL = 0.814 - 0.01;
+    private double intakeposR = 0.1403 + 0.01;
     //placeholder outtake position, may change depending on outtake
     private double outtakeposL = 0.129;
     private double outtakeposR = 0.8595;

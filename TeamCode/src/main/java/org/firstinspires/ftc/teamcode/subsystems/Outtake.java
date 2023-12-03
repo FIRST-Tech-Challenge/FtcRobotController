@@ -26,7 +26,7 @@ public class Outtake implements Subsystem{
     private double dumpIntakePos= 0.1855;
     private double dumpTravelPos = 0.1785;
     private double dumpCarryPos = 0.6793;
-    private double dumpDumpPos = 0;
+    private double dumpDumpPos = 0.1013;
 
     //State Machine
     private int swingState;
@@ -44,7 +44,7 @@ public class Outtake implements Subsystem{
     private long liftStartTime;
     private long tempStartTime;
     private long swingDelay = 500; //miliseconds
-    private long liftDelay = 3000;
+    private long liftDelay = 1000;
     private long tempDelay = 5000;
 
     //Hardware
@@ -97,7 +97,7 @@ public class Outtake implements Subsystem{
     }
     public void toIntakePos(){
         swingState = 0;
-        //lift.goToLevel(0);
+        lift.goToHt(lift.inchToTicks(0.3));
         dumpServo.setPosition(dumpIntakePos);
         armServo_Right.setPosition(armIntake_Right);
         armServo_Left.setPosition(armIntake_Left);

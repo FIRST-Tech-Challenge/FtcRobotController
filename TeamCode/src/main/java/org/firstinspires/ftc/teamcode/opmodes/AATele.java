@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import android.util.Log;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,7 +27,17 @@ public class AATele extends LinearOpMode {
         while (!isStopRequested()) {
             telemetry.update();
             robot.update();
-            //robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
+
+            boolean slowMode = gamepad1.left_bumper;
+            double joystickRadius = Math.min(1,Math.sqrt(Math.pow(gamepad1.left_stick_y,2) + Math.pow(gamepad1.left_stick_x,2)));
+            double factor = robot.mecanumDrive.mapJsRadiusVal(joystickRadius,slowMode);
+            double jsX = robot.mecanumDrive.mapJsComponents(-gamepad1.left_stick_x, joystickRadius, slowMode);
+            double jsY = robot.mecanumDrive.mapJsComponents(gamepad1.left_stick_y, joystickRadius, slowMode);
+            robot.mecanumDrive.setDrivePower(new Pose2d(-jsY, -jsX, -(0.5)*gamepad1.right_stick_x));
+            robot.mecanumDrive.setPowerFactor(0.7); //remove with actual robot.
+
+
+//            robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
 
                 //UG OUTTAKE
             if(smartGamepad2.left_trigger>0) { robot.outtake.moveDumper(-0.5);}
@@ -84,6 +95,13 @@ public class AATele extends LinearOpMode {
                 robot.intake.setPower(1);
             } else{
                 robot.intake.setPower(0);
+            }
+
+            if(smartGamepad2.left_bumper){
+                robot.droneLauncher.release();
+            }
+            if(smartGamepad1.b_pressed()){
+                robot.intake.toBasePos();
             }
 
 
