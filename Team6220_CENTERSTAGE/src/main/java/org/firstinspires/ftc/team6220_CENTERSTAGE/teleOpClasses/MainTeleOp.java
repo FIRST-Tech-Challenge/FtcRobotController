@@ -11,6 +11,7 @@ import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
@@ -28,8 +29,10 @@ public class MainTeleOp extends LinearOpMode {
     // ENUMS
     // GRAAAAHH
 
+    private double dumperPosLogger = 0;
     private int slidePreset = 0;
-    private int intakePreset = 0;
+    private int intakePreset = Constants.INTAKE_POSITIONS.length - 1;
+    private boolean resetProced = false;
 
     TurnStates curTurningState = TurnStates.TURNING_MANUAL;
     enum TurnStates {
@@ -87,6 +90,10 @@ public class MainTeleOp extends LinearOpMode {
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
+
+        // Reset encoders of slide motor
+        drive.slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -174,28 +181,22 @@ public class MainTeleOp extends LinearOpMode {
 
             if (!drive.isDevBot) {
 
-                // drive Drone Launcher 📄📄✈✈✈
+                // drive Drone Launcher
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.Y)){
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
                 }
 
-                /*// Slides stuff 😎📈📈📈
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER))
-                    if (slidePreset > 0) {
-                        slidePreset--;
-                    }
+                // Slides stuff
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    drive.moveSlides(-0.5);
+                }
 
                 // slides stuff 2: the greg
-                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
-                    if (slidePreset > Constants.SLIDE_POSITIONS.length) {
-                        slidePreset++;
-                    }*/
-                slidePreset += -gp2.getRightY() * 10;
-
-                // moves the slides to a preset (theoretically)
-                drive.moveSlides(slidePreset);
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    drive.moveSlides(0.5);
+                }
 
                 // move intake bar down to preset value with dpad but only if it can
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
@@ -223,8 +224,30 @@ public class MainTeleOp extends LinearOpMode {
                 // go go gadget intake motor
                 drive.intakeMotor.setPower(-gp2.getLeftY());
 
-                /*if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    VERY WIP
+                // Sets everything back to constant positions if slides are at the bottom
+                if ((slidePreset == 0) && resetProced) {
+                    drive.dumperServo.setPosition(Constants.DUMPER_INITIALIZATION_POS);
+                    dumperPosLogger = Constants.DUMPER_INITIALIZATION_POS;
+                    drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
+                    drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
+                    resetProced = true;
+                }
+
+                // Manual control for the dumper
+                drive.dumperServo.setPosition(0.6 - gp2.getRightY()*0.6);
+
+                // Determines whether to open or close the front pixel latch
+                if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                    drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
+                }/* else if (gp2.wasJustReleased(GamepadKeys.Button.A)) {
+                    drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
+                } */
+
+                // Determines whether to open or close the back pixel latch
+                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                    drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
+                }/* else if (gp2.wasJustReleased(GamepadKeys.Button.B)) {
+                    drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
                 }*/
             }
 
