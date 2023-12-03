@@ -104,15 +104,17 @@ public final class MecanumDrive {
                 axialGain = 10.0;
                 lateralGain = 10.0;
                 headingGain = 10.0; // shared with turn
+
+            // is competition bot
             } else {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 72.0 / 3146.5;
+                lateralInPerTick = inPerTick;
+                trackWidthTicks = 1316.0487423269376;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
+                kS = 0.7120066356750563;
+                kV = 0.004248490354527058;
                 kA = 0;
 
                 // path controller gains
@@ -565,5 +567,28 @@ public final class MecanumDrive {
                 defaultVelConstraint, defaultAccelConstraint,
                 0.25, 0.1
         );
+    }
+
+    // List of currently running Actions:
+    LinkedList<Action> actionList = new LinkedList<>();
+
+    // Invoke an Action to run in parallel during TeleOp:
+    public void runParallel(Action action) {
+        actionList.add(action);
+    }
+
+    // On every iteration of your robot loop, call 'doActionsWork'. Specify the packet
+    // if you're drawing on the graph for FTC Dashboard:
+    public boolean doActionsWork() { return doActionsWork(null); }
+    public boolean doActionsWork(TelemetryPacket packet) {
+        LinkedList<Action> deletionList = new LinkedList<>();
+        for (Action action: actionList) {
+            // Once the Action returns false, the action is done:
+            if (!action.run(packet))
+                // We can't delete an item from a list while we're iterating on that list:
+                deletionList.add(action);
+        }
+        actionList.removeAll(deletionList);
+        return actionList.size() != 0;
     }
 }

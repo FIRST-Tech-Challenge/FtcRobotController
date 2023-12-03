@@ -9,6 +9,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -17,44 +19,110 @@ import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 import org.jetbrains.annotations.NotNull;
 
+import org.firstinspires.ftc.team6220_CENTERSTAGE.JavaTextMenu.*;
+
 @Autonomous(name="League2_Autonomous", group ="amogus2")
 public class League2_Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+
         AutonDriveFactory autoDrive = new AutonDriveFactory(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
 
-        // setup auto parameters
+        GamepadEx gp1 = new GamepadEx(gamepad1);
+
+        // setup menu
+        TextMenu menu = new TextMenu();
+        MenuInput menuInput = new MenuInput(MenuInput.InputType.CONTROLLER);
+
+        menu.add("League 2 Autonomous Options")
+                .add()
+                .add("Alliance team:")
+                .add("select-team", AutoParams.AllianceTeam.class)
+                .add("Starting position:")
+                .add("start-select", AutoParams.StartingPosition.class)
+                .add("Park destination:")
+                .add("park-select", AutoParams.ParkLocation.class)
+                .add()
+                .add("Start long wait time:")
+                .add("long-wait", new MenuSlider(0, 20, 1, 10))
+                .add()
+                .add("Place purple pixel?")
+                .add("purple-switch", new MenuSwitch(true))
+                .add("Place yellow pixel?")
+                .add("yellow-switch", new MenuSwitch(true))
+                .add()
+                .add("finish", new MenuFinishedButton())
+        ;
+
+        // let user access menu
+        while (!menu.isCompleted() && !isStopRequested()) {
+            // print menu
+            for (String line : menu.toListOfStrings()) {
+                telemetry.addLine(line);
+            }
+            telemetry.update();
+
+            // update with input
+            gp1.readButtons();
+            //menuInput.update(gp1.getLeftX(), gp1.getLeftY(), gp1.getButton(GamepadKeys.Button.A));
+            menuInput.update(
+                    gp1.getLeftX() + (gp1.getButton(GamepadKeys.Button.DPAD_LEFT) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0),
+                    gp1.getLeftY() + (gp1.getButton(GamepadKeys.Button.DPAD_DOWN) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_UP) ? 1 : 0),
+                    gp1.getButton(GamepadKeys.Button.A)
+            );
+            menu.updateWithInput(menuInput);
+            sleep(17); // 60 fps, helps telemetry not get spammed as much
+        }
+
+
+        // setup auto parameters using menu results
         AutoParams params = new AutoParams();
-        params.allianceTeam = AutoParams.AllianceTeam.BLUE;
-        params.startingPosition = AutoParams.StartingPosition.LONG;
-        params.parkLocation = AutoParams.ParkLocation.CENTER_FIELD_SIDE;
+        params.allianceTeam = menu.getResult("select-team", AutoParams.AllianceTeam.class);
+        params.startingPosition = menu.getResult("start-select", AutoParams.StartingPosition.class);
+        params.parkLocation = menu.getResult("park-select", AutoParams.ParkLocation.class);
         //params.propPosition = ColorDetection.PropPosition.LEFT; // we get it after wait for start
-        params.placePurplePixel = true;
-        params.placeYellowPixel = true;
-        params.startLongWaitTime = 1;
+        params.startLongWaitTime = menu.getResult("long-wait", Double.class);
+        params.placePurplePixel = menu.getResult("purple-switch", Boolean.class);
+        params.placeYellowPixel = menu.getResult("yellow-switch", Boolean.class);
 
-        
-
-        // init color detector after determining which alliance we're on
         ColorDetection colorDetector = new ColorDetection(this);
-        switch (params.allianceTeam) {
+        if (!autoDrive.drive.isDevBot) {
+            // init color detector after determining which alliance we're on
+            switch (params.allianceTeam) {
 
-            case BLUE:
-                colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
-                break;
+                case BLUE:
+                    colorDetector.init(Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV);
+                    break;
 
-            case RED:
-                colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
-                break;
+                case RED:
+                    colorDetector.init(Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV);
+                    break;
+            }
         }
 
         // wait until we hit start auto
+        telemetry.addLine("Waiting for start...");
+        telemetry.addLine();
+        telemetry.addData("Team", params.allianceTeam);
+        telemetry.addData("Start", params.startingPosition);
+        telemetry.addData("Park", params.parkLocation);
+        telemetry.addData("Start long wait", params.startLongWaitTime);
+        telemetry.addData("Place purple", params.placePurplePixel);
+        telemetry.addData("Place purple", params.placeYellowPixel);
+        telemetry.update();
+
         waitForStart();
 
-        // capture the position of the prop
-        params.propPosition = colorDetector.returnZone();
+        if (!autoDrive.drive.isDevBot) {
+            // capture the position of the prop
+            params.propPosition = colorDetector.returnZone();
+        } else {
+            telemetry.addLine("isDevBot: choosing random prop position");
+            ColorDetection.PropPosition[] propPositions = {ColorDetection.PropPosition.RIGHT, ColorDetection.PropPosition.MIDDLE, ColorDetection.PropPosition.LEFT};
+            params.propPosition = propPositions[(int)Math.floor(Math.random()*3)];
+        }
 
-        telemetry.addData("prop position", params.propPosition);
+        telemetry.addData("Captured prop position:", params.propPosition);
         telemetry.update();
 
         // run the path with the chosen parameters

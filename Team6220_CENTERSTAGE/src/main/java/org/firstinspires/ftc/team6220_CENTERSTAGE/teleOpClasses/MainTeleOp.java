@@ -254,7 +254,10 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("intake power", intakePower);
             telemetry.addData("intake preset", intakePreset); */
 
-            telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
+            if (!drive.isDevBot) {
+                telemetry.addData("slide target", slidePreset);
+                telemetry.addData("slide encoder pos", drive.slideMotor.getCurrentPosition());
+            }
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
