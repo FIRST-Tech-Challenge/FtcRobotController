@@ -13,7 +13,7 @@ public class MenuSelection<E extends Enum<E>> implements HoverableMenuElement<E>
     private Class<E> enumClass;
 
     // border formats for hovered and selected options
-    private static final String[] borders = {"  x "," >x "," [x]",">[x]"};
+    private static final String[] borders = {"  x "," ➤x "," [x]","➤[x]"};
 
     /**
      * creates a new enum selector using an enum type

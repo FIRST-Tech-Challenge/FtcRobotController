@@ -17,7 +17,7 @@ public class MenuFinishedButton implements HoverableMenuElement<Void> {
 	// MenuElement interface required methods
 	
 	public String getAsString() {
-		return (this.isHovered ? ">" : " ") + "[[ Finish Menu ]]";
+		return (this.isHovered ? "➤" : " ") + "[[ Finish Menu ]]";
 	}
 
 	// HoverableMenuElement interface required methods

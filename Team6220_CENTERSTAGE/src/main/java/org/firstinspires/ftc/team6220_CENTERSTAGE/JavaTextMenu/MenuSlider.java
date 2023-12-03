@@ -42,7 +42,7 @@ public class MenuSlider implements HoverableMenuElement<Double> {
 	// MenuElement interface required methods
 	
 	public String getAsString() {
-		String asString = isHovered ? ">[" : " [";
+		String asString = isHovered ? "➤[" : " [";
 		double sliderLength = (this.max - this.min) * this.scale;
 		for (int i = 0; i < Math.round(sliderLength); i++) {
 			asString += i < (this.value - this.min) * this.scale ? "/" : "-";
