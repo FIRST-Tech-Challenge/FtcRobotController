@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
+import java.util.concurrent.CompletableFuture;
+
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
 
@@ -104,7 +106,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
         drive.pose = poseAndAction.startPose;
 
         if (!test) {
-            Actions.runBlocking(poseAndAction.action);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> Actions.runBlocking(poseAndAction.action));
+
+            while (opModeIsActive());
+
+            future.cancel(true);
+        } else {
+            while (opModeIsActive());
         }
 
 
