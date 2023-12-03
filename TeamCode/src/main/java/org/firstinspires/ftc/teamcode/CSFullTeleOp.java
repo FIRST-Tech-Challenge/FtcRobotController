@@ -72,6 +72,7 @@ public class CSFullTeleOp extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
+        pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
         pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Initialized");
