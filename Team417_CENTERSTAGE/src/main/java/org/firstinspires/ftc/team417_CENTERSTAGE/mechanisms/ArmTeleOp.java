@@ -159,7 +159,7 @@ public class ArmTeleOp {
     }
 
     public void armControl() {
-        double rStickSensitivity = 1, rStickSensitivityInsideRobot = rStickSensitivity / 3, rStickSensitivityOutsideRobot = rStickSensitivity; //How much moving the right stick will effect arm speed outside and inside the robot.
+        double rStickSensitivity = 0.5, rStickSensitivityInsideRobot = rStickSensitivity / 3, rStickSensitivityOutsideRobot = rStickSensitivity; //How much moving the right stick will effect arm speed outside and inside the robot.
         double[] ArmPositions = new double[] {BaseOpMode.ARM_MOTOR_MIN_POSITION, BaseOpMode.ARM_MOTOR_MAX_POSITION / 2.0,
                 BaseOpMode.ARM_MOTOR_MAX_POSITION * (3.0/4.0), BaseOpMode.ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
         double armCurrentLocation = armMotor.getCurrentPosition(); //The current distance the arm is from its init location
