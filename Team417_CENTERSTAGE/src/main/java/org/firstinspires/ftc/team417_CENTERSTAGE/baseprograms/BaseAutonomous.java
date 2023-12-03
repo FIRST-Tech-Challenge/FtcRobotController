@@ -23,7 +23,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     public static double APRIL_TAG_SLEEP_TIME = 500;
-    public static double NO_APRIL_TAG_SLEEP_TIME = 2500;
+    public static double NO_APRIL_TAG_SLEEP_TIME = 5000;
 
     public int lastEncoderFL = 0;
     public int lastEncoderFR = 0;
@@ -221,31 +221,31 @@ class AutonDriveFactory {
 
         TrajectoryActionBuilder spikeLeft = this.drive.actionBuilder(xForm(new Pose2d(-34, -64, Math.toRadians(90))));
         spikeLeft = spikeLeft.splineTo(xForm(new Vector2d(-34, -37)), xForm(Math.toRadians(90)))
-                .splineTo(xForm(new Vector2d(-38, -34)), xForm((Math.toRadians(180) + (1e-6))))
+                .splineTo(xForm(new Vector2d(-35, -34)), xForm((Math.toRadians(180) + (1e-6))))
                 .stopAndAdd(intake)
-                .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)));
-//                .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
-//                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadi.ans(0)))
-//                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -10)), xForm(Math.toRadians(0)));
+                .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)))
+                .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -10)), xForm(Math.toRadians(0)));
 
         TrajectoryActionBuilder spikeCenter = this.drive.actionBuilder(xForm(new Pose2d(-34, -64, (Math.toRadians(90)))));
         spikeCenter = spikeCenter.splineTo(xForm(new Vector2d(-34, -37)), xForm(Math.toRadians(90)))
                 .stopAndAdd(intake)
-                .splineToConstantHeading(xForm(new Vector2d(-34, -39)), xForm(Math.toRadians(90)));
-//                .splineToConstantHeading(xFormCenter(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
-//                .splineToConstantHeading(xFormCenter(new Vector2d(-55, -30)), xForm(Math.toRadians(90)))
-//                .splineTo(xFormCenter(new Vector2d(parkingOffset - 43, -10)), xForm(Math.toRadians(0)))
-//                .splineToConstantHeading(xFormCenter(new Vector2d(parkingOffset - 43, -10)), xForm(Math.toRadians(0)));
+                .splineToConstantHeading(xForm(new Vector2d(-34, -39)), xForm(Math.toRadians(90)))
+                .splineToConstantHeading(xFormCenter(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
+                .splineToConstantHeading(xFormCenter(new Vector2d(-55, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xFormCenter(new Vector2d(parkingOffset - 43, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xFormCenter(new Vector2d(parkingOffset - 43, -10)), xForm(Math.toRadians(0)));
 
 
         TrajectoryActionBuilder spikeRight = this.drive.actionBuilder(xForm(new Pose2d(-34, -64, Math.toRadians(90))));
         spikeRight = spikeRight.splineTo(xForm(new Vector2d(-35, -37)), xForm(Math.toRadians(90)))
-                .splineTo(xForm(new Vector2d(-30, -37)), xForm(Math.toRadians(0)))
+                .splineTo(xForm(new Vector2d(-33, -37)), xForm(Math.toRadians(0)))
                 .stopAndAdd(intake)
-                .splineToConstantHeading(xForm(new Vector2d(-40, -34)), xForm(Math.toRadians(0)));
-//                .splineTo(xForm(new Vector2d(-36, -30)), xForm(Math.toRadians(90)))
-//                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
-//                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -10)), xForm(Math.toRadians(0)));
+                .splineToConstantHeading(xForm(new Vector2d(-40, -34)), xForm(Math.toRadians(0)))
+                .splineTo(xForm(new Vector2d(-36, -30)), xForm(Math.toRadians(90)))
+                .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -10)), xForm(Math.toRadians(0)));
 
         if (location == xForm(SpikeMarks.LEFT)) {
             return new PoseAndAction(spikeLeft.build(), xForm(new Pose2d(-34, -64, Math.toRadians(90))));

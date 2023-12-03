@@ -32,6 +32,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public Servo gateServo;
     public final double GATE_SERVO_OPEN_POSITION = 0;
     public final double GATE_SERVO_CLOSE_POSITION = 0.55;
+    public Servo droneServo;
 
     public static final double TICKS_PER_REVOLUTION = 537.7 * (24.0/27); // 5203 Series Yellow Jacket Motor, robot was overshooting so
     public static final double GEAR_RATIO = 1.0;
@@ -71,6 +72,10 @@ public abstract class BaseOpMode extends LinearOpMode {
             //Mechanism Servos
             dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
             gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
+            droneServo = initializeServo("droneServo", Servo.Direction.FORWARD);
+
+            closeGate();
+            droneServo.setPosition(0.08);
         }
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
