@@ -22,7 +22,7 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     /*
-     * FTC 17240 GoBilda v3 Chassis:
+     * FTC 17240 GoBilda + DuluthBot v3 Chassis:
      */
     public static final double TICKS_PER_REV = 537.6;
     public static final double MAX_RPM = 312;
@@ -60,7 +60,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.77; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16.34; // in
+    public static double TRACK_WIDTH = 15.25; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -100,7 +100,7 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      */
     /*
-     * FTC 17420 GoBilda:
+     * FTC 17420 GoBilda + DuluthBot:
      *  Values copied/pasted from the generated wizard at https://learnroadrunner.com/drive-constants.html#drive-constants
      */
     public static double MAX_VEL = 52.48180821614297;

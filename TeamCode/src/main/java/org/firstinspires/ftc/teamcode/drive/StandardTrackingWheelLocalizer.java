@@ -31,17 +31,17 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = .69; // // Dual Omni 35mm (1.38 inches / 2)
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 4.9375; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 8; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = -1; // in; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     private List<Integer> lastEncPositions, lastEncVels;
 
-    /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+    /* FTC 17240 2023-24: Duluth Bot + 3 Wheel Odometry
     * Added X_MULTIPLIER and Y_MULTIPLIER */
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 0.997; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1.024; // Multiplier in the Y direction
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
@@ -53,11 +53,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "paraDeadWheelLeft"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "paraDeadWheelRight"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "perpDeadWheel"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRearDrive"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRearDrive"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFrontDrive"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -76,7 +78,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions.add(rightPos);
         lastEncPositions.add(frontPos);
 
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+        /* FTC 17240 2023-24: Duluth Bot + 3 Wheel Odometry
          * Added X_MULTIPLIER and Y_MULTIPLIER */
         return Arrays.asList(
                 encoderTicksToInches(leftPos) * X_MULTIPLIER,
@@ -97,7 +99,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(rightVel);
         lastEncVels.add(frontVel);
 
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+        /* FTC 17240 2023-24: Duluth Bot + 3 Wheel Odometry
          * Added X_MULTIPLIER and Y_MULTIPLIER */
         return Arrays.asList(
                 encoderTicksToInches(leftVel) * X_MULTIPLIER,

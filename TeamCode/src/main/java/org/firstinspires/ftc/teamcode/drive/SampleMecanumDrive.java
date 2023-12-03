@@ -93,7 +93,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry
         Removing based on use of ThreeWheelEncoder usage
 
         // TODO: adjust the names of the following hardware devices to match your configuration
@@ -103,11 +103,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu.initialize(parameters);
         */
 
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry */
+        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry */
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRearDrive");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRearDrive");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
+
+        // Set direction of leftRearDrive
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -295,7 +298,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
          */
@@ -304,7 +307,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        /* FTC 17240 2023-24: GoBilda + 3 Wheel Odometry
+        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry
         return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
 
          */
