@@ -22,7 +22,7 @@ public class Constants {
     public static final double DUMPER_INITIALIZATION_POS = 0.6;
 
     public static final double[] PIXEL_LATCH_POSITIONS = {
-            0, // closed
+            0.5, // closed
             1, // open
     };
 

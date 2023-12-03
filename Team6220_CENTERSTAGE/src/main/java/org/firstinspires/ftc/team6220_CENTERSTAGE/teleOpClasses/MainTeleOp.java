@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
-@TeleOp(name="League2_TeleOp", group ="vazkiiIsANeatByMod")
+@TeleOp(name="MainTeleOp", group ="vazkiiIsANeatByMod")
 public class MainTeleOp extends LinearOpMode {
 
     // define states for turning, using slides, outtaking
@@ -184,10 +184,12 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 // Slides stuff
-                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                    drive.moveSlides(-0.5);
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    drive.moveSlides(0.5);
+                if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+                    drive.moveSlides(-0.5, true);
+                } else if (gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    drive.moveSlides(0.5, false);
+                } else {
+                    drive.moveSlides(0, false);
                 }
 
                 // move intake bar down to preset value with dpad but only if it can
@@ -210,8 +212,12 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
                         intakePreset = Constants.INTAKE_POSITIONS.length - 1;
 
+                double pushIntakeServoHarder = 0.0;
+
+
                 // drive the servo to position set by dpad using above code
-                drive.intakeServo.setPosition(Constants.INTAKE_POSITIONS[intakePreset]);
+                drive.intakeServo.setPosition(Constants.INTAKE_POSITIONS[intakePreset]
+                        - (gp2.getButton(GamepadKeys.Button.X)? 0.05 : 0.0));
 
                 // go go gadget intake motor
                 drive.intakeMotor.setPower(-gp2.getLeftY());
@@ -226,7 +232,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 // Manual control for the dumper
-                drive.dumperServo.setPosition(0.6 - Math.min(0.0, gp2.getRightY())*0.6);
+                drive.dumperServo.setPosition(1 - (0.35 - Math.min(0.0, gp2.getRightY()) * 0.35));
 
                 // Determines whether to open or close the front pixel latch
                 if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
