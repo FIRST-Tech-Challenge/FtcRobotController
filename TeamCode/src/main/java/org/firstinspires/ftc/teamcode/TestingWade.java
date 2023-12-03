@@ -36,7 +36,7 @@ public class TestingWade extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.straightBlocking(6, false, 0.7);
+            robot.autoOuttake(true);
 
             /*
 //            while (count < 5) {

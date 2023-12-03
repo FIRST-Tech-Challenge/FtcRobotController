@@ -21,8 +21,8 @@ public class LongRedAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
             robot.alignToBoard();
-            robot.autoOuttake();
-            //robot.parkBot(true);
+            robot.autoOuttake(false);
+            robot.parkBot(true);
 
             /*
             //second trip
