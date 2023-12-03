@@ -52,7 +52,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         servoReleaseDrone = hardwareMap.servo.get("servoReleaseDrone");
 
-        // servoRotateGondola = hardwareMap.servo.get("servoRotateGondola");
+        servoRotateGondola = hardwareMap.servo.get("servoRotateGondola");
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -78,12 +78,12 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorIntakeWheels.setDirection(DcMotor.Direction.FORWARD);
 
-        servoFlipGondola.setPosition(0.98);
+        servoFlipGondola.setPosition(0.25);
 
         // servoRotateGondola.setPosition(0.0);
 
         // initializes position of drone launcher servo. careful!
-        servoReleaseDrone.setPosition(0.5);
+        // servoReleaseDrone.setPosition(0.5);
     }
 
     // mecanum drive method
