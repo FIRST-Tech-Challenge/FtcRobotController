@@ -105,11 +105,13 @@ public final class MecanumDrive {
                 axialGain = 10.0;
                 lateralGain = 10.0;
                 headingGain = 10.0; // shared with turn
+
+            // is competition bot
             } else {
                 // drive model parameters
                 inPerTick = 72.0 / 3146.5;
-                lateralInPerTick = inPerTick * 8.5 / 72.0;
-                trackWidthTicks = 0;
+                lateralInPerTick = inPerTick;
+                trackWidthTicks = 1316.0487423269376;
 
                 // feedforward parameters (in tick units)
                 kS = 0.7120066356750563;
