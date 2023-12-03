@@ -43,10 +43,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
-// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineFindLinesNavyHat;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
@@ -85,9 +83,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="BlueFieldLeft", group="OpMode")
+@Autonomous(name="NavyLinesBlueFieldLeft", group="OpMode")
 //@Disabled
-public class Auto1_BlueFieldLeft extends OpMode {
+public class Auto1_FindLinesNavyHat_BlueFieldLeft extends OpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -109,7 +107,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
-    GripPipelineWhitePixelRGBT1 pipeline;
+    GripPipelineFindLinesNavyHat pipeline;
 
     Movement moveTo;
 
@@ -117,19 +115,19 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
     LinearSlideMovement linearSlideMove;
 
-    private String gamepieceLocation = "right";
+    private String gamepieceLocation;
 
     int state;
 
-    double rightCount = 0;
-    double centerCount = 0;
-    double leftCount = 0;
+    int rightCount = 0;
+    int centerCount = 0;
+    int leftCount = 0;
 
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "left");
-        Point avgLoc = pipeline.avgContourCoord();
+        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgLineCoordinate(), "left");
+        Point avgLoc = pipeline.avgLineCoordinate();
         if (gamepiecePOS.getPOS() == "right"){
             rightCount += 1;
         } else if (gamepiecePOS.getPOS() == "center"){
@@ -137,22 +135,13 @@ public class Auto1_BlueFieldLeft extends OpMode {
         } else if (gamepiecePOS.getPOS() == "left") {
             leftCount += 1;
         }
-
-        if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = "right";
-        } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = "center";
-        } else if (leftCount > 5){
+        if (leftCount > centerCount) {
             gamepieceLocation = "left";
+        } else if (centerCount > rightCount) {
+            gamepieceLocation = "center";
+        } else {
+            gamepieceLocation = "right";
         }
-
-        // Reset the counters to lower values every 50 detects to allow for field condition changes
-        if (rightCount + centerCount + leftCount > 50) {
-            rightCount = rightCount * 0.3;
-            centerCount = centerCount * 0.3;
-            leftCount = leftCount * 0.3;
-        }
-
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
         telemetry.addData("Left Probability", leftCount / (leftCount+rightCount+centerCount));
@@ -169,7 +158,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new GripPipelineWhitePixelRGBT1();
+        pipeline = new GripPipelineFindLinesNavyHat();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -290,9 +279,9 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Backwards 18 inches
             moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
             // Left 6 inches
-            moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Left((int)((6 * ticksPerInch) * 1.04), 0.5);
             // Move backwards 10.5 inches
-            moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward
@@ -336,7 +325,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Right 2 inches
             moveTo.Right((int)((2 * ticksPerInch) * 0.94), 0.5);
             // Backwards 36.5 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((36.75 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward
