@@ -286,9 +286,9 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Backwards 18 inches
             moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
             // Left 6 inches
-            moveTo.Left((int)((6 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
             // Move backwards 10.5 inches
-            moveTo.Backwards((int)((10.5 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward
@@ -332,7 +332,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Right 2 inches
             moveTo.Right((int)((2 * ticksPerInch) * 0.94), 0.5);
             // Backwards 36.5 inches
-            moveTo.Backwards((int)((36.75 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             // Moves the conveyor forward

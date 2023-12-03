@@ -362,8 +362,8 @@ public class Auto1_RedFieldRight extends OpMode {
             sleep(500);
             intake.FlipUp();
             moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
-            //moveTo.Right((int)((6.5 * ticksPerInch) * 1.04), 0.5);
-            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Right((int)((3 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Backwards((int)((20 * ticksPerInch) * 0.94), 0.25);
             linearSlideMove.Movelinearslide(low_linearslide_ticks);
             sleep(700);
             // Moves the conveyor forward
