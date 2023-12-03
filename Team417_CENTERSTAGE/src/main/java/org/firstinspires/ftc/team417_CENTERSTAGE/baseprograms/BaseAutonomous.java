@@ -152,8 +152,18 @@ abstract public class BaseAutonomous extends BaseOpMode {
             //double startTime = 0;  // startTime value to compare to
             @Override
             public boolean run(TelemetryPacket packet) {
+                final double startUpwardTiltPos = 75, startUpwardResetPos = 1500, endUpwardResetPos = 2000, startDownwardTiltPos = 1500, endDownwardTiltPos = 250; //Locations the dumper should tilt so the arm does not hit the robot.
                 if (armMotor.getCurrentPosition() <= BaseOpMode.ARM_MOTOR_MAX_POSITION * (3.0/4.0)) {
                     armMotor.setPower(0.2);
+                    if ((armMotor.getCurrentPosition() > startUpwardTiltPos && armMotor.getCurrentPosition() < startUpwardResetPos) && armMotor.getPower() > 0)
+                        dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);
+                    else if (armMotor.getCurrentPosition() < endUpwardResetPos && armMotor.getPower() > 0)
+                        dumperServo.setPosition(DUMPER_SERVO_RESET_POSITION);
+
+                    if (armMotor.getCurrentPosition() < endDownwardTiltPos && armMotor.getPower() < 0)
+                        dumperServo.setPosition(DUMPER_SERVO_RESET_POSITION);
+                    else if (armMotor.getCurrentPosition() < startDownwardTiltPos && armMotor.getPower() < 0)
+                        dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);
                     return true;
                 } else {
                     armMotor.setPower(0);
