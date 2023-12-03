@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Random;
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double X_OFFSET = 60;
-    public static double Y_OFFSET  = 20;
+    public static double L_X_OFFSET = 500;
+    public static double L_Y_OFFSET  = -80;
+    public static double R_X_OFFSET = 350;
+    public static double R_Y_OFFSET  = 50;
 
-    static final int STREAM_WIDTH = 1184; // resolution of camera   1280
-    static final int STREAM_HEIGHT = 656; // resolution of camera  720
+    static final int STREAM_WIDTH = 1280; // resolution of camera   1280
+    static final int STREAM_HEIGHT = 720; // resolution of camera  720
 
     Mat zoomedInput = new Mat();
     Mat HLS = new Mat();
@@ -34,16 +36,26 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public int avgCH, avgCL, avgCS;
     public int avgRH, avgRL, avgRS;
     // To zoom in (x2)
+    public static int red1 = 160;
+
+    public static int blue2 = 100;
     Rect viewScope = new Rect(new Point(STREAM_WIDTH/4, STREAM_HEIGHT/4), new Point(STREAM_WIDTH * 3/4, STREAM_HEIGHT * 3/4));
 
-    static final int WidthRectA = 180;
-    static final int HeightRectA = 100;
+    public static int WidthRectA = 200; //180
+    public static int HeightRectA = 175; //100
 
-    static final Point RectATopLeftAnchor = new Point(((STREAM_WIDTH/2 - WidthRectA) / 2), ((STREAM_HEIGHT/2 - HeightRectA) / 2));
+    public static int WidthRectB = 100; //180
+    public static int HeightRectB = 100; //100
 
-    Point RectATLCorner = new Point(RectATopLeftAnchor.x - X_OFFSET, RectATopLeftAnchor.y - Y_OFFSET);
-    Point RectABRCorner = new Point(RectATopLeftAnchor.x + WidthRectA -X_OFFSET, RectATopLeftAnchor.y + HeightRectA - Y_OFFSET);
+static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH/2), (STREAM_HEIGHT/2));
 
+    Point RectATLCorner = new Point(RectATopLeftAnchor.x - L_X_OFFSET, RectATopLeftAnchor.y + L_Y_OFFSET);
+
+    Point RectABRCorner = new Point(RectATopLeftAnchor.x - L_X_OFFSET + WidthRectA, RectATopLeftAnchor.y + L_Y_OFFSET + HeightRectA);
+
+    Point RectBTLCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET, RectATopLeftAnchor.y - R_Y_OFFSET);
+
+    Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
     boolean stopped = false;
 
     static final int colorTolerance = 20;
@@ -78,7 +90,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         }
 
         Log.v("vision", "processFrame called.");
-        zoomedInput = input.submat(viewScope);
+        zoomedInput = input;
 
         Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
         Mat leftArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
@@ -103,7 +115,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgLH, avgLL, avgLS));
 
         Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
-        Mat centerArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
+        Mat centerArea = zoomedInput.submat(new Rect(RectBTLCorner, RectBBRCorner));
         Log.v("vision", "submat created.");
 
         ArrayList<Mat> matInCHLS = inputMatToHLS(centerArea);
@@ -117,8 +129,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 
         Imgproc.rectangle( // rings
                 zoomedInput, // Buffer to draw on
-                RectATLCorner, // First point which defines the rectangle
-                RectABRCorner, // Second point which defines the rectangle
+                RectBTLCorner, // First point which defines the rectangle
+                RectBBRCorner, // Second point which defines the rectangle
                 new Scalar(0,0,255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
@@ -147,7 +159,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
          * L (0-100, %)     L / 256
          */
 
-        Utilities.getSharedUtility().telemetry.addData("Sleeve Color:", avgLH);
+        Utilities.getSharedUtility().telemetry.addData("Left Hue:", avgLH);
+        Utilities.getSharedUtility().telemetry.addData("Center Hue:", avgCH);
 
         //algorithm for finding the closest color
         /*if (avgH > 50 && avgH < 80) {
@@ -159,17 +172,15 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         } else {
             return 1; // a guess...
         }*/
-        int red1 = 1;
-        int blue2 = 244;
         int LdistFrom1 = Math.abs(avgLH-red1);
         int LdistFrom2 = Math.abs(avgLH-blue2);
-        int RdistFrom1 = Math.abs(avgLH-red1);
-        int RdistFrom2 = Math.abs(avgLH-blue2);
+        int CdistFrom1 = Math.abs(avgCH-red1);
+        int CdistFrom2 = Math.abs(avgCH-blue2);
         if (LdistFrom1<=colorTolerance || LdistFrom2 <= colorTolerance){
             Log.v("vision", "left " + 1);
             return 1;
         }
-        else if (RdistFrom1<=colorTolerance || RdistFrom2 <= colorTolerance){
+        if ((CdistFrom1>=colorTolerance && CdistFrom1 < LdistFrom1)  || (CdistFrom2 >= colorTolerance && CdistFrom2 < LdistFrom2)){
             Log.v("vision", "center " + 2);
             return 2;
         }

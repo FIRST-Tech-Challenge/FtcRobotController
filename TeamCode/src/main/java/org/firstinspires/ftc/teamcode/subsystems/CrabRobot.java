@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 public class CrabRobot extends Robot {
-    public final SimpleMecanumDrive mecanumDrive;
-    public final Intake intake;
-    public final Outtake outtake;
-    //public final DualMotorLift dualMotorLift;
+    public  SimpleMecanumDrive mecanumDrive;
+    public  Intake intake;
+    public  Outtake outtake;
+    public  DualMotorLift dualMotorLift;
     public SmartGamepad smartGamepad1;
     public SmartGamepad smartGamepad2;
     public DroneLauncher droneLauncher;
@@ -23,11 +23,9 @@ public class CrabRobot extends Robot {
         intake = new Intake(this);
         registerSubsystem(intake);
         outtake = new Outtake(this, opMode.telemetry);
-        registerSubsystem(outtake);
+        registerSubsystem(outtake); //dualMotorLift is initialized in outtake
         droneLauncher = new DroneLauncher(this, opMode.telemetry);
         registerSubsystem(droneLauncher);
-        //dualMotorLift = new DualMotorLift(this, opMode.telemetry, DualMotorLift.Mode.BOTH_MOTORS_PID);
-        //registerSubsystem(dualMotorLift);
 
     }
 
