@@ -44,8 +44,9 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
+// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
+// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
@@ -108,7 +109,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
-    GripPipelineBlueGamepieceRGB pipeline;
+    GripPipelineWhitePixelRGBT1 pipeline;
 
     Movement moveTo;
 
@@ -116,13 +117,13 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
     LinearSlideMovement linearSlideMove;
 
-    private String gamepieceLocation;
+    private String gamepieceLocation = "right";
 
     int state;
 
-    int rightCount = 0;
-    int centerCount = 0;
-    int leftCount = 0;
+    double rightCount = 0;
+    double centerCount = 0;
+    double leftCount = 0;
 
     @Override
     public void init_loop(){
@@ -136,13 +137,21 @@ public class Auto1_BlueFieldLeft extends OpMode {
         } else {
             leftCount += 1;
         }
-        if (rightCount > centerCount) {
+        if (rightCount > centerCount && rightCount > 5) {
             gamepieceLocation = "right";
-        } else if (centerCount > leftCount) {
+        } else if (centerCount > leftCount && centerCount > 5) {
             gamepieceLocation = "center";
-        } else {
+        } else if (leftCount > 5){
             gamepieceLocation = "left";
         }
+
+        // Reset the counters to lower values every 50 detects to allow for field condition changes
+        if (rightCount + centerCount + leftCount > 50) {
+            rightCount = rightCount * 0.3;
+            centerCount = centerCount * 0.3;
+            leftCount = leftCount * 0.3;
+        }
+
         telemetry.addData("AvgContour.x",avgLoc.x);
         telemetry.addData("AvgContour.y",avgLoc.y);
         telemetry.addData("location", gamepieceLocation);
@@ -156,7 +165,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new GripPipelineBlueGamepieceRGB();
+        pipeline = new GripPipelineWhitePixelRGBT1();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

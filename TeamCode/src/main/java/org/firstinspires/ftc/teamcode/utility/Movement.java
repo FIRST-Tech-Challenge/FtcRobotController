@@ -70,6 +70,9 @@ public class Movement {
      */
     private void initMovement(){
         motor_ticks = 0;
+
+        moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
         lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
@@ -82,7 +85,6 @@ public class Movement {
         rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
-        moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     /**
@@ -106,11 +108,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 0.9);
-                lbDrive.setPower(power * 0.9);
+                lfDrive.setPower(power * 1.15);
+                lbDrive.setPower(power * 1.15);
             } else {
-                lfDrive.setPower(power * 1.1);
-                lbDrive.setPower(power * 1.1);
+                lfDrive.setPower(power * 0.85);
+                lbDrive.setPower(power * 0.85);
             }
         }
     }
@@ -136,11 +138,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 0.9);
-                lbDrive.setPower(power * 0.9);
+                lfDrive.setPower(power * 0.85);
+                lbDrive.setPower(power * 0.85);
             } else {
-                lfDrive.setPower(power * 1.1);
-                lbDrive.setPower(power * 1.1);
+                lfDrive.setPower(power * 1.15);
+                lbDrive.setPower(power * 1.15);
             }
         }
     }
@@ -168,11 +170,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 0.9);
-                lbDrive.setPower(power * 0.9);
+                lfDrive.setPower(power * 1.15);
+                lbDrive.setPower(power * 1.15);
             } else {
-                lfDrive.setPower(power * 1.1);
-                lbDrive.setPower(power * 1.1);
+                lfDrive.setPower(power * 0.85);
+                lbDrive.setPower(power * 0.85);
             }
         }
     }
@@ -199,11 +201,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 0.9);
-                lbDrive.setPower(power * 0.9);
+                lfDrive.setPower(power * 0.85);
+                lbDrive.setPower(power * 0.85);
             } else {
-                lfDrive.setPower(power * 1.1);
-                lbDrive.setPower(power * 1.1);
+                lfDrive.setPower(power * 1.15);
+                lbDrive.setPower(power * 1.15);
             }
         }
     }
