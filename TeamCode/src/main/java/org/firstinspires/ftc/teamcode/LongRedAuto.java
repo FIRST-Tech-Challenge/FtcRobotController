@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -36,6 +38,8 @@ public class LongRedAuto extends LinearOpMode {
             robot.mecanumBlocking(24, false, 0.7); //mecanum directly in front of board left if blue
             robot.setHeading(-90, 0.7);
             */
+
+            Log.d("vision", "runOpMode: heading " + robot.getCurrentHeading());
 
             break;
         }
