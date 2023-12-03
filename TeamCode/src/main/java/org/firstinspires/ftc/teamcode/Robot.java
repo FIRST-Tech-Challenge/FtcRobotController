@@ -83,6 +83,7 @@ public class Robot {
             lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lsBack = hardwareMap.dcMotor.get("lsBack");
             lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            // get servos from hardware map
             tray = hardwareMap.servo.get("arm");
             clamp = hardwareMap.servo.get("holderClamp");
             hook = hardwareMap.servo.get("linearLocker");
@@ -288,7 +289,6 @@ public class Robot {
         intake = hardwareMap.dcMotor.get("intake");
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsFront = hardwareMap.dcMotor.get("lsFront");
-        spikeServo = hardwareMap.servo.get("spikeServo");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -300,9 +300,6 @@ public class Robot {
 
         lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        tray = hardwareMap.servo.get("arm");
-        flipper = hardwareMap.servo.get("flipper");
     }
 
     public double maxAbsValueDouble(double[] values) {
@@ -1190,4 +1187,29 @@ public class Robot {
         Log.d("pid", "straightBlockingFixHeading: final currentTick is " + currentTick);
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
     }
+
+    public void closeClamp () {
+        setServoPosBlocking(clamp, 0.522);
+    }
+
+    public void openClamp () {
+        setServoPosBlocking(clamp, 0.472);
+    }
+
+    public void slideToOuttakePos () {
+        moveLinearSlideByTicksBlocking(-1650);
+    }
+
+    public void slideToIntakePos () {
+        moveLinearSlideByTicksBlocking(0);
+    }
+
+    public void openHook () {
+        hook.setPosition(0.49);
+    }
+
+    public void closeHook () {
+        hook.setPosition(0.27);
+    }
+
 }

@@ -17,6 +17,7 @@ public class TestingWade extends LinearOpMode {
 
         // Calculate distances
 
+        /*
         boolean isRedAlliance = true;
         int HORIZONTAL_TOTAL_BEFORE_CHUNKING = 44;
         int VERTICAL_TOTAL = 73;
@@ -29,12 +30,13 @@ public class TestingWade extends LinearOpMode {
         int vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
         int horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
         int count = 0;
+        */
 
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.autoOuttake();
 
+            robot.straightBlocking(6, false, 0.7);
 
             /*
 //            while (count < 5) {

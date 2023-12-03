@@ -24,18 +24,12 @@ public class TeleOp extends LinearOpMode {
         //initialize robot class
         robot = new Robot(hardwareMap, this, telemetry, true, false);
         robot.setUpDrivetrainMotors();
-
-        //setting motor direction
-        robot.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //set run mode
-        robot.lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.setUpIntakeOuttake();
 
         boolean hangingMode;
         int polarity;
+
+        Log.d("vision", "runOpMode: heading " + robot.getCurrentHeading());
 
         waitForStart();
 
@@ -237,8 +231,6 @@ public class TeleOp extends LinearOpMode {
 
             robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
-            telemetry.addLine("lsfront pos" + robot.lsFront.getCurrentPosition());
-            telemetry.addLine("lsback pos" + robot.lsBack.getCurrentPosition());
             telemetry.update();
         }
     }
