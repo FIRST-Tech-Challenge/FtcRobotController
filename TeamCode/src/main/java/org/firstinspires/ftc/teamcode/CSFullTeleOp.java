@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -70,6 +71,7 @@ public class CSFullTeleOp extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
         pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Initialized");
@@ -125,7 +127,7 @@ public class CSFullTeleOp extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
 
             if (gamepad2.dpad_up){
-                pixelLiftingMotor.setTargetPosition(100);
+                pixelLiftingMotor.setTargetPosition(1000);
             }
 
             if (gamepad2.dpad_down) {
