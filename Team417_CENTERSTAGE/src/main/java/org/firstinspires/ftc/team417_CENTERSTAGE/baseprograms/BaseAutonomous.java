@@ -206,7 +206,7 @@ class AutonDriveFactory {
     }
 
     PoseAndAction getDriveAction(boolean isRed, boolean isFar, SpikeMarks location, Action intake, Action output) {
-
+  
         if (isFar) {
             xOffset = 0;
             parkingOffset = 48;
