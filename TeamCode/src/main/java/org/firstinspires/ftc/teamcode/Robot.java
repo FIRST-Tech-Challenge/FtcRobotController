@@ -178,18 +178,26 @@ public class Robot {
         if (lowOuttake) {
             moveLinearSlideByTicksBlocking(-1550);
         } else {
-            moveLinearSlideByTicksBlocking(-1800);
+            moveLinearSlideByTicksBlocking(-1650); //1750
         }
 
         trayToOuttakePos(); // pivot tray to outtake position
         opMode.sleep(100);
         openClamp(); // drop pixel
         opMode.sleep(100);
-        moveLinearSlideByTicksBlocking(-2010); // move linear slide up
+
+        // move linear slide up
+        if (lowOuttake) {
+            moveLinearSlideByTicksBlocking(-2010);
+        } else {
+            moveLinearSlideByTicksBlocking(-2200);
+        }
+
         opMode.sleep(100);
         straightBlocking(6, true, 0.7); //move back 2
         setHeading(-90, 0.7);
         trayToIntakePos(); //intake
+        opMode.sleep(2000);
         moveLinearSlideByTicksBlocking(0); // linear slide down
     }
 
@@ -591,7 +599,7 @@ public class Robot {
 
     public void detectMarkerPosition() {
 
-        boolean isTesting = true;
+        boolean isTesting = false;
         int visionTimeout = 2; // timeout detection after 2 seconds
         double time;
         MarkerDetector.MARKER_POSITION position;
@@ -802,7 +810,7 @@ public class Robot {
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
         int polarity = isRedAlliance ? -1 : 1;
-        int PIXEL_SIZE = 3;
+        double PIXEL_SIZE = 3.5;
         int inchesMovedBack = 0;
 
         while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
@@ -908,16 +916,16 @@ public class Robot {
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "moveToMarker: Inner Spike");
-                // Calculate distances
+                // calculate distances
                 vertical1 = 0;
-                horizontal2 = 18;
+                horizontal2 = 20;
                 horizontal3 = 0;
                 vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 22;
 
-                // Start moving
+                // move!
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
                 setHeading(45 * polarity, 0.25); //turn right
                 straightBlockingFixHeading(7, false, 0.25); //forward
@@ -928,7 +936,6 @@ public class Robot {
                 setHeading(0, 0.7); //turn back
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                opMode.sleep(10000);
                 straightBlockingFixHeading(vertical6, false, 0.7);
                 //moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
@@ -976,7 +983,7 @@ public class Robot {
                 vertical4 = 10;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 25;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
