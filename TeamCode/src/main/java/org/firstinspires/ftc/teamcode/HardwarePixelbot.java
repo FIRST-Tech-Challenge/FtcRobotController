@@ -88,11 +88,14 @@ public class HardwarePixelbot
     public double       viperMotorsPwr  = 0.0;     // current power setting
     public double       viperMotorsAmps = 0.0;     // current power draw (Amps)
 
-    public double  VIPER_RAISE_POWER =  1.00; // Motor power used to RAISE viper slide
+    public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
     public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
-    public double  VIPER_LOWER_POWER = -0.25; // Motor power used to LOWER viper slide
+    public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
-    public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended
+    public int     VIPER_EXTEND_LOW  = 200;  // Encoder count when raised to lowest possible scoring position
+    public int     VIPER_EXTEND_MID  = 350;  // Encoder count when raised to medium scoring height
+    public int     VIPER_EXTEND_HIGH = 500;  // Encoder count when raised to upper scoring height
+    public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
@@ -472,11 +475,11 @@ public class HardwarePixelbot
         if( targetEncoderCount > VIPER_EXTEND_FULL ) targetEncoderCount = VIPER_EXTEND_FULL;
         // Are we raising or lowering the lift?
         boolean directionUpward = (targetEncoderCount > viperMotorsPos)? true : false;
-        // Configure target encoder count
-        viperMotors.setTargetPosition( targetEncoderCount );
         // Set the power used to get there
         double motorPower = (directionUpward)? VIPER_RAISE_POWER : VIPER_LOWER_POWER;
         viperMotors.setPower( motorPower );
+        // Configure target encoder count
+        viperMotors.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
         viperMotors.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
     } // viperSlideExtension

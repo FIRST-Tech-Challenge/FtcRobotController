@@ -81,7 +81,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Drive To AprilTag", group = "Demo")
-@Disabled
+//@Disabled
 public class DemoRobotDriveToAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
@@ -90,21 +90,26 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
+    final double SPEED_GAIN  =  0.02  ;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
     final double STRAFE_GAIN =  0.02 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double TURN_GAIN   =  0.01  ;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-    final double MAX_AUTO_SPEED = 0.75;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.50;  //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.30;  //  Clip the turn speed to this max value (adjust for your robot)
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
     private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    // CENTERSTAGE AprilTag assignments:
+    //  - Blue Alliance LEFT   Backdrop  = 1        - Red Alliance LEFT   Backdrop  = 4
+    //  - Blue Alliance CENTER Backdrop  = 2        - Red Alliance CENTER Backdrop  = 5
+    //  - Blue Alliance RIGHT  Backdrop  = 3        - Red Alliance RIGHT  Backdrop  = 6
+    //  - Blue Alliance 5-stack 2"/50mm  = 9        - Red Alliance 5-stack 2"/50mm  = 8
+    //  - Blue Alliance 5-stack 5"/127mm = 10       - Red Alliance 5-stack 5"/127mm = 7
+    private static final int DESIRED_TAG_ID = 5;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -148,8 +153,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        if (USE_WEBCAM)
-            setManualExposure(15, 250);  // Use low exposure time to reduce motion blur
+        setManualExposure(15, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
@@ -195,9 +199,9 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
             if (gamepad1.left_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range/2.16 - DESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing;
-                double  yawError        = desiredTag.ftcPose.yaw;
+                double  rangeError   = (desiredTag.ftcPose.range/2.16 - DESIRED_DISTANCE);
+                double  headingError = desiredTag.ftcPose.bearing;
+                double  yawError     = desiredTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
                 driveErr  = (Math.abs(rangeError) < 0.2)? 0.0 : (minDrvPwr + rangeError * SPEED_GAIN);
@@ -278,7 +282,9 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
                 // === CAMERA CALIBRATION for 150deg webcam ===
-                .setLensIntrinsics(332.309,332.309,341.008,243.109)
+                //.setLensIntrinsics(332.309,332.309,341.008,243.109)
+                // === CAMERA CALIBRATION for Arducam B0197 webcam ===
+                .setLensIntrinsics(1566.16,1566.16,1002.58,539.862)
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
@@ -286,26 +292,18 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-
         // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
-        }
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTag)
+                .build();
     }
 
     /*
      Manually set the camera gain and exposure.
      This can only be called AFTER calling initAprilTag(), and only works for Webcams;
     */
-    private void    setManualExposure(int exposureMS, int gain) {
+    private void setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {

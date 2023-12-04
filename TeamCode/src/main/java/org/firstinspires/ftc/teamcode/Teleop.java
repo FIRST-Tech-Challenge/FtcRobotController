@@ -29,18 +29,18 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Lower lift to collect from current stack height
-    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Flip intake (toggle)
-    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Lower lift to COLLECT position
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // Raise lift to TRANSPORT position
-    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Lift to HIGH junction
-    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Lift to MEDIUM junction
-    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Lift to LOW junction
-    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Lower to GROUND junction
-    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // Collect cone (intake cone)
-    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // Deposit cone (eject cone)
-    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
-    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // UNUSED
+    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // 
+    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // 
+    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // 
+    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // 
+    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // 
+    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // 
+    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // 
+    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // 
+    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // 
+    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // 
+    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // 
+    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // 
 
     double  yTranslation, xTranslation, rotation;                  /* Driver control inputs */
     double  rearLeft, rearRight, frontLeft, frontRight, maxPower;  /* Motor power levels */
@@ -118,15 +118,10 @@ public abstract class Teleop extends LinearOpMode {
             robot.readBulkData();
             globalCoordinatePositionUpdate();
 
+            ProcessAprilTagControls();
             ProcessCollectorControls();
             ProcessFingerControls();
             ProcessLiftControls();
-
-            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
-            if( gamepad1_triangle_now && !gamepad1_triangle_last)
-            {
-
-            }
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -239,6 +234,13 @@ public abstract class Teleop extends LinearOpMode {
   //    gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
     } // captureGamepad2Buttons
 
+    /*---------------------------------------------------------------------------------*/
+    void ProcessAprilTagControls() {
+
+
+    } // ProcessAprilTagControls
+    
+    /*---------------------------------------------------------------------------------*/
     void ProcessCollectorControls() {
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
         // - turns off collector motor
@@ -271,6 +273,7 @@ public abstract class Teleop extends LinearOpMode {
     }  // processCollectorControls
 
 
+    /*---------------------------------------------------------------------------------*/
     void ProcessFingerControls() {
 
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
@@ -289,6 +292,7 @@ public abstract class Teleop extends LinearOpMode {
 
     } // ProcessFingerControls
 
+    /*---------------------------------------------------------------------------------*/
     void ProcessLiftControls() {
         boolean safeToManuallyLower = (robot.viperMotorsPos > robot.VIPER_EXTEND_ZERO);
         boolean safeToManuallyRaise = (robot.viperMotorsPos < robot.VIPER_EXTEND_FULL);
@@ -303,14 +307,22 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
+           robot.viperSlideExtension( robot.VIPER_EXTEND_HIGH );
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
-        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
+        else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Move lift to MID-SCORING position
+           robot.viperSlideExtension( robot.VIPER_EXTEND_MID );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        {   // Move lift to LOW-SCORING position
+           robot.viperSlideExtension( robot.VIPER_EXTEND_LOW );
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
+        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
+           robot.viperSlideExtension( robot.VIPER_EXTEND_ZERO );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
