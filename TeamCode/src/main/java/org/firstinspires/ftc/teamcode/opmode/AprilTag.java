@@ -34,16 +34,26 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 
 @TeleOp(name = "AprilTag")
 public class AprilTag extends LinearOpMode {
+    private int     myExposure  ;
+    private int     minExposure ;
+    private int     maxExposure ;
+    private int     myGain      ;
+    private int     minGain ;
+    private int     maxGain ;
     private DistanceUnit distance;
     // The variable to store our instance of the AprilTag processor.
     private AprilTagProcessor aprilTag;
@@ -55,7 +65,9 @@ public class AprilTag extends LinearOpMode {
     public void runOpMode() {
 
         initAprilTag();
-
+        getCameraSetting();
+        myExposure = Math.min(5, minExposure);
+        myGain = maxGain;
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -129,7 +141,7 @@ public class AprilTag extends LinearOpMode {
 //                telemetry.addLine(String.format("XYZ %6.3f %6.3f %6.3f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
 //                telemetry.addLine(String.format("PRY %6.3f %6.3f %6.3f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
 //                telemetry.addLine(String.format("RBE %6.3f %6.3f %6.3f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                telemetry.addData("range from tag", detection.ftcPose.range);
+                telemetry.addData("range from tag", detection.ftcPose.range-0.035);
                 telemetry.addData("angle from tag", detection.ftcPose.bearing);
 //            } else {
 //                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -143,5 +155,32 @@ public class AprilTag extends LinearOpMode {
 //        telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
+    private void getCameraSetting() {
+        // Ensure Vision Portal has been setup.
+        if (visionPortal == null) {
+            return;
+        }
 
+        // Wait for the camera to be open
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Get camera control values unless we are stopping.
+        if (!isStopRequested()) {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            minExposure = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
+            maxExposure = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
+
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            minGain = gainControl.getMinGain();
+            maxGain = gainControl.getMaxGain();
+        }
+    }
 }   // end class
