@@ -45,19 +45,50 @@ public class OpenCV_BottomRight extends LinearOpMode {
     private void TravelLeft()
     {
         telemetry.addData("Go left", "");
-        //robot.driveRobot(FORWARD_SPEED, TURNSPEED);
+        //From Samarth - Uncommenting as its not tested
+        //near the bar
+        //move forward while turning to left
+
+        /*
+        robot.driveRobot(-FORWARD_SPEED, -TURNSPEED);
+        sleep(3500);
+        robot.driveRobot(0,0);
+        robot.driveRobot(FORWARD_SPEED, 0);
+        sleep(2000);
+        robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
+        sleep(2700);
+        robot.stopArm();
+
+        robot.driveRobot(FORWARD_SPEED, 0);
+        sleep(4400);
+        robot.driveRobot(0,TURNSPEED);
+        sleep(5200);
+        robot.driveRobot(FORWARD_SPEED,0);
+        sleep(8000);
+        robot.moveElbowToPosition(0.3);
+        sleep(1000);
+        robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
+        sleep(500);
+        robot.moveElbowToPosition(-0.3);
+        sleep(1000);
+        robot.driveRobot(FORWARD_SPEED,0);
+        sleep(1000);
+
+         */
     }
     private void TravelRight()
     {
         telemetry.addData("Go Right", "");
         //robot.driveRobot(FORWARD_SPEED, -TURNSPEED);
+
+
     }
     private void TravelStraight()
     {
         //AT top right
         telemetry.addData("Go straight", "");
         robot.driveRobot(-FORWARD_SPEED, 0);
-        sleep(6000);
+        sleep(5800);
         robot.driveRobot(0,0);
 
         robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
