@@ -39,6 +39,7 @@ public class Ultrasonics {
      */
     public boolean checkAlliance() {
         backLeft.setLine(allianceLine);
+        op.telemetry.addData("dist", backLeft.getDist());
 //        frontRight.setLine(allianceLine);
         return backLeft.isDetected();
 //                && frontRight.isDetected();

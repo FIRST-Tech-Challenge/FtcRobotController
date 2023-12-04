@@ -14,15 +14,15 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class Magazine extends RFServo {
     public static double CLOSE = 0.13, OPEN = 0.28, FLIP_TIME = 0.1;
     double lastTime = 0, target = 0;
-    private RFLEDStrip blinkin;
+//    private RFLEDStrip blinkin;
     private RFColorSensor colorSensor;
     boolean closed;
 
     public Magazine() {
         super("clawServo", 1.0);
         colorSensor = new RFColorSensor("colorSensor");
-        blinkin = new RFLEDStrip("blinkin");
-        blinkin.shotwhite();
+//        blinkin = new RFLEDStrip("blinkin");
+//        blinkin.shotwhite();
         closed = false;
         super.setFlipTime(FLIP_TIME);
         if(isTeleop) {
@@ -154,16 +154,16 @@ public class Magazine extends RFServo {
         for(int i = 0; i< Magazine.ColorStates.values().length; i++){
             if(ColorStates.values()[i].color.equals(color)){
                 Magazine.ColorStates.values()[i].state = true;
-                if(ColorStates.values()[i].color.equals("WHITE"))
-                    blinkin.white();
-                if(ColorStates.values()[i].color.equals("GREEN"))
-                    blinkin.green();
-                if(ColorStates.values()[i].color.equals("PURPLE"))
-                    blinkin.violet();
-                if(ColorStates.values()[i].color.equals("YELLOW"))
-                    blinkin.yellow();
-                if(ColorStates.values()[i].color.equals("NONE"))
-                    blinkin.shotwhite();
+//                if(ColorStates.values()[i].color.equals("WHITE"))
+//                    blinkin.white();
+//                if(ColorStates.values()[i].color.equals("GREEN"))
+//                    blinkin.green();
+//                if(ColorStates.values()[i].color.equals("PURPLE"))
+//                    blinkin.violet();
+//                if(ColorStates.values()[i].color.equals("YELLOW"))
+//                    blinkin.yellow();
+//                if(ColorStates.values()[i].color.equals("NONE"))
+//                    blinkin.shotwhite();
             }
             else{
                 Magazine.ColorStates.values()[i].state = false;

@@ -58,7 +58,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(-40, -58, toRadians(180)))
                         .setReversed(true)
                         .splineTo(new Vector2d(10, -56.5), toRadians(5))
-                        .splineTo(new Vector2d(45, -28), toRadians(0))
+                        .splineTo(new Vector2d(30, -35), toRadians(0))
                         .waitSeconds(2)
                         .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(180)))
                         .addTemporalMarker(robot::done)
@@ -71,7 +71,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
                         .splineTo(new Vector2d(10, -55.5), toRadians(5))
-                        .splineTo(new Vector2d(40, -28), toRadians(0))
+                        .splineTo(new Vector2d(30, -35), toRadians(0))
                         .waitSeconds(2)
                         .lineToLinearHeading(new Pose2d(52.5, -36, toRadians(180)))
                         .addTemporalMarker(robot::done)
@@ -84,7 +84,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
                         .setReversed(true)
                         .splineTo(new Vector2d(10, -55.5), toRadians(5))
-                        .splineTo(new Vector2d(45, -28), toRadians(0))
+                        .splineTo(new Vector2d(30, -35), toRadians(0))
                         .waitSeconds(2)
                         .lineToLinearHeading(new Pose2d(53, -43, toRadians(180)))
                         .addTemporalMarker(robot::done)
@@ -93,7 +93,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
         detect[0] =
                 robot
                         .roadrun
-                        .trajectorySequenceBuilder(new Pose2d(45, -28, toRadians(180)))
+                        .trajectorySequenceBuilder(new Pose2d(30, -35, toRadians(180)))
                         .waitSeconds(2.0)
                         .lineToLinearHeading(new Pose2d(52.5, -27.5, toRadians(181)))
                         .addTemporalMarker(robot::done)
@@ -101,7 +101,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
         detect[1] =
                 robot
                         .roadrun
-                        .trajectorySequenceBuilder(new Pose2d(40, -28, toRadians(180)))
+                        .trajectorySequenceBuilder(new Pose2d(30, -35, toRadians(180)))
                         .waitSeconds(2.0)
                         .lineToLinearHeading(new Pose2d(52.5, -36, toRadians(181)))
                         .addTemporalMarker(robot::done)
@@ -109,7 +109,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
         detect[2] =
                 robot
                         .roadrun
-                        .trajectorySequenceBuilder(new Pose2d(45, -28, toRadians(180)))
+                        .trajectorySequenceBuilder(new Pose2d(30, -35, toRadians(180)))
                         .waitSeconds(2.0)
                         .lineToLinearHeading(new Pose2d(53, -43.5, toRadians(180)))
                         .addTemporalMarker(robot::done)
@@ -144,20 +144,22 @@ public class RedLeftUltraAuto extends LinearOpMode {
         }
         while (!isStopRequested() && opModeIsActive() && !robot.queuer.isFullfilled()) {
             previousCheck = robot.checkAlliance();
-            robot.queuer.addDelay(4.5);
+            op.telemetry.addData("check", previousCheck);
+            op.telemetry.update();
+//            robot.queuer.addDelay(4.5);
             robot.followTrajSeq(spikePosition[pos]);
-            robot.queuer.addDelay(5);
+//            robot.queuer.addDelay(5);
             robot.preloadAuto();
             robot.queuer.addDelay(1.5);
             robot.followTrajSeq(throughTruss[pos]);
             robot.followTrajSeq(detect[pos], !robot.checkAlliance() && previousCheck);
             robot.queuer.addDelay(6.5);
-            robot.flipAuto();
-            robot.loadAuto();
+//            robot.flipAuto();
+//            robot.loadAuto();
             robot.queuer.addDelay(1.2);
-            robot.dropWrist();
+//            robot.dropWrist();
             robot.queuer.addDelay(0.8);
-            robot.drop();
+//            robot.drop();
             robot.queuer.addDelay(2.5);
             robot.followTrajSeq(dropAndPark[pos]);
             robot.queuer.addDelay(1.0);
