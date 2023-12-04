@@ -8,23 +8,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotClass;
 
-@Autonomous()
-
-public class BlueBackstage extends LinearOpMode {
-
+@Autonomous
+public class RedBackstage extends LinearOpMode {
+    //Instantiate robot class
     RobotClass teamBot = new RobotClass(this);
-
-    @Override
     public void runOpMode() throws InterruptedException {
-        teamBot.init(hardwareMap);
+        //initialize robot
+            waitForStart();
 
-        waitForStart();
+            while (opModeIsActive()){
+                teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
+            }
 
-        while (opModeIsActive()){
-            teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);
-        }
-
-        //Strafe to the wall
-
+            //Strafe to the wall
     }
 }
