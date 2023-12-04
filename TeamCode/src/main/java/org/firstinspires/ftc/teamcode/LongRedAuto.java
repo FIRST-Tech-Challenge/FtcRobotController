@@ -24,23 +24,6 @@ public class LongRedAuto extends LinearOpMode {
             robot.autoOuttake(false);
             robot.parkBot(true);
 
-            /*
-            //second trip
-            robot.mecanumBlocking(24, true, 0.7); //mecanum directly in front of board left if blue
-            robot.setHeading(-90, 0.7);
-            robot.straightBlockingFixHeading(97, true, 0.8);
-            robot.setHeading(-90, 0.7);
-
-            this.sleep(100);
-
-            robot.straightBlockingFixHeading(94, false, 0.8);
-            robot.setHeading(-90, 0.7);
-            robot.mecanumBlocking(24, false, 0.7); //mecanum directly in front of board left if blue
-            robot.setHeading(-90, 0.7);
-            */
-
-            Log.d("vision", "runOpMode: heading " + robot.getCurrentHeading());
-
             break;
         }
     }

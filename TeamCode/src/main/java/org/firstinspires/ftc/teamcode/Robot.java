@@ -165,11 +165,12 @@ public class Robot {
     }
 
     public void trayToOuttakePos() {
-        setServoPosBlocking(tray, 0.375);
+        setServoPosBlocking(tray, 0.37);
     }
 
     public void autoOuttake(boolean lowOuttake) {
 
+        /*
         //precautionary
         trayToIntakePos();
         closeClamp();
@@ -178,11 +179,13 @@ public class Robot {
         if (lowOuttake) {
             moveLinearSlideByTicksBlocking(-1550);
         } else {
-            moveLinearSlideByTicksBlocking(-1650); //1750
+            moveLinearSlideByTicksBlocking(-1700); //1750
         }
 
         trayToOuttakePos(); // pivot tray to outtake position
         opMode.sleep(100);
+        */
+
         openClamp(); // drop pixel
         opMode.sleep(100);
 
@@ -195,7 +198,11 @@ public class Robot {
 
         opMode.sleep(100);
         straightBlocking(6, true, 0.7); //move back 2
-        setHeading(-90, 0.7);
+        if (isRedAlliance) {
+            setHeading(-90, 0.7);
+        } else {
+            setHeading(90, 0.7);
+        }
         trayToIntakePos(); //intake
         opMode.sleep(100);
         moveLinearSlideByTicksBlocking(0); // linear slide down
@@ -652,9 +659,12 @@ public class Robot {
                 polarity = 1;
             }
 
-            setServoPosBlocking(clamp, 0.6);
-            setServoPosBlocking(hook, 0.5);
-            setServoPosBlocking(spikeServo, 0.5);
+            if (!testingOnBert) {
+                trayToIntakePos();
+                closeClamp();
+                openHook();
+                setServoPosBlocking(spikeServo, 0.5);
+            }
 
             Log.d("vision", "moveToMarker: Pos " + markerPos);
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
@@ -665,10 +675,10 @@ public class Robot {
 
                 // Calculate distances
 
-                HORIZONTAL_TOTAL = 17; //h1-h2+h3
-                VERTICAL_TOTAL = 26; //v1+v2
+                HORIZONTAL_TOTAL = 18; //h1-h2+h3
+                VERTICAL_TOTAL = 29; //v1+v2
                 vertical1 = 11;
-                horizontal1 = 17;
+                horizontal1 = 20;
                 horizontal2 = 10;
                 vertical2 = VERTICAL_TOTAL - vertical1; //adjust for left
                 horizontal3 = HORIZONTAL_TOTAL - horizontal1 + horizontal2;
@@ -676,36 +686,41 @@ public class Robot {
                 // Start moving
                 mecanumBlocking(vertical1, !isRedAlliance, 0.5); //go right if blue, go left if red
                 setHeading(0, 0.7);
-                straightBlocking(horizontal1, false, 0.7); //go forward FAST
+                straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(horizontal2, true, 1); //move back FAST
+                straightBlockingFixHeading(horizontal2, true, 1); //move back FAST
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlocking(vertical2, false, 0.7);
+                straightBlockingFixHeading(vertical2, false, 0.7);
                 mecanumBlocking(horizontal3, isRedAlliance, 0.7);
                 break;
 
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
 
-                HORIZONTAL_TOTAL = 17;
-                VERTICAL_TOTAL = 26;
-                horizontal1 = 17;
-                vertical1 = 11;
-                horizontal2 = 13;
-                double slantDistance = 7;
+                horizontal1 = 20;
+                horizontal2 = 15;
+                vertical1 = 3;
+                vertical2 = 26;
 
-                // Start moving
-
-                straightBlocking(horizontal1, false, 0.7);
-                setHeading(-45 * polarity, 0.7);
-                straightBlocking(slantDistance, false, 0.7);
-                setServoPosBlocking(spikeServo, 0.2);
-                straightBlocking(slantDistance, true, 0.7);
-                setHeading(90 * polarity, 0.7);
-                straightBlocking(vertical1, false, 0.7);
-                setHeading(90 * polarity, 0.7);
+                // move!
+                straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
+                setHeading(-45 * polarity, 0.25); //turn right
+                straightBlockingFixHeading(7, false, 0.25); //forward
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                }
+                straightBlockingFixHeading(7, true, 0.7); //dropoff, back
+                setHeading(0, 0.7); //turn back
+                mecanumBlocking(vertical1, !isRedAlliance, 0.7); //mecanum away from prop
+                setHeading(90 * polarity, 0.7); //turn
+                straightBlockingFixHeading(vertical2, false, 0.7);
                 mecanumBlocking(horizontal2, isRedAlliance, 0.7);
+
                 break;
+
+                //20 forward
+                //turn 45 right
+                //7 forward, lift, 7 back, turn to center
 
             } else { //center, default
                 Log.d("vision", "moveToMarker: Center Spike");
@@ -713,18 +728,18 @@ public class Robot {
                 // Calculate distances
                 vertical1 = 6;
                 vertical2 = 20;
-                horizontal1 = 27;
+                horizontal1 = 30;
                 horizontal2 = 10;
-                horizontal3 = 8;
+                horizontal3 = 5;
 
                 // Start moving
                 mecanumBlocking(vertical1, !isRedAlliance, 0.5); //go left if blue, go right if red
                 setHeading(0, 0.7);
-                straightBlocking(horizontal1, false, 0.7); //go forward FAST
+                straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(horizontal2, true, 1); //move back FAST
+                straightBlockingFixHeading(horizontal2, true, 1); //move back FAST
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlocking(vertical2, false, 0.7); //go forward FAST
+                straightBlockingFixHeading(vertical2, false, 0.7); //go forward FAST
                 setHeading(90 * polarity, 0.7); //turn
                 mecanumBlocking(horizontal3, isRedAlliance, 0.5); //go left if blue, go right if red
 
@@ -733,75 +748,6 @@ public class Robot {
         }
     }
 
-    /* Deprecated
-    public void shortMoveToBoard() { //TODO: add polarity, use in ShortRedAuto.java, and TEST
-        Log.d("vision", "moveToMarker: Pos " + markerPos);
-        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-
-        int polarity;
-        double VERTICAL_TOTAL;
-        double vertical1;
-        double vertical4;
-        double vertical6;
-        double horizontal2;
-        double horizontal3;
-        double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
-        double horizontal5;
-        double horizontal7;
-
-        while (opMode.opModeIsActive()) {
-
-            if (isRedAlliance) {
-                polarity = -1;
-            } else {
-                polarity = 1;
-            }
-
-            setServoPosBlocking(clamp, 0.5);
-            setServoPosBlocking(hook, 0.5);
-            setServoPosBlocking(spikeServo, 0.5);
-            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-                mecanumBlocking(10, false, 0.5);
-                setHeading(0, 0.25);
-                setServoPosBlocking(spikeServo, 0.2);
-                sleeplessStraightBlocking(18, false, 0.7);
-                straightBlocking(8, true, 0.7);
-                setHeading(-90, 0.7);
-                straightBlocking(19, false, 0.7);
-                setHeading(-90, 0.7);
-                mecanumBlocking(10, true, 0.7);
-                setHeading(-90, 0.7);
-                break;
-            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-                Log.d("vision", "shortMoveToBoard: left");
-                straightBlocking(16, false, 0.25); //forward
-                setHeading(45, 0.25); //turn
-                setServoPosBlocking(spikeServo, 0.2);
-                straightBlocking(10, false, 0.25); //forward
-                setHeading(45, 0.25);
-                straightBlocking(15, true, 0.9); //dropoff, backward
-                setHeading(-90, 0.7); //turn
-                straightBlocking(24, false, 0.7);
-                setHeading(-90, 0.7);
-                mecanumBlocking(18, true, 0.4);
-                setHeading(-90, 0.7);
-                break;
-            } else { //center, default
-                Log.d("vision", "shortMoveToBoard: " + markerPos);
-                straightBlocking(2, false, 0.25);
-                mecanumBlocking(3, false, 0.7); //go left
-                setHeading(0, 0.25);
-                setServoPosBlocking(spikeServo, 0.2);
-                sleeplessStraightBlocking(26, false, 0.7); //go forward FAST
-                straightBlocking(10, true, 0.7); //dropoff & move back
-                setHeading(-90, 0.7);
-                straightBlocking(22, false, 0.7);
-                mecanumBlocking(4, true, 0.4);
-                break;
-            }
-        }
-    }
-    */
     //contains most apriltag logic
     public void alignToBoard() {
 
@@ -810,7 +756,7 @@ public class Robot {
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
         int polarity = isRedAlliance ? -1 : 1;
-        double PIXEL_SIZE = 3.5;
+        double PIXEL_SIZE = 4;
         int inchesMovedBack = 0;
 
         while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
@@ -1009,7 +955,7 @@ public class Robot {
 
     public void parkBot(boolean longPath) {
         /*
-         * Where to park depends on 3 factors
+         * Where to park depends on 3 actors
          * long or short run  (not optimized for combining this yet)
          * Red or blue alliance
          * position of april tag
@@ -1018,7 +964,7 @@ public class Robot {
          * Park near center
          */
 
-        int parkDistance = 25; // distance from center tag in inches
+        int parkDistance = 27; // distance from center tag in inches
         int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
