@@ -247,13 +247,16 @@ public class RobotClass {
     }
 
     //strafing class with power and direction as parameters
-    public void strafing(String direction, double power, int timeInMs) throws InterruptedException {
-        if (direction == "left") {
+    public enum Direction {
+        LEFT, RIGHT
+    }
+    public void strafing(Direction direction, double power, int timeInMs) throws InterruptedException {
+        if (direction == Direction.LEFT) {
             frontLeft.setPower(-power);
             frontRight.setPower(power);
             backLeft.setPower(power);
             backRight.setPower(-power);
-        } else if (direction == "right"){
+        } else if (direction == Direction.RIGHT) {
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(-power);
