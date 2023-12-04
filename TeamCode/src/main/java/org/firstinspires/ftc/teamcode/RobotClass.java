@@ -32,18 +32,16 @@ import java.util.List;
 
 public class RobotClass {
 
-    /*
-        initializing variables
-     */
+    //initializing variables
     private LinearOpMode myOpMode = null;
 
     //defining motor variables
-    public DcMotor frontLeft = null;
-    public DcMotor frontRight = null;
-    public DcMotor backLeft = null;
-    public DcMotor backRight = null;
-    public BNO055IMU imu = null;
-    public Orientation angles = null;
+    public DcMotor frontLeft;
+    public DcMotor frontRight;
+    public DcMotor backLeft;
+    public DcMotor backRight;
+    public BNO055IMU imu;
+    public Orientation angles;
 
     public AprilTagProcessor aprilTag;
     public VisionPortal visionPortal;
@@ -52,12 +50,28 @@ public class RobotClass {
         myOpMode = opmode;
     }
 
-    public void init(HardwareMap ahsMap) throws InterruptedException {
+    public void init(HardwareMap hardwareMap) {
+        //initializing motors
+        initMotors(hardwareMap);
+
+        //initializing IMU
+        try {
+            initGyro(hardwareMap);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //initializing camera
+        initCamera(hardwareMap);
+    }
+
+    //initalizing motors
+    private void initMotors(HardwareMap hardwareMap) {
         //assigning motor variables to configuration name
-        frontLeft = ahsMap.get(DcMotor.class, "frontLeft");
-        frontRight = ahsMap.get(DcMotor.class, "frontRight");
-        backLeft = ahsMap.get(DcMotor.class, "backLeft");
-        backRight = ahsMap.get(DcMotor.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         //setting direction of motors
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,16 +84,11 @@ public class RobotClass {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
 
-        // Create the AprilTag processor the easy way.
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-
-        // Create the vision portal the easy way.
-        visionPortal = VisionPortal.easyCreateWithDefaults(
-                ahsMap.get(WebcamName.class, "Webcam 1"), aprilTag);
-
-
-        //initializing imu
+    //initializing IMU
+    private void initGyro(HardwareMap hardwareMap) throws InterruptedException{
+        //TODO: Test different IMU configs
 
         // Set up the parameters with which we will use our IMU.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -91,7 +100,7 @@ public class RobotClass {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         //hardware mapping and initializing imu
-        imu = ahsMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         while(!imu.isGyroCalibrated()){
@@ -101,6 +110,17 @@ public class RobotClass {
         myOpMode.telemetry.update();
     }
 
+    //initializing camera
+    private void initCamera(HardwareMap hardwareMap) {
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+    }
+
+    //resetting encoders
     public void resetEncoders() {
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -123,7 +143,7 @@ public class RobotClass {
         backRight.setPower(0);
     }
 
-    public void moveNoEncoders(double powerLeft, double powerRight, int timeInMs) throws InterruptedException {
+    public void moveWithoutEncoders(double powerLeft, double powerRight, int timeInMs) throws InterruptedException {
         //setting mode of motors
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -141,7 +161,7 @@ public class RobotClass {
     }
 
     //Moving using encoders
-    public void move(double power, double cm) throws InterruptedException{
+    public void moveStraightWithEncoders(double power, double cm) throws InterruptedException {
         //setting number of ticks per 10 cm to get number of ticks per cm
         int ticksPer10cm = 64;
         int ticksPerCm = ticksPer10cm / 10;
@@ -149,12 +169,6 @@ public class RobotClass {
 
         //resetting
         resetEncoders();
-
-        //setting motor mode
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //setting target position of motors
         frontLeft.setTargetPosition(target);
@@ -167,6 +181,11 @@ public class RobotClass {
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+
         //waiting while the motors are busy
         while (frontLeft.isBusy()){
             sleep(50);
@@ -177,45 +196,50 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning(double targetAngleDeg) throws InterruptedException{
+    double angleMinThreshold = 0.5;
+    double angleMaxThreshold = 10;
+    double minCorrectionPower = 0.15;
+    double maxCorrectionPower = 0.25;
+
+    public void gyroTurning(double targetAngleDegrees) throws InterruptedException {
         boolean run = true;
         while (run) {
             angles = imu.getAngularOrientation();
             //using gyro
-            if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+            if (angles.firstAngle >= targetAngleDegrees - angleMinThreshold && angles.firstAngle <= targetAngleDegrees + angleMinThreshold) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
                 sleep(500);
-                if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+                if (angles.firstAngle >= targetAngleDegrees - angleMinThreshold && angles.firstAngle <= targetAngleDegrees + angleMinThreshold) {
                     run = false;
                     return;
                 }
-            } else if (angles.firstAngle >= targetAngleDeg) {
-                if (angles.firstAngle <= targetAngleDeg + 10) {
-                    frontLeft.setPower(0.15);
-                    frontRight.setPower(-0.15);
-                    backLeft.setPower(0.15);
-                    backRight.setPower(-0.15);
+            } else if (angles.firstAngle >= targetAngleDegrees) {
+                if (angles.firstAngle <= targetAngleDegrees + angleMaxThreshold) {
+                    frontLeft.setPower(minCorrectionPower);
+                    frontRight.setPower(-minCorrectionPower);
+                    backLeft.setPower(minCorrectionPower);
+                    backRight.setPower(-minCorrectionPower);
                 } else {
-                    frontLeft.setPower(0.25);
-                    frontRight.setPower(-0.25);
-                    backLeft.setPower(0.25);
-                    backRight.setPower(-0.25);
+                    frontLeft.setPower(maxCorrectionPower);
+                    frontRight.setPower(-maxCorrectionPower);
+                    backLeft.setPower(maxCorrectionPower);
+                    backRight.setPower(-maxCorrectionPower);
                 }
-            } else if (angles.firstAngle <= targetAngleDeg) {
-                if (angles.firstAngle >= targetAngleDeg - 10) {
-                    frontLeft.setPower(-0.15);
-                    frontRight.setPower(0.15);
-                    backLeft.setPower(-0.15);
-                    backRight.setPower(0.15);
+            } else if (angles.firstAngle <= targetAngleDegrees) {
+                if (angles.firstAngle >= targetAngleDegrees - angleMaxThreshold) {
+                    frontLeft.setPower(-minCorrectionPower);
+                    frontRight.setPower(minCorrectionPower);
+                    backLeft.setPower(-minCorrectionPower);
+                    backRight.setPower(minCorrectionPower);
 
                 } else {
-                    frontLeft.setPower(-0.25);
-                    frontRight.setPower(0.25);
-                    backLeft.setPower(-0.25);
-                    backRight.setPower(0.25);
+                    frontLeft.setPower(-maxCorrectionPower);
+                    frontRight.setPower(maxCorrectionPower);
+                    backLeft.setPower(-maxCorrectionPower);
+                    backRight.setPower(maxCorrectionPower);
                 }
             }
             stopMotors();
@@ -223,13 +247,16 @@ public class RobotClass {
     }
 
     //strafing class with power and direction as parameters
-    public void strafing (String direction, double power, int timeInMs) throws InterruptedException{
-        if (direction == "left") {
+    public enum Direction {
+        LEFT, RIGHT
+    }
+    public void strafing(Direction direction, double power, int timeInMs) throws InterruptedException {
+        if (direction == Direction.LEFT) {
             frontLeft.setPower(-power);
             frontRight.setPower(power);
             backLeft.setPower(power);
             backRight.setPower(-power);
-        } else if (direction == "right"){
+        } else if (direction == Direction.RIGHT) {
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(-power);
@@ -242,32 +269,25 @@ public class RobotClass {
         stopMotors();
     }
 
-    public int getDetection(int tagID) {
-        //initiallzes current detection variable
+    //Using AprilTag to find the team prop
+    public int findTeamProp(int tagID) {
+        //initializes current detection variable
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-        //defines bounds of ROIs
-        int [] leftROI = new int[2];
-        int [] rightROI = new int[2];
-        int [] centerROI = new int[2];
-
-        leftROI[0] = 0;
-        leftROI[1] = 0;
-
-        rightROI[0] = 0;
-        rightROI[1] = 0;
-
-        centerROI[0] = 0;
-        centerROI[1] = 0;
+        //Instantiates ROI objects
+        //TODO: Define ROIs
+        RegionOfInterest leftROI = new RegionOfInterest(0, 0);
+        RegionOfInterest centerROI = new RegionOfInterest(0, 0);
+        RegionOfInterest rightROI = new RegionOfInterest(0, 0);
 
         //goes through a for loop of all detections and will search for the id 502.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.id == tagID) {
-                if((detection.ftcPose.x > leftROI[0]) ||(detection.ftcPose.x < leftROI[1])){
+                if((detection.ftcPose.x > leftROI.leftBound) ||(detection.ftcPose.x < leftROI.rightBound)){
                     return 1;
-                } else if ((detection.ftcPose.x > rightROI[0]) ||(detection.ftcPose.x < rightROI[1])){
+                } else if ((detection.ftcPose.x > rightROI.leftBound) ||(detection.ftcPose.x < rightROI.rightBound)){
                     return 3;
-                } else if ((detection.ftcPose.x > centerROI[0]) ||(detection.ftcPose.x < centerROI[1])){
+                } else if ((detection.ftcPose.x > centerROI.leftBound) ||(detection.ftcPose.x < centerROI.rightBound)){
                     return 2;
                 } else {
                     return 4;
