@@ -26,6 +26,12 @@ public class Intake implements Subsystem {
     private double upperlimitR = 0.9;
 
     //State Machine
+    public int intakeState = 0; //0: basePos, motor=0, 1: intakePos, motor=1, 2: outtakePos, motor=1
+    private double motorDelayAfterOut = 1000; // in ms. after arm moves to outtake, delay to stop motor
+    private double motorDelayForAuto = 200; // in ms. after arm moves to outtake, delay to stop motor
+
+    private double outtakeStartTime = 0;
+    private double motorSweepPwr = 1.0;
 
     public Intake(Robot robot) {
         intakeMotor = robot.getMotor("intakeMotor");
@@ -67,10 +73,11 @@ public class Intake implements Subsystem {
     }
 
 
+    public void setIntakeState(int state) {
+        this.intakeState = state;
+    }
     public void setPower(double power) {
         this.motorPosition = -power;
-
-
         // set encode to new position
     }
 
@@ -81,6 +88,36 @@ public class Intake implements Subsystem {
 
     @Override
     public void update(TelemetryPacket packet) {
-        intakeMotor.setPower(motorPosition);
+
+        if (intakeState == 0) {//Base, idle
+            toBasePos();
+            intakeMotor.setPower(0);
+        } else if (intakeState == 1) {//Intake
+            toIntakePos();
+            intakeMotor.setPower(this.motorSweepPwr);
+        } else if (intakeState == 2) {//Start outtake
+            toOuttakePos();
+            intakeMotor.setPower(this.motorSweepPwr);
+            intakeState = 3;
+            outtakeStartTime = System.currentTimeMillis();
+        } else if (intakeState == 3) {//Done outtake
+            long time = System.currentTimeMillis();
+            if(time - outtakeStartTime >= this.motorDelayAfterOut){
+                intakeState = 0;
+            }
+        } else if (intakeState == 4) {//Start output pre-load pixel
+            toIntakePos();
+            intakeMotor.setPower(-this.motorSweepPwr);
+            intakeState = 5;
+            outtakeStartTime = System.currentTimeMillis();
+        } else if (intakeState == 5) {
+            long time = System.currentTimeMillis();
+            if(time - outtakeStartTime >= this.motorDelayForAuto){
+                intakeState = 0;
+                intakeMotor.setPower(0);
+                toBasePos();
+            }
+        }
+        //intakeMotor.setPower(motorPosition);
     }
 }

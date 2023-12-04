@@ -22,7 +22,7 @@ public class AATele extends LinearOpMode {
 
         NanoClock clock = NanoClock.system();
         double prevTime = clock.seconds();
-        int intakeState = 0; // 0 = outtake; 1 = intake;
+        int intakePosition = 0; // 0 = outtake; 1 = intake;
 
         while (!isStopRequested()) {
             telemetry.update();
@@ -39,7 +39,41 @@ public class AATele extends LinearOpMode {
 
 //            robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
 
-                //UG OUTTAKE
+            // INTAKE
+            if(smartGamepad1.a_pressed()){
+                if(intakePosition == 0 && robot.intake.intakeState == 0) {
+                    robot.intake.setIntakeState(1);
+                    intakePosition=1;
+                } else if (intakePosition == 1 && robot.intake.intakeState == 1){
+                    robot.intake.setIntakeState(2);
+                    intakePosition=0;
+                }
+            }
+            if(smartGamepad1.b_pressed()){
+                robot.intake.toBasePos();
+            }
+            /*            if(smartGamepad1.left_bumper){
+                robot.intake.setPower(1);
+            } else{
+                robot.intake.setPower(0);
+            }
+ */
+
+            // Outtake automated
+            if(smartGamepad2.a_pressed()){
+                robot.intake.setPower(0);
+                robot.intake.toBasePos();
+                robot.outtake.prepOuttake();
+            }
+            if(smartGamepad2.b_pressed()){
+                robot.outtake.toDumpPos();
+            }
+
+            if(smartGamepad2.left_bumper){
+                robot.droneLauncher.release();
+            }
+
+                //UG OUTTAKE, single steps
             if(smartGamepad2.left_trigger>0) { robot.outtake.moveDumper(-0.5);}
             if(smartGamepad2.right_trigger>0) {robot.outtake.moveDumper( 0.5);}
 
@@ -72,49 +106,12 @@ public class AATele extends LinearOpMode {
                 robot.outtake.lift.stopMotor();
             }
 
-            // INTAKE
-            if(smartGamepad1.a_pressed()){
-                if(intakeState == 0) {
-                    robot.intake.toIntakePos();
-                    robot.intake.setPower(1);
-                    intakeState=1;
-                } else if (intakeState == 1){
-                    robot.intake.toOuttakePos();
-                    robot.outtake.toIntakePos();
-                    robot.intake.setPower(0);
-                    intakeState=0;
-                }
-            }
-
-            if(smartGamepad2.a_pressed()){
-                robot.intake.setPower(0);
-                robot.intake.toBasePos();
-                robot.outtake.prepOuttake();
-            }
-            if(smartGamepad2.b_pressed()){
-                robot.outtake.toDumpPos();
-            }
-/*            if(smartGamepad1.left_bumper){
-                robot.intake.setPower(1);
-            } else{
-                robot.intake.setPower(0);
-            }
-
-
- */
-            if(smartGamepad2.left_bumper){
-                robot.droneLauncher.release();
-            }
-            if(smartGamepad1.b_pressed()){
-                robot.intake.toBasePos();
-            }
-
+            telemetry.addData("intake pos", intakePosition);
+            //telemetry.addData("intake motor power", robot.intake.getPower());
 
             telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
             telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
-            telemetry.addData("intake pos", intakeState);
-            telemetry.addData("intake motor power", robot.intake.getPower());
             telemetry.addData("slide pos", robot.outtake.getLiftPos());
             telemetry.addData("slide power", robot.outtake.getLiftPower());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
