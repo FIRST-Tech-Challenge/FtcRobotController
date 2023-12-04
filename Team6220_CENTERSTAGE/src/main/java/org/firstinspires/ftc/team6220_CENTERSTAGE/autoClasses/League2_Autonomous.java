@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE.autoClasses;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2dDual;
@@ -14,6 +15,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
@@ -22,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.JavaTextMenu.*;
 
-@Disabled
-@Autonomous(name="League2_Autonomous", group ="amogus2")
+
+@Autonomous(name="DONT_RUN_League2_Autonomous", group ="amogus2")
 public class League2_Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,12 +48,12 @@ public class League2_Autonomous extends LinearOpMode {
                 .add("park-select", AutoParams.ParkLocation.class)
                 .add()
                 .add("Start long wait time:")
-                .add("long-wait", new MenuSlider(0, 20, 1, 10))
+                .add("long-wait", new MenuSlider(0, 25, 1, 15))
                 .add()
                 .add("Place purple pixel?")
                 .add("purple-switch", new MenuSwitch(true))
                 .add("Place yellow pixel?")
-                .add("yellow-switch", new MenuSwitch(true))
+                .add("yellow-switch", new MenuSwitch(false))
                 .add()
                 .add("finish", new MenuFinishedButton())
         ;
@@ -110,7 +112,7 @@ public class League2_Autonomous extends LinearOpMode {
         telemetry.addData("Park", params.parkLocation);
         telemetry.addData("Start long wait", params.startLongWaitTime);
         telemetry.addData("Place purple", params.placePurplePixel);
-        telemetry.addData("Place purple", params.placeYellowPixel);
+        telemetry.addData("Place yellow", params.placeYellowPixel);
         telemetry.update();
 
         waitForStart();
@@ -253,6 +255,7 @@ class AutonDriveFactory {
                     break;
 
                 case MIDDLE:
+                    build = build.lineToY(30 * teamInvert).endTrajectory();
                     build = build.lineToY(34 * teamInvert);
                     break;
 
@@ -264,7 +267,8 @@ class AutonDriveFactory {
             }
 
             // place purple pixel
-            build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            build = build.stopAndAdd(new AutoMechanismActions(drive).spinIntakeFor(3, 1));
 
             // return to the side of the field so that we can go towards the backdrop
             switch (spikeType) {
@@ -397,4 +401,47 @@ class AutoParams {
 
     public AutoParams() {}
 
+}
+
+// mechanism action classes
+
+class AutoMechanismActions {
+    private DcMotorEx intakeMotor;
+
+    public AutoMechanismActions(MecanumDrive drive) {
+        intakeMotor = drive.intakeMotor;
+    }
+
+    public Action spinIntakeFor(double timeSec, double power) {
+        return new Action() {
+
+            double spinTimer = 0.0;
+            @Override
+            public boolean run(TelemetryPacket packet) {
+
+                updateDeltaTime();
+                spinTimer += deltaTime;
+
+                if (intakeMotor != null) {
+                    if (spinTimer > timeSec) {
+                        intakeMotor.setPower(0);
+                    } else {
+                        intakeMotor.setPower(power);
+                    }
+                }
+                return spinTimer <= timeSec;
+            }
+        };
+    }
+
+    private double deltaTime = 0.0;
+    private Long lastTime = null;
+
+    // updates the deltatime in seconds
+    private void updateDeltaTime() {
+        if (this.lastTime != null) {
+            this.deltaTime = (double)(System.nanoTime() - this.lastTime) / 1_000_000_000.0;
+        }
+        this.lastTime = System.nanoTime();
+    }
 }

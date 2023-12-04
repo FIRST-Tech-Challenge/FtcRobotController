@@ -1,5 +1,6 @@
 package com.example.meepmeeptesting;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -53,9 +54,13 @@ public class MeepMeepTesting {
  * Shim so that the AutonDriveFactory can refer to the drive using a MecanumDrive type both
  * here in MeepMeep and also in the competition code.
  */
+class DcMotorEx {
+    void setPower(double x) {}
+}
 class MecanumDrive {
     DriveShim shim;
     Pose2d pose;
+    DcMotorEx intakeMotor = null;
     MecanumDrive(DriveShim shim) {
         this.shim = shim;
     }
@@ -193,6 +198,7 @@ class AutonDriveFactory {
                     break;
 
                 case MIDDLE:
+                    build = build.lineToY(30 * teamInvert).endTrajectory();
                     build = build.lineToY(34 * teamInvert);
                     break;
 
@@ -204,7 +210,8 @@ class AutonDriveFactory {
             }
 
             // place purple pixel
-            build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            build = build.stopAndAdd(new AutoMechanismActions(drive).spinIntakeFor(2, 1));
 
             // return to the side of the field so that we can go towards the backdrop
             switch (spikeType) {
@@ -288,11 +295,11 @@ class AutonDriveFactory {
 
         AutoParams params = new AutoParams();
         params.allianceTeam = AutoParams.AllianceTeam.BLUE;
-        params.startingPosition = AutoParams.StartingPosition.LONG;
+        params.startingPosition = AutoParams.StartingPosition.SHORT;
         params.parkLocation = AutoParams.ParkLocation.CENTER_FIELD_SIDE;
-        params.propPosition = ColorDetection.PropPosition.LEFT;
+        params.propPosition = ColorDetection.PropPosition.MIDDLE;
         params.placePurplePixel = true;
-        params.placeYellowPixel = true;
+        params.placeYellowPixel = false;
         params.startLongWaitTime = 1;
 
         return getDriveAction(params);
@@ -337,4 +344,47 @@ class AutoParams {
 
     public AutoParams() {}
 
+}
+
+// mechanism action classes
+
+class AutoMechanismActions {
+    private DcMotorEx intakeMotor;
+
+    public AutoMechanismActions(MecanumDrive drive) {
+        intakeMotor = drive.intakeMotor;
+    }
+
+    public Action spinIntakeFor(double timeSec, double power) {
+        return new Action() {
+
+            double spinTimer = 0.0;
+            @Override
+            public boolean run(TelemetryPacket packet) {
+
+                updateDeltaTime();
+                spinTimer += deltaTime;
+
+                if (intakeMotor != null) {
+                    if (spinTimer > timeSec) {
+                        intakeMotor.setPower(0);
+                    } else {
+                        intakeMotor.setPower(power);
+                    }
+                }
+                return spinTimer <= timeSec;
+            }
+        };
+    }
+
+    private double deltaTime = 0.0;
+    private Long lastTime = null;
+
+    // updates the deltatime in seconds
+    private void updateDeltaTime() {
+        if (this.lastTime != null) {
+            this.deltaTime = (double)(System.nanoTime() - this.lastTime) / 1_000_000_000.0;
+        }
+        this.lastTime = System.nanoTime();
+    }
 }

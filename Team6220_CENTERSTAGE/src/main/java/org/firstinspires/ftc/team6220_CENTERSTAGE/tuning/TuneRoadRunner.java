@@ -26,7 +26,6 @@ import org.firstinspires.ftc.team6220_CENTERSTAGE.TwoDeadWheelLocalizer;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
 @TeleOp
 public class TuneRoadRunner extends LinearOpMode {
     // Member fields referenced by every test:
