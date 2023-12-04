@@ -1,0 +1,108 @@
+package org.firstinspires.ftc.teamcode.Autonomous;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.RobotClass;
+
+
+/**
+ *
+ * Robot should be under 14 inches
+ * Robot will start on F2 1 pixel length away from the left seam
+ *
+ *
+ */
+
+
+@Autonomous(name = "CostaAuto1", group = "Autonomous")
+
+public class RedAudienceAuto extends LinearOpMode{
+
+    //Instantiate the RobotClass
+    RobotClass teamBot = new RobotClass(this);
+    private ElapsedTime runTime = new ElapsedTime();
+
+    //Instantiate Camera
+    //Create Variables/Constants
+    public int propPos = 1;
+
+    //Initialize Robot
+
+    //Begin movement
+    @Override
+    public void runOpMode(){
+
+        //Scan for TeamProp
+    /*
+    Temporarily, 1 = Left Gang, 2 = Mid Gang, 3 = Right Gang
+     */
+
+        propPos = 1;
+
+        waitForStart();
+
+        while (opModeIsActive()){
+
+            //Based on prop location, move towards section 1, 2, or 3
+
+            runTime.reset();
+
+            if (propPos == 1){
+                //If Left Gang, move forward slightly, turn right 90 degrees, strafe
+                    teamBot.moveNoEncoders(0.6, 0.6, 2500);
+                    teamBot.gyroTurning(-90);
+                    teamBot.strafing("right", 0.6, 2500);
+
+
+            }else if(propPos == 2){
+                //Mid Gang
+                teamBot.moveNoEncoders(0.6, 0.6, 2500);
+                teamBot.moveNoEncoders(0.6, 0.6, 2500);
+
+            }else if(propPos == 3){
+                //Right Gang
+                teamBot.moveNoEncoders(0.6, 0.6, 2500);
+                //Turn Right
+                //Turn Left
+                //Forward
+                //Turn Left
+
+            }else{
+                //ADD CODE HERE
+            }
+
+            //Deliver Pixel (Move arm and claw motors)
+
+            //If Mid Gang, move forward slightly, rotate 180 degrees, move backwards, then drop pixel
+            //If Right Gang, move forward slightly, turn left 90 degrees, strafe, then drop pixel
+
+            //Based on State, move robot to face backdrop
+            //If Left Gang, you are good to go
+            //If Mid Gang, turn robot 90 degrees to the left
+            //If Right Gang, move forward slightly, turn 180 degrees
+
+            //Strafe to the right
+
+            //Move Forward one tile
+
+            //Check if path is clear (If it is, forward to backstage, else strafe left and go to backstage)
+            //Make sure it is all the way towards the wall
+
+            //Extend and drop pixel
+            //If on left, put robot at an angle and then drop pixel
+            //If on right, just drop pixel
+
+        }
+
+
+
+
+
+    }
+
+
+}
