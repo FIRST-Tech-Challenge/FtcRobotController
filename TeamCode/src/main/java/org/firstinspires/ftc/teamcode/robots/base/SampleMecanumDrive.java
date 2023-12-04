@@ -56,9 +56,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
-    public static double VX_WEIGHT = .60;
-    public static double VY_WEIGHT = .60;
-    public static double OMEGA_WEIGHT = .60;
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+    public static double VX_PERCENTAGE = 1.0;
+    public static double VY_PERCENTAGE = 1.0;
+    public static double HEADING_PERCENTAGE = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -79,8 +82,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
-        // Default brake behavior
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -234,6 +235,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
         }
+
+        // Apply percentage adjustments
+        vel = new Pose2d(
+                vel.getX() * VX_PERCENTAGE,
+                vel.getY() * VY_PERCENTAGE,
+                vel.getHeading() * HEADING_PERCENTAGE
+        );
 
         setDrivePower(vel);
     }

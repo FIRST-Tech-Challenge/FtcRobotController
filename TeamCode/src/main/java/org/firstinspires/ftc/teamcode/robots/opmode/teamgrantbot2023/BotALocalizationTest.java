@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.robots.opmode.teamgrantbot2023;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.opmode.LocalizationTest;
-import org.firstinspires.ftc.teamcode.robots.TeamGrantBot2023;
+import org.firstinspires.ftc.teamcode.robots.BotA2023;
 
-@TeleOp(group = "TeamGrantBot2023", name = "TeamGrant LocalizationTest")
-public class TGLocalizationTest extends LocalizationTest {
+@TeleOp(group = "teamgrantbot2023", name = "Robot A - LocalizationTest")
+public class BotALocalizationTest extends LocalizationTest {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TeamGrantBot2023 drive = new TeamGrantBot2023(hardwareMap);
+        BotA2023 drive = new BotA2023(hardwareMap);
         opModeCode(drive);
     }
 }
