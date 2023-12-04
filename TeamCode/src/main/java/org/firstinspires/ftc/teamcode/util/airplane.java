@@ -18,7 +18,7 @@ public class airplane {
         }
         if (planeb) {
             extend.setTilt(((int) Range.scale(gamepad1.touchpad_finger_1_y, -1, 1, 0, 400)));
-            if (gamepad1.touchpad_finger_2) plane.setPosition(0);
+            if (gamepad1.touchpad_finger_2) plane.setPosition(1);
         }
     }
 }
