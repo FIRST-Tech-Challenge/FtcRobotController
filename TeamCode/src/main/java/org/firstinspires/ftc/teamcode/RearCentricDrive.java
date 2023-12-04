@@ -83,7 +83,7 @@ public class RearCentricDrive extends LinearOpMode {
 
         //Sets power for driving wheels
         //low power mode
-        if(gamepad1.x){
+        if(gamepad1.right_bumper){
             if(yI > 0.2 || yI < -0.2){
             backLeftMotor.setPower(((yI-0.1)*-1)*0.25);
             backRightMotor.setPower(yI*0.25);
