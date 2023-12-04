@@ -89,9 +89,13 @@ public class MouvementJoystick extends LinearOpMode {
             }
 
 
-
-            motorA.setPower(tgtPowerA);
-            motorB.setPower(-tgtPowerB);
+            if (this.gamepad1.left_bumper) {
+                motorA.setPower(tgtPowerA);
+                motorB.setPower(-tgtPowerB);
+            } else {
+                motorA.setPower(tgtPowerA/2);
+                motorB.setPower(-(tgtPowerB/2));
+            }
 
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
