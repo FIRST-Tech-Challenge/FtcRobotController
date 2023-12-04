@@ -46,11 +46,10 @@ public class CalibrageDirection extends LinearOpMode {
             if (this.gamepad1.y) {
                 tgtPowerB += 0.01;
             }
-
             telemetry.addData("Moteur 1 Puissance : ", tgtPowerA);
-            telemetry.addData("Moteur 1 difference : ", abs(varY1)-abs(tgtPowerA));
+            telemetry.addData("Moteur 1 difference : ", Math.abs(varY1)-Math.abs(tgtPowerA));
             telemetry.addData("Moteur 2 Puissance : ", tgtPowerB);
-            telemetry.addData("Moteur 2 difference : ", abs(varY1)-abs(tgtPowerB));
+            telemetry.addData("Moteur 2 difference : ", Math.abs(varY1)-Math.abs(tgtPowerB));
             telemetry.addData("Status", "Running");
             telemetry.update();
 

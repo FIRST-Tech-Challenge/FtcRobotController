@@ -33,14 +33,14 @@ public class MoteursIndividuels extends LinearOpMode {
         double varX = 0;
         while (opModeIsActive()) {
             varY1 = this.gamepad1.left_stick_y;
-            varY2 = this.gamepad1.right_stick_y;
+            varY2 = -this.gamepad1.right_stick_y;
 
             motorA.setPower(varY1);
-            motorB.setPower(-varY2);
+            motorB.setPower(varY2);
 
 
             telemetry.addData("Target Power A", varY1);
-            telemetry.addData("Target Power B", -varY2);
+            telemetry.addData("Target Power B", varY2);
             telemetry.addData("Status", "Running");
             telemetry.update();
 

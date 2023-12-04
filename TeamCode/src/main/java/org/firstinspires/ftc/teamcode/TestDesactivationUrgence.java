@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp
-public class testmoteurmateo extends LinearOpMode {
+public class TestDesactivationUrgence extends LinearOpMode {
 
     private DcMotorEx motorA;
     private DcMotorEx motorB;
@@ -33,8 +33,8 @@ public class testmoteurmateo extends LinearOpMode {
         double varX = 0;
         while (opModeIsActive()) {
             if (this.gamepad1.dpad_up) { // test mode urgence -> coupe les moteurs
-                motorA.setMotorDisable()
-                motorB.setMotorDisable()
+                motorA.setMotorDisable();
+                motorB.setMotorDisable();
                 }
 
 
@@ -48,7 +48,7 @@ public class testmoteurmateo extends LinearOpMode {
 
             telemetry.addData("Target Power A", varY1);
             telemetry.addData("Target Power B", -varY2);
-            telemetry.addData("Power ON ?", motorA.isMotorEnabled())
+            telemetry.addData("Power ON ?", motorA.isMotorEnabled());
             telemetry.addData("Status", "Running");
             telemetry.update();
 
