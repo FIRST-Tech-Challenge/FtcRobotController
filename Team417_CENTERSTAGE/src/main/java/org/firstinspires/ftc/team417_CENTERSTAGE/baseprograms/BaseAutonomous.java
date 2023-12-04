@@ -39,6 +39,11 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
+
+    public static double PARKING_OFFSET = -6;
+    public static double PARKING_ANGLE = -80;
+    public static double PARKING_Y_OFFSET = 4;
+
     MecanumDrive drive;
 
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);;
@@ -154,7 +159,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             public boolean run(TelemetryPacket packet) {
                 final double startUpwardTiltPos = 75, startUpwardResetPos = 1500, endUpwardResetPos = 2000, startDownwardTiltPos = 1500, endDownwardTiltPos = 250; //Locations the dumper should tilt so the arm does not hit the robot.
                 if (armMotor.getCurrentPosition() <= BaseOpMode.ARM_MOTOR_MAX_POSITION * (3.0/4.0)) {
-                    armMotor.setPower(0.2);
+                    armMotor.setPower(0.4);
                     if ((armMotor.getCurrentPosition() > startUpwardTiltPos && armMotor.getCurrentPosition() < startUpwardResetPos) && armMotor.getPower() > 0)
                         dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);
                     else if (armMotor.getCurrentPosition() < endUpwardResetPos && armMotor.getPower() > 0)
@@ -254,10 +259,10 @@ class AutonDriveFactory {
                 .splineToConstantHeading(xForm(new Vector2d(-30, -34)), xForm(Math.toRadians(180)))
                 .splineTo(xForm(new Vector2d(-34, -30)), xForm(Math.toRadians(90)))
                 .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
                 .turn(Math.toRadians(180)) //Turn so the arm faces the backdrop
                 .setTangent(xForm(Math.toRadians(-90)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -29.5)), xForm(Math.toRadians(-90)))
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -36 + BaseAutonomous.PARKING_Y_OFFSET)), xForm(Math.toRadians(BaseAutonomous.PARKING_ANGLE)))
                 .stopAndAdd(output);
 
         TrajectoryActionBuilder spikeCenter = this.drive.actionBuilder(xForm(new Pose2d(-34, -64, (Math.toRadians(90)))));
@@ -267,10 +272,10 @@ class AutonDriveFactory {
                 .splineToConstantHeading(xFormCenter(new Vector2d(-55, -39)), xForm(Math.toRadians(90)))
                 .splineToConstantHeading(xFormCenter(new Vector2d(-55, -30)), xForm(Math.toRadians(90)))
                 .splineTo(xFormCenter(new Vector2d(parkingOffset - 43, -10)), xForm(Math.toRadians(0)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
                 .turn(xForm(Math.toRadians(180))) //Turn so the arm faces the backdrop
                 .setTangent(xForm(Math.toRadians(-90)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -36)), xForm(Math.toRadians(-90)))
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -36)), xForm(Math.toRadians(BaseAutonomous.PARKING_ANGLE)))
                 .stopAndAdd(output);
 
 
@@ -281,10 +286,10 @@ class AutonDriveFactory {
                 .splineToConstantHeading(xForm(new Vector2d(-40, -34)), xForm(Math.toRadians(0)))
                 .splineTo(xForm(new Vector2d(-36, -30)), xForm(Math.toRadians(90)))
                 .splineTo(xForm(new Vector2d(-30, -10)), xForm(Math.toRadians(0)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -12)), xForm(Math.toRadians(0))) //drive to the backdrop
                 .turn(Math.toRadians(180)) //Turn so the arm faces the backdrop
                 .setTangent(xForm(Math.toRadians(-90)))
-                .splineToConstantHeading(xForm(new Vector2d(parkingOffset, -44)), xForm(Math.toRadians(-90)))
+                .splineToConstantHeading(xForm(new Vector2d(parkingOffset + BaseAutonomous.PARKING_OFFSET, -36 - BaseAutonomous.PARKING_Y_OFFSET)), xForm(Math.toRadians(BaseAutonomous.PARKING_ANGLE)))
                 .stopAndAdd(output);
 
         if (location == xForm(SpikeMarks.LEFT)) {
