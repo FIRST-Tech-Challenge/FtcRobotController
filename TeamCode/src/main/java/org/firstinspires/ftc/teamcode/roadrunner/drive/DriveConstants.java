@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 18; // in
+    public static double TRACK_WIDTH = 15; // in
 
     public static double kPTrans = 0.00;
     public static double kDTrans = 0.000;
@@ -73,10 +73,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 20;
-    public static double MAX_ANG_VEL = 3;
-    public static double MAX_ANG_ACCEL = 2;
+    public static double MAX_VEL = 80;
+    public static double MAX_ACCEL = 40;
+    public static double MAX_ANG_VEL = 5;
+    public static double MAX_ANG_ACCEL = 3;
 
 
     public static double encoderTicksToInches(double ticks) {
