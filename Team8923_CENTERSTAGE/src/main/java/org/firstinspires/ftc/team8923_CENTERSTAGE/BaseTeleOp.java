@@ -8,14 +8,15 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
     public void driveMechanism() {
         /* controls:
-        hold left bumper: compliant wheels rotate in, pixel release rotates in
-        hold right bumper: compliant wheels rotate out, pixel release rotates out
+        hold left bumper: intake runs in, pixel release rotates in
+        hold right bumper: intake runs out, pixel release rotates out
+        hold Y button: pixel release spins out
+        right trigger: intake runs outward
         d-pad up and down: linear slides up and down correspondingly
-        A button: gondola flip
+        B button: gondola flip out
+        A button: gondola returns to initialized position (down/in)
         press left joystick down: release drone
          */
-
-        // mUST CHANGE ALL OF THIS PLEASE OHMYGOD
 
         // intake and servo inside gondola rotate together inside when left bumper, out when right bumper
         if (gamepad2.left_bumper) {
@@ -35,10 +36,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoReleasePixel.setPower(0.0);
         }
 
-       /* if (gamepad2.x) {
-            servoReleasePixel.setPower(0.5);
-        }*/
-
         // slides controlled by up and down dpad
         if (gamepad2.dpad_up) {
             motorSlides.setPower(1.0);
@@ -48,32 +45,16 @@ abstract public class BaseTeleOp extends BaseOpMode {
             motorSlides.setPower(0.0);
         }
 
-        // this does not work lolz anD IDK WHY AAAAAAAAAAAA
-        // servoRotateGondola.setPosition(gamepad2.right_stick_x);
-
-        /*while (gamepad2.dpad_left) {
-            servoRotateGondola.setPosition(servoRotateGondola.getPosition()-0.2);
-        }
-        while (gamepad2.dpad_right) {
-            servoRotateGondola.setPosition(servoRotateGondola.getPosition()+0.2);
-        }*/
-        // button A flips arms for pixel mechanism
         if (gamepad2.a) {
-            // servoLeftFlipGondola.setPosition(0.96);
             servoFlipGondola.setPosition(0.25);
             servoRotateGondola.setPosition(0.6);
-            // servoRotateGondola.setPosition(0.0);
-        // button B flips arms back
         } else if (gamepad2.b) {
-            // servoLeftFlipGondola.setPosition(0.04);
-            servoFlipGondola.setPosition(0.9);
-            servoRotateGondola.setPosition(0.7);
-            // servoFlipGondola.setPosition(1.0);
-        } /*else if (gamepad2.y) {
+            servoFlipGondola.setPosition(0.95);
             servoRotateGondola.setPosition(0.8);
-        } else if (gamepad2.x) {
-            servoRotateGondola.setPosition(0.6);
-        }*/
+        }
+        if (gamepad2.right_trigger != 0.0) {
+            motorIntakeWheels.setPower(-gamepad2.right_trigger);
+        }
 
         // release drone with pushing down right joystick, servo should rotate counter-clockwise
         if (gamepad2.right_stick_button) {
