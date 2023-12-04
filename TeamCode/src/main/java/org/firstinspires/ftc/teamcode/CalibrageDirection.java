@@ -20,6 +20,7 @@ public class CalibrageDirection extends LinearOpMode {
         double varY1;
         double tgtPowerA = 0;
         double tgtPowerB = 0;
+        double att = 0;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -31,21 +32,37 @@ public class CalibrageDirection extends LinearOpMode {
             varY1 = this.gamepad1.left_stick_y;
 
 
-            motorA.setPower(varY1+tgtPowerA);
-            motorB.setPower(-(varY1+tgtPowerB));
 
-            if (this.gamepad1.a) {
-                tgtPowerA -= 0.01;
+            if (att == 0) {
+                if (this.gamepad1.a) {
+                    tgtPowerA -= 0.01;
+                    att = 500;
+                }
+                if (this.gamepad1.b) {
+                    tgtPowerA += 0.01;
+                    att = 500;
+                }
+                if (this.gamepad1.x) {
+                    tgtPowerB -= 0.01;
+                    att = 500;
+                }
+                if (this.gamepad1.y) {
+                    tgtPowerB += 0.01;
+                    att = 500;
+                }
+            } else {
+                att = att - 1;
             }
-            if (this.gamepad1.b) {
-                tgtPowerA += 0.01;
+
+
+            if (varY1 != 0) {
+                motorA.setPower(varY1 + tgtPowerA);
+                motorB.setPower(-(varY1 + tgtPowerB));
+            } else {
+                motorA.setPower(0);
+                motorB.setPower(0);
             }
-            if (this.gamepad1.x) {
-                tgtPowerB -= 0.01;
-            }
-            if (this.gamepad1.y) {
-                tgtPowerB += 0.01;
-            }
+
             telemetry.addData("Moteur 1 Puissance : ", tgtPowerA);
             telemetry.addData("Moteur 1 difference : ", Math.abs(varY1)-Math.abs(tgtPowerA));
             telemetry.addData("Moteur 2 Puissance : ", tgtPowerB);
