@@ -46,11 +46,11 @@ public class RobotClass {
     public AprilTagProcessor aprilTag;
     public VisionPortal visionPortal;
 
-    public RobotClass (LinearOpMode opmode) {
+    public RobotClass(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
-    public void init (HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) {
         //initializing motors
         initMotors(hardwareMap);
 
@@ -66,7 +66,7 @@ public class RobotClass {
     }
 
     //initalizing motors
-    private void initMotors (HardwareMap hardwareMap) {
+    private void initMotors(HardwareMap hardwareMap) {
         //assigning motor variables to configuration name
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -87,7 +87,7 @@ public class RobotClass {
     }
 
     //initializing IMU
-    private void initGyro (HardwareMap hardwareMap) throws InterruptedException{
+    private void initGyro(HardwareMap hardwareMap) throws InterruptedException{
         //TODO: Test different IMU configs
 
         // Set up the parameters with which we will use our IMU.
@@ -111,7 +111,7 @@ public class RobotClass {
     }
 
     //initializing camera
-    private void initCamera (HardwareMap hardwareMap) {
+    private void initCamera(HardwareMap hardwareMap) {
         // Create the AprilTag processor the easy way.
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
@@ -143,7 +143,7 @@ public class RobotClass {
         backRight.setPower(0);
     }
 
-    public void moveWithoutEncoders (double powerLeft, double powerRight, int timeInMs) throws InterruptedException {
+    public void moveWithoutEncoders(double powerLeft, double powerRight, int timeInMs) throws InterruptedException {
         //setting mode of motors
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -161,7 +161,7 @@ public class RobotClass {
     }
 
     //Moving using encoders
-    public void moveWithEncoders (double power, double cm) throws InterruptedException {
+    public void moveStraightWithEncoders(double power, double cm) throws InterruptedException {
         //setting number of ticks per 10 cm to get number of ticks per cm
         int ticksPer10cm = 64;
         int ticksPerCm = ticksPer10cm / 10;
@@ -196,45 +196,50 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning (double targetAngleDegrees) throws InterruptedException {
+    double angleMinThreshold = 0.5;
+    double angleMaxThreshold = 10;
+    double minCorrectionPower = 0.15;
+    double maxCorrectionPower = 0.25;
+
+    public void gyroTurning(double targetAngleDegrees) throws InterruptedException {
         boolean run = true;
         while (run) {
             angles = imu.getAngularOrientation();
             //using gyro
-            if (angles.firstAngle >= targetAngleDegrees - 0.5 && angles.firstAngle <= targetAngleDegrees + 0.5) {
+            if (angles.firstAngle >= targetAngleDegrees - angleMinThreshold && angles.firstAngle <= targetAngleDegrees + angleMinThreshold) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
                 sleep(500);
-                if (angles.firstAngle >= targetAngleDegrees - 0.5 && angles.firstAngle <= targetAngleDegrees + 0.5) {
+                if (angles.firstAngle >= targetAngleDegrees - angleMinThreshold && angles.firstAngle <= targetAngleDegrees + angleMinThreshold) {
                     run = false;
                     return;
                 }
             } else if (angles.firstAngle >= targetAngleDegrees) {
-                if (angles.firstAngle <= targetAngleDegrees + 10) {
-                    frontLeft.setPower(0.15);
-                    frontRight.setPower(-0.15);
-                    backLeft.setPower(0.15);
-                    backRight.setPower(-0.15);
+                if (angles.firstAngle <= targetAngleDegrees + angleMaxThreshold) {
+                    frontLeft.setPower(minCorrectionPower);
+                    frontRight.setPower(-minCorrectionPower);
+                    backLeft.setPower(minCorrectionPower);
+                    backRight.setPower(-minCorrectionPower);
                 } else {
-                    frontLeft.setPower(0.25);
-                    frontRight.setPower(-0.25);
-                    backLeft.setPower(0.25);
-                    backRight.setPower(-0.25);
+                    frontLeft.setPower(maxCorrectionPower);
+                    frontRight.setPower(-maxCorrectionPower);
+                    backLeft.setPower(maxCorrectionPower);
+                    backRight.setPower(-maxCorrectionPower);
                 }
             } else if (angles.firstAngle <= targetAngleDegrees) {
-                if (angles.firstAngle >= targetAngleDegrees - 10) {
-                    frontLeft.setPower(-0.15);
-                    frontRight.setPower(0.15);
-                    backLeft.setPower(-0.15);
-                    backRight.setPower(0.15);
+                if (angles.firstAngle >= targetAngleDegrees - angleMaxThreshold) {
+                    frontLeft.setPower(-minCorrectionPower);
+                    frontRight.setPower(minCorrectionPower);
+                    backLeft.setPower(-minCorrectionPower);
+                    backRight.setPower(minCorrectionPower);
 
                 } else {
-                    frontLeft.setPower(-0.25);
-                    frontRight.setPower(0.25);
-                    backLeft.setPower(-0.25);
-                    backRight.setPower(0.25);
+                    frontLeft.setPower(-maxCorrectionPower);
+                    frontRight.setPower(maxCorrectionPower);
+                    backLeft.setPower(-maxCorrectionPower);
+                    backRight.setPower(maxCorrectionPower);
                 }
             }
             stopMotors();
@@ -242,7 +247,7 @@ public class RobotClass {
     }
 
     //strafing class with power and direction as parameters
-    public void strafing (String direction, double power, int timeInMs) throws InterruptedException {
+    public void strafing(String direction, double power, int timeInMs) throws InterruptedException {
         if (direction == "left") {
             frontLeft.setPower(-power);
             frontRight.setPower(power);
@@ -262,33 +267,24 @@ public class RobotClass {
     }
 
     //Using AprilTag to find the team prop
-    public int findTeamProp (int tagID) {
+    public int findTeamProp(int tagID) {
         //initiallzes current detection variable
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-        //defines bounds of ROIs
-        int [] leftROI = new int[2];
-        int [] rightROI = new int[2];
-        int [] centerROI = new int[2];
-
+        //Instantiates ROI objects
         //TODO: Define ROIs
-        leftROI[0] = 0;
-        leftROI[1] = 0;
-
-        rightROI[0] = 0;
-        rightROI[1] = 0;
-
-        centerROI[0] = 0;
-        centerROI[1] = 0;
+        RegionOfInterest leftROI = new RegionOfInterest(0, 0);
+        RegionOfInterest centerROI = new RegionOfInterest(0, 0);
+        RegionOfInterest rightROI = new RegionOfInterest(0, 0);
 
         //goes through a for loop of all detections and will search for the id 502.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.id == tagID) {
-                if((detection.ftcPose.x > leftROI[0]) ||(detection.ftcPose.x < leftROI[1])){
+                if((detection.ftcPose.x > leftROI.leftBound) ||(detection.ftcPose.x < leftROI.rightBound)){
                     return 1;
-                } else if ((detection.ftcPose.x > rightROI[0]) ||(detection.ftcPose.x < rightROI[1])){
+                } else if ((detection.ftcPose.x > rightROI.leftBound) ||(detection.ftcPose.x < rightROI.rightBound)){
                     return 3;
-                } else if ((detection.ftcPose.x > centerROI[0]) ||(detection.ftcPose.x < centerROI[1])){
+                } else if ((detection.ftcPose.x > centerROI.leftBound) ||(detection.ftcPose.x < centerROI.rightBound)){
                     return 2;
                 } else {
                     return 4;
