@@ -964,7 +964,7 @@ public class Robot {
          * Park near center
          */
 
-        int parkDistance = 27; // distance from center tag in inches
+        int parkDistance = 25; // distance from center tag in inches
         int distanceBetweenTags = 5; // inches
         while (opMode.opModeIsActive()) {
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
