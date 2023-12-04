@@ -303,8 +303,8 @@ public class BradBot extends BasicRobot {
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
-          wrist.flatten();
+        if (Wrist.WristTargetStates.INTAKE.state
+            && Lift.LiftMovingStates.AT_ZERO.getState()) {
           arm.flatten();
           magazine.unclamp();
         }
