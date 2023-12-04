@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class MonPremierModeOp extends LinearOpMode {
+public class MouvementJoystick extends LinearOpMode {
 
     private DcMotor motorA;
     private DcMotor motorB;
@@ -79,13 +79,13 @@ public class MonPremierModeOp extends LinearOpMode {
             }
 
             if (varX>0 && varY==0) {
-                tgtPowerA=-1;
-                tgtPowerB=1;
+                tgtPowerA=-varXpos;
+                tgtPowerB=varXpos;
             }
 
-            if (varX>0 && varY==0) {
-                tgtPowerA=1;
-                tgtPowerB=-1;
+            if (varX<0 && varY==0) {
+                tgtPowerA=varXpos;
+                tgtPowerB=-varXpos;
             }
 
 
