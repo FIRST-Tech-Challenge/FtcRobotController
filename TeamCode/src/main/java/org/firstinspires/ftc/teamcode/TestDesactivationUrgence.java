@@ -31,7 +31,7 @@ public class TestDesactivationUrgence extends LinearOpMode {
         double varY1 = 0;
         double varY2 = 0;
         double varX = 0;
-        boolean disable = false
+        boolean disable = false;
         while (opModeIsActive()) {
             if (this.gamepad1.dpad_up) { // test mode urgence -> coupe les moteurs
                 disable = true;
