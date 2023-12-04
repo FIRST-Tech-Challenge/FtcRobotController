@@ -10,10 +10,15 @@ public class extension {
     int degreestotickstilt(int degrees){
         return (int)((2786.2/360)*degrees);
     }
-    public static int pos;
+    public static int pos=0;
     public PIDFController pidf;
     public static int Liftpos;
-    public static int tiltplacepos=675;
+    public static int tiltplacepos=0;
+    public static int tiltplacelowpos=0;
+    public static int tiltplacemidpos=0;
+    public static int tiltplacehighpos=0;
+    public static int tiltintakeclosepos=0;
+    public static int tiltintakefarpos=0;
     public static int tiltpos;
     public DcMotor lift1;
     public DcMotor tilt;
@@ -40,11 +45,12 @@ public class extension {
 
       //  ((DcMotorEx) tilt).setVelocityPIDFCoefficients(10, 0, 11, 10);
 
-        ((DcMotorEx) tilt).setPositionPIDFCoefficients(4.75);
+//        ((DcMotorEx) tilt).setPositionPIDFCoefficients(4.75);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //    pidf.setTolerance(5);
   //      pidf.setPIDF(0.004,0,0.005,0.00000001);
         Liftpos = lift1.getCurrentPosition();
+        setIntakeClosePos();
     }
     public static boolean laststate=false;
 //    public void move_with_hands(boolean yes){
@@ -60,8 +66,20 @@ public class extension {
 //        }
 //        laststate=yes;
 //    }
-    public void makemoretilt(){tiltplacepos+=10;}
-    public void makelesstilt(){tiltplacepos-=10;}
+    public void makemoretilt(){
+        if(pos==0)tiltintakeclosepos+=10;
+        else if(pos==1)tiltintakefarpos+=10;
+        else if(pos==3)tiltplacelowpos+=10;
+        else if(pos==4)tiltplacemidpos+=10;
+        else if(pos==5)tiltplacehighpos+=10;
+    }
+    public void makelesstilt(){
+        if(pos==0)tiltintakeclosepos-=10;
+    else if(pos==1)tiltintakefarpos-=10;
+    else if(pos==3)tiltplacelowpos-=10;
+    else if(pos==4)tiltplacemidpos-=10;
+    else if(pos==5)tiltplacehighpos-=10;
+    }
     public int getTilt(){
         return tilt.getCurrentPosition();
     }
@@ -85,7 +103,7 @@ public class extension {
     public void setPlace() {setTilt(tiltplacepos);}
     public void setIntakeClosePos(){
         pos=0;
-        setTilt(0);
+        setTilt(tiltintakeclosepos);
         setHeight(0);
         if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
         setHeight(0);
@@ -93,7 +111,7 @@ public class extension {
     }
     public void setIntakeFarPos(){
         pos=1;
-        setTilt(0);
+        setTilt(tiltintakefarpos);
         setHeight(0);
         if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
@@ -109,7 +127,7 @@ public class extension {
     }
     public void setPlaceLow(){
         if(pos>1) {
-            setTilt(0);
+            setTilt(tiltplacelowpos);
             setHeight(0);
             pos=3;
         }
@@ -117,16 +135,16 @@ public class extension {
     }
     public void setPlaceMid(){
         if(pos>1) {
-            setTilt(0);
+            setTilt(tiltplacemidpos);
             setHeight(0);
             pos=4;
         }
     }
     public void setPlaceHigh(){
         if(pos>1) {
-            setTilt(0);
+            setTilt(tiltplacehighpos);
             setHeight(0);
-            pos=4;
+            pos=5;
         }
     }
 
