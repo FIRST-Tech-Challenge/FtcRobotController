@@ -271,7 +271,7 @@ public class RobotClass {
 
     //Using AprilTag to find the team prop
     public int findTeamProp(int tagID) {
-        //initiallzes current detection variable
+        //initializes current detection variable
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         //Instantiates ROI objects
