@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RobotClass;
 
-@Autonomous(name = "BlueAudienceSide", group = "Autonomous")
+@Autonomous()
+
 public class BlueAudienceSide extends LinearOpMode {
 
     RobotClass robot = new RobotClass(this);
@@ -17,14 +18,12 @@ public class BlueAudienceSide extends LinearOpMode {
         waitForStart();
 
         //Moving to spike mark grid square
-        robot.moveNoEncoders(0.5, 0.5, 1250);
 
-        //turning and moving to backdrop
-        robot.gyroTurning(90);
+        //Move forwards one more square
 
-        //TODO: Fix turning code (currently not turning)
+        //turning 90 degrees
 
+        //move forwards to the wall
 
-        //parking
     }
 }
