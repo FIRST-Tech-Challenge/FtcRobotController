@@ -27,11 +27,13 @@ public class Intake implements Subsystem {
 
     //State Machine
     public int intakeState = 0; //0: basePos, motor=0, 1: intakePos, motor=1, 2: outtakePos, motor=1
-    private double motorDelayAfterOut = 1000; // in ms. after arm moves to outtake, delay to stop motor
-    private double motorDelayForAuto = 200; // in ms. after arm moves to outtake, delay to stop motor
+    private double motorDelayAfterOut = 2000; // in ms. after arm moves to outtake, delay to stop motor
+    private double motorDelayForAuto = 1300; // in ms. after arm moves to outtake, delay to stop motor
+    private double motorDelayForAutoOutput = 800;
 
     private double outtakeStartTime = 0;
-    private double motorSweepPwr = 1.0;
+    private double motorSweepPwr = -1.0;
+    private double autoOutputPwr = -0.4;
 
     public Intake(Robot robot) {
         intakeMotor = robot.getMotor("intakeMotor");
@@ -107,12 +109,18 @@ public class Intake implements Subsystem {
             }
         } else if (intakeState == 4) {//Start output pre-load pixel
             toIntakePos();
-            intakeMotor.setPower(-this.motorSweepPwr);
+            //intakeMotor.setPower(this.autoOutputPwr);
             intakeState = 5;
             outtakeStartTime = System.currentTimeMillis();
-        } else if (intakeState == 5) {
+        } else if (intakeState == 5) { //wait for intake to intakePos
             long time = System.currentTimeMillis();
-            if(time - outtakeStartTime >= this.motorDelayForAuto){
+            if (time - outtakeStartTime >= this.motorDelayForAuto) {
+                intakeState = 6;
+                intakeMotor.setPower(this.autoOutputPwr);
+                outtakeStartTime = System.currentTimeMillis();
+            }
+        } else if (intakeState == 6) {//output
+            if (System.currentTimeMillis() - outtakeStartTime >= this.motorDelayForAutoOutput) {
                 intakeState = 0;
                 intakeMotor.setPower(0);
                 toBasePos();

@@ -52,6 +52,9 @@ public class AATele extends LinearOpMode {
             if(smartGamepad1.b_pressed()){
                 robot.intake.toBasePos();
             }
+            if(smartGamepad1.x_pressed()){ // test auto output command
+                robot.intake.intakeState = 4;
+            }
             /*            if(smartGamepad1.left_bumper){
                 robot.intake.setPower(1);
             } else{
