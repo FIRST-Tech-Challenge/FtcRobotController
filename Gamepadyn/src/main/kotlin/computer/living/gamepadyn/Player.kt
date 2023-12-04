@@ -11,11 +11,6 @@ class Player<T : Enum<T>> internal constructor(
 ) {
 
     /**
-     * The state of the Player at the end of the last update.
-     */
-    internal var statePrevious: Map<T, InputData> = mapOf()
-
-    /**
      * The current state of every action tracked by the Player.
      */
     internal var state: MutableMap<T, InputData> = parent.actions.entries.associate {
@@ -23,7 +18,7 @@ class Player<T : Enum<T>> internal constructor(
         return@associate when (it.value!!.type) {
             ANALOG -> (it.key to (if (it.value!!.axes == 1) InputDataAnalog(0f) else InputDataAnalog(
                 0f,
-                *FloatArray(-1).toTypedArray()
+                *FloatArray(it.value!!.axes - 1).toTypedArray()
             )))
 
             DIGITAL -> (it.key to InputDataDigital())
@@ -31,6 +26,11 @@ class Player<T : Enum<T>> internal constructor(
     }.toMutableMap()
 
     /**
+     * The state of the Player at the end of the last update.
+     */
+    internal var statePrevious: Map<T, InputData> = state
+
+        /**
      * These two maps have to be separate due to Kotlin's rules on generics.
      * This doesn't really affect the user, but here it means that you need to put a bit more work into type checking.
      * In short, generics cannot be checked at runtime unless reified, but you can't reify class generic parameters.

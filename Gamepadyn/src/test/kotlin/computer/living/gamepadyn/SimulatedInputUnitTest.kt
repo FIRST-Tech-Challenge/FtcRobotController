@@ -20,7 +20,7 @@ class SimulatedInputUnitTest {
         val sysTest = InputSystemTesting()
         InputSystemTesting.manipulableState = false
 
-        val gamepadyn = Gamepadyn(sysTest, strict = true, useInputThread = false, actions)
+        val gamepadyn = Gamepadyn(sysTest, strict = true, actions)
 
         var stateChangeCount = 0
 

@@ -23,14 +23,14 @@ typealias GDesc = InputDescriptor
 @Suppress("MemberVisibilityCanBePrivate")
 class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
     internal val inputSystem: InputSystem,
+    /**
+     * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
+     */
+    var strict: Boolean = true,
 //    @JvmField val useInputThread: Boolean = false,
     internal val actions: Map<T, InputDescriptor?>
 ) {
 
-    /**
-     * If enabled, failures will be loud and catastrophic. Usually, that's better than "silent but deadly."
-     */
-    var strict: Boolean = true
 
     /**
      * Creates a Gamepadyn instance.
@@ -44,7 +44,7 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
         strict: Boolean = true,
 //        useInputThread: Boolean = false,
         vararg actions: Pair<T, InputDescriptor?>
-    ) : this(inputSystem, /* useInputThread,*/ actions.toMap()) {
+    ) : this(inputSystem, strict, /* useInputThread,*/ actions.toMap()) {
         this.strict = strict
     }
 
@@ -57,7 +57,8 @@ class Gamepadyn<T : Enum<T>> @JvmOverloads constructor(
      *
      * TODO: This can never update, needs to be fixed.
      */
-    val players: ArrayList<Player<T>> = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
+    val players: ArrayList<Player<T>> =
+        ArrayList(inputSystem.getGamepads().map { Player(this, it) })
 //        get() = ArrayList(inputSystem.getGamepads().map { Player(this, it) })
 
     /**

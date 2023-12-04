@@ -70,7 +70,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
     // these variables can be deleted when Gamepadyn is finished (state transitions cause headaches)
     /** true for lowered, false for raised */
     private var lastIntakeStatus = false
-    private var useBotRelative = false
+    private var useBotRelative = true
     private var isIntakeLiftRaised = true
 
     enum class Action {
@@ -92,7 +92,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 //        val setter = DriverControl::tagCamera.setter
         shared = BotShared(this)
         shared.drive = MecanumDrive(hardwareMap, initialPose)
-        gamepadyn = Gamepadyn(InputSystemFtc(this), strict = true, useInputThread = false,
+        gamepadyn = Gamepadyn(InputSystemFtc(this), true,
             MOVEMENT                    to GDesc(ANALOG, 2),
             ROTATION                    to GDesc(ANALOG, 1),
             SPIN_INTAKE                 to GDesc(ANALOG, 1),
@@ -108,12 +108,17 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             ActionBind(RawInput.FACE_A, TOGGLE_INTAKE_HEIGHT),
         )
 
-        val intake = shared.intake!!
-
         // toggle driver-relative controls
-        gamepadyn.players[0].getEventDigital(TOGGLE_DRIVER_RELATIVITY)!!.addListener { useBotRelative = !useBotRelative }
-        // toggle intake height
-        gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!.addListener { if (intake.raised) intake.lower() else intake.raise() }
+        gamepadyn.players[0].getEventDigital(TOGGLE_DRIVER_RELATIVITY)!!.addListener { if (it.digitalData) useBotRelative = !useBotRelative }
+
+        val intake = shared.intake
+        if (intake != null) {
+            // toggle intake height
+            gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!
+                .addListener { if (intake.raised) intake.lower() else intake.raise() }
+        } else {
+            telemetry.addLine("WARNING: Safeguard triggered (intake not present)");
+        }
     }
 
     override fun start() {
@@ -140,9 +145,11 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
         telemetry.addLine("Left Stick X: ${gamepad1.left_stick_x}")
         telemetry.addLine("Left Stick Y: ${gamepad1.left_stick_y}")
-        telemetry.addLine("Manual Controls: ${if (useBotRelative) "EN" else "DIS"}ABLED")
+        telemetry.addLine("Bot Relativity: ${if (useBotRelative) "EN" else "DIS"}ABLED")
         telemetry.addLine("Delta Time: $deltaTime")
         telemetry.update()
+
+        gamepadyn.update()
 
         shared.update()
     }
@@ -195,10 +202,10 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
         // +X = forward, +Y = left
         drive.setDrivePowers(PoseVelocity2d(
-            if (useBotRelative) inputVector else Vector2d(
+            if (useBotRelative) Vector2d(
                 driveRelativeX,
                 driveRelativeY
-            ) * powerModifier,
+            ) * powerModifier else inputVector,
             -gamepad1.right_stick_x.toDouble()
         ))
 
@@ -212,12 +219,15 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
      */
     private fun updateSlide() {
         // TODO: replace with Linear Slide Driver
-        val slide = shared.motorSlide!!
-//        val lsd = shared.lsd!!
-
-        // lift/slide
-        slide.mode = RUN_WITHOUT_ENCODER
-        slide.power = if (abs(gamepad2.left_stick_y) > 0.1) -gamepad2.left_stick_y.toDouble() else 0.0
+        val slide = shared.motorSlide
+        //        val lsd = shared.lsd!!
+        if (slide != null) {
+            // lift/slide
+            slide.mode = RUN_WITHOUT_ENCODER
+            slide.power = if (abs(gamepad2.left_stick_y) > 0.1) -gamepad2.left_stick_y.toDouble() else 0.0
+        } else {
+            telemetry.addLine("WARNING: Safeguard triggered (slide not present)");
+        }
     }
 
     /**
@@ -225,30 +235,37 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
      */
     private fun updateIntake() {
         val intake = shared.intake
-        val arm = shared.servoArm!!
-        val claw = shared.claw!!
+        val arm = shared.servoArm
+        val claw = shared.claw
+
+        // Claw
+        if (claw != null && shared.servoClawLeft != null && shared.servoClawRight != null) {
+            // TODO: need to make claw work
+            claw.state += 0.5 * 0.01 * (gamepad2.right_trigger - gamepad2.left_trigger)
+
+            //        claw.state +=
+            //        clawLeft.position +=    Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
+            //        clawRight.position +=   Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
+            telemetry.addLine("Claw Positions: L=${shared.servoClawLeft?.position} R=${shared.servoClawRight?.position}")
+            telemetry.addLine("Claw Module: ${claw.state}")
+        } else {
+            telemetry.addLine("WARNING: Safeguard triggered (claw not present)");
+        }
 
         // Arm
-        val armPos = (arm.position + Servo.MAX_POSITION * /*deltaTime*/ 0.01 * -gamepad2.right_stick_y)
-        arm.position = armPos.clamp(Servo.MIN_POSITION, Servo.MAX_POSITION)
+        if (arm != null) {
+            val armPos = (arm.position + Servo.MAX_POSITION * /*deltaTime*/ 0.01 * -gamepad2.right_stick_y)
+            arm.position = armPos.clamp(Servo.MIN_POSITION, Servo.MAX_POSITION)
 
-// TODO: need to make claw work
-        claw.state += 0.5 * 0.01 * (gamepad2.right_trigger - gamepad2.left_trigger)
-
-// Claw
-//        claw.state +=
-//        clawLeft.position +=    Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
-//        clawRight.position +=   Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
+            telemetry.addLine("Arm Position: ${arm.position}")
+        } else {
+            telemetry.addLine("WARNING: Safeguard triggered (arm not present)");
+        }
 
         // spinner
         intake?.active =
             if (gamepad1.dpad_down) 1.0     // inwards
             else if (gamepad1.dpad_up) -1.0 // outwards
             else 0.0                        // off
-
-        // Debug telemetry
-        telemetry.addLine("Claw Positions: L=${shared.servoClawLeft?.position} R=${shared.servoClawRight?.position}")
-        telemetry.addLine("Claw Module: ${claw.state}")
-        telemetry.addLine("Arm Position: ${arm.position}")
     }
 }

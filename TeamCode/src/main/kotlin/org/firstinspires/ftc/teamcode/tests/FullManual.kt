@@ -37,7 +37,7 @@ class FullManual : OpMode() {
 //        telemetry.addLine("Yaw Difference (bot - input): " + )
 
         telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
-        telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
+        telemetry.addLine("Left Stick Y: " + -gamepad1.left_stick_y)
         telemetry.update()
 
         shared.update()
