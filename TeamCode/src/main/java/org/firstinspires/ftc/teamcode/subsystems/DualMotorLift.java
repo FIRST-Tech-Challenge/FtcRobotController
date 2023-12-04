@@ -25,7 +25,7 @@ public class DualMotorLift implements Subsystem {
     private DcMotorEx slideMotorR;
     private static final double TICKS_PER_REV = 751.8; //5203-2402-0027, 223 RPM
     private static final double PULLEY_DIAMETER_IN = (32.25 / 24.5); //3407-0002-0112 // = 1.269685 inches
-    private final int HEIGHT_DIFF_TOLERANCE = inchToTicks(1.5); //(int) (0.3*TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
+    private final int HEIGHT_DIFF_TOLERANCE = inchToTicks(0.5); //(int) (0.3*TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
     private Telemetry telemetry;
     private boolean targetReached = true;
     private final double FAST_POWER = 0.6;

@@ -75,16 +75,17 @@ public class AATele extends LinearOpMode {
             // INTAKE
             if(smartGamepad1.a_pressed()){
                 if(intakeState == 0) {
-                    robot.intake.setPower(1);
                     robot.intake.toIntakePos();
+                    robot.intake.setPower(1);
                     intakeState=1;
                 } else if (intakeState == 1){
-                    robot.intake.setPower(0);
                     robot.intake.toOuttakePos();
                     robot.outtake.toIntakePos();
+                    robot.intake.setPower(0);
                     intakeState=0;
                 }
             }
+
             if(smartGamepad2.a_pressed()){
                 robot.intake.setPower(0);
                 robot.intake.toBasePos();
@@ -93,12 +94,14 @@ public class AATele extends LinearOpMode {
             if(smartGamepad2.b_pressed()){
                 robot.outtake.toDumpPos();
             }
-            if(smartGamepad1.left_bumper){
+/*            if(smartGamepad1.left_bumper){
                 robot.intake.setPower(1);
             } else{
                 robot.intake.setPower(0);
             }
 
+
+ */
             if(smartGamepad2.left_bumper){
                 robot.droneLauncher.release();
             }

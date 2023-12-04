@@ -39,11 +39,13 @@ public class Outtake implements Subsystem{
      * 0: safe to do whatever
      * 1: waiting for intake to lift
      * 2: waiting to reach height with dumper above intake
+     * 10: wating for reach 0 (and then put dumper to input position)
      */
     private long swingStartTime;
     private long liftStartTime;
     private long tempStartTime;
     private long swingDelay = 500; //miliseconds
+    private long swingDownDelay = 1200; //miliseconds
     private long liftDelay = 1000;
     private long tempDelay = 5000;
 
@@ -97,10 +99,8 @@ public class Outtake implements Subsystem{
     }
     public void toIntakePos(){
         swingState = 10;
-        //lift.goToHt(lift.inchToTicks(0.3));
-        dumpServo.setPosition(dumpIntakePos);
-        armServo_Right.setPosition(armIntake_Right);
-        armServo_Left.setPosition(armIntake_Left);
+        swingStartTime = System.currentTimeMillis();
+        toTravelPos();
     }
     public void prepOuttake(){
         liftState = 1;
@@ -126,8 +126,8 @@ public class Outtake implements Subsystem{
     private boolean liftDelayDone(long time){
         return (time - liftStartTime >= liftDelay);
     }
-    private boolean swingDelayDone(long time){
-        return (time - swingStartTime >= swingDelay);
+    private boolean swingDelayDone(long time, long delay){
+        return (time - swingStartTime >= delay);
     }
     private boolean armCanSwing(long time){
         return (time - tempStartTime >= tempDelay);
@@ -158,20 +158,22 @@ public class Outtake implements Subsystem{
          */
         if(swingState == 1){
             long time = System.currentTimeMillis();
-            if(swingDelayDone(time)){
+            if(swingDelayDone(time, swingDelay)){
                 swingState = 0;
                 dumpServo.setPosition(dumpCarryPos);
                 Log.v("StateMach", "moving dumper " + (time - swingStartTime));
             }
         }
-        if(swingState == 10){
+        if(swingState == 10) {
             long time = System.currentTimeMillis();
-            if(swingDelayDone(time)){
+            if (swingDelayDone(time, swingDownDelay)) {
                 swingState = 0;
-                lift.goToHt(lift.inchToTicks(0));
-                Log.v("StateMach", "moving lift down " + (time - swingStartTime));
+                liftState = 10;
+                lift.goToHt(lift.inchToTicks(0.0));
+                Log.v("StateMach", "moving lift down" + (time - swingStartTime));
             }
         }
+
 
         /*
          * 0: safe to do whatever
@@ -196,6 +198,13 @@ public class Outtake implements Subsystem{
                 this.toDumpPos();
             }
         }
-
+        if(liftState == 10){
+            if(lift.getPosition() < 1.0) {
+                liftState = 0;
+                armServo_Right.setPosition(armIntake_Right);
+                armServo_Left.setPosition(armIntake_Left);
+                dumpServo.setPosition(dumpIntakePos);
+            }
+        }
     }
 }
