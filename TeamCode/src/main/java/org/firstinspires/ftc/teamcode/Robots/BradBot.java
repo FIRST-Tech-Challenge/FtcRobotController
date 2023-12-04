@@ -4,8 +4,6 @@ import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
-import static java.lang.Math.toRadians;
-
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -316,7 +314,8 @@ public class BradBot extends BasicRobot {
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        if (Wrist.WristTargetStates.INTAKE.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
+        if (Wrist.WristTargetStates.INTAKE.state
+            && Lift.LiftMovingStates.AT_ZERO.getState()) {
           arm.flatten();
           magazine.unclamp();
         }

@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -141,9 +142,9 @@ public class StandardTrackingWheelLocalizer implements Localizer {
                 {deltaTicks[2]*2/1.3779/ticks_per_inch - (FORWARD_OFFSET*deltaAngle)},
                 {deltaAngle}};
         double [][] deltaMatrix;
-
-        if(deltaAngle==0){
-            deltaMatrix = new double[][]{{1,0,0},{0,1,0},{0,0,1}};
+        //taylor aprox for small values of delta theta
+        if(abs(deltaAngle)<.000001){
+            deltaMatrix = new double[][]{{1-deltaAngle*deltaAngle*.1666667,-deltaAngle*0.5,0},{deltaAngle*0.5,1-deltaAngle*deltaAngle*.1666667,0},{0,0,1}};
         }else{
             deltaMatrix = new double[][]{{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
                     {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
