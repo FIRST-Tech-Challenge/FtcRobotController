@@ -45,7 +45,7 @@ public class OpenCV_BottomRight extends LinearOpMode {
     private void TravelLeft()
     {
         telemetry.addData("Go left", "");
-        //From Samarth - Uncommenting as its not tested
+        //From Samarth -commenting as its not tested
         //near the bar
         //move forward while turning to left
 
