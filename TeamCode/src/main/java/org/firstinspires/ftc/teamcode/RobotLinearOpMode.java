@@ -469,10 +469,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         rightBackDriveMotor = hardwareMap.get(DcMotor.class, "backright");
         leftBackDriveMotor = hardwareMap.get(DcMotor.class, "backleft");
 
-        leftFrontDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
-        leftBackDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
-        rightFrontDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        rightBackDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        leftFrontDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        leftBackDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        rightFrontDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBackDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     enum MOVEMENT_DIRECTION {

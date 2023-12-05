@@ -58,9 +58,6 @@ public class TeleOp2 extends LinearOpMode {
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
             double liftPower = 0;
-            liftPower += gamepad1.right_trigger;
-            liftPower += gamepad1.left_trigger * -1;
-
 
             // Send calculated power to wheels
             if (leftFrontPower <= -.05){
@@ -80,31 +77,11 @@ public class TeleOp2 extends LinearOpMode {
             rightFrontDrive.setPower((.8)*rightFrontPower);
             leftBackDrive.setPower((.8)*leftBackPower);
             rightBackDrive.setPower((.77)*rightBackPower);
+            liftPower += gamepad1.right_trigger*-1;
+            liftPower += gamepad1.left_trigger;
+            liftMotor.setPower(liftPower*.3);
 
-            if (gamepad1.right_trigger <= 0.05 && gamepad1.left_trigger <= 0.05)
-            {
-                if (gamepad1.y) {
-                    if (liftState == 0) {
-                        encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                        liftPower = .6;
-                        liftState++;
-                    } else if (liftState == 1) {
-                        liftState++;
-                        encoderLift(0.5, 8, LIFT_DIRECTION.UP);
-                        liftPower = -.03;
-                    }
-                    liftMotor.setPower(liftPower*.3);
-                }
-            }
-            else
-            {
-                liftMotor.setPower(liftPower * 0.3);
-            }
-                if (gamepad1.left_bumper) {
-                    encoderLift(0.7, 15, LIFT_DIRECTION.DOWN);
-                    liftMotor.setPower(0);
-                    liftState = 0;
-                }
+
 
 
 
@@ -112,6 +89,8 @@ public class TeleOp2 extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("LeftTrigger RightTrigger","%4.2f, %4.2f", gamepad1.left_trigger, gamepad1.right_trigger);
+            telemetry.addData("lift power", liftPower);
             telemetry.update();
         }
     }
