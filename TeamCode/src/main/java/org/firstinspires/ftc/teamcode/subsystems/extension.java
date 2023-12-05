@@ -67,18 +67,18 @@ public class extension {
 //        laststate=yes;
 //    }
     public void makemoretilt(){
-        if(pos==0)tiltintakeclosepos+=10;
-        else if(pos==1)tiltintakefarpos+=10;
-        else if(pos==3)tiltplacelowpos+=10;
-        else if(pos==4)tiltplacemidpos+=10;
-        else if(pos==5)tiltplacehighpos+=10;
+        if(pos==0){tiltintakeclosepos+=10; setIntakeClosePos();}
+        else if(pos==1){tiltintakefarpos+=10; setIntakeFarPos();}
+        else if(pos==3){tiltplacelowpos+=10;setPlaceLow();}
+        else if(pos==4){tiltplacemidpos+=10;setPlaceMid();}
+        else if(pos==5){tiltplacehighpos+=10;setPlaceHigh();}
     }
     public void makelesstilt(){
-        if(pos==0)tiltintakeclosepos-=10;
-    else if(pos==1)tiltintakefarpos-=10;
-    else if(pos==3)tiltplacelowpos-=10;
-    else if(pos==4)tiltplacemidpos-=10;
-    else if(pos==5)tiltplacehighpos-=10;
+        if(pos==0){tiltintakeclosepos-=10; setIntakeClosePos();}
+        else if(pos==1){tiltintakefarpos-=10; setIntakeFarPos();}
+        else if(pos==3){tiltplacelowpos-=10;setPlaceLow();}
+        else if(pos==4){tiltplacemidpos-=10;setPlaceMid();}
+        else if(pos==5){tiltplacehighpos-=10;setPlaceHigh();}
     }
     public int getTilt(){
         return tilt.getCurrentPosition();
@@ -105,46 +105,44 @@ public class extension {
         pos=0;
         setTilt(tiltintakeclosepos);
         setHeight(0);
-        if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
+        if((tilt.getCurrentPosition())<=155){
         setHeight(0);
         }
     }
     public void setIntakeFarPos(){
         pos=1;
         setTilt(tiltintakefarpos);
-        setHeight(0);
-        if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
+        if((tilt.getCurrentPosition())<=155){
             setHeight(0);
         }
     }
     public void setStowPos(){
         pos=2;
         setHeight(0);
-        if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(7.0 / 8.0))){
-            setTilt(degreestotickstilt(90));
+        if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(8.0 / 9.0))) {
+            setTilt(0);
         }
-
     }
     public void setPlaceLow(){
-        if(pos>1) {
             setTilt(tiltplacelowpos);
-            setHeight(0);
             pos=3;
+            if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
+            setHeight(0);
         }
 
     }
     public void setPlaceMid(){
-        if(pos>1) {
-            setTilt(tiltplacemidpos);
+        setTilt(tiltplacemidpos);
+        pos=4;
+        if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
-            pos=4;
         }
     }
     public void setPlaceHigh(){
-        if(pos>1) {
-            setTilt(tiltplacehighpos);
+        setTilt(tiltplacehighpos);
+        pos=5;
+        if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
-            pos=5;
         }
     }
 
@@ -155,7 +153,15 @@ public class extension {
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void run(){
-
+        if(pos==0)setIntakeClosePos();
+        else if(pos==1)setIntakeFarPos();
+        else if(pos==2)setStowPos();
+        else if(pos==3)setPlaceLow();
+        else if(pos==4)setPlaceMid();
+        else if(pos==5)setPlaceHigh();
+//        if(pos<3){
+//            if(tilt.getTargetPosition())
+//        }
     }
 
 }

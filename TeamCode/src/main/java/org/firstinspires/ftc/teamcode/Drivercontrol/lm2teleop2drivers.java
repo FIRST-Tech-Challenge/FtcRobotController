@@ -168,6 +168,7 @@ public class lm2teleop2drivers extends LinearOpMode {
            // cstate= gamepad1.dpad_down;
             //state2=gamepad1.dpad_up;
             lastState = state;//set last state to the state at end of loop
+        extend.run();
         }
     }
 
