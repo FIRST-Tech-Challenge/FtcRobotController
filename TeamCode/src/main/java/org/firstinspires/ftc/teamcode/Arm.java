@@ -45,23 +45,29 @@ public class Arm {
     static final double THRESHOLD_TO_SLOW_IN_DEG = 60;
 
 
-    static final double  POWER_UP_MUL = 0.5;
-    static final double  POWER_DOWN_MUL = 0.05;
+    static final double  POWER_UP_MUL = 0.8;
+    static final double  POWER_DOWN_MUL = 0.8;
     // Define class members
 
 
     private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
-    DcMotor motor = null;
+    DcMotor arm_right = null;
+    DcMotor arm_left = null;
     public Arm (LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
     public void init() {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
-        motor = myOpMode.hardwareMap.get(DcMotor.class, "arm");
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm_right = myOpMode.hardwareMap.get(DcMotor.class, "arm_right");
+        arm_left = myOpMode.hardwareMap.get(DcMotor.class, "arm_left");
+
+        arm_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        arm_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void moveArmUp() {
@@ -78,18 +84,26 @@ public class Arm {
 
     public void moveToDegree(double deg) {
         double targetPos = degToPosition(deg);
-        motor.setTargetPosition((int)targetPos);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm_right.setTargetPosition((int)targetPos);
+        arm_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm_left.setTargetPosition((int)targetPos);
+        arm_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set the required driving speed  (must be positive for RUN_TO_POSITION)
         // Start driving straight, and then enter the control loop
-        motor.setPower(POWER_AUTO_MOVE);
+        arm_right.setPower(POWER_AUTO_MOVE);
+        arm_left.setPower(POWER_AUTO_MOVE);
 
         // keep looping while we are still active, and BOTH motors are running.
-        while (myOpMode.opModeIsActive() && motor.isBusy()) {
+        while (myOpMode.opModeIsActive() && arm_right.isBusy() && arm_left.isBusy()) {
 
-            if (motor.getCurrentPosition() > degToPosition(THRESHOLD_TO_SLOW_IN_DEG)) {
-                motor.setPower(0.1);
+            if (
+                    arm_right.getCurrentPosition() > degToPosition(THRESHOLD_TO_SLOW_IN_DEG)
+                    || arm_left.getCurrentPosition() > degToPosition(THRESHOLD_TO_SLOW_IN_DEG)
+            ) {
+                arm_right.setPower(0.1);
+                arm_left.setPower(0.1);
             }
 
             // Display drive status for the driver.
@@ -97,24 +111,37 @@ public class Arm {
         }
 
         // Stop all motion & Turn off RUN_TO_POSITION
-        motor.setPower(0);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm_right.setPower(0);
+        arm_left.setPower(0);
+
+        arm_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void sendTelemetry() {
-        myOpMode.telemetry.addData("Arm pos", motor.getCurrentPosition());
+        myOpMode.telemetry.addData("Arm pos Left/Right", "%4.2f / %4.2f",
+                arm_left.getCurrentPosition(),
+                arm_right.getCurrentPosition());
     }
 
     public void moveArmByPower(double power) {
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (myOpMode.gamepad2.right_bumper) {
 
-            motor.setPower(power);
+            arm_right.setPower(power);
+            arm_left.setPower(power);
+
         } else {
             if (power > 0) {
-                motor.setPower(power * POWER_DOWN_MUL);
+                arm_right.setPower(power * POWER_DOWN_MUL);
+                arm_left.setPower(power * POWER_DOWN_MUL);
+
             } else {
-                motor.setPower(power * POWER_UP_MUL);
+                arm_right.setPower(power * POWER_UP_MUL);
+                arm_left.setPower(power * POWER_UP_MUL);
+
             }
         }
 
@@ -124,7 +151,7 @@ public class Arm {
     public void listen() {
 
         // move arm according to the right stick y
-        moveArmByPower(myOpMode.gamepad2.right_stick_y);
+        moveArmByPower(-myOpMode.gamepad2.right_stick_y);
 
     }
 }
