@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,6 +44,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -50,6 +53,13 @@ import java.util.concurrent.TimeUnit;
 /*
  * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag.
  * The code assumes a Holonomic (Mecanum or X Drive) Robot.
+ *
+ * For an introduction to AprilTags, see the ftc-docs link below:
+ * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
+ *
+ * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
+ * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
+ * https://ftc-docs.firstinspires.org/apriltag-detection-values
  *
  * The drive goal is to rotate to keep the Tag centered in the camera, while strafing to be directly in front of the tag, and
  * driving towards the tag to achieve the desired distance.
@@ -91,7 +101,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
     final double SPEED_GAIN  =  0.02  ;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
-    final double STRAFE_GAIN =  0.02 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double STRAFE_GAIN =  0.015;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     final double TURN_GAIN   =  0.01  ;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
@@ -109,7 +119,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     //  - Blue Alliance RIGHT  Backdrop  = 3        - Red Alliance RIGHT  Backdrop  = 6
     //  - Blue Alliance 5-stack 2"/50mm  = 9        - Red Alliance 5-stack 2"/50mm  = 8
     //  - Blue Alliance 5-stack 5"/127mm = 10       - Red Alliance 5-stack 5"/127mm = 7
-    private static final int DESIRED_TAG_ID = 5;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = -1;    // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -153,7 +163,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        setManualExposure(15, 250);  // Use low exposure time to reduce motion blur
+        setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
@@ -169,13 +179,21 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
-                if ((detection.metadata != null) &&
-                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
-                    targetFound = true;
-                    desiredTag = detection;
-                    break;  // don't look any further.
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                        // Yes, we want to use this tag.
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
                 } else {
-                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
             }
 
@@ -187,7 +205,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                 }
                 telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
                 telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range/2.16);
+                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
                 telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
                 telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
@@ -199,7 +217,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
             if (gamepad1.left_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError   = (desiredTag.ftcPose.range/2.16 - DESIRED_DISTANCE);
+                double  rangeError   = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
                 double  headingError = desiredTag.ftcPose.bearing;
                 double  yawError     = desiredTag.ftcPose.yaw;
 
@@ -274,19 +292,21 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         aprilTag = new AprilTagProcessor.Builder()
                 //.setDrawAxes(false)
                 //.setDrawCubeProjection(false)
+                //.setDrawTagID(true)
                 //.setDrawTagOutline(true)
                 //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
-                // If you do not manually specify calibration parameters, the SDK will attempt
+                // If you do not manually specify calibration parameters, the SDK will
                 // to load a predefined calibration for your camera.
-                // === CAMERA CALIBRATION for 150deg webcam ===
-                //.setLensIntrinsics(332.309,332.309,341.008,243.109)
-                // === CAMERA CALIBRATION for Arducam B0197 webcam ===
-                .setLensIntrinsics(1566.16,1566.16,1002.58,539.862)
+              //  ===== CAMERA CALIBRATION for 150deg webcam ===
+              //.setLensIntrinsics(332.309,332.309,341.008,243.109)
+              //  ===== CAMERA CALIBRATION for Arducam B0197 webcam ===
+              //.setLensIntrinsics(1566.16,1566.16,1002.58,539.862)
+              //  ===== CAMERA CALIBRATION for Arducam B0385 webcam ===
+                .setLensIntrinsics(904.214,904.214,696.3,362.796)
                 // ... these parameters are fx, fy, cx, cy.
-
                 .build();
 
         // Create the vision portal by using a builder.
@@ -295,6 +315,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(1280,800))
                 .addProcessor(aprilTag)
                 .build();
     }
