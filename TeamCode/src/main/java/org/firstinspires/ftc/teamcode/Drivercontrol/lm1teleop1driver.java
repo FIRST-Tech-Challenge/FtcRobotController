@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.airplane;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
@@ -106,7 +107,8 @@ public class lm1teleop1driver extends LinearOpMode {
         while (opModeIsActive()) {
             airplane.run(extend,gamepad1,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
-            telemetry.addData("1",gamepad1.touchpad_finger_1);
+            telemetry.addData("?",gamepad1.touchpad_finger_1);
+            telemetry.addData("rev",Range.scale(gamepad1.touchpad_finger_1_y, -1, 1, 1,-1));
             telemetry.update();
           //  gamepad1.rumble(Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),50);
             if (gamepad1.a) {//slow turn mode

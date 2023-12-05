@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.qualcomm.robotcore.util.Range;
+
 public class extension {
     int degreestotickstilt(int degrees){
         return (int)((2786.2/360)*degrees);
@@ -119,9 +121,17 @@ public class extension {
     public void setStowPos(){
         pos=2;
         setHeight(0);
-        if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(8.0 / 9.0))) {
+        if((lift1.getCurrentPosition())<50) {
             setTilt(0);
         }
+        tilt.setPower(Range.scale(tilt.getCurrentPosition(),0,/*697*/640,1,0));
+//        if(tilt.getCurrentPosition()<=155){
+//            tilt.setPower(0.5);
+//        }else if(tilt.getCurrentPosition()<=55&&!tilt.isBusy()){
+//            tilt.setPower(1);
+//        }else if(tilt.getCurrentPosition()<=55&&tilt.getCurrentPosition()>0){
+//            tilt.setPower(0.3);
+//        }else tilt.setPower(1);
     }
     public void setPlaceLow(){
             setTilt(tiltplacelowpos);
