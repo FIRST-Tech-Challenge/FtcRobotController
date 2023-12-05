@@ -19,6 +19,9 @@ public class BlueBackstage extends LinearOpMode {
         teamBot.init(hardwareMap);
 
         waitForStart();
+        /* Rowan's Notes:
+            * Why is there a loop for constantly running the program?
+         */
 
         while (opModeIsActive()){
             teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);

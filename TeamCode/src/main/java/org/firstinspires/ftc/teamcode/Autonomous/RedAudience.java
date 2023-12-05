@@ -16,6 +16,10 @@ public class RedAudience extends LinearOpMode {
         //initialize robot
             waitForStart();
 
+        /* Rowan's Notes:
+             * Why is there a loop for constantly running the program?
+             * Move line under the corresponding comment. This allows people to see what line does what
+         */
             while (opModeIsActive()){
                 teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
                 teamBot.moveWithoutEncoders(0.6, 0.6, 1500);

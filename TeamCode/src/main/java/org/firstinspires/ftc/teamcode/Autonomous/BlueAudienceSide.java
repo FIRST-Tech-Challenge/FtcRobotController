@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 
 @Autonomous()
 
+/* Rowan's Notes:
+    * Change the name for the class to BlueAudience to have consistency
+ */
 public class BlueAudienceSide extends LinearOpMode {
 
     RobotClass teamBot = new RobotClass(this);
@@ -20,6 +23,10 @@ public class BlueAudienceSide extends LinearOpMode {
 
         waitForStart();
 
+        /* Rowan's Notes:
+            * Why is there a loop for constantly running the program?
+            * Move line under the corresponding comment. This allows people to see what line does what
+         */
         while (opModeIsActive()){
             teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
             teamBot.moveWithoutEncoders(0.6, 0.6, 1500);
