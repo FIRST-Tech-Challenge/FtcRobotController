@@ -55,6 +55,7 @@ public class TeleOpPhase2 extends LinearOpMode {
 
         // Hardware map
         DcMotor liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -67,6 +68,9 @@ public class TeleOpPhase2 extends LinearOpMode {
         // PID controller for heading
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0.019, 0, 0.001), 0, 0);
         headingPID.setInputBounds(0, 360);
+
+        // PID controller for heading
+        PIDFController liftPID = new PIDFController(new PIDCoefficients(1, 1, 1), 0, 0);
 
 
         while (!isStopRequested()) {
@@ -116,19 +120,42 @@ public class TeleOpPhase2 extends LinearOpMode {
             drive.update();
 
             // Arm stuff beyond this point:
-            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            if (gamepad1.dpad_up || gamepad1.dpad_down) {
-                liftMotor.setPower(0.7);
+            if (gamepad1.left_bumper || gamepad1.right_bumper) {
+                liftMotor.setPower(0.3);
             } else {
-                liftMotor.setPower(0);
+                liftMotor.setPower(0.0);
             }
 
-            if (gamepad1.dpad_up) {
+            if (gamepad1.left_bumper) {
                 liftMotor.setDirection(DcMotor.Direction.FORWARD);
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.right_bumper) {
                 liftMotor.setDirection(DcMotor.Direction.REVERSE);
+            }
+
+            double liftStage1 = 0.5;
+            double liftStage2 = 1;
+            if (gamepad1.dpad_up) {
+                liftPID.setTargetPosition(liftStage1);
+            } else if (gamepad2.dpad_down) {
+                liftPID.setTargetPosition(liftStage2);
+            }
+
+            liftMotor.setTargetPosition((int) liftPID.update(liftMotor.getCurrentPosition()));
+
+
+            if (gamepad1.left_trigger > 0.03 || gamepad1.right_trigger > 0.03) {
+                intakeMotor.setPower(0.5);
+            } else {
+                intakeMotor.setPower(0.0);
+            }
+
+            if (gamepad1.left_trigger > 0.03) {
+                intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            } else if (gamepad1.right_trigger > 0.03) {
+                intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
 
@@ -139,6 +166,7 @@ public class TeleOpPhase2 extends LinearOpMode {
             telemetry.addData("headingToHold", Math.toDegrees(headingToHold.getHeading()));
             telemetry.addData("isHolding", isHolding);
             telemetry.addData("joystick", -gamepad1.right_stick_x);
+            telemetry.addData("liftPosition", liftMotor.getCurrentPosition());
             telemetry.update();
         }
     }
