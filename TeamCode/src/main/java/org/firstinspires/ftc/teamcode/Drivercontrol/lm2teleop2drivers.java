@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Drivercontrol.Feildcentricdrive;
+//import org.firstinspires.ftc.teamcode.Drivercontrol.Feildcentricdrive;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.teamcode.util.airplane;
 
@@ -72,11 +72,11 @@ public class lm2teleop2drivers extends LinearOpMode {
     public void runOpMode() {
         plane=hardwareMap.get(Servo.class,"plane");
         plane.setPosition(0);
-        boolean half = false;//half speed
+       // boolean half = false;//half speed
         boolean open = false;
         boolean state = false;
-        boolean cstate = false;
-        boolean state2 = false;
+        //boolean cstate = false;
+       // boolean state2 = false;
         boolean lastState = false;// claw booleans
         hang=hardwareMap.get(DcMotor.class,"hang");
         hangs=hardwareMap.get(Servo.class,"hangs");
@@ -85,7 +85,7 @@ public class lm2teleop2drivers extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         extension extend = new extension(hardwareMap);//tilt object made
         //extend.release();//releases the tilt to move into start pos
-        boolean reset = false;//boolean for reset heading
+        //boolean reset = false;//boolean for reset heading
         boolean slowturn = false;//boolean for slowturn mode
         double rx;//right x
         telemetry.addData("Status", "Initialized");
@@ -100,7 +100,7 @@ public class lm2teleop2drivers extends LinearOpMode {
 //        }
         waitForStart();
         runtime.reset();
-        boolean hangmode=false;
+       // boolean hangmode=false;
         gamepad1.setLedColor(255.0,215,0,180000);
 
         // run until the end of the match (driver presses STOP)
@@ -121,13 +121,12 @@ public class lm2teleop2drivers extends LinearOpMode {
                 rx *=0.7;
             } //could be more compact
 
-            if (gamepad1.right_trigger >=0.5) {//slow speed mode
-                half = true;
-            } else {
-                half=false;
-            }
-            if(half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
-            else if(!half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
+           // half=false;
+            if (gamepad1.right_trigger >=0.5) drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true,gamepad1.back);
+            else drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
+
+//            if(half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true,gamepad1.back);
+//            else if(!half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
 
             state = gamepad2.left_bumper;//state for claw
 
