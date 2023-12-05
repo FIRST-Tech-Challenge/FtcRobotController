@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.robots.base;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -34,11 +34,10 @@ public class DriveConstants {
      *
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
-     */
-    /*
-     * FTC 17240 GoBuilda:
-     *  Using 'dead' wheels with 90mm Omni Wheels + Through Bore Encoder
-     *   Noted that motors RF and RB appear to have malfunctioning encoders
+     *
+     * FTC 17240 GoBuilda and DuluthBot:
+     *  Using 'dead' wheel odometry with 90mm Omni Wheels + Through Bore Encoder
+     *   Therefore, this should always be 'false'
      */
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,

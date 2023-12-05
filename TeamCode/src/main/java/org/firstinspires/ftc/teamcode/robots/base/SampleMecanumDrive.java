@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.robots.base;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +18,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -27,7 +26,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -37,17 +35,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.robots.base.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -58,10 +56,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
-
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+    public static double VX_PERCENTAGE = 1.0;
+    public static double VY_PERCENTAGE = 1.0;
+    public static double HEADING_PERCENTAGE = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -70,8 +70,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
+    protected DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    protected List<DcMotorEx> motors;
 
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -81,6 +81,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -93,44 +95,19 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry
-        Removing based on use of ThreeWheelEncoder usage
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-        imu.initialize(parameters);
-        */
-
-        /* FTC 17240 2023-24: DuluthBot + 3 Wheel Odometry */
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRearDrive");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRearDrive");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
-
-        // Set direction of leftRearDrive
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
+        /* FTC 17240 2023-24:
+          Both RUN_USING_ENCODER and MOTOR_VELO_PID should always be false, so
+          calculations for setMode() and setPIDFCoefficients() should not be used.
+          Keeping them as options in the code for now.
+         */
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
@@ -142,6 +119,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -257,6 +235,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
         }
+
+        // Apply percentage adjustments
+        vel = new Pose2d(
+                vel.getX() * VX_PERCENTAGE,
+                vel.getY() * VY_PERCENTAGE,
+                vel.getHeading() * HEADING_PERCENTAGE
+        );
 
         setDrivePower(vel);
     }
