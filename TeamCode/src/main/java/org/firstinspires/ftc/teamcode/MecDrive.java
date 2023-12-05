@@ -30,6 +30,7 @@ public class MecDrive extends LinearOpMode {
 
     private DcMotorEx rightHook;
     private DcMotorEx leftHook;
+    private DcMotorEx intake;
     private Servo RHook;
     private Servo LHook;
 
@@ -39,6 +40,8 @@ public class MecDrive extends LinearOpMode {
     private double leftStickX;
     private double leftStickY;
     private double rightStickX;
+
+    private float speedFactor;
 
     NormalizedColorSensor colorSensor;
 
@@ -58,10 +61,7 @@ public class MecDrive extends LinearOpMode {
         RL= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RL");
         RR= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RR");
 
-        rightHook= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "rightHook");
-        leftHook= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "leftHook");
-        RHook=(Servo) hardwareMap.get(Servo.class, "RHook");
-        LHook=(Servo) hardwareMap.get(Servo.class, "LHook");
+        intake= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "intake");
 
         colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
@@ -75,6 +75,7 @@ public class MecDrive extends LinearOpMode {
         Globals.robot.enableBrake(true);
         Rservopos = 1;
         Lservopos = -1;
+        speedFactor = 1;
 
         telemetry.setMsTransmissionInterval(20);
         telemetry.addData("Status", "Initialized");
@@ -116,6 +117,12 @@ public class MecDrive extends LinearOpMode {
             //LHook.setPosition(Lservopos);
         }
 
+        if (gamepad1.x) {
+            intake.setPower(1);
+        } else {
+            intake.setPower(0);
+        }
+
         telemetry.addData("ServoRpos", Rservopos);
         telemetry.addData("ServoLpos", Lservopos);
 
@@ -139,8 +146,8 @@ public class MecDrive extends LinearOpMode {
         telemetry.update();
 
         MecanumDrive.cartesian(Globals.robot,
-                -leftStickY * 1,
-                leftStickX * 1,
-                rightStickX * .75);
+                -leftStickY * speedFactor,
+                leftStickX * speedFactor,
+                rightStickX * speedFactor * .75);
     }
 }
