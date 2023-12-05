@@ -50,14 +50,21 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
     public VisionPortal visionPortal;
-    public static final String TFOD_MODEL_ASSET = "CSTeamProp.tflite";
+    public static String TFOD_MODEL_ASSET = null;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
             "prop",
     };
 
-    public void inititalization() {
+    public void inititalization(boolean isRed) {
+        if (isRed) {
+            TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
+        }
+        else{
+            TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
+        }
+
         lf = hardwareMap.get(DcMotor.class, "leftFront");
         lb = hardwareMap.get(DcMotor.class, "leftBack");
         rf = hardwareMap.get(DcMotor.class, "rightFront");

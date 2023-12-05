@@ -42,7 +42,7 @@ public class CSFullTeleOp extends CSMethods {
 
     @Override
     public void runOpMode() {
-        inititalization();
+        inititalization(true);
 
         double slow = 1.0;
         double turnSpeed = 2.0;

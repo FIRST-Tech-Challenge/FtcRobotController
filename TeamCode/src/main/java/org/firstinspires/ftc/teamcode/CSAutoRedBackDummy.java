@@ -49,7 +49,7 @@ import java.util.List;
 public class CSAutoRedBackDummy extends CSMethods {
 
     public void runOpMode() {
-        inititalization();
+        inititalization(true);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

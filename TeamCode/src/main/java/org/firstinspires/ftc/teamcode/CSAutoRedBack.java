@@ -39,7 +39,7 @@ import java.util.List;
 public class CSAutoRedBack extends CSMethods {
 
     public void runOpMode() {
-        inititalization();
+        inititalization(true);
 
 
         // Main code

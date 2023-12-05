@@ -50,7 +50,7 @@ import java.util.List;
 public class CSAutoBlueFrontDummy extends CSMethods {
 
     public void runOpMode() {
-        inititalization();
+        inititalization(false);
 
 
         // Main code

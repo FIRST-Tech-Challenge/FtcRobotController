@@ -40,7 +40,7 @@ public class CSAutoBlueBack extends CSMethods {
 
 
     public void runOpMode() {
-        inititalization();
+        inititalization(false);
 
 
         // Main code

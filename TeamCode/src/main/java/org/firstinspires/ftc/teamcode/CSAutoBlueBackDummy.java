@@ -49,7 +49,7 @@ import java.util.List;
 public class CSAutoBlueBackDummy extends CSMethods {
 
     public void runOpMode() {
-        inititalization();
+        inititalization(false);
 
 
         // Main code
