@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.Toros;
 
 import android.util.Size;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.DriveRR.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -19,12 +22,13 @@ import java.util.List;
 
 public class Autonomus extends LinearOpMode{
 
-    private static final boolean USE_WEBCAM = true;
 
-    private static final String Model = "Mymodel.tflite";
+
+    private static final String Model = "/sdcard/FIRST/tflitemodels/model.tflite";
 
     private static final String[] Labels = {
-            "Cone"
+            "RedCone",
+            "BluCone"
     };
 
     private TfodProcessor tfod;
@@ -35,17 +39,21 @@ public class Autonomus extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         initvision();
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
+                .forward(1)
+                .build();
+
         waitForStart();
         if(opModeIsActive()){
             while(opModeIsActive()){
                 telemetry();
-
             }
         } sleep(20);
         visionPortal.close();
     } private void initvision(){
         tfod = new TfodProcessor.Builder()
-                .setModelAssetName(Model)
+                .setModelFileName(Model)
                 .setModelLabels(Labels)
                 .setIsModelTensorFlow2(true)
                 .setIsModelQuantized(true)
@@ -94,7 +102,6 @@ public class Autonomus extends LinearOpMode{
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
-
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
 
@@ -109,6 +116,6 @@ public class Autonomus extends LinearOpMode{
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
 
-    }
+   }
 }
 

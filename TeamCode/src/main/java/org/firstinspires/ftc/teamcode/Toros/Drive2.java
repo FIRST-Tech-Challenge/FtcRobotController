@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp(name = "MainDrive")
@@ -21,16 +20,17 @@ public class Drive2 extends LinearOpMode {
     private PIDController controller;
 
 
-    public static double p = 0.03, i = 0, d = -0.0001;
+    public static double p = 0.03, i = 0.0022, d = 0.001;
     public static double f = -0.05;
     public static int target = -100;
-    private final double ticks_in_degrees = 1440 / 180;
+   private final double ticks_in_degrees = 1440 / 180;
 
     //Motors
     private DcMotor FrontLeftMotor;
     private DcMotor BackLeftMotor;
     private DcMotor FrontRightMotor;
     private DcMotor BackRightMotor;
+    private DcMotor Railgun;
     private DcMotorEx Arm1;
 
     //Servos
@@ -57,10 +57,10 @@ public class Drive2 extends LinearOpMode {
                 double x = gamepad1.left_stick_x;
                 double y = -gamepad1.left_stick_y;
                 double turn = gamepad1.right_stick_x;
-
+                boolean PIDF = true;
 
                 //Drive variables used in the calculations to run our motors
-
+                boolean launcher = gamepad1.y;
                 double theta = Math.atan2(y, x);
                 double power = Math.hypot(x, y);
                 double sin = Math.sin(theta - Math.PI / 4);
@@ -83,7 +83,7 @@ public class Drive2 extends LinearOpMode {
                     br /= power + Math.abs(turn);
                 }
 
-                telemetry.addData("Target Position", target);
+                //telemetry.addData("Target Position", target);
 
                 //Motor Drive
                 FrontLeftMotor.setPower(fl * (speed/100));
@@ -109,37 +109,63 @@ public class Drive2 extends LinearOpMode {
                     speed = 100;
                 } if (speed > 100){
                     speed = 100;
-                } else if (speed < -100){
-                    speed = -100;
+                } else if (speed < 2){
+                    speed = 2;
                 }
-                controller.setPID(p, i, d);
+                if (target > -2100){
+                    f =  0.05;
+                } else if (target < -2100) {
+                    f = -0.05;
+                }
+                double powerA = 0;
                 int armPos = Arm1.getCurrentPosition();
+
+                controller.setPID(p, i, d);
                 double pid = controller.calculate(armPos, target);
                 double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+                powerA = pid + ff;
 
-                double powerA = pid + ff;
+                if(gamepad2.left_stick_y <= 1.0 && gamepad2.left_stick_y != 0.0|| gamepad2.left_stick_y >= -1.0 && gamepad2.left_stick_y != 0){
+                    powerA = gamepad2.left_stick_y / 0.5;
+                    target = armPos;
+                }
+
 
                 Arm1.setPower(powerA);
 
+
+
                 //ArmControl
                 if (gamepad2.y) {
-                    target = -1300;
+                    target = -2850;
                 } else if (gamepad2.x) {
                     target = -1900;
                 } else if (gamepad2.b){
-                    target = -75;
+                    target = -550;
                 } else if(gamepad2.a){
                     target =-3250;
                 }
 
-                if (gamepad2.left_stick_y <= 1.0 && gamepad2.left_stick_y != 0.0|| gamepad2.left_stick_y >= -1.0 && gamepad2.left_stick_y != 0 ){
-                    target = (int) (target + 10 * gamepad2.left_stick_y);
-                    if (target  > -75) {
-                        target = -75;
-                    } else if (target <-4300) {
-                        target = -4300;
-                    }
+                if(launcher == true){
+                    Railgun.setPower(1);
                 }
+
+//                if (gamepad2.left_stick_y <= 1.0 && gamepad2.left_stick_y != 0.0|| gamepad2.left_stick_y >= -1.0 && gamepad2.left_stick_y != 0 ){
+//                    target = (int) (target + 10 * gamepad2.left_stick_y);
+//                    if (target  > -75) {
+//                        target = -75;
+//                    } else if (target <-4300) {
+//                        target = -4300;
+//                    }
+//                }
+
+
+//
+//                if(gamepad2.y){
+//                    Arm1.setPower(1.0);
+//                } else if (gamepad2.b) {
+//                    Arm1.setPower(0);
+//                }
                 //Telemetry under iniTelemetry();
                 telemetry.addData("Speed", speed);
                 initTelemetry();
@@ -154,6 +180,7 @@ public class Drive2 extends LinearOpMode {
         BackLeftMotor = hardwareMap.get(DcMotor.class, "BackLeftMotor");
         FrontRightMotor = hardwareMap.get(DcMotor.class, "FrontRightMotor");
         BackRightMotor = hardwareMap.get(DcMotor.class, "BackRightMotor");
+        Railgun = hardwareMap.get(DcMotor.class,"Railgun");
         Arm1 = hardwareMap.get(DcMotorEx.class, "Arm");
         //Servos
         Claw1 = hardwareMap.get(Servo.class, "Claw1");
@@ -174,14 +201,17 @@ public class Drive2 extends LinearOpMode {
         Claw3.setPosition(0);
 
     }
-    //PIDF control method for controlling the
+
 
     private void initTelemetry() {
 
         telemetry.addData("claw angle", Claw1.getPosition() * 180);
         telemetry.addData("claw open or closed", Claw3.getPosition());
+        //
+        //
+        //
         telemetry.addData("Target", target);
-        //telemetry.addData("ArmPosition", Arm1.getCurrentPosition());
+        telemetry.addData("ArmPosition", Arm1.getCurrentPosition());
         telemetry.addData("Pos", Arm1.getCurrentPosition());
         telemetry.addData("Speed", speed);
         telemetry.update();
