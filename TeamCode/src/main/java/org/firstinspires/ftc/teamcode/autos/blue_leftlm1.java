@@ -172,7 +172,7 @@ public class blue_leftlm1 extends LinearOpMode {
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
-        ex.setStowPos();
+       // ex.setStowPos();
         //claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -443,8 +443,9 @@ public class blue_leftlm1 extends LinearOpMode {
 
             // Display drive status for the driver.
             sendTelemetry(false);
-                if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
-            if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
+            claw.setPosition(1);
+               // if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
+            //if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
 //            if (order==0&&(holdTimer.time()>holdTime*0.1)){
 //                wrist.setPosition(0.32);
 //                telemetry.addData("order", order);

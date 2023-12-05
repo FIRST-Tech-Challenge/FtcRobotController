@@ -1,0 +1,8 @@
+claw 1 open =
+claw 1 close =
+claw 2 open =
+claw 2 close =
+list of wrist 1 pos in the order of intake close, intake far, stow, place low, mid, high =
+list of wrist 2 pos in the order of intake close, intake far, stow, place low, mid, high =
+list of tilt pos in the order of intake close, intake far, stow, place low, mid, high =
+list of lift pos in the order of intake close, intake far, stow, place low, mid, high =

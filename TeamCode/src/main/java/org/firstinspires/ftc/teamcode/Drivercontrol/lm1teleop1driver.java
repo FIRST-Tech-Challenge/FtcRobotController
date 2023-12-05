@@ -104,7 +104,7 @@ public class lm1teleop1driver extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            airplane.run(extend,gamepad1,plane);
+            airplane.run(extend,gamepad1,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.addData("1",gamepad1.touchpad_finger_1);
             telemetry.update();

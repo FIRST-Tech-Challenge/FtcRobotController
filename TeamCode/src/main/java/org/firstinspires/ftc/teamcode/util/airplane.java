@@ -10,15 +10,26 @@ import java.security.cert.Extension;
 
 public class airplane {
     public static boolean planeb=false;
-    public static void run(extension extend, Gamepad gamepad1, Servo plane) {
-        if (gamepad1.touchpad_finger_1) {
-            planeb = true;
-        } else if (gamepad1.touchpad_finger_2) {
-            planeb = false;
+    public static boolean state=false;
+    public static void run(extension extend, Gamepad gamepad1, Servo plane, boolean runmode) {
+        if (gamepad1.start&& state!=gamepad1.start&&!runmode) {
+            if (!planeb) {
+                planeb = true;
+            } else {
+                planeb = false;
+            }
+        }
+        if (gamepad1.triangle&& state!=gamepad1.start&&runmode) {
+            if (!planeb) {
+                planeb = true;
+            } else {
+                planeb = false;
+            }
         }
         if (planeb) {
-            extend.setTilt(((int) Range.scale(gamepad1.touchpad_finger_1_y, -1, 1, 0, 400)));
-            if (gamepad1.touchpad_finger_2) plane.setPosition(1);
+           // extend.setTilt(((int) Range.scale(gamepad1.touchpad_finger_1_y, -1, 1, 0, 400)));
+            if (gamepad1.touchpad_finger_1) plane.setPosition(1);
         }
+        state = gamepad1.start;
     }
 }

@@ -104,15 +104,15 @@ public class lm2teleop1driver extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            airplane.run(extend,gamepad1,plane);
+            airplane.run(extend,gamepad1,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.addData("1",gamepad1.touchpad_finger_1);
             telemetry.update();
           //  gamepad1.rumble(Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),50);
-            if (gamepad1.a) {//slow turn mode
+            if (gamepad1.circle) {//slow turn mode
                 slowturn = true;
             }
-            if (gamepad1.b) {
+            if (gamepad1.square) {
                 slowturn = false;
             }
             rx = gamepad1.right_stick_x;
@@ -120,7 +120,7 @@ public class lm2teleop1driver extends LinearOpMode {
                 rx *=0.7;
             } //could be more compact
 
-            if (gamepad1.y) {//slow speed mode
+            if (gamepad1.triangle) {//slow speed mode
                 half = true;
             } else if(gamepad1.x){
                 half=false;
@@ -133,8 +133,8 @@ public class lm2teleop1driver extends LinearOpMode {
             if (gamepad1.dpad_up&&!air.planeb) {extend.setIntake();wrist.setPosition(1);}//set positions
             else if (gamepad1.right_bumper&&!air.planeb) {extend.setIntakeClosePos();wrist.setPosition(0.315);}
             else if (gamepad1.right_trigger >= 0.5&&!air.planeb) {extend.setPlaceLow();wrist.setPosition(0.95);}
-            else if (gamepad1.dpad_down&&!air.planeb) {extend.setIntakeFarPos();wrist.setPosition(0.315);}
-            else if (gamepad1.dpad_right&&!air.planeb) {extend.setPlaceMid();wrist.setPosition(0.95);}
+            else if (gamepad1.dpad_down&&!air.planeb) {extend.setPlaceMid();wrist.setPosition(0.95);}
+            else if (gamepad1.dpad_right&&!air.planeb) {extend.setIntakeFarPos();wrist.setPosition(0.95);}
             else if (gamepad1.dpad_left&&!air.planeb) {extend.setPlaceHigh();wrist.setPosition(0.95);}
 
             if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving

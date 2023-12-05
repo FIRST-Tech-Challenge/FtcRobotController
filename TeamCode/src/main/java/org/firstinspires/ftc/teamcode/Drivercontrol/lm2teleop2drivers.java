@@ -31,10 +31,13 @@ package org.firstinspires.ftc.teamcode.Drivercontrol;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Drivercontrol.Feildcentricdrive;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
+import org.firstinspires.ftc.teamcode.util.airplane;
 
 
 /*
@@ -50,12 +53,16 @@ import org.firstinspires.ftc.teamcode.subsystems.extension;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="lm1drive2drivers", group="Linear OpMode")
+@TeleOp(name="lm2drive2driver", group="Linear OpMode")
 
-public class lm1teleop2drivers extends LinearOpMode {
+public class lm2teleop2drivers extends LinearOpMode {
+    airplane air=new airplane();
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    DcMotor hang;
+    Servo plane;
+    Servo hangs;
     Servo wrist;
     Servo claw;
 
@@ -63,14 +70,21 @@ public class lm1teleop2drivers extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        plane=hardwareMap.get(Servo.class,"plane");
+        plane.setPosition(0);
+        boolean half = false;//half speed
         boolean open = false;
         boolean state = false;
+        boolean cstate = false;
+        boolean state2 = false;
         boolean lastState = false;// claw booleans
+        hang=hardwareMap.get(DcMotor.class,"hang");
+        hangs=hardwareMap.get(Servo.class,"hangs");
+        hangs.setPosition(0);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         extension extend = new extension(hardwareMap);//tilt object made
-        extend.release();//releases the tilt to move into start pos
+        //extend.release();//releases the tilt to move into start pos
         boolean reset = false;//boolean for reset heading
         boolean slowturn = false;//boolean for slowturn mode
         double rx;//right x
@@ -78,21 +92,28 @@ public class lm1teleop2drivers extends LinearOpMode {
         telemetry.update();
         drive.init(hardwareMap, 0);//init dt
         //extend.setStowPos();//for when auto is ready
-        while(opModeInInit()){
-            if(gamepad1.a){
-                extend.hold();//hold init pos
-                break;
-            }
-        }
+//        while(opModeInInit()){
+//            if(gamepad1.a){
+//                extend.hold();//hold init pos
+//                break;
+//            }
+//        }
         waitForStart();
         runtime.reset();
+        boolean hangmode=false;
+        gamepad1.setLedColor(255.0,215,0,180000);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if (gamepad1.a) {//slow turn mode
+            airplane.run(extend,gamepad1,plane,true);
+            telemetry.addData("y",gamepad1.touchpad_finger_1_y);
+            telemetry.addData("1",gamepad1.touchpad_finger_1);
+            telemetry.update();
+          //  gamepad1.rumble(Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),Math.abs(extend.getTilt()/extend.tilt.getTargetPosition()),50);
+            if (gamepad1.circle) {//slow turn mode
                 slowturn = true;
             }
-            if (gamepad1.b) {
+            if (gamepad1.square) {
                 slowturn = false;
             }
             rx = gamepad1.right_stick_x;
@@ -100,22 +121,44 @@ public class lm1teleop2drivers extends LinearOpMode {
                 rx *=0.7;
             } //could be more compact
 
-            if (gamepad1.y) {//slow speed mode
-                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
+            if (gamepad1.right_trigger >=0.5) {//slow speed mode
+                half = true;
             } else {
-                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
+                half=false;
             }
+            if(half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
+            else if(!half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
 
             state = gamepad2.left_bumper;//state for claw
 
-            if (gamepad2.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set posistions
-            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.15);}
-            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.9);}
+            if (gamepad2.dpad_up&&!air.planeb) {extend.setIntake();wrist.setPosition(1);}//set positions
+            else if (gamepad2.dpad_right&&!air.planeb) {extend.setIntakeClosePos();wrist.setPosition(0.315);}
+            else if (gamepad2.x &&!air.planeb) {extend.setPlaceLow();wrist.setPosition(0.95);}
+            else if (gamepad2.circle&&!air.planeb) {extend.setPlaceMid();wrist.setPosition(0.95);}
+            else if (gamepad2.dpad_left&&!air.planeb) {extend.setIntakeFarPos();wrist.setPosition(0.95);}
+            else if (gamepad2.triangle&&!air.planeb) {extend.setPlaceHigh();wrist.setPosition(0.95);}
 
-            if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
+            if (gamepad2.left_bumper && state != lastState) {//new claw code for easier driving
                 if (open) {claw.setPosition(0.2);open = false;}
                 else {claw.setPosition(1);open = true;}
             }
+           // if(!hangmode) {
+                if (gamepad2.dpad_down && gamepad1.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides
+                else if (gamepad2.dpad_up && gamepad1.left_trigger >= 0.5) {extend.makemoretilt();}
+           // }else{
+//                if (gamepad1.dpad_down) hang.setPower(-1);//place pos over-rides
+//                else if (gamepad1.dpad_up) hang.setPower(1);
+//                else hang.setPower(0);
+
+            }
+//            if(gamepad1.dpad_right){
+//                extend.sethang();
+//                hangs.setPosition(1);
+//            }
+//            if(gamepad1.start){
+//                hangmode=true;
+//            }
+
 //            if(gamepad1.dpad_up) {//old claw code
 //                claw.setPosition(0.2);
 //
@@ -123,9 +166,10 @@ public class lm1teleop2drivers extends LinearOpMode {
 //                claw.setPosition(1);
 //
 //            }
-
+           // cstate= gamepad1.dpad_down;
+            //state2=gamepad1.dpad_up;
             lastState = state;//set last state to the state at end of loop
         }
     }
-}
+
 
