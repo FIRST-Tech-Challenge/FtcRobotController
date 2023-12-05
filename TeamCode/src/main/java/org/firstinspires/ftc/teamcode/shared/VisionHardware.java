@@ -28,14 +28,14 @@ public class VisionHardware {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "model_cube_props-102823.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_spheres_20231202.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20231015_125021.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "RED CUBE",
-            "BLUE CUBE"
+            "Red Sphere",
+            "Blue Sphere"
     };
     public enum PropPosition {
         UNKNOWN,
@@ -76,7 +76,8 @@ public class VisionHardware {
         if (USE_WEBCAM) {
             visionPortalBuilder = new VisionPortal.Builder();
             visionPortalBuilder.setCamera(myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
-            visionPortalBuilder.setCameraResolution(new Size(640, 480));
+            //visionPortalBuilder.setCameraResolution(new Size(640, 480));
+            visionPortalBuilder.setCameraResolution(new Size(1280, 720));
             visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
             visionPortalBuilder.enableLiveView(true);
             visionPortalBuilder.addProcessors(tfod);
@@ -113,22 +114,22 @@ public class VisionHardware {
                         double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
                         double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-                        if (x < 300) {
+                        if (x < 500) {
                             myOpMode.telemetry.addData("Prop Left", "");
                             myOpMode.telemetry.update();
                             debugWait();
                             return PropPosition.LEFT;
-                        } else if (x > 300) {
+                        } else if (x > 1000) {
                             myOpMode.telemetry.addData("Prop Right", "");
                             myOpMode.telemetry.update();
                             debugWait();
                             //return PropPosition.RIGHT;
-                            return PropPosition.MIDDLE;
+                            return PropPosition.RIGHT;
                         } else {
                             myOpMode.telemetry.addData("Prop Middle", "");
                             myOpMode.telemetry.update();
                             debugWait();
-                            return PropPosition.RIGHT;
+                            return PropPosition.MIDDLE;
                         }
                     }
                 }
