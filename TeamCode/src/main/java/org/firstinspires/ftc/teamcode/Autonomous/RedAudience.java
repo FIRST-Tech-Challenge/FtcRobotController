@@ -20,23 +20,16 @@ public class RedAudience extends LinearOpMode {
              * Why is there a loop for constantly running the program?
              * Move line under the corresponding comment. This allows people to see what line does what
          */
-            while (opModeIsActive()){
-                teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
-                teamBot.moveWithoutEncoders(0.6, 0.6, 1500);
-                teamBot.gyroTurning(90);
-                teamBot.moveWithoutEncoders(0.6, 0.6, 6000);
-                teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
-            }
-
-
 
         //Moving to spike mark grid square
-
-
+        teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
         //Move forwards one more square
-
+        teamBot.moveWithoutEncoders(0.6, 0.6, 1500);
         //Turning 90 degrees
-
+        teamBot.gyroTurning(90);
         //Move forwards to the wall
+        teamBot.moveWithoutEncoders(0.6, 0.6, 6000);
+        //Strafe for Safety
+        teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
     }
 }

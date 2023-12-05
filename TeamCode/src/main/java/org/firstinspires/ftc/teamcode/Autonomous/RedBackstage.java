@@ -16,10 +16,8 @@ public class RedBackstage extends LinearOpMode {
         //initialize robot
             waitForStart();
 
-            while (opModeIsActive()){
-                teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
-            }
+            //Strafe to the Wall
+        teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
 
-            //Strafe to the wall
     }
 }

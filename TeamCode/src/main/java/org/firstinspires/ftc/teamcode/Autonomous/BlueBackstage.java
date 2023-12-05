@@ -22,12 +22,9 @@ public class BlueBackstage extends LinearOpMode {
         /* Rowan's Notes:
             * Why is there a loop for constantly running the program?
          */
-
-        while (opModeIsActive()){
-            teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);
-        }
-
         //Strafe to the wall
+
+        teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);
 
     }
 }
