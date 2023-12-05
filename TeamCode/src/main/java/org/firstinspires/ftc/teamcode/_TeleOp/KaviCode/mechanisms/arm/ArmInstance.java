@@ -38,4 +38,5 @@ public class ArmInstance {
         Arm_Motor.setPower(0.2);
         Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
 }
