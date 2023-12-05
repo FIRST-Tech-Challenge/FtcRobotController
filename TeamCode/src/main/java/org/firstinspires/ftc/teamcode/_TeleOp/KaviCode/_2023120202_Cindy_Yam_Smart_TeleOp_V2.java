@@ -96,7 +96,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
 
             //Smart TeleOp
 
-            if (gamepad1.right_bumper) {
+            if (gamepad2.right_bumper) {
                 armDown = false;
                 Arm.setArmPosTo(500);
                 while (Arm.Arm_Motor.isBusy()) {}
@@ -106,7 +106,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
                 Claw.Actuate_Claw_Top_Finger("open");
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper) {
                 if (armDown) {
                     armDown = false;
                     Arm.setArmPosTo(100);
@@ -117,6 +117,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
             }
 
             if (!Arm.Arm_Motor.isBusy() && armDown) {
+                sleep(50);
                 Claw.Actuate_Claw_Bottom_Finger("close");
                 Claw.Actuate_Claw_Top_Finger("close");
             }
