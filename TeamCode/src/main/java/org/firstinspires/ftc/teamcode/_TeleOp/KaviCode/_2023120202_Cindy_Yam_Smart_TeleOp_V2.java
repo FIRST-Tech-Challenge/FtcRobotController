@@ -69,34 +69,34 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
 
 
 
-            if (gamepad2.y) {
+            if (gamepad1.y) {
                 Claw.Actuate_Claw_Top_Finger("open");
             }
-            if (gamepad2.x) {
+            if (gamepad1.x) {
                 Claw.Actuate_Claw_Top_Finger("close");
             }
 
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 Claw.Actuate_Claw_Bottom_Finger("open");
             }
-            if (gamepad2.b) {
+            if (gamepad1.b) {
                 Claw.Actuate_Claw_Bottom_Finger("close");
             }
 
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 armDown = false;
-                Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad2.right_trigger));
-            } else if (gamepad2.left_trigger > 0) {
+                Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
+            } else if (gamepad1.left_trigger > 0) {
                 armDown = false;
-                Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad2.left_trigger));
+                Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
             }
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
                 DroneLauncher.launchDrone();
             }
 
             //Smart TeleOp
 
-            if (gamepad2.right_bumper) {
+            if (gamepad1.right_bumper) {
                 armDown = false;
                 Arm.setArmPosTo(500);
                 while (Arm.Arm_Motor.isBusy()) {}
@@ -106,7 +106,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
                 Claw.Actuate_Claw_Top_Finger("open");
             }
 
-            if (gamepad2.left_bumper) {
+            if (gamepad1.left_bumper) {
                 if (armDown) {
                     armDown = false;
                     Arm.setArmPosTo(100);
