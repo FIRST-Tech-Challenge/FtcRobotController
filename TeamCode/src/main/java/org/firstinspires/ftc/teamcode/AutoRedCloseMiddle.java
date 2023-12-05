@@ -62,7 +62,7 @@ public class AutoRedCloseMiddle extends RobotLinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
