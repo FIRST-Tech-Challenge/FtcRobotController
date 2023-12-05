@@ -102,10 +102,12 @@ public class tele extends OpMode {
         rx = gamepad1.right_stick_x;
 
         denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+
         frontLeftPower = (y + x + rx) / denominator;
         frontRightPower = (y - x - rx) / denominator;
         backLeftPower = (y - x + rx) / denominator;
         backRightPower = (y + x - rx) / denominator;
+
         if ((Math.abs(gamepad1.right_stick_x) > 0.1) || (Math.abs(gamepad1.right_stick_y) > 0.1) || (Math.abs(gamepad1.left_stick_x) > 0.1) || (Math.abs(gamepad1.left_stick_y) > 0.1)) {
             robot.leftDrive.setPower(frontLeftPower * speedLimitValue);
             robot.leftBackDrive.setPower(backLeftPower * speedLimitValue);
@@ -127,21 +129,23 @@ public class tele extends OpMode {
         }
 
         if (gamepad2.y) {
-            robot.droneAngle.setPosition(.32);
+            robot.droneAngle.setPosition(.33);
         } else if (gamepad2.a) {
             robot.droneAngle.setPosition(.17);
         }
 
         if (gamepad2.x && gamepad2.b) {
+            robot.droneHolder.setPosition(0);
             robot.launcherRelease.setPosition(0.85);
         } else {
+            robot.droneHolder.setPosition(0.065);
             robot.launcherRelease.setPosition(0.6);
         }
 
         if (gamepad2.right_bumper) {
-            robot.arm.setPosition(.4);
+            robot.arm.setPosition(.456);
         } else if (gamepad2.left_bumper) {
-            robot.arm.setPosition(0);
+            robot.arm.setPosition(0.1);
         }
 
         if (gamepad2.right_trigger > 0.5) {
@@ -176,7 +180,8 @@ public class tele extends OpMode {
             gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
             gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
         }
-
+        telemetry.addData("Right",robot.rightDistance.getDistance(DistanceUnit.CM));
+        telemetry.addData("Left",robot.leftDistance.getDistance(DistanceUnit.CM));
         telemetry.update();
 
     }

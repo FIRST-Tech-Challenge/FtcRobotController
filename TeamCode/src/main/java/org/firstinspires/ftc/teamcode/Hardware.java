@@ -32,6 +32,7 @@ public class Hardware {
     public Servo arm = null;
     public Servo launcherRelease = null;
     public Servo droneAngle = null;
+    public Servo droneHolder = null;
 
     public Rev2mDistanceSensor rightDistance = null;
     public Rev2mDistanceSensor leftDistance = null;
@@ -59,6 +60,7 @@ public class Hardware {
         arm = hwMap.get(Servo.class, "arm");
         launcherRelease = hwMap.get(Servo.class, "release");
         droneAngle = hwMap.get(Servo.class, "angle");
+        droneHolder = hwMap.get(Servo.class, "clip");
 
         rightDistance = hwMap.get(Rev2mDistanceSensor.class, "rdist");
         leftDistance = hwMap.get(Rev2mDistanceSensor.class, "ldist");
