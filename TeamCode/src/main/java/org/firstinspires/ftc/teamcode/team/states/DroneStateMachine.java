@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.lib.util.Namable;
 import org.firstinspires.ftc.teamcode.lib.util.Time;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 
-public class ClawStateMachine extends TimedState<ClawStateMachine.State> {
-    public ClawStateMachine() {
+public class DroneStateMachine extends TimedState<DroneStateMachine.State> {
+    public DroneStateMachine() {
         super(State.OPEN);
     }
 

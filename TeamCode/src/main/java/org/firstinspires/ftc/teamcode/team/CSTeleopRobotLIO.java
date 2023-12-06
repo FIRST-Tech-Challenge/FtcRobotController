@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.team;
 
 import org.firstinspires.ftc.teamcode.lib.drivers.RevMotor;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
-import org.firstinspires.ftc.teamcode.team.auto.PPBaseLAC;
+import org.firstinspires.ftc.teamcode.team.auto.CSBaseLIO;
 
 import java.util.Arrays;
 
@@ -23,9 +23,9 @@ import java.util.Arrays;
  * Misc. sensors naming convention:
 
  */
-public abstract class PPTeleopRobotLAC extends Robot {
+public abstract class CSTeleopRobotLIO extends Robot {
     private TimeProfiler matchRuntime;
-    protected PPBaseLAC drive;
+    protected CSBaseLIO drive;
 
     @Override
     public void init() {
@@ -52,7 +52,7 @@ public abstract class PPTeleopRobotLAC extends Robot {
         super.loop();
         drive.getExpansionHubs().update(getDt());
         drive.update();
-        drive.robot.getClawSubsystem().update(getDt());
+        drive.robot.getDroneSubsystem().update(getDt());
         drive.robot.getArmSubsystem().update(getDt());
         drive.robot.getLiftSubsystem().update(getDt());
     }
@@ -62,7 +62,7 @@ public abstract class PPTeleopRobotLAC extends Robot {
         super.stop();
         drive.getExpansionHubs().stop();
         drive.robot.getLiftSubsystem().stop();
-        drive.robot.getClawSubsystem().stop();
+        drive.robot.getDroneSubsystem().stop();
         drive.robot.getArmSubsystem().stop();
     }
 

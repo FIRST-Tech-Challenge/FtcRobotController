@@ -4,17 +4,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.drivers.RevMotor;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
-import org.firstinspires.ftc.teamcode.team.PPAutoRobotLAC;
+import org.firstinspires.ftc.teamcode.team.CSAutoRobotLIO;
 import org.firstinspires.ftc.teamcode.team.states.IState;
 
-public class PPExpansionHubsLAC implements ISubsystem {
-    private PPAutoRobotLAC robot;
+public class CSExpansionHubsLIO implements ISubsystem {
+    private CSAutoRobotLIO robot;
     private ExpansionHubEx masterHub;
     private ExpansionHubEx slaveHub;
     private RevBulkData masterData;
     private RevBulkData slaveData;
 
-    public PPExpansionHubsLAC(PPAutoRobotLAC robot, ExpansionHubEx masterHub, ExpansionHubEx slaveHub) {
+    public CSExpansionHubsLIO(CSAutoRobotLIO robot, ExpansionHubEx masterHub, ExpansionHubEx slaveHub) {
         setRobot(robot);
         setMasterHub(masterHub);
         setSlaveHub(slaveHub);
@@ -147,11 +147,11 @@ public class PPExpansionHubsLAC implements ISubsystem {
         this.slaveData = slaveData;
     }
 
-    public PPAutoRobotLAC getRobot() {
+    public CSAutoRobotLIO getRobot() {
         return robot;
     }
 
-    public void setRobot(PPAutoRobotLAC robot) {
+    public void setRobot(CSAutoRobotLIO robot) {
         this.robot = robot;
     }
 

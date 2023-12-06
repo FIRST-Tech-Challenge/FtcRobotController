@@ -2,25 +2,25 @@ package org.firstinspires.ftc.teamcode.team.subsystems;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.drivers.RevServo;
-import org.firstinspires.ftc.teamcode.team.states.ClawStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 
-public class ClawSubsystem implements ISubsystem<ClawStateMachine, ClawStateMachine.State> {
-    private static ClawStateMachine clawStateMachine;
+public class DroneSubsystem implements ISubsystem<DroneStateMachine, DroneStateMachine.State> {
+    private static DroneStateMachine clawStateMachine;
     private RevServo ClawServo;
 
 
-    public ClawSubsystem(RevServo clawServo){
-        setClawStateMachine(new ClawStateMachine());
+    public DroneSubsystem(RevServo clawServo){
+        setClawStateMachine(new DroneStateMachine());
         setGripperServo(clawServo);
     }
 
     @Override
-    public ClawStateMachine getStateMachine() {
+    public DroneStateMachine getStateMachine() {
         return clawStateMachine;
     }
 
     @Override
-    public ClawStateMachine.State getState() {
+    public DroneStateMachine.State getState() {
         return getStateMachine().getState();
     }
 
@@ -50,8 +50,8 @@ public class ClawSubsystem implements ISubsystem<ClawStateMachine, ClawStateMach
         getClawServo().setPosition(getState().getPosition());
     }
 
-    public static void setClawStateMachine(ClawStateMachine gripperStateMachine) {
-        ClawSubsystem.clawStateMachine = gripperStateMachine;
+    public static void setClawStateMachine(DroneStateMachine gripperStateMachine) {
+        DroneSubsystem.clawStateMachine = gripperStateMachine;
     }
 
     public RevServo getClawServo() {

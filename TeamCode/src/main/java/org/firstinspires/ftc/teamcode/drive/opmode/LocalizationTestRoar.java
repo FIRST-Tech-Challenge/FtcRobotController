@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * The robot goes half the speed of the Localization test
  */
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-@TeleOp(group = "drive")
-public class TestDrive extends LinearOpMode {
+@TeleOp(name = "LocalizationTestRoar", group = "drive")
+public class LocalizationTestRoar extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -36,6 +36,8 @@ public class TestDrive extends LinearOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
+
+            }
         }
     }
-}
+

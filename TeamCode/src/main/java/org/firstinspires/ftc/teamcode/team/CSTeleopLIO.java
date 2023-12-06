@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.team;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.team.auto.PPBaseLAC;
-import org.firstinspires.ftc.teamcode.team.states.ArmStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.ClawStateMachine;
+import org.firstinspires.ftc.teamcode.team.auto.CSBaseLIO;
+import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 
 /*
- * This {@code class} acts as the driver-controlled program for FTC team 10515 for the PowerPlay
- * challenge. By extending {@code PPRobot}, we already have access to all the robot subsystems,
+ * This {@code class} acts as the driver-controlled program for FTC team 16598 for the CenterStage
+ * challenge. By extending {@code CSRobot}, we already have access to all the robot subsystems,
  * so only tele-operated controls need to be defined here.
  *
  * The controls for this robot are:
@@ -49,8 +49,8 @@ import org.firstinspires.ftc.teamcode.team.states.ClawStateMachine;
  * @see UltimateGoalRobot
  */
 
-@TeleOp(name = "PP TeleOp LAC", group = "Main")
-public class PPTeleopLAC extends PPTeleopRobotLAC {
+@TeleOp(name = "CS TeleOp LIO", group = "Main")
+public class CSTeleopLIO extends CSTeleopRobotLIO {
 
    // private double currentTime = 0; // keep track of current time
     private double speedMultiplier = 0.7;
@@ -70,7 +70,7 @@ public class PPTeleopLAC extends PPTeleopRobotLAC {
 
     @Override
     public void init(){
-        drive = new PPBaseLAC(hardwareMap, true);
+        drive = new CSBaseLIO(hardwareMap, true);
         //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         super.init();
     }
@@ -109,12 +109,12 @@ public class PPTeleopLAC extends PPTeleopRobotLAC {
 
 
         //Claw
-        telemetry.addData("Claw State: ", drive.robot.getClawSubsystem().getStateMachine().getState());
+        telemetry.addData("Claw State: ", drive.robot.getDroneSubsystem().getStateMachine().getState());
         if (getEnhancedGamepad1().isLeftBumperJustPressed()) {
-            drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.OPEN);
+            drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
         }
         if (getEnhancedGamepad1().isRightBumperJustPressed()) {
-            drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.CLOSE);
+            drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -151,19 +151,19 @@ public class PPTeleopLAC extends PPTeleopRobotLAC {
         //Allow moving the Arm only when the Lift has moved up and is no longer in Ground or Intake Position
         if (!liftdown) {
             if (getEnhancedGamepad2().isaJustPressed() || getEnhancedGamepad2().isyJustPressed()) {
-                drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.INIT);
+                drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
                 drive.robot.getLiftSubsystem().retract();
                 liftdown = true;
                 armMid = true;
             }
 
             if (getEnhancedGamepad2().isxJustPressed()) {
-                drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.LEFT);
+                drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
                 armMid = false;
             }
 
             if (getEnhancedGamepad2().isbJustPressed()) {
-                drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.RIGHT);
+                drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
                 armMid = false;
             }
         }

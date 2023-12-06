@@ -12,13 +12,13 @@ import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.PPCV;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.team.states.ArmStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.ClawStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 
 @Autonomous(name = "Red Left FTCCV", group = "XtremeV")
 public class RedLeftFTCCV extends LinearOpMode {
-    PPBaseLAC drive;
+    CSBaseLIO drive;
     private static double dt;
     private static TimeProfiler updateRuntime;
 
@@ -74,11 +74,11 @@ public class RedLeftFTCCV extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
 
-        drive = new PPBaseLAC(hardwareMap);
+        drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
         drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
-        drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.OPEN);
-        drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.INIT);
+        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
+        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
         //drive.robot.getCappingArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.REST);
 
         TrajectorySequence traj0 = drive.trajectorySequenceBuilder(startPose)
@@ -118,7 +118,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
         drive.robot.getLiftSubsystem().update(getDt());
         drive.robot.getArmSubsystem().update(getDt());
-        drive.robot.getClawSubsystem().update(getDt());
+        drive.robot.getDroneSubsystem().update(getDt());
 
         double t1 = waitTimer.milliseconds();
 
@@ -181,7 +181,7 @@ public class RedLeftFTCCV extends LinearOpMode {
                     telemetry.addData("Confidence: ", confidence);
                     telemetry.addData("#: ", detectCounter);
                     if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.CLOSE);
+                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
                         currentState = State.INITSTRAFE;
                         waitTimer.reset();
                     }
@@ -227,7 +227,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case MOVEARM:
                     if(!drive.isBusy()){
-                        drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.RIGHT);
+                        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
                         currentState = State.CLAWOPEN;
                         waitTimer.reset();
                     }
@@ -235,7 +235,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case CLAWOPEN:
                     if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.OPEN);
+                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
                         currentState = State.MOVEARMBACK;
                         waitTimer.reset();
                     }
@@ -243,7 +243,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case MOVEARMBACK:
                     if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.INIT);
+                        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
                         currentState = State.LIFTDOWN;
                         waitTimer.reset();
                     }
@@ -273,7 +273,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case GRAB:
                     if(!drive.isBusy()){
-                        drive.robot.getClawSubsystem().getStateMachine().updateState(ClawStateMachine.State.CLOSE);
+                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
                         currentState = State.LIFTUP;
                         waitTimer.reset();
                     }
@@ -322,7 +322,7 @@ public class RedLeftFTCCV extends LinearOpMode {
             drive.getExpansionHubs().update(getDt());
             drive.robot.getLiftSubsystem().update(getDt());
             drive.robot.getArmSubsystem().update(getDt());
-            drive.robot.getClawSubsystem().update(getDt());
+            drive.robot.getDroneSubsystem().update(getDt());
             telemetry.update();
         }
 

@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.lib.util.Namable;
 import org.firstinspires.ftc.teamcode.lib.util.Time;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 
-public class ArmStateMachine extends TimedState<ArmStateMachine.State> {
-    public ArmStateMachine(){
+public class OuttakeStateMachine extends TimedState<OuttakeStateMachine.State> {
+    public OuttakeStateMachine(){
         super(State.INIT);
     }
 
@@ -16,11 +16,11 @@ public class ArmStateMachine extends TimedState<ArmStateMachine.State> {
 
     @Override
     public String getName() {
-        return "Dropper Left State Machine";
+        return "Outtake State Machine";
     }
 
     public enum State implements Namable{
-        LEFT("LEFT", 0.025d), INIT("Init", 0.5d), RIGHT("RIGHT", 0.975d);
+        PICKUP("PICKUP", 0.025d), INIT("Init", 0.5d), RELEASE("RELEASE", 0.975d); //KHALID TO-DO
 
         private final String name;
         private final double position;

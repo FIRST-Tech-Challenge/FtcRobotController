@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-import org.firstinspires.ftc.teamcode.team.auto.PPBaseLAC;
+import org.firstinspires.ftc.teamcode.team.auto.CSBaseLIO;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 //import org.firstinspires.ftc.teamcode.team10515.GridSystem;
 
@@ -61,7 +61,7 @@ import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.Trajector
 
 @TeleOp(name = "PP TeleOp Assist", group = "Main")
 @Disabled
-public class PPTeleopAssistLAC extends PPTeleopRobotLAC {
+public class PPTeleopAssistLAC extends CSTeleopRobotLIO {
 
     int[] blank = {};
     int[] pole01 = {0, 1, 0, 1, 0};
@@ -123,7 +123,7 @@ public class PPTeleopAssistLAC extends PPTeleopRobotLAC {
     int y = 0;
     @Override
     public void init(){
-        drive = new PPBaseLAC(hardwareMap, true);
+        drive = new CSBaseLIO(hardwareMap, true);
         drive.setPoseEstimate(PoseStorage.currentPose);
     //    blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         //cv = new PPCV();

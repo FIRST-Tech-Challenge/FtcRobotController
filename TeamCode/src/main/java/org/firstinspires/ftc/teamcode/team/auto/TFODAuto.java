@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.team.PPCV;
 
 @Autonomous(name = "TFODAuto", group = "Test")
 public class TFODAuto extends LinearOpMode {
-    PPBaseLAC drive;
+    CSBaseLIO drive;
     private static double dt;
     private static TimeProfiler updateRuntime;
     private Recognition finalRecog = null;
@@ -30,7 +30,7 @@ public class TFODAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         setUpdateRuntime(new TimeProfiler(false));
 
-        drive = new PPBaseLAC(hardwareMap);
+        drive = new CSBaseLIO(hardwareMap);
 
         drive.getExpansionHubs().update(getDt());
 

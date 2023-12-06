@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.lib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.ExpansionHubServo;
-import org.firstinspires.ftc.teamcode.team.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.team.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.team.subsystems.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.team.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.team.subsystems.ExpansionHubs;
 import org.firstinspires.ftc.teamcode.team.subsystems.LiftSubsystem;
@@ -34,15 +34,15 @@ import org.firstinspires.ftc.teamcode.team.subsystems.RobotStateEstimator;
  * Misc. sensors naming convention:
 
  */
-public class PPAutoRobotLAC {
+public class CSAutoRobotLIO {
     //private  RevBlinkinLedDriver lights;
     private TimeProfiler matchRuntime;
     private ExpansionHubs expansionHubs;
     private RobotStateEstimator robotStateEstimator;
     private Drive drive;
     private LiftSubsystem liftSubsystem;
-    private ArmSubsystem armSubsystem;
-    private ClawSubsystem clawSubsystem;
+    private OuttakeSubsystem outtakeSubsystem;
+    private DroneSubsystem droneSubsystem;
     private RevMotor[] motors;
     private RevServo[] servos;
 
@@ -65,8 +65,8 @@ public class PPAutoRobotLAC {
         });
 
         setLiftSubsystem(new LiftSubsystem(getMotors()[0], getMotors()[1]));
-        setArmSubsystem(new ArmSubsystem(getServos()[0]));
-        setClawSubsystem(new ClawSubsystem(getServos()[1]));
+        setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
+        setDroneSubsystem(new DroneSubsystem(getServos()[1]));
         setMatchRuntime(new TimeProfiler(false));
     }
     public RevMotor[] getMotors() {
@@ -117,20 +117,20 @@ public class PPAutoRobotLAC {
         this.liftSubsystem = liftSubsystem;
     }
 
-    public ArmSubsystem getArmSubsystem() {
-        return armSubsystem;
+    public OuttakeSubsystem getArmSubsystem() {
+        return outtakeSubsystem;
     }
 
-    public void setArmSubsystem(ArmSubsystem armSubsystem){
-        this.armSubsystem = armSubsystem;
+    public void setOuttakeSubsystem(OuttakeSubsystem outtakeSubsystem){
+        this.outtakeSubsystem = outtakeSubsystem;
     }
 
-    public ClawSubsystem getClawSubsystem() {
-        return clawSubsystem;
+    public DroneSubsystem getDroneSubsystem() {
+        return droneSubsystem;
     }
 
-    public void setClawSubsystem(ClawSubsystem clawSubsystem){
-        this.clawSubsystem = clawSubsystem;
+    public void setDroneSubsystem(DroneSubsystem droneSubsystem){
+        this.droneSubsystem = droneSubsystem;
     }
 
     public TimeProfiler getMatchRuntime() {
