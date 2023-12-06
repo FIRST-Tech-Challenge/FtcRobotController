@@ -18,6 +18,7 @@ public class AutoRL extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init();
+
         vision.init();
 
         robot.moveArm(.5, 5, 5);
@@ -34,16 +35,17 @@ public class AutoRL extends LinearOpMode {
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel
-                    robot.moveRobot(.5, -43.75, 10);
+                    robot.moveArm(.5, -10, 5);
+                    robot.moveRobot(.5, -37, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
                     //sleep(1000);
                     //Backup and clear pixel
-                    //robot.moveRobot(.5, -5, 5);
+                    robot.moveRobot(.5, -4.75, 5);
                     //Turn to parking location
-                    //robot.turnRobot(Direction.LEFT, 16, .5, 10);
+                    robot.turnRobot(Direction.LEFT, 20, .5, 10);
                     //Park
-                    //robot.moveRobot(.5, 30, 10);
+                    robot.moveRobot(.5, 95, 10);
                     break;
                 case RIGHT:
                     //Drop off pixel
@@ -55,9 +57,9 @@ public class AutoRL extends LinearOpMode {
                     //Drop pixel
                     robot.dropPixel();
                     //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.LEFT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.moveRobot(.5, 45, 10);
+                    robot.turnRobot(Direction.LEFT, 14, 5, 10);
+                    robot.moveRobot(.5, 13, 5);
                     break;
                 default:
                     //Drop off pixel
@@ -69,13 +71,13 @@ public class AutoRL extends LinearOpMode {
                     //Drop pixel
                     robot.dropPixel();
                     //Move awayn from line
-                    //robot.moveRobot(.5, -9, 5);
+                    robot.moveRobot(.5, -9, 5);
                     //Turn to park
-                    //robot.turnRobot(Direction.LEFT, 19, 5, 10);
+                    robot.turnRobot(Direction.LEFT, 19, 5, 10);
                     //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.LEFT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.moveRobot(.5, 45, 10);
+                    robot.turnRobot(Direction.LEFT, 14, 5, 10);
+                    robot.moveRobot(.5, 13, 5);
                     break;
             }
 
