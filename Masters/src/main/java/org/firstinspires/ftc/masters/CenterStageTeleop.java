@@ -97,6 +97,10 @@ RB - Hang up
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
+        gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
+        gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
+        backSlides = hardwareMap.dcMotor.get("backSlides");
+
         planeLaunch = hardwareMap.servo.get("planeLaunch");
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
@@ -198,6 +202,12 @@ RB - Hang up
                     target = 9;
                 }
                 sleep(300);
+            }
+
+            if (gamepad1.right_trigger > .3) {
+                //up
+            } else if (gamepad1.left_trigger > .3) {
+                //down
             }
 
             planeLaunch.setPosition(servoPos[0]);
