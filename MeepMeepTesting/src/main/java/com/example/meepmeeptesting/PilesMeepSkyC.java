@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepMyFirstPath {
+public class PilesMeepSkyC {
     public static void main(String[] args) {
 
         MeepMeep meepMeep = new MeepMeep(700);
@@ -18,13 +18,12 @@ public class MeepMeepMyFirstPath {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
 
-                                        .lineToLinearHeading(new Pose2d(-35, 30, Math.toRadians(0))) // Angle will be changed based on CV
-                                        .turn(Math.toRadians(-90))
-                                        .splineToLinearHeading(new Pose2d(-16, 11, Math.toRadians(180)), Math.toRadians(225))
-                                        .back(95)
-                                        .strafeRight(15)
-                                        .strafeLeft(15)
-                                        .forward(95)
+                                        .splineToLinearHeading(new Pose2d(-55, 24, Math.toRadians(270)), Math.toRadians(270))
+                                        .splineToLinearHeading(new Pose2d(-34, 11, Math.toRadians(180)), Math.toRadians(0))
+                                        .back(70)
+                                        .strafeRight(30)
+                                        .strafeLeft(30)
+                                        .forward(70)
                                         .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
