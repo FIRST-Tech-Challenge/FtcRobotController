@@ -23,6 +23,19 @@ public class RedAudience extends LinearOpMode {
 
             waitForStart();
 
+        if (posOfTag == 1){
+
+
+        }else if(posOfTag == 2){
+
+
+        }else if(posOfTag == 3){
+
+
+        }else{
+            //ADD CODE HERE
+        }
+
         /* Rowan's Notes:
              * Why is there a loop for constantly running the program?
              * Move line under the corresponding comment. This allows people to see what line does what

@@ -26,7 +26,24 @@ public class BlueBackstage extends LinearOpMode {
          */
         //Strafe to the wall
 
-        teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);
+        if (posOfTag == 1){
+
+
+
+        }else if(posOfTag == 2){
+
+
+
+        }else if(posOfTag == 3){
+
+
+
+        }else{
+            teamBot.strafing(RobotClass.Direction.LEFT, 0.6, 3000);
+        }
+
+
+
 
     }
 }

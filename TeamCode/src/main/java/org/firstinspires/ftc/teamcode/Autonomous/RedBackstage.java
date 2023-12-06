@@ -22,8 +22,21 @@ public class RedBackstage extends LinearOpMode {
 
         waitForStart();
 
-            //Strafe to the Wall
-        teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
+        if (posOfTag == 1){
+
+
+
+        }else if(posOfTag == 2){
+
+
+
+        }else if(posOfTag == 3){
+
+
+
+        }else{
+            teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
+        }
 
     }
 }
