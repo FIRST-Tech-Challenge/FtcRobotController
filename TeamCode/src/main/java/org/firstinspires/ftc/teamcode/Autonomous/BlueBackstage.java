@@ -13,10 +13,12 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 public class BlueBackstage extends LinearOpMode {
 
     RobotClass teamBot = new RobotClass(this);
+    private Object posOfTag;
 
     @Override
     public void runOpMode() throws InterruptedException {
         teamBot.init(hardwareMap);
+        posOfTag = teamBot.findTeamProp(502);
 
         waitForStart();
         /* Rowan's Notes:

@@ -12,8 +12,15 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 public class RedAudience extends LinearOpMode {
     //Instantiate robot class
     RobotClass teamBot = new RobotClass(this);
+
+    private Object posOfTag;
+
     public void runOpMode() throws InterruptedException {
         //initialize robot
+
+        teamBot.init(hardwareMap);
+        posOfTag = teamBot.findTeamProp(502);
+
             waitForStart();
 
         /* Rowan's Notes:

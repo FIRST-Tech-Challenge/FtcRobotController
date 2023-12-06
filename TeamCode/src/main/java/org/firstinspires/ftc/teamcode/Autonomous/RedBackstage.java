@@ -12,9 +12,15 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 public class RedBackstage extends LinearOpMode {
     //Instantiate robot class
     RobotClass teamBot = new RobotClass(this);
+
+    private Object posOfTag;
     public void runOpMode() throws InterruptedException {
         //initialize robot
-            waitForStart();
+
+        teamBot.init(hardwareMap);
+        posOfTag = teamBot.findTeamProp(502);
+
+        waitForStart();
 
             //Strafe to the Wall
         teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 3000);
