@@ -37,6 +37,7 @@ public class AutoRL extends LinearOpMode {
                     //Drop off pixel
                     robot.moveArm(.5, -10, 5);
                     robot.moveRobot(.5, -37, 10);
+                    robot.moveRobot(.5, -38.75, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
                     //sleep(1000);
@@ -63,7 +64,7 @@ public class AutoRL extends LinearOpMode {
                     break;
                 default:
                     //Drop off pixel
-                    robot.moveRobot(.5, -36.75, 10);
+                    robot.moveRobot(.5, -31.75, 10);
                     //Turn left
                     robot.turnRobot(Direction.RIGHT, 10, .5, 10);
                     //Move to line

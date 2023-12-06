@@ -34,14 +34,14 @@ public class AutoBL extends LinearOpMode {
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel
-                    robot.moveRobot(.5, -43.75, 10);
+                    robot.moveRobot(.5, -38.75, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
                     sleep(1000);
                     //Backup and clear pixel
                     robot.moveRobot(.5, -5, 5);
                     //Turn to parking location
-                    robot.turnRobot(Direction.LEFT, 16, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 16, .5, 10);
                     //Park
                     robot.moveRobot(.5, 30, 10);
                     break;
@@ -49,7 +49,7 @@ public class AutoBL extends LinearOpMode {
                     //Drop off pixel
                     robot.moveRobot(.5, -43.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.RIGHT, 10, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 8, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 9, 5);
                     //Drop pixel
@@ -61,9 +61,9 @@ public class AutoBL extends LinearOpMode {
                     break;
                 default:
                     //Drop off pixel
-                    robot.moveRobot(.5, -36.75, 10);
+                    robot.moveRobot(.5, -31.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.LEFT, 10, .5, 10);
+                    robot.turnRobot(Direction.LEFT, 12, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 9, 5);
                     //Drop pixel
