@@ -478,6 +478,7 @@ public class MotionHardware {
 
     public void dropPixel() {
         rightGripper.setPosition(RIGHT_GRIPPER_OPEN);
+        leftGripper.setPosition(LEFT_GRIPPER_OPEN);
 
     }
 

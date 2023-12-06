@@ -28,6 +28,8 @@ public class TELEOPtest1 extends LinearOpMode {
     public void runOpMode() {
         robot.init();
 
+
+
         waitForStart();
 
         // Define class members
@@ -55,8 +57,13 @@ public class TELEOPtest1 extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
 
         // check the gamepad buttons and if pressed, increment the appropriate position
@@ -101,8 +108,8 @@ public class TELEOPtest1 extends LinearOpMode {
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 2);
-            double frontLeftPower = (y + x + rx) / denominator;
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator; //
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
@@ -142,27 +149,21 @@ public class TELEOPtest1 extends LinearOpMode {
                     wristServo.setPosition(0.3); // Adjust the position value for the center position
                 }
                 if (gamepad2.y) {
-                   // robot.moveArm(1, 90, 5);
                     armMotor.setTargetPosition(-4185);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     runtime.reset();
                     armMotor.setPower(Math.abs(1));
-                    while (opModeIsActive() &&
-                            (runtime.seconds() < 5) &&
-                            (armMotor.isBusy()));
+
                     armMotor.setPower(0);
 
                     armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                 }
                 else if (gamepad2.x) {
-                    //robot.moveArm(1, -90, 5);
                     armMotor.setTargetPosition(1);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     runtime.reset();
                     armMotor.setPower(Math.abs(1));
-                    while (opModeIsActive() &&
-                            (runtime.seconds() < 5) &&
-                            (armMotor.isBusy()));
+
                     armMotor.setPower(0);
 
                     armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
