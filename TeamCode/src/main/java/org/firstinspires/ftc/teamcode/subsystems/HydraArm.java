@@ -27,7 +27,7 @@ public class HydraArm {
     protected final int cUpperArmPos3BackScore = -440;
     //
     protected final int cLowerArmPos4FrontScore = -700;
-    protected final int cUpperArmPos4FrontScore = 750;
+    protected final int cUpperArmPos4FrontScore = 650;
     //
     protected final int cLowerArmPos5Hang = -1200;
     protected final int cUpperArmPos5Hang = 850;

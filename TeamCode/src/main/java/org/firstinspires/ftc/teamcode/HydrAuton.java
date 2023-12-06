@@ -24,7 +24,7 @@ import java.util.List;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends LinearOpMode {
-    protected int mWaitTimeAtRigging = 13000;
+    protected int mWaitTimeAtRigging = 15000;
     protected IMU imu;
     protected HydraArm Arm;
     protected HydraDrive Drive;
@@ -611,7 +611,7 @@ public class HydrAuton extends LinearOpMode {
                 break;
             case 301:
                 if (!Drive.Busy()) {
-                    Drive.Start(7, 0, 0);
+                    Drive.Start(8, 0, 0);
                     autonState += 1;
                 }
                 break;
