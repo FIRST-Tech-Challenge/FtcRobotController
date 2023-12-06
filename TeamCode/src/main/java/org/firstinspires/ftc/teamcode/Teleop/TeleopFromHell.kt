@@ -235,9 +235,12 @@ class TeleopFromHell: DriveMethods() {
                     aeroplaneLauncherServo.position = AEROPLANE_CLOSE
                 } else {
                     magicHoldNumber++
+                    sleep(25)
                     telemetry.addData("Magic Hold Number", magicHoldNumber)
                 }
             } else if (!gamepad2.y && !aeroplaneHasBeenLaunched) {
+            telemetry.addLine("reseting Magic Hold Number");
+                sleep(25)
                 magicHoldNumber = 0
             }
 
