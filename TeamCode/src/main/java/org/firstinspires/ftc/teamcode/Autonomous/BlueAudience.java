@@ -20,7 +20,7 @@ public class BlueAudience extends LinearOpMode {
 
         waitForStart();
 
-        if (posOfTag == 1){
+        if(posOfTag == 1){
 
 
 
