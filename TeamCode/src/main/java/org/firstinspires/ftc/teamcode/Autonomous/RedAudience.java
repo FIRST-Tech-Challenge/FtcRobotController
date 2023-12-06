@@ -23,7 +23,7 @@ public class RedAudience extends LinearOpMode {
 
             waitForStart();
 
-        if (posOfTag == 1){
+        if(posOfTag == 1){
 
 
         }else if(posOfTag == 2){

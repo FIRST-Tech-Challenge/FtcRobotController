@@ -22,7 +22,7 @@ public class BlueBackstage extends LinearOpMode {
 
         waitForStart();
 
-        if (posOfTag == 1){
+        if(posOfTag == 1){
 
 
 
