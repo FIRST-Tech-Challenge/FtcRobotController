@@ -10,6 +10,6 @@ public class BotBLocalizationTest extends LocalizationTest {
     @Override
     public void runOpMode() throws InterruptedException {
         BotB2023 drive = new BotB2023(hardwareMap);
-        opModeCode(drive);
+        opModeCode(drive, -1, -1, 1);
     }
 }
