@@ -73,7 +73,7 @@ open class AutoSuper(
         res = testAction.run(packet)
 //        drive.FollowTrajectoryAction(TimeTrajectory())
 
-        drive.FollowTrajectoryAction()
+//        drive.FollowTrajectoryAction()
         // +X = forward, +Y = left
 //        drive.setDrivePowers(
 //            PoseVelocity2d(

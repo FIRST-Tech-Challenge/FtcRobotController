@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.PoseVelocity2dDual
+import com.acmerobotics.roadrunner.Time
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.clamp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
@@ -114,8 +117,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val intake = shared.intake
         if (intake != null) {
             // toggle intake height
-            gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!
-                .addListener { if (intake.raised) intake.lower() else intake.raise() }
+            gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!.addListener { if (intake.raised) intake.lower() else intake.raise() }
         } else {
             telemetry.addLine("WARNING: Safeguard triggered (intake not present)");
         }
@@ -198,16 +200,25 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
         // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
 //        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - abs((gyroYaw % (PI / 2)) - (PI / 4)) / (PI / 4))))
-        val powerModifier = 1.0
 
-        // +X = forward, +Y = left
-        drive.setDrivePowers(PoseVelocity2d(
+        val powerModifier = 1.0
+        val pv = PoseVelocity2d(
             if (useBotRelative) Vector2d(
                 driveRelativeX,
                 driveRelativeY
-            ) * powerModifier else inputVector,
+            ) else inputVector,
             -gamepad1.right_stick_x.toDouble()
-        ))
+        )
+        // +X = forward, +Y = left
+//        drive.setDrivePowers(pv)
+        val wheelVels = MecanumKinematics(1.0).inverse<Time>(PoseVelocity2dDual.constant(pv, 1));
+
+        shared.motorLeftFront.power = wheelVels.leftFront[0] / powerModifier
+        shared.motorLeftBack.power = wheelVels.leftBack[0] / powerModifier
+        shared.motorRightBack.power = wheelVels.rightBack[0] / powerModifier
+        shared.motorRightFront.power = wheelVels.rightFront[0] / powerModifier
+
+//        Actions.run
 
         telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
         telemetry.addLine("Input Yaw: " + if (inputVector.x > 0.05 && inputVector.y > 0.05) inputTheta * 180.0 / PI else 0.0)

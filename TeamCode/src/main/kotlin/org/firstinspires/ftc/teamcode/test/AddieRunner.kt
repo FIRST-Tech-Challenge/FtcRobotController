@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tests
+package org.firstinspires.ftc.teamcode.test
 
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.Vector2d

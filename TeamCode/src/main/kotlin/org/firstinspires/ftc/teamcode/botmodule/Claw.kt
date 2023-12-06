@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.botmodule
 
-import com.acmerobotics.roadrunner.clamp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.Servo
-import kotlin.math.abs
 
 class Claw(opMode: OpMode, private val servoLeft: Servo, private val servoRight: Servo) : BotModule(opMode) {
     init {

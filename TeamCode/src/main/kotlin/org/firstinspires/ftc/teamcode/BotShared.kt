@@ -13,6 +13,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.botmodule.Claw
+import org.firstinspires.ftc.teamcode.botmodule.Intake
+import org.firstinspires.ftc.teamcode.botmodule.LSD
+import org.firstinspires.ftc.teamcode.botmodule.March
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
 // TODO: should this be a superclass? our codebase has grown so much, and we might want to reconsider
