@@ -33,6 +33,7 @@ public class MecDrive extends LinearOpMode {
     private DcMotorEx intake;
     private Servo RHook;
     private Servo LHook;
+    private Servo intakeLift;
 
     private float Rservopos;
     private float Lservopos;
@@ -62,6 +63,7 @@ public class MecDrive extends LinearOpMode {
         RR= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RR");
 
         intake= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "intake");
+        intakeLift=(Servo) hardwareMap.get(Servo.class, "intakeLift");
 
         colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
@@ -100,21 +102,11 @@ public class MecDrive extends LinearOpMode {
 
 
         if (gamepad1.a) {
-            Rservopos = (float) (Rservopos + 0.01);
-            if (Rservopos > 1){
-                Rservopos = 0.99F;
-            }
-            RHook.setPosition(Rservopos);
-            //LHook.setPosition(Lservopos);
+           intakeLift.setPosition(.3);
         }
 
         if (gamepad1.b) {
-            Rservopos = (float) (Rservopos - 0.01);
-            if (Rservopos < 0) {
-                Rservopos = 0;
-            }
-            RHook.setPosition(Rservopos);
-            //LHook.setPosition(Lservopos);
+            intakeLift.setPosition(.6);
         }
 
         if (gamepad1.x) {
