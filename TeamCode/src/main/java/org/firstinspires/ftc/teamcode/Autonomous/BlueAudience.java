@@ -7,9 +7,6 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 
 @Autonomous()
 
-/* Rowan's Notes:
-    * Change the name for the class to BlueAudience to have consistency
- */
 public class BlueAudience extends LinearOpMode {
 
     RobotClass teamBot = new RobotClass(this);

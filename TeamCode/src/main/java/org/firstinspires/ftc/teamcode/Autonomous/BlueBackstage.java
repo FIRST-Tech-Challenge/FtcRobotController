@@ -21,10 +21,6 @@ public class BlueBackstage extends LinearOpMode {
         posOfTag = teamBot.findTeamProp(502);
 
         waitForStart();
-        /* Rowan's Notes:
-            * Why is there a loop for constantly running the program?
-         */
-        //Strafe to the wall
 
         if (posOfTag == 1){
 

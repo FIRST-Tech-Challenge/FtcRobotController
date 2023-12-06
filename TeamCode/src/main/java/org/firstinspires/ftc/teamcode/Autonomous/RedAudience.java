@@ -36,11 +36,6 @@ public class RedAudience extends LinearOpMode {
             //ADD CODE HERE
         }
 
-        /* Rowan's Notes:
-             * Why is there a loop for constantly running the program?
-             * Move line under the corresponding comment. This allows people to see what line does what
-         */
-
         //Moving to spike mark grid square
         teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
         //Move forwards one more square
