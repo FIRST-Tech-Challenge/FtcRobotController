@@ -103,16 +103,6 @@ public class TestTeleOp extends LinearOpMode {
             }
 
             heightControl.setPosition(servoPos);
-//
-//            if (gamepad1.dpad_left) {
-//                intakeFriend.setPower(1);
-//            } else if (gamepad1.dpad_right) {
-//                intakeFriend.setPower(-1);
-//            } else {
-//                intakeFriend.setPower(0);
-//            }
-            //a open claw 0.87
-            //b close claw 0.61
 
             if (gamepad1.a) {
                 clawServo.setPosition(.87); //open
