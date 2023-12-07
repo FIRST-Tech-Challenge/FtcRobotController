@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Drivercontrol;
+package org.firstinspires.ftc.teamcode.Drivercontrol.lm2;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//import org.firstinspires.ftc.teamcode.Drivercontrol.Feildcentricdrive;
+import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.teamcode.util.airplane;
 
@@ -55,7 +55,7 @@ import org.firstinspires.ftc.teamcode.util.airplane;
 
 @TeleOp(name="lm2drive2driver", group="Linear OpMode")
 
-public class lm2teleop2drivers extends LinearOpMode {
+public class lm2teleop1driver extends LinearOpMode {
     airplane air=new airplane();
 
     // Declare OpMode members.
@@ -109,7 +109,7 @@ public class lm2teleop2drivers extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            airplane.run(extend,gamepad1,plane,true);
+            airplane.run(extend,gamepad1,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.addData("1",gamepad1.touchpad_finger_1);
             telemetry.update();
@@ -126,7 +126,7 @@ public class lm2teleop2drivers extends LinearOpMode {
             } //could be more compact
 
            // half=false;
-            if (gamepad1.right_trigger >=0.5) drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true,gamepad1.back);
+            if (gamepad1.triangle) drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true,gamepad1.back);
             else drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
 
 //            if(half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true,gamepad1.back);
@@ -134,20 +134,20 @@ public class lm2teleop2drivers extends LinearOpMode {
 
             state = gamepad2.left_bumper;//state for claw
 
-            if (gamepad2.dpad_up) {extend.setIntake();wrist.setPosition(1);wrist1.setPosition(1);}//set positions
-            else if (gamepad2.dpad_right) {extend.setIntakeClosePos();wrist.setPosition(0.315);wrist1.setPosition(0.315);}
-            else if (gamepad2.x) {extend.setPlaceLow();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
-            else if (gamepad2.circle) {extend.setPlaceMid();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
-            else if (gamepad2.dpad_left) {extend.setIntakeFarPos();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
-            else if (gamepad2.triangle) {extend.setPlaceHigh();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            if (gamepad1.dpad_up) {extend.setIntake();wrist.setPosition(1);wrist1.setPosition(1);}//set positions
+            else if (gamepad1.right_trigger>=0.5) {extend.setIntakeClosePos();wrist.setPosition(0.315);wrist1.setPosition(0.315);}
+            else if (gamepad1.right_bumper) {extend.setPlaceLow();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad1.dpad_down) {extend.setPlaceMid();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad1.dpad_left) {extend.setIntakeFarPos();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad1.dpad_right) {extend.setPlaceHigh();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
 
-            if (gamepad2.left_bumper && state != lastState) {//new claw code for easier driving
+            if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
                 if (open) {claw.setPosition(0);claw1.setPosition(0);open = false;}
                 else {claw.setPosition(1);claw1.setPosition(1);open = true;}
             }
            // if(!hangmode) {
-                if (gamepad2.dpad_down && gamepad1.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides
-                else if (gamepad2.dpad_up && gamepad1.left_trigger >= 0.5) {extend.makemoretilt();}
+                if (gamepad1.dpad_down && gamepad1.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides
+                else if (gamepad1.dpad_up && gamepad1.left_trigger >= 0.5) {extend.makemoretilt();}
            // }else{
 //                if (gamepad1.dpad_down) hang.setPower(-1);//place pos over-rides
 //                else if (gamepad1.dpad_up) hang.setPower(1);
