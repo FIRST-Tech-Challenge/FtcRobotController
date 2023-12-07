@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Drivercontrol;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,7 +54,7 @@ import org.firstinspires.ftc.teamcode.util.airplane;
  */
 
 @TeleOp(name="lm2drive1driver", group="Linear OpMode")
-
+@Disabled
 public class lm2teleop1driver extends LinearOpMode {
     airplane air=new airplane();
 

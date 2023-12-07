@@ -65,6 +65,8 @@ public class lm2teleop2drivers extends LinearOpMode {
     Servo hangs;
     Servo wrist;
     Servo claw;
+    Servo wrist1;
+    Servo claw1;
 
     Feildcentricdrive drive = new Feildcentricdrive();
 
@@ -78,13 +80,15 @@ public class lm2teleop2drivers extends LinearOpMode {
         //boolean cstate = false;
        // boolean state2 = false;
         boolean lastState = false;// claw booleans
-        hang=hardwareMap.get(DcMotor.class,"hang");
-        hangs=hardwareMap.get(Servo.class,"hangs");
-        hangs.setPosition(0);
+//        hang=hardwareMap.get(DcMotor.class,"hang");
+//        hangs=hardwareMap.get(Servo.class,"hangs");
+        //hangs.setPosition(0);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
+        wrist1 = hardwareMap.get(Servo.class, "wrist1");
+        claw1 = hardwareMap.get(Servo.class, "claw1");
         extension extend = new extension(hardwareMap);//tilt object made
-        //extend.release();//releases the tilt to move into start pos
+        extend.release();//releases the tilt to move into start pos
         //boolean reset = false;//boolean for reset heading
         boolean slowturn = false;//boolean for slowturn mode
         double rx;//right x
@@ -130,16 +134,16 @@ public class lm2teleop2drivers extends LinearOpMode {
 
             state = gamepad2.left_bumper;//state for claw
 
-            if (gamepad2.dpad_up&&!air.planeb) {extend.setIntake();wrist.setPosition(1);}//set positions
-            else if (gamepad2.dpad_right&&!air.planeb) {extend.setIntakeClosePos();wrist.setPosition(0.315);}
-            else if (gamepad2.x &&!air.planeb) {extend.setPlaceLow();wrist.setPosition(0.95);}
-            else if (gamepad2.circle&&!air.planeb) {extend.setPlaceMid();wrist.setPosition(0.95);}
-            else if (gamepad2.dpad_left&&!air.planeb) {extend.setIntakeFarPos();wrist.setPosition(0.95);}
-            else if (gamepad2.triangle&&!air.planeb) {extend.setPlaceHigh();wrist.setPosition(0.95);}
+            if (gamepad2.dpad_up) {extend.setIntake();wrist.setPosition(1);wrist1.setPosition(1);}//set positions
+            else if (gamepad2.dpad_right) {extend.setIntakeClosePos();wrist.setPosition(0.315);wrist1.setPosition(0.315);}
+            else if (gamepad2.x) {extend.setPlaceLow();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad2.circle) {extend.setPlaceMid();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad2.dpad_left) {extend.setIntakeFarPos();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
+            else if (gamepad2.triangle) {extend.setPlaceHigh();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
 
             if (gamepad2.left_bumper && state != lastState) {//new claw code for easier driving
-                if (open) {claw.setPosition(0.2);open = false;}
-                else {claw.setPosition(1);open = true;}
+                if (open) {claw.setPosition(0);claw1.setPosition(0);open = false;}
+                else {claw.setPosition(1);claw1.setPosition(1);open = true;}
             }
            // if(!hangmode) {
                 if (gamepad2.dpad_down && gamepad1.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides

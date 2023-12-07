@@ -87,6 +87,8 @@ public class extension {
     }
     public void release(){
         tilt.setPower(0);
+        lift1.setPower(0);
+        lift2.setPower(0);
     }
     public void hold(){tilt.setTargetPosition(tilt.getCurrentPosition()); tilt.setPower(1);}
     //add wrist commands here probably
@@ -95,6 +97,9 @@ public class extension {
     public void setHeight(int ticks){
         lift1.setTargetPosition(ticks);
         lift2.setTargetPosition(ticks);
+        lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        tilt.setPower(1);
     }
     public void setIntake() {
         setTilt(0);
@@ -124,7 +129,7 @@ public class extension {
         if((lift1.getCurrentPosition())<50) {
             setTilt(0);
         }
-        tilt.setPower(Range.scale(tilt.getCurrentPosition(),0,/*697*/640,1,0));
+        tilt.setPower(Range.clip((Range.scale(Range.clip(tilt.getCurrentPosition(),0,640),0,/*697*/640,1,0)*2),0.1,1));
 //        if(tilt.getCurrentPosition()<=155){
 //            tilt.setPower(0.5);
 //        }else if(tilt.getCurrentPosition()<=55&&!tilt.isBusy()){
@@ -159,7 +164,7 @@ public class extension {
     public void setTilt(int ticks){
         tiltpos=ticks;
         tilt.setTargetPosition(tiltpos);
-        tilt.setPower(1);
+        if(tilt.getPower()==0)tilt.setPower(1);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void run(){
