@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class MoteursIndividuels extends LinearOpMode {
+public class BrasArticule extends LinearOpMode {
 
     private DcMotorEx motorA;
     private DcMotorEx motorB;
@@ -47,8 +47,6 @@ public class MoteursIndividuels extends LinearOpMode {
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
         while (opModeIsActive()) {
             varRY = this.gamepad1.right_stick_y;
             trigger = this.gamepad1.right_trigger;
@@ -81,8 +79,6 @@ public class MoteursIndividuels extends LinearOpMode {
             coude.setPosition(coudeX);
 
             mains.setPosition(trigger);
-
-
 
             telemetry.addData("Var Y", varRY);
             telemetry.addData("Coude", coudeX);

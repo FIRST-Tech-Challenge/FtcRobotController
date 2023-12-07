@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class MouvementBras extends LinearOpMode {
+public class ConduiteUneManette extends LinearOpMode {
     private DcMotor motorA;
     private DcMotor motorB;
     private DcMotorEx bras1;
@@ -26,46 +26,41 @@ public class MouvementBras extends LinearOpMode {
         coude = hardwareMap.get(Servo.class, "coude");
         mains = hardwareMap.get(Servo.class, "mains");
 
+        double tgtPowerA = 0;
+        double tgtPowerB = 0;
+
+        double varY = 0;
+        double varX = 0;
+        double varYpos = 0;
+        double varXpos = 0;
+
+        double coudeX = 0;
+        int brasA = 0;
+        double trigger = 0;
+        double varRY = 0;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
-        double tgtPowerA = 0;
-        double tgtPowerB = 0;
-
-        double deadZone = 0.1;
-        double varY = 0;
-        double varX = 0;
-        double varYpos = 0;
-        double varXpos = 0;
-        double speed = 0;
-
-        double coudeX = 0;
-        int brasA = 0;
-        int brasB = 0;
-        double trigger = 0;
-        double varRY = 0;
-
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             varY = this.gamepad1.left_stick_y;
             varX = this.gamepad1.left_stick_x;
 
             varYpos = Math.abs(varY);
             varXpos = Math.abs(varX);
-            speed = Math.sqrt(varXpos * varXpos + varYpos * varYpos);
 
             varRY = this.gamepad1.right_stick_y;
             trigger = this.gamepad1.right_trigger;
 
             brasA = bras1.getCurrentPosition();
-            brasB = bras2.getCurrentPosition();
 
-
+            /// Mouvements
             if (varY > 0) //Forward
             {
                 tgtPowerA = varYpos;
@@ -89,8 +84,7 @@ public class MouvementBras extends LinearOpMode {
                 }
 
             }
-            //joyValue Between joyValueMidLower - joyValueMidUpper.
-            //Need some range here, because joystick sometime not in  exact center.
+
             else if (varY == 0) {
                 tgtPowerA = 0;
                 tgtPowerB = 0;
@@ -114,6 +108,8 @@ public class MouvementBras extends LinearOpMode {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
             }
+
+            /// Bras + Coude + Main
 
             if (varRY < 0) {
                 bras1.setPower(varRY/2);
