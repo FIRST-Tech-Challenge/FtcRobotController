@@ -156,7 +156,6 @@ public class Robot {
         telemetry.addData("not started, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
         servo.setPosition(targetServoPos);
-        opMode.sleep(500);
         telemetry.addData("done, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
     }
@@ -665,6 +664,7 @@ public class Robot {
                 closeClamp();
                 openHook();
                 setServoPosBlocking(spikeServo, 0.5);
+                opMode.sleep(100);
             }
 
             Log.d("vision", "moveToMarker: Pos " + markerPos);
@@ -689,6 +689,7 @@ public class Robot {
                 setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
+                opMode.sleep(100);
                 straightBlockingFixHeading(horizontal2, true, 1); //move back FAST
                 setHeading(90 * polarity, 0.7); //turn
                 straightBlockingFixHeading(vertical2, false, 0.7);
@@ -709,6 +710,7 @@ public class Robot {
                 straightBlockingFixHeading(7, false, 0.25); //forward
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(100);
                 }
                 straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
@@ -738,6 +740,7 @@ public class Robot {
                 setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
+                opMode.sleep(100);
                 straightBlockingFixHeading(horizontal2, true, 1); //move back FAST
                 setHeading(90 * polarity, 0.7); //turn
                 straightBlockingFixHeading(vertical2, false, 0.7); //go forward FAST
@@ -851,6 +854,7 @@ public class Robot {
                 closeClamp();
                 openHook();
                 setServoPosBlocking(spikeServo, 0.5);
+                opMode.sleep(100);
             }
 
 
@@ -878,6 +882,7 @@ public class Robot {
                 straightBlockingFixHeading(7, false, 0.25); //forward
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(100);
                 }
                 straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
@@ -908,6 +913,7 @@ public class Robot {
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(100);
                 }
                 straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
@@ -938,6 +944,7 @@ public class Robot {
                 straightBlockingFixHeading(horizontal2, false, 0.5); //go forward
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(100);
                 }
                 straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
@@ -1178,9 +1185,10 @@ public class Robot {
         setUpIntakeOuttake();
 
         openHook();
-        trayToIntakePos();
-        moveLinearSlideByTicksBlocking(0);
         closeClamp();
+        trayToIntakePos();
+        opMode.sleep(100);
+        moveLinearSlideByTicksBlocking(0);
     }
 
     public void teleOpWhileLoop (Gamepad gamepad1, Gamepad gamepad2) {
@@ -1201,6 +1209,11 @@ public class Robot {
         double bRightPower;
         double maxPower;
         double scale;
+
+        double fLeftPowerPrev = 0;
+        double fRightPowerPrev = 0;
+        double bLeftPowerPrev = 0;
+        double bRightPowerPrev = 0;
 
         while (opMode.opModeIsActive()) {
 
@@ -1235,11 +1248,11 @@ public class Robot {
             }
 
             //setting forward and mecanum based on where the front is
-            straight = gamepad1.left_stick_y * frontFacing * -0.75;
-            mecanuming = gamepad1.left_stick_x * frontFacing * 0.75;
+            straight = gamepad1.left_stick_y * frontFacing * -1;
+            mecanuming = gamepad1.left_stick_x * frontFacing;
 
             //turning stays the same
-            turning = gamepad1.right_stick_x * 0.75;
+            turning = gamepad1.right_stick_x / 2;
 
             //set powers using this input
             fLeftPower = straight + turning + mecanuming;
@@ -1260,11 +1273,23 @@ public class Robot {
 
             //uses different powers based on which bumper was pressed last
             if (slowMode) {
-                setMotorPower(fLeftPower / 2, fRightPower / 2,
-                        bLeftPower / 2, bRightPower / 2);
-            } else {
-                setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+                fLeftPower /= 2;
+                bLeftPower /= 2;
+                fRightPower /= 2;
+                bRightPower /= 2;
             }
+
+            //set motor power ONLY if a value has changed. else, use previous value.
+            if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
+            || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
+                setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+                fLeftPowerPrev = fLeftPower;
+                fRightPowerPrev = fRightPower;
+                bLeftPowerPrev = bLeftPower;
+                bRightPowerPrev = bRightPower;
+            }
+
 
             // GAMEPAD 2: ARM CONTROLS
 
@@ -1288,10 +1313,13 @@ public class Robot {
             if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
                 // do nothing
             } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
+                openClamp();
                 intake.setPower(-0.7);
             } else if (gamepad2.left_bumper) { // left bumper - regurgitate
+                openClamp();
                 intake.setPower(0.7);
             } else { // neither - stop
+                closeClamp();
                 intake.setPower(0);
             }
 
@@ -1301,6 +1329,7 @@ public class Robot {
             } else if (gamepad2.right_bumper) { // bumper - open clamp
                 openClamp();
             }
+
 
             // b - hanging mode
             if (gamepad2.b) {
