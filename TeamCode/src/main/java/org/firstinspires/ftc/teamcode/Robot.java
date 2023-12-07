@@ -8,6 +8,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -161,7 +162,7 @@ public class Robot {
     }
 
     public void trayToIntakePos() {
-        setServoPosBlocking(tray, 0.424);
+        setServoPosBlocking(tray, 0.411);
     }
 
     public void trayToOuttakePos() {
@@ -965,7 +966,7 @@ public class Robot {
          */
 
         int parkDistance = 25; // distance from center tag in inches
-        int distanceBetweenTags = 5; // inches
+        int distanceBetweenTags = 4; // inches
         while (opMode.opModeIsActive()) {
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
                 // move left to park
@@ -1170,4 +1171,167 @@ public class Robot {
         hook.setPosition(0.27);
     }
 
+    public void initForTeleOp () {
+
+        // initialize robot class
+        setUpDrivetrainMotors();
+        setUpIntakeOuttake();
+
+        openHook();
+        trayToIntakePos();
+        moveLinearSlideByTicksBlocking(0);
+        closeClamp();
+    }
+
+    public void teleOpWhileLoop (Gamepad gamepad1, Gamepad gamepad2) {
+
+        boolean hangingMode = false;
+        int TRIGGER_PRESSED = 0; // TODO: test
+        int frontFacing = 1;
+
+
+        //doubles for amount of input for straight, turning, and mecanuming variables
+        double straight;
+        double turning;
+        double mecanuming;
+
+        double fLeftPower;
+        double fRightPower;
+        double bLeftPower;
+        double bRightPower;
+        double maxPower;
+        double scale;
+
+        while (opMode.opModeIsActive()) {
+
+            // GAMEPAD 1: DRIVER CONTROLS
+
+            // right bumper launches drone
+            if (gamepad1.right_bumper) {
+                planeLauncher.setPosition(0.7);
+            }
+
+            // x aligns bot to board
+            if (gamepad1.x) {
+                if (isRedAlliance) {
+                    setHeading(-90, 0.7);
+                } else {
+                    setHeading(90, 0.7);
+                }
+            }
+
+            //a and y switch which side is front
+            if (gamepad1.a) {
+                frontFacing = 1;
+            } else if (gamepad1.y) {
+                frontFacing = -1;
+            }
+
+            //setting forward and mecanum based on where the front is
+            straight = gamepad1.left_stick_y * frontFacing * -0.75;
+            mecanuming = gamepad1.left_stick_x * frontFacing * 0.75;
+
+            //turning stays the same
+            turning = gamepad1.right_stick_x * 0.75;
+
+            //set powers using this input
+            fLeftPower = straight + turning + mecanuming;
+            fRightPower = straight - turning - mecanuming;
+            bLeftPower = straight + turning - mecanuming;
+            bRightPower = straight - turning + mecanuming;
+
+            //scale powers
+            maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
+
+            if (Math.abs(maxPower) > 1) {
+                scale = Math.abs(maxPower);
+                fLeftPower /= scale;
+                bLeftPower /= scale;
+                fRightPower /= scale;
+                bRightPower /= scale;
+            }
+
+            setMotorPower(fLeftPower / 2, fRightPower, bLeftPower, bRightPower);
+
+            // GAMEPAD 2: ARM CONTROLS
+
+            // dpad controlling lock
+            if (gamepad2.dpad_up) { // up - close
+                closeHook();
+            } else if (gamepad2.dpad_down) { // down - open
+                openHook();
+            }
+
+            // pivoting tray
+            if (gamepad2.a && gamepad2.y) { // both - stay at current
+                // do nothing
+            } else if (gamepad2.a) { // a - intake position
+                trayToIntakePos();
+            } else if (gamepad2.y) { // y - outtake position
+                trayToOuttakePos();
+            }
+
+            // intake regurgitate
+            if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
+                // do nothing
+            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
+                intake.setPower(-0.7);
+            } else if (gamepad2.left_bumper) { // left bumper - regurgitate
+                intake.setPower(0.7);
+            } else { // neither - stop
+                intake.setPower(0);
+            }
+
+            // clamp controls
+            if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger or trigger & bumper - close clamp
+                closeClamp();
+            } else if (gamepad2.right_bumper) { // bumper - open clamp
+                openClamp();
+            }
+
+            // b - hanging mode
+            if (gamepad2.b) {
+                hangingMode = true;
+            }
+
+            //b to turn on hanging mode
+            if (!hangingMode) {
+                //if not hanging, power less
+                if (-gamepad2.left_stick_y > 0) {
+                    lsBack.setPower(0.5);
+                    lsFront.setPower(0.5);
+                } else if (-gamepad2.left_stick_y < 0) {
+                    lsBack.setPower(-0.5);
+                    lsFront.setPower(-0.5);
+                } else {
+                    lsBack.setPower(0);
+                    lsFront.setPower(0);
+                }
+            } else if (hangingMode) {
+                //if hanging, power more
+                if (-gamepad2.left_stick_y > 0) {
+                    lsBack.setPower(1);
+                    lsFront.setPower(1);
+                } else if (-gamepad2.left_stick_y < 0) {
+                    lsBack.setPower(-1);
+                    lsFront.setPower(-1);
+                } else {
+                    lsBack.setPower(0);
+                    lsFront.setPower(0);
+                }
+            }
+        }
+    }
+
+    private double maxAbsValueDouble(double a, double... others) {
+        double max = a;
+
+        for (double next : others) {
+            if (Math.abs(next) > Math.abs(max)) {
+                max = next;
+            }
+        }
+
+        return max;
+    }
 }
