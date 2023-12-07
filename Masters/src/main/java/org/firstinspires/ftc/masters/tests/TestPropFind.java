@@ -82,12 +82,17 @@ public class TestPropFind extends OpenCvPipeline {
         inputToHSV(input);
 
         // Useful for red isolation
-        //Core.inRange(LAB, new Scalar(0,0,0), new Scalar(240,150,255), mask); //Black out Red
+        //Core.inRange(HSV, new Scalar(150,50,0), new Scalar(180,255,255), mask); //Black out Red
 
-//        Core.inRange(HSV, new Scalar(47,50,0), new Scalar(80,255,255), mask); //Black out green pixel
-//        Core.inRange(HSV, new Scalar(15,50,0), new Scalar(35,255,255), mask); //Black out yellow pixel
-//        Core.inRange(HSV, new Scalar(110,50,0), new Scalar(150,255,255), mask); //Black out purple pixel
+        // Blue prop
+        Core.inRange(HSV, new Scalar(105,50,0), new Scalar(115,255,255), mask); //Black out Red
+
+/*
+        Core.inRange(HSV, new Scalar(47,50,0), new Scalar(80,255,255), mask); //Black out green pixel
+        Core.inRange(HSV, new Scalar(15,50,0), new Scalar(35,255,255), mask); //Black out yellow pixel
+        Core.inRange(HSV, new Scalar(110,50,0), new Scalar(150,255,255), mask); //Black out purple pixel
         Core.inRange(HSV, new Scalar(0,0,100), new Scalar(120,30,255), mask); //Black out white pixel
+*/
 
         diff_im = new Mat();
         Core.add(diff_im, Scalar.all(0), diff_im);
@@ -96,7 +101,7 @@ public class TestPropFind extends OpenCvPipeline {
         diff_im.copyTo(input);
         diff_im.release();
 
-        inputToLAB(input);
+        inputToHSV(input);
 
         region_a_mid = H.submat(interestMid);
         region_b_mid = S.submat(interestMid);
