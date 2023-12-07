@@ -256,5 +256,6 @@ public class OldTeleOp extends LinearOpMode {
         slidesToMid();
         trayPos = TRAY_UP_POS;
         robot.setServoPosBlocking(robot.tray, trayPos);
+        this.sleep(100);
     }
 }
