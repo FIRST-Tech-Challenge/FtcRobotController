@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<!--
+        This file can provide additional camera calibration settings beyond those built into the SDK itself.
+        Each calibration is for a particular camera (indicated by USB vid & pid pair) and a particular
+        capture resolution for the camera. Note: it is very important when capturing images used to calibrate
+        a camera that the image acquisition tool can actually control this capture resolution within the camera
+        itself and that you use this setting correctly. Many image acquistion tools do not in fact provide
+        this level of control.
+
+        Beyond simply providing additional, new camera calibrations, calibrations provided herein can
+        *replace/update* those that are builtin to the SDK. This matching is keyed, of course, by the
+        (vid, pid, size) triple. Further, if such a calibration has the 'remove' attribute with value 'true',
+        any existing calibration with that key is removed (and the calibration itself not added).
+
+        Calibrations are internally processed according to aspect ratio. If a format is requested in a size
+        that is not calibrated, but a calibration does exist for the same aspect ratio on the same camera,
+        then the latter will be scaled to accommodate the request. For example, if a 640x480 calibration
+        is requested but only a 800x600 calibration exists for that camera, then the 800x600 is scaled
+        down to service the 640x480 request.
+
+        Further, it is important to note that if *no* calibrations exist for a given camera, then Vuforia
+        is offered the entire range of capture resolutions that the hardware can support (and it does its
+        best to deal with the lack of calibration). However, if *any* calibrations are provided for a camera,
+        then capture resolutions in those aspect ratios supported by the camera for which any calibrations
+        are *not* provided are *not* offered. Thus, if you calibrate a camera but fail to calibrate all
+        the camera's supported aspect ratios, you limit the choices of capture resolutions that Vuforia can
+        select from.
+
+        One image acquisition program that supports control of camera capture resolution is YouCam 7:
+        https://www.cyberlink.com/products/youcam/features_en_US.html
+
+        Programs that can process acquired images to determine camera calibration settings include:
+        https://www.3dflow.net/3df-zephyr-free/ (see "Utilities/Images/Launch Camera Calibration" therein)
+        http://graphics.cs.msu.ru/en/node/909
+        Note that the type of images that must be acquired in order to calibrate is specific to the
+        calibration software used.
+
+        The required contents are illustrated here by example. Note that for the attribute names, both the
+        camelCase or the underscore_variations are supported; they are equivalent. The attributes for
+        each Calibration are as follows:
+
+        size (int pair): space separated camera resolution (width, height).
+        focalLength (float pair): space separated focal length value.
+        principalPoint (float pair): space separated principal point values (width, height).
+        distortionCoefficients (an 8-element float array): distortion coefficients in the following form
+        (r:radial, t:tangential): [r0, r1, t0, t1, r2, r3, r4, r5]
+        see https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
+
+        The examples here are commented out as the values are built-in to the FTC SDK. They serve instead
+        here as examples on how make your own.
+
+        -->
+<Calibrations>
+
+ Microsoft Lifecam HD 3000 v1, Calibrated by PTC using unknown tooling -->
+ <Camera vid="Microsoft" pid="0x0779">
+<Calibration
+            size="640 480"
+                    focalLength="678.154f, 678.17f"
+                    principalPoint="318.135f, 228.374f"
+                    distortionCoefficients="0.154576f, -1.19143f, 0f, 0f, 2.06105f, 0f, 0f, 0f"
+                    />
+</Camera>
+
+ Microsoft Lifecam HD 3000 v2, Calibrated by PTC using unknown tooling -->
+ <Camera vid="Microsoft" pid="0x0810">
+<Calibration
+            size="640 480"
+                    focalLength="678.154f, 678.17f"
+                    principalPoint="318.135f, 228.374f"
+                    distortionCoefficients="0.154576f, -1.19143f, 0f, 0f, 2.06105f, 0f, 0f, 0f"
+                    />
+</Camera>
+
+</Calibrations>
