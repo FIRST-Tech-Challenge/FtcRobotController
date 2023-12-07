@@ -9,6 +9,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,10 +42,9 @@ import java.util.List;
  *
  */
 @Config
-public class StandardTrackingWheelLocalizer implements Localizer {
+public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalizer {
     public static double Y_MULTIPLIER = 1/*0.896707*/;
     public static double X_MULTIPLIER = 1/*107.5/119*/;
-
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 1.3779/2; // in
     public static double wheelrad2 = 1;
@@ -57,6 +57,8 @@ public class StandardTrackingWheelLocalizer implements Localizer {
 
     private final double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*2*PI);
     private final double ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI);
+
+    private final double ticks_per_inch2 = TICKS_PER_REV/(2*PI);
     private double aOffset=0;
     private double lastAngle=0;
 
@@ -69,9 +71,12 @@ public class StandardTrackingWheelLocalizer implements Localizer {
     private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
+        super(Arrays.asList(new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
+                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))));
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
@@ -90,9 +95,9 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         packet.put("y",getPoseEstimate().getY());
         packet.put("a",getPoseEstimate().getHeading()*180/PI);        /*op.telemetry.update();*/
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCurrentPosition()*X_MULTIPLIER),
-                encoderTicksToInches(rightEncoder.getCurrentPosition()*X_MULTIPLIER),
-                encoderTicksToInches(frontEncoder.getCurrentPosition()*Y_MULTIPLIER)
+                encoderTicksToInches(leftEncoder.getCurrentPosition()),
+                encoderTicksToInches(rightEncoder.getCurrentPosition()),
+                frontEncoder.getCurrentPosition()*2*PI/TICKS_PER_REV
         );
     }
 
@@ -126,74 +131,81 @@ public class StandardTrackingWheelLocalizer implements Localizer {
         }
         return C;
     }
-    public void update() {
-        double xpos = currentPose.getX(), ypos=currentPose.getY(), angle = currentPose.getHeading();
-        double[] nowTicks = {leftEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition(),
-                frontEncoder.getCurrentPosition()};
-        double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1], nowTicks[2] - lastTicks[2]};
-        lastTicks = nowTicks;
-        double deltaAngle = (deltaTicks[1] - deltaTicks[0]) / ticks_per_radian;
+//    public void update() {
+//        double xpos = currentPose.getX(), ypos=currentPose.getY(), angle = currentPose.getHeading();
+//        double[] nowTicks = {leftEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition(),
+//                frontEncoder.getCurrentPosition()};
+//        double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1], nowTicks[2] - lastTicks[2]};
+//        lastTicks = nowTicks;
+//        double deltaAngle = (deltaTicks[1] - deltaTicks[0]) / ticks_per_radian;
+//
+//        double [][] initalAngle = {{cos(angle),-sin(angle),0},
+//                {sin(angle),cos(angle),0},
+//                {0,0,1}};
+//
+//        double [][] robotDelta = {{(deltaTicks[0]+deltaTicks[1])*0.5/ticks_per_inch},
+//                {deltaTicks[2]/ticks_per_inch2 - (FORWARD_OFFSET*deltaAngle)},
+//                {deltaAngle}};
+//        double [][] deltaMatrix;
+//        //taylor aprox for small values of delta theta
+//        if(abs(deltaAngle)<.00001){
+//            deltaMatrix = new double[][]{{1-deltaAngle*deltaAngle*.1666667,-deltaAngle*0.5,0},{deltaAngle*0.5,1-deltaAngle*deltaAngle*.1666667,0},{0,0,1}};
+//        }else{
+//            deltaMatrix = new double[][]{{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
+//                    {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
+//                    {0,0,1}};
+//        }
+//        double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
+//
+//        double [][] finalSolve = multiplyMatrix(3,3, partialSolve, 3,1, robotDelta);
+//
+//        double deltaX = finalSolve[0][0];
+//        double deltaY = finalSolve[1][0];
+////        if(angle!=lastAngle){
+////            aOffset += angle-lastAngle;
+////        }
+//        angle = aOffset + (nowTicks[1]-nowTicks[0])/ticks_per_radian;
+//        lastAngle = angle;
+//        xpos += deltaX;
+//        ypos += deltaY;
+//        currentPose = new Pose2d(xpos,ypos,angle);
+//        double[] velo = {leftEncoder.getCorrectedVelocity()/ticks_per_inch, rightEncoder.getCorrectedVelocity()/ticks_per_inch,
+//                frontEncoder.getCorrectedVelocity()/ticks_per_inch2};
+//        double headingVelo = (velo[0]-velo[1])/LATERAL_DISTANCE;
+//        currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]+headingVelo*LATERAL_DISTANCE, -headingVelo);
+//        currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
+//        Canvas fieldOverlay = packet.fieldOverlay();
+//        packet.put("currentPose", currentPose);
+//        packet.put("currentVelocity", currentVelocity.getX());
+//        packet.put("currentPOVVelocity", currentPOVVelocity);
+//        packet.put("leftTicks", nowTicks[0]);
+//        packet.put("rightTicks", nowTicks[1]);
+//        packet.put("backTicks", nowTicks[2]);
+////        setPoseEstimate(currentPose);
+//        if(currentPose!=null) {
+//            fieldOverlay.setStrokeWidth(1);
+//            fieldOverlay.setStroke("#4CAF50");
+//            DashboardUtil.drawRobot(fieldOverlay, currentPose);
+//        }
+//    }
 
-        double [][] initalAngle = {{cos(angle),-sin(angle),0},
-                {sin(angle),cos(angle),0},
-                {0,0,1}};
+//    @NonNull
+//    public Pose2d getPoseEstimate() {
+//        return currentPose;
+//    }
 
-        double [][] robotDelta = {{(deltaTicks[0]+deltaTicks[1])*0.5/ticks_per_inch},
-                {deltaTicks[2]*2/1.3779/ticks_per_inch - (FORWARD_OFFSET*deltaAngle)},
-                {deltaAngle}};
-        double [][] deltaMatrix;
-        //taylor aprox for small values of delta theta
-        if(abs(deltaAngle)<.000001){
-            deltaMatrix = new double[][]{{1-deltaAngle*deltaAngle*.1666667,-deltaAngle*0.5,0},{deltaAngle*0.5,1-deltaAngle*deltaAngle*.1666667,0},{0,0,1}};
-        }else{
-            deltaMatrix = new double[][]{{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
-                    {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
-                    {0,0,1}};
-        }
-        double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
-
-        double [][] finalSolve = multiplyMatrix(3,3, partialSolve, 3,1, robotDelta);
-
-        double deltaX = finalSolve[0][0];
-        double deltaY = finalSolve[1][0];
-        if(angle!=lastAngle){
-            aOffset += angle-lastAngle;
-        }
-        angle = aOffset + (nowTicks[1]-nowTicks[0])/ticks_per_radian;
-        lastAngle = angle;
-        xpos += deltaX;
-        ypos += deltaY;
-        currentPose = new Pose2d(xpos,ypos,angle);
-        double[] velo = {leftEncoder.getCorrectedVelocity()/ticks_per_inch, rightEncoder.getCorrectedVelocity()/ticks_per_inch,
-                frontEncoder.getCorrectedVelocity()*2/1.3779/ticks_per_inch};
-        double headingVelo = (velo[0]-velo[1])/LATERAL_DISTANCE;
-        currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]+headingVelo*LATERAL_DISTANCE, -headingVelo);
-        currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
-        Canvas fieldOverlay = packet.fieldOverlay();
-        packet.put("currentPose", currentPose);
-        packet.put("currentVelocity", currentVelocity.getX());
-        packet.put("currentPOVVelocity", currentPOVVelocity);
-        packet.put("leftTicks", nowTicks[0]);
-        packet.put("rightTicks", nowTicks[1]);
-        packet.put("backTicks", nowTicks[2]);
-//        setPoseEstimate(currentPose);
-        if(currentPose!=null) {
-            fieldOverlay.setStrokeWidth(1);
-            fieldOverlay.setStroke("#4CAF50");
-            DashboardUtil.drawRobot(fieldOverlay, currentPose);
-        }
-    }
-
-    @NonNull
-    public Pose2d getPoseEstimate() {
-        return currentPose;
-    }
-
-    public void setPoseEstimate(@NonNull Pose2d pose2d) {
-        currentPose=pose2d;
-    }
+//    public void setPoseEstimate(@NonNull Pose2d pose2d) {
+//        currentPose=pose2d;
+//        aOffset = toRadians(-90);
+//    }
 
     public Pose2d getPoseVelocity() {
         return currentPOVVelocity;
     }
+
+
+//    @Override
+//    public void setPoseEstimate(@NonNull Pose2d pose2d) {
+//        currentPose=pose2d;
+//    }
 }
