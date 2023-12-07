@@ -45,6 +45,8 @@ public class CenterStageTeleop extends LinearOpMode {
     double[] servoPos = {.5,.5,.5,.5,.5,.5,.5,.5,.5,.5};
     int target = 0;
 
+    int clawClosed = 0;
+
     private enum DriveMode {
         NORMAL,
         PIXEL_SCORE,
@@ -125,6 +127,14 @@ RB - Hang up
         leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
@@ -146,6 +156,58 @@ RB - Hang up
 
             switch (driveMode)  {
                 case NORMAL:
+                    /*
+X - auto aligns and switches to pixel scoring mode
+Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
+LB - four bar down (presets for stack positions)
+RB - four bar up (presets)
+LT - slides down (presets)
+RT - slides up (presets)
+                    */
+                    if (gamepad1.dpad_up){
+                        //gp slides full extension
+                        //v4b preset 4 pixel high
+                        //claw open
+                    }
+                    if (gamepad1.dpad_right){
+                        //gp slides 2/3rds extension
+                        //v4b preset 1 pixel high
+                        //claw open
+                    }
+                    if (gamepad1.dpad_down){
+                        //gp slides 1/3rds extension
+                        //v4b preset 1 pixel high
+                        //claw open
+                    }
+                    if (gamepad1.dpad_left){
+                        //gp slides fully in
+                        //v4b preset 4 pixel high
+                        //claw open
+                    }
+                    if (gamepad1.a && clawClosed == 1) {
+                        //claw false
+                        //claw open
+                        sleep(300);
+                    } else if (gamepad1.a) {
+                        //claw true
+                        //claw close
+                        sleep(300);
+                    }
+                    if (gamepad1.b) {
+                        //slides in
+                        //v4b to deposit
+                        //claw angle to deposit
+                        //when not busy, open claw
+                        //right intake
+                    }
+                    if (gamepad1.x) {
+                        // Solinexi's april tag alignment
+                        driveMode = DriveMode.PIXEL_SCORE;
+                    }
+                    if (gamepad1.left_stick_button) {
+                        driveMode = DriveMode.PIXEL_SCORE;
+                        sleep(300);
+                    }
                     break;
                 case PIXEL_SCORE:
                     break;
@@ -215,9 +277,11 @@ RB - Hang up
             }
 
             if (gamepad1.right_trigger > .3) {
-                //up
+                hangingMotor.setPower(.1);
             } else if (gamepad1.left_trigger > .3) {
-                //down
+                hangingMotor.setPower(-.1);
+            } else {
+                backSlides.setPower(0);
             }
 
             planeLaunch.setPosition(servoPos[0]);
@@ -241,6 +305,8 @@ RB - Hang up
             telemetry.addData("outtakeRotation",servoPos[7]);
             telemetry.addData("outtakeMovementRight",servoPos[8]);
             telemetry.addData("outtakeMovementLeft",servoPos[9]);
+            telemetry.addData("hangingMotor",hangingMotor.getCurrentPosition());
+            telemetry.addData("backSlides",backSlides.getCurrentPosition());
 
             telemetry.update();
         }
