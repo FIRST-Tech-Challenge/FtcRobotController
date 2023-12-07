@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.robots.base.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.robots.base.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robots.base.StandardTrackingWheelLocalizerBotA;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +21,8 @@ import java.util.List;
 public class BotA2023 extends SampleMecanumDrive {
 
     public BotA2023(HardwareMap hardwareMap) {
+        super(hardwareMap);
+
         // Override DriveConstants
         TRACK_WIDTH = 15.25; // in
 
@@ -52,8 +54,12 @@ public class BotA2023 extends SampleMecanumDrive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-        StandardTrackingWheelLocalizerBotA localizer = new StandardTrackingWheelLocalizerBotA(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
-        super(hardwareMap, localizer);
+        setLocalizer(new StandardTrackingWheelLocalizerBotA(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+
+        trajectorySequenceRunner = new TrajectorySequenceRunner(
+                follower, HEADING_PID, batteryVoltageSensor,
+                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
+        );
     }
 }
 

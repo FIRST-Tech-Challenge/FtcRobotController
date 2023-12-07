@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.robots.opmode.teamgrantbot2023;
+package org.firstinspires.ftc.teamcode.robots.opmode.bota;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.opmode.LocalizationTest;
 import org.firstinspires.ftc.teamcode.robots.BotA2023;
 
-@TeleOp(group = "teamgrantbot2023", name = "Robot A - LocalizationTest")
+@TeleOp(group = "Robot A", name = "Robot A - LocalizationTest")
 public class BotALocalizationTest extends LocalizationTest {
 
     @Override

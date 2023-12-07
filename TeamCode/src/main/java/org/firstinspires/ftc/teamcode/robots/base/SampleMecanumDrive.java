@@ -63,28 +63,24 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VY_PERCENTAGE = 1.0;
     public static double HEADING_PERCENTAGE = 1.0;
 
-    private TrajectorySequenceRunner trajectorySequenceRunner;
+    protected TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    private TrajectoryFollower follower;
+    protected TrajectoryFollower follower;
 
     protected DcMotorEx leftFront, leftRear, rightRear, rightFront;
     protected List<DcMotorEx> motors;
 
     private IMU imu;
-    private VoltageSensor batteryVoltageSensor;
+    protected VoltageSensor batteryVoltageSensor;
 
-    private List<Integer> lastEncPositions = new ArrayList<>();
-    private List<Integer> lastEncVels = new ArrayList<>();
+    protected List<Integer> lastEncPositions = new ArrayList<>();
+    protected List<Integer> lastEncVels = new ArrayList<>();
 
-    public SampleMecanumDrive(
-            HardwareMap hardwareMap,
-            StandardTrackingWheelLocalizer localizer) {
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
-
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -115,11 +111,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        if(localizer != null) {
-            setLocalizer(localizer);
-        } else {
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
-        }
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,

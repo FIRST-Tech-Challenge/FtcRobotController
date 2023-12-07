@@ -8,8 +8,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.robots.base.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robots.base.StandardTrackingWheelLocalizerBotB;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * FTC 17240 Robot B: Team Zack Bot - GoBilda Chassis
@@ -46,5 +50,16 @@ public class BotB2023 extends SampleMecanumDrive {
 
         // Default brake behavior
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncVels = new ArrayList<>();
+
+        setLocalizer(new StandardTrackingWheelLocalizerBotB(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+
+        trajectorySequenceRunner = new TrajectorySequenceRunner(
+                follower, HEADING_PID, batteryVoltageSensor,
+                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
+        );
+
     }
 }
