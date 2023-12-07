@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Config
-@TeleOp(name="Test Mec (groovy moovy)", group = "competition")
+@TeleOp(name="Demo library", group = "competition")
 public class TestTeleOp extends LinearOpMode {
 
     DcMotor leftFrontMotor = null;
@@ -21,8 +21,16 @@ public class TestTeleOp extends LinearOpMode {
     Servo heightControl = null;
     Servo v4b= null;
 
+    Servo droneTipping = null;
+    Servo droneLaunch = null;
+
     double servoPos = .5;
     double v4bPos = .5;
+
+    double droneStartPos = .6;
+    double hookStartPos = .45;
+    double droneAim = .3;
+    double droneRelease = .1;
 
 
     @Override
@@ -32,10 +40,12 @@ public class TestTeleOp extends LinearOpMode {
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
-        clawServo = hardwareMap.servo.get("servo");
-        heightControl = hardwareMap.servo.get("intake");
-        v4b = hardwareMap.servo.get("v4b");
+//        droneTipping = hardwareMap.servo.get("droneTip");
+//        droneLaunch = hardwareMap.servo.get("droneHook");
 
+//        clawServo = hardwareMap.servo.get("servo");
+//        heightControl = hardwareMap.servo.get("intake");
+//        v4b = hardwareMap.servo.get("v4b");
 
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -56,11 +66,14 @@ public class TestTeleOp extends LinearOpMode {
         double x = 0;
         double rx = 0;
 
+//        droneTipping.setPosition(droneStartPos);
+//        droneLaunch.setPosition(hookStartPos);
+
         waitForStart();
 
         while (opModeIsActive()) {
 
-            y = -gamepad1.left_stick_y;
+            y = gamepad1.left_stick_y;
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
             //rx = (gamepad1.right_trigger - gamepad1.left_trigger);
@@ -72,10 +85,10 @@ public class TestTeleOp extends LinearOpMode {
                 x = 0;
             }
 
-            double leftFrontPower = y + x + rx;
-            double leftRearPower = y - x + rx;
-            double rightFrontPower = y - x - rx;
-            double rightRearPower = y + x - rx;
+            double leftFrontPower = -y + x + rx;
+            double leftRearPower = -y - x + rx;
+            double rightFrontPower = -y - x - rx;
+            double rightRearPower = -y + x - rx;
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
@@ -92,17 +105,31 @@ public class TestTeleOp extends LinearOpMode {
 
             leftFrontMotor.setPower(leftFrontPower );
             leftRearMotor.setPower(leftRearPower);
-            rightFrontMotor.setPower(rightFrontPower );
+            rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
+//
+//            if (gamepad1.a) {
+//                droneTipping.setPosition(droneAim);
+//            }
+//
+//            if (gamepad1.b) {
+//                droneTipping.setPosition(droneAim);
+//                sleep(1000);
+//                droneLaunch.setPosition(droneRelease);
+//            }
+//
+//            if (gamepad1.y) {
+//                droneTipping.setPosition(droneStartPos);
+//                droneLaunch.setPosition(hookStartPos);
+//            }
 
+//            if (gamepad1.dpad_up && servoPos < 1) {
+//                servoPos+=.005;
+//            } else if (gamepad1.dpad_down && servoPos > 0) {
+//                servoPos-=.005;
+//            }
 
-            if (gamepad1.dpad_up && servoPos < 1) {
-                servoPos+=.005;
-            } else if (gamepad1.dpad_down && servoPos > 0) {
-                servoPos-=.005;
-            }
-
-            heightControl.setPosition(servoPos);
+//            heightControl.setPosition(servoPos);
 //
 //            if (gamepad1.dpad_left) {
 //                intakeFriend.setPower(1);
@@ -114,19 +141,19 @@ public class TestTeleOp extends LinearOpMode {
             //a open claw 0.87
             //b close claw 0.61
 
-            if (gamepad1.a) {
-                clawServo.setPosition(.87); //open
-            } else if (gamepad1.b) {
-                clawServo.setPosition(.61); //close
-            }
+//            if (gamepad1.a) {
+//                clawServo.setPosition(.87); //open
+//            } else if (gamepad1.b) {
+//                clawServo.setPosition(.61); //close
+//            }
 
-            if (gamepad1.right_bumper && v4bPos < 1) {
-                v4bPos+=.005;
-            } else if (gamepad1.left_bumper  && v4bPos > 0) {
-                v4bPos-=.005;
-            }
-            v4b.setPosition(v4bPos);
-            telemetry.addData("v4b", v4bPos);
+//            if (gamepad1.right_bumper && v4bPos < 1) {
+//                v4bPos+=.005;
+//            } else if (gamepad1.left_bumper  && v4bPos > 0) {
+//                v4bPos-=.005;
+//            }
+//            v4b.setPosition(v4bPos);
+//            telemetry.addData("v4b", v4bPos);
             telemetry.addData("servo pos: ", servoPos);
             telemetry.update();
 
