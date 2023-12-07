@@ -1188,7 +1188,7 @@ public class Robot {
         boolean hangingMode = false;
         int TRIGGER_PRESSED = 0; // TODO: test
         int frontFacing = 1;
-
+        boolean slowMode = false;
 
         //doubles for amount of input for straight, turning, and mecanuming variables
         double straight;
@@ -1207,7 +1207,7 @@ public class Robot {
             // GAMEPAD 1: DRIVER CONTROLS
 
             // right bumper launches drone
-            if (gamepad1.right_bumper) {
+            if (gamepad1.b) {
                 planeLauncher.setPosition(0.7);
             }
 
@@ -1225,6 +1225,13 @@ public class Robot {
                 frontFacing = 1;
             } else if (gamepad1.y) {
                 frontFacing = -1;
+            }
+
+            //left bumper uses faster mode, right bumper uses slower mode
+            if (gamepad1.left_bumper) {
+                slowMode = false;
+            } else if (gamepad1.right_bumper) {
+                slowMode = true;
             }
 
             //setting forward and mecanum based on where the front is
@@ -1251,7 +1258,13 @@ public class Robot {
                 bRightPower /= scale;
             }
 
-            setMotorPower(fLeftPower / 2, fRightPower, bLeftPower, bRightPower);
+            //uses different powers based on which bumper was pressed last
+            if (slowMode) {
+                setMotorPower(fLeftPower / 2, fRightPower / 2,
+                        bLeftPower / 2, bRightPower / 2);
+            } else {
+                setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+            }
 
             // GAMEPAD 2: ARM CONTROLS
 
