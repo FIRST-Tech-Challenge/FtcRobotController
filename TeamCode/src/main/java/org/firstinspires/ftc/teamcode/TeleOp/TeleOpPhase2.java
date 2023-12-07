@@ -69,8 +69,8 @@ public class TeleOpPhase2 extends LinearOpMode {
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0.01, 0, 0.00000001), 0, 0);
         headingPID.setInputBounds(0, 360);
 
-        // PID controller for heading
-        PIDFController liftPID = new PIDFController(new PIDCoefficients(4, 1, 1), 0, 0);
+        // PID controller for lift
+        PIDFController liftPID = new PIDFController(new PIDCoefficients(1, 1, 1), 0, 0);
 
         liftPID.setTargetPosition(0);
 
@@ -123,10 +123,11 @@ public class TeleOpPhase2 extends LinearOpMode {
             // Arm stuff beyond this point:
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+            int liftSpeed = 100;
             if (gamepad1.left_bumper) {
-                // Implement later
+                liftPID.setTargetPosition(liftMotor.getCurrentPosition() + liftSpeed);
             } else if (gamepad1.right_bumper) {
-                // AAAAA
+                liftPID.setTargetPosition(liftMotor.getCurrentPosition() - liftSpeed);
             }
 
             int liftStage0 = 20;
@@ -145,7 +146,8 @@ public class TeleOpPhase2 extends LinearOpMode {
 
             if (liftMotor.getCurrentPosition() != liftMotor.getTargetPosition()) {
                 liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                liftMotor.setPower(1); // This number should probably be dependent on error
+                Ewma liftPower = new Ewma(0.3);
+                liftMotor.setPower(liftPower.update(1)); // This number should probably be dependent on error
             }
 
 
