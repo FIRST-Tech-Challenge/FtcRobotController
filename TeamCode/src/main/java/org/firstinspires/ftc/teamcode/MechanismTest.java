@@ -16,8 +16,8 @@ public class MechanismTest extends OpMode
 
 
     //deposit servo declaration
-    public Servo depositServoOne;
-    public Servo depositServoTwo;
+    //public Servo depositServoOne;
+    //public Servo depositServoTwo;
 
 
     //servo variable declarations
@@ -35,22 +35,21 @@ public class MechanismTest extends OpMode
     @Override
     public void init() //initialization method
     {
-        /*
+
         //intake servo config
         counteroller = hardwareMap.get(CRServo.class, "Intake Servo");
         intakeMotor = hardwareMap.get(DcMotor.class, "Intake Motor");
-*/
 
         //Deposit servo config
-        depositServoOne = hardwareMap.get(Servo.class, "Right Deposit");
-        depositServoTwo = hardwareMap.get(Servo.class, "Left Deposit");
+        //depositServoOne = hardwareMap.get(Servo.class, "Right Deposit");
+        //depositServoTwo = hardwareMap.get(Servo.class, "Left Deposit");
 
     }
 
     @Override
     public void loop() //teleop loop
     {
-        /*
+
         //intake
         if (gamepad1.right_trigger > 0.05) {
             counteroller.setPower(1);
@@ -62,59 +61,5 @@ public class MechanismTest extends OpMode
             counteroller.setPower(0);
             intakeMotor.setPower(0);
         }
-*/
-//        deposit
-//right trigger
-        if (gamepad2.right_trigger > 0.05) {
-            depositServoOne.setPosition(1);
-        } else{
-            depositServoOne.setPosition(0);
-        }
-        if (gamepad2.left_trigger > 0.05) {
-            depositServoTwo.setPosition(1);
-        } else {
-            depositServoTwo.setPosition(0);
-        }
-
-        /*deposit
-//        a button logic
-        if (gamepad1.a && !aPressed)
-        {
-            rightUp = !rightUp;
-            leftUp = !leftUp;
-            aPressed = true;
-        }
-        else if (!gamepad1.a)
-            aPressed = false;
-
-        //x button logic
-        if (gamepad1.x && !xPressed)
-        {
-            leftUp = !leftUp;
-            xPressed = true;
-        }
-        else if (!gamepad1.x)
-            xPressed = false;
-
-        //b button logic
-        if (gamepad1.b && !bPressed)
-        {
-            rightUp = !rightUp;
-            bPressed = true;
-        }
-        else if (!gamepad1.b)
-            bPressed = false;
-
-        //x button drops left
-        if (leftUp == true)
-            depositServoTwo.setPosition(1);
-        else if (leftUp == false)
-            depositServoTwo.setPosition(0);
-
-        //b button drops right
-        if (rightUp == true)
-            depositServoOne.setPosition (1);
-        else if (rightUp == false)
-            depositServoOne.setPosition (0);*/
     }
 }
