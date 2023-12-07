@@ -111,6 +111,7 @@ public class extension {
     public void setIntakeClosePos(){
         pos=0;
         setTilt(tiltintakeclosepos);
+        tilt.setPower(1);
         setHeight(0);
         if((tilt.getCurrentPosition())<=155){
         setHeight(0);
@@ -119,6 +120,7 @@ public class extension {
     public void setIntakeFarPos(){
         pos=1;
         setTilt(tiltintakefarpos);
+        tilt.setPower(1);
         if((tilt.getCurrentPosition())<=155){
             setHeight(0);
         }
@@ -130,16 +132,10 @@ public class extension {
             setTilt(0);
         }
         tilt.setPower(Range.clip((Range.scale(Range.clip(tilt.getCurrentPosition(),0,640),0,/*697*/640,1,0)*2),0.1,1));
-//        if(tilt.getCurrentPosition()<=155){
-//            tilt.setPower(0.5);
-//        }else if(tilt.getCurrentPosition()<=55&&!tilt.isBusy()){
-//            tilt.setPower(1);
-//        }else if(tilt.getCurrentPosition()<=55&&tilt.getCurrentPosition()>0){
-//            tilt.setPower(0.3);
-//        }else tilt.setPower(1);
     }
     public void setPlaceLow(){
             setTilt(tiltplacelowpos);
+            tilt.setPower(1);
             pos=3;
             if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
@@ -148,6 +144,7 @@ public class extension {
     }
     public void setPlaceMid(){
         setTilt(tiltplacemidpos);
+        tilt.setPower(1);
         pos=4;
         if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
@@ -155,6 +152,7 @@ public class extension {
     }
     public void setPlaceHigh(){
         setTilt(tiltplacehighpos);
+        tilt.setPower(1);
         pos=5;
         if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*(7.0 / 8.0))){
             setHeight(0);
@@ -164,7 +162,7 @@ public class extension {
     public void setTilt(int ticks){
         tiltpos=ticks;
         tilt.setTargetPosition(tiltpos);
-        if(tilt.getPower()==0)tilt.setPower(1);
+        //if(tilt.getPower()==0)tilt.setPower(1);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void run(){
@@ -174,9 +172,6 @@ public class extension {
         else if(pos==3)setPlaceLow();
         else if(pos==4)setPlaceMid();
         else if(pos==5)setPlaceHigh();
-//        if(pos<3){
-//            if(tilt.getTargetPosition())
-//        }
     }
 
 }
