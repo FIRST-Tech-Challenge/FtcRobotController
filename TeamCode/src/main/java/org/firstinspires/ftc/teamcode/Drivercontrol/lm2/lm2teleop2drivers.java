@@ -93,24 +93,34 @@ public class lm2teleop2drivers extends LinearOpMode {
         //boolean reset = false;//boolean for reset heading
         boolean slowturn = false;//boolean for slowturn mode
         double rx;//right x
+        boolean rc = false;
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Press circle or b on gamepad1 for robot centric","ok");
         telemetry.update();
-        drive.init(hardwareMap, 0);//init dt
+        if(gamepad1.circle||gamepad1.b){
+            rc=true;
+        }
+        //init dt
         //extend.setStowPos();//for when auto is ready
-//        while(opModeInInit()){
+        while(opModeInInit()){
+            if(gamepad1.circle||gamepad1.b){
+                rc=true;
+                break;
+            }
 //            if(gamepad1.a){
 //                extend.hold();//hold init pos
 //                break;
 //            }
-//        }
+        }
         waitForStart();
+        if (rc)drive.init(hardwareMap, 1);else if(!rc)drive.init(hardwareMap, 0);
         runtime.reset();
        // boolean hangmode=false;
         gamepad1.setLedColor(255.0,215,0,180000);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            airplane.run(extend,gamepad2,plane,false);
+            air.run(extend,gamepad2,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.addData("1",gamepad1.touchpad_finger_1);
             telemetry.update();
