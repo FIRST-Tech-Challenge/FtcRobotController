@@ -82,17 +82,42 @@ public class AutoRedCloseCorner extends RobotLinearOpMode
             sleep(50);
         }
 
-        /*
-         * The START command just came in: snapshot the current analysis now
-         * for later use. We must do this because the analysis will continue
-         * to change as the camera view changes once the robot starts moving!
-         */
         sleep(2000);
-        snapshotAnalysis = pipeline.getAnalysis();
 
         /*
          * Show that snapshot on the telemetry
          */
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        encoderDrive(0.5, 3, MOVEMENT_DIRECTION.FORWARD);
+        encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
+
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        switch (snapshotAnalysis){
+            case RIGHT:
+            {
+                encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 14, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                sleep(100000);
+            }
+        }
+
+        encoderDrive(0.3, 4, MOVEMENT_DIRECTION.STRAFE_LEFT);
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
         telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
         telemetry.update();
 
@@ -101,27 +126,13 @@ public class AutoRedCloseCorner extends RobotLinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 27, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                sleep(25000);
-            }
-
-            case RIGHT:
-            {
-                /* Your autonomous code */
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 8.5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 sleep(25000);
             }
@@ -129,16 +140,17 @@ public class AutoRedCloseCorner extends RobotLinearOpMode
             case CENTER:
             {
                 /* Your autonomous code*/
-                encoderDrive(0.5, 33.5, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 28, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 sleep(25000);
             }
         }
+
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive())

@@ -82,13 +82,7 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
             sleep(50);
         }
 
-        /*
-         * The START command just came in: snapshot the current analysis now
-         * for later use. We must do this because the analysis will continue
-         * to change as the camera view changes once the robot starts moving!
-         */
-        sleep(5000);
-        snapshotAnalysis = pipeline.getAnalysis();
+        sleep(2000);
 
         /*
          * Show that snapshot on the telemetry
@@ -96,28 +90,21 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
         telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
         telemetry.update();
 
-        switch (snapshotAnalysis)
-        {
-            case LEFT:
-            {
-                /* Your autonomous code */
-                encoderDrive(0.5, 26, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
-                sleep(5000);
-                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                sleep(25000);
-            }
+        encoderDrive(0.5, 3, MOVEMENT_DIRECTION.FORWARD);
+        encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
 
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
+
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        switch (snapshotAnalysis){
             case RIGHT:
             {
-                /* Your autonomous code */
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 9, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
@@ -127,16 +114,38 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 sleep(25000);
             }
+        }
+
+        encoderDrive(0.3, 4, MOVEMENT_DIRECTION.STRAFE_LEFT);
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        switch (snapshotAnalysis)
+        {
+            case LEFT:
+            {
+                /* Your autonomous code */
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 8.5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                sleep(25000);
+            }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                encoderDrive(0.5, 33.5, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 28, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 2, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
-                sleep(5000);
                 encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 sleep(25000);
