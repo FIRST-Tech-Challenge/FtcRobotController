@@ -88,11 +88,41 @@ public class AutoBlueCloseCorner extends RobotLinearOpMode
          * to change as the camera view changes once the robot starts moving!
          */
         sleep(2000);
-        snapshotAnalysis = pipeline.getAnalysis();
 
         /*
          * Show that snapshot on the telemetry
          */
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        encoderDrive(0.5, 3, MOVEMENT_DIRECTION.FORWARD);
+        encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
+
+        telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
+        telemetry.update();
+
+        switch (snapshotAnalysis){
+            case RIGHT:
+            {
+                encoderDrive(0.3, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 24, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                sleep(100000);
+            }
+        }
+
+        encoderDrive(0.3, 6, MOVEMENT_DIRECTION.STRAFE_LEFT);
+        sleep(2000);
+        snapshotAnalysis = pipeline.getAnalysis();
         telemetry.addData("Snapshot post-START analysis", snapshotAnalysis);
         telemetry.update();
 
@@ -106,20 +136,6 @@ public class AutoBlueCloseCorner extends RobotLinearOpMode
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                sleep(25000);
-            }
-
-            case RIGHT:
-            {
-                /* Your autonomous code */
-                encoderDrive(0.5, 27, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 2, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
