@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD = 1, NUMBER_OF_SAMPLES = 5;
+  public static double X_OFFSET = 5, Y_OFFSET = 2, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 10;
   public static int EXPOSURE_MS = 10, GAIN = 40;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
   private AprilTagProcessor aprilTag;
@@ -159,13 +159,13 @@ public class RFAprilCam {
           VectorF values = tagData.fieldPosition;
           Vector2d pos = new Vector2d(values.get(0), values.get(1));
           Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
-          offset = offset.rotated(currentPose.getHeading());
+//          offset = offset.rotated(currentPose.getHeading());
           Pose2d camPose =
               new Pose2d(
                   pos.plus(
                       new Vector2d(
                           -(p_x) * directions[p_ind][0] - offset.getX(),
-                          -(p_y) * directions[p_ind][1] - offset.getY())),
+                          -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
                   -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
           if (poseFtc.range < UPSAMPLE_THRESHOLD) {
             //                        if (!upsample) {
@@ -197,9 +197,9 @@ public class RFAprilCam {
           LOGGER.log("camPoseError" + camPoseError);
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
-          LOGGER.setLogLevel(RFLogger.Severity.FINE);
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
           camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), 0);
+          LOGGER.log("oldPose" + currentPose);
           currentPose = currentPose.plus(camPoseError.div(poseCount));
           LOGGER.log("newPose" + currentPose);
           poseCount = 0;
