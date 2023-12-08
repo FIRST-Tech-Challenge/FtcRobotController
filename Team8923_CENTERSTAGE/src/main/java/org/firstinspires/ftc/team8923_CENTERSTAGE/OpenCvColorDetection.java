@@ -104,8 +104,8 @@ public class OpenCvColorDetection {
                 startStreaming();
             }
 
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
+                stopStreaming();
             }
         });
     }
