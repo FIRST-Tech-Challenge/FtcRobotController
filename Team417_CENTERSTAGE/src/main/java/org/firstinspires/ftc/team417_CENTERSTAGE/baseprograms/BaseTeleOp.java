@@ -55,6 +55,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
                 telemetry.addData("DumperServo", dumperServo.getPosition());
                 telemetry.addData("GateServo", gateServo.getPosition());
             }
+
             telemetry.addData("FRMotor", FR.getCurrentPosition());
             telemetry.addData("FRMotor", FR.getPowerFloat());
             telemetry.addData("FLMotor", FL.getCurrentPosition());
@@ -65,6 +66,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
+
+        // Close drive (release resources)
+        drive.close();
     }
 
     boolean leftBumperIsPressed = false;
