@@ -226,19 +226,19 @@ class TeleopFromHell: DriveMethods() {
                 sleep(500)
             }
             if (gamepad2.y && !aeroplaneHasBeenLaunched)  {
-                if (magicHoldNumber >= 100) {
+                //if (magicHoldNumber >= 100) {
                     // Launch Aeroplane
                     aeroplaneLauncherServo.position = AEROPLANE_LAUNCH
-                    magicHoldNumber = 0
+                    //magicHoldNumber = 0
                     aeroplaneHasBeenLaunched = true
                     sleep(50)
                     aeroplaneLauncherServo.position = AEROPLANE_CLOSE
-                } else {
+               // } else {
                     magicHoldNumber++
                     telemetry.addData("Magic Hold Number", magicHoldNumber)
-                }
+               // }
             } else if (!gamepad2.y && !aeroplaneHasBeenLaunched) {
-                magicHoldNumber = 0
+                //magicHoldNumber = 0
             }
 
             //claw stuff
@@ -285,6 +285,7 @@ class TeleopFromHell: DriveMethods() {
             telemetry.addData("Claw Clamped: ", clawClamp)
             telemetry.addData("Right rack: ", rMotorR?.currentPosition)
             telemetry.addData("Left rack: ", rMotorL?.currentPosition)
+            telemetry.addData("Magic num: ", magicHoldNumber)
             telemetry.update()
         }
     }

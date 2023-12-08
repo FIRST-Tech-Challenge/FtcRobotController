@@ -80,7 +80,7 @@ open class DriveMethods: LinearOpMode() {
     }
 
     fun getDetectionsSingleTFOD(): Variables.Detection {
-        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam")
+        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         // Ensure the Webcam is correct
 //        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
         tfod.setZoom(1.0);
@@ -93,17 +93,17 @@ open class DriveMethods: LinearOpMode() {
         if (includesCup(recognitions)) {
             val cup = getCup(recognitions) ?: return Variables.Detection.CENTER
 
-            return if (cup.right < 214) Variables.Detection.LEFT
-            else if (cup.right > 214 && cup.right < 428) Variables.Detection.CENTER
-            else if (cup.right > 428) Variables.Detection.RIGHT
+            return if (cup.right < 260) Variables.Detection.LEFT
+            else if (cup.right > 260) Variables.Detection.CENTER
+//            else if (cup.right > 428) Variables.Detection.RIGHT
             else Variables.Detection.CENTER
         } else {
-            return Variables.Detection.CENTER
+            return Variables.Detection.RIGHT
         }
     }
 
     fun getDetectionsMultiTFOD(): Variables.Detection {
-        val webcamL = hardwareMap.get(WebcamName::class.java, "Webcam")
+        val webcamL = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         val webcamR = hardwareMap.get(WebcamName::class.java, "Webcam 2")
 
         // Ensure we are using Left Cam
@@ -153,7 +153,7 @@ open class DriveMethods: LinearOpMode() {
         val builder: VisionPortal.Builder = VisionPortal.Builder()
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
-        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam"))
+        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
 
         // Enable Live View for debugging purposes
         builder.enableLiveView(true)
@@ -368,7 +368,7 @@ open class DriveMethods: LinearOpMode() {
 
 
     open fun initSlideMotors() {
-        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+        //motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
     //    slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
       //  clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
       //  clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
