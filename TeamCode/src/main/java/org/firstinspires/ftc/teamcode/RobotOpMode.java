@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,8 +26,8 @@ public abstract class RobotOpMode extends OpMode {
 
     // Hardware variables
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
-    public DcMotor armMotor, armExtensionMotor;
-    public Servo armCatcherServo, wristServo, fingerServo;
+    public DcMotor armMotor;
+    public CRServo wristServo;
     public BNO055IMU imu;
     public RevColorSensorV3 colorSensor;
     public RevTouchSensor touchSensor;
@@ -362,7 +363,6 @@ public abstract class RobotOpMode extends OpMode {
     public void resetArmMotors() {
         try {
             armMotor.setPower(MIN_POWER);
-            armExtensionMotor.setPower(MIN_POWER);
         } catch(NullPointerException e) {
             log(WARNING, e.getMessage());
         }

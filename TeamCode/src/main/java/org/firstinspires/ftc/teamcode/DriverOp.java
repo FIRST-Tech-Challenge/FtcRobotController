@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RobotOpMode;
@@ -19,22 +20,9 @@ public class DriverOp extends RobotOpMode {
         //gamePadMoveRobot();
 
         movement(gamepad1, AnalogInput.LEFT_STICK_Y, AnalogInput.LEFT_STICK_X, AnalogInput.RIGHT_STICK_X);
+        wrist(gamepad1, DigitalInput.DPAD_UP, DigitalInput.DPAD_DOWN);
+        arm(gamepad1, AnalogInput.RIGHT_TRIGGER, AnalogInput.LEFT_TRIGGER);
 
-        /*int direction = 0;
-        if(armMotor!= null) {
-            if (gamepad1.dpad_up) {
-                int position = positionFromAngle(-110, AngleUnit.DEGREES);
-                armMotor.setTargetPosition(position);
-                armMotor.setPower(1);
-            } else if (gamepad1.dpad_down) {
-                int position = positionFromAngle(0, AngleUnit.DEGREES);
-                armMotor.setTargetPosition(position);
-                armMotor.setPower(1);
-            }
-            if (!armMotor.isBusy()) {
-                armMotor.setPower(0);
-            }
-        }*/
         if(gamepad1.dpad_up) {
 
         } else if(gamepad1.dpad_down) {
@@ -64,16 +52,22 @@ public class DriverOp extends RobotOpMode {
 
     }
     public void wrist(Gamepad gamepad, DigitalInput up, DigitalInput down) {
-
+        double power = (up.getValue(gamepad)?1:0) + (down.getValue(gamepad)?-1:0);
+        wristServo.setPower(power/2d);
+        createTelemetryPacket();
+        log("WRIST", "POWER: "+power);
+        sendTelemetryPacket(true);
     }
-    public void finger(Gamepad gamepad, DigitalInput clamp, DigitalInput release) {
 
-    }
     public void arm(Gamepad gamepad, DigitalInput frontward, DigitalInput backward) {
 
     }
     public void arm(Gamepad gamepad, AnalogInput frontward, AnalogInput backward) {
-
+        double power = frontward.getValue(gamepad)-backward.getValue(gamepad);
+        log("ARM", "POWER: "+power);
+        createTelemetryPacket();
+        armMotor.setPower(power/2d);
+        sendTelemetryPacket(true);
     }
 
     public int positionFromAngle(double angle, AngleUnit angleUnit) {

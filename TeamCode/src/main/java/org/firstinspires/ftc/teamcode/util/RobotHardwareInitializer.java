@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.RobotOpMode.WARNING;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -35,22 +36,12 @@ public class RobotHardwareInitializer {
     public static void initializeArm(RobotOpMode robot) {
         try {
             robot.armMotor = robot.hardwareMap.get(DcMotor.class, "arm");
-            robot.armExtensionMotor = robot.hardwareMap.get(DcMotor.class, "arm_extension");
+            robot.armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-            //armCatcherServo = hardwareMap.get(Servo.class, "arm_servo");
-            //armCatcherServoPosition = (float) armCatcherServo.getPosition();
-
-            robot.fingerServo = robot.hardwareMap.get(Servo.class, "finger_servo");
-            robot.wristServo = robot.hardwareMap.get(Servo.class, "wrist_servo");
-            robot.wristServoPosition = (float) robot.wristServo.getPosition();
-            robot.fingerServoPosition = (float) robot.fingerServo.getPosition();
-            robot.setTargetHandState(RobotOpMode.HandState.RELEASE);
+            robot.wristServo = robot.hardwareMap.get(CRServo.class, "wrist_servo");
+            robot.wristServo.setDirection(DcMotorSimple.Direction.FORWARD);
 
             // Prepare the arm motors for movement
-            robot.armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            robot.armMotor.setTargetPosition(0);
-            robot.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.armExtensionMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             robot.log(INFO, "Arm hardware initialized successfully!");
         } catch(Exception e) {
             robot.log(ERROR, "Error initializing arm hardware: "+e.getMessage());
