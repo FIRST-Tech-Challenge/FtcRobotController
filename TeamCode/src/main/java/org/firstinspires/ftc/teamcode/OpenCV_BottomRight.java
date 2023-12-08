@@ -87,27 +87,23 @@ public class OpenCV_BottomRight extends LinearOpMode {
     {
         //AT top right
         telemetry.addData("Go straight", "");
-        robot.driveRobot(-FORWARD_SPEED, 0);
+        robot.goStrafe(-1);
+        sleep(200);
+        robot.driveRobot(FORWARD_SPEED, 0);
         sleep(5800);
         robot.driveRobot(0,0);
 
-        robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
-        sleep(2700);
-        robot.stopArm();
-
-        robot.driveRobot(FORWARD_SPEED, 0);
+        robot.driveRobot(-FORWARD_SPEED, 0);
         sleep(4400);
-        robot.driveRobot(0,TURNSPEED);
+        robot.driveRobot(0,-TURNSPEED);
         sleep(5200);
-        robot.driveRobot(FORWARD_SPEED,0);
-        sleep(8000);
-        robot.moveElbowToPosition(0.3);
-        sleep(1000);
+        robot.driveRobot(-FORWARD_SPEED,0);
+        sleep(7200);
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         sleep(500);
         robot.moveElbowToPosition(-0.3);
         sleep(1000);
-        robot.driveRobot(FORWARD_SPEED,0);
+        robot.driveRobot(-FORWARD_SPEED,0);
         sleep(1000);
 
 
