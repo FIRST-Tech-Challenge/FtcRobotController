@@ -58,13 +58,4 @@ public class AutonomousAwareness {
     public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor) {
         initOdometry();
     }
-    /**
-     * Constructor for the AutonomousAwareness class
-     * @param startingPosition the starting position of the robot
-     */
-    /*
-    public AutonomousAwareness(StartingPosition startingPosition) {
-        AutonomousAwareness(startingPosition, false);
-    }
-    */
 }
