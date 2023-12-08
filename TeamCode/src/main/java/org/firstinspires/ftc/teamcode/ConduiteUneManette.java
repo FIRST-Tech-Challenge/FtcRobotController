@@ -34,7 +34,8 @@ public class ConduiteUneManette extends LinearOpMode {
         double varYpos = 0;
         double varXpos = 0;
 
-        double coudeX = 0.5;
+        double coudeZero = 0.5215;
+        double coudeX = coudeZero;
         int brasA = 0;
         double trigger = 0;
         double varRY = 0;
@@ -121,17 +122,19 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (this.gamepad1.dpad_up) {
                 coudeX += 0.002;
-                if (coudeX>1) {
+                if (coudeX > 1) {
                     coudeX = 1;
                 }
-            }
-            if (this.gamepad1.dpad_down) {
+            } else if (this.gamepad1.dpad_down) {
 
                 coudeX -= 0.002;
                 if (coudeX<0) {
                     coudeX = 0;
                 }
+            } else {
+                coudeX = coudeZero;
             }
+
             coude.setPosition(coudeX);
 
             mains.setPosition(trigger);
