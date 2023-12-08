@@ -215,18 +215,22 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.update();
             // All 3 positions required forward movement
 //          timeDriveStraight( drive_power, 800 );
-            driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+            driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
             // THe final motion depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT
-                    timeDriveStrafe( -strafe_power, 525 );
+                    //timeDriveStrafe( -strafe_power, 525 );
+                    driveToPosition( -28.0, -10.0, 135.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
                     break;
                 case 2:  // CENTER
-                    timeDriveStraight( drive_power, 200 );
+                    //timeDriveStraight( drive_power, 200 );
+                    driveToPosition( -30.0, -10.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU);
+                    driveToPosition( -37.0, -10.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
                     break;
                 case 3:  // RIGHT
                 default:
-                    timeDriveStrafe( strafe_power,474 );   // less! (against the truss)
+                    //timeDriveStrafe( strafe_power,474 );   // less! (against the truss)
+                    driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
                     break;
             } // switch
         }
@@ -244,7 +248,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "park in back stage");
             telemetry.update();
-            timeDriveStraight( -drive_power, 200 );
+            //timeDriveStraight( -drive_power, 200 );
             // FOR NOW, CAN'T PARK FROM RIGHT SIDE
         }
 

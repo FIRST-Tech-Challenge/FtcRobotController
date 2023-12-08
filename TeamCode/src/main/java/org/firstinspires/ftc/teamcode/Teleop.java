@@ -2,13 +2,26 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TeleOp Full Control.
@@ -72,10 +85,22 @@ public abstract class Teleop extends LinearOpMode {
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
     boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior()
+    int     aprilTagLeft   = 1;   // overriden in setAllianceSpecificBehavior()
+    int     aprilTagCenter = 2;   // overriden in setAllianceSpecificBehavior()
+    int     aprilTagRight  = 3;   // overriden in setAllianceSpecificBehavior()
+
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
 
-    Gamepad.RumbleEffect coneRumbleEffect1;    // Use to build a custom rumble sequence.
-    Gamepad.RumbleEffect coneRumbleEffect2;    // Use to build a custom rumble sequence.
+    Gamepad.RumbleEffect visibleAprilTagRumble1;    // Use to build a custom rumble sequence.
+    Gamepad.RumbleEffect visibleAprilTagRumble2;    // Use to build a custom rumble sequence.
+
+//========== DRIVE-TO-APRILTAG variables ==========
+
+    private static final int DESIRED_TAG_ID = -1;    // Choose the tag you want to approach or set to -1 for ANY tag.
+    private VisionPortal visionPortal;               // Used to manage the video source.
+    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+
+//========== DRIVE-TO-APRILTAG variables ==========
 
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
@@ -86,10 +111,10 @@ public abstract class Teleop extends LinearOpMode {
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
 
-        coneRumbleEffect1 = new Gamepad.RumbleEffect.Builder()
+        visibleAprilTagRumble1 = new Gamepad.RumbleEffect.Builder()
                 .addStep(1.0, 1.0, 500)  //  Rumble left/right motors 100% for 500 mSec
                 .build();
-        coneRumbleEffect2 = new Gamepad.RumbleEffect.Builder()
+        visibleAprilTagRumble2 = new Gamepad.RumbleEffect.Builder()
                 .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
                 .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
                 .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
@@ -100,7 +125,11 @@ public abstract class Teleop extends LinearOpMode {
 
         setAllianceSpecificBehavior();
 
-        // Send telemetry message to signify robot waiting;
+        // Initialize the Apriltag Detection process
+        initAprilTag();
+        setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+
+       // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
         telemetry.update();
 
@@ -118,7 +147,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.readBulkData();
             globalCoordinatePositionUpdate();
 
-            ProcessAprilTagControls();
+           //ProcessAprilTagControls();
             ProcessCollectorControls();
             ProcessFingerControls();
             ProcessLiftControls();
@@ -236,7 +265,101 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void ProcessAprilTagControls() {
+        
+        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+        double  minDrvPwr       = 0.05;     // minimum power needed to drive robot forward
+        double  minStrafePwr    = 0.12;
+        double  minTurnPwr      = 0.06;
+        double  driveErr        = 0.0;
+        double  strafeErr       = 0.0;
+        double  turnErr         = 0.0;
+        double  drive           = 0.0;      // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0.0;      // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0.0;      // Desired turning power/speed (-1 to +1)
 
+        boolean hasRumbled = false;
+        
+        AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+
+    // Adjust these numbers to suit your robot.
+    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+
+    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
+    //  applied to the drive motors to correct the error.
+    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+    final double SPEED_GAIN  =  0.02  ;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
+    final double STRAFE_GAIN =  0.015;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.01  ;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+    final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.50;  //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.30;  //  Clip the turn speed to this max value (adjust for your robot)
+
+            // Step through the list of detected tags and look for a matching tag
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                        // Yes, we want to use this tag.
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                }
+            }
+
+            // Tell the driver what we see, and what to do.
+            if (targetFound) {
+                if(!hasRumbled) {
+                    gamepad1.runRumbleEffect(visibleAprilTagRumble1);
+                    hasRumbled = true;
+                }
+                telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
+                telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+            } else {
+                hasRumbled = false;
+                telemetry.addData(">","Drive using joysticks to find valid target\n");
+            }
+
+            // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
+            if (gamepad1.left_bumper && targetFound) {
+
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                double  rangeError   = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double  headingError = desiredTag.ftcPose.bearing;
+                double  yawError     = desiredTag.ftcPose.yaw;
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                driveErr  = (Math.abs(rangeError) < 0.2)? 0.0 : (minDrvPwr + rangeError * SPEED_GAIN);
+                turnErr   = (Math.abs(headingError) < 0.4)? 0.0 : (minTurnPwr + headingError * TURN_GAIN);
+                strafeErr = (Math.abs(yawError) < 0.2)? 0.0 : (minStrafePwr - yawError * STRAFE_GAIN);
+                drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            } else {
+
+                // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
+                drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+                strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
+                turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+                if( Math.abs(drive)  < 0.03 ) drive  = 0.0;
+                if( Math.abs(strafe) < 0.03 ) strafe = 0.0;
+                if( Math.abs(turn)   < 0.05 ) turn   = 0.0;
+                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            }
 
     } // ProcessAprilTagControls
     
@@ -669,5 +792,76 @@ public abstract class Teleop extends LinearOpMode {
         robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
     } // globalCoordinatePositionUpdate
+
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder()
+                //.setDrawAxes(false)
+                //.setDrawCubeProjection(false)
+                //.setDrawTagID(true)
+                //.setDrawTagOutline(true)
+                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // If you do not manually specify calibration parameters, the SDK will
+                // to load a predefined calibration for your camera.
+                //  ===== CAMERA CALIBRATION for 150deg webcam ===
+                //.setLensIntrinsics(332.309,332.309,341.008,243.109)
+                //  ===== CAMERA CALIBRATION for Arducam B0197 webcam ===
+                //.setLensIntrinsics(1566.16,1566.16,1002.58,539.862)
+                //  ===== CAMERA CALIBRATION for Arducam B0385 webcam ===
+                .setLensIntrinsics(904.214,904.214,696.3,362.796)
+                // ... these parameters are fx, fy, cx, cy.
+                .build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Create the vision portal by using a builder.
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
+                .setCameraResolution(new Size(1280,800))
+                .addProcessor(aprilTag)
+                .build();
+    }
+
+    /*
+     Manually set the camera gain and exposure.
+     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
+    */
+    private void setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
 
 } // Teleop

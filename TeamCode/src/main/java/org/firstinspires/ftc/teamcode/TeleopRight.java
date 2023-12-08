@@ -18,5 +18,13 @@ public class TeleopRight extends Teleop {
         // PowerPlay is symmetric for Red vs. Blue, and Left vs. Right
         // during Tele-Op.  We define this, but so far never use it.
         leftAlliance = false;
+
+        // CENTERSTAGE AprilTag assignments:
+        int  aprilTagLeft   = 4;  // Red Alliance LEFT   Backdrop
+        int  aprilTagCenter = 5;  // Red Alliance CENTER Backdrop
+        int  aprilTagRight  = 6;  // Red Alliance RIGHT  Backdrop
+        // Red Alliance 5-stack 2"/50mm  = 8
+        // Red Alliance 5-stack 5"/127mm = 7
+
     }
 } // TeleopRight
