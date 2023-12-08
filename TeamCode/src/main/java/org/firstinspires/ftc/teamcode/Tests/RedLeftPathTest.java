@@ -25,10 +25,10 @@ public class RedLeftPathTest extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -57.5, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -59, Math.toRadians(-90)));
     Waypoint start =
         new StartWaypoint(
-            new com.arcrobotics.ftclib.geometry.Pose2d(-38.5, -59, new Rotation2d(toRadians(-90))));
+            new com.arcrobotics.ftclib.geometry.Pose2d(-38.5, -57.5, new Rotation2d(toRadians(-90))));
     EndWaypoint spike = new EndWaypoint(-55, -32, toRadians(-160), 0.8, 0.7, 15, 5, toRadians(10));
 
     Path dropPath = new Path(start, spike);
@@ -55,57 +55,66 @@ public class RedLeftPathTest extends LinearOpMode {
     TrajectorySequence tradegy =
         robot
             .roadrun
-            .trajectorySequenceBuilder(new Pose2d(-38.5, -62, Math.toRadians(-90)))
+            .trajectorySequenceBuilder(new Pose2d(-38.5, -59, Math.toRadians(-90)))
             .setReversed(true)
             .lineToLinearHeading(new Pose2d(-55, -32, toRadians(-160)))
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-40, -58, toRadians(180)))
+            .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
             .setReversed(true)
-            .splineTo(new Vector2d(5, -57.5), toRadians(10))
-            .splineTo(new Vector2d(50, -28), toRadians(0))
+            .splineTo(new Vector2d(5, -58), toRadians(10))
+            .splineTo(new Vector2d(45, -36), toRadians(0))
             .setReversed(false)
-            .splineTo(new Vector2d(5, -57.5), toRadians(185))
-            .splineTo(new Vector2d(-20, -55.5), toRadians(175))
-            .splineTo(new Vector2d(-57, -37.5), toRadians(165))
+            .splineTo(new Vector2d(5, -59), toRadians(185))
+            .splineTo(new Vector2d(-20, -56), toRadians(175))
+            .splineTo(new Vector2d(-45, -37.5), toRadians(165))
             .setReversed(true)
-            .splineTo(new Vector2d(-25, -55.5), toRadians(-10))
-            .splineTo(new Vector2d(5, -55.5), toRadians(10))
+            .splineTo(new Vector2d(-25, -58), toRadians(-10))
+            .splineTo(new Vector2d(5, -58), toRadians(10))
             .splineTo(new Vector2d(50, -44), toRadians(0))
             .setReversed(false)
-            .splineTo(new Vector2d(5, -57.5), toRadians(185))
-            .splineTo(new Vector2d(-20, -55.5), toRadians(175))
-            .splineTo(new Vector2d(-57, -37.5), toRadians(165))
-            .setReversed(true)
-            .splineTo(new Vector2d(-22, -55.5), toRadians(-10))
-            .splineTo(new Vector2d(5, -55.5), toRadians(10))
-            .splineTo(new Vector2d(50, -44), toRadians(0))
-            .setReversed(false)
-            .splineTo(new Vector2d(5, -55.5), toRadians(185))
-            .splineTo(new Vector2d(-20, -55.5), toRadians(175))
-            .splineTo(new Vector2d(-57, -28), toRadians(155))
-            .setReversed(true)
-            .splineTo(new Vector2d(-22, -55.5), toRadians(-10))
-            .splineTo(new Vector2d(5, -55.5), toRadians(10))
-            .splineTo(new Vector2d(50, -44), toRadians(0))
+                .setReversed(false)
+                .splineTo(new Vector2d(5, -58), toRadians(185))
+                .splineTo(new Vector2d(-20, -58), toRadians(175))
+                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
+                .setReversed(true)
+                .splineTo(new Vector2d(-25, -58), toRadians(-10))
+                .splineTo(new Vector2d(5, -58), toRadians(10))
+                .splineTo(new Vector2d(50, -44), toRadians(0))
+                .setReversed(false)
+                .setReversed(false)
+                .splineTo(new Vector2d(5, -59), toRadians(185))
+                .splineTo(new Vector2d(-20, -58), toRadians(175))
+                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
+                .setReversed(true)
+                .splineTo(new Vector2d(-25, -58), toRadians(-10))
+                .splineTo(new Vector2d(5, -58), toRadians(10))
+                .splineTo(new Vector2d(50, -44), toRadians(0))
+                .setReversed(false)
+                .setReversed(false)
+                .splineTo(new Vector2d(5, -59), toRadians(185))
+                .splineTo(new Vector2d(-20, -58), toRadians(175))
+                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
+                .setReversed(true)
             .build();
     waitForStart();
     while (opModeIsActive() && !isStopRequested() && !robot.queuer.isFullfilled()) {
-//      for (int i = 0; i < 6; i++) {
-//        robot.followPPPath(testPath);
-//        robot.followPPPath(testPath2);
-//      }
-//      robot.update();
-//    }
-                robot.followPPPath(dropPath);
-          for (int i = 0; i < 3; i++) {
-            robot.followPPPath(toTruss);
-            robot.followPPPath(toBackdrop);
-            robot.followPPPath(backToTruss);
-                }
-                robot.followPPPath(toTruss);
-                robot.followPPPath(toBackdrop);
-                robot.update();
-            }
+      //      for (int i = 0; i < 6; i++) {
+      //        robot.followPPPath(testPath);
+      //        robot.followPPPath(testPath2);
+      //      }
+      //            robot.update();
+      //          }
+      //      robot.followPPPath(dropPath);
+      //      for (int i = 0; i < 3; i++) {
+      //        robot.followPPPath(toTruss);
+      //        robot.followPPPath(toBackdrop);
+      //        robot.followPPPath(backToTruss);
+      //      }
+      //      robot.followPPPath(toTruss);
+      //      robot.followPPPath(toBackdrop);
+      robot.followTrajSeq(tradegy);
+      robot.update();
+    }
     robot.stop();
   }
 }
