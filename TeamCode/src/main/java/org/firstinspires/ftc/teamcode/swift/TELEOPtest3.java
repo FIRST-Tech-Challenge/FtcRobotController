@@ -29,7 +29,9 @@ public class TELEOPtest3 extends LinearOpMode {
         robot.init();
 
         waitForStart();
-    public static void main(String[] args) {
+    }
+
+    public void test() {
         // Creating two instances of the Runnable implementation
         RunnableTask task1 = new RunnableTask("Driver 1");
         RunnableTask task2 = new RunnableTask("Driver 2");
@@ -42,22 +44,22 @@ public class TELEOPtest3 extends LinearOpMode {
         thread1.start();
         thread2.start();
     }
-}
 
-// Runnable implementation that contains the task to be performed by the threads
-class RunnableTask implements Runnable {
-    private String threadName;
+    // Runnable implementation that contains the task to be performed by the threads
+    class RunnableTask implements Runnable {
+        private String threadName;
 
-    public RunnableTask(String threadName) {
-        this.threadName = threadName;
-    }
+        public RunnableTask(String threadName) {
+            this.threadName = threadName;
+        }
 
-    @Override
-    public void run() {
-        for (int i = 1; i <= 5; i++) {
-            System.out.println(threadName + " - Count: " + i);
+        @Override
+        public void run() {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println(threadName + " - Count: " + i);
 
 
+            }
         }
     }
 }
