@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 @TeleOp
 public class TELEOPtest2 extends LinearOpMode {
 
-    
+
         private ElapsedTime runtime = new ElapsedTime();
         static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
         static final int CYCLE_MS = 50;     // period of each cycle
