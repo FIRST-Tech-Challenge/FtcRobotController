@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE.autoClasses;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Arclength;
@@ -16,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
@@ -204,6 +207,8 @@ class AutonDriveFactory {
 
             (middle is always middle spike)
 
+            // Listing the spike configuration for every auton start position
+
             SHORT   BLUE    LEFT    RIGHT
             true    true    open    truss
             true    false   truss   open
@@ -310,8 +315,8 @@ class AutonDriveFactory {
             build = build.splineToConstantHeading(new Vector2d(46, 36 * teamInvert), Math.toRadians(0), limitVelo(20))
                     .splineToConstantHeading(new Vector2d(50, 36 * teamInvert), Math.toRadians(0), limitVelo(4));
 
-            // place yellow pixel
-            build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // place yellow pixel (hopefully works :D)
+            build = build.stopAndAdd(new AutoMechanismActions(drive).releaseOuttake());
 
         } // end of params.placeYellowPixel
 
@@ -407,9 +412,13 @@ class AutoParams {
 
 class AutoMechanismActions {
     private DcMotorEx intakeMotor;
+    private Servo dumperServo;
+    private Servo pixelLatchFront;
 
     public AutoMechanismActions(MecanumDrive drive) {
         intakeMotor = drive.intakeMotor;
+        dumperServo = drive.dumperServo;
+        pixelLatchFront = drive.pixelLatchFront;
     }
 
     public Action spinIntakeFor(double timeSec, double power) {
@@ -433,6 +442,17 @@ class AutoMechanismActions {
             }
         };
     }
+
+    public Action releaseOuttake() {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                dumperServo.setPosition(0.5); // PLACEHOLDER HEHEHEHA
+                pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
+                return true;
+            }
+        };
+    };
 
     private double deltaTime = 0.0;
     private Long lastTime = null;
