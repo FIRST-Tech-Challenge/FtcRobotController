@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+
 @Autonomous (name = "Blue", group = "Autonomous")
 public class AutoBlue extends LinearOpMode {
 
@@ -17,6 +19,7 @@ public class AutoBlue extends LinearOpMode {
     private DcMotor backLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backRightMotor;
+
 
     @Override
     public void runOpMode() {
@@ -34,15 +37,7 @@ public class AutoBlue extends LinearOpMode {
         waitForStart();
         if(opModeIsActive()){
             while(opModeIsActive()){
-                backRightMotor.setPower(-0.3);
-                backLeftMotor.setPower(1);
-                frontRightMotor.setPower(-0.3);
-                frontLeftMotor.setPower(1);
-                sleep(1000);
-                backRightMotor.setPower(0);
-                backLeftMotor.setPower(0);
-                frontRightMotor.setPower(0);
-                frontLeftMotor.setPower(0);
+
             }
         }
     }

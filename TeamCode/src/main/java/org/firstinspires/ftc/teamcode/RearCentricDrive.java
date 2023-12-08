@@ -19,6 +19,7 @@ public class RearCentricDrive extends LinearOpMode {
   private DcMotor frontRightMotor;
   private DcMotor backRightMotor;
 
+
   /**
    * This function is executed when this OpMode is selected from the Driver Station.
    */
@@ -111,7 +112,7 @@ public class RearCentricDrive extends LinearOpMode {
           backRightMotor.setPower(yI+xI);
           frontLeftMotor.setPower((-yI+xI)*0.9);
           frontRightMotor.setPower(yI+xI);
-        }
+        } //end drive controls
 
         //Arm rotation controls
           //Rotates up when Right Bumper is pressed
@@ -134,12 +135,12 @@ public class RearCentricDrive extends LinearOpMode {
                armRotate.setPower(0);
                armBrace.setPower(0);
              }
-           }
+           }//end arm rotation inputs
           
         
         
       
-       if(armLocked == false){
+       /*if(armLocked == false){
          if(gamepad2.y){
            armLocked = true;
          }
@@ -147,7 +148,7 @@ public class RearCentricDrive extends LinearOpMode {
           if(gamepad2.x){
             armLocked = false;
           }
-        }
+        }*/
 
         //Arm extension controls
           //Moves up when X is pressed
@@ -179,7 +180,7 @@ public class RearCentricDrive extends LinearOpMode {
         } if(gamepad2.right_trigger > 0.5 && gamepad2.left_trigger > 0.5){
           armExt.setPower(-1);
           sleep(1000000);
-        }
+        } //end arm extension inputs
 
         //Inputs for claw grip
           //When A is pressed, the claw releases its grip
@@ -190,7 +191,7 @@ public class RearCentricDrive extends LinearOpMode {
         } else if (gamepad2.b) {
           leftGrip.setPosition(1);
           rightGrip.setPosition(1);
-        }
+        } //end claw inputs
 
 
 
@@ -202,7 +203,7 @@ public class RearCentricDrive extends LinearOpMode {
         telemetry.addData("Left Wheel Power", backLeftMotor.getPower());
         telemetry.addData("Arm Locked: ", armLocked);
         telemetry.update();
-      }
-    }
-  }
-}
+      } //end while loop
+    } //end if loop
+  } //end run method
+} //end class
