@@ -18,6 +18,8 @@ public class ArcadeRowan extends LinearOpMode {
     DcMotor backRight;
     //Initializing frontLeft motor variable
 
+    DcMotor intake;
+
     //DO NOT CHANGE FOLLOWING LINES OF CODE
 
     public void runOpMode(){
@@ -26,6 +28,10 @@ public class ArcadeRowan extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Waiting for Start button to be pressed
         waitForStart();
@@ -70,6 +76,15 @@ public class ArcadeRowan extends LinearOpMode {
             backLeft.setPower(turn);
             frontRight.setPower(-turn);
             backRight.setPower(-turn);
+
+            //setting power for intake
+            if(gamepad2.a) {
+                intake.setPower(1);
+            } else if (gamepad2.b) {
+                intake.setPower(-1);
+            } else {
+                intake.setPower(0);
+            }
         }
     }
 }
