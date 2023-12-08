@@ -17,7 +17,7 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.BaseOpMode;
 @TeleOp (name = "LatencyTest")
 public class AprilTagLatencyTest extends BaseOpMode {
     // Declares instance of our April Tag Pose Estimator
-    AprilTagPoseEstimator myATPE;
+    AprilTagPoseEstimator myAprilTagLatencyCompensation;
 
     @Override
     public void runOpMode() {
@@ -26,9 +26,9 @@ public class AprilTagLatencyTest extends BaseOpMode {
         // Turn red light to be off at beginning (counterintuitive, on = false, off = true)
         red.setState(true);
 
-        myATPE = new AprilTagPoseEstimator(this);
+        myAprilTagLatencyCompensation = new AprilTagPoseEstimator(this);
 
-        myATPE.init();
+        myAprilTagLatencyCompensation.init();
 
         waitForStart();
 
@@ -37,7 +37,7 @@ public class AprilTagLatencyTest extends BaseOpMode {
             TelemetryPacket p = new TelemetryPacket();
             Canvas c = p.fieldOverlay();
 
-            myATPE.updatePoseEstimate();
+            myAprilTagLatencyCompensation.updatePoseEstimate();
 
             FtcDashboard dashboard = FtcDashboard.getInstance();
             dashboard.sendTelemetryPacket(p);

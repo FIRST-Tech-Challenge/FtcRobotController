@@ -54,10 +54,12 @@ public class AprilTagPoseEstimator {
     //   in order to allow this class to access the camera hardware
     public AprilTagPoseEstimator(LinearOpMode opmode) {
         myOpMode = opmode;
+        init();
     }
 
     public AprilTagPoseEstimator(HardwareMap hardwareMap) {
         myHardwareMap = hardwareMap;
+        init();
     }
 
     /**
@@ -90,6 +92,7 @@ public class AprilTagPoseEstimator {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
+        // Changed from 3 (default) to 1
         aprilTag.setDecimation(1);
 
         // Create the vision portal by using a builder.
@@ -121,6 +124,7 @@ public class AprilTagPoseEstimator {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
+        // Used max resolution
         builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
@@ -150,7 +154,10 @@ public class AprilTagPoseEstimator {
     // Also telemeters relevant info
     // Note that this is relative to the center of the camera
     public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTagInfo aprilTagInfo) {
-        //See November notebook 11/20/2023 for more info on the math used here
+        // See November notebook 11/20/2023 for more info on the math used here
+
+        // Todo: comment code
+
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
         if (isDevBot) {
@@ -180,13 +187,16 @@ public class AprilTagPoseEstimator {
         return new Pose(absoluteX, absoluteY, absoluteTheta);
     }
 
+    // Many camera frames contain two or more AprilTag detections.
+    // This method chooses the best detection to go off of for a pose estimate.
     public InfoWithDetection chooseBestAprilTag(ArrayList<InfoWithDetection> iwdList) {
         // If list is empty, return null
         if (iwdList.size() < 1) {
             return null;
         }
 
-        // Remove iwds that are more than two tiles away
+        // Todo: Remove magic constant 48
+        // Remove iwds (InfoWithDetection objects) that are more than two tiles (48 inches) away
         int iwdListSize = iwdList.size();
         InfoWithDetection currentIwd;
         for (int i = 0; i < iwdListSize; i++) {
@@ -245,7 +255,7 @@ public class AprilTagPoseEstimator {
     ArrayList<InfoWithDetection> knownAprilTagsDetected = new ArrayList<>();
 
     /**
-     * Add telemetry about AprilTag detections.
+     * Produce a pose estimate from current frames and update it
      */
     public void updatePoseEstimate() {
         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();

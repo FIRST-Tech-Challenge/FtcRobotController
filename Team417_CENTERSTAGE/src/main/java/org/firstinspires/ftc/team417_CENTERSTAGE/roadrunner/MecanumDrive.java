@@ -252,7 +252,6 @@ public final class MecanumDrive {
         if (USE_APRIL_TAGS) {
             // To detect April Tags to correct drift (added by Hank)
             myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
-            myAprilTagPoseEstimator.init();
         }
 
         this.pose = pose;
