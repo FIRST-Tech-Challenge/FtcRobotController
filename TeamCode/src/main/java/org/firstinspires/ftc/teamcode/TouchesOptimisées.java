@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class ConduiteUneManette extends LinearOpMode {
+public class TouchesOptimisées extends LinearOpMode {
     private DcMotor motorA;
     private DcMotor motorB;
     private DcMotorEx bras1;
@@ -33,10 +33,10 @@ public class ConduiteUneManette extends LinearOpMode {
         double varX = 0;
         double varYpos = 0;
         double varXpos = 0;
-
         double coudeX = 0.5;
         int brasA = 0;
-        double trigger = 0;
+        double triggergauche = 0;
+        double triggerdroit = 0;
         double varRY = 0;
 
         telemetry.addData("Status", "Initialized");
@@ -51,12 +51,11 @@ public class ConduiteUneManette extends LinearOpMode {
         while (opModeIsActive()) {
             varY = this.gamepad1.left_stick_y;
             varX = this.gamepad1.left_stick_x;
-
             varYpos = Math.abs(varY);
             varXpos = Math.abs(varX);
-
+            triggerdroit = this.gamepad1.right_trigger;
+            triggergauche = this.gamepad1.left_trigger;
             varRY = this.gamepad1.right_stick_y;
-            trigger = this.gamepad1.right_trigger;
 
             brasA = bras1.getCurrentPosition();
 
@@ -112,36 +111,49 @@ public class ConduiteUneManette extends LinearOpMode {
             /// Bras + Coude + Main
 
             if (varRY < 0) {
-                bras1.setPower(varRY/2);
-                bras2.setPower(varRY/2);
+                bras1.setPower(varRY/3);
+                bras2.setPower(varRY/3);
             } else {
-                bras1.setPower(varRY/4);
-                bras2.setPower(varRY/4);
+                bras1.setPower(varRY/3);
+                bras2.setPower(varRY/3);
             }
 
-            if (this.gamepad1.dpad_up) {
+            if (triggergauche > 0) {
                 coudeX += 0.002;
-                if (coudeX>1) {
+                if (coudeX > 1) {
                     coudeX = 1;
                 }
-            }
-            if (this.gamepad1.dpad_down) {
+            } else if (triggerdroit > 0) {
 
                 coudeX -= 0.002;
                 if (coudeX<0) {
                     coudeX = 0;
                 }
+            } else {
+                coudeX = 0.5;
             }
             coude.setPosition(coudeX);
 
-            mains.setPosition(trigger);
+            if (this.gamepad1.a) {
+                if (mains.getPosition() < 0.65) {
+                    mains.setPosition(mains.getPosition() + 0.0035);
+                } else {
+                    mains.setPosition(0.65);
+                }
+            } else if (this.gamepad1.b) {
+                mains.setPosition(mains.getPosition());
+            } else {
+                mains.setPosition(0);
+            }
 
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
             telemetry.addData("Var Y", varRY);
             telemetry.addData("Coude", coudeX);
             telemetry.addData("Bras", brasA);
-            telemetry.addData("Main", trigger);
+            telemetry.addData("triggerdroit", triggerdroit);
+            telemetry.addData("triggergauche", triggergauche);
+            telemetry.addData("mains", mains.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
 

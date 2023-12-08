@@ -38,7 +38,7 @@ public class BrasArticule extends LinearOpMode {
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
-        double coudeX = 0;
+        double coudeX = 0.5;
         int brasA = 0;
         int brasB = 0;
         double trigger = 0;
@@ -65,16 +65,17 @@ public class BrasArticule extends LinearOpMode {
 
             if (this.gamepad1.dpad_up) {
                 coudeX += 0.002;
-                if (coudeX>1) {
+                if (coudeX > 1) {
                     coudeX = 1;
                 }
-            }
-            if (this.gamepad1.dpad_down) {
+            } else if (this.gamepad1.dpad_down) {
 
                 coudeX -= 0.002;
                 if (coudeX<0) {
                     coudeX = 0;
                 }
+            } else {
+                coudeX = 0.5;
             }
             coude.setPosition(coudeX);
 
