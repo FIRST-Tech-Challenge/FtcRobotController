@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
@@ -120,14 +121,14 @@ abstract public class BaseAutonomous extends BaseOpMode {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*public  void pivot(double targetHeading) {
-        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    public  void pivot(double targetHeading) {
+        double currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double angleError = targetHeading - currentAngle + startAngle;
         double motorPower;
 
         // while robot hasn't reached target heading
         while (Math.abs(angleError) >= BaseOpMode.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
-            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             angleError = targetHeading - currentAngle + startAngle;
 
             // prevents angle from gong above 180 degrees and below -180 degrees
@@ -150,7 +151,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
 
         stopDriving();
-    }*/
+    }
 
     public void runIntake(double power, int rotations) {
         motorIntakeWheels.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -7,7 +7,7 @@ public class RandomizationBlueLeftPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        /*switch (myColorDetection.detectColor()) {
+        switch (myColorDetection.detectColor()) {
             case ONE:
                 // forward 1 tile
                 driveInches(0, 24);
@@ -58,6 +58,6 @@ public class RandomizationBlueLeftPark extends BaseAutonomous {
                 pivot(-90);
                 driveInches(0, 24);
                 break;
-        }*/
+        }
     }
 }
