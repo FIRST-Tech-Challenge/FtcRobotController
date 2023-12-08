@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.RobotClass;
-
 @TeleOp
-public class TeachingClass extends LinearOpMode {
+public class ArcadeRowan extends LinearOpMode {
 
     //Initializing motor variables
     DcMotor frontLeft;
@@ -29,17 +27,6 @@ public class TeachingClass extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        //Setting Direction of Motors
-        //TODO: Fix directions
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of frontLeft to FORWARD
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of backLeft to FORWARD
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of frontRight to FORWARD
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of backLeft to FORWARD
-
         //Waiting for Start button to be pressed
         waitForStart();
 
@@ -48,7 +35,8 @@ public class TeachingClass extends LinearOpMode {
             //defining driving variables (throttle = moving)
             double throttle = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
-            double strafe = gamepad1.left_stick_x;
+            boolean strafeR = gamepad1.right_bumper;
+            boolean strafeL = gamepad1.left_bumper;
 
             //setting power for forward-backward movement
             frontLeft.setPower(throttle);
@@ -61,10 +49,17 @@ public class TeachingClass extends LinearOpMode {
             //setting the power for backRight
 
             //setting up strafing
-            frontLeft.setPower(strafe);
-            backLeft.setPower(-strafe);
-            frontRight.setPower(-strafe);
-            backRight.setPower(strafe);
+            if(strafeR) {
+                frontLeft.setPower(0.75);
+                backLeft.setPower(-0.75);
+                frontRight.setPower(-0.75);
+                backRight.setPower(0.75);
+            } else if (strafeL) {
+                frontLeft.setPower(-0.75);
+                backLeft.setPower(0.75);
+                frontRight.setPower(0.75);
+                backRight.setPower(-0.75);
+            }
 
             //setting power for turning
             /*frontLeft and backLeft are -turn while frontRight and backRight are positive b/c two
