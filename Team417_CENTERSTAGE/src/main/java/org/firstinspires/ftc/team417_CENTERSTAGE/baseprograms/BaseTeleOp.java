@@ -18,9 +18,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     @Override
     public void runOpMode() {
-        initializeHardware();
-
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
+        initializeHardware();
 
         if (armMotor != null) {
             arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
@@ -146,7 +146,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
     public void outputUsingControllers() {
         controlDumperUsingControllers();
         controlGateUsingControllers();
-        controlDroneLauncher();
         if (arm != null)
             arm.armControl();
     }
@@ -177,12 +176,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
 
         yIsPressed = gamepad2.y;
-    }
-
-    public void controlDroneLauncher(){
-        if (gamepad1.x) {
-            droneServo.setPosition(0.5);
-        }
     }
 
     public boolean gateOpen = false;

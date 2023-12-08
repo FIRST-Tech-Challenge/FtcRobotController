@@ -110,7 +110,7 @@ public final class MecanumDrive {
                 // drive model parameters
                 inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
-                trackWidthTicks = 690.3255416844875;
+                trackWidthTicks = 616.0724803629631;
 
                 // feedforward parameters (in tick units)
                 kS = 0.6298460597755153;
@@ -139,7 +139,7 @@ public final class MecanumDrive {
             }
 
             // path profile parameters (in inches)
-            maxWheelVel = 40;
+            maxWheelVel = 50;
             minProfileAccel = -30;
             maxProfileAccel = 50;
 
@@ -252,7 +252,6 @@ public final class MecanumDrive {
         if (USE_APRIL_TAGS) {
             // To detect April Tags to correct drift (added by Hank)
             myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
-            myAprilTagPoseEstimator.init();
         }
 
         this.pose = pose;

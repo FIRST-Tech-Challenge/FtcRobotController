@@ -9,7 +9,6 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms.League1BaseAutonom
 
 public class BlueFarAuto extends BaseAutonomous {
     public void runOpMode() {
-
         runAuto(false, false);
     }
 }
