@@ -10,31 +10,57 @@ import java.io.IOException;
 import java.util.Locale;
 
 @Autonomous(name = "Test Battery Voltage")
-public class TestBatteryVoltage extends RobotOpMode {
+public class TestBatteryVoltage extends AutoRobotOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime batteryTestTime = new ElapsedTime();
     private boolean shouldStop = false;
-    DcMotor arm;
+
+    private Motor light1, light2, light3, light4;
+    private boolean lightsOn = false;
+
     @Override
-    public void init() {
+    public init() {
         super.init();
+        light1 = new Motor(hardwareMap, "light1", DcMotor.Direction.FORWARD);
+        light2 = new Motor(hardwareMap, "light2", DcMotor.Direction.FORWARD);
+        light3 = new Motor(hardwareMap, "light3", DcMotor.Direction.FORWARD);
+        light4 = new Motor(hardwareMap, "light4", DcMotor.Direction.FORWARD);
+    }
 
-        telemetry.addData("Arm Zero Position: ", String.valueOf(armZeroPosition));
+    private void runLights() {
+        if !lightsOn {
+            light1.setPower(1);
+            light2.setPower(1);
+            light3.setPower(1);
+            light4.setPower(1);
+            lightsOn = true;
+            return;
+        }
+    }
 
-        moveArm(0.1f, armZeroPosition - 90);
+    private void stopLights() {
+        if lightsOn {
+            light1.setPower(0);
+            light2.setPower(0);
+            light3.setPower(0);
+            light4.setPower(0);
+            lightsOn = false;
+            return;
+        }
     }
 
     @Override
     public void robotLoop() {
-        linearMoveRobot(1, 0, 0);
         double voltage = getBatteryVoltage();
         dbp.createNewTelePacket();
+        runLights();
 
         if ((runtime.seconds() < VoltageConstants.VOLTAGE_POLL_RATE) || shouldStop) {
             dbp.put("Battery Voltage", String.format(Locale.ENGLISH,
                     "%f s : Current Voltage: %.1f v",
                     batteryTestTime.seconds(), voltage));
             dbp.send(true);
+            stopLights();
             return;
         }
 
