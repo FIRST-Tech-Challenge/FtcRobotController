@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Drivercontrol.lm2;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -39,6 +40,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.teamcode.util.airplane;
+
+import java.util.List;
 
 
 /*
@@ -73,6 +76,7 @@ public class lm2teleop2drivers extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        ElapsedTime runtime=new ElapsedTime();
         plane=hardwareMap.get(Servo.class,"plane");
         plane.setPosition(0);
        // boolean half = false;//half speed
@@ -116,10 +120,21 @@ public class lm2teleop2drivers extends LinearOpMode {
         if (rc)drive.init(hardwareMap, 1);else if(!rc)drive.init(hardwareMap, 0);
         runtime.reset();
        // boolean hangmode=false;
-        gamepad1.setLedColor(255.0,215,0,180000);
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         // run until the end of the match (driver presses STOP)
+        gamepad2.setLedColor(0.98823529411,0.98823529411,0.03921568627,120000);
+        gamepad1.setLedColor(0.13333333333,0.03921568627,0.98823529411,120000);
+        runtime.reset();
         while (opModeIsActive()) {
+            if(runtime.milliseconds()>120000){
+                gamepad2.setLedColor(0.98823529411,0.98823529411,0.03921568627,120000);
+                gamepad1.setLedColor(0.98823529411,0.03921568627,0.03921568627,120000);
+            }
             air.run(extend,gamepad2,plane,false);
             telemetry.addData("y",gamepad1.touchpad_finger_1_y);
             telemetry.addData("1",gamepad1.touchpad_finger_1);

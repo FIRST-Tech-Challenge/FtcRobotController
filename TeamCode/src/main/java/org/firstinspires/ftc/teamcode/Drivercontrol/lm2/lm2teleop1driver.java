@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Drivercontrol.lm2;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -38,6 +39,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.teamcode.util.airplane;
+
+import java.util.List;
 
 
 /*
@@ -106,7 +109,11 @@ public class lm2teleop1driver extends LinearOpMode {
         runtime.reset();
        // boolean hangmode=false;
         gamepad1.setLedColor(255.0,215,0,180000);
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             air.run(extend,gamepad1,plane,false);
