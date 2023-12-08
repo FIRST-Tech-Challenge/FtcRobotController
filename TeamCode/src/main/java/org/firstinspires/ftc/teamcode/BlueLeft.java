@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name = "BlueLeft")
@@ -29,29 +30,37 @@ public class BlueLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        //ConceptTensorFlowObjectDetection = new
 
         waitForStart();
 
         autoMethods.RunMotors(25,0.2);
         sleep(3000);
+        autoMethods.ZeroMotors();
         autoMethods.StrafeByInch(4, false, 0.2);
         sleep(1000);
+        autoMethods.ZeroMotors();
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         autoMethods.Turn90(true, 0.2);
         sleep(4000);
+        autoMethods.ZeroMotors();
         autoMethods.StrafeByInch(3, true, 0.2);
         sleep(1000);
+        autoMethods.ZeroMotors();
         autoMethods.RunMotors(36, 0.2);
         autoMethods.RunMotorHang(6.5,0.75);
         sleep(6000);
+        autoMethods.ZeroMotors();
         motorHang.setPower(0);
         autoMethods.RunMotorHang(-6.5,0.75);
         autoMethods.RunMotors(-4,0.5);
         sleep(1000);
+        autoMethods.ZeroMotors();
         autoMethods.StrafeByInch(24, false, 0.2);
         sleep(4000);
+        autoMethods.ZeroMotors();
         motorHang.setPower(0);
     }
 }

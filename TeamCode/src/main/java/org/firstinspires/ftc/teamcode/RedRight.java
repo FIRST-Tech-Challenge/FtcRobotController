@@ -35,24 +35,30 @@ public class RedRight extends LinearOpMode {
 
         autoMethods.RunMotors(25,0.2);
         sleep(3000);
+        autoMethods.ZeroMotors();
         autoMethods.StrafeByInch(4, true, 0.2);
         sleep(1000);
+        autoMethods.ZeroMotors();
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         autoMethods.Turn90(false, 0.2);
         sleep(6000);
+        autoMethods.ZeroMotors();
         //autoMethods.StrafeByInch(2, true, 0.2);
         //sleep(2000);
         autoMethods.RunMotors(36, 0.2);
         autoMethods.RunMotorHang(6.5,0.75);
         sleep(6000);
+        autoMethods.ZeroMotors();
         motorHang.setPower(0);
         autoMethods.RunMotorHang(-6.5,0.75);
         autoMethods.RunMotors(-4,0.5);
         sleep(1000);
+        autoMethods.ZeroMotors();
         autoMethods.StrafeByInch(24, false, 0.2);
         sleep(4000);
+        autoMethods.ZeroMotors();
         motorHang.setPower(0);
     }
 }

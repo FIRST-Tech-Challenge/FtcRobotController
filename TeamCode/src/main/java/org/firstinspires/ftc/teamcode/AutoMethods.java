@@ -41,11 +41,6 @@ public class AutoMethods {
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorRight2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeft.setPower(0.1);
-        motorRight.setPower(0.1);
-        motorRight2.setPower(0.1);
-        motorLeft2.setPower(0.1);
-        Thread.sleep(500);
         motorLeft.setPower(motorPower);
         motorRight.setPower(motorPower);
         motorRight2.setPower(motorPower);
@@ -102,5 +97,11 @@ public class AutoMethods {
         motorHang.setTargetPosition(motorHang.getCurrentPosition() + Ticks);
         motorHang.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorHang.setPower(hangPower);
+    }
+    void ZeroMotors(){
+        motorLeft.setPower(0);
+        motorRight.setPower(0);
+        motorRight2.setPower(0);
+        motorLeft2.setPower(0);
     }
 }

@@ -136,10 +136,10 @@ telemetry.update();
         else {
             drive(gamepad1.left_stick_y*0.7, gamepad1.right_stick_y*0.7);
         }
-
+//outtake
         if (gamepad2.left_trigger > 0.25 ) {
-            motorIntake.setPower(gamepad2.left_trigger * -1);
-
+            motorIntake.setPower(gamepad2.left_trigger * -0.5);
+            //intake
         } else if (gamepad2.right_trigger > 0.25) {
             motorIntake.setPower(gamepad2.right_trigger);
         }
