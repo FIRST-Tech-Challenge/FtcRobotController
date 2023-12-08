@@ -128,7 +128,7 @@ public class RobotHardware {
         //servos
         launcher = myOpMode.hardwareMap.get(Servo.class, "launcher");
         //launcher.setDirection(Servo.Direction.REVERSE);
-        launcher.setPosition(LAUNCHER_MIN);
+        launcher.setPosition(LAUNCHER_MAX);
 
         //arm motors
         armMotorL       = myOpMode.hardwareMap.get(DcMotor.class, "motorlefthex");
