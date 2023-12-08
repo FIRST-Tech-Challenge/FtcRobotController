@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 public class BlueAudience extends LinearOpMode {
 
     RobotClass teamBot = new RobotClass(this);
-    private Object posOfTag;
+    private int posOfTag;
 
 
     @Override
@@ -21,16 +21,24 @@ public class BlueAudience extends LinearOpMode {
         waitForStart();
 
         if(posOfTag == 1){
-
-
+            teamBot.moveWithoutEncoders(0.6, 0.6, 1000);
+            teamBot.gyroTurning(90);
+            teamBot.strafing(RobotClass.Direction.LEFT, 0.5, 1000);
+            teamBot.moveWithoutEncoders(0.6, 0.6, 500);
+            //Dropping Pixel
 
         }else if(posOfTag == 2){
-
-
+            teamBot.moveWithoutEncoders(0.6, 0.6, 1000);
+            teamBot.gyroTurning(180);
+            teamBot.moveWithoutEncoders(-0.6, -0.6, 2500);
+            //Dropping Pixel
 
         }else if(posOfTag == 3){
-
-
+            teamBot.moveWithoutEncoders(0.6, 0.6, 1000);
+            teamBot.gyroTurning(-90);
+            teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
+            teamBot.moveWithoutEncoders(0.6, 0.6, 500);
+            //Dropping Pixel
 
         }else{
             //Moving to spike mark grid square
