@@ -128,6 +128,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runAuto(boolean red, boolean close) {
+
         runAuto(red, close, false);
     }
 
