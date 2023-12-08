@@ -314,7 +314,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
 
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
                 .setCameraResolution(new Size(1280,800))
                 .addProcessor(aprilTag)
                 .build();

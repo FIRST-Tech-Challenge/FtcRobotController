@@ -135,18 +135,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean backCameraInitialized = false;
     boolean rightCameraInitialized = false;
 
-    VisionPortal.Builder webcamLeft = new VisionPortal.Builder();
-    VisionPortal.Builder webcamRight = new VisionPortal.Builder();
-//  VisionPortal.Builder webcamBack = new VisionPortal.Builder();
     /**
      * The variable to store our instance of the vision portal.
      */
-    protected VisionPortal visionPortalLeft;
-    protected CenterstageSuperPipeline pipelineLeft;
-//    protected VisionPortal visionPortalRight;
-//  protected CenterstageSuperPipeline pipelineRight;
- // protected VisionPortal visionPortalBack;
- // protected CenterstageSuperPipeline pipelineBack;
+    protected VisionPortal visionPortalBack;
+    protected CenterstageSuperPipeline pipelineBack;
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
     int pixelNumber = 0;

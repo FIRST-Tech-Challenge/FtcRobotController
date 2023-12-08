@@ -57,37 +57,26 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
         // This is the line that determined what auto is run.
         // This is left side blue alliance.
-        pipelineLeft = new CenterstageSuperPipeline(true, false );
-// WAS 640, 480
-        visionPortalLeft = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Left"))
-                .addProcessor(pipelineLeft)
+        pipelineBack = new CenterstageSuperPipeline(true, false );
+        visionPortalBack = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
+                .addProcessor(pipelineBack)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
-//        pipelineRight = new CenterstageSuperPipeline(false, false);
-//        visionPortalRight = new VisionPortal.Builder()
-//                .setCamera(hardwareMap.get(WebcamName.class, "Webcam Right"))
-//                .addProcessor(pipelineRight)
-//                .setCameraResolution(new Size(640, 480))
-//                .build();
-//      pipelineBack = new CenterstageSuperPipeline(true, false);
-//        webcamBack.setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"));
-//        webcamBack.setCameraResolution(new Size(320, 240));
-//        webcamBack.addProcessor(pipelineBack);
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
                     ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
             // If vision pipeline disagrees with forced alliance setting, report it
-            if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
-               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
+            if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
+               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.targetHue +
-                                          ") L:"   + pipelineLeft.avg1   +
-                                          " C:"    + pipelineLeft.avg2   + 
-                                          " R:"    + pipelineLeft.avg3   +
-                                          " Zone:" + pipelineLeft.spikeMark );
+            telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
+                                          ") L:"   + pipelineBack.avg1   +
+                                          " C:"    + pipelineBack.avg2   + 
+                                          " R:"    + pipelineBack.avg3   +
+                                          " Zone:" + pipelineBack.spikeMark );
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addLine("   use LEFT/RIGHT bumpers to modify");
             telemetry.update();
@@ -105,7 +94,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
             }
             // If we've not FORCED a red/blue alliance, report real-time detection
             if( !forceAlliance ) {
-                redAlliance = pipelineLeft.redAlliance;
+                redAlliance = pipelineBack.redAlliance;
             }
             // Change number of 5-stack to attempt?
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last ) {
@@ -130,9 +119,9 @@ public class AutonomousLeftBlue extends AutonomousBase {
         if( opModeIsActive() ) {
             pixelNumber = 0;
             createAutoStorageFolder(redAlliance, true);
-            pipelineLeft.setStorageFolder(storageDir);
-            spikeMark = pipelineLeft.spikeMark;
-            pipelineLeft.saveSpikeMarkAutoImage();
+            pipelineBack.setStorageFolder(storageDir);
+            spikeMark = pipelineBack.spikeMark;
+            pipelineBack.saveSpikeMarkAutoImage();
         }
 
         //---------------------------------------------------------------------------------
