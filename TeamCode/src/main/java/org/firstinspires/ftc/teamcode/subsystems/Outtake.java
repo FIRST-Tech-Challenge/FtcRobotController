@@ -29,12 +29,12 @@ public class Outtake implements Subsystem{
     private double dumpDumpPos = 0.1013;
 
     //State Machine
-    private int swingState;
+    public int swingState;
     /*
      * 0: arm is not moving
      * 1: not yet reached height, wait.
      */
-    private int liftState;
+    public int liftState;
     /* //1. wait for intake to move out; 2. go to travel pos, lift the lift 3. at appropriate height, go to dump pos
      * 0: safe to do whatever
      * 1: waiting for intake to lift
@@ -200,10 +200,10 @@ public class Outtake implements Subsystem{
         }
         if(liftState == 10){
             if(lift.getPosition() < 1.0) {
-                liftState = 0;
                 armServo_Right.setPosition(armIntake_Right);
                 armServo_Left.setPosition(armIntake_Left);
                 dumpServo.setPosition(dumpIntakePos);
+                liftState = 0;
             }
         }
     }
