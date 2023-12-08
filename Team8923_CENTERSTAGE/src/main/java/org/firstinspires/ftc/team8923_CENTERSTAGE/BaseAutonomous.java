@@ -52,6 +52,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public void initAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
+        initOpenCv();
         initHardware();
 
         telemetry.addData("Init State", "Init Finished");
