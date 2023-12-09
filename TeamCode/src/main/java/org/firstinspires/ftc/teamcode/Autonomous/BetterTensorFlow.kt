@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
@@ -10,6 +11,8 @@ public enum class CupLocation {
     RIGHT,
     UNKNOWN
 }
+
+@Disabled
 @TeleOp(name="BetterTensorFlow", group="Concept")
 class BetterTensorFlow: DriveMethods(){
     override fun runOpMode() {

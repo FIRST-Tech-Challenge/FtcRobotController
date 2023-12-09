@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop
 
 //import org.firstinspires.ftc.teamcode.Variables.rMotorL
 //import org.firstinspires.ftc.teamcode.Variables.rMotorR
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.motorBL
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Variables.motorFR
 import java.io.BufferedWriter
 import java.io.FileWriter
 
+@Disabled
 @TeleOp(name = "SimpleTeleopRecorder", group = "TeleopFinal")
 class SimpleTeleopRecorder: DriveMethods() {
     override fun runOpMode() {

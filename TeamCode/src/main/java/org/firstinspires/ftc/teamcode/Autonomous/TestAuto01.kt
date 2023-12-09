@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode.Autonomous
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive
@@ -48,6 +49,8 @@ import java.util.Locale
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 // Autonomous
+
+@Disabled
 @TeleOp(name = "TestAuto01", group = "Linear Opmode")
 class TestAuto01 : DriveMethods() {
     override fun runOpMode() {

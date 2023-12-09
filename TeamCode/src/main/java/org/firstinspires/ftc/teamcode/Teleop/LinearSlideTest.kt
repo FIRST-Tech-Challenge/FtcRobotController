@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Teleop
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import kotlin.math.exp
 
+@Disabled
 @TeleOp(name = "LSTest", group = "LinearSlide")
 class LinearSlideTest: DriveMethods() {
     override fun runOpMode() {

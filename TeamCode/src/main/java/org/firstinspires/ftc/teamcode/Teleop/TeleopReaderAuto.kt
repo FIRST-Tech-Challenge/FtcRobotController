@@ -28,6 +28,7 @@
  */
 package org.firstinspires.ftc.teamcode.Teleop
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.DriveMethods
@@ -54,6 +55,8 @@ import java.io.FileReader
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 // Autonomous
+
+@Disabled
 @TeleOp(name = "TeleopReaderAuto", group = "Linear Opmode")
 class TeleopReaderAuto : DriveMethods() {
     override fun runOpMode() {

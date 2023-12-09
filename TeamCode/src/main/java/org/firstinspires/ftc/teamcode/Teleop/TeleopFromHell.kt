@@ -231,8 +231,8 @@ class TeleopFromHell: DriveMethods() {
                     aeroplaneLauncherServo.position = AEROPLANE_LAUNCH
                     magicHoldNumber = 0
                     aeroplaneHasBeenLaunched = true
-//                    sleep(500)
-//                    aeroplaneLauncherServo.position = AEROPLANE_CLOSE
+//                    sleep(1000)
+
                } else {
                     magicHoldNumber++
                     sleep(25)
@@ -291,5 +291,6 @@ class TeleopFromHell: DriveMethods() {
             telemetry.addData("Magic num: ", magicHoldNumber)
             telemetry.update()
         }
+        aeroplaneLauncherServo.position = AEROPLANE_CLOSE
     }
 }

@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Variables.Detection;
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 
+@Disabled
 @Config
 @Autonomous(name = "BackRedAuto", group = "LinearOpmode")
 public class BackRedAuto extends MeepMeepBoilerplate {

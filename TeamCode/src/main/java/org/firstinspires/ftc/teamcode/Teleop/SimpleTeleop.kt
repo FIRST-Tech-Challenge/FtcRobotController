@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop
 
 //import org.firstinspires.ftc.teamcode.Variables.rMotorL
 //import org.firstinspires.ftc.teamcode.Variables.rMotorR
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
 import org.firstinspires.ftc.teamcode.Variables.pomPomServo
 
+@Disabled
 @TeleOp(name = "SimpleTeleop", group = "TeleopFinal")
 class SimpleTeleop: DriveMethods() {
     override fun runOpMode() {

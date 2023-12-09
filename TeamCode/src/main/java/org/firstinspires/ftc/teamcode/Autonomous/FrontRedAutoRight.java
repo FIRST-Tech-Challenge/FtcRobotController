@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 
 import java.util.Arrays;
 
+@Disabled
 @Config
 @Autonomous(name = "FRRight", group = "Linear OpMode")
 public class FrontRedAutoRight extends MeepMeepBoilerplate{

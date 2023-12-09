@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.Teleop
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.touchyL
 import org.firstinspires.ftc.teamcode.Variables.touchyR
 
+@Disabled
 @TeleOp(name = "RackAndPain", group = "AprilTag")
 class RackAndPain: DriveMethods() {
     override fun runOpMode() {

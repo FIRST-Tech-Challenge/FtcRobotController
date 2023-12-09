@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
 
+@Disabled
 @Autonomous(name = "TFODAutoTest1", group = "A")
 class TFODAutoTest1 : DriveMethods() {
     override fun runOpMode() {

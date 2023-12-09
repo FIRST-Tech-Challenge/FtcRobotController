@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor
 import java.io.BufferedReader
 import java.io.FileReader
 //import org.firstinspires.ftc.vision.tfod.TfodProcessor.Builder.setNumDetectorThreads;
+
+@Disabled
 @TeleOp(name="Tensor Flow Test 2", group="Concept")
 class tensorFlowTest2: LinearOpMode(){
     private val USE_WEBCAM = true;

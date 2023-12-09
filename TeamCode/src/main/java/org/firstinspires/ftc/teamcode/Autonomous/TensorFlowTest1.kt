@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor
 import java.io.BufferedReader
 import java.io.FileReader
 
-
+@Disabled
 @TeleOp(name="TensorFlow Test 1", group="Concept")
 class tensorFlowTest1: LinearOpMode(){
     private val USE_WEBCAM = true;
