@@ -136,9 +136,7 @@ public final class TankDrive {
                 for (DcMotorEx m : leftMotors) {
                     Encoder e = new OverflowEncoder(new RawEncoder(m));
                     leftEncs.add(e);
-                    lastLeftPos += e.getPositionAndVelocity().position;
                 }
-                lastLeftPos /= leftEncs.size();
                 this.leftEncs = Collections.unmodifiableList(leftEncs);
             }
 
@@ -147,14 +145,22 @@ public final class TankDrive {
                 for (DcMotorEx m : rightMotors) {
                     Encoder e = new OverflowEncoder(new RawEncoder(m));
                     rightEncs.add(e);
-                    lastRightPos += e.getPositionAndVelocity().position;
                 }
-                lastRightPos /= rightEncs.size();
                 this.rightEncs = Collections.unmodifiableList(rightEncs);
             }
 
             // TODO: reverse encoder directions if needed
             // leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+
+            for (Encoder e : leftEncs) {
+                lastLeftPos += e.getPositionAndVelocity().position;
+            }
+            lastLeftPos /= leftEncs.size();
+
+            for (Encoder e : rightEncs) {
+                lastRightPos += e.getPositionAndVelocity().position;
+            }
+            lastRightPos /= rightEncs.size();
         }
 
         @Override
