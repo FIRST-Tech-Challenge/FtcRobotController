@@ -8,6 +8,8 @@ public class ArmInstance {
 
     public DcMotor Arm_Motor;
 
+    public int currentArmPos;
+
     public void initializeArm(HardwareMap hardwareMap) {
         Arm_Motor = hardwareMap.get(DcMotor.class, "Arm_Motor");
         Arm_Motor.setDirection(DcMotor.Direction.REVERSE);
@@ -30,6 +32,8 @@ public class ArmInstance {
         Arm_Motor.setTargetPosition(Arm_Motor_Encoder_Target_Position);
         Arm_Motor.setPower(1);
         Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        currentArmPos = Arm_Motor_Encoder_Target_Position;
     }
     
     public void setArmPosTo(int Ticks_To_Move_Arm_To) {
@@ -37,6 +41,11 @@ public class ArmInstance {
         Arm_Motor.setTargetPosition(Arm_Motor_Encoder_Target_Position);
         Arm_Motor.setPower(0.2);
         Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        currentArmPos = Arm_Motor_Encoder_Target_Position;
     }
 
+    public int getCurrentArmPos() {
+        return currentArmPos;
+    }
 }

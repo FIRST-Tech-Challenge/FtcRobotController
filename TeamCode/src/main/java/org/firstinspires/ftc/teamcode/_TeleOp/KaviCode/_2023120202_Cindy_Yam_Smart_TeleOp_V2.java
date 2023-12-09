@@ -47,7 +47,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
 
             x = x * 1.1;  // Counteract imperfect strafing
 
-            // Denominator is the largest motor power (absolute value) or 1
+            // Denominator is the largest motor power (absolute value) or 1a
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -67,9 +67,6 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower * Driving_Speed);
             frontRightMotor.setPower(frontRightPower * Driving_Speed);
             backRightMotor.setPower(backRightPower * Driving_Speed);
-
-
-
 
             if (gamepad1.y) {
                 Claw.Actuate_Claw_Top_Finger("open");
@@ -94,6 +91,13 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
             }
             if (gamepad1.dpad_up) {
                 DroneLauncher.launchDrone();
+            }
+
+            if (Arm.Arm_Motor.getCurrentPosition() > 555) {
+                Arm.setArmPosTo(550);
+            }
+            if (Arm.Arm_Motor.getCurrentPosition() < 5) {
+                Arm.setArmPosTo(5);
             }
 
             //Smart TeleOp
@@ -124,11 +128,15 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
                 Claw.Actuate_Claw_Top_Finger("close");
             }
 
+            Arm.setArmPosTo(Arm.getCurrentArmPos());
+            sleep(50);
+
             telemetry.addLine("Open Claw Top: y");
             telemetry.addLine("Close Claw Top: x");
             telemetry.addLine("Open Claw Bottom: b");
             telemetry.addLine("Close Claw Bottom: a");
             telemetry.addData("Arm Position: ", Arm.Arm_Motor.getCurrentPosition());
+            telemetry.addData("Arm Target Position: ", Arm.getCurrentArmPos());
             telemetry.addData("Arm Target Position: ", Arm.Arm_Motor.getTargetPosition());
             telemetry.addData("Bottom Claw Position: ", Claw.Claw_Bottom_Finger.getPosition());
             telemetry.addData("Drone Launcher Position: ", DroneLauncher.DroneLauncherServo.getPosition());
