@@ -111,7 +111,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         // initial state
         START_TO_DETECT_POS,
         DETECT_LEFT, DETECT_MIDDLE, ASSUME_RIGHT,
-        GO_PARK,
+        GO_PARK,GO_PARK_DROP_YELLOWPIXEL,
 
         // all TEST states
         TEST_DRAW_TWO_PICK_ONE,
@@ -181,6 +181,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
     Wrist wrist = new Wrist(this);
 
     String msg = "";
+
+    FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
+
 
     // This is needed for TFOD
 
@@ -429,8 +432,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         holdHeading(TURN_SPEED, 90, 0.1);
 
                         driveStraight(DRIVE_SPEED*5,-18, 90,false, true);
-
-                        nextState = FSMState.GO_PARK;
+                        //This is where the robot will remember where the pixel should be.
+                        cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
+                        nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
 
                     } else {
                         nextState = FSMState.DETECT_LEFT;
@@ -458,8 +462,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         // set up the place to where it is ready to go park
                         driveStraight(DRIVE_SPEED*1,3, 90,false, false);
                         driveStraight(DRIVE_SPEED*2,-27, 90,false, true);
-
-                        nextState = FSMState.GO_PARK;
+                        //This is where the robot will remember where the pixel should be.
+                        cubeIsFound = FoundTeamProp.FOUND_LEFT;
+                        nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
 
                     } else {
                         nextState = FSMState.ASSUME_RIGHT;
@@ -485,8 +490,24 @@ public class FirstAutonomousIteration extends LinearOpMode {
                     // get ready to go park
                     // set up the place to where it is ready to go park
                     driveStraight(DRIVE_SPEED*5,-24.5, 90,false, true);
+                    //This is where the robot will remember where the pixel should be.
+                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
+                    nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
+                    break;
 
-                    nextState = FSMState.GO_PARK;
+                case GO_PARK_DROP_YELLOWPIXEL:
+                    //Drive straight until ready to scan the apriltag.
+                    turnToHeading(TURN_SPEED*10, sideMul * (90));
+                    driveStraight(DRIVE_SPEED*10, 79, sideMul * (90), true, false);
+                    //Then strafe inline with the backboard according to the position of where the team prop was found.
+                    driveStraight(DRIVE_SPEED*5,24.5, sideMul*(90),false, true);
+                    //Go front then face your back to the backdrop
+                    turnToHeading(TURN_SPEED*10, sideMul * (-90));
+                    driveStraight(DRIVE_SPEED*10, -10, sideMul * (-90), true, false);
+                    //Drop yellow pixel.
+                    arm.moveArmUp();
+                    claw.openClaw();
+                    nextState = FSMState.DONE;
                     break;
 
                 case GO_PARK:
@@ -505,6 +526,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
                 case TEST_LATERAL_RIGHT:
                     targetHeading = getHeading();
                     driveStraight(DRIVE_SPEED*5, 3, targetHeading, true, true);
+                    nextState = FSMState.DONE;
+                    break;
             }
         }
 
