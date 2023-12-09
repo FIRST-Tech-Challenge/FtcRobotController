@@ -53,7 +53,7 @@ public abstract class CSTeleopRobotLIO extends Robot {
         drive.getExpansionHubs().update(getDt());
         drive.update();
         drive.robot.getDroneSubsystem().update(getDt());
-        drive.robot.getArmSubsystem().update(getDt());
+        drive.robot.getOuttakeSubsystem().update(getDt());
         drive.robot.getLiftSubsystem().update(getDt());
     }
 
@@ -63,7 +63,7 @@ public abstract class CSTeleopRobotLIO extends Robot {
         drive.getExpansionHubs().stop();
         drive.robot.getLiftSubsystem().stop();
         drive.robot.getDroneSubsystem().stop();
-        drive.robot.getArmSubsystem().stop();
+        drive.robot.getOuttakeSubsystem().stop();
     }
 
     public TimeProfiler getMatchRuntime() {

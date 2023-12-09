@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
-import org.firstinspires.ftc.teamcode.team.PPCV;
+import org.firstinspires.ftc.teamcode.team.CSVP;
 
 
 @Autonomous(name = "TFODAuto", group = "Test")
@@ -18,7 +18,7 @@ public class TFODAuto extends LinearOpMode {
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-    PPCV ppcv;
+    CSVP CSVP;
 
     enum State {
         DETECT,
@@ -36,8 +36,8 @@ public class TFODAuto extends LinearOpMode {
 
         double t1 = waitTimer.milliseconds();
 
-        ppcv = new PPCV();
-        ppcv.initTfod(hardwareMap);
+        CSVP = new CSVP();
+        CSVP.initTfod(hardwareMap);
 
         double t2 = waitTimer.milliseconds();
 
@@ -55,11 +55,11 @@ public class TFODAuto extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()){
             switch (currentState){
                 case DETECT:
-                    recog = ppcv.detect();
+                    recog = CSVP.detect();
                     detectCounter++;
                     if (recog != null){
                         if(oldRecog != null) {
-                            if (ppcv.detect() == recog){
+                            if (CSVP.detect() == recog){
                                 confidence = recog.getConfidence();
                                 label = recog.getLabel();
                                 oldRecog = recog;

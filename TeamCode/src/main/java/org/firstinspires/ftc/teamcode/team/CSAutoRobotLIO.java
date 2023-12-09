@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.team.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.team.subsystems.ExpansionHubs;
 import org.firstinspires.ftc.teamcode.team.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.team.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.RobotStateEstimator;
 
 
@@ -43,28 +44,29 @@ public class CSAutoRobotLIO {
     private LiftSubsystem liftSubsystem;
     private OuttakeSubsystem outtakeSubsystem;
     private DroneSubsystem droneSubsystem;
+    private IntakeSubsystem intakeSubsystem;
     private RevMotor[] motors;
     private RevServo[] servos;
 
 
     public void init(HardwareMap hardwareMap) {
-
 //        setExpansionHubs(new ExpansionHubs(this,
 //                hardwareMap.get(ExpansionHubEx.class, "Control Hub"),
 //                hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2"))
 //        );
 
         setMotors(new RevMotor[] {
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Elev Left")), false, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 0.7402879093),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Elev Right")), false, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 0.7402879093)
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Lift")), false, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 1.503937), //38.2mm diameter
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Intake")), false, false, false, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION())
         });
 
         setServos(new RevServo[] {
-                new RevServo((ExpansionHubServo)(hardwareMap.get("Arm"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("Claw")))
+                new RevServo((ExpansionHubServo)(hardwareMap.get("Outtake"))),
+                new RevServo((ExpansionHubServo)(hardwareMap.get("Drone")))
         });
 
-        setLiftSubsystem(new LiftSubsystem(getMotors()[0], getMotors()[1]));
+        setLiftSubsystem(new LiftSubsystem(getMotors()[0]));
+        setIntakeSubsystem(new IntakeSubsystem(getMotors()[1]));
         setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
         setDroneSubsystem(new DroneSubsystem(getServos()[1]));
         setMatchRuntime(new TimeProfiler(false));
@@ -117,7 +119,15 @@ public class CSAutoRobotLIO {
         this.liftSubsystem = liftSubsystem;
     }
 
-    public OuttakeSubsystem getArmSubsystem() {
+    public IntakeSubsystem getIntakeSubsystem() {
+        return intakeSubsystem;
+    }
+
+    public void setIntakeSubsystem(IntakeSubsystem intakeSubsystem){
+        this.intakeSubsystem = intakeSubsystem;
+    }
+
+    public OuttakeSubsystem getOuttakeSubsystem() {
         return outtakeSubsystem;
     }
 

@@ -88,7 +88,7 @@ public class PPTeleopAssistLAC extends CSTeleopRobotLIO {
 //    public ShooterStateMachine.State currentShooterSpeed = ShooterStateMachine.State.SPEED1;
 
 //    public boolean allowMovement = true;
-    private PPCV cv;
+    private CSVP cv;
     private float confidence = 0;
     private String label = "";
     public double xSpeedMult = 1;

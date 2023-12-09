@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.DbgLog;
-import org.firstinspires.ftc.teamcode.team.PPCV;
+import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.FeederConeGripperStateMachine;
@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.team.states.FeederExtensionStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.VirtualFourBarStateMachine;
 import org.firstinspires.ftc.teamcode.team.subsystems.Feeder;
 
-@Autonomous(name = "Red Right FTCCV", group = "XtremeV")
-public class RedRightFTCCV extends LinearOpMode {
+@Autonomous(name = "Red Right Pixel", group = "Pixel")
+public class RedRightFTC extends LinearOpMode {
     PPBaseFeeder drive;
     private static double dt;
     private static TimeProfiler updateRuntime;
@@ -66,8 +66,7 @@ public class RedRightFTCCV extends LinearOpMode {
     private static final double MID = 23.5d;
     private static final double LOW = 14d;
 
-
-    PPCV ppcv;
+    CSVP CSVP;
     boolean hasCVInit = false;
     String placement = "ONE";
     float confidence = 0;
@@ -138,9 +137,9 @@ public class RedRightFTCCV extends LinearOpMode {
 
         double t1 = waitTimer.milliseconds();
 
-        ppcv = new PPCV();
+        CSVP = new CSVP();
         //ppcv.initVuforia(hardwareMap);
-        ppcv.initTfod(hardwareMap);
+        CSVP.initTfod(hardwareMap);
 
         double t2 = waitTimer.milliseconds();
 
@@ -171,11 +170,11 @@ public class RedRightFTCCV extends LinearOpMode {
             switch (currentState) {
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = ppcv.detect();
+                    recog = CSVP.detect();
                     detectCounter++;
                     if (recog != null){
                         if(oldRecog != null) {
-                            if (ppcv.detect() == recog){
+                            if (CSVP.detect() == recog){
                                 confidence = recog.getConfidence();
                                 label = recog.getLabel();
                                 oldRecog = recog;

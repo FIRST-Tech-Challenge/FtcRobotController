@@ -271,8 +271,6 @@ public class CSBaseLIO extends MecanumDrive {
         waitForIdle();
     }
 
-
-
     public void cancelFollowing() {
         mode = Mode.IDLE;
     }

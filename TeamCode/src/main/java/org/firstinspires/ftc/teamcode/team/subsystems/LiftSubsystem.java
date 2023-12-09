@@ -30,8 +30,7 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
     private static final ControlConstants RETRACT_CONTROL_CONSTANTS;
 
     private static LiftStateMachine liftStateMachine;
-    private RevMotor liftL;
-    private RevMotor liftR;
+    private RevMotor lift;
 
     private static IMotionProfile extensionProfile = null;
     private static double setpoint = 0d;
@@ -66,21 +65,11 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
             EXTEND_CONTROL_CONSTANTS  = new ControlConstants();
             RETRACT_CONTROL_CONSTANTS = new ControlConstants();
         }
-
-//        LiftStateMachine.setRunExtension((setpoint) -> {
-//            if(getExtensionProfile() != null) {
-//                getExtensionProfile().start();
-//                LiftSubsystem.setpoint = setpoint;
-//            }
-//        });
     }
 
-    public LiftSubsystem(RevMotor liftL, RevMotor liftR) {
+    public LiftSubsystem(RevMotor lift) {
         setLiftStateMachine(new LiftStateMachine(this));
-        setLiftL(liftL);
-        setLiftR(liftR);
-    //    getLiftL().setEncoderTicksPerInch(231.157895d);
-    //    getLiftR().setEncoderTicksPerInch(231.157895d);
+        setLift(lift);
         setLastError(0d);
         resetRunningSum();
     }
@@ -105,10 +94,8 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
 
     @Override
     public void stop() {
-        getLiftL().setPower(0d);
-        getLiftR().setPower(0d);
-        getLiftL().resetEncoder();
-        getLiftR().resetEncoder();
+        getLift().setPower(0d);
+        getLift().resetEncoder();
         setSetpoint(0d);
         setDesiredSetpoint(0d);
     }
@@ -128,7 +115,7 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
         //getStateMachine().update(dt);
         getLiftStateMachine().update(dt);
 
-        double error                = getSetpoint() - getLiftL().getPosition();
+        double error                = getSetpoint() - getLift().getPosition();
         double setpointVelocity     = 0d;
         double setpointAcceleration = 0d;
         if(getExtensionProfile() != null && !getExtensionProfile().isDone()) {
@@ -151,13 +138,8 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
         DbgLog.msg("Output: " + String.valueOf(output));
 
         setLastError(error);
+        getLift().setPower(output);
 
-        final double kP = 0.001d;
-        double relativeError = getLiftL().getPosition() - getLiftR().getPosition();;
-        double relativeOutput = kP * relativeError;
-
-        getLiftL().setPower(output);
-        getLiftR().setPower(output + relativeOutput);
     }
 
     public void extend(Double set) {
@@ -172,7 +154,7 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
     }
 
     public boolean closeToSetpoint(double threshold) {
-        return Math.abs(getSetpoint() - getLiftL().getPosition()) <= threshold;
+        return Math.abs(getSetpoint() - getLift().getPosition()) <= threshold;
     }
 
     public static LiftStateMachine getLiftStateMachine() {
@@ -183,20 +165,12 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
         LiftSubsystem.liftStateMachine = liftStateMachine;
     }
 
-    public RevMotor getLiftL() {
-        return liftL;
+    public RevMotor getLift() {
+        return lift;
     }
 
-    public void setLiftL(RevMotor liftL) {
-        this.liftL = liftL;
-    }
-
-    public RevMotor getLiftR() {
-        return liftR;
-    }
-
-    public void setLiftR(RevMotor liftR) {
-        this.liftR = liftR;
+    public void setLift(RevMotor lift) {
+        this.lift = lift;
     }
 
     public static double getSetpoint() {
@@ -215,7 +189,7 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
                 getLiftStateMachine().updateState(LiftStateMachine.State.RETRACT);
                 this.setpoint = setpoint;
                 //setExtensionProfile(new ResidualVibrationReductionMotionProfilerGenerator(
-                //        getLiftL().getPosition(), -getLiftL().getPosition(), 25d, 50d
+                //        getLift().getPosition(), -getLift().getPosition(), 25d, 50d
                 //));
             }
         }

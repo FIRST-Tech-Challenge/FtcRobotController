@@ -9,26 +9,26 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
-import org.firstinspires.ftc.teamcode.team.PPCV;
+import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 
-@Autonomous(name = "Red Left FTCCV", group = "XtremeV")
-public class RedLeftFTCCV extends LinearOpMode {
+@Autonomous(name = "Blue Right Pixel", group = "Pixel")
+public class BlueRightFTC extends LinearOpMode {
     CSBaseLIO drive;
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    static final Vector2d Traj0 = new Vector2d(-34,-65.5);
-    static final Vector2d Traj1 = new Vector2d(-34, -12.5);
-    static final Vector2d Traj2 = new Vector2d(-21.5,-12.5);
-    static final Vector2d Traj3 = new Vector2d(-54, -12.5);
-    static final Vector2d Location1 = new Vector2d(-52, -13);
-    static final Vector2d Location2 = new Vector2d(-34, -13);
-    static final Vector2d Location3 = new Vector2d(-12,-13);
+    static final Vector2d Traj0 = new Vector2d(-34,65.5);
+    static final Vector2d Traj1 = new Vector2d(-34, 12.5);
+    static final Vector2d Traj2 = new Vector2d(-24,12.5);
+    static final Vector2d Traj3 = new Vector2d(-56, 12.5);
+    static final Vector2d Location1 = new Vector2d(-50, 13);
+    static final Vector2d Location2 = new Vector2d(-34, 13);
+    static final Vector2d Location3 = new Vector2d(-12,13);
 
     //ElapsedTime carouselTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -53,7 +53,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(-31, -65.5, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(-37, 65.5, Math.toRadians(-90));
 
 
     //these are based on LiftTest
@@ -62,7 +62,7 @@ public class RedLeftFTCCV extends LinearOpMode {
     private static final double LOW = 14d;
 
 
-    PPCV ppcv;
+    CSVP CSVP;
     boolean hasCVInit = false;
     String placement = "ONE";
     float confidence = 0;
@@ -78,7 +78,7 @@ public class RedLeftFTCCV extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
         drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
-        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
         //drive.robot.getCappingArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.REST);
 
         TrajectorySequence traj0 = drive.trajectorySequenceBuilder(startPose)
@@ -87,7 +87,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(traj0.end())
                 .lineTo(Traj1)
-                .turn(Math.toRadians(93.5))
+                .turn(Math.toRadians(-101))
                 .build();
 
         TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
@@ -117,14 +117,13 @@ public class RedLeftFTCCV extends LinearOpMode {
         drive.getExpansionHubs().update(getDt());
 
         drive.robot.getLiftSubsystem().update(getDt());
-        drive.robot.getArmSubsystem().update(getDt());
+        drive.robot.getOuttakeSubsystem().update(getDt());
         drive.robot.getDroneSubsystem().update(getDt());
 
         double t1 = waitTimer.milliseconds();
 
-        ppcv = new PPCV();
-        //ppcv.initVuforia(hardwareMap);
-        ppcv.initTfod(hardwareMap);
+        CSVP = new CSVP();
+        CSVP.initTfod(hardwareMap);
 
         double t2 = waitTimer.milliseconds();
 
@@ -154,11 +153,11 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = ppcv.detect();
+                    recog = CSVP.detect();
                     detectCounter++;
                     if (recog != null){
                         if(oldRecog != null) {
-                            if (ppcv.detect() == recog){
+                            if (CSVP.detect() == recog){
                                 confidence = recog.getConfidence();
                                 label = recog.getLabel();
                                 oldRecog = recog;
@@ -227,7 +226,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case MOVEARM:
                     if(!drive.isBusy()){
-                        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
+                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
                         currentState = State.CLAWOPEN;
                         waitTimer.reset();
                     }
@@ -243,7 +242,7 @@ public class RedLeftFTCCV extends LinearOpMode {
 
                 case MOVEARMBACK:
                     if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getArmSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
                         currentState = State.LIFTDOWN;
                         waitTimer.reset();
                     }
@@ -255,10 +254,10 @@ public class RedLeftFTCCV extends LinearOpMode {
 //                            drive.robot.getLiftSubsystem().extend(6d);
 //                            currentState = State.TOSTACK;
 //                        }
- //                       else{
+//                        else{
                             drive.robot.getLiftSubsystem().retract();
                             currentState = State.PARK;
-   //                     }
+ //                       }
                         waitTimer.reset();
                     }
                     break;
@@ -321,7 +320,7 @@ public class RedLeftFTCCV extends LinearOpMode {
             //The following code ensure state machine updates i.e. parallel execution with drivetrain
             drive.getExpansionHubs().update(getDt());
             drive.robot.getLiftSubsystem().update(getDt());
-            drive.robot.getArmSubsystem().update(getDt());
+            drive.robot.getOuttakeSubsystem().update(getDt());
             drive.robot.getDroneSubsystem().update(getDt());
             telemetry.update();
         }

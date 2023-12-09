@@ -10,7 +10,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-public class PPCV {
+public class CSVP {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
@@ -33,7 +33,7 @@ public class PPCV {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-    public PPCV(){
+    public CSVP(){
 
     }
 
