@@ -26,8 +26,8 @@ public class RobotTeleop extends LinearOpMode {
             DT.drive();
             DL.launchDrone();
             slider.move();
-            //arm.move();
-            //claw.operate();
+            arm.move();
+            claw.operate();
         }
     }
 }

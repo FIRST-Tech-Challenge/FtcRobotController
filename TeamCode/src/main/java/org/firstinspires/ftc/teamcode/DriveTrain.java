@@ -9,6 +9,7 @@ public class DriveTrain {
     private double normal_speed = 0.8;
     private double medium_speed = 0.3;
     private double slow_speed = 0.2;
+    private boolean verbose = false;
 
     public DriveTrain(Robot robot, Gamepad gamepad) {
         this.robot = robot;
@@ -57,25 +58,16 @@ public class DriveTrain {
     {
         double[] speeds = new double[4];
 
-        robot.telemetry.addData("DT: Speed_factor =", speed_factor);
-
         if (gamepad.left_stick_y == 0 && gamepad.left_stick_x == 0 && gamepad.right_stick_x == 0) {
-            robot.telemetry.addData("Returning because zero", "zero");
             stopDrive();
             return;
         }
 
-        robot.telemetry.addData("Y", Double.toString(gamepad.left_stick_y));
-                robot.telemetry.addData("X", Double.toString(gamepad.left_stick_x));
-        robot.telemetry.addData("RX", Double.toString(gamepad.right_stick_x));
         calculateSpeed(gamepad.left_stick_y, gamepad.left_stick_x, gamepad.right_stick_x, speed_factor, speeds);
-        robot.telemetry.addData("Speeds=", Double.toString(speeds[0]), Double.toString(speeds[1]), Double.toString(speeds[2]), Double.toString(speeds[3]));
         robot.motorFL.setPower(speeds[0]);
         robot.motorFR.setPower(speeds[1]);
         robot.motorBL.setPower(speeds[2]);
         robot.motorBR.setPower(speeds[3]);
-
-        robot.telemetry.update();
     }
 
     public void drive_normal()
@@ -116,22 +108,36 @@ public class DriveTrain {
         robot.motorBR.setPower(speeds[3]);
     }
 
+    private void log(String s, Double d)
+    {
+        if (verbose) {
+            robot.telemetry.addData(s, d);
+        }
+    }
+    private void logUpdate()
+    {
+        if (verbose) {
+            robot.telemetry.update();
+        }
+    }
+
     public void drive() {
 
         if (gamepad.left_stick_y != 0 || gamepad.left_stick_x != 0 || gamepad.right_stick_x != 0) {
             if (gamepad.left_trigger > 0 || gamepad.right_trigger > 0) {
+                log("DriveTrain: Medium Speed: ", medium_speed);
                 drive_medium();
-                //robot.telemetry.addData("MEdium", "Running");
             } else {
+                log("DriveTrain: Normal Speed:", normal_speed);
                 drive_normal();
-                //robot.telemetry.addData("Normal", "Running");
             }
         } else if (gamepad.dpad_left || gamepad.dpad_right || gamepad.dpad_down || gamepad.dpad_up) {
+            log("DriveTrain: Slow Speed:", slow_speed);
             drive_slow();
-            //robot.telemetry.addData("Normal", "Running");
         } else {
+            log("DriveTrain: StopDrive", 0.0);
             stopDrive();
         }
-        //robot.telemetry.update();
+        logUpdate();
     }
 }

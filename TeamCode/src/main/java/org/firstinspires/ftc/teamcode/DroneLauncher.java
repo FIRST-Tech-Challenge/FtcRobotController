@@ -22,8 +22,7 @@ public class DroneLauncher {
 
     public void holdDrone()
     {
-        // TBD: do we need another button
-        if (!gamepad.b) {
+        if (gamepad.b) {
             robot.servoDrone.setPosition(pos_hold);
         }
     }
