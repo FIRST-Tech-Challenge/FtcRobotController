@@ -19,7 +19,7 @@ import java.util.List;
 
 public class VisionHardware {
 
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     private LinearOpMode myOpMode = null;
 
     private ALLIANCE_POS alliancePos = null;
@@ -32,7 +32,7 @@ public class VisionHardware {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "ModelSphereClassWindowSLC.tflite";
+    private static final String TFOD_MODEL_ASSET = "ModelSpheresClassWindowSLC.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/ModelSphereClassWindowSLC.tflite";

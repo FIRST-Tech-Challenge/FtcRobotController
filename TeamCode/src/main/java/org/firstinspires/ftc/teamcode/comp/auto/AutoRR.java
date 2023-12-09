@@ -36,7 +36,7 @@ public class AutoRR extends LinearOpMode {
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel
-                    robot.moveRobot(.5, -38.75, 10);
+                    robot.moveRobot(.5, -38, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
                     sleep(1000);
@@ -51,7 +51,7 @@ public class AutoRR extends LinearOpMode {
                     //Drop off pixel
                     robot.moveRobot(.5, -43.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.LEFT, 10, .5, 10);
+                    robot.turnRobot(Direction.LEFT, 6, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 9, 5);
                     //Drop pixel
@@ -63,7 +63,7 @@ public class AutoRR extends LinearOpMode {
                     break;
                 default:
                     //Drop off pixel
-                    robot.moveRobot(.5, -31.75, 10);
+                    robot.moveRobot(.5, -30.75, 10);
                     //Turn left
                     robot.turnRobot(Direction.RIGHT, 10, .5, 10);
                     //Move to line
