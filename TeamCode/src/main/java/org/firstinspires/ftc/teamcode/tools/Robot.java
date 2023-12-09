@@ -176,6 +176,11 @@ public class Robot {
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 150)
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                        .stopMotor(lift.liftMotor)
                         .stopMotor(intakeMotor));
 
         // rejecting pixels
@@ -186,8 +191,10 @@ public class Robot {
         idle.addTransitionTo(holdingPixels, handlerButtonLeftTriggerPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 200)
                         .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
                         .stopMotor(lift.liftMotor));
 
         holdingPixels.addTransitionTo(outTakingPixels, handlerButtonBPressed,
