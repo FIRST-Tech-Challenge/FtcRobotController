@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class DroneLauncher {
-    private Robot robot;
-    private Gamepad gamepad;
+    private Robot robot = null;
+    private Gamepad gamepad = null;
     private double pos_hold = 1;
     private double pos_release = 0;
     public DroneLauncher(Robot robot, Gamepad gamepad)
@@ -23,7 +23,7 @@ public class DroneLauncher {
     public void holdDrone()
     {
         // TBD: do we need another button
-        if (!gamepad.a) {
+        if (!gamepad.b) {
             robot.servoDrone.setPosition(pos_hold);
         }
     }

@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Robot {
-    public DcMotor motorFR; // Front Right
-    public DcMotor motorFL; // Front Left
-    public DcMotor motorBR; // Back Right
-    public DcMotor motorBL; // Back Left
+    public DcMotor motorFR = null; // Front Right
+    public DcMotor motorFL = null; // Front Left
+    public DcMotor motorBR = null; // Back Right
+    public DcMotor motorBL = null; // Back Left
 
     public DcMotorEx motorSlider; // Slider
     public DcMotor motorArm; // Elbow or Arm
@@ -33,7 +33,7 @@ public class Robot {
         motorHanging = hardwareMap.get(DcMotor.class, "hanging");
         servoCL = hardwareMap.get(Servo.class, "claw_left");
         servoCR = hardwareMap.get(Servo.class, "claw_right");
-        servoDrone = hardwareMap.get(Servo.class, "done");
+        servoDrone = hardwareMap.get(Servo.class, "drone");
     }
 
 }

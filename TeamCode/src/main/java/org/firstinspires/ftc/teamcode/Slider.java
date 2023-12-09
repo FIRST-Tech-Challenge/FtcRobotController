@@ -8,10 +8,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class Slider {
     private Robot robot;
     private Gamepad gamepad;
-    private double normal_speed = 0.8;
+    private double normal_speed = 0.5;
     private double slow_speed = 0.3;
-    int max_height_ticks = 1000;
+    int max_height_ticks = 4000;
     boolean verbose = true;
+    int motor_ticks = 1425;
 
     int rev_ticks = 250;
 
@@ -46,6 +47,8 @@ public class Slider {
     {
         boolean limit_reached = softlimit_check(power > 0);
         if (limit_reached) {
+            robot.telemetry.addData("Reached", "Limit");
+            robot.telemetry.update();
             return;
         }
         robot.motorSlider.setPower(power);
@@ -54,6 +57,7 @@ public class Slider {
     {
         boolean limit_reached = softlimit_check(power > 0);
         if (limit_reached) {
+            robot.motorSlider.setPower(0);
             return;
         }
         int cur_position = robot.motorSlider.getCurrentPosition();
@@ -65,13 +69,28 @@ public class Slider {
         robot.motorSlider.setPower(power);
     }
 
+    private void moveBottom()
+    {
+        robot.motorSlider.setTargetPosition(0);
+        robot.motorSlider.setPower(0.4);
+
+    }
+
     public void move()
     {
+        int cur_position = robot.motorSlider.getCurrentPosition();
+        if (verbose) {
+            robot.telemetry.addData("Slider Current Position=", cur_position);
+            robot.telemetry.update();
+        }
         if (gamepad.left_stick_y != 0) {
             moveOp(gamepad.left_stick_y * normal_speed);
         } else if (gamepad.left_stick_x != 0) {
             moveOp(10, gamepad.left_stick_x * slow_speed);
+        } if (gamepad.b) {
+            moveBottom();
+        } else {
+            robot.motorSlider.setPower(0);
         }
     }
-
 }
