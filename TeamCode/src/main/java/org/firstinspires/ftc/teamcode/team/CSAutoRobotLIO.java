@@ -61,13 +61,13 @@ public class CSAutoRobotLIO {
         });
 
         setServos(new RevServo[] {
-                new RevServo((ExpansionHubServo)(hardwareMap.get("Outtake"))),
+                //new RevServo((ExpansionHubServo)(hardwareMap.get("Outtake"))),
                 new RevServo((ExpansionHubServo)(hardwareMap.get("Drone")))
         });
 
         setLiftSubsystem(new LiftSubsystem(getMotors()[0]));
-        setIntakeSubsystem(new IntakeSubsystem(getMotors()[1]));
-        setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
+        setIntakeSubsystem(new IntakeSubsystem(getMotors()[0]));
+        //setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
         setDroneSubsystem(new DroneSubsystem(getServos()[1]));
         setMatchRuntime(new TimeProfiler(false));
     }

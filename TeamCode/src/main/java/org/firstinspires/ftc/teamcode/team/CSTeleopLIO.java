@@ -17,16 +17,15 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
  *  User 1:
  *      Drive:
  *          Left & Right joysticks     -> Mecanum drive
- *          Left-Trigger               -> Decrease robot speed .7x
- *          Right-Trigger              -> Normal robot speed 1x
+ *          Left-Bumper               -> Decrease robot speed .7x
+ *          Right-Bumper              -> Normal robot speed 1x
  *      Lift:
  *          Dpad-up                    -> High
  *          Dpad-down                  -> Ground / Intake
  *          Dpad-right                 -> Medium
  *          Dpad-left                  -> Low
- *      Claw:
- *          Left-Bumper                -> Open
- *          Right-Bumper               -> Close
+ *      Drone:
+ *          Dpad-Up                    -> Open
  *      Arm:
  *          B-Button (pressed)         -> Left
  *          X-Button (pressed)         -> Right
@@ -86,21 +85,8 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         drive.update();
         poseEstimate = drive.getPoseEstimate();
 
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------
         //Gamepad 1
-        //drive
-        if (getEnhancedGamepad1().isLeftBumperJustPressed()) {
-            speedMultiplier = 0.7;
-        }
-        if (getEnhancedGamepad1().isRightBumperJustPressed()) {
-            speedMultiplier = 0.5;
-        }
-
-        if (getEnhancedGamepad1().getLeft_trigger() > 0) {
-            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.INTAKE);
-        }
-        if (getEnhancedGamepad1().getRight_trigger() > 0) {
-            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.OUTTAKE);
-        }
 
         drive.setWeightedDrivePower(
                 new Pose2d(
@@ -110,17 +96,30 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
                 )
         );
 
-        //Move to HIGH only if arm is in Mid Position
-//        if(getEnhancedGamepad1().isDpad_up() && armMid){
-//            drive.robot.getLiftSubsystem().extend(HIGH);
-//        }
+        //this changes the speed the robot moves at
+        if (getEnhancedGamepad1().isLeftBumperJustPressed()) {
+            speedMultiplier = 0.7;
+        }
+        if (getEnhancedGamepad1().isRightBumperJustPressed()) {
+            speedMultiplier = 1.0;
+        }
 
+        //Intake
+        //spins the intake to intake a pixel
+        if (getEnhancedGamepad1().getLeft_trigger() > 0) {
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.INTAKE);
+        }
+        //spins the intake to outtake a pixel
+        if (getEnhancedGamepad1().getRight_trigger() > 0) {
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.OUTTAKE);
+        }
+        //stops spining the intake
+        if (getEnhancedGamepad1().isStart()) {
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
+        }
 
-
-
-        //-----------------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------
         //Gamepad 2
-
 
         //Drone
         telemetry.addData("Drone State: ", drive.robot.getDroneSubsystem().getStateMachine().getState());
@@ -129,51 +128,49 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         }
 
         //Lift
-        if(getEnhancedGamepad2().isbJustPressed()){
+        //this bring the lift down
+        if(getEnhancedGamepad2().isaJustPressed()){
             double lastSetPoint = drive.robot.getLiftSubsystem().getDesiredSetpoint();
             telemetry.addData("Lift State: ", lastSetPoint);
-//            if(lastSetPoint == LOW){
-//                drive.robot.getLiftSubsystem().retract();
-//                liftdown = true;
-//            }
-//            else if((lastSetPoint == HIGH || lastSetPoint == MID) && armMid){
-//                drive.robot.getLiftSubsystem().retract();
-////                liftdown = true;
-//            }
+            if(lastSetPoint == LOW){
+                drive.robot.getLiftSubsystem().retract();
+                liftdown = true;
+            }
+            else if((lastSetPoint == HIGH || lastSetPoint == MID) && armMid){
+                drive.robot.getLiftSubsystem().retract();
+                liftdown = true;
+            }
         }
 
-//        if(getEnhancedGamepad2().isDpadRightJustPressed() && armMid){
-//            drive.robot.getLiftSubsystem().extend(MID);
-//            liftdown = false;
-//        }
+        if(getEnhancedGamepad2().isbJustPressed() && armMid){
+            drive.robot.getLiftSubsystem().extend(MID);
+            liftdown = false;
+        }
 
 //        if(getEnhancedGamepad2().isDpadLeftJustPressed()){
 //            drive.robot.getLiftSubsystem().extend(LOW);
 //            liftdown = false;
 //        }
 
-        //Arm
         telemetry.addData("Lift State: ", drive.robot.getLiftSubsystem().getStateMachine().getState());
         telemetry.addData("Lift SetPoint: ", drive.robot.getLiftSubsystem().getDesiredSetpoint());
         telemetry.addData("Outtake State: ", drive.robot.getOuttakeSubsystem().getStateMachine().getState());
 
-        //Allow moving the Arm only when the Lift has moved up and is no longer in Ground or Intake Position
+        //Outtake
+        //Allow moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
         if (!liftdown) {
-            if (getEnhancedGamepad2().isaJustPressed() || getEnhancedGamepad2().isyJustPressed()) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
-                drive.robot.getLiftSubsystem().retract();
-                liftdown = true;
-                armMid = true;
-            }
-
-            if (getEnhancedGamepad2().isxJustPressed()) {
+//            if (getEnhancedGamepad2().isaJustPressed() || getEnhancedGamepad2().isyJustPressed()) {
+//                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+//                drive.robot.getLiftSubsystem().retract();
+//                liftdown = true;
+//                armMid = true;
+//            }
+            if (getEnhancedGamepad2().getLeft_trigger() > 0) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
-                armMid = false;
             }
 
-            if (getEnhancedGamepad2().isbJustPressed()) {
+            if (getEnhancedGamepad2().getRight_trigger() > 0) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-                armMid = false;
             }
         }
 
