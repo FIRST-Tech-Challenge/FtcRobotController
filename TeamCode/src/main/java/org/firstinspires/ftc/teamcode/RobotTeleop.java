@@ -14,7 +14,7 @@ public class RobotTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, telemetry);
         DT = new DriveTrain(robot, gamepad1);
         DL = new DroneLauncher(robot, gamepad2);
         slider = new Slider(robot, gamepad2);
