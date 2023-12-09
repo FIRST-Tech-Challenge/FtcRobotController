@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 import java.util.Arrays;
 
 @Config
-@Autonomous(name = "BRLeft", group = "Linear OpMode")
+@Autonomous(name = "BlueRedLeft(actual)", group = "Linear OpMode")
 public class BackRedAutoLeftPixel extends MeepMeepBoilerplate{
     @Override
     public void runOpMode() {
@@ -40,11 +40,12 @@ public class BackRedAutoLeftPixel extends MeepMeepBoilerplate{
         switch (detection) {
             case LEFT -> drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(26.0)
+                            .forward(28.0)
                             .turn(Math.toRadians(90))
-                            .forward(6)
+                            .forward(3)
+                            .waitSeconds(1)
                             .addTemporalMarker(() -> passiveServo.setPosition(0.1))
-                            .waitSeconds(.25)
+                            .waitSeconds(1)
                             .back(6)
 //                            .strafeRight(25)
 //                            .waitSeconds(.5)
@@ -72,9 +73,7 @@ public class BackRedAutoLeftPixel extends MeepMeepBoilerplate{
             );
             case CENTER -> { drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(10)
-//                            .turn(Math.toRadians(180))
-                            .forward(35)
+                            .forward(31.5)
                             .addDisplacementMarker(() -> passiveServo.setPosition(0.1))
                             .back(5)
 //                            .turn(Math.toRadians(-90))
@@ -103,9 +102,10 @@ public class BackRedAutoLeftPixel extends MeepMeepBoilerplate{
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                             .forward(28.0)
                             .turn(Math.toRadians(-90))
-                            .forward(2)
+                            .forward(6)
+                            .waitSeconds(1)
                             .addTemporalMarker(() -> passiveServo.setPosition(0.1))
-                            .waitSeconds(.25)
+                            .waitSeconds(1)
                             .back(5)
 //                            .strafeLeft(22)
 //                            .waitSeconds(.5)

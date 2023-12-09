@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 import java.util.Arrays;
 
 @Config
-@Autonomous(name = "BBLeft", group = "Linear OpMode")
+@Autonomous(name = "BackBlueLeft(Actual)", group = "Linear OpMode")
 public class BackBlueAutoLeftPixel extends MeepMeepBoilerplate{
     @Override
     public void runOpMode() {
@@ -40,12 +40,12 @@ public class BackBlueAutoLeftPixel extends MeepMeepBoilerplate{
         switch (detection) {
             case LEFT -> drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(26.0)
+                            .forward(28.0)
                             .turn(Math.toRadians(90))
-                            .forward(6)
+                            .forward(8)
                             .addTemporalMarker(() -> passiveServo.setPosition(0.1))
                             .waitSeconds(.25)
-                            .back(6)
+                            .back(8)
 //                            .strafeRight(25)
 //                            .waitSeconds(.5)
 //                            .forward(18)
@@ -72,9 +72,7 @@ public class BackBlueAutoLeftPixel extends MeepMeepBoilerplate{
             );
             case CENTER -> { drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(10)
-                            .turn(Math.toRadians(180))
-                            .back(35)
+                            .forward(31.5)
                             .addDisplacementMarker(() -> passiveServo.setPosition(0.1))
                             .back(5)
 //                            .turn(Math.toRadians(90))

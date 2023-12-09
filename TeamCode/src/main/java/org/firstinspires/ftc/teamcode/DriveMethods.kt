@@ -83,7 +83,7 @@ open class DriveMethods: LinearOpMode() {
         val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         // Ensure the Webcam is correct
 //        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
-        tfod.setZoom(1.0);
+        tfod.setZoom(1.3);
         // Wait for recognitions
         sleep(3000)
 
@@ -133,7 +133,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun includesCup(recognitions: List<Recognition>): Boolean {
         for (recognition in recognitions) {
-            if (recognition.label == "cup" || recognition.label == "parking meter" ||  recognition.label == "airplane" ||recognition.label == "suitcase"||recognition.label == "fire hydrant") return true
+            if (recognition.label == "cup" || recognition.label == "parking meter"||recognition.label == "suitcase"||recognition.label == "fire hydrant") return true
         }
 
         return false
@@ -141,7 +141,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun getCup(recognitions: List<Recognition>): Recognition? {
         for (recognition in recognitions) {
-            if (recognition.label == "cup" || recognition.label == "parking meter"||  recognition.label == "airplane"||recognition.label == "suitcase"||recognition.label == "fire hydrant") return recognition
+            if (recognition.label == "cup" || recognition.label == "parking meter"||recognition.label == "suitcase"||recognition.label == "fire hydrant") return recognition
         }
         return null
     }
