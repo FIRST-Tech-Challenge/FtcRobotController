@@ -102,7 +102,7 @@ public class MecDrive extends LinearOpMode {
         Globals.robot.enableBrake(true);
         Rservopos = 1;
         Lservopos = -1;
-        speedFactor = 1;
+        speedFactor = (float) .5;
 
         Lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -126,6 +126,8 @@ public class MecDrive extends LinearOpMode {
 
     void runGamepad() {
 
+        speedFactor = (float) .5;
+
         leftStickX = gamepad1.left_stick_x;
         leftStickY = gamepad1.left_stick_y;
         rightStickX = gamepad1.right_stick_x;
@@ -134,6 +136,14 @@ public class MecDrive extends LinearOpMode {
         if (gamepad1.a) {
             intakeLift.setPosition(.5);
             intake.setPower(1);
+        }
+
+        if (gamepad1.dpad_left) {
+            speedFactor = (float) .1;
+        }
+
+        if (gamepad1.dpad_right) {
+            speedFactor = (float) 1;
         }
 
         if (gamepad1.y) {
@@ -150,24 +160,36 @@ public class MecDrive extends LinearOpMode {
         if (gamepad1.right_bumper) {
             RHook.setPosition(1);
             LHook.setPosition(0);
+            while (LHook.getPosition()> 0) {
+               LHang.setPower(1);
+               RHang.setPower(1);
+            }
         }
         if (gamepad1.left_bumper) {
-            RHook.setPosition(.75);
-            LHook.setPosition(.25);
-        }
-        if (gamepad1.left_trigger > .5) {
-            RHook.setPosition(.4);
-            LHook.setPosition(.4);
+            RHook.setPosition(.70);
+            LHook.setPosition(.30);
+            while (LHook.getPosition()< .25) {
+                RHang.setPower(-.2);
+                LHang.setPower(-.2);
+            }
         }
         if (gamepad1.right_trigger > .5) {
+            RHook.setPosition(.4);
+            LHook.setPosition(.4);
+            while (LHook.getPosition() < .4) {
+                RHang.setPower(-.3);
+                LHang.setPower(-.3);
+            }
+        }
+        if (gamepad1.left_trigger > .5) {
             airplane.setPosition(0);
         }
             else {
             airplane.setPosition(.3);
         }
         if (gamepad1.dpad_up) {
-            LHang.setPower(.2);
-            RHang.setPower(.2);
+            LHang.setPower(.3);
+            RHang.setPower(.3);
         }
         else {
             LHang.setPower(0);
@@ -205,11 +227,16 @@ public class MecDrive extends LinearOpMode {
             SLift.setPosition(.5);
         }
 
+        if (gamepad1.dpad_left) {
+            Pivot.setPosition(.8);
+            Door.setPosition(0);
+        }
+
         if (gamepad2.right_bumper) {
-            Door.setPosition(.4);
+            Door.setPosition(.43);
         }
         if (gamepad2.left_bumper) {
-            Door.setPosition(.43);
+            Door.setPosition(.45);
         }
         // Door Open .45
         // Door Closed .3
@@ -247,8 +274,8 @@ public class MecDrive extends LinearOpMode {
         telemetry.update();
 
         MecanumDrive.cartesian(Globals.robot,
-                -leftStickY * .5,
-                leftStickX * .5,
-                rightStickX * .35);
+                -leftStickY * speedFactor,
+                leftStickX * speedFactor,
+                rightStickX * speedFactor);
     }
 }
