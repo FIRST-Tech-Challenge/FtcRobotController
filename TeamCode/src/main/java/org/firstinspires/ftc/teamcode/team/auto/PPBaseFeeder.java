@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
-import org.openftc.revextensions2.ExpansionHubEx;
+import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubEx;
 import org.firstinspires.ftc.teamcode.team.PPAutoRobotFeeder;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequenceBuilder;

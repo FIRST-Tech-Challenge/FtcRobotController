@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.team.subsystems;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.drivers.RevMotor;
-import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.RevBulkData;
+import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubEx;
+import org.firstinspires.ftc.teamcode.revextension2.RevBulkData;
 import org.firstinspires.ftc.teamcode.team.PPAutoRobotFeeder;
 import org.firstinspires.ftc.teamcode.team.states.IState;
 

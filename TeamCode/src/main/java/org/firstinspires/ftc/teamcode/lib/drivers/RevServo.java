@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lib.drivers;
 
-import org.openftc.revextensions2.ExpansionHubServo;
+import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubServo;
 
 public class RevServo {
     private static final double MIN_DELTA_POSITION = 0.01d;

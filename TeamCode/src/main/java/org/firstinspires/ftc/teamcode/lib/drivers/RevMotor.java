@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
-import org.openftc.revextensions2.ExpansionHubMotor;
+import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubMotor;
 
 public class RevMotor {
     private static final double MAX_POWER = 1d;

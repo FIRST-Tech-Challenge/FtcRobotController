@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.team;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.openftc.revextensions2.ExpansionHubEx;
+import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubEx;
 
 @TeleOp(name = "Voltage Monitor", group = "Test")
 public class VoltageMonitor extends OpMode
