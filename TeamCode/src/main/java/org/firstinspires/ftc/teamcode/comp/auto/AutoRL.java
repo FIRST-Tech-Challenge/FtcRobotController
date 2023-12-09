@@ -27,6 +27,7 @@ public class AutoRL extends LinearOpMode {
 
         waitForStart();
 
+        //TODO Add Park from RL
 
         // Center Strike Line
         // - Forward: 31.75
@@ -34,7 +35,6 @@ public class AutoRL extends LinearOpMode {
         while(opModeIsActive()) {
             PropPosition propPosition = vision.detectProp();
 
-            //TODO This should be seeing Middle and Left..update trajectories and case
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel

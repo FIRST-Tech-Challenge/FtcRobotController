@@ -27,6 +27,7 @@ public class AutoBL extends LinearOpMode {
 
         waitForStart();
 
+        //TODO In parking code, drop arms to TeleOp pickup position
 
         // Center Strike Line
         // - Forward: 31.75

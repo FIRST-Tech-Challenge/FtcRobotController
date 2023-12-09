@@ -26,6 +26,7 @@ public class AutoBR extends LinearOpMode {
 
         waitForStart();
 
+        //TODO Add Park from BR
 
         // Center Strike Line
         // - Forward: 31.75
@@ -33,7 +34,6 @@ public class AutoBR extends LinearOpMode {
         while(opModeIsActive()) {
             PropPosition propPosition = vision.detectProp();
 
-            //TODO This should be seeing Middle and Right..update trajectories and case
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel
