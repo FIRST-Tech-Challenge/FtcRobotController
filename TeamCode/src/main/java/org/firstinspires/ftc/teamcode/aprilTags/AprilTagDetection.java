@@ -23,6 +23,7 @@ package org.firstinspires.ftc.teamcode.aprilTags;
 
 import android.annotation.SuppressLint;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -39,7 +40,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagDetection
+public class AprilTagDetection extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -50,13 +51,13 @@ public class AprilTagDetection
 
     // Lens intrinsics
     // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C270 webcam at 640 x 480.
+    // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
     // Calibration data is here: https://github.com/FIRST-Tech-Challenge/FtcRobotController/blob/master/TeamCode/src/main/res/xml/teamwebcamcalibrations.xml
-    double fx = 822.317;
-    double fy = 822.317;
-    double cx = 319.495;
-    double cy = 242.502;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
 
     double tagsize_meters = 0.051; // This is the Centerstage 2023-2024 standard april tag size on the backdrop
@@ -79,9 +80,9 @@ public class AprilTagDetection
         zNew /= currentDetections.size();
         }
         z = zNew!=0? zNew : (z > 1.0? 0 : z);
-        if (numberOfZeroValuesSinceNonZero > 30){
-            z = 0;
-        }
+        //if (numberOfZeroValuesSinceNonZero > 30){
+        //    z = 0;
+        //}
 
         return z;
     }
@@ -138,6 +139,9 @@ public class AprilTagDetection
     public double roll(org.openftc.apriltag.AprilTagDetection detection) { return rot.thirdAngle ; }
 
 
+    @Override
+    public void runOpMode() throws InterruptedException {
 
+    }
 }
 

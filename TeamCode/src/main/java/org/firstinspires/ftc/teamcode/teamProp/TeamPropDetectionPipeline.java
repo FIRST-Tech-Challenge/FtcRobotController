@@ -69,7 +69,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline
 
     Telemetry telemetry;
     //Color specific filtering values
-    static final double minBlueInitValues[]= {105, 125, 50};
+    static final double minBlueInitValues[]= {90, 90, 20};
     static final double maxBlueInitValues[] = {135, 255, 255};
 
     //It is on 2 different sections in the hsv therefore we need to merge the 2 red sections
@@ -79,7 +79,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline
     static final double maxRedInitValues2[] = {15, 255, 255};
 
     // Blacken out the top of the image, because the team prop can only be in the bottom half
-    static final int Y_BLACK_COORDINATE = 200;
+    static final int Y_BLACK_COORDINATE = 290;
 
     public TeamPropDetectionPipeline(double fx, double fy, double cx, double cy, Telemetry telemetry)
     {

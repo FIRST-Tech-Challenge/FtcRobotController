@@ -18,35 +18,36 @@ public class Hanger {
     public Hanger(HardwareMap hardwareMap, Button handlerDPadDown, Button handlerDPadUp) {
         hangerMotor = hardwareMap.dcMotor.get("skyHookMotor");
         hangerTouchUp = hardwareMap.touchSensor.get("skyHookTouchUp");
-        hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hangerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         this.handlerDPadDown = handlerDPadDown;
         this.handlerDPadUp = handlerDPadUp;
     }
 
     public void update(Button button) {
-        TelemetryManager.getTelemetry().addData("Hanger Pos: ", hangerMotor.getCurrentPosition());
+        //TelemetryManager.getTelemetry().addData("Hanger Pos: ", hangerMotor.getCurrentPosition());
         if(handlerDPadUp.On()){
             if(hangerTouchUp.isPressed()) {
                 hangerMotor.setPower(0);
             }
             else {
-                int targetPosition = (int) (countsPerRev * HANGER_REVOLUTIONS); // cast to int
-                hangerMotor.setTargetPosition(-targetPosition);
-                hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                hangerMotor.setPower(0.2);
+                //int targetPosition = (int) (countsPerRev * HANGER_REVOLUTIONS); // cast to int
+                /*hangerMotor.setTargetPosition(targetPosition);
+                hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
+                hangerMotor.setPower(1);
             }
         }
         else if(handlerDPadDown.On()){ // button is pressed
             //int targetPosition = (int)(countsPerRev * HANGER_REVOLUTIONS); // cast to int
-            hangerMotor.setTargetPosition(0);
-            hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangerMotor.setPower(0.2);
+            //hangerMotor.setTargetPosition(0);
+            //hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangerMotor.setPower(-1);
         }
         else {
             hangerMotor.setPower(0);
             //hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 

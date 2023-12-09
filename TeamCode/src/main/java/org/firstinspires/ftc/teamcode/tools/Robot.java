@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.OverrideMotor;
 import java.util.function.BooleanSupplier;
 
 public class Robot {
-    public Robot(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2){
+    public Robot(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Boolean isAutonomousMode) {
 
         // Gamepads
         this.gamepad1 = gamepad1;
@@ -38,9 +38,44 @@ public class Robot {
         handlerDPad_Left = new Button(this.gamepad2, Button.NAME.DPAD_LEFT);
         handlerDPad_Right = new Button(this.gamepad2, Button.NAME.DPAD_RIGHT);
 
-        stateMachine = new StateMachine();
 
         lift = new Lift(hardwareMap, gamepad2);
+
+        // Motors
+        intakeMotor = new OverrideMotor(hardwareMap.dcMotor.get("intakeMotor"));
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        skyHook = new Hanger(hardwareMap, handlerDPad_Down, handlerDPad_Up);//hardwareMap.dcMotor.get("skyHookMotor");
+
+
+        planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
+        planeLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Servos
+        clawPitch = hardwareMap.servo.get("clawPitch");
+        clawYaw = hardwareMap.servo.get("clawYaw");
+        clawGrip = hardwareMap.servo.get("clawGrip");
+
+       // clawGrip.scaleRange(0.02, 0.22);  //old values
+        clawGrip.scaleRange(0.05, 0.35);
+        clawPitch.scaleRange(0.755, 0.973);
+        clawYaw.scaleRange(0.125, 0.675);
+
+        // Touch Sensors
+        liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
+
+        clawOpen = 1;
+        clawClose = 0.30;
+        clawCloseOnePixel = 0;
+        clawPitchIntake = 1;
+        clawPitchOutTake = 0;
+
+        clawYawIntake = 0.5;
+        clawYawLeft = 1;
+        clawYawRight = 0;
+
+
+        stateMachine = new StateMachine();
 
         // States
         intakingPixels = new StateMachine.State("pixelTransition");
@@ -60,45 +95,60 @@ public class Robot {
         // Set initial state
         stateMachine.setInitialState(idle);
 
-
-        // Motors
-        intakeMotor = new OverrideMotor(hardwareMap.dcMotor.get("intakeMotor"));
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        skyHook = new Hanger(hardwareMap, handlerDPad_Down, handlerDPad_Up);//hardwareMap.dcMotor.get("skyHookMotor");
-
-
-        planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
-        planeLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Servos
-        clawPitch = hardwareMap.servo.get("clawPitch");
-        clawYaw = hardwareMap.servo.get("clawYaw");
-        clawGrip = hardwareMap.servo.get("clawGrip");
-
-        clawGrip.scaleRange(0.02, 0.22);
-        clawPitch.scaleRange(0.755, 0.973);
-        clawYaw.scaleRange(0.125, 0.675);
-
-        // Touch Sensors
-        liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
-
-        clawOpen = 1;
-        clawClose = 0;
-
-        clawPitchIntake = 1;
-        clawPitchOutTake = 0;
-
-        clawYawIntake = 0.5;
-        clawYawLeft = 1;
-        clawYawRight = 0;
-
-
-
-
         // Timer
         timer = new ElapsedTime();
 
+        if (isAutonomousMode) {
+            createAutoStateTransitions();
+        }
+        else {
+            createTeleopStateTransitions();
+        }
+    }
+
+    public Boolean closeClaw = false;
+    public Boolean outtakePixels = false;
+
+    private void createAutoStateTransitions() {
+        // button triggers
+        BooleanSupplier closeClawSupplier = () -> closeClaw;
+        BooleanSupplier openClawSupplier = () -> (!closeClaw);
+        BooleanSupplier outtakePixelsSupplier = () -> outtakePixels;
+
+        // adding transitions
+        idle.addTransitionTo(holdingPixels, closeClawSupplier,
+                new ActionBuilder()
+                        .servoRunToPosition(clawGrip, clawCloseOnePixel)
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
+                        .stopMotor(lift.liftMotor));
+
+        // rejecting pixels
+//        holdingPixels.addTransitionTo(idle, openClawSupplier,
+//                new ActionBuilder()
+//                        .servoRunToPosition(clawGrip, clawOpen));
+
+        holdingPixels.addTransitionTo(outTakingPixels, outtakePixelsSupplier,
+                new ActionBuilder()
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin+200)
+                        .stopMotor(lift.liftMotor)
+                        .servoRunToPosition(clawPitch, clawPitchOutTake));
+
+
+        outTakingPixels.addTransitionTo(idle, openClawSupplier,
+                new ActionBuilder()
+                        .servoRunToPosition(clawGrip, clawOpen)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 300)
+                );
+    }
+
+
+
+
+
+    private void createTeleopStateTransitions() {
         // button triggers
         BooleanSupplier handlerButtonAPressed = handlerA::Pressed;
         BooleanSupplier handlerButtonBPressed = handlerB::Pressed;
@@ -121,11 +171,16 @@ public class Robot {
         // intaking pixels
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
-                        .startMotor(intakeMotor, 0.2));
+                        .startMotor(intakeMotor, 0.15));
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 150)
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                        .stopMotor(lift.liftMotor)
                         .stopMotor(intakeMotor));
 
         // rejecting pixels
@@ -135,7 +190,12 @@ public class Robot {
 
         idle.addTransitionTo(holdingPixels, handlerButtonLeftTriggerPressed,
                 new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawClose));
+                        .servoRunToPosition(clawGrip, clawClose)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 200)
+                        .startMotor(lift.liftMotor, 1)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                        .stopMotor(lift.liftMotor));
 
         holdingPixels.addTransitionTo(outTakingPixels, handlerButtonBPressed,
                 new ActionBuilder()
@@ -162,10 +222,9 @@ public class Robot {
     }
 
 
-
     // States
     StateMachine stateMachine;
-    Lift lift;
+    public static Lift lift;
     public StateMachine.State intakingPixels;
     public StateMachine.State holdingPixels;
     public StateMachine.State idle;
@@ -184,7 +243,7 @@ public class Robot {
     public static TouchSensor liftTouchDown;
 
     public static double clawPitchIntake, clawPitchOutTake;
-    public static double clawOpen, clawClose, clawYawIntake, clawYawLeft, clawYawRight;
+    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake, clawYawLeft, clawYawRight;
     int liftOutTake;
 
     public static Button handlerA, handlerB, handlerX, handlerY, handlerLeftBumper,
@@ -207,6 +266,10 @@ public class Robot {
         handlerDPad_Up.updateButton(gamepad2);
         handlerDPad_Left.updateButton(gamepad2);
         handlerDPad_Right.updateButton(gamepad2);
+    }
+
+    public void updateSync() {
+        stateMachine.updateStateSync(); //Do one call to process potential trigger
     }
 
     public void update(){

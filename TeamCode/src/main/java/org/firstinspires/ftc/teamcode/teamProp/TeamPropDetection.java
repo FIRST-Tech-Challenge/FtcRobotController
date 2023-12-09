@@ -46,8 +46,8 @@ public class TeamPropDetection {
     static final Point ORIGIN = new Point(0, 0);
 
     // These correspond to where the team prop is to be in either left, center or right position (in pixels)
-    static final double LEFT_BOUNDING_BOX_X = 250;
-    static final double RIGHT_BOUNDING_BOX_X = 500;
+    static final double LEFT_BOUNDING_BOX_X = 300;
+    static final double RIGHT_BOUNDING_BOX_X = 600;
 
 
 
@@ -61,7 +61,7 @@ public class TeamPropDetection {
     double cy = 221.506;
     private Telemetry telemetry;
 
-    private enum propLocation {
+    public enum propLocation {
         LEFT,
         RIGHT,
         CENTER,
@@ -71,8 +71,7 @@ public class TeamPropDetection {
 
 
     public propLocation GetPropLocation() {
-        telemetry.addLine("X Position is:" + teamPropDetectionPipeline.getLatestPosition().x + "Y Position is:" + teamPropDetectionPipeline.getLatestPosition().y);
-
+        //telemetry.addLine("X Position is:" + teamPropDetectionPipeline.getLatestPosition().x + "Y Position is:" + teamPropDetectionPipeline.getLatestPosition().y);
         if (Objects.equals(teamPropDetectionPipeline.getLatestPosition(), ORIGIN)){
             return propLocation.NULL;
         }

@@ -30,7 +30,7 @@ public class SetDriveMotors extends OpMode {
     private final IMU imu;
     public double powerValues[] = new double[4];
 
-    static final double BACKDROP_APPROACH_SPEED = 0.3;
+    static final double BACKDROP_APPROACH_SPEED = -0.25;
 
     //map the motors and run the op mode
     public SetDriveMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
@@ -71,7 +71,7 @@ public class SetDriveMotors extends OpMode {
     public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters) {
         //Driver assistance: takes over if too close to wall
         if (distanceToWallMeters != 0 && distanceToWallMeters < 0.4){
-            if (vertical > BACKDROP_APPROACH_SPEED) {
+            if (vertical < BACKDROP_APPROACH_SPEED) {
                 vertical = BACKDROP_APPROACH_SPEED;
             }
         }
@@ -99,10 +99,10 @@ public class SetDriveMotors extends OpMode {
         TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         // Rotate the movement direction counter to the bot's rotation
 
-        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
-        double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
-//        double rotX = horizontal;
-//        double rotY = vertical;
+//        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
+//        double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
+        double rotX = horizontal;
+        double rotY = vertical;
 
         double rotationalCorrection = 1.1; // original value of code on site was 1.1
 
