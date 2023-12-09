@@ -27,7 +27,7 @@ public class AutonBlueLeft extends LinearOpMode {
         mySparky.initializeDevices();
         mySparky.initializePositions();
 
-        parkingSpot = mySparky.askParkingSpot();
+       // parkingSpot = mySparky.askParkingSpot();
         //drivePath = mySparky.askDrivePath();
 
         telemetry.addData("ParkingSpot", parkingSpot.toString());

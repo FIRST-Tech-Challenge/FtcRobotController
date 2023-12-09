@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.drm.DrmStore;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,10 +14,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.lang.annotation.Target;
-
-public class SpikeCam {
-    OpenCvCamera webcam1 = null;
+public class PropLocationCam {
+    OpenCvCamera webcam1;
     public enum location{
         LEFT,
         MIDDLE,
@@ -37,16 +31,16 @@ public class SpikeCam {
     location spikeLocation = location.NOT_FOUND;
     private LinearOpMode myOpMode;
 
-    public void initialize(LinearOpMode currentOp, SpikeCam.TargetColor targetColor, OpenCvCamera webcamInput) {
+    public void initialize(LinearOpMode currentOp, TargetColor targetColor, OpenCvCamera webcamInput) {
         webcam1 = webcamInput;
         myOpMode = currentOp;
         HardwareMap hardwareMap = myOpMode.hardwareMap;
         myColor = targetColor;
 
-        //       WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        //       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //       webcam1 = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        webcam1.setPipeline(new SpikeCam.spikePipeline());
+ //       WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+ //       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+ //       webcam1 = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        webcam1.setPipeline(new PropLocationCam.spikePipeline());
 
         webcam1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override

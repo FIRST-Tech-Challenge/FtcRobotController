@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous
-public class AutonRedRight extends LinearOpMode {
+public class AutonRedRightNew extends LinearOpMode {
     SpikeCam.location mySpikeLocation;
 
     // This is a SHORT side Auton

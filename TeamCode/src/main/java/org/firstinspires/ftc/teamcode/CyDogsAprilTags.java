@@ -74,6 +74,11 @@ public class CyDogsAprilTags {
 
 
         }   // end method initAprilTag()
+         public void initAprilTag(AprilTagProcessor aprilTagProcessor, VisionPortal visPortal)
+         {
+             aprilTag = aprilTagProcessor;
+             visionPortal = visPortal;
+         }
 
         public AprilTagDetection GetAprilTag(int tagID)
         {
@@ -119,7 +124,7 @@ public class CyDogsAprilTags {
        //     myOpMode.telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         //    myOpMode.telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
        //     myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
-            myOpMode.telemetry.update();
+        //    myOpMode.telemetry.update();
 
         }   // end method telemetryAprilTag()
 

@@ -7,8 +7,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+
+import java.util.List;
+
 
 public class CyDogsSparky extends CyDogsChassis{
 
@@ -17,22 +24,25 @@ public class CyDogsSparky extends CyDogsChassis{
     public Direction parkingSpot;
     private boolean isElbowOpen = false;
 
-    public static final int ArmHomePosition = 5;
-    public static final int ArmLow = 600;
-    public static final int ArmMedium = 950;
-    public static final int ArmHigh = 1300;
-    public static final double ArmRaiseBeforeElbowMovement = 150;
-    public static final double WristForIntake = 0.03;
-    public static final double WristForDriving = 0.08;
-    public static final double WristForScoring = 0.25;
-    public static final double ElbowHomePosition = 0.49;
-    public static final double ElbowScoringPosition = 0.23;
-    public static final double FingerOpen = 0.8;
-    public static final double FingerClosed = 0.5;
+    private AprilTagProcessor aprilTag;
+
+    private VisionPortal visionPortal;
+
+    public static final int ArmHomePosition = 0;
+    public static final int ArmLow = 1800;
+    public static final int ArmMedium = 3600;
+    public static final int ArmHigh = 6300;
+    public static final double ArmRaiseBeforeElbowMovement = 3400;
+    public static final double WristForDriving = 0.05;
+    public static final double WristForScoring = 0.33;
+    public static final double ElbowHomePosition = 0.51;
+    public static final double ElbowScoringPosition = 0.785;
+    public static final double FingerLeftOpen = 0.4;
+    public static final double FingerLeftClosed = 0.5;
+    public static final double FingerRightOpen = 0.4;
+    public static final double FingerRightClosed = 0.53;
     public static final double DroneSecure = 0.53;
     public static final double DroneRelease = 0.3;
-    public static final double CaptainReachHeight = 4000;
-    public static final double CaptainPullHeight = 2000;
 
     public static final int BackUpDistanceFromSpike = 30;
     public static final int DistanceBetweenScoreBoardAprilTags = 150;
@@ -44,7 +54,8 @@ public class CyDogsSparky extends CyDogsChassis{
     public DcMotor ArmLift;
     public Servo DroneReleaseServo;
     public Servo Elbow;
-    public Servo Finger;
+    public Servo FingerLeft;
+    public Servo FingerRight;
     public DcMotor Intake1;
     public DcMotor Intake2;
     public DcMotor TheCaptain;
@@ -66,7 +77,9 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void initializeSpikeCam(SpikeCam.TargetColor targetColor){
         spikeCam = new SpikeCam();
-        spikeCam.initialize(myOpMode, targetColor);
+        WebcamName webcam1 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1");
+        OpenCvCamera spikeCamera = OpenCvCameraFactory.getInstance().createWebcam(webcam1);
+        spikeCam.initialize(myOpMode, targetColor, spikeCamera);
     }
 
     public void initializeDevices() {
@@ -75,27 +88,13 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift = myOpMode.hardwareMap.get(DcMotor.class, "ArmLift");
         DroneReleaseServo = myOpMode.hardwareMap.get(Servo.class, "DroneRelease");
         Elbow = myOpMode.hardwareMap.get(Servo.class, "Elbow");
-        Finger = myOpMode.hardwareMap.get(Servo.class, "Finger");
-        Intake1 = myOpMode.hardwareMap.get(DcMotor.class, "Intake1");
-        Intake2 = myOpMode.hardwareMap.get(DcMotor.class, "Intake2");
-        TheCaptain = myOpMode.hardwareMap.get(DcMotor.class, "TheCaptain");
+        FingerLeft = myOpMode.hardwareMap.get(Servo.class, "FingerLeft");
+        FingerRight = myOpMode.hardwareMap.get(Servo.class, "FingerRight");
 
 
-        // Initialize Intake
-        Intake1.setDirection(DcMotor.Direction.REVERSE);
-        Intake2.setDirection(DcMotor.Direction.FORWARD);
-        Intake1.setPower(0);
-        Intake2.setPower(0);
-        Intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize Drone Release and set position closed
         DroneReleaseServo.setDirection(Servo.Direction.FORWARD);
-        // Initialize the Captain
-        TheCaptain.setDirection(DcMotor.Direction.FORWARD);
-        TheCaptain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        TheCaptain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        TheCaptain.setTargetPosition(0);
-        TheCaptain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         // Initialize Arm Lift
         ArmLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ArmLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -104,11 +103,12 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift.setTargetPosition(0);
         ArmLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // Initialize Finger
-        Finger.setDirection(Servo.Direction.FORWARD);
+        FingerLeft.setDirection(Servo.Direction.FORWARD);
+        FingerRight.setDirection(Servo.Direction.FORWARD);
         // Initialize Wrist
         Wrist.setDirection(Servo.Direction.FORWARD);
         // Initialize Elbow
-        Elbow.setDirection(Servo.Direction.REVERSE);
+        Elbow.setDirection(Servo.Direction.FORWARD);
     }
 
     public void initializePositions() {
@@ -116,12 +116,25 @@ public class CyDogsSparky extends CyDogsChassis{
         Wrist.setPosition(WristForDriving);
         Elbow.setPosition(ElbowHomePosition);
         ArmLift.setTargetPosition(ArmHomePosition);
-        Finger.setPosition(FingerClosed);
+        FingerLeft.setPosition(FingerLeftClosed);
+        FingerRight.setPosition(FingerRightClosed);
+    }
+
+    public void initializeAprilTags(AprilTagProcessor aprilTagProcessor, VisionPortal visPortal)
+    {
+        WebcamName webcam2 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 2");
+
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(webcam2)
+                .addProcessor(aprilTag)
+                .build();
     }
 
     public void raiseArmToScore(int armHeight)
     {
-        Finger.setPosition(FingerClosed);
+    //    Finger.setPosition(FingerClosed);
         ArmLift.setPower(0.8);
         ArmLift.setTargetPosition(armHeight);
     }
@@ -143,12 +156,14 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void openFinger()
     {
-        Finger.setPosition(FingerOpen);
+        FingerLeft.setPosition(FingerLeftOpen);
+        FingerRight.setPosition(FingerRightOpen);
     }
 
     public void closeFinger()
     {
-        Finger.setPosition(FingerClosed);
+        FingerLeft.setPosition(FingerLeftClosed);
+        FingerRight.setPosition(FingerRightClosed);
     }
 
     public void SetLiftToZero() {
@@ -164,7 +179,8 @@ public class CyDogsSparky extends CyDogsChassis{
             } else {
                 Wrist.setPosition(WristForDriving);
                 Elbow.setPosition(ElbowHomePosition);
-                Finger.setPosition(FingerOpen);
+                FingerLeft.setPosition(FingerLeftOpen);
+                FingerRight.setPosition(FingerRightOpen);
                 isElbowOpen = false;
             }
         }
@@ -195,59 +211,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
     }
 
-    public void AdjustToAprilTag2(SpikeCam.location mySpike, CyDogsAprilTags myTagReader, CyDogsChassis.Alliance alliance)
-    {
-        //int targetTag;
-
-        if(mySpike==SpikeCam.location.LEFT) {
-            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 400);
-        } else if (mySpike==SpikeCam.location.RIGHT) {
-            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,400);
-        }
-
-        if(alliance==Alliance.BLUE) {
-                if(mySpike== SpikeCam.location.LEFT) {targetTag=1;}
-                else if (mySpike== SpikeCam.location.MIDDLE) {targetTag=2;}
-                else {targetTag=3;}
-        } else {
-            if(mySpike== SpikeCam.location.LEFT) {targetTag=4;}
-            else if (mySpike== SpikeCam.location.MIDDLE) {targetTag=5;}
-            else {targetTag=6;}
-        }
-
-        AprilTagDetection myDetection = myTagReader.GetAprilTag(targetTag);
-        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0;
-        // now what?
-
-        if(myDetection.id==targetTag) {
-            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double  rangeError      = (myDetection.ftcPose.range - DESIRED_DISTANCE);
-            double  headingError    = myDetection.ftcPose.bearing;
-            double  yawError        = myDetection.ftcPose.yaw;
-
-            // Use the speed and turn "gains" to calculate how we want the robot to move.
-            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-        }
-
-        //moveRobot(drive, strafe, turn);
-        myOpMode.telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-        myOpMode.telemetry.addData("Manual", "x&5.2f","y&5.2f", myDetection.ftcPose.x, myDetection.ftcPose.y);
-        myOpMode.telemetry.update();
-
-    }
-
     public void dropPurplePixel(){
-        Intake1.setPower(-0.2);
-        Intake2.setPower(-0.2);
+        FingerLeft.setPosition(FingerLeftOpen);
+        FingerLeft.setPosition(FingerRightOpen);
         this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
-        Intake1.setPower(0);
-        Intake2.setPower(0);
     }
-
 
     public Direction askParkingSpot(){
         Direction parkingSpot = null;
@@ -377,16 +345,13 @@ public class CyDogsSparky extends CyDogsChassis{
             RotateLeft(94,.5,StandardAutonWaitTime);
             MoveStraight(-17,.5,200);
             dropPurplePixel();
-            returnLiftForDriving();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
             MoveStraight(50,.5,StandardAutonWaitTime);
             dropPurplePixel();
-            returnLiftForDriving();
         } else {
             RotateLeft(-90,.5,StandardAutonWaitTime);
-            MoveStraight(-17,.5,200);
+            MoveStraight(-23,.5,200);
             dropPurplePixel();
-            returnLiftForDriving();
         }
     }
 
@@ -456,4 +421,52 @@ public class CyDogsSparky extends CyDogsChassis{
             StrafeRight(OneTileMM+rightAdjustment+65,.5,StandardAutonWaitTime);
         }
     }
+
+    public AprilTagDetection GetAprilTag(int tagID)
+    {
+        telemetryAprilTag();
+        // Get the latest AprilTag detections from the pipeline.
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        // Iterate over the detections and return the one that matches the specified ID.
+        for (AprilTagDetection aprilTagDetection : currentDetections) {
+            if (aprilTagDetection.id == tagID) {
+                return aprilTagDetection;
+            }
+        }
+
+        // If no matching detection is found, return null.
+        return null;
+    }
+
+    /**
+     * Add telemetry about AprilTag detections.
+     */
+    private void telemetryAprilTag() {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        myOpMode.telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                myOpMode.telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                myOpMode.telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                myOpMode.telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                myOpMode.telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            } else {
+                myOpMode.telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                myOpMode.telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+
+
+        }   // end for() loop
+
+        // Add "key" information to telemetry
+        //     myOpMode.telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        //    myOpMode.telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        //     myOpMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
+        //    myOpMode.telemetry.update();
+
+    }   // end method telemetryAprilTag()
 }
