@@ -68,5 +68,9 @@ public class Wrist {
             servo.setPosition(1.0);
         }
 
+        if (myOpMode.gamepad2.left_bumper) {
+            servo.setPosition(0.4);
+        }
+
     }
 }
