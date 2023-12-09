@@ -9,13 +9,14 @@ This is a copy of the FirstAutonomousIterationMirror just the last portion to ma
  */
 
 
-@Autonomous(name="Red Front: Auto V0.2", group="Robot")
+@Autonomous(name="Blue Back: Auto V0.2", group="Robot")
 //@Disabled
 
-public class FirstAutonomousIterationRed extends FirstAutonomousIteration {
+public class FirstAutonomousIterationBlueBack extends FirstAutonomousIteration {
 
-    public FirstAutonomousIterationRed() {
-        super(-1, false);
+    public FirstAutonomousIterationBlueBack() {
+        super(1,true);
     }
+
 
 }

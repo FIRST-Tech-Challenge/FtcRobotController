@@ -124,6 +124,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
     private FSMState nextState = FSMState.UNINITIALIZED;
 
     private int sideMul = 1;
+    private boolean isBack = false;
 
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
@@ -210,7 +211,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    public FirstAutonomousIteration (int sideMul) {
+    public FirstAutonomousIteration (int sideMul, boolean isBack) {
+        this.isBack = isBack;
         this.sideMul = sideMul;
     }
 
@@ -491,8 +493,13 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
                 case GO_PARK:
                     turnToHeading(TURN_SPEED*10, sideMul * (-90));
-                    driveStraight(DRIVE_SPEED*10, -30, sideMul * (-90), true, false);
-                    driveStraight(DRIVE_SPEED*11, -61, sideMul * (-90), true, false);
+
+                    if (isBack) {
+                        driveStraight(DRIVE_SPEED * 10, -50, sideMul * (-90), true, false);
+                    } else  {
+                        driveStraight(DRIVE_SPEED*10, -30, sideMul * (-90), true, false);
+                        driveStraight(DRIVE_SPEED*11, -61, sideMul * (-90), true, false);
+                    }
 
                     nextState = FSMState.DONE;
                     break;
