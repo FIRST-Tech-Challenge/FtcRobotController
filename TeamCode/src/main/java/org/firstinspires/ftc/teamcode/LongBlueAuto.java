@@ -18,9 +18,17 @@ public class LongBlueAuto extends LinearOpMode {
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
+
+            // move linear slide up
+            robot.moveLinearSlideByTicksBlocking(-1550);
+
+            robot.trayToOuttakePos(); // pivot tray to outtake position
+            sleep(100);
+
             robot.alignToBoard();
-            robot.autoOuttake(true);
+            robot.autoOuttake(false);
             robot.parkBot(true);
+
             break;
         }
     }
