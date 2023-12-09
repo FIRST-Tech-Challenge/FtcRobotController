@@ -26,7 +26,7 @@ class KotlinAprilTagRRTest : LinearOpMode() {
     override fun runOpMode() {
         val robot = BasicRobot(this, false)
         roadrun = SampleMecanumDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY)
-        val startPose = Pose2d(40.0, 1.5 * 23.5, Math.toRadians(0.0))
+        val startPose = Pose2d(40.0, 1.5 * 23.5, Math.toRadians(180.0))
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         val cv = CVMaster()
         cv.switchToApril()

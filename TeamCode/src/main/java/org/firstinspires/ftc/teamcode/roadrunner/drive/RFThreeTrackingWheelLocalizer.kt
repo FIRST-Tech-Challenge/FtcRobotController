@@ -11,7 +11,10 @@ import org.apache.commons.math3.linear.DecompositionSolver
 import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.lastWheelPositions
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -23,14 +26,12 @@ import kotlin.math.sin
 abstract class RFThreeTrackingWheelLocalizer(
     wheelPoses: List<Pose2d>
 ) : Localizer {
-    private var _poseEstimate = Pose2d()
     override var poseEstimate: Pose2d
-        get() = _poseEstimate
+        get() = currentPose
         set(value) {
-            _poseEstimate = value
+            lastWheelPositions = emptyList()
+            currentPose = value
         }
-    override var poseVelocity: Pose2d? = null
-    private var lastWheelPositions = emptyList<Double>()
 
     private val forwardSolver: DecompositionSolver
 
@@ -69,48 +70,23 @@ abstract class RFThreeTrackingWheelLocalizer(
     }
 
     override fun update() {
-//        poseEstimate=currentPose
         val wheelPositions = getWheelPositions()
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
                 .map { it.first - it.second }
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
-            _poseEstimate = relativeOdometryUpdate(robotPoseDelta)
+            currentPose = Kinematics.relativeOdometryUpdate(currentPose, robotPoseDelta)
         }
 
         val wheelVelocities = getWheelVelocities()
         if (wheelVelocities != null) {
-            poseVelocity = calculatePoseDelta(wheelVelocities)
+            currentPOVVelocity = calculatePoseDelta(wheelVelocities)
+            currentVelocity = Pose2d(currentPOVVelocity.vec().rotated(currentPose.heading),
+                currentPOVVelocity.heading)
         }
 
         lastWheelPositions = wheelPositions
-    }
-
-    /**
-     * Performs a relative odometry update. Note: this assumes that the robot moves with constant velocity over the
-     * measurement interval.
-     */
-    fun relativeOdometryUpdate(robotPoseDelta: Pose2d): Pose2d {
-        val dtheta = robotPoseDelta.heading
-        val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
-            1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
-        } else {
-            sin(dtheta) / dtheta to (1 - cos(dtheta)) / dtheta
-        }
-
-        val fieldPositionDelta = Vector2d(
-            sineTerm * robotPoseDelta.x - cosTerm * robotPoseDelta.y,
-            cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y
-        )
-
-        val fieldPoseDelta = Pose2d(fieldPositionDelta.rotated(_poseEstimate.heading), robotPoseDelta.heading)
-
-        return Pose2d(
-            _poseEstimate.x + fieldPoseDelta.x,
-            _poseEstimate.y + fieldPoseDelta.y,
-            Angle.norm(_poseEstimate.heading + fieldPoseDelta.heading)
-        )
     }
 
     /**

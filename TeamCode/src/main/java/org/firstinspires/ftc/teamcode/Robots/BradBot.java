@@ -60,7 +60,7 @@ public class BradBot extends BasicRobot {
     if (!isTeleop) {
       cv = new CVMaster();
     }
-    magazine = new Magazine();
+//    magazine = new Magazine();
     hanger = new Hanger();
     intake = new Intake();
     launcher = new Launcher();
