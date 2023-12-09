@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.teamcode.util.Utilities;
@@ -18,14 +13,13 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double L_X_OFFSET = 625;
-    public static double L_Y_OFFSET = -100;
-    public static double R_X_OFFSET = 100;
-    public static double R_Y_OFFSET = 175;
+    public static double L_X_OFFSET = 640;
+    public static double L_Y_OFFSET = 120;
+    public static double R_X_OFFSET = -20;
+    public static double R_Y_OFFSET = 0;
 
     static final int STREAM_WIDTH = 1280; // resolution of camera   1280
     static final int STREAM_HEIGHT = 720; // resolution of camera  720
@@ -46,8 +40,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public static int WidthRectA = 50; //180
     public static int HeightRectA = 50; //100
 
-    public static int WidthRectB = 50; //180
-    public static int HeightRectB = 50; //100
+    public static int WidthRectB = 100; //180
+    public static int HeightRectB = 100; //100
 
     static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH / 2), (STREAM_HEIGHT / 2));
 
@@ -60,7 +54,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
     boolean stopped = false;
 
-    static final int colorTolerance = 10;
+    static final int colorThreshold = 70;
 
     public ColorDetectionPipeline() {
         Log.v("vision", "ColorDetectionPipeline called.");
@@ -180,10 +174,10 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         int CdistFrom1 = Math.abs(avgCS - red1);
         int CdistFrom2 = Math.abs(avgCS - blue2);
         if (isred) {
-            if(LdistFrom1 <= colorTolerance){
+            if(avgLS > colorThreshold){
                 propPos = 1;
             }
-            if(CdistFrom1 <= colorTolerance){
+            if(avgCS > colorThreshold){
                 if(LdistFrom1 < CdistFrom1){
                     propPos = 1;
                 }
@@ -193,10 +187,10 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
             }
         }
         if(!isred){
-            if(LdistFrom2 <= colorTolerance){
+            if(avgLS > colorThreshold){
                 propPos = 1;
             }
-            if(CdistFrom2 <= colorTolerance){
+            if(avgCS > colorThreshold){
                 if(LdistFrom2 < CdistFrom2){
                     propPos = 1;
                 }

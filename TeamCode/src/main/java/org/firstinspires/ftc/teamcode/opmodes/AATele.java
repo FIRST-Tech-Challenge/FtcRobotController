@@ -23,6 +23,7 @@ public class AATele extends LinearOpMode {
         NanoClock clock = NanoClock.system();
         double prevTime = clock.seconds();
         int intakePosition = 0; // 0 = outtake; 1 = intake;
+        double intakeStartTime = 0;
 
         while (!isStopRequested()) {
             telemetry.update();
@@ -33,7 +34,7 @@ public class AATele extends LinearOpMode {
             double factor = robot.mecanumDrive.mapJsRadiusVal(joystickRadius,slowMode);
             double jsX = robot.mecanumDrive.mapJsComponents(-gamepad1.left_stick_x, joystickRadius, slowMode);
             double jsY = robot.mecanumDrive.mapJsComponents(gamepad1.left_stick_y, joystickRadius, slowMode);
-            robot.mecanumDrive.setDrivePower(new Pose2d(-jsY, -jsX, -(0.5)*gamepad1.right_stick_x));
+            robot.mecanumDrive.setDrivePower(new Pose2d(-jsY, -jsX, -(0.8)*gamepad1.right_stick_x));
             robot.mecanumDrive.setPowerFactor(0.7); //remove with actual robot.
 
 
@@ -55,12 +56,11 @@ public class AATele extends LinearOpMode {
             if(smartGamepad1.x_pressed()){ // test auto output command
                 robot.intake.intakeState = 4;
             }
-            /*            if(smartGamepad1.left_bumper){
-                robot.intake.setPower(1);
-            } else{
-                robot.intake.setPower(0);
+            if(smartGamepad1.right_bumper){// reverses the intake motor for a few seconds :)
+                robot.intake.intakeState = 7;
+
             }
- */
+
 
             // Outtake automated
             if(smartGamepad2.a_pressed()){

@@ -32,6 +32,7 @@ public class Intake implements Subsystem {
     private double motorDelayForAutoOutput = 800;
 
     private double outtakeStartTime = 0;
+    private double intakeReverseStartTime = 0;
     private double motorSweepPwr = -1.0;
     private double autoOutputPwr = -0.4;
 
@@ -124,6 +125,15 @@ public class Intake implements Subsystem {
                 intakeState = 0;
                 intakeMotor.setPower(0);
                 toBasePos();
+            }
+        } else if(intakeState == 7) {
+            intakeReverseStartTime = System.currentTimeMillis();
+            intakeMotor.setPower(-1);
+            intakeState = 8;
+        }else if(intakeState == 8){
+            if (System.currentTimeMillis() - intakeReverseStartTime >= 2000) {
+                intakeMotor.setPower(0);
+                intakeState = 0;
             }
         }
         //intakeMotor.setPower(motorPosition);

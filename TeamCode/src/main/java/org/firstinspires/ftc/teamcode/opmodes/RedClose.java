@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
 import org.firstinspires.ftc.teamcode.util.Utilities;
 import org.firstinspires.ftc.teamcode.subsystems.RobotVision;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 @Autonomous
@@ -33,7 +35,7 @@ public class RedClose extends LinearOpMode {
         RobotVision rvis = new RobotVision();
 
         // general variable
-        int elementPos = 3;
+        int elementPos = rvis.getTeamPropOrientation(true);
 
         // Commands
         //Servo init code here
@@ -52,32 +54,58 @@ public class RedClose extends LinearOpMode {
         elementPos = rvis.getTeamPropOrientation(true);
         //Log.v("AUTODEBUG", "1: elementPos = %0d");
         telemetry.addData("Element pos", elementPos);
-        elementPos = 1;
+        elementPos = rvis.getTeamPropOrientation(true);
         // drop intake preload
 
         if (elementPos == 1) {//left
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(24, -3), Math.toRadians(-90))
+                            .splineTo(new Vector2d(22, -3), Math.toRadians(-89))
                             .build()
             ));
+            //dump purple pixel
+            robot.runCommand(dropIntakePreload);
+
+            // go to back drop
+            robot.runCommand(drivetrain.followTrajectory(
+                    drivetrain.trajectoryBuilder(new Pose2d())
+                            .splineTo(new Vector2d(46, -3), Math.toRadians(0))
+                            .build()
+            ));
+            //dump yellow pixel
+            robot.runCommand(outCmd);
+
         } else if (elementPos == 2) { //middle
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
                             .splineTo(new Vector2d(30, -15), Math.toRadians(-90))
                             .build()
             ));
+            //dump purple pixel
+            robot.runCommand(dropIntakePreload);
+
+            // go to back drop
+
+            //dump yellow pixel
+            robot.runCommand(outCmd);
         } else {// right
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
                             .splineTo(new Vector2d(24, -27), Math.toRadians(-90))
                             .build()
             ));
+            //dump purple pixel
+            robot.runCommand(dropIntakePreload);
+
+            // go to back drop
+
+            //dump yellow pixel
+            robot.runCommand(outCmd);
         }
 
-        robot.runCommand(dropIntakePreload);
-        // Move to backdrop
-        robot.runCommand(outCmd);
+
+
+
 
 
 
