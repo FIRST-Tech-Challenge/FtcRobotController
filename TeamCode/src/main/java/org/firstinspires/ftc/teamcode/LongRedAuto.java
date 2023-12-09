@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -15,11 +14,19 @@ public class LongRedAuto extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true);
         robot.setUpDrivetrainMotors();
         robot.initVisionProcessing();
+
         waitForStart();
 
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
+
+            // move linear slide up
+            robot.moveLinearSlideByTicksBlocking(-1550);
+
+            robot.trayToOuttakePos(); // pivot tray to outtake position
+            sleep(100);
+
             robot.alignToBoard();
             robot.autoOuttake(false);
             robot.parkBot(true);

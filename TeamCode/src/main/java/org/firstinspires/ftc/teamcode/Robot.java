@@ -105,9 +105,6 @@ public class Robot {
 
             double power =  remainingDistanceLow * 0.002;
 
-            Log.d("pid", "linear slide pos in ticks" + lsFront.getCurrentPosition());
-            Log.d("pid", "linear slides power" + power);
-
             double minPower = 0.4;
             if (power > 0 && power < minPower) {
                 power = minPower;
@@ -1183,11 +1180,13 @@ public class Robot {
         // initialize robot class
         setUpDrivetrainMotors();
         setUpIntakeOuttake();
+        planeLauncher = hardwareMap.servo.get("planeLauncher");
 
         openHook();
         closeClamp();
         trayToIntakePos();
         opMode.sleep(100);
+        planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
     }
 
@@ -1221,7 +1220,7 @@ public class Robot {
 
             // right bumper launches drone
             if (gamepad1.b) {
-                planeLauncher.setPosition(0.7);
+                planeLauncher.setPosition(0.45);
             }
 
             // x aligns bot to board
@@ -1252,7 +1251,7 @@ public class Robot {
             mecanuming = gamepad1.left_stick_x * frontFacing;
 
             //turning stays the same
-            turning = gamepad1.right_stick_x / 2;
+            turning = gamepad1.right_stick_x;
 
             //set powers using this input
             fLeftPower = straight + turning + mecanuming;
@@ -1273,10 +1272,10 @@ public class Robot {
 
             //uses different powers based on which bumper was pressed last
             if (slowMode) {
-                fLeftPower /= 2;
-                bLeftPower /= 2;
-                fRightPower /= 2;
-                bRightPower /= 2;
+                fLeftPower *= 0.7;
+                bLeftPower *= 0.7;
+                fRightPower *= 0.7;
+                bRightPower *= 0.7;
             }
 
             //set motor power ONLY if a value has changed. else, use previous value.
