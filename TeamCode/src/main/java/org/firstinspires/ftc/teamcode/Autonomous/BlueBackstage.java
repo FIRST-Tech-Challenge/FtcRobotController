@@ -39,7 +39,7 @@ public class BlueBackstage extends LinearOpMode {
             teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
             //Open Purple Pixel Claw Side
             //Shooting Purple Pixel onto SpikeMark with Intake
-            teamBot.moveWithoutEncoders(-0.6, -0.6, 2500);
+            teamBot.moveWithoutEncoders(-0.6, -0.6, 2400);
             teamBot.gyroTurning(-90);
             teamBot.moveWithoutEncoders(0.6, 0.6, 1500);
             //Open Yellow Pixel Claw Side
