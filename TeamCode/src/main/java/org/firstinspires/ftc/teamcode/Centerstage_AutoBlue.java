@@ -47,7 +47,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = " Position Object Detection", group = "Concept")
+@TeleOp(name = "Position Object Detection", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue extends LinearOpMode {
 
@@ -79,11 +79,14 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     public void runOpMode() {
         Robot robot = new Robot(hardwareMap);
         initTfod();
-
+        robot.intake.intakeDown(false);
+        //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+
+
         waitForStart();
 
         if (opModeIsActive()) {
@@ -97,14 +100,14 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                         // center
                         telemetry.addData("position","Center");
                         robot.driveTrain.centerPos();
-                        seen=true;
+                        seen = true;
                         
                 }
                 else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
                         // left
                         telemetry.addData("position","Left");
                         robot.driveTrain.leftPos();
-                        seen=true;
+                        seen = true;
                 }
 
             }

@@ -17,26 +17,67 @@ public class Centerstage_TeleOp extends LinearOpMode {
         boolean intakeToggle = false;
         ElapsedTime intakeToggleTime = new ElapsedTime();
 
+        boolean droneToggle = false;
+        ElapsedTime droneToggleTime = new ElapsedTime();
+
+        boolean trapToggle = false;
+        ElapsedTime trapToggleTime = new ElapsedTime();
+
         boolean directionToggle = false;
         ElapsedTime directionToggleTime = new ElapsedTime();
 
+        boolean droneLaunched = false;
+        ElapsedTime droneTime = new ElapsedTime();
+
+        robot.intake.intakeDown(true);
+
         waitForStart();
+        robot.intake.intakeDown(true);
         while (opModeIsActive()) {
 
-            if (gamepad2.x && intakeToggleTime.time() > .75 && !intakeToggle) {
+
+            // This helps control the intake, it toggles the intake.
+            if (gamepad2.a && intakeToggleTime.time() > .75 && !intakeToggle) {
                 intakeToggle = true;
                 intakeToggleTime.reset(); }
-            else if (gamepad2.x && intakeToggleTime.time() > .75 && intakeToggle) {
+            else if (gamepad2.a && intakeToggleTime.time() > .75 && intakeToggle) {
                 intakeToggle = false;
                 intakeToggleTime.reset();
             }
 
+            // This function controls driving directions.
             if (gamepad1.x && directionToggleTime.time() > .75 && !directionToggle) {
                 directionToggle = true;
                 directionToggleTime.reset(); }
             else if (gamepad1.x && directionToggleTime.time() > .75 && directionToggle) {
                 directionToggle = false;
                 directionToggleTime.reset();
+            }
+
+            // This function controls the drone.
+            if (gamepad2.y && droneToggleTime.time() > .75 && !droneToggle) {
+                droneToggle = true;
+                droneToggleTime.reset();
+                robot.outtake.launchDrone(droneToggle);
+
+            }
+            else if (gamepad2.y && droneToggleTime.time() > .75 && droneToggle) {
+                droneToggle = false;
+                droneToggleTime.reset();
+                robot.outtake.launchDrone(droneToggle);
+            }
+
+            // This function controls the trapdoor.
+            if (gamepad2.x && trapToggleTime.time() > .25 && !trapToggle) {
+                trapToggle = true;
+                trapToggleTime.reset();
+                robot.outtake.trapdoor(trapToggle);
+
+            }
+            else if (gamepad2.x && trapToggleTime.time() > .25 && trapToggle) {
+                trapToggle = false;
+                trapToggleTime.reset();
+                robot.outtake.trapdoor(trapToggle);
             }
 
 

@@ -4,6 +4,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -31,10 +32,10 @@ public class DriveTrain {
         rightBackDrive = hwMap.get(DcMotor.class, "rightBack");
 
         // Initializes motor directions:
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
     // This function needs an axial, lateral, and yaw input. It uses this input to drive the drive train motors.
@@ -69,15 +70,15 @@ public class DriveTrain {
 
         // The next four lines gives the calculated power to each motor:
         if (direction) {
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower/2);
+            rightFrontDrive.setPower(rightFrontPower/2);
+            leftBackDrive.setPower(leftBackPower/2);
+            rightBackDrive.setPower(rightBackPower/2);
         } else {
-            leftFrontDrive.setPower(-leftFrontPower);
-            rightFrontDrive.setPower(-rightFrontPower);
-            leftBackDrive.setPower(-leftBackPower);
-            rightBackDrive.setPower(-rightBackPower);
+            leftFrontDrive.setPower(-leftFrontPower/2);
+            rightFrontDrive.setPower(-rightFrontPower/2);
+            leftBackDrive.setPower(-leftBackPower/2);
+            rightBackDrive.setPower(-rightBackPower/2);
         }
 
 
@@ -437,7 +438,7 @@ public class DriveTrain {
         Wait(.5);
     }
 
-    private void Wait(double seconds) {
+   public void Wait(double seconds) {
         runtime.reset();
         while (runtime.time() < seconds) {
             // this statement is supposed to be empty.

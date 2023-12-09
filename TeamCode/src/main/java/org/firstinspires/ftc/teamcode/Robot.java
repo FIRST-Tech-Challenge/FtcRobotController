@@ -11,8 +11,8 @@ public class Robot {
     // This combines all the subsystems.
     public Robot(HardwareMap hwMap) {
         driveTrain = new DriveTrain(hwMap);
-        //intake = new Intake(hwMap);
-       // outtake = new Outtake(hwMap);
+        intake = new Intake(hwMap);
+        outtake = new Outtake(hwMap);
     }
 
 }

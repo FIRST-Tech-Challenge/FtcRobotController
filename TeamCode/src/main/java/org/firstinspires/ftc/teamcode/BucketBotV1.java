@@ -16,7 +16,7 @@ public class BucketBotV1 extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            bucketBot.drivetrain.drive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            bucketBot.drivetrain.drive(gamepad1.left_stick_y/2.0, gamepad1.right_stick_y/2.0);
 
             if (gamepad1.x && toggleTime.time() > .75 && !toggle) {
                 toggle = true;
