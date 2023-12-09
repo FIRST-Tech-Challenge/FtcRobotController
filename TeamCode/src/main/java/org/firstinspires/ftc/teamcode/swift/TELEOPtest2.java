@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 @TeleOp
+@Disabled
 public class TELEOPtest2 extends LinearOpMode {
 
 
