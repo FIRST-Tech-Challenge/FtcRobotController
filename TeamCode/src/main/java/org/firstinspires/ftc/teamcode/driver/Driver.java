@@ -28,11 +28,11 @@ public class Driver extends LinearOpMode {
     static final double LEFT_GRIPPER_OPEN = 0.95;
 
     //was 1.5
-    static final double LEFT_GRIPPER_CLOSE = 1.7;
+    static final double LEFT_GRIPPER_CLOSE = 2;
     static final double RIGHT_GRIPPER_OPEN = 0.05;
 
     //was -0.5
-    static final double RIGHT_GRIPPER_CLOSE = -0.7;
+    static final double RIGHT_GRIPPER_CLOSE = -0.9;
     static final double WRIST_DROP_POS = 0.7;
     static final double WRIST_INTAKE_POS = 0.3;
     private Servo leftGripper;
@@ -137,24 +137,16 @@ public class Driver extends LinearOpMode {
 
 
 
-            if (gamepad2.left_bumper) {
+            if (gamepad2.right_bumper) {
                 // Move servos in opposite directions when "y" is pressed
-                leftGripper.setPosition(LEFT_GRIPPER_CLOSE); // Adjust the position value as needed
+                leftGripper.setPosition(LEFT_GRIPPER_CLOSE);
+                rightGripper.setPosition(RIGHT_GRIPPER_CLOSE);// Adjust the position value as needed
 
-            } else if (gamepad2.left_trigger>0.5) {
+            } else if (gamepad2.left_bumper) {
                 // Return servos to the center position when "x" is pressed
-                leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value for the center position
+                leftGripper.setPosition(LEFT_GRIPPER_OPEN);
+                rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
             }
-                if (gamepad2.right_bumper) {
-                    // Move servo in opposite directions when "y" is pressed
-                    rightGripper.setPosition(RIGHT_GRIPPER_CLOSE); // Adjust the position value as needed
-
-                } else if (gamepad2.right_trigger>0.5) {
-                    // Return servos to the center position when "x" is pressed
-                    rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
-                }
-
-
             telemetry.update();
             }
 
@@ -221,6 +213,7 @@ public class Driver extends LinearOpMode {
                         moveArmMotorToPosition(ARM_INTAKE_POS);
                     } else if (gamepad2.dpad_up) {
                         moveArmMotorToPosition(ARM_DRIVE_POS);
+                        //wristServo.setPosition(WRIST_INTAKE_POS);
                     }
 
                     //and here put your logic to move the arm up and down
