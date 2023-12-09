@@ -45,7 +45,7 @@ public class CenterStageTeleop extends LinearOpMode {
     double[] servoPos = {.5,.5,.5,.5,.5,.5,.5,.5,.5,.5};
     int target = 0;
 
-    int clawClosed = 0;
+    boolean clawClosed = true;
 
     private enum DriveMode {
         NORMAL,
@@ -164,33 +164,29 @@ RB - four bar up (presets)
 LT - slides down (presets)
 RT - slides up (presets)
                     */
-                    if (gamepad1.dpad_up){
-                        //gp slides full extension
-                        //v4b preset 4 pixel high
-                        //claw open
-                    }
+//                    if (gamepad1.dpad_up){
+//                        clawArm.setPosition(temp - 0.005);
+//                    }
                     if (gamepad1.dpad_right){
                         //gp slides 2/3rds extension
                         //v4b preset 1 pixel high
                         //claw open
                     }
-                    if (gamepad1.dpad_down){
-                        //gp slides 1/3rds extension
-                        //v4b preset 1 pixel high
-                        //claw open
-                    }
+//                    if (gamepad1.dpad_down){
+//                        clawArm.setPosition(temp + 0.005);
+//                    }
                     if (gamepad1.dpad_left){
                         //gp slides fully in
                         //v4b preset 4 pixel high
                         //claw open
                     }
-                    if (gamepad1.a && clawClosed == 1) {
-                        //claw false
-                        //claw open
+                    if (gamepad1.a && clawClosed == true) {
+                        clawClosed = false;
+                        clawServo.setPosition(CSCons.claw[0]);
                         sleep(300);
-                    } else if (gamepad1.a) {
-                        //claw true
-                        //claw close
+                    } else if (gamepad1.a && clawClosed == false) {
+                        clawClosed = true;
+                        clawServo.setPosition(CSCons.claw[1]);
                         sleep(300);
                     }
                     if (gamepad1.b) {
@@ -200,14 +196,21 @@ RT - slides up (presets)
                         //when not busy, open claw
                         //right intake
                     }
-                    if (gamepad1.x) {
-                        // Solinexi's april tag alignment
-                        driveMode = DriveMode.PIXEL_SCORE;
-                    }
-                    if (gamepad1.left_stick_button) {
-                        driveMode = DriveMode.PIXEL_SCORE;
-                        sleep(300);
-                    }
+//                    if (gamepad1.x) {
+//                        // Solinexi's april tag alignment
+//                        driveMode = DriveMode.PIXEL_SCORE;
+//                    }
+//                    if (gamepad1.left_stick_button) {
+//                        driveMode = DriveMode.PIXEL_SCORE;
+//                        sleep(300);
+//                    }
+//                    if (gamepad1.left_trigger > 0.5){
+//                        backSlides.setPower(-1);
+//                    } else if (gamepad1.right_trigger > 0.5) {
+//                        backSlides.setPower(1);
+//                    } else {
+//                        backSlides.setPower(0);
+//                    }
                     break;
                 case PIXEL_SCORE:
                     break;
@@ -248,25 +251,25 @@ RT - slides up (presets)
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-            if (gamepad1.a && servoPos[target]< 1) {
-                servoPos[target]+=.005;
-            } else if (gamepad1.b && servoPos[target] > 0) {
-                servoPos[target]-=.005;
-            }
+//            if (gamepad1.a && servoPos[target]< 1) {
+//                servoPos[target]+=.005;
+//            } else if (gamepad1.b && servoPos[target] > 0) {
+//                servoPos[target]-=.005;
+//            }
 
-            if (gamepad1.x) {
-                target++;
-                if (target == 10){
-                    target = 0;
-                }
-                sleep(300);
-            } else if (gamepad1.y) {
-                target--;
-                if (target == -1){
-                    target = 9;
-                }
-                sleep(300);
-            }
+//            if (gamepad1.x) {
+//                target++;
+//                if (target == 10){
+//                    target = 0;
+//                }
+//                sleep(300);
+//            } else if (gamepad1.y) {
+//                target--;
+//                if (target == -1){
+//                    target = 9;
+//                }
+//                sleep(300);
+//            }
 
             if(gamepad1.right_bumper){
                 hangingMotor.setPower(.3);
@@ -276,37 +279,31 @@ RT - slides up (presets)
                 hangingMotor.setPower(0);
             }
 
-            if (gamepad1.right_trigger > .3) {
-                hangingMotor.setPower(.1);
-            } else if (gamepad1.left_trigger > .3) {
-                hangingMotor.setPower(-.1);
-            } else {
-                backSlides.setPower(0);
-            }
+//            planeLaunch.setPosition(servoPos[0]);
+//            planeRaise.setPosition(servoPos[1]);
+//            clawServo.setPosition(servoPos[2]);
+//            clawArm.setPosition(servoPos[3]);
+//            clawAngle.setPosition(servoPos[4]);
+//            cameraTurning.setPosition(servoPos[5]);
+//            outtakeHook.setPosition(servoPos[6]);
+//            outtakeRotation.setPosition(servoPos[7]);
+//            outtakeMovementRight.setPosition(servoPos[8]);
+//            outtakeMovementLeft.setPosition(servoPos[9]);
+//
+//            telemetry.addData("planeLaunch",servoPos[0]);
+//            telemetry.addData("planeRaise",servoPos[1]);
+//            telemetry.addData("clawServo",servoPos[2]);
+//            telemetry.addData("clawArm",servoPos[3]);
+//            telemetry.addData("clawAngle",servoPos[4]);
+//            telemetry.addData("cameraTurning",servoPos[5]);
+//            telemetry.addData("outtakeHook",servoPos[6]);
+//            telemetry.addData("outtakeRotation",servoPos[7]);
+//            telemetry.addData("outtakeMovementRight",servoPos[8]);
+//            telemetry.addData("outtakeMovementLeft",servoPos[9]);
+//            telemetry.addData("hangingMotor",hangingMotor.getCurrentPosition());
+//            telemetry.addData("backSlides",backSlides.getCurrentPosition());
 
-            planeLaunch.setPosition(servoPos[0]);
-            planeRaise.setPosition(servoPos[1]);
-            clawServo.setPosition(servoPos[2]);
-            clawArm.setPosition(servoPos[3]);
-            clawAngle.setPosition(servoPos[4]);
-            cameraTurning.setPosition(servoPos[5]);
-            outtakeHook.setPosition(servoPos[6]);
-            outtakeRotation.setPosition(servoPos[7]);
-            outtakeMovementRight.setPosition(servoPos[8]);
-            outtakeMovementLeft.setPosition(servoPos[9]);
-
-            telemetry.addData("planeLaunch",servoPos[0]);
-            telemetry.addData("planeRaise",servoPos[1]);
-            telemetry.addData("clawServo",servoPos[2]);
-            telemetry.addData("clawArm",servoPos[3]);
-            telemetry.addData("clawAngle",servoPos[4]);
-            telemetry.addData("cameraTurning",servoPos[5]);
-            telemetry.addData("outtakeHook",servoPos[6]);
-            telemetry.addData("outtakeRotation",servoPos[7]);
-            telemetry.addData("outtakeMovementRight",servoPos[8]);
-            telemetry.addData("outtakeMovementLeft",servoPos[9]);
-            telemetry.addData("hangingMotor",hangingMotor.getCurrentPosition());
-            telemetry.addData("backSlides",backSlides.getCurrentPosition());
+            telemetry.addData("Arm", clawArm.getPosition());
 
             telemetry.update();
         }
