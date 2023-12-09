@@ -41,6 +41,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @TeleOp(name = "Concept: AprilTag Easy", group = "Testing")
+@Disabled
 public class AprilTagTesting extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
