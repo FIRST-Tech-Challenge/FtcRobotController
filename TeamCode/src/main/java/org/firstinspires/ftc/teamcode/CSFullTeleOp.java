@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file contains an example of a Linear "OpMode".
@@ -42,7 +38,7 @@ public class CSFullTeleOp extends CSMethods {
 
     @Override
     public void runOpMode() {
-        inititalization(true);
+        setup(true);
 
         double slow = 1.0;
         double turnSpeed = 2.0;

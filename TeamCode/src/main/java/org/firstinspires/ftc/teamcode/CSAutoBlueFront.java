@@ -39,7 +39,7 @@ import java.util.List;
 public class CSAutoBlueFront extends CSMethods {
 
     public void runOpMode() {
-        inititalization(false);
+        setup(false);
 
 
         // Main code

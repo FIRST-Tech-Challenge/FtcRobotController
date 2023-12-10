@@ -57,7 +57,7 @@ public abstract class CSMethods extends LinearOpMode {
             "prop",
     };
 
-    public void inititalization(boolean isRed) {
+    public void setup(boolean isRed) {
         if (isRed) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
         }

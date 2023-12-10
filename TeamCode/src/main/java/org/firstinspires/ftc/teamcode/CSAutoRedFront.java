@@ -39,7 +39,7 @@ import java.util.List;
 public class CSAutoRedFront extends CSMethods {
 
     public void runOpMode() {
-        inititalization(true);
+        setup(true);
 
         // Main code
         //dropCarWash();
