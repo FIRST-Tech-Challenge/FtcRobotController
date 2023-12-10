@@ -16,15 +16,21 @@ import java.util.ArrayList;
 
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double L_X_OFFSET = 640;
-    public static double L_Y_OFFSET = 120;
-    public static double R_X_OFFSET = -20;
-    public static double R_Y_OFFSET = 0;
+    public static double ALIGN_R_L_X_OFFSET = 640;
+    public static double ALIGN_R_L_Y_OFFSET = 120;
+    public static double ALIGN_R_R_X_OFFSET = 50;
+    public static double ALIGN_R_R_Y_OFFSET = 0;
+
+    public static double ALIGN_L_L_X_OFFSET = 550;
+    public static double ALIGN_L_L_Y_OFFSET = 120;
+    public static double ALIGN_L_R_X_OFFSET = 160;
+    public static double ALIGN_L_R_Y_OFFSET = 30;
 
     static final int STREAM_WIDTH = 1280; // resolution of camera   1280
     static final int STREAM_HEIGHT = 720; // resolution of camera  720
 
     int propPos = 3;
+    boolean align_right = true;
 
     Mat zoomedInput = new Mat();
     Mat HLS = new Mat();
@@ -45,19 +51,37 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 
     static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH / 2), (STREAM_HEIGHT / 2));
 
-    Point RectATLCorner = new Point(RectATopLeftAnchor.x - L_X_OFFSET, RectATopLeftAnchor.y + L_Y_OFFSET);
+    Point RectATLCorner;
 
-    Point RectABRCorner = new Point(RectATopLeftAnchor.x - L_X_OFFSET + WidthRectA, RectATopLeftAnchor.y + L_Y_OFFSET + HeightRectA);
+    Point RectABRCorner;
 
-    Point RectBTLCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET, RectATopLeftAnchor.y - R_Y_OFFSET);
+    Point RectBTLCorner;
 
-    Point RectBBRCorner = new Point(RectATopLeftAnchor.x + R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - R_Y_OFFSET + HeightRectB);
+    Point RectBBRCorner;
     boolean stopped = false;
 
     static final int colorThreshold = 70;
 
-    public ColorDetectionPipeline() {
-        Log.v("vision", "ColorDetectionPipeline called.");
+    public ColorDetectionPipeline(boolean align_right) {
+        this.align_right = align_right;
+        RectATLCorner = (this.align_right) ?
+                (new Point(RectATopLeftAnchor.x - ALIGN_R_L_X_OFFSET, RectATopLeftAnchor.y + ALIGN_R_L_Y_OFFSET))
+                : (new Point(RectATopLeftAnchor.x - ALIGN_L_L_X_OFFSET, RectATopLeftAnchor.y + ALIGN_L_L_Y_OFFSET));
+
+        RectABRCorner = (this.align_right) ?
+                (new Point(RectATopLeftAnchor.x - ALIGN_R_L_X_OFFSET + WidthRectA, RectATopLeftAnchor.y + ALIGN_R_L_Y_OFFSET + HeightRectA))
+                : (new Point(RectATopLeftAnchor.x - ALIGN_L_L_X_OFFSET + WidthRectA, RectATopLeftAnchor.y + ALIGN_L_L_Y_OFFSET + HeightRectA));
+
+        RectBTLCorner = (this.align_right) ?
+                (new Point(RectATopLeftAnchor.x + ALIGN_R_R_X_OFFSET, RectATopLeftAnchor.y - ALIGN_R_R_Y_OFFSET))
+                : (new Point(RectATopLeftAnchor.x + ALIGN_L_R_X_OFFSET, RectATopLeftAnchor.y - ALIGN_L_R_Y_OFFSET));
+
+        RectBBRCorner = (this.align_right) ?
+                (new Point(RectATopLeftAnchor.x + ALIGN_R_R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - ALIGN_R_R_Y_OFFSET + HeightRectB))
+                : (new Point(RectATopLeftAnchor.x + ALIGN_L_R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - ALIGN_L_R_Y_OFFSET + HeightRectB));
+        Log.v("vision", "ColorDetectionPipeline constructed. align_right = " + this.align_right);
+        Log.v("vision", String.format("ColorDetectionPipeline constructed. Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
+                RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
     }
 
     /*
@@ -88,7 +112,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         Log.v("vision", "processFrame called.");
         zoomedInput = input;
 
-        Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
+        Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
+                RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
         Mat leftArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
         Log.v("vision", "submat created.");
 

@@ -9,6 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.firstinspires.ftc.teamcode.subsystems.ColorDetectionPipeline;
 import org.firstinspires.ftc.teamcode.util.Utilities;
+import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
@@ -20,7 +21,7 @@ public class RobotVision {
     OpenCvWebcam webcam;
     ColorDetectionPipeline cdPipeline;
 
-    public RobotVision() {
+    public RobotVision(boolean align_right) {
 
         Utilities utilities = Utilities.getSharedUtility();
         HardwareMap hardwareMap = utilities.getSharedUtility().hardwareMap;
@@ -28,7 +29,8 @@ public class RobotVision {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        cdPipeline = new ColorDetectionPipeline();
+        Log.v("vision", "RobotVision constructed. align_right = " + align_right);
+        cdPipeline = new ColorDetectionPipeline(align_right);
         webcam.setPipeline(cdPipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -49,8 +51,9 @@ public class RobotVision {
         });
     }
 
-    public int getTeamPropOrientation(boolean isred)
+    public int getTeamPropOrientation(boolean isred, boolean align_right)
     {
+        cdPipeline.align_right = align_right;
         return cdPipeline.getTeamPropOrientation(isred);
     }
 

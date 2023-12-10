@@ -25,34 +25,37 @@ public class autoOut implements Command {
     }
 
     @Override
-    public void start() {
+    public void start() { // gamepad2.a
         this.robot.intake.setPower(0);
         this.robot.intake.toBasePos();
         this.robot.outtake.prepOuttake();
+        time = System.currentTimeMillis();
         state = 1;
     }
 
     @Override
     public void update() {
-        if (state == 1) {//wait for lift reach state 0
-            if (robot.outtake.liftState == 0) {
-                time = System.currentTimeMillis();
-                robot.outtake.dropPixelPos(); //dump pixel
+        if (state == 1) { // wait for lift state to be != 0
+            if (System.currentTimeMillis() - time > 100) {
                 state = 2;
             }
-        } else if (state == 2) { // dump pixel, wait for 1 s
-            if (System.currentTimeMillis() - time > 3000) {
-                robot.outtake.toIntakePos(); // back to intake pos
+        } else if (state == 2) {//wait for lift reach state 0
+            if (robot.outtake.liftState == 0 && robot.outtake.swingState == 0) { //gamepad2.a done,
+                time = System.currentTimeMillis();
                 state = 3;
-            } else {
-                robot.outtake.dropPixelPos();
             }
-        } else if (state == 3) { // wait for swingState == 0
-            if (robot.outtake.swingState == 0) {
+        } else if (state == 3) {
+            if (System.currentTimeMillis() - time > 1000) { // wait for dumpServo reach carryPos
+                robot.outtake.dropPixelPos();    //dump pixel
                 state = 4;
+                time = System.currentTimeMillis();
+            }
+        } else if (state == 4) { // dump pixel, wait for 1 s
+            if (System.currentTimeMillis() - time > 1000) {
+                robot.outtake.toIntakePos(); // back to intake pos
+                state = 5;
             }
         }
-
     }
 
     @Override
@@ -61,7 +64,7 @@ public class autoOut implements Command {
 
     @Override
     public boolean isCompleted() {
-        if (this.state == 4 && this.robot.outtake.liftState == 0) {
+        if (this.state == 5 && robot.outtake.swingState == 0 && robot.outtake.liftState == 0) {
             state = 0;
             return (true);
         } else {

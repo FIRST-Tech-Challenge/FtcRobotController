@@ -19,7 +19,6 @@ public class SlideTest extends LinearOpMode {
         robot.addGamepads(gamepad1, gamepad2);
         SmartGamepad smartGamepad1 = robot.smartGamepad1;
         SmartGamepad smartGamepad2 = robot.smartGamepad2;
-        RobotVision rvis = new RobotVision();
 
         NanoClock clock = NanoClock.system();
         double prevTime = clock.seconds();
