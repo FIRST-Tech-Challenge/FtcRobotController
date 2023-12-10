@@ -6,32 +6,41 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
     private Robot robot;
     private Gamepad gamepad;
-    private int pos_open = 1;
-    private int pos_close = 0;
+    private boolean cl_closed = true;
+    private boolean cr_closed = true;
     public Claw(Robot robot, Gamepad gamepad)
     {
         this.robot = robot;
         this.gamepad = gamepad;
+        robot.servoCL.setPosition(1);
+        robot.servoCR.setPosition(0);
     }
 
-    public void open(Servo s) {
-        s.setPosition(pos_open);
-    }
-    public void close(Servo s) {
-        s.setPosition(pos_close);
-    }
+
 
     public void operate()
     {
-        if (gamepad.left_trigger > 0) {
-            open(robot.servoCL);
+        robot.telemetry.addData("Claw_Right: Status", cr_closed);
+        robot.telemetry.addData("Claw_Left: Status", cl_closed);
+        robot.telemetry.update();
+
+        if (gamepad.right_trigger > 0.5) {
+            robot.servoCL.setPosition(0); // open the claw
+            cl_closed = false;
         } else {
-            close(robot.servoCL);
+            if (cl_closed == false) {
+                robot.servoCL.setPosition(1); // close the claw
+            }
+            cl_closed = true;
         }
-        if (gamepad.right_trigger > 0) {
-            open(robot.servoCR);
+        if (gamepad.left_trigger > 0.5) {
+            robot.servoCR.setPosition(1); // open the claw
+            cr_closed = false;
         } else {
-            close(robot.servoCR);
+            if (cr_closed == false) {
+                robot.servoCR.setPosition(0); // close the claw
+            }
+            cr_closed = true;
         }
     }
 }
