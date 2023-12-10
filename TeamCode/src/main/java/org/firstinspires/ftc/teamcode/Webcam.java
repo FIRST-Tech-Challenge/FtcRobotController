@@ -43,8 +43,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 
 import java.util.List;
 
-@TeleOp
-@Disabled
+
 public class Webcam {
 
     static final boolean USE_WEBCAM = true;
