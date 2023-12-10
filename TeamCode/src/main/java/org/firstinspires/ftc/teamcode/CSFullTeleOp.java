@@ -87,13 +87,11 @@ public class CSFullTeleOp extends CSMethods {
             rb.setPower(rightBackPower);
 
             if (gamepad2.dpad_up && !gamepad2.dpad_down){
-                pixelLiftingMotor.setPower(1);
                 pixelLiftingMotor.setTargetPosition(1000);
                 pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             if (gamepad2.dpad_down && !gamepad2.dpad_up) {
-                pixelLiftingMotor.setPower(1);
                 pixelLiftingMotor.setTargetPosition(0);
                 pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
