@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,15 +12,11 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseOpMode extends LinearOpMode {
+    MecanumDrive drive;
+
     //Declares LEDs on DevBot
     public DigitalChannel red;
     public DigitalChannel green;
-
-    //Declares drive-motors
-    public DcMotor FR;
-    public DcMotor FL ;
-    public DcMotor BR ;
-    public DcMotor BL ;
 
     public DcMotor intakeMotor ;
     public DcMotor armMotor ;
@@ -45,13 +42,10 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         //Drive Motors, other motors, sensors, etc.
         if(MecanumDrive.isDevBot) {
-            FL = initializeMotor("leftFront", DcMotor.Direction.REVERSE);
-            FR = initializeMotor("rightFront", DcMotor.Direction.FORWARD);
-            BL = initializeMotor("leftBack", DcMotor.Direction.REVERSE);
-            BR = initializeMotor("rightBack", DcMotor.Direction.FORWARD);
-
             red = initializeDigitalChannel("red", DigitalChannel.Mode.OUTPUT);
             green = initializeDigitalChannel("green", DigitalChannel.Mode.OUTPUT);
 
@@ -59,11 +53,6 @@ public abstract class BaseOpMode extends LinearOpMode {
             red.setState(true);
             green.setState(true);
         } else {
-            FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
             //Mechanism Motors
             intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
             armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);//DcMotor.RunMode.RUN_TO_POSITION);
@@ -96,6 +85,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         */
     }
 
+    // A digital channel is a device that can accept either a 1 or a 0 of input.
+    // In this case "green" and "red" are LED lights.
     public DigitalChannel initializeDigitalChannel(String channelName, DigitalChannel.Mode mode) {
         DigitalChannel digitalChannel = hardwareMap.get(DigitalChannel.class, channelName);
         digitalChannel.setMode(mode);
@@ -134,17 +125,16 @@ public abstract class BaseOpMode extends LinearOpMode {
         double backLeftPower = (y - x + rot) / denominator;
         double backRightPower = (y + x - rot) / denominator;
 
-        FL.setPower(frontLeftPower);
-        FR.setPower(frontRightPower);
-        BL.setPower(backLeftPower);
-        BR.setPower(backRightPower);
+
+        drive.leftFront.setPower(frontLeftPower);
+        drive.rightFront.setPower(frontRightPower);
+        drive.leftBack.setPower(backLeftPower);
+        drive.rightBack.setPower(backRightPower);
     }
 
     public void runIntakeMechanism(double speed) {
         intakeMotor.setPower(speed);
     }
-
-
 
     public void tiltDumper() {
         dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);
