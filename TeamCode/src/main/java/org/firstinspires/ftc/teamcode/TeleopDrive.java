@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -61,6 +62,7 @@ public class TeleopDrive extends LinearOpMode {
         Setup();
         waitForStart();
         while(opModeIsActive()){
+
             if(!isLiftReset) {
                 Robot.lift.liftMotor.setPower(-1);
                 if (Robot.liftTouchDown.isPressed()) {
@@ -77,6 +79,7 @@ public class TeleopDrive extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
             boolean goFast = gamepad1.left_bumper;
             boolean emergencyBrakeOverride = gamepad1.right_bumper;
+            boolean switchDriveMode = gamepad1.b;
 //            if (!drive.isBusy() || !atRest()) {
 //                setMotorsObj.driveCommands(hardwareMap, horizontal, vertical, turn, goFast);
 //            }
@@ -86,7 +89,7 @@ public class TeleopDrive extends LinearOpMode {
                 // A little bit of a monkey patch, but it works to override, because distance 0 corresponds to "too far to detect"
                 distanceToWall = 0;
             }
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall);
+            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode);
 
 
             robot.update();

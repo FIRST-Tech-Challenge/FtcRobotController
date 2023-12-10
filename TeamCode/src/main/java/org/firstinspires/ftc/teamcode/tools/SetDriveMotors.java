@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.tools;
 
 
+import com.acmerobotics.roadrunner.drive.Drive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 
 @TeleOp
 @Disabled
@@ -29,11 +33,26 @@ public class SetDriveMotors extends OpMode {
     private final Gamepad gamepad1;
     private final IMU imu;
     public double powerValues[] = new double[4];
+    private SampleMecanumDrive drive;
+
+    protected enum DriveMode{
+        FIELD_CENTRIC,
+        ROBOT_CENTRIC
+    }
+
+    private DriveMode driveMode = DriveMode.FIELD_CENTRIC;
 
     static final double BACKDROP_APPROACH_SPEED = -0.25;
 
     //map the motors and run the op mode
     public SetDriveMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
+        // Initialize SampleMecanumDrive
+        drive = new SampleMecanumDrive(hardwareMap);
+
+        // Retrieve our pose from the PoseStorage.currentPose static field
+        // See AutoTransferPose.java for further details
+        drive.setPoseEstimate(PoseStorage.currentPose);
+
         this.gamepad1 = gamepad1;
         // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
@@ -68,7 +87,10 @@ public class SetDriveMotors extends OpMode {
         horizontalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_X, 0.5);
         verticalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_Y, 0.4);
     }
-    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters) {
+    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode) {
+        // Read pose
+        Pose2d poseEstimate = drive.getPoseEstimate();
+
         //Driver assistance: takes over if too close to wall
         if (distanceToWallMeters != 0 && distanceToWallMeters < 0.4){
             if (vertical < BACKDROP_APPROACH_SPEED) {
@@ -85,45 +107,80 @@ public class SetDriveMotors extends OpMode {
             vertical = verticalSlowDeadzone.computePower(vertical);
             turn *= 0.6;
         }
-        //IMPLEMENTATION OF FIELD CENTRIC DRIVE
+
+        switch (driveMode){
+            case FIELD_CENTRIC:
+                if(switchDriveMode){
+                    driveMode = DriveMode.ROBOT_CENTRIC;
+                }
+                break;
+            case ROBOT_CENTRIC:
+                if(switchDriveMode){
+                    driveMode = DriveMode.FIELD_CENTRIC;
+                }
+        }
+
+        if(driveMode == DriveMode.ROBOT_CENTRIC){
+            //IMPLEMENTATION OF FIELD CENTRIC DRIVE
 
 
-        // This button choice was made so that it is hard to hit on accident,
-        // it can be freely changed based on preference.
-        // The equivalent button is start on Xbox-style controllers.
+            // This button choice was made so that it is hard to hit on accident,
+            // it can be freely changed based on preference.
+            // The equivalent button is start on Xbox-style controllers.
         /*if (gamepad1.a) {
             imu.resetYaw(); // Reset the IMU yaw angle when the 'options' button is pressed.
         }*/
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        // Rotate the movement direction counter to the bot's rotation
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            // Rotate the movement direction counter to the bot's rotation
 
 //        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
 //        double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
-        double rotX = horizontal;
-        double rotY = vertical;
+            double rotX = horizontal;
+            double rotY = vertical;
 
-        double rotationalCorrection = 1.1; // original value of code on site was 1.1
+            double rotationalCorrection = 1.1; // original value of code on site was 1.1
 
-        rotX = rotX * rotationalCorrection;  // Counteract imperfect strafing
+            rotX = rotX * rotationalCorrection;  // Counteract imperfect strafing
 
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
 
-        // uses the values calculated via the imu's yaw to create accurate movement
-        double frontLeftPower = (rotY + rotX + turn) / denominator;
-        double backLeftPower = (rotY - rotX + turn) / denominator;
-        double frontRightPower = (rotY - rotX - turn) / denominator;
-        double backRightPower = (rotY + rotX - turn) / denominator;
+            // uses the values calculated via the imu's yaw to create accurate movement
+            double frontLeftPower = (rotY + rotX + turn) / denominator;
+            double backLeftPower = (rotY - rotX + turn) / denominator;
+            double frontRightPower = (rotY - rotX - turn) / denominator;
+            double backRightPower = (rotY + rotX - turn) / denominator;
 
-        // Set motor power based on the calculated values
-        frontLeftMotor.setPower(frontLeftPower);
-        backLeftMotor.setPower(backLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backRightMotor.setPower(backRightPower);
+            // Set motor power based on the calculated values
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
+        }
+        else {
+            // Create a vector from the gamepad x/y inputs
+            // Then, rotate that vector by the inverse of that heading
+            Vector2d input = new Vector2d(
+                    vertical,
+                    horizontal // Note: if the robot has a flipped left / right direction, make this negative
+            ).rotated(-poseEstimate.getHeading());
+
+            // Pass in the rotated input + right stick value for rotation
+            // Rotation is not part of the rotated input thus must be passed in separately
+            drive.setWeightedDrivePower(
+                    new Pose2d(
+                            input.getX(),
+                            input.getY(),
+                            turn // Note: if the robot has a flipped turn direction, make this negative
+                    )
+            );
+        }
+
+
     }
 
     @Override
