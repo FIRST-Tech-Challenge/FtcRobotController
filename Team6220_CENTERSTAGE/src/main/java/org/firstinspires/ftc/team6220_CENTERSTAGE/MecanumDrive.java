@@ -323,11 +323,11 @@ public final class MecanumDrive {
      * used in conjunction with a outside loop ♻
      * {removed sorry :<} the position to target in encoder ticks
      */
-/*    public void moveSlides(int targetPos) {
+    public void moveSlidesPreset(int targetPos) {
         double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         this.slideMotor.setPower(power);
         this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
-    }*/
+    }
 
     public void moveSlides(double power, boolean retracting) {
         this.slideMotor.setPower(power);
