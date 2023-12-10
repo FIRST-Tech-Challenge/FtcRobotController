@@ -21,6 +21,7 @@ public class Outtake implements Subsystem{
     //BELOW NOT TESTED YET
     private double armTravel_Right = 0.51263; private double armTravel_Left=0.505265;
     private double armDump_Right = 0.3756; private double armDump_Left = 0.64922;
+    private double armHang_Right = 0.525; private double armHang_Left = 0.492;
 
     private double dumpResetPos = 0.5;
     private double dumpIntakePos= 0.1855;
@@ -41,12 +42,14 @@ public class Outtake implements Subsystem{
      * 2: waiting to reach height with dumper above intake
      * 10: wating for reach 0 (and then put dumper to input position)
      */
+
+    public int hangState=0;
     private long swingStartTime;
     private long liftStartTime;
     private long tempStartTime;
     private long swingDelay = 500; //miliseconds
     private long swingDownDelay = 1200; //miliseconds
-    private long liftDelay = 1000;
+    private long liftDelay = 600;
     private long tempDelay = 5000;
 
     //Hardware
@@ -114,6 +117,14 @@ public class Outtake implements Subsystem{
         dumpServo.setPosition(dumpTravelPos);
         Log.v("StateMach", "toTravelPos() called");
     }
+    public void toHangPos(){
+        armServo_Right.setPosition(armHang_Right);
+        armServo_Left.setPosition(armHang_Left);
+        dumpServo.setPosition(dumpResetPos);
+    }
+    public void prepHang(){
+        hangState = 1;
+    }
     public void toDumpPos(){
         swingState = 1;
         swingStartTime = System.currentTimeMillis();
@@ -121,6 +132,7 @@ public class Outtake implements Subsystem{
         armServo_Right.setPosition(armDump_Right);
         armServo_Left.setPosition(armDump_Left);
     }
+
     public void dropPixelPos(){
         dumpServo.setPosition(dumpDumpPos);
         Log.v("StateMach", "dump servo to dumpDumpPos");
@@ -209,6 +221,16 @@ public class Outtake implements Subsystem{
                 armServo_Left.setPosition(armIntake_Left);
                 dumpServo.setPosition(dumpIntakePos);
                 liftState = 0;
+            }
+        }
+        if(hangState == 1){
+            long time = System.currentTimeMillis();
+            if(liftDelayDone(time)){
+                hangState = 0;
+                this.toHangPos();
+                Log.v("StateMach", "moving to travelPos " + (time - liftStartTime));
+                tempStartTime = System.currentTimeMillis();
+                lift.goToLevel(0);  //go to the level where dumper is above intake
             }
         }
     }
