@@ -276,9 +276,9 @@ public class AprilTagPoseEstimator {
         }
 
         // Turn the status light on when it detects an april tag (yes, setState(boolean) is backwards)
-        //if (statusLight != null) {
-        //    statusLight.setState(!detecting);
-        //}
+        if (statusLight != null) {
+            statusLight.setState(!detecting);
+        }
 
         // Telemeters the current pose estimate
         if (telemetry != null && robotPoseEstimate != null) {
