@@ -156,13 +156,14 @@ public class AprilTagPoseEstimator {
     public Pose calculatePoseEstimate(AprilTagDetection detection, AprilTagInfo aprilTagInfo) {
         // See November notebook 11/20/2023 for more info on the math used here
 
-        // Todo: comment code
-
+        // Declaring variables
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
         if (isDevBot) {
+            // d - Absolute distance from April-tag to robot
             d = Math.hypot(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
 
+            // gamma
             gamma = Math.atan2(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
 
             beta = gamma + Math.toRadians(detection.ftcPose.yaw + Constants.DEVBOT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT) if that doesn't work)
@@ -195,13 +196,12 @@ public class AprilTagPoseEstimator {
             return null;
         }
 
-        // Todo: Remove magic constant 48
         // Remove iwds (InfoWithDetection objects) that are more than two tiles (48 inches) away
         int iwdListSize = iwdList.size();
         InfoWithDetection currentIwd;
         for (int i = 0; i < iwdListSize; i++) {
             currentIwd = iwdList.get(i);
-            if (Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y) > 48) {
+            if (Math.hypot(currentIwd.detection.ftcPose.x, currentIwd.detection.ftcPose.y) > Constants.MAX_DETECTION_DISTANCE) {
                 iwdList.remove(i);
                 i--;
             }
@@ -232,10 +232,6 @@ public class AprilTagPoseEstimator {
             }
             iwdListSize = iwdList.size();
         }
-
-        // List should not be empty
-        // TODO: Remove this assert before competition
-        assert iwdList.size() >= 1;
 
         // Choose the april tag that has the least distance
         currentIwd = iwdList.get(0);
