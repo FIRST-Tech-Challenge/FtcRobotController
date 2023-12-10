@@ -77,9 +77,9 @@ public class OpenCvColorDetection {
     }
 
     // set detection color
-    public void setDetectColor(detectColorType color) {
+   /* public void setDetectColor(detectColorType color) {
         myColor = color;
-    }
+    }*/
 
     // initialize the camera and openCV pipeline
     public void init() {
@@ -90,12 +90,7 @@ public class OpenCvColorDetection {
         int cameraMonitorViewId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myOpMode.hardwareMap.appContext.getPackageName());
         robotCamera = OpenCvCameraFactory.getInstance().createWebcam(myOpMode.hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        // OR...  Do Not Activate the Camera Monitor View
-        // robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
-        // OR... use internal phone camera
-        // phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
-
-       setDetectColor(detectColorType.BLUE);
+        //setDetectColor(detectColorType.BLUE);
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -105,7 +100,7 @@ public class OpenCvColorDetection {
             }
 
             public void onError(int errorCode) {
-                //stopStreaming();
+                stopStreaming();
             }
         });
     }
@@ -131,7 +126,6 @@ public class OpenCvColorDetection {
         Mat contourMask = new Mat();
         Mat outputMat = new Mat();
 
-        @Override
         public Mat processFrame(Mat inputMat) {
             // blur the image to reduce the impact of noisy pixels
             //   each pixel is "averaged" with its neighboring pixels
@@ -201,6 +195,7 @@ public class OpenCvColorDetection {
             }
         }*/
     }
+
 
     public Position detectColor() {
         Position position = Position.FOUR;
