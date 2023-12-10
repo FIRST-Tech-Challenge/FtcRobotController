@@ -63,7 +63,7 @@ public class DriveTrain {
             return;
         }
 
-        calculateSpeed(gamepad.left_stick_y, gamepad.left_stick_x, gamepad.right_stick_x, speed_factor, speeds);
+        calculateSpeed(gamepad.left_stick_y, -gamepad.left_stick_x, -gamepad.right_stick_x, speed_factor, speeds);
         robot.motorFL.setPower(speeds[0]);
         robot.motorFR.setPower(speeds[1]);
         robot.motorBL.setPower(speeds[2]);

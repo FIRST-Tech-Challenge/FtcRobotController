@@ -11,7 +11,7 @@ public class Slider {
     private double normal_speed = 1.0;
     private double slow_speed = 1.0;
     private int max_height_ticks = 4000;
-    private boolean verbose = true;
+    private boolean verbose = false;
     private int motor_ticks = 1425;
 
     private int rev_ticks = 250;
@@ -25,8 +25,8 @@ public class Slider {
 
         robot.motorSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Assume the starting is the bottom most position
-        //robot.motorSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.motorSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //robot.motorSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //robot.motorSlider.setTargetPositionTolerance(3);
     }
@@ -61,6 +61,7 @@ public class Slider {
 
     private void moveOp(double power)
     {
+        /*
         boolean limit_reached = softlimitCheck(power < 0);
         if (limit_reached) {
             robot.motorSlider.setPower(0);
@@ -69,7 +70,11 @@ public class Slider {
             //return;
         }
         //robot.motorSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.telemetry.addData("SliderPower:", power);
+
+         */
+        if (verbose) {
+            robot.telemetry.addData("SliderPower:", power);
+        }
         robot.motorSlider.setPower(power);
     }
 
@@ -84,17 +89,20 @@ public class Slider {
 
     public void move()
     {
+
         int cur_position = robot.motorSlider.getCurrentPosition();
 
         if (verbose) {
             robot.telemetry.addData("Slider Current Position=", cur_position);
         }
+        /*
         if (cur_position <= 3) {
             inAutoBottom = false;
         }
         if (inAutoBottom) {
             return;
         }
+
         if (gamepad.left_stick_y != 0) {
             moveOp(gamepad.left_stick_y * normal_speed);
         } else if (gamepad.left_stick_x != 0) {
@@ -104,6 +112,11 @@ public class Slider {
         } else {
             robot.motorSlider.setPower(0);
         }
-        robot.telemetry.update();
+
+         */
+        moveOp(gamepad.left_stick_y * normal_speed);
+        if (verbose) {
+            robot.telemetry.update();
+        }
     }
 }
