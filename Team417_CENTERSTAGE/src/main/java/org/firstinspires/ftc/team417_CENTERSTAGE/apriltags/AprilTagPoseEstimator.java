@@ -160,29 +160,38 @@ public class AprilTagPoseEstimator {
         double d, beta, gamma, relativeX, relativeY, absoluteX, absoluteY, absoluteTheta;
 
         if (isDevBot) {
-            // d - Absolute distance from April-tag to robot
+            // d - absolute distance from April-tag to robot
             d = Math.hypot(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
 
-            // gamma
+            // gamma - angle of center of camera direction to april tag direction
             gamma = Math.atan2(detection.ftcPose.x + Constants.DEVBOT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.DEVBOT_CAMERA_TO_CENTER_Y);
 
+            // beta - yaw of robot relative to the tag
             beta = gamma + Math.toRadians(detection.ftcPose.yaw + Constants.DEVBOT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.DEVBOT_CAMERA_TO_CENTER_ROT) if that doesn't work)
         } else {
+            // d - absolute distance from April-tag to robot
             d = Math.hypot(detection.ftcPose.x + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_Y);
 
+            // gamma - angle of center of camera direction to april tag direction
             gamma = Math.atan2(detection.ftcPose.x + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_X, detection.ftcPose.y + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_Y);
 
+            // beta - yaw of robot relative to the tag
             beta = gamma + Math.toRadians(detection.ftcPose.yaw + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_ROT); //(or gamma - detection.ftcPose.yaw + + Constants.COMPETITION_BOT_FRONT_CAMERA_TO_CENTER_ROT) if that doesn't work)
         }
-            
+
+        // relativeX - x of robot without compensating for yaw
         relativeX = d * Math.cos(beta) + aprilTagInfo.x;
-        
+
+        // relativeY - y of robot without compensating for yaw
         relativeY = -d * Math.sin(beta) + aprilTagInfo.y;
-        
+
+        // absoluteX - x of robot
         absoluteX = relativeX * Math.cos(Math.toRadians(aprilTagInfo.yaw)) - relativeY * Math.sin(Math.toRadians(aprilTagInfo.yaw));
-        
+
+        // absoluteY - y of robot
         absoluteY = relativeX * Math.sin(Math.toRadians(aprilTagInfo.yaw)) + relativeY * Math.cos(Math.toRadians(aprilTagInfo.yaw));
-        
+
+        // absoluteTheta - yaw of robot
         absoluteTheta = Math.toRadians(aprilTagInfo.yaw) - Math.toRadians(detection.ftcPose.yaw) + Math.PI;
 
         return new Pose(absoluteX, absoluteY, absoluteTheta);
