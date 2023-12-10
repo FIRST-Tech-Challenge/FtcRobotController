@@ -37,6 +37,7 @@ public class CSFullTeleOp extends CSMethods {
     // Declare OpMode members for each of the 4 motors.
     boolean lBack = false;
     boolean rBack = false;
+    boolean a = false;
 
     @Override
     public void runOpMode() {
@@ -101,31 +102,41 @@ public class CSFullTeleOp extends CSMethods {
                 pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
                 pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-
-
+            
             if (gamepad2.a || gamepad2.x) {
                 carWashMotor.setPower(carWashPower);
             }
 
-            if (gamepad1.dpad_left && !lBack) {
+            if (gamepad1.left_bumper && !lBack) {
                 lBack = true;
                 if (pixelBackServo.getPosition() == 1) {
                     pixelBackServo.setPosition(0);
                 } else {
                     pixelBackServo.setPosition(1);
                 }
-            } else if (!gamepad1.dpad_left) {
+            } else if (!gamepad1.left_bumper) {
                 lBack = false;
             }
 
-            if (gamepad1.dpad_right && !rBack) {
+            if (gamepad1.a && !a) {
+                a = true;
+                if (trayTiltingServo.getPosition() == 1) {
+                    trayTiltingServo.setPosition(0);
+                } else {
+                    trayTiltingServo.setPosition(1);
+                }
+            } else if (!gamepad1.a) {
+                a = false;
+            }
+
+            if (gamepad1.right_bumper && !rBack) {
                 rBack = true;
                 if (pixelFrontServo.getPosition() == 1) {
-                    pixelBackServo.setPosition(0);
+                    pixelFrontServo.setPosition(0);
                 } else {
-                    pixelBackServo.setPosition(1);
+                    pixelFrontServo.setPosition(1);
                 }
-            } else if (!gamepad1.dpad_right) {
+            } else if (!gamepad1.right_bumper) {
                 rBack = false;
             }
 
