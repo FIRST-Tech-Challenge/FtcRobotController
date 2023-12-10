@@ -96,8 +96,7 @@ public class CSFullTeleOp extends CSMethods {
             }
 
             if(!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up){
-                pixelLiftingMotor.setPower(0);
-                pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
             }
 
             if (gamepad2.a || gamepad2.x) {
