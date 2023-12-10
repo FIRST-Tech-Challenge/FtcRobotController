@@ -103,6 +103,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
+    private static final String TFOD_MODEL_ASSET = "Red_Bob.tflite";
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
@@ -110,8 +111,8 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
             // Use setModelAssetName() if the TF Model is built in as an asset.
             // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-            //.setModelAssetName(TFOD_MODEL_ASSET)
-            //.setModelFileName(TFOD_MODEL_FILE)
+           // .setModelAssetName(TFOD_MODEL_ASSET)
+            .setModelFileName(TFOD_MODEL_ASSET)
 
             //.setModelLabels(LABELS)
             //.setIsModelTensorFlow2(true)
