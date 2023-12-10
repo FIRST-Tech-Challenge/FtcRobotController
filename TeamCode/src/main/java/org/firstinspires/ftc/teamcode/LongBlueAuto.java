@@ -22,8 +22,7 @@ public class LongBlueAuto extends LinearOpMode {
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(-1550);
 
-            robot.trayToOuttakePos(); // pivot tray to outtake position
-            sleep(100);
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
 
             robot.alignToBoard();
             robot.autoOuttake(false);
