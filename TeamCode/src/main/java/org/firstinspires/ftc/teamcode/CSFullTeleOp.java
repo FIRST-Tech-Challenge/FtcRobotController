@@ -53,7 +53,7 @@ public class CSFullTeleOp extends CSMethods {
             rb.setPower(rightBackPower);
 
             if (gamepad2.dpad_up && !gamepad2.dpad_down) {
-                if (pixelLiftingMotor.getCurrentPosition() < 2000){
+                if (pixelLiftingMotor.getCurrentPosition() < 3000){
                     pixelLiftingMotor.setPower(1);
                 }
                 else {
@@ -91,16 +91,16 @@ public class CSFullTeleOp extends CSMethods {
 
             if (gamepad1.a && !a) {
                 a = true;
-                if (trayTiltingServo.getPosition() == 0.5) {
+                if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
                     trayTiltingServo.setPosition(0);
                 } else {
-                    trayTiltingServo.setPosition(0.5);
+                    trayTiltingServo.setPosition(0.35);
                 }
             } else if (!gamepad1.a) {
                 a = false;
             }
 
-            /*if (gamepad1.right_bumper && !rBack) {
+            if (gamepad1.right_bumper && !rBack) {
                 rBack = true;
                 if (pixelFrontServo.getPosition() == 1) {
                     pixelFrontServo.setPosition(0);
@@ -108,8 +108,9 @@ public class CSFullTeleOp extends CSMethods {
                     pixelFrontServo.setPosition(1);
                 }
             } else if (!gamepad1.right_bumper) {
+
                 rBack = false;
-            }*/
+            }
 
             if (gamepad2.b || gamepad2.y) {
                 carWashMotor.setPower(-carWashPower);

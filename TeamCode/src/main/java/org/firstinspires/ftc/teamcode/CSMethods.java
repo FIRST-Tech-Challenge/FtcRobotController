@@ -95,6 +95,7 @@ public abstract class CSMethods extends LinearOpMode {
         lf.setTargetPosition(lf.getCurrentPosition());
         rf.setTargetPosition(rf.getCurrentPosition());
 
+        pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
         pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
