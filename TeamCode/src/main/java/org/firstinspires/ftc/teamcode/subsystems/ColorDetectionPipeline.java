@@ -60,7 +60,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     Point RectBBRCorner;
     boolean stopped = false;
 
-    static final int colorThreshold = 70;
+    static final int colorThreshold = 120; //70;
 
     public ColorDetectionPipeline(boolean align_right) {
         this.align_right = align_right;

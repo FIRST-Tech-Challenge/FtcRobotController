@@ -15,8 +15,10 @@ public class Intake implements Subsystem {
     private Servo intakeServoR;
     private double baseposl = 0.217;
     private double baseposr = 0.76715;
-    private double intakeposL = 0.814 - 0.01;
-    private double intakeposR = 0.1403 + 0.01;
+    private double baseposl_yield = 0.36;
+    private double baseposr_yield = 0.615;
+    private double intakeposL = 0.814 - 0.01; //0.804
+    private double intakeposR = 0.1403 + 0.01; //0.1503
     //placeholder outtake position, may change depending on outtake
     private double outtakeposL = 0.129 + 0.02 ;
     private double outtakeposR = 0.8595 - 0.02                                                                                                                                                                                                                               ;
@@ -60,6 +62,10 @@ public class Intake implements Subsystem {
         intakeServoR.setPosition(baseposr);
     }
 
+    public void toBasePosYield(){
+        intakeServoL.setPosition(baseposl_yield);
+        intakeServoR.setPosition(baseposr_yield);
+    }
 
     public void moveArm(double d){
         double targetPosR = intakeServoR.getPosition()+(0.01*d*syncFactor);
@@ -93,7 +99,7 @@ public class Intake implements Subsystem {
     public void update(TelemetryPacket packet) {
 
         if (intakeState == 0) {//Base, idle
-            toBasePos();
+            toBasePosYield();
             intakeMotor.setPower(0);
         } else if (intakeState == 1) {//Intake
             toIntakePos();
@@ -108,29 +114,29 @@ public class Intake implements Subsystem {
             if(time - outtakeStartTime >= this.motorDelayAfterOut){
                 intakeState = 0;
             }
-        } else if (intakeState == 4) {//Start output pre-load pixel
+        } else if (intakeState == 11) {//Start output pre-load pixel
             toIntakePos();
             //intakeMotor.setPower(this.autoOutputPwr);
-            intakeState = 5;
+            intakeState = 12;
             outtakeStartTime = System.currentTimeMillis();
-        } else if (intakeState == 5) { //wait for intake to intakePos
+        } else if (intakeState == 12) { //wait for intake to intakePos
             long time = System.currentTimeMillis();
             if (time - outtakeStartTime >= this.motorDelayForAuto) {
-                intakeState = 6;
+                intakeState = 13;
                 intakeMotor.setPower(this.autoOutputPwr);
                 outtakeStartTime = System.currentTimeMillis();
             }
-        } else if (intakeState == 6) {//output
+        } else if (intakeState == 13) {//output
             if (System.currentTimeMillis() - outtakeStartTime >= this.motorDelayForAutoOutput) {
                 intakeState = 0;
                 intakeMotor.setPower(0);
-                toBasePos();
+                toBasePosYield();
             }
-        } else if(intakeState == 7) {
+        } else if(intakeState == 21) { // Start reverse intake roller motor
             intakeReverseStartTime = System.currentTimeMillis();
             intakeMotor.setPower(-1);
             intakeState = 8;
-        }else if(intakeState == 8){
+        } else if(intakeState == 22){
             if (System.currentTimeMillis() - intakeReverseStartTime >= 2000) {
                 intakeMotor.setPower(0);
                 intakeState = 0;

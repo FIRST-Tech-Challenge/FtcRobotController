@@ -27,8 +27,8 @@ public class autoOut implements Command {
     @Override
     public void start() { // gamepad2.a
         this.robot.intake.setPower(0);
-        this.robot.intake.toBasePos();
-        this.robot.outtake.prepOuttake();
+        this.robot.intake.toBasePosYield();
+        this.robot.outtake.prepOuttakeAuto();
         time = System.currentTimeMillis();
         state = 1;
     }
@@ -46,7 +46,8 @@ public class autoOut implements Command {
             }
         } else if (state == 3) {
             if (System.currentTimeMillis() - time > 1000) { // wait for dumpServo reach carryPos
-                robot.outtake.dropPixelPos();    //dump pixel
+                //robot.outtake.dropPixelPos();    //dump pixel
+                robot.outtake.dropPixelPosAuto();
                 state = 4;
                 time = System.currentTimeMillis();
             }

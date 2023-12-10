@@ -9,33 +9,35 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.commands.dropIntakePreload;
 import org.firstinspires.ftc.teamcode.commands.autoOut;
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.commands.dropIntakePreload;
 import org.firstinspires.ftc.teamcode.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
-import org.firstinspires.ftc.teamcode.util.Utilities;
+import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.RobotVision;
+import org.firstinspires.ftc.teamcode.util.Utilities;
 
 @Config
 @Autonomous
-public class RedNear extends LinearOpMode {
-    public static boolean parkCenter = false;
-    public static boolean IS_RED = true;
-    public static boolean ALIGN_RIGHT = true;
-    public static double POS1_SPL1_X = 20;
-    public static double POS1_SPL1_Y = -5;
-    public static double POS1_DUMP_X = 28;
-    public static double POS1_DUMP_Y = -33;
+public class BlueFar extends LinearOpMode {
+    public static boolean parkCenter = false; // Park center of field
+    public static boolean IS_RED = false;     // IS_RED side?
+    public static boolean ALIGN_RIGHT = true; // Align 1 inch from tile right side
+    public static double POS1_SPL1_X = 23;
+    public static double POS1_SPL1_Y = 24;
+    public static double POS1_DUMP_X = 24;
+    public static double POS1_DUMP_Y = 33;
 
     public static double POS2_SPL1_X = 37;
-    public static double POS2_SPL1_Y = -15;
+    public static double POS2_SPL1_Y = 15;
     public static double POS3_SPL1_X = 26;
-    public static double POS3_SPL1_Y = -26;
-    public static double FACE_BACKDROP_HEADERING = Math.toRadians(-90);
+    public static double POS3_SPL1_Y = 26;
+    public static double FACE_BACKDROP_HEADERING = Math.toRadians(90);
     public static double PARK_STRAFE_MIDDLE_TO_CENTER = 28;
     public static double TAG_DIST = 6;
-    public static double PARK_FORWARD = 10.0;
+    public static double PARK_X_CORNER = 2;
+    public static double PARK_X_CENTER = 50;
+    public static double PARK_Y = 34.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,44 +66,48 @@ public class RedNear extends LinearOpMode {
         if (isStopRequested()) return;
         Log.v("AUTODEBUG", "0: start");
         elementPos = rvis.getTeamPropOrientation(IS_RED, ALIGN_RIGHT);
-        //Log.v("AUTODEBUG", "1: elementPos = %0d");
+        Log.v("AUTODEBUG", "1: elementPos = " + elementPos);
         telemetry.addData("Element pos", elementPos);
 
 
         if (elementPos == 1) {//left
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS1_SPL1_X, POS1_SPL1_Y), FACE_BACKDROP_HEADERING)
-                            .back(3)
+                            .splineTo(new Vector2d(21, -7), Math.toRadians(-90))
+                            .back(5)
                             .build()
             ));
+            Log.v("AUTODEBUG", "2: dump purple");
             //dump purple pixel
             robot.runCommand(dropIntakePreload);
+            Log.v("AUTODEBUG", "3: go to backdrop");
 
-            // go to back drop
-            robot.runCommand(drivetrain.followTrajectory(
-                    drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS1_DUMP_X, POS1_DUMP_Y), FACE_BACKDROP_HEADERING)
+            robot.runCommand(drivetrain.followTrajectorySequence(
+                    drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
+                            .turn(Math.toRadians(45), 1,0.5)
+                            .splineTo(new Vector2d(0, 2), Math.toRadians(90))
+                            .splineTo(new Vector2d(0, 68), Math.toRadians(90))
+                            .splineTo(new Vector2d(18, 84), Math.toRadians(90)) // go to backdrop
+                            //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
+            Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
             robot.runCommand(outCmd);
-            Log.v("AUTODEBUG", "10: dump done");
-
+            Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER - TAG_DIST)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(44, 81))
+                                //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
             }
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER + TAG_DIST)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(0, 81 ))
                                 .build()
                 ));
             }
@@ -109,16 +115,18 @@ public class RedNear extends LinearOpMode {
         } else if (elementPos == 2) { //middle
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS2_SPL1_X, POS2_SPL1_Y), FACE_BACKDROP_HEADERING)
+                            .splineTo(new Vector2d(21, 6), Math.toRadians(180))
                             .build()
             ));
             //dump purple pixel
             robot.runCommand(dropIntakePreload);
 
             // go to back drop
-            robot.runCommand(drivetrain.followTrajectory(
-                    drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
-                            .splineTo(new Vector2d(22, -35), FACE_BACKDROP_HEADERING)
+            robot.runCommand(drivetrain.followTrajectorySequence(
+                    drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
+                            .splineTo(new Vector2d(-4, -2), Math.toRadians(90))
+                            .splineTo(new Vector2d(-4, -68), Math.toRadians(90))
+                            .splineTo(new Vector2d(20, -86), Math.toRadians(90))
                             .build()
             ));
             //dump yellow pixel
@@ -127,54 +135,62 @@ public class RedNear extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(50, -81))
+                                //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
             }
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(-4, -81 ))
                                 .build()
                 ));
             }
 
         } else {// right
-            robot.runCommand(drivetrain.followTrajectory(
-                    drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS3_SPL1_X, POS3_SPL1_Y), FACE_BACKDROP_HEADERING)
+
+            robot.runCommand(drivetrain.followTrajectorySequence(
+                    drivetrain.trajectorySequenceBuilder(new Pose2d())
+                            .splineTo(new Vector2d(8, 10), Math.toRadians(180))
                             .build()
             ));
+            Log.v("AUTODEBUG", "2: dump purple");
             //dump purple pixel
             robot.runCommand(dropIntakePreload);
+            Log.v("AUTODEBUG", "3: go to backdrop");
 
-            // go to back drop
-            robot.runCommand(drivetrain.followTrajectory(
-                    drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
-                            .splineTo(new Vector2d(16, -35), FACE_BACKDROP_HEADERING)
+            robot.runCommand(drivetrain.followTrajectorySequence(
+                    drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
+                            .turn(Math.toRadians(45), 1,0.5)
+                            .splineTo(new Vector2d(-4, -2), Math.toRadians(90))
+                            .splineTo(new Vector2d(-4, -68), Math.toRadians(90))
+                            .splineTo(new Vector2d(26, -85), Math.toRadians(90)) // go to backdrop
+                            //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
+            Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
             robot.runCommand(outCmd);
+            Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER + TAG_DIST)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(50, -81))
+                                //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
             }
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER - TAG_DIST)
-                                //.forward(PARK_FORWARD)
+                                .lineTo(new Vector2d(-4, -81 ))
                                 .build()
                 ));
             }
+
+
         }
 
     }

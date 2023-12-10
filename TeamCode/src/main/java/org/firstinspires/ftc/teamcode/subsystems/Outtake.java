@@ -3,6 +3,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,7 +14,10 @@ import org.firstinspires.ftc.teamcode.robot.Subsystem;
 import java.util.Calendar;
 import java.util.Date;
 
+@Config
 public class Outtake implements Subsystem{
+    public static double HT_TO_SWING_AUTO = 3.0;
+    public static double dumpDumpPos_auto = 0.09;
     //Constants
     private double syncFactor=1.05;
     private double armReset_Right = 0.5; private double armReset_Left = 0.5186; // + means up and towards intake
@@ -111,6 +115,11 @@ public class Outtake implements Subsystem{
         liftStartTime = System.currentTimeMillis();
         Log.v("StateMach", "prepOuttake() called");
     }
+    public void prepOuttakeAuto(){
+        liftState = 21;
+        liftStartTime = System.currentTimeMillis();
+        Log.v("StateMach", "prepOuttakeAuto() called");
+    }
     public void toTravelPos(){
         armServo_Right.setPosition(armTravel_Right);
         armServo_Left.setPosition(armTravel_Left);
@@ -136,6 +145,11 @@ public class Outtake implements Subsystem{
     public void dropPixelPos(){
         dumpServo.setPosition(dumpDumpPos);
         Log.v("StateMach", "dump servo to dumpDumpPos");
+    }
+
+    public void dropPixelPosAuto(){
+        dumpServo.setPosition(dumpDumpPos_auto);
+        Log.v("StateMach", "dump servo to dumpDumpPos_auto");
     }
 
     //Access functions
@@ -214,6 +228,29 @@ public class Outtake implements Subsystem{
                 this.toDumpPos();
             }
         }
+
+        // For auto
+        if(liftState == 21){
+            long time = System.currentTimeMillis();
+            if(liftDelayDone(time)){
+                liftState = 22;
+                this.toTravelPos();
+                Log.v("StateMach", "lift moving to travelPos " + (time - liftStartTime));
+                tempStartTime = System.currentTimeMillis();
+                //lift.goToLevel(1);  //go to the level where dumper is above intake
+                lift.goToHt(lift.inchToTicks(HT_TO_SWING_AUTO));
+                Log.v("StateMach", "liftState: 21 -> 22. lift.goToHt " + HT_TO_SWING_AUTO);
+            }
+        }
+        if(liftState == 22){
+            long time = System.currentTimeMillis();
+            if(lift.armCanSwingAuto()){
+                Log.v("StateMach", "liftState = 0. Start toDumpPos");
+                liftState=0;
+                this.toDumpPos();
+            }
+        }
+
         if(liftState == 10){
             if(lift.getPosition() < 1.0) {
                 Log.v("StateMach", "lift down reached. reset arm pos");

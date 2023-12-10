@@ -54,10 +54,10 @@ public class AATele extends LinearOpMode {
                 robot.intake.toBasePos();
             }
             if(smartGamepad1.x_pressed()){ // test auto output command
-                robot.intake.intakeState = 4;
+                robot.intake.intakeState = 11;
             }
             if(smartGamepad1.right_bumper){// reverses the intake motor for a few seconds :)
-                robot.intake.intakeState = 7;
+                robot.intake.intakeState = 21;
 
             }
 
