@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 abstract public class BaseAutonomous extends BaseOpMode {
 
@@ -14,9 +17,20 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
+
+    OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
+
     public void initAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
+        // initialize the webcam and openCV pipeline
+        myColorDetection.init();
+
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
+
+        waitForStart();
+        myColorDetection.detectColor();
         initHardware();
 
         telemetry.addData("Init State", "Init Finished");
@@ -84,6 +98,52 @@ abstract public class BaseAutonomous extends BaseOpMode {
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public  void pivot(double targetHeading) {
+        double currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double angleError = targetHeading - currentAngle + startAngle;
+        double motorPower;
+
+        // while robot hasn't reached target heading
+        while (Math.abs(angleError) >= BaseOpMode.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
+            currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            angleError = targetHeading - currentAngle + startAngle;
+
+            // prevents angle from going above 180 degrees and below -180 degrees
+            // makes sure robot takes most optimal path to get to the target heading
+            if (angleError > 180.0) {
+                angleError -= 360.0;
+            } else if (angleError < -180.0) {
+                angleError += 360.0;
+            }
+
+            // proportional motor power based on angle error
+            motorPower = angleError * -BaseOpMode.TURNING_KP;
+            motorPower = Math.max(Math.min(Math.abs(motorPower), BaseOpMode.MAXIMUM_TURN_POWER_AUTONOMOUS), BaseOpMode.MINIMUM_TURN_POWER) * Math.signum(motorPower);
+
+            // gives a power to each motor to make the robot pivot
+            motorFL.setPower(motorPower);
+            motorFR.setPower(-motorPower);
+            motorBL.setPower(motorPower);
+            motorBR.setPower(-motorPower);
+        }
+
+        stopDriving();
+    }
+
+    public void runIntake(double power, int rotations) {
+        motorIntakeWheels.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double targetMotorIntakeWheels = rotations * TICKS_PER_REVOLUTION;
+        targetMotorIntakeWheels += motorIntakeWheels.getCurrentPosition();
+        motorIntakeWheels.setTargetPosition((int) targetMotorIntakeWheels);
+        runtime.reset();
+        motorIntakeWheels.setPower(power);
+        while (opModeIsActive() &&
+                (runtime.seconds() < 30) &&
+                (motorFL.isBusy() && motorFR.isBusy() && motorBL.isBusy() && motorBR.isBusy())) {
+        }
+        motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void stopDriving() {
