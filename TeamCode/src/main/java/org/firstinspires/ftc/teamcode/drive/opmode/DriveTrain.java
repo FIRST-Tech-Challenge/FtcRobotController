@@ -95,7 +95,7 @@ public class DriveTrain extends OpMode
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         rearRight.setDirection(DcMotor.Direction.FORWARD);
 
-        liftMotor1.setDirection(DcMotor.Direction.REVERSE);
+        liftMotor1.setDirection(DcMotor.Direction.FORWARD);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -139,7 +139,6 @@ public class DriveTrain extends OpMode
         frontRightPower = (-pivot+y-x);
         rearRightPower = (-pivot+y+x);
 
-
         // gamepad 1 controls
         if(gamepad1.left_bumper) {
             frontLeft.setPower(frontLeftPower * 0.35);
@@ -153,18 +152,6 @@ public class DriveTrain extends OpMode
             rearLeft.setPower(rearLeftPower * .85);
             rearRight.setPower(rearRightPower * .85);
         }
-        if(gamepad1.dpad_left) {
-            frontLeft.setPower(-0.5);
-            rearRight.setPower(-0.5);
-            frontRight.setPower(0.5);
-            rearLeft.setPower(0.5);
-        }
-        if(gamepad1.dpad_right) {
-            frontLeft.setPower(0.5);
-            rearRight.setPower(0.5);
-            frontRight.setPower(-0.5);
-            rearLeft.setPower(-0.5);
-        }
 
         if(gamepad1.right_bumper) {
             intakeMotor.setPower(1);
@@ -173,8 +160,27 @@ public class DriveTrain extends OpMode
             intakeMotor.setPower(0);
         }
 
-        liftMotor1.setPower(0);
-        liftMotor2.setPower(0);
+        if(gamepad1.a) {
+            if (liftMotor2.getCurrentPosition() < 10) {
+                liftMotor1.setPower(0);
+                liftMotor2.setPower(0);
+            }
+            else {
+                liftMotor1.setPower(-1);
+                liftMotor2.setPower(-1);
+            }
+//            liftMotor1.setTargetPosition(0);
+//            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            liftMotor1.setPower(-1);
+        }
+        if (gamepad1.y) {
+            liftMotor1.setPower(1);
+            liftMotor2.setPower(1);
+        }
+        else {
+            liftMotor1.setPower(0);
+            liftMotor2.setPower(0);
+        }
         // gamepad 1 controls
         double power = 0;
 //        if(gamepad1.a) {
@@ -210,17 +216,10 @@ public class DriveTrain extends OpMode
             liftMotor1.setPower(-.4);
             liftMotor2.setPower(-.4);
         }
-//        else {
-//            liftMotor1.setPower(Kg);
-//            liftMotor2.setPower(Kg);
-//        }
-
-
-//        if(gamepad2.left_bumper) {
-//            clawServo.setPosition(0.26);
-//        } else if (gamepad2.right_bumper) {
-//            clawServo.setPosition(0.5);
-//        }
+        else {
+            liftMotor1.setPower(0);
+            liftMotor2.setPower(0);
+        }
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
