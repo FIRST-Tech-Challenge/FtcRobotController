@@ -158,14 +158,13 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Control/Expansion Hub device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
-            robot.checkViperSlideExtension();
             globalCoordinatePositionUpdate();
 
            //ProcessAprilTagControls();
             ProcessCollectorControls();
             ProcessFingerControls();
             ProcessLiftControls();
-            ProcessLiftStateMachine();
+           //ProcessLiftStateMachine();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -437,7 +436,9 @@ public abstract class Teleop extends LinearOpMode {
             if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
                 robot.elbowServo.setPosition(robot.ELBOW_SERVO_DROP);
                 robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
-                sleep(1250);
+                // Wait 2.5 seconds (1 sec to rotate the servos, plus 1.5 sec more to stop wobbling
+                // so we don't end up "flinging" the pixel against the backdrop.
+                sleep(2500 );
                 robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
                 robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
             }
@@ -448,7 +449,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-            sleep(500);
+            sleep(1000);
             robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
             robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
         }
@@ -470,7 +471,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
-//         robot.viperSlideExtension( robot.VIPER_EXTEND_HIGH );  NOT NEEDED FOR TOURNY2
+           robot.startViperSlideExtension( robot.VIPER_EXTEND_HIGH );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
@@ -494,20 +495,24 @@ public abstract class Teleop extends LinearOpMode {
         else if( manual_lift_control || liftTweaked ) {
             // Does user want to manually RAISE the lift?
             if( safeToManuallyRaise && (gamepad2_right_trigger > 0.25) ) {
-                //robot.viperMotors.setPower( robot.VIPER_RAISE_POWER );
-                robot.viperMotors.setPower( gamepad2_right_trigger );
+                // Do we need to terminate an auto movement?
+                robot.checkViperSlideExtension();
+                robot.viperMotors.setPower( gamepad2_right_trigger );  // fixed power? (robot.VIPER_RAISE_POWER)
                 liftTweaked = true;
             }
             // Does user want to manually LOWER the lift?
             else if( safeToManuallyLower && (gamepad2_left_trigger > 0.25) ) {
+                // Do we need to terminate an auto movement?
+                robot.checkViperSlideExtension();
                 robot.viperMotors.setPower( robot.VIPER_LOWER_POWER );
                 liftTweaked = true;
             }
             // No more input?  Time to stop lift movement!
             else if( liftTweaked ) {
+                // if the lift is near the bottom, truly go to zero power
+                // but if in a raised position, only drop to minimal holding power
                 boolean closeToZero = (Math.abs(robot.viperMotorsPos - robot.VIPER_EXTEND_ZERO) < 20);
                 robot.viperMotors.setPower( closeToZero? 0.0 : robot.VIPER_HOLD_POWER );
-//              robot.viperMotors.setPower( robot.VIPER_HOLD_POWER  );
                 liftTweaked = false;
             }
         } // manual_lift_control

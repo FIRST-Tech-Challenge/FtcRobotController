@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,7 +33,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
 @Autonomous(name="Autonomous Left-Blue", group="7592", preselectTeleOp = "Teleop-Left")
-//@Disabled
+@Disabled
 public class AutonomousLeftBlue extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
@@ -168,43 +169,6 @@ public class AutonomousLeftBlue extends AutonomousBase {
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
-/*    private void updatePoleAlignInstrumentation() {
-        // Collect our instrumentation data
-        anglePole1[timeIndex]   = robot.turretAngle;
-        odomPoleX0[timeIndex]   = beforeXpos;
-        odomPoleY0[timeIndex]   = beforeYpos;
-        odomPoleAng0[timeIndex] = beforeAngle;
-        odomPoleX1[timeIndex]   = afterXpos;
-        odomPoleY1[timeIndex]   = afterYpos;
-        odomPoleAng1[timeIndex] = afterAngle;
-        // Populate the telemetry
-        telemetry.addData("Drive", "Pole Travel %.1f sec", timePoleDrive[timeIndex] );
-        telemetry.addData("Turret", "Before=%.1f, After=%.1f degrees",
-                anglePole0[timeIndex], anglePole1[timeIndex] );
-        telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
-                odomPoleX0[timeIndex],   odomPoleX1[timeIndex],
-                odomPoleY0[timeIndex],   odomPoleY1[timeIndex],
-                odomPoleAng0[timeIndex], odomPoleAng1[timeIndex] );
-    } // updatePoleAlignInstrumentation
-*/
-    /*--------------------------------------------------------------------------------------------*/
-/*    private void updateStackAlignInstrumentation() {
-        // Collect our instrumentation data
-        odomStackX0[timeIndex]   = beforeXpos;
-        odomStackY0[timeIndex]   = beforeYpos;
-        odomStackAng0[timeIndex] = beforeAngle;
-        odomStackX1[timeIndex]   = afterXpos;
-        odomStackY1[timeIndex]   = afterYpos;
-        odomStackAng1[timeIndex] = afterAngle;
-        // Populate the telemetry
-        telemetry.addData("Drive", "Stack Travel %.1f sec", timeStackDrive[timeIndex] );
-        telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
-                odomStackX0[timeIndex],   odomStackX1[timeIndex],
-                odomStackY0[timeIndex],   odomStackY1[timeIndex],
-                odomStackAng0[timeIndex], odomStackAng1[timeIndex] );
-    } // updateStackAlignInstrumentation
-*/
-    /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous( int spikemark ) {
         double drive_power = 0.6;
         double strafe_power = 0.6;
@@ -216,18 +180,18 @@ public class AutonomousLeftBlue extends AutonomousBase {
             // THe final motion depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT
-                    driveToPosition( -14.0, 0.0, 60.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -28.0, 5.0, 135.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
+                    driveToPosition( -14.0, 0.0, 60.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
+                    driveToPosition( -28.0, 5.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -30.0, -10.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU);
-                    driveToPosition( -37.0, -10.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
+                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
+                    driveToPosition( -30.0, -10.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU);
+                    driveToPosition( -37.0, -10.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO);
+                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
+                    driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
                     break;
             } // switch
         }

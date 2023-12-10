@@ -92,10 +92,10 @@ public class HardwarePixelbot
     public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
-    public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to lowest possible scoring position
-    public int     VIPER_EXTEND_LOW  = 200;  // Encoder count when raised to lowest possible scoring position
-    public int     VIPER_EXTEND_MID  = 350;  // Encoder count when raised to medium scoring height
-    public int     VIPER_EXTEND_HIGH = 500;  // Encoder count when raised to upper scoring height
+    public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_LOW  = 250;  // Encoder count when raised to lowest possible scoring position (200)
+    public int     VIPER_EXTEND_MID  = 325;  // Encoder count when raised to medium scoring height (350)
+    public int     VIPER_EXTEND_HIGH = 400;  // Encoder count when raised to upper scoring height (500)
     public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
@@ -494,15 +494,13 @@ public class HardwarePixelbot
 
     public void checkViperSlideExtension()
     {
-        // Have we commanded an automatic lift movement that we need to monitor?
+        // Have we commanded an automatic lift movement that we need to terminate?
         if( viperMotorAutoMove ) {
-            // Are we done? (no longer busy) then restore manual control
-            if( viperMotors.isBusy() == false) {
-                // turn off the auto-movement power, but don't go to zero or
-                // the weight of the lift will immediately drop it back down.
-                viperMotors.setPower( VIPER_HOLD_POWER );
-                viperMotors.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
-            }
+           // turn off the auto-movement power, but don't go to ZERO POWER or
+           // the weight of the lift will immediately drop it back down.
+           viperMotors.setPower( VIPER_HOLD_POWER );
+           viperMotors.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
+           viperMotorAutoMove = false;
         }
     } // checkViperSlideExtension
 
