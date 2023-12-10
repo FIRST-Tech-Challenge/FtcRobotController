@@ -48,9 +48,9 @@ import java.util.List;
  */
 
 public class OpenCvColorDetection {
-    OpenCvCamera robotCamera;
+    public OpenCvCamera robotCamera;
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
     public enum detectColorType {
         BLUE,
@@ -91,10 +91,12 @@ public class OpenCvColorDetection {
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
             public void onOpened() {
                 startStreaming();
             }
 
+            @Override
             public void onError(int errorCode) {
             }
         });
@@ -108,6 +110,8 @@ public class OpenCvColorDetection {
         robotCamera.startStreaming(Constants.CAMERA_IMAGE_WIDTH, Constants.CAMERA_IMAGE_HEIGHT, OpenCvCameraRotation.UPRIGHT);
     }
 
+    // Four possibilities for the camera; SideDetected.INITIALIZED means the camera
+    //    hasn't had a chance to detect anything yet
     public enum SideDetected {
         INITIALIZED,
         LEFT,
@@ -137,7 +141,6 @@ public class OpenCvColorDetection {
 
         @Override
         public Mat processFrame(Mat inputMat) {
-            System.out.println("Start new process");
             // resize the image to the roi so that stuff like volunteer's shirts aren't detected
             roiMat = inputMat.submat(Constants.roi);
 
@@ -161,7 +164,9 @@ public class OpenCvColorDetection {
                 default:
             }
 
+            // Clears list from the last loop to use as a empty
             contoursList.clear();
+
             // create a list of contours surrounding groups of contiguous pixels that were filtered
             Imgproc.findContours(filteredMat, contoursList, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -173,10 +178,7 @@ public class OpenCvColorDetection {
             targetPoint.x = -1;
             targetPoint.y = -1;
             targetDetected = false;
-            System.out.println("Contour list: " + contoursList.size());
             if (contoursList.size() > 0) {
-                System.out.println("After if: Contour list: " + contoursList.size());
-
                 // Code for offsetting the contours if full image is relayed to scrcpy
                 //    (doesn't work and throws an exception)
                 /*
@@ -211,15 +213,11 @@ public class OpenCvColorDetection {
                 }
                 targetDetected = true;
 
-                System.out.println("Before drawing: " + contoursList.size());
-
                 // Draw the max area contour at index maxAreaContourIndex for debugging in scrcpy
                 Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, Constants.borderColor, 2, -1);
 
                 // draw rectangular bounding box around roi (use if using full image)
                 //Imgproc.rectangle(outputMat, Constants.roi, Constants.roiColor);
-
-                System.out.println("After drawing: " + contoursList.size());
 
                 //   draw rectangular bounding box around the max area contour
                 //   and draw circle at the center of rectangular bounding box
@@ -233,6 +231,9 @@ public class OpenCvColorDetection {
 
                 double width = inputMat.size().width;
 
+                // Update sideDetected so that robot can detect position with detectPosition()
+                // Takes the left fourth of the screen for left spike mark, right fourth for right, and
+                //    otherwise is center
                 if (targetPoint.x < width / 4) {
                     sideDetected = SideDetected.LEFT;
                 } else if (targetPoint.x > (3 * width) / 4) {

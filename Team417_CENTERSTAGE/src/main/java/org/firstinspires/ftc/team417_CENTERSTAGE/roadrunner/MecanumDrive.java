@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamMentor.roadrunner;
+package org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner;
 
 import android.util.Log;
 
@@ -8,8 +8,8 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
@@ -18,9 +18,9 @@ import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
@@ -43,16 +43,35 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagLatencyCompensation;
+import org.firstinspires.ftc.team417_CENTERSTAGE.apriltags.AprilTagPoseEstimator;
+import org.firstinspires.ftc.team417_CENTERSTAGE.utilityclasses.TwistWithTimestamp;
 import org.firstinspires.inspection.InspectionState;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    // For the April Tag latency calculation (added by Hank)
+    public ElapsedTime clock = new ElapsedTime();
+
+    // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+    public ArrayList<TwistWithTimestamp> twistList;
+
+    // To detect April Tags to correct drift (added by Hank)
+    public AprilTagPoseEstimator myAprilTagPoseEstimator;
+
+    // To detect the motion of the motors (added by Hank)
+    public DcMotorEx[] motors;
+
+    // Whether or not to use April Tags (added by Hank)
+    public final static boolean USE_APRIL_TAGS = false;
 
     public static String getBotName() {
         InspectionState inspection=new InspectionState();
@@ -89,29 +108,29 @@ public final class MecanumDrive {
         Params() {
             if (isDevBot) {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
+                lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
+                trackWidthTicks = 616.0724803629631;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
+                kS = 0.6298460597755153;
+                kV = 0.004317546531109388;
                 kA = 0;
 
                 // path controller gains
-                axialGain = 0.0;
-                lateralGain = 0.0;
-                headingGain = 0.0; // shared with turn
+                axialGain = 20.0;
+                lateralGain = 8.0;
+                headingGain = 8.0; // shared with turn
             } else {
                 // drive model parameters
-                inPerTick = 0;
-                lateralInPerTick = 1;
-                trackWidthTicks = 0;
+                inPerTick = 0.00057006;
+                lateralInPerTick = 0.00043717549671991654;
+                trackWidthTicks = 23590.63804655905;
 
                 // feedforward parameters (in tick units)
-                kS = 0;
-                kV = 0;
-                kA = 0;
+                kS = 0.7728626336483462;
+                kV = 0.00011028881238241981;
+                kA = 0.0000009;
 
                 // path controller gains
                 axialGain = 0.0;
@@ -175,8 +194,6 @@ public final class MecanumDrive {
             leftFront.setDirection(DcMotorEx.Direction.REVERSE);
             leftBack.setDirection(DcMotorEx.Direction.REVERSE);
 
-            // <<motor>>.setDirection(DcMotorEx.Direction.REVERSE);
-
             lastLeftFrontPos = leftFront.getPositionAndVelocity().position;
             lastLeftBackPos = leftBack.getPositionAndVelocity().position;
             lastRightBackPos = rightBack.getPositionAndVelocity().position;
@@ -229,6 +246,14 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+        // For the April Tag latency calculation (added by Hank)
+        clock.reset();
+
+        if (USE_APRIL_TAGS) {
+            // To detect April Tags to correct drift (added by Hank)
+            myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
+        }
+
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -237,41 +262,60 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-
-        // <<motor>>.setDirection(DcMotorEx.Direction.REVERSE);
         if (isDevBot) {
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
             leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
             rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
             rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
-            leftBack.setDirection(DcMotor.Direction.REVERSE);
         } else {
             leftFront = hardwareMap.get(DcMotorEx.class, "FLMotor");
             leftBack = hardwareMap.get(DcMotorEx.class, "BLMotor");
             rightBack = hardwareMap.get(DcMotorEx.class, "BRMotor");
             rightFront = hardwareMap.get(DcMotorEx.class, "FRMotor");
-
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
-            leftBack.setDirection(DcMotor.Direction.REVERSE);
         }
+
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        IMU.Parameters parameters;
+                if (isDevBot) {
+                    parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                    RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        } else {
+                    parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                    RevHubOrientationOnRobot.UsbFacingDirection.UP)); }
         imu.initialize(parameters);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new DriveLocalizer();
+        if (isDevBot) {
+            localizer = new DriveLocalizer();
+        } else {
+            localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+        }
+
+        // To detect the motion of the motors (added by Hank)
+        motors = new DcMotorEx[]{rightBack, rightFront, leftBack, leftFront};
+
+        // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+        twistList = new ArrayList<>();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    // Closes and releases resources (Added by Hank)
+    public void close() {
+        if (myAprilTagPoseEstimator != null) {
+            myAprilTagPoseEstimator.visionPortal.close();
+        }
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
@@ -456,7 +500,10 @@ public final class MecanumDrive {
 
     public PoseVelocity2d updatePoseEstimate() {
         Twist2dDual<Time> twist = localizer.update();
-        pose = pose.plus(twist.value());
+
+        AprilTagLatencyCompensation.compensateForLatency(this, twist);
+
+        //This was the original location of: "pose = pose.plus(twist.value());"
 
         poseHistory.add(pose);
         while (poseHistory.size() > 100) {
@@ -506,5 +553,27 @@ public final class MecanumDrive {
                 defaultVelConstraint, defaultAccelConstraint,
                 0.25, 0.1
         );
+    }
+    // List of currently running Actions:
+    LinkedList<Action> actionList = new LinkedList<>();
+
+    // Invoke an Action to run in parallel during TeleOp:
+    public void runParallel(Action action) {
+        actionList.add(action);
+    }
+
+    // On every iteration of your robot loop, call 'doActionsWork'. Specify the packet
+    // if you're drawing on the graph for FTC Dashboard:
+    public boolean doActionsWork() { return doActionsWork(null); }
+    public boolean doActionsWork(TelemetryPacket packet) {
+        LinkedList<Action> deletionList = new LinkedList<>();
+        for (Action action: actionList) {
+            // Once the Action returns false, the action is done:
+            if (!action.run(packet))
+                // We can't delete an item from a list while we're iterating on that list:
+                deletionList.add(action);
+        }
+        actionList.removeAll(deletionList);
+        return actionList.size() != 0;
     }
 }
