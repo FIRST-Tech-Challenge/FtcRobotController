@@ -64,7 +64,7 @@ public class BlueRightFTC extends LinearOpMode {
 
     CSVP CSVP;
     boolean hasCVInit = false;
-    String placement = "ONE";
+    int placement = 1;
     float confidence = 0;
 
     boolean tf = false;
@@ -133,8 +133,8 @@ public class BlueRightFTC extends LinearOpMode {
         int detectCounter = 0;
         double confidence = 0;
         String label = "NONE";
-        Recognition oldRecog = null;
-        Recognition recog;
+        int oldRecog = 0;
+        int recog;
 
         telemetry.update();
         waitForStart();
@@ -155,11 +155,11 @@ public class BlueRightFTC extends LinearOpMode {
                     telemetry.addLine("in the wait0 state");
                     recog = CSVP.detect();
                     detectCounter++;
-                    if (recog != null){
-                        if(oldRecog != null) {
+                    if (recog != 0){
+                        if(oldRecog != 0) {
                             if (CSVP.detect() == recog){
-                                confidence = recog.getConfidence();
-                                label = recog.getLabel();
+                                //confidence = recog.getConfidence();
+                                //label = recog.getLabel();
                                 oldRecog = recog;
                             }
                         }
@@ -172,12 +172,13 @@ public class BlueRightFTC extends LinearOpMode {
                     }
                     if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
                         currentState = State.CLAWCLOSE;
-                        placement = label;
+                        placement = recog;
                     }
                     break;
                 case CLAWCLOSE:
-                    telemetry.addData("Label: ", label);
-                    telemetry.addData("Confidence: ", confidence);
+                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
+                    //telemetry.addData("Label: ", label);
+                    //telemetry.addData("Confidence: ", confidence);
                     telemetry.addData("#: ", detectCounter);
                     if(waitTimer.milliseconds() >= 1000){
                         drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);

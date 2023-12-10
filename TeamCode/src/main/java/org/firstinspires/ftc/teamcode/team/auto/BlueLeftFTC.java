@@ -64,7 +64,7 @@ public class BlueLeftFTC extends LinearOpMode {
 
     CSVP CSVP;
     boolean hasCVInit = false;
-    String placement = "ONE";
+    int placement = 1;
     float confidence = 0;
 
     boolean tf = false;
@@ -131,10 +131,10 @@ public class BlueLeftFTC extends LinearOpMode {
         telemetry.update();
 
         int detectCounter = 0;
-        double confidence = 0;
-        String label = "NONE";
-        Recognition oldRecog = null;
-        Recognition recog;
+        //double confidence = 0;
+        //String label = "NONE";
+        int oldRecog = 0;
+        int recog;
 
         telemetry.update();
         waitForStart();
@@ -155,12 +155,13 @@ public class BlueLeftFTC extends LinearOpMode {
                     telemetry.addLine("in the wait0 state");
                     recog = CSVP.detect();
                     detectCounter++;
-                    if (recog != null){
-                        if(oldRecog != null) {
+                    if (recog != 0){//edited
+                        if(oldRecog != 0) {//edited
                             if (CSVP.detect() == recog){
-                                confidence = recog.getConfidence();
-                                label = recog.getLabel();
+                                //confidence = recog.getConfidence();
+                                //label = recog.getLabel(); //object name (redObject...)
                                 oldRecog = recog;
+                                //add if location detected is left center or right (1,2,3) then itll move accordingly
                             }
                         }
                         else{
@@ -172,12 +173,14 @@ public class BlueLeftFTC extends LinearOpMode {
                     }
                     if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
                         currentState = State.CLAWCLOSE;
-                        placement = label;
+                        placement = recog;
                     }
                     break;
+
                 case CLAWCLOSE:
-                    telemetry.addData("Label: ", label);
-                    telemetry.addData("Confidence: ", confidence);
+                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
+                    //telemetry.addData("Label: ", label);
+                    //telemetry.addData("Confidence: ", confidence);
                     telemetry.addData("#: ", detectCounter);
                     if(waitTimer.milliseconds() >= 1000){
                         drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
@@ -255,9 +258,9 @@ public class BlueLeftFTC extends LinearOpMode {
 //                            currentState = State.TOSTACK;
 //                        }
 //                        else{
-                            drive.robot.getLiftSubsystem().retract();
-                            currentState = State.PARK;
-                       // }
+                        drive.robot.getLiftSubsystem().retract();
+                        currentState = State.PARK;
+                        // }
                         waitTimer.reset();
                     }
                     break;
@@ -295,13 +298,13 @@ public class BlueLeftFTC extends LinearOpMode {
 
                 case PARK:
                     if(waitTimer.milliseconds() >= 2000){
-                        if(placement == "ONE"){
+                        if(placement == 1){
                             drive.followTrajectorySequenceAsync(location1);
                         }
-                        else if(placement == "TWO"){
+                        else if(placement == 2){
                             drive.followTrajectorySequenceAsync(location2);
                         }
-                        else if(placement == "THREE"){
+                        else if(placement == 3){
                             drive.followTrajectorySequenceAsync(location3);
                         }
                         currentState = State.IDLE;

@@ -57,7 +57,7 @@ public class RedRightFTC extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-//    Pose2d startPose = new Pose2d(37, -65.5, Math.toRadians(90));
+    //    Pose2d startPose = new Pose2d(37, -65.5, Math.toRadians(90));
     Pose2d startPose = new Pose2d(39.25, -63.5, Math.toRadians(90));
 
 
@@ -68,7 +68,7 @@ public class RedRightFTC extends LinearOpMode {
 
     CSVP CSVP;
     boolean hasCVInit = false;
-    String placement = "ONE";
+    int placement = 1;
     float confidence = 0;
 
     boolean tf = false;
@@ -149,8 +149,8 @@ public class RedRightFTC extends LinearOpMode {
         int detectCounter = 0;
         double confidence = 0;
         String label = "NONE";
-        Recognition oldRecog = null;
-        Recognition recog;
+        int oldRecog = 0;
+        int recog;
 
         DbgLog.msg("HI: " + traj1.end().toString());
 
@@ -172,11 +172,11 @@ public class RedRightFTC extends LinearOpMode {
                     telemetry.addLine("in the wait0 state");
                     recog = CSVP.detect();
                     detectCounter++;
-                    if (recog != null){
-                        if(oldRecog != null) {
+                    if (recog != 0){
+                        if(oldRecog != 0) {
                             if (CSVP.detect() == recog){
-                                confidence = recog.getConfidence();
-                                label = recog.getLabel();
+                                //confidence = recog.getConfidence();
+                                //label = recog.getLabel();
                                 oldRecog = recog;
                             }
                         }
@@ -189,16 +189,17 @@ public class RedRightFTC extends LinearOpMode {
                     }
                     if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
                         currentState = State.CLAWCLOSE;
-                        placement = label;
+                        placement = recog;
                     }
                     break;
 
                 case CLAWCLOSE:
-                    telemetry.addData("Label: ", label);
-                    telemetry.addData("Confidence: ", confidence);
+                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
+                    //telemetry.addData("Label: ", label);
+                    //telemetry.addData("Confidence: ", confidence);
                     telemetry.addData("#: ", detectCounter);
                     if(waitTimer.milliseconds() >= 250){
-                    //    drive.robot.getFeeder().getFeederConeGripperStateMachine().updateState(FeederConeGripperStateMachine.State.CLOSE);
+                        //    drive.robot.getFeeder().getFeederConeGripperStateMachine().updateState(FeederConeGripperStateMachine.State.CLOSE);
                         currentState = State.INITSTRAFE;
                         waitTimer.reset();
                     }
@@ -325,13 +326,13 @@ public class RedRightFTC extends LinearOpMode {
 
                 case PARK:
                     if(waitTimer.milliseconds() >= 2000){
-                        if(placement == "ONE"){
+                        if(placement == 1){
                             drive.followTrajectorySequenceAsync(location1);
                         }
-                        else if(placement == "TWO"){
+                        else if(placement == 2){
                             drive.followTrajectorySequenceAsync(location2);
                         }
-                        else if(placement == "THREE"){
+                        else if(placement == 3){
                             drive.followTrajectorySequenceAsync(location3);
                         }
                         currentState = State.IDLE;

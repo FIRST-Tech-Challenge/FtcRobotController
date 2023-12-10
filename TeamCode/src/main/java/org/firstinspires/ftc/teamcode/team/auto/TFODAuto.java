@@ -47,8 +47,8 @@ public class TFODAuto extends LinearOpMode {
         int detectCounter = 0;
         double confidence = 0;
         String label = "NONE";
-        Recognition oldRecog = null;
-        Recognition recog;
+        int oldRecog = 0;
+        int recog;
 
         waitForStart();
         double start = waitTimer.milliseconds();
@@ -57,11 +57,9 @@ public class TFODAuto extends LinearOpMode {
                 case DETECT:
                     recog = CSVP.detect();
                     detectCounter++;
-                    if (recog != null){
-                        if(oldRecog != null) {
+                    if (recog != 0){
+                        if(oldRecog != 0) {
                             if (CSVP.detect() == recog){
-                                confidence = recog.getConfidence();
-                                label = recog.getLabel();
                                 oldRecog = recog;
                             }
                         }

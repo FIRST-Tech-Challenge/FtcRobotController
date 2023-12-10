@@ -66,9 +66,9 @@ public class CSAutoRobotLIO {
         });
 
         setLiftSubsystem(new LiftSubsystem(getMotors()[0]));
-        setIntakeSubsystem(new IntakeSubsystem(getMotors()[0]));
+        setIntakeSubsystem(new IntakeSubsystem(getMotors()[1]));
         //setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
-        setDroneSubsystem(new DroneSubsystem(getServos()[1]));
+        setDroneSubsystem(new DroneSubsystem(getServos()[0]));
         setMatchRuntime(new TimeProfiler(false));
     }
     public RevMotor[] getMotors() {
