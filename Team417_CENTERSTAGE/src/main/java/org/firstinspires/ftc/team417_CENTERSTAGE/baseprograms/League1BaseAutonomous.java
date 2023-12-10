@@ -12,11 +12,6 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    public int lastEncoderFL = 0;
-    public int lastEncoderFR = 0;
-    public int lastEncoderBL = 0;
-    public int lastEncoderBR = 0;
-
     // Autonomous tuning constants
     public static double LEFT_Y = 26.0;
     public static double LEFT_X = -12.0;
@@ -104,12 +99,6 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFR = FR.getCurrentPosition();
-        lastEncoderFL = FL.getCurrentPosition();
-        lastEncoderBL = BL.getCurrentPosition();
-        lastEncoderBR = BR.getCurrentPosition();
 
         // Sleep for OpenCv to process
         sleep(5000);
@@ -204,10 +193,6 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
     public String toString() {
         return "BaseAutonomous{" +
                 "runtime=" + runtime +
-                ", lastEncoderFL=" + lastEncoderFL +
-                ", lastEncoderFR=" + lastEncoderFR +
-                ", lastEncoderBL=" + lastEncoderBL +
-                ", lastEncoderBR=" + lastEncoderBR +
                 ", LEFT_Y=" + LEFT_Y +
                 ", LEFT_X=" + LEFT_X +
                 ", RIGHT_Y=" + RIGHT_Y +
