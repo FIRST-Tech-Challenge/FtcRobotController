@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class BlueRight extends LinearOpMode {
     OpenCvWebcam webcam;
     private AutoMethods autoMethods;
-    private boolean isLeft = false, isRight = true, isCenter = false;
+    private boolean isLeft = false, isRight = false, isCenter = true;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
 
@@ -56,7 +56,7 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(83,0.5);
         sleep(5000);
         blar.ZeroMotors();
-        blar.StrafeByInch(24, false, 0.2);
+        blar.StrafeByInch(21, false, 0.2);
         blar.RunMotorHang(6.5,0.75);
         sleep(5000);
         blar.ZeroMotors();
@@ -64,7 +64,7 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(6, 0.2);
         sleep(3000);
         blar.ZeroMotors();
-        blar.RunMotorHang(-6.5,0.75);
+        blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         //autoMethods.StrafeByInch(24, true, 0.2);
         sleep(4000);
@@ -74,8 +74,8 @@ public class BlueRight extends LinearOpMode {
 
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.2);
-        sleep(3000);
+        blar.RunMotors(17,0.5);
+        sleep(1500);
         blar.ZeroMotors();
         blar.StrafeByInch(9, true, 0.2);
         sleep(2000);
@@ -95,7 +95,7 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(83, 0.5);
         sleep(5000);
         blar.ZeroMotors();
-        blar.RunMotorHang(6.5,0.75);
+        blar.RunMotorHang(6.5,1);
         blar.StrafeByInch(12, false, 0.2);
         sleep(3000);
         blar.ZeroMotors();
@@ -104,7 +104,7 @@ public class BlueRight extends LinearOpMode {
         blar.ZeroMotors();
         blar.RunMotors(-4,0.2);
         blar.RunMotorHang(-6.5,0.75);
-        sleep(3000);
+        sleep(5000);
         motorHang.setPower(0);
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
@@ -131,7 +131,7 @@ public class BlueRight extends LinearOpMode {
         sleep(2000);
         blar.ZeroMotors();
         motorHang.setPower(0);
-        blar.RunMotorHang(-6.5,0.75);
+        blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         sleep(1000);
         blar.ZeroMotors();
