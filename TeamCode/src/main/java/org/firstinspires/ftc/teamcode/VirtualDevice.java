@@ -9,10 +9,10 @@ public class VirtualDevice implements HardwareDevice {
     public Manufacturer manufacturer;
     public String name;
     public String partID;
-    protected HashMap<String, Integer> connectionScheme;
+    protected HashMap<String, Object> connectionScheme;
     public int version;
 
-    public VirtualDevice(String partNumber, String DeviceName, HashMap<String, Integer> connectionScheme, int version) {
+    public VirtualDevice(String partNumber, String DeviceName, HashMap<String, Object> connectionScheme, int version) {
         this.name = DeviceName;
         this.partID = partNumber;
         this.version = version;
