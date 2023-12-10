@@ -4,15 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
 @Autonomous(name = "RedLeft")
 public class RedLeft extends LinearOpMode {
-    OpenCvWebcam webcam;
+    Webcam webcam;
     private AutoMethods autoMethods;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    private boolean isLeft = false, isRight = false, isCenter = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,8 +33,30 @@ public class RedLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), true);
+        while(!opModeIsActive()){
 
-        waitForStart();
+            Double x = webcam.CheckCamera();
+            if (x > 450 || x == 0){
+                isLeft = true;
+                isRight = false;
+                isCenter = false;
+            }
+            else if (x < 150){
+                isLeft = false;
+                isRight = true;
+                isCenter = false;
+            }
+            else{
+                isLeft = false;
+                isRight = false;
+                isCenter = true;
+            }
+            telemetry.addData("detected x", x);
+            telemetry.update();
+            sleep (2000);
+        }
+
 
         autoMethods.RunMotors(25,0.2);
         sleep(8000);
