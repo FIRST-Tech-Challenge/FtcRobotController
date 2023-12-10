@@ -64,7 +64,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // motors
-        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "FL");
+        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
