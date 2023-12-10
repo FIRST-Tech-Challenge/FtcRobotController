@@ -53,6 +53,9 @@ public class actuatorUtils {
         actuatorUtils.arm = arm;
         actuatorUtils.gripper = gripper;
         actuatorUtils.dump = null;
+        arm.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -161,7 +164,7 @@ public class actuatorUtils {
         armPole(newHeight, true);
     }
     public static void armBoard() {
-        arm.setTargetPosition(-2850);
+        arm.setTargetPosition(-100);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
     }
@@ -171,10 +174,10 @@ public class actuatorUtils {
         arm.setPower(0.5);
     }
     public static void noElbowBoard() {
-        elbow.setPosition(0.1);
+        elbow.setPosition(1);
     }
     public static void elbowBoard() {
-        elbow.setPosition(0.265);
+        elbow.setPosition(0.579);
     }
     public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == ArmLevel.LOW_POLE)

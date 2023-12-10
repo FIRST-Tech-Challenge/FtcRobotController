@@ -26,6 +26,8 @@ public class RedRight extends LinearOpMode {
 
     private MecanumDrive2024 drive;
     private actuatorUtils utils;
+    private moveUtils move;
+
     private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private Servo elbow = null; //Located on Expansion Hub- Servo port 0
@@ -51,6 +53,7 @@ public class RedRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive2024(hardwareMap);
         utils = new actuatorUtils();
+        move = new moveUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
         dump = hardwareMap.get(Servo.class, "Dump");
         elbow = hardwareMap.get(Servo.class, "elbow");
@@ -67,6 +70,7 @@ public class RedRight extends LinearOpMode {
         desiredHeading = getHeading();
 
         utils.initializeActuator(arm, gripper, dump, elbow);
+        move.initialize(drive, utils);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -150,158 +154,47 @@ public class RedRight extends LinearOpMode {
         telemetry.update();
     }
 
-    private void LeftPath() {
-        Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-30,-12,Math.toRadians(-180));
-        TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-30,-1,Math.toRadians(-180));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
+    private void LeftPath() throws InterruptedException {
+        move.driveSeq(-30,-12,-180);
+        move.driveSeq(-30,-1,-180);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-30, -8, Math.toRadians(-180));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
+        move.driveSeq(-30, -8, -180);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        pose = new Pose2d(-19, -30, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        utils.armBoard();
-        utils.elbowBoard();
-        pose = new Pose2d(-19, -32, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(2000);
-        utils.gripperOpen();
+        move.driveSeq(-19, -30, 90);
+        move.driveToBoard(-19, -32, 90);
+        move.driveFromBoard(-52, -32, 90);
+        move.driveSeq(-52, -50, 90);
+    }
+    private void MiddlePath() throws InterruptedException {
+        move.driveSeq(-14.5,-19.5,-180);
         sleep(1000);
-        utils.noElbowBoard();
-        utils.noArmBoard();
+        utils.dumpOpen();
         sleep(1000);
-        utils.gripperClose();
-        pose = new Pose2d(-52, -32, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-52, -50, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-
-
+        move.driveSeq(-14.5, -23.5, -180);
+        sleep(1000);
+        utils.dumpClose();
+        sleep(1000);
+        move.driveSeq(-24.5, -30, 90);
+        move.driveToBoard(-24.5, -32, 90);
+        move.driveFromBoard(-52, -32, 90);
+        move.driveSeq(-52, -50, 90);
 
     }
-    private void MiddlePath() {
-        Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-14.5,-19.5,Math.toRadians(-180));
-        TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        
-        drive.followTrajectorySequence(seq);
+    private void RightPath() throws InterruptedException {
+        move.driveSeq(-27,-24.5,180);
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-14.5, -23.5, Math.toRadians(-180));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
+        move.driveSeq(-27, -28.5, 180);
         sleep(1000);
         utils.dumpClose();
-        sleep(1000);
-        pose = new Pose2d(-24.5, -30, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        utils.armBoard();
-        utils.elbowBoard();
-        pose = new Pose2d(-24.5, -32, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(2000);
-        utils.gripperOpen();
-        sleep(1000);
-        utils.noElbowBoard();
-        utils.noArmBoard();
-        sleep(1000);
-        utils.gripperClose();
-        pose = new Pose2d(-52, -32, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-52, -50, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-
-    }
-    private void RightPath() {
-        Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-27,-24.5,Math.toRadians(180));
-        TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(1000);
-        utils.dumpOpen();
-        sleep(1000);
-        pose = new Pose2d(-27, -28.5, Math.toRadians(180));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(1000);
-        utils.dumpClose();
-        pose = new Pose2d(-40.0, -30, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        utils.armBoard();
-        utils.elbowBoard();
-        pose = new Pose2d(-28.5, -32, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        sleep(2000);
-        utils.gripperOpen();
-        sleep(1000);
-        utils.noElbowBoard();
-        utils.noArmBoard();
-        sleep(1000);
-        utils.gripperClose();
-        pose = new Pose2d(-52, -33, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-        pose = new Pose2d(-52, -50, Math.toRadians(90));
-        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(pose)
-                .build();
-        drive.followTrajectorySequence(seq);
-
+        move.driveSeq(-40.0, -30, 90);
+        move.driveToBoard(-28.5, -32, 90);
+        move.driveFromBoard(-52, -33, 90);
+        move.driveSeq(-52, -50, 90);
     }
 
     private void initOpenCV() {

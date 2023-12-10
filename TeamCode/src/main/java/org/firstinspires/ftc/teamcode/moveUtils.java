@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 
 import static java.lang.Thread.sleep;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive2024;
+
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 public class moveUtils {
 
@@ -43,6 +47,8 @@ public class moveUtils {
 
     static final float STRAFE_MOD = 36f;
     static final float MAX_STRAFE_SPEED = 1.0f;
+    private static MecanumDrive2024 drive;
+    private static actuatorUtils utils;
 
 
     public static void initialize(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, BNO055IMU imu, float currHeading, PIDController pidRotate) {
@@ -55,8 +61,35 @@ public class moveUtils {
         moveUtils.pidRotate = pidRotate;
 
     }
+    public static void initialize(MecanumDrive2024 drive, actuatorUtils utils){
+        moveUtils.drive = drive;
+        moveUtils.utils = utils;
+    }
+    public static void driveSeq (double x, double y, double heading){
+        Pose2d pose = new Pose2d(x, y, Math.toRadians(heading));
+        TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+    }
+    public static void driveToBoard(double x, double y, double heading) throws InterruptedException{
+        utils.armBoard();
+        utils.elbowBoard();
+        moveUtils.driveSeq(x, y, heading);
+        sleep(2000);
+        utils.gripperOpen();
+        sleep(1000);
+    }
+    public static void driveFromBoard(double x, double y, double heading) throws InterruptedException{
+        utils.noElbowBoard();
+        utils.noArmBoard();
+        sleep(1000);
+        utils.gripperClose();
+        moveUtils.driveSeq(x,y,heading);
+    }
 
-    public static void turnCW(int turnDegrees) throws InterruptedException {
+
+        public static void turnCW(int turnDegrees) throws InterruptedException {
         rotate(-turnDegrees,TURN_SPEED_LOW);
         resetEncoders();
 
