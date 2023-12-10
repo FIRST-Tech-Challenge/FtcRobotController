@@ -189,6 +189,9 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         }
     }
 
+    /*this code below sets the current settings from FTC Dash to a log
+      this was generated: (right-click, "Generate...", "toString()" with "Settings..." set to include static and constant fields)
+    */
     @Override
     public String toString() {
         return "BaseAutonomous{" +
