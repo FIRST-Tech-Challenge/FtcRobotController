@@ -110,7 +110,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             angleError = targetHeading - currentAngle + startAngle;
 
-            // prevents angle from gong above 180 degrees and below -180 degrees
+            // prevents angle from going above 180 degrees and below -180 degrees
             // makes sure robot takes most optimal path to get to the target heading
             if (angleError > 180.0) {
                 angleError -= 360.0;
