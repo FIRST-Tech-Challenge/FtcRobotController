@@ -36,9 +36,7 @@ public class CSFullTeleOp extends CSMethods {
 
     // Declare OpMode members for each of the 4 motors.
     boolean lBack = false;
-    boolean backServo = false;
     boolean rBack = false;
-    boolean frontServo = false;
 
     @Override
     public void runOpMode() {
@@ -109,27 +107,23 @@ public class CSFullTeleOp extends CSMethods {
 
             if (gamepad1.dpad_left && !lBack) {
                 lBack = true;
-                if (backServo) {
+                if (pixelBackServo.getPosition() == 1) {
                     pixelBackServo.setPosition(0);
-                    backServo = false;
                 } else {
                     pixelBackServo.setPosition(1);
-                    backServo = false;
                 }
-            } else {
+            } else if (!gamepad1.dpad_left) {
                 lBack = false;
             }
 
-            if (gamepad1.dpad_left && !rBack) {
+            if (gamepad1.dpad_right && !rBack) {
                 rBack = true;
-                if (frontServo) {
+                if (pixelFrontServo.getPosition() == 1) {
                     pixelBackServo.setPosition(0);
-                    frontServo = false;
                 } else {
                     pixelBackServo.setPosition(1);
-                    frontServo = false;
                 }
-            } else {
+            } else if (!gamepad1.dpad_right) {
                 rBack = false;
             }
 
