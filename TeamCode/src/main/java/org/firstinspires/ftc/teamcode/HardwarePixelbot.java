@@ -8,7 +8,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -79,7 +78,7 @@ public class HardwarePixelbot
     protected DcMotorEx collectorMotor     = null;
 
     public double  COLLECTOR_MOTOR_POWER = 1.00;  // Speed of the collector motor when we run
-    public double  COLLECTOR_EJECT_POWER = 0.50;  // Speed of the collector motor for autonomous
+    public double  COLLECTOR_EJECT_POWER = 0.60;  // Speed of the collector motor for autonomous
 
     // Viper slide motors (Y power cable to drive both motors from one port; single encoder cable on left motor
     protected DcMotorEx viperMotors = null;
@@ -88,10 +87,12 @@ public class HardwarePixelbot
     public double       viperMotorsPwr  = 0.0;     // current power setting
     public double       viperMotorsAmps = 0.0;     // current power draw (Amps)
 
+    public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
     public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to lowest possible scoring position
     public int     VIPER_EXTEND_LOW  = 200;  // Encoder count when raised to lowest possible scoring position
     public int     VIPER_EXTEND_MID  = 350;  // Encoder count when raised to medium scoring height
     public int     VIPER_EXTEND_HIGH = 500;  // Encoder count when raised to upper scoring height
@@ -100,13 +101,13 @@ public class HardwarePixelbot
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
 
-    public double COLLECTOR_SERVO_GROUND = 0.850;
-    public double COLLECTOR_SERVO_STACK2 = 0.810;
+    public double COLLECTOR_SERVO_GROUND = 0.830;
+    public double COLLECTOR_SERVO_STACK2 = 0.780;
     public double COLLECTOR_SERVO_STACK3 = 0.750;
-    public double COLLECTOR_SERVO_STACK4 = 0.700;
-    public double COLLECTOR_SERVO_STACK5 = 0.675;
+    public double COLLECTOR_SERVO_STACK4 = 0.710;
+    public double COLLECTOR_SERVO_STACK5 = 0.680;
     public double COLLECTOR_SERVO_RAISED = 0.300;  // almost vertical
-    public double COLLECTOR_SERVO_STORED = 0.240;  // past this hits the collector motor
+    public double COLLECTOR_SERVO_STORED = 0.230;  // past this hits the collector motor
 
     public double collectorServoSetPoint = COLLECTOR_SERVO_STORED;
 
@@ -116,18 +117,23 @@ public class HardwarePixelbot
 
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
     public Servo  elbowServo = null;
-    public double ELBOW_SERVO_INIT = 0.950;
-	
+    public double ELBOW_SERVO_INIT = 0.265;
+    public double ELBOW_SERVO_SAFE = 0.265;   // Safe to raise/lower the lift
+    public double ELBOW_SERVO_GRAB = 0.400;   // Rotate pixel fingers toward the pixel bin
+    public double ELBOW_SERVO_DROP = 0.950;   // Rotate pixel fingers toward the Backdrop
+
     public Servo  wristServo = null;
-    public double WRIST_SERVO_INIT = 0.400;   // higher is counter-clockwise
-    
+    public double WRIST_SERVO_INIT = 0.490;   // higher is counter-clockwise
+    public double WRIST_SERVO_GRAB = 0.490;
+    public double WRIST_SERVO_DROP = 0.000;
+
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
     public double FINGER1_SERVO_DROP = 0.440;
-    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.415;
+    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.420;
 
 	public Servo  fingerServo2 = null;  // BOTTOM (bin) or LEFT (backdrop)
     public double FINGER2_SERVO_DROP = 0.430;
-    public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.410;
+    public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.415;
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
@@ -468,7 +474,7 @@ public class HardwarePixelbot
 
     /*--------------------------------------------------------------------------------------------*/
     /* viperSlideExtension()                                                                      */
-    public void viperSlideExtension( int targetEncoderCount )
+    public void startViperSlideExtension(int targetEncoderCount )
     {
         // Range-check the target
         if( targetEncoderCount < VIPER_EXTEND_ZERO ) targetEncoderCount = VIPER_EXTEND_ZERO;
@@ -482,7 +488,23 @@ public class HardwarePixelbot
         viperMotors.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
         viperMotors.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
+        viperMotorAutoMove = true;
     } // viperSlideExtension
+
+    public void checkViperSlideExtension()
+    {
+        // Have we commanded an automatic lift movement that we need to monitor?
+        if( viperMotorAutoMove ) {
+            // Are we done? (no longer busy) then restore manual control
+            if( viperMotors.isBusy() == false) {
+                // turn off the auto-movement power, but don't go to zero or
+                // the weight of the lift will immediately drop it back down.
+                viperMotors.setPower( VIPER_HOLD_POWER );
+                viperMotors.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
+            }
+        }
+    } // checkViperSlideExtension
 
     public int singleSonarRangeF() {
         //Query the current range sensor reading and wait for a response

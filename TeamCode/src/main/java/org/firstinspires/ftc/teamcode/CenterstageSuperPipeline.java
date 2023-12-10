@@ -103,7 +103,7 @@ class CenterstageSuperPipeline implements VisionProcessor {
         //   RED team prop      = 175     BLUE team prop      = 105
         //   RED spikemark tape =         BLUE spikemark tape = 
         targetHue = (redAlliance)? 175 : 105;
-        maxHueErr = 15;     // how far off can we go and still be the desired color??
+        maxHueErr = 25;     // how far off can we go and still be the desired color??
 
         // Define permanent sampling areas from this color channel (HueChan -> submatHue)
         subMat1Hue = HueChan.submat(new Rect(sub1PointA, sub1PointB));

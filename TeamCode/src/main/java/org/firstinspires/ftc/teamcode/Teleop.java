@@ -6,7 +6,6 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.qualcomm.robotcore.util.Range;
 
@@ -102,6 +101,20 @@ public abstract class Teleop extends LinearOpMode {
 
 //========== DRIVE-TO-APRILTAG variables ==========
 
+//  double elbowPos = 0.500;
+//  double wristPos = 0.500;
+//  double collPos  = 0.500;
+
+    // LIFT STATE MACHINE VARIABLES
+    final int LIFT_STATE_IDLE = 0;
+    final int LIFT_STATE_ELBOW_INTO_BIN = 1;  // ready to rotate elbow into the pixel bin
+    final int LIFT_STATE_FINGERS_GRAB_PIXELS = 2;  // ready to open fingers to grab pixels
+    final int LIFT_STATE_LIFT_TO_SCORE = 3; // ready to raise the lift to the scoring position
+    final int LIFT_STATE_WRIST_TO_SCORE = 4; // ready to rotate wrist to the scoring position
+    final int LIFT_STATE_FINGERS_DROP_TO_SCORE = 4; // ready to rotate wrist to the scoring position
+
+    int       liftState = LIFT_STATE_IDLE;
+
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
 
@@ -145,12 +158,14 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Control/Expansion Hub device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+            robot.checkViperSlideExtension();
             globalCoordinatePositionUpdate();
 
            //ProcessAprilTagControls();
             ProcessCollectorControls();
             ProcessFingerControls();
             ProcessLiftControls();
+            ProcessLiftStateMachine();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -172,10 +187,14 @@ public abstract class Teleop extends LinearOpMode {
                 }
             }
 
-            telemetry.addData("circle","Robot-centric (fwd/back modes)");
-            telemetry.addData("square","Driver-centric (set joystick!)");
-            telemetry.addData("d-pad","Fine control (30%)");
-            telemetry.addData(" "," ");
+//            telemetry.addData("circle","Robot-centric (fwd/back modes)");
+//            telemetry.addData("square","Driver-centric (set joystick!)");
+//            telemetry.addData("d-pad","Fine control (30%)");
+//            telemetry.addData(" "," ");
+
+//            telemetry.addData("Elbow", "%.3f", elbowPos );
+//            telemetry.addData("Wrist", "%.3f", wristPos );
+//            telemetry.addData("Coll", "%.3f", collPos);
 
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
@@ -378,11 +397,23 @@ public abstract class Teleop extends LinearOpMode {
         // - right enables the collector motor in FORWARD mode
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
         {
-            robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
+          robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
+//        elbowPos -= 0.01;
+//        robot.elbowServo.setPosition(elbowPos);
+//        wristPos -= 0.01;
+//        robot.wristServo.setPosition(wristPos);
+//        collPos -= 0.01;
+//        robot.collectorServo.setPosition(collPos);
         }
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
-            robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
+          robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
+//        elbowPos += 0.01;
+//        robot.elbowServo.setPosition(elbowPos);
+//        wristPos += 0.01;
+//        robot.wristServo.setPosition(wristPos);
+//        collPos += 0.01;
+//        robot.collectorServo.setPosition(collPos);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         // - lowers collector for grabbing pixels
@@ -390,7 +421,7 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_circle_now && !gamepad2_circle_last)
         {
             robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_GROUND);
-            robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
+            robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
         }
 
     }  // processCollectorControls
@@ -402,13 +433,22 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
         if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {
-            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
-            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
+            // Make sure we're lifted before we allow the operator to command SCORE
+            if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
+                robot.elbowServo.setPosition(robot.ELBOW_SERVO_DROP);
+                robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
+                sleep(1250);
+                robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
+                robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
+            }
         }
 
         // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
         else if( gamepad2_square_now && !gamepad2_square_last)
         {
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            sleep(500);
             robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
             robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
         }
@@ -430,22 +470,25 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
-           robot.viperSlideExtension( robot.VIPER_EXTEND_HIGH );
+//         robot.viperSlideExtension( robot.VIPER_EXTEND_HIGH );  NOT NEEDED FOR TOURNY2
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Move lift to MID-SCORING position
-           robot.viperSlideExtension( robot.VIPER_EXTEND_MID );
+           robot.startViperSlideExtension( robot.VIPER_EXTEND_MID );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Move lift to LOW-SCORING position
-           robot.viperSlideExtension( robot.VIPER_EXTEND_LOW );
+           robot.startViperSlideExtension( robot.VIPER_EXTEND_LOW );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
-           robot.viperSlideExtension( robot.VIPER_EXTEND_ZERO );
+           robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
+           robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+           sleep(750);
+           robot.startViperSlideExtension( robot.VIPER_EXTEND_ZERO );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -470,6 +513,16 @@ public abstract class Teleop extends LinearOpMode {
         } // manual_lift_control
 
     }  // ProcessLiftControls
+
+    /*---------------------------------------------------------------------------------*/
+    void ProcessLiftStateMachine() {
+
+        if( liftState != LIFT_STATE_IDLE ) {
+
+        }
+
+
+    } // ProcessLiftStateMachine
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
