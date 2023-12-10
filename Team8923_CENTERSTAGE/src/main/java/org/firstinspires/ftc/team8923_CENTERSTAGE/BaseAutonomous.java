@@ -20,7 +20,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
-    public void initOpenCv() {
+    public void initAuto() {
+        telemetry.addData("Init State", "Init Started");
+        telemetry.update();
         // initialize the webcam and openCV pipeline
         myColorDetection.init();
 
@@ -29,30 +31,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         waitForStart();
         myColorDetection.detectColor();
-
-        while (opModeIsActive()) {
-            // print detection status and coordinates of largest object
-            telemetry.addLine("Detection")
-                    .addData(" ", myColorDetection.targetDetected)
-                    .addData("x", myColorDetection.targetPoint.x)
-                    .addData("y", myColorDetection.targetPoint.y);
-
-            telemetry.addData("Frame Count", myColorDetection.robotCamera.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", myColorDetection.robotCamera.getFps()));
-            telemetry.addData("Total frame time ms", myColorDetection.robotCamera.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", myColorDetection.robotCamera.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", myColorDetection.robotCamera.getOverheadTimeMs());
-            telemetry.update();
-
-            myColorDetection.robotCamera.stopStreaming();
-            myColorDetection.robotCamera.closeCameraDevice();
-        }
-    }
-
-    public void initAuto() {
-        telemetry.addData("Init State", "Init Started");
-        telemetry.update();
-        initOpenCv();
         initHardware();
 
         telemetry.addData("Init State", "Init Finished");

@@ -94,11 +94,9 @@ public class OpenCvColorDetection {
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            public void onOpened()
-            {
+            public void onOpened() {
                 startStreaming();
             }
-
             public void onError(int errorCode) {
                 stopStreaming();
             }
