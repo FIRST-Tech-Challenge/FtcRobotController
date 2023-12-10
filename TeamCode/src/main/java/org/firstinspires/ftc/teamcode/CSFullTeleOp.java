@@ -57,28 +57,28 @@ public class CSFullTeleOp extends CSMethods {
                 turnSpeed = 2.5;
             }
 
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
             axial = -gamepad1.left_stick_y * slow;
             lateral = gamepad1.left_stick_x * 1.0 * slow;
             yaw = gamepad1.right_stick_x * turnSpeed;
 
-            double leftFrontPower  = axial + lateral + yaw;
+            double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
 
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
             }
 
             // Send calculated power to wheels
@@ -87,7 +87,7 @@ public class CSFullTeleOp extends CSMethods {
             lb.setPower(leftBackPower);
             rb.setPower(rightBackPower);
 
-            if (gamepad2.dpad_up && !gamepad2.dpad_down){
+            if (gamepad2.dpad_up && !gamepad2.dpad_down) {
                 pixelLiftingMotor.setTargetPosition(1000);
                 pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -97,9 +97,11 @@ public class CSFullTeleOp extends CSMethods {
                 pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            if(!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up){
+            if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                 pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
+                pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
+
 
             if (gamepad2.a || gamepad2.x) {
                 carWashMotor.setPower(carWashPower);
@@ -137,19 +139,18 @@ public class CSFullTeleOp extends CSMethods {
                 droneServo.setPosition(1);
             }
 
-            if (!gamepad2.a && !gamepad2.b && !gamepad2.y && !gamepad2.x){
+            if (!gamepad2.a && !gamepad2.b && !gamepad2.y && !gamepad2.x) {
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Run Time", runtime.toString());
-            if (runtime.seconds() > 90){
-                telemetry.addData("Game Phase","End Game");
-            }else {
+            if (runtime.seconds() > 90) {
+                telemetry.addData("Game Phase", "End Game");
+            } else {
                 telemetry.addData("Game Phase", "Driver Controlled");
             }
             telemetry.update();
 
             sleep(25);
         }
-
-            }
+    }
 }
