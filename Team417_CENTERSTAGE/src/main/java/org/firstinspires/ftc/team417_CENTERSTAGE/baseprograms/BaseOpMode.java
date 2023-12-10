@@ -72,6 +72,8 @@ public abstract class BaseOpMode extends LinearOpMode {
             dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
             gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
         }
+
+        //In case we ever need an IMU
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -88,10 +90,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        */
 
-        // Waits so the imu can process 
-        //sleep(2000);
+        // Waits so the imu can process
+        sleep(2000);
+        */
     }
 
     public DigitalChannel initializeDigitalChannel(String channelName, DigitalChannel.Mode mode) {

@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-
-    int lastEncoderFL = 0;
-    int lastEncoderFR = 0;
-    int lastEncoderBL = 0;
-    int lastEncoderBR = 0;
 
     public void initAuto() {
         telemetry.addData("Init State", "Init Started");
@@ -20,12 +13,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         initHardware();
 
         telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFR = motorFR.getCurrentPosition();
-        lastEncoderFL = motorFL.getCurrentPosition();
-        lastEncoderBL = motorBL.getCurrentPosition();
-        lastEncoderBR = motorBR.getCurrentPosition();
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
