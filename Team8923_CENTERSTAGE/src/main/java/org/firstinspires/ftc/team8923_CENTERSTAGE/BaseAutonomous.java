@@ -101,13 +101,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public  void pivot(double targetHeading) {
-        double currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         double angleError = targetHeading - currentAngle + startAngle;
         double motorPower;
 
         // while robot hasn't reached target heading
         while (Math.abs(angleError) >= BaseOpMode.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
-            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             angleError = targetHeading - currentAngle + startAngle;
 
             // prevents angle from going above 180 degrees and below -180 degrees
