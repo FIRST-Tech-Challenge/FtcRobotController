@@ -42,7 +42,8 @@ public class Robot {
     Servo clamp;
     Servo flipper;
     Servo hook;
-    Servo planeLauncher;
+    //Servo planeLauncher; TODO: servo is kaitlyn launcher, dcmotor is ethan launcher
+    DcMotor planeLauncher;
     Servo spikeServo;
     IMU imu;
     double prevError = 0;
@@ -118,6 +119,9 @@ public class Robot {
             telemetry.update();
 
             opMode.sleep(100);
+
+            Log.d("vision", "moving linear slide: remaining distance " + remainingDistanceLow);
+            Log.d("vision", "moving linear slide: power " + power);
         }
 
         lsFront.setPower(0);
@@ -157,12 +161,18 @@ public class Robot {
         telemetry.update();
     }
 
-    public void trayToIntakePos() {
+    public void trayToIntakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.411);
+        if (blocking) {
+            opMode.sleep(300);
+        }
     }
 
-    public void trayToOuttakePos() {
+    public void trayToOuttakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.37);
+        if (blocking) {
+            opMode.sleep(300);
+        }
     }
 
     public void autoOuttake(boolean lowOuttake) {
@@ -183,7 +193,7 @@ public class Robot {
         opMode.sleep(100);
         */
 
-        openClamp(); // drop pixel
+        openClamp(false, true); // drop pixel
         opMode.sleep(100);
 
         // move linear slide up
@@ -200,8 +210,7 @@ public class Robot {
         } else {
             setHeading(90, 0.7);
         }
-        trayToIntakePos(); //intake
-        opMode.sleep(100);
+        trayToIntakePos(true); //intake pos
         moveLinearSlideByTicksBlocking(0); // linear slide down
     }
 
@@ -657,8 +666,8 @@ public class Robot {
             }
 
             if (!testingOnBert) {
-                trayToIntakePos();
-                closeClamp();
+                trayToIntakePos(true);
+                closeClamp(true);
                 openHook();
                 setServoPosBlocking(spikeServo, 0.5);
                 opMode.sleep(100);
@@ -848,22 +857,22 @@ public class Robot {
             }
 
             if (!testingOnBert) {
-                closeClamp();
+                closeClamp(false);
                 openHook();
                 setServoPosBlocking(spikeServo, 0.5);
                 opMode.sleep(100);
             }
 
 
-            Log.d("vision", "moveToMarker: Pos " + markerPos);
-            Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+            Log.d("vision", "path: Pos " + markerPos);
+            Log.d("vision", "path: Tag " + wantedAprTagId);
 
             HORIZONTAL_TOTAL_BEFORE_CHUNKING = 51;
             VERTICAL_TOTAL = 76;
 
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-                Log.d("vision", "moveToMarker: Inner Spike");
+                Log.d("vision", "path: Inner Spike");
                 // calculate distances
                 vertical1 = 0;
                 horizontal2 = 20;
@@ -893,7 +902,7 @@ public class Robot {
                 break;
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-                Log.d("vision", "moveToMarker: Outer Spike");
+                Log.d("vision", "path: Outer Spike");
 
                 // Calculate distances
                 vertical1 = 11;
@@ -924,13 +933,13 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
                 break;
             } else { //center, default
-                Log.d("vision", "moveToMarker: Center Spike");
+                Log.d("vision", "path: Center Spike");
 
                 // Calculate distances
                 vertical1 = 6;
                 horizontal2 = 30;
                 horizontal3 = 10;
-                vertical4 = 10;
+                vertical4 = 13;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
                 horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 25;
@@ -1062,21 +1071,11 @@ public class Robot {
             //find power using PID
             power = (KP * error * error * error) + (KD * errorDer);
 
-            Log.d("pid", "straightBlockingFixHeading: currentTick is " + currentTick);
-            Log.d("pid", "straightBlockingFixHeading: endTick is " + endTick);
-            Log.d("pid", "straightBlockingFixHeading: time is " + currentTime);
-            Log.d("pid", "straightBlockingFixHeading: error is " + error);
-            Log.d("pid", "straightBlockingFixHeading: errorDer is " + errorDer);
-            Log.d("pid", "straightBlockingFixHeading: calculated power is " + power);
-
             //make sure there is enough power
             if (error > 0 && power < minPower) {
                 power = minPower;
-                Log.d("pid", "straightBlockingFixHeading: adjusted to minPower " + power);
             } else if (error < 0 && power > (-1 * minPower)) {
                 power = (-1 * minPower);
-                Log.d("pid", "straightBlockingFixHeading: adjusted to minPower " + power);
-
             }
 
             //clip power
@@ -1085,11 +1084,6 @@ public class Robot {
             //get heading & heading error
             currentHeading = getCurrentHeading();
             headingError = currentHeading - targetHeading;
-
-            Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
-            Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
-            Log.d("pid turn", "straightBlockingFixHeading: targetHeading is " + targetHeading);
-            Log.d("pid turn", "straightBlockingFixHeading: headingError is " + headingError);
 
             //default l/r power
             leftPower = power;
@@ -1117,8 +1111,6 @@ public class Robot {
                     }
                 }
             }
-            Log.d("pid turn", "straightBlockingFixHeading: leftPower is " + leftPower);
-            Log.d("pid turn", "straightBlockingFixHeading: rightPower is " + rightPower);
 
             //set powers
             if (leftPower != prevLeftPower || rightPower != prevRightPower) {
@@ -1151,12 +1143,23 @@ public class Robot {
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
     }
 
-    public void closeClamp () {
+    public void closeClamp (boolean blocking) {
         setServoPosBlocking(clamp, 0.522);
+        if (blocking) {
+            opMode.sleep(300);
+        }
     }
 
-    public void openClamp () {
-        setServoPosBlocking(clamp, 0.472);
+    public void openClamp (boolean wide, boolean blocking) {
+        if (wide) {
+            setServoPosBlocking(clamp, 0.472);
+        } else {
+            setServoPosBlocking(clamp, 0.51);
+        }
+
+        if (blocking) {
+            opMode.sleep(300);
+        }
     }
 
     public void slideToOuttakePos () {
@@ -1168,7 +1171,7 @@ public class Robot {
     }
 
     public void openHook () {
-        hook.setPosition(0.49);
+        hook.setPosition(0.38); //started 0.49
     }
 
     public void closeHook () {
@@ -1180,13 +1183,15 @@ public class Robot {
         // initialize robot class
         setUpDrivetrainMotors();
         setUpIntakeOuttake();
-        planeLauncher = hardwareMap.servo.get("planeLauncher");
+        //planeLauncher = hardwareMap.servo.get("planeLauncher");
+        planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
 
         openHook();
-        closeClamp();
-        trayToIntakePos();
+        closeClamp(false);
+        trayToIntakePos(true);
         opMode.sleep(100);
-        planeLauncher.setPosition(0.6);
+        planeLauncher.setPower(0);
+        //planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
     }
 
@@ -1213,6 +1218,8 @@ public class Robot {
         double fRightPowerPrev = 0;
         double bLeftPowerPrev = 0;
         double bRightPowerPrev = 0;
+        boolean willOpenClamp = false;
+
 
         while (opMode.opModeIsActive()) {
 
@@ -1220,7 +1227,10 @@ public class Robot {
 
             // right bumper launches drone
             if (gamepad1.b) {
-                planeLauncher.setPosition(0.45);
+                //planeLauncher.setPosition(0.45);
+                planeLauncher.setPower(-1);
+            } else {
+                planeLauncher.setPower(0);
             }
 
             // x aligns bot to board
@@ -1303,32 +1313,52 @@ public class Robot {
             if (gamepad2.a && gamepad2.y) { // both - stay at current
                 // do nothing
             } else if (gamepad2.a) { // a - intake position
-                trayToIntakePos();
+                trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
-                trayToOuttakePos();
+                trayToOuttakePos(false);
             }
 
             // intake regurgitate
+
             if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
                 // do nothing
             } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
-                openClamp();
+                openClamp(true, false);
                 intake.setPower(-0.7);
             } else if (gamepad2.left_bumper) { // left bumper - regurgitate
-                openClamp();
+                openClamp(true, false);
                 intake.setPower(0.7);
             } else { // neither - stop
-                closeClamp();
+                //closeClamp(false);
                 intake.setPower(0);
             }
 
             // clamp controls
             if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger or trigger & bumper - close clamp
-                closeClamp();
+                closeClamp(false);
             } else if (gamepad2.right_bumper) { // bumper - open clamp
-                openClamp();
+                openClamp(false, false);
             }
 
+
+            if (gamepad2.right_bumper) {
+                willOpenClamp = true;
+            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
+                willOpenClamp = true;
+            } else if (Math.abs(maxPower) > 0) {
+            } else {
+                intake.setPower(0);
+            }
+
+            if (gamepad2.right_bumper || gamepad2.left_trigger > TRIGGER_PRESSED || Math.abs(maxPower) > 0) {
+                willOpenClamp = true;
+            } else if (gamepad2.right_bumper) {
+
+            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
+
+            } else if (maxPower > 0) {
+
+            }
 
             // b - hanging mode
             if (gamepad2.b) {

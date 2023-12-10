@@ -157,9 +157,9 @@ public class OldTeleOp extends LinearOpMode {
 
             //set intake/outtake positions for tray
             if (gamepad2.a) {
-                robot.trayToIntakePos();
+                robot.trayToIntakePos(false);
             } else if (gamepad2.y) {
-                robot.trayToOuttakePos();
+                robot.trayToOuttakePos(false);
             }
 
             //the earlier conditionals set variables based on what was pressed
@@ -179,7 +179,8 @@ public class OldTeleOp extends LinearOpMode {
 
             //gamepad 1 right bumper launches drone
             if (gamepad1.right_bumper) {
-                robot.planeLauncher.setPosition(0.7);
+                //robot.planeLauncher.setPosition(0.7);
+                robot.planeLauncher.setPower(1);
             }
 
             if (gamepad1.x) {
