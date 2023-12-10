@@ -8,13 +8,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmTeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmMechanism;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseTeleOp extends BaseOpMode {
     public MecanumDrive drive;
-    private ArmTeleOp arm;
+    private ArmMechanism arm;
 
     @Override
     public void runOpMode() {
@@ -23,7 +23,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
         initializeHardware();
 
         if (armMotor != null) {
-            arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
+            arm = new ArmMechanism(gamepad2, armMotor, dumperServo);
             resetDumper();
         }
 
