@@ -36,8 +36,6 @@ public class TestingWade extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.autoOuttake(true);
-
             /*
 //            while (count < 5) {
                 robot.straightBlockingFixHeading(horizontal2 + horizontal5, true, 0.8); //go forward FAST

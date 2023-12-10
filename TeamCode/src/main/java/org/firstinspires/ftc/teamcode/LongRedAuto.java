@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,7 +11,9 @@ public class LongRedAuto extends LinearOpMode {
         //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true);
         robot.setUpDrivetrainMotors();
+        robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
+        double slideStartingPosition;
 
         waitForStart();
 
@@ -21,13 +21,15 @@ public class LongRedAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
 
+            slideStartingPosition = robot.lsFront.getCurrentPosition();
+
             // move linear slide up
-            robot.moveLinearSlideByTicksBlocking(-1550);
+            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
 
             robot.alignToBoard();
-            robot.autoOuttake(false);
+            robot.autoOuttake(false, slideStartingPosition);
             robot.parkBot(true);
 
             break;

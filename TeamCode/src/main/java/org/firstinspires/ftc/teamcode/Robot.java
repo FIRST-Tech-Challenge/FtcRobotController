@@ -120,8 +120,9 @@ public class Robot {
 
             opMode.sleep(100);
 
-            Log.d("vision", "moving linear slide: remaining distance " + remainingDistanceLow);
-            Log.d("vision", "moving linear slide: power " + power);
+            Log.d("vision ls", "moveLinearSlideByTicksBlocking: lsFront position " + lsFront.getCurrentPosition());
+            Log.d("vision ls", "moving linear slide: remaining distance " + remainingDistanceLow);
+            Log.d("vision ls", "moving linear slide: power " + power);
         }
 
         lsFront.setPower(0);
@@ -164,18 +165,18 @@ public class Robot {
     public void trayToIntakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.411);
         if (blocking) {
-            opMode.sleep(300);
+            opMode.sleep(1000);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.37);
+        setServoPosBlocking(tray, 0.36);
         if (blocking) {
             opMode.sleep(300);
         }
     }
 
-    public void autoOuttake(boolean lowOuttake) {
+    public void autoOuttake(boolean lowOuttake, double startingPosition) {
 
         /*
         //precautionary
@@ -193,14 +194,14 @@ public class Robot {
         opMode.sleep(100);
         */
 
-        openClamp(false, true); // drop pixel
-        opMode.sleep(100);
+        openClamp(true, true); // drop pixel
+        opMode.sleep(1000);
 
         // move linear slide up
         if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(-2010);
+            moveLinearSlideByTicksBlocking(startingPosition + 1900); //2010
         } else {
-            moveLinearSlideByTicksBlocking(-2200);
+            moveLinearSlideByTicksBlocking(startingPosition + 2100); //2200
         }
 
         opMode.sleep(100);
@@ -211,7 +212,7 @@ public class Robot {
             setHeading(90, 0.7);
         }
         trayToIntakePos(true); //intake pos
-        moveLinearSlideByTicksBlocking(0); // linear slide down
+        moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -911,7 +912,7 @@ public class Robot {
                 vertical4 = vertical1; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 33;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -1377,6 +1378,8 @@ public class Robot {
                     lsFront.setPower(0);
                 }
             }
+
+            Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
         }
     }
 
