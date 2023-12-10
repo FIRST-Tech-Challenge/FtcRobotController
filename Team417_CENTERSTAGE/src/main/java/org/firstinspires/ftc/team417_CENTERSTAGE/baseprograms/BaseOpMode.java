@@ -90,8 +90,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
         */
 
-<<<<<<< HEAD:Team417_CENTERSTAGE/src/main/java/org/firstinspires/ftc/team417_CENTERSTAGE/BaseOpMode.java
-=======
         // Waits so the imu can process 
         //sleep(2000);
     }
@@ -100,7 +98,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         DigitalChannel digitalChannel = hardwareMap.get(DigitalChannel.class, channelName);
         digitalChannel.setMode(mode);
         return digitalChannel;
->>>>>>> 417CenterstageLeague2:Team417_CENTERSTAGE/src/main/java/org/firstinspires/ftc/team417_CENTERSTAGE/baseprograms/BaseOpMode.java
     }
 
     public DcMotor initializeMotor(String motorName, DcMotorSimple.Direction direction, DcMotor.RunMode mode) {

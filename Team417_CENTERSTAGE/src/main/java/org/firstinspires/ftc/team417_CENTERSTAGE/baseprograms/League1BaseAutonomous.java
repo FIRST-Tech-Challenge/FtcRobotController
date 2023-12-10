@@ -111,11 +111,7 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
-<<<<<<< HEAD:Team417_CENTERSTAGE/src/main/java/org/firstinspires/ftc/team417_CENTERSTAGE/BaseAutonomous.java
         // Robot takes 5 seconds for camera to be able to detect meaningful images (as opposed to a bright flash of light)
-=======
-        // Sleep for OpenCv to process
->>>>>>> 417CenterstageLeague2:Team417_CENTERSTAGE/src/main/java/org/firstinspires/ftc/team417_CENTERSTAGE/baseprograms/League1BaseAutonomous.java
         sleep(5000);
 
         telemetry.clear();
