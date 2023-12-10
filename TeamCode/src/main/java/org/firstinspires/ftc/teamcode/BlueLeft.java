@@ -59,22 +59,25 @@ public class BlueLeft extends LinearOpMode {
         else RunCenter(autoMethods);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(25,0.2);
-        sleep(3000);
+        blar.RunMotors(17,0.5);
+        sleep(1500);
         blar.ZeroMotors();
-        blar.StrafeByInch(4, false, 0.2);
-        sleep(1000);
+        blar.StrafeByInch(13, false, 0.2);
+        sleep(4000);
         blar.ZeroMotors();
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.Turn90(true, 0.2);
+        blar.StrafeByInch(10,false,0.2);
         sleep(4000);
+        blar.ZeroMotors();
+        blar.Turn90(true, 0.2);
+        sleep(3000);
         blar.ZeroMotors();
         blar.StrafeByInch(3, true, 0.2);
         sleep(1000);
         blar.ZeroMotors();
-        blar.RunMotors(36, 0.2);
+        blar.RunMotors(17, 0.2);
         blar.RunMotorHang(6.5,0.75);
         sleep(6000);
         blar.ZeroMotors();
@@ -83,7 +86,7 @@ public class BlueLeft extends LinearOpMode {
         blar.RunMotors(-4,0.5);
         sleep(1000);
         blar.ZeroMotors();
-        blar.StrafeByInch(24, false, 0.2);
+        blar.StrafeByInch(18, false, 0.2);
         sleep(4000);
         blar.ZeroMotors();
         motorHang.setPower(0);
