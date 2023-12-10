@@ -86,10 +86,10 @@ public class AATele extends LinearOpMode {
             if(smartGamepad2.left_trigger>0) { robot.outtake.moveDumper(-0.5);}
             if(smartGamepad2.right_trigger>0) {robot.outtake.moveDumper( 0.5);}
 
-            if (smartGamepad2.right_stick_x>0) {
+            if (smartGamepad2.dpad_right) {
                 robot.outtake.moveArm(0.5);
             }
-            if (smartGamepad2.right_stick_x<0) {
+            if (smartGamepad2.dpad_left) {
                 robot.outtake.moveArm(-0.5);
             }
 
@@ -99,6 +99,10 @@ public class AATele extends LinearOpMode {
 
             if (smartGamepad2.y_pressed()) {
                 robot.outtake.toTravelPos();
+            }
+
+            if(smartGamepad2.right_stick_button){
+                    robot.outtake.prepHang();
             }
 
             if (smartGamepad2.dpad_up) {

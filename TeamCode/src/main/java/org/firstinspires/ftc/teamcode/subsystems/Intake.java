@@ -18,8 +18,8 @@ public class Intake implements Subsystem {
     private double intakeposL = 0.814 - 0.01;
     private double intakeposR = 0.1403 + 0.01;
     //placeholder outtake position, may change depending on outtake
-    private double outtakeposL = 0.129;
-    private double outtakeposR = 0.8595;
+    private double outtakeposL = 0.129 + 0.02 ;
+    private double outtakeposR = 0.8595 - 0.02                                                                                                                                                                                                                               ;
     private double lowerlimitL = 0.814;
     private double lowerlimitR = 0.13;
     private double upperlimitL = 0.09;
