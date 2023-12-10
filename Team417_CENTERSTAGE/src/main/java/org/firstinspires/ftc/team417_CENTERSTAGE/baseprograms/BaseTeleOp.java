@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -13,13 +12,10 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseTeleOp extends BaseOpMode {
-    public MecanumDrive drive;
     private ArmTeleOp arm;
 
     @Override
     public void runOpMode() {
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
         initializeHardware();
 
         if (armMotor != null) {
@@ -55,15 +51,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
                 telemetry.addData("DumperServo", dumperServo.getPosition());
                 telemetry.addData("GateServo", gateServo.getPosition());
             }
-
-            telemetry.addData("FRMotor", FR.getCurrentPosition());
-            telemetry.addData("FRMotor", FR.getPowerFloat());
-            telemetry.addData("FLMotor", FL.getCurrentPosition());
-            telemetry.addData("FLMotor", FL.getPowerFloat());
-            telemetry.addData("BRMotor", BR.getCurrentPosition());
-            telemetry.addData("BRMotor", BR.getPowerFloat());
-            telemetry.addData("BLMotor", BL.getCurrentPosition());
-            telemetry.addData("BLMotor", BL.getPowerFloat());
             telemetry.update();
         }
 
