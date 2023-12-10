@@ -1318,46 +1318,32 @@ public class Robot {
                 trayToOuttakePos(false);
             }
 
-            // intake regurgitate
+            // clamp controls
+            if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
+                willOpenClamp = false;
+            } else if (gamepad2.right_bumper) {
+                willOpenClamp = true;
+            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
+                willOpenClamp = true;
+            } else {
+                willOpenClamp = false;
+            }
 
+            if (willOpenClamp) {
+                openClamp(true, false);
+            } else {
+                closeClamp(false);
+            }
+
+            // intake regurgitate
             if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
                 // do nothing
             } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
-                openClamp(true, false);
                 intake.setPower(-0.7);
             } else if (gamepad2.left_bumper) { // left bumper - regurgitate
-                openClamp(true, false);
                 intake.setPower(0.7);
             } else { // neither - stop
-                //closeClamp(false);
                 intake.setPower(0);
-            }
-
-            // clamp controls
-            if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger or trigger & bumper - close clamp
-                closeClamp(false);
-            } else if (gamepad2.right_bumper) { // bumper - open clamp
-                openClamp(false, false);
-            }
-
-
-            if (gamepad2.right_bumper) {
-                willOpenClamp = true;
-            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
-                willOpenClamp = true;
-            } else if (Math.abs(maxPower) > 0) {
-            } else {
-                intake.setPower(0);
-            }
-
-            if (gamepad2.right_bumper || gamepad2.left_trigger > TRIGGER_PRESSED || Math.abs(maxPower) > 0) {
-                willOpenClamp = true;
-            } else if (gamepad2.right_bumper) {
-
-            } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
-
-            } else if (maxPower > 0) {
-
             }
 
             // b - hanging mode
