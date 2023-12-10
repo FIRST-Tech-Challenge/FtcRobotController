@@ -35,6 +35,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class CSFullTeleOp extends CSMethods {
 
     // Declare OpMode members for each of the 4 motors.
+    boolean lBack = false;
+    boolean backServo = false;
+    boolean rBack = false;
+    boolean frontServo = false;
 
     @Override
     public void runOpMode() {
@@ -103,6 +107,31 @@ public class CSFullTeleOp extends CSMethods {
                 carWashMotor.setPower(carWashPower);
             }
 
+            if (gamepad1.dpad_left && !lBack) {
+                lBack = true;
+                if (backServo) {
+                    pixelBackServo.setPosition(0);
+                    backServo = false;
+                } else {
+                    pixelBackServo.setPosition(1);
+                    backServo = false;
+                }
+            } else {
+                lBack = false;
+            }
+
+            if (gamepad1.dpad_left && !rBack) {
+                rBack = true;
+                if (frontServo) {
+                    pixelBackServo.setPosition(0);
+                    frontServo = false;
+                } else {
+                    pixelBackServo.setPosition(1);
+                    frontServo = false;
+                }
+            } else {
+                rBack = false;
+            }
 
             if (gamepad2.b || gamepad2.y) {
                 carWashMotor.setPower(-carWashPower);
