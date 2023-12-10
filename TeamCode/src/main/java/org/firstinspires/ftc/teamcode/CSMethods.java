@@ -77,7 +77,7 @@ public abstract class CSMethods extends LinearOpMode {
         pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");
         droneServo = hardwareMap.get(Servo.class, "droneServo");
         pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");
-        pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");
+        //pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");
         trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -95,9 +95,9 @@ public abstract class CSMethods extends LinearOpMode {
         lf.setTargetPosition(lf.getCurrentPosition());
         rf.setTargetPosition(rf.getCurrentPosition());
 
+        pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pixelLiftingMotor.setTargetPosition(pixelLiftingMotor.getCurrentPosition());
-        pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         initTfod();
 
