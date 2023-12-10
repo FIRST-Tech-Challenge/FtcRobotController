@@ -47,7 +47,6 @@ import java.util.List;
 @Autonomous(name = "Team Prop Detection", group = "Tests")
 public class TeamPropDetectionTest extends CSMethods {
 
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
@@ -74,30 +73,7 @@ public class TeamPropDetectionTest extends CSMethods {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            List<Recognition> pixels = detectProp();
-            telemetry.addData("Team Prop Detection", pixels);
-            telemetry.update();
-        }
-
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-                detectProp();
-
-                // Push telemetry to the Driver Station.
-                telemetry.update();
-
-                // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
-                }
-
-                // Share the CPU.
-                sleep(20);
-            }
+            detectProp();
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -105,9 +81,27 @@ public class TeamPropDetectionTest extends CSMethods {
 
     }   // end runOpMode()
 
-    /**
-     * Initialize the TensorFlow Object Detection processor.
-     */
+    @Override
+    public List<Recognition> detectProp() {
 
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+
+            if (x > 100 && x < 300){
+                telemetry.addData("Prop Position","Middle");
+            }
+            else if (x > 500){
+                telemetry.addData("Prop Position","Right");
+            }
+            else {
+                telemetry.addData("Prop Position","Left");
+            }
+        }   // end for() loop
+        telemetry.update();
+        return currentRecognitions;
+    }   // end method detectProp()
 
 }   // end class

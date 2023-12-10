@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Red Front Dummy", group = "CenterStage")
 public class CSAutoRedFrontDummy extends CSMethods {
-
+    @Override
     public void runOpMode() {
         setup(true);
 

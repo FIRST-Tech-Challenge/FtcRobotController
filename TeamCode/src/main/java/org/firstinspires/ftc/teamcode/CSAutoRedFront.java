@@ -37,7 +37,7 @@ import java.util.List;
 
 @Autonomous(name = "Red Front", group = "CenterStage")
 public class CSAutoRedFront extends CSMethods {
-
+    @Override
     public void runOpMode() {
         setup(true);
 
