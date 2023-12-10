@@ -110,7 +110,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCorrectedVelocity()*X_MULTIPLIER),
                 encoderTicksToInches(rightEncoder.getCorrectedVelocity()*X_MULTIPLIER),
-                encoderTicksToInches(frontEncoder.getCorrectedVelocity()*Y_MULTIPLIER)
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity()*2*PI/TICKS_PER_REV)
         );
     }
     public double[][] multiplyMatrix(int row1, int col1, double A[][], int row2, int col2, double B[][]) {

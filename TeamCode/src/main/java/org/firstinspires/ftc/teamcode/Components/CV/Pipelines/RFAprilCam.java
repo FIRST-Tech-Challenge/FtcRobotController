@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static java.lang.Math.PI;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
 
 import android.os.Build;
 import android.util.Size;
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 5, Y_OFFSET = 2, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 10;
+  public static double X_OFFSET = 5, Y_OFFSET = 3, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 10;
   public static int EXPOSURE_MS = 10, GAIN = 40;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
   private AprilTagProcessor aprilTag;
@@ -112,7 +113,7 @@ public class RFAprilCam {
             .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
             .setLensIntrinsics(626.909f, 626.909f, 426.007f, 236.834f)
             .build();
-    aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
+    aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
     aprilTag.setDecimation((float) UPSAMPLE);
 
     // Create the WEBCAM vision portal by using a builder.
@@ -206,9 +207,8 @@ public class RFAprilCam {
           camPoseError = new Pose2d(0, 0, 0);
         }
       }
-    } else if (upsample) {
-      upsample = false;
-      //                aprilTag.setDecimation((float)DOWNSAMPLE);
+    } else {
+LOGGER.log("waitForApril");      //                aprilTag.setDecimation((float)DOWNSAMPLE);
     }
   }
 

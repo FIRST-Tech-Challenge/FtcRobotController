@@ -16,7 +16,8 @@ import java.util.logging.SimpleFormatter;
 // print name of program at top of logfile
 // in competition opmodes = only info verbosity
 
-public class RFLogger {
+public class
+RFLogger {
     public Logger LOGGER;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
     Severity logLevel = Severity.ALL;

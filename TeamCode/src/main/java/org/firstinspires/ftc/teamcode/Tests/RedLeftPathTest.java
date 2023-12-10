@@ -25,25 +25,26 @@ public class RedLeftPathTest extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -59, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -61, Math.toRadians(-90)));
     Waypoint start =
         new StartWaypoint(
-            new com.arcrobotics.ftclib.geometry.Pose2d(-38.5, -57.5, new Rotation2d(toRadians(-90))));
+            new com.arcrobotics.ftclib.geometry.Pose2d(
+                -38.5, -57.5, new Rotation2d(toRadians(-90))));
     EndWaypoint spike = new EndWaypoint(-55, -32, toRadians(-160), 0.8, 0.7, 15, 5, toRadians(10));
 
     Path dropPath = new Path(start, spike);
     Path toTruss = new Path();
     toTruss.add(new StartWaypoint(dropPath.get(dropPath.size() - 1).getPose().getTranslation()));
-    toTruss.add(new EndWaypoint(-40, -58, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
+    toTruss.add(new EndWaypoint(-40, -60, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
     Path toBackdrop = new Path();
     toBackdrop.add(new StartWaypoint(toTruss.get(toTruss.size() - 1).getPose().getTranslation()));
-    toBackdrop.add(new GeneralWaypoint(5, -59, toRadians(185), 1.0, 0.8, 10));
+    toBackdrop.add(new GeneralWaypoint(5, -60, toRadians(185), 1.0, 0.8, 10));
     toBackdrop.add(new EndWaypoint(45, -36, toRadians(180), 0.7, 0.8, 10, 4, toRadians(10)));
     Path backToTruss = new Path();
     backToTruss.add(
         new StartWaypoint(toBackdrop.get(toBackdrop.size() - 1).getPose().getTranslation()));
-    backToTruss.add(new GeneralWaypoint(20, -59, toRadians(180), 0.8, 0.8, 5));
-    backToTruss.add(new GeneralWaypoint(-35, -59, toRadians(180), 1.0, 0.8, 10));
+    backToTruss.add(new GeneralWaypoint(20, -60.5, toRadians(180), 0.8, 0.8, 5));
+    backToTruss.add(new GeneralWaypoint(-35, -60, toRadians(180), 1.0, 0.8, 10));
     backToTruss.add(new EndWaypoint(-45, -34, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
 
     Path testPath = new Path();
@@ -61,60 +62,57 @@ public class RedLeftPathTest extends LinearOpMode {
             .setReversed(true)
             .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
             .setReversed(true)
-            .splineTo(new Vector2d(5, -58), toRadians(10))
-            .splineTo(new Vector2d(45, -36), toRadians(0))
+            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(45, -36), toRadians(0))
             .setReversed(false)
-            .splineTo(new Vector2d(5, -59), toRadians(185))
-            .splineTo(new Vector2d(-20, -56), toRadians(175))
-            .splineTo(new Vector2d(-45, -37.5), toRadians(165))
+            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
+            .splineToConstantHeading(new Vector2d(-20, -56), toRadians(175))
+            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
             .setReversed(true)
-            .splineTo(new Vector2d(-25, -58), toRadians(-10))
-            .splineTo(new Vector2d(5, -58), toRadians(10))
-            .splineTo(new Vector2d(50, -44), toRadians(0))
+            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
+            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
             .setReversed(false)
-                .setReversed(false)
-                .splineTo(new Vector2d(5, -58), toRadians(185))
-                .splineTo(new Vector2d(-20, -58), toRadians(175))
-                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
-                .setReversed(true)
-                .splineTo(new Vector2d(-25, -58), toRadians(-10))
-                .splineTo(new Vector2d(5, -58), toRadians(10))
-                .splineTo(new Vector2d(50, -44), toRadians(0))
-                .setReversed(false)
-                .setReversed(false)
-                .splineTo(new Vector2d(5, -59), toRadians(185))
-                .splineTo(new Vector2d(-20, -58), toRadians(175))
-                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
-                .setReversed(true)
-                .splineTo(new Vector2d(-25, -58), toRadians(-10))
-                .splineTo(new Vector2d(5, -58), toRadians(10))
-                .splineTo(new Vector2d(50, -44), toRadians(0))
-                .setReversed(false)
-                .setReversed(false)
-                .splineTo(new Vector2d(5, -59), toRadians(185))
-                .splineTo(new Vector2d(-20, -58), toRadians(175))
-                .splineTo(new Vector2d(-45, -37.5), toRadians(165))
-                .setReversed(true)
+            .splineToConstantHeading(new Vector2d(5, -58), toRadians(185))
+            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
+            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+            .setReversed(true)
+            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
+            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
+            .setReversed(false)
+            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
+            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
+            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+            .setReversed(true)
+            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
+            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
+            .setReversed(false)
+            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
+            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
+            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+            .setReversed(true)
             .build();
     waitForStart();
     while (opModeIsActive() && !isStopRequested() && !robot.queuer.isFullfilled()) {
-      //      for (int i = 0; i < 6; i++) {
-      //        robot.followPPPath(testPath);
-      //        robot.followPPPath(testPath2);
-      //      }
-      //            robot.update();
-      //          }
-      //      robot.followPPPath(dropPath);
-      //      for (int i = 0; i < 3; i++) {
-      //        robot.followPPPath(toTruss);
-      //        robot.followPPPath(toBackdrop);
-      //        robot.followPPPath(backToTruss);
-      //      }
-      //      robot.followPPPath(toTruss);
-      //      robot.followPPPath(toBackdrop);
-      robot.followTrajSeq(tradegy);
+      //            for (int i = 0; i < 6; i++) {
+      //              robot.followPPPath(testPath);
+      //              robot.followPPPath(testPath2);
+      //            }
+      //                  robot.update();
+      //                }
+      robot.followPPPath(dropPath);
+            for (int i = 0; i < 3; i++) {
+              robot.followPPPath(toTruss);
+              robot.followPPPath(toBackdrop);
+              robot.followPPPath(backToTruss);
+            }
+            robot.followPPPath(toTruss);
+            robot.followPPPath(toBackdrop);
+//      robot.followTrajSeq(tradegy);
       robot.update();
-    }
+      }
     robot.stop();
   }
 }
