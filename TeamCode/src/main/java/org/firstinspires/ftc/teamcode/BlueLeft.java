@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name = "BlueLeft")
 public class BlueLeft extends LinearOpMode {
-    OpenCvWebcam webcam;
+    Webcam webcam;
     private AutoMethods autoMethods;
     private boolean isLeft = true, isRight = false, isCenter = false;
     private DcMotor motorLeft, motorLeft2,
@@ -31,14 +32,31 @@ public class BlueLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
-        //ConceptTensorFlowObjectDetection = new
+        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
+        while(!opModeIsActive()) {
 
-        waitForStart();
+            Double x = webcam.CheckCamera();
+            if (x > 450 || x == 0) {
+                isLeft = false;
+                isRight = true;
+                isCenter = false;
+            } else if (x < 150) {
+                isLeft = true;
+                isRight = false;
+                isCenter = false;
+            } else {
+                isLeft = true;
+                isRight = false;
+                isCenter = true;
+            }
+            telemetry.addData("detected x", x);
+            telemetry.update();
+            sleep (2000);
+
+        }
         if(isLeft) RunLeft(autoMethods);
         else if (isRight) RunRight(autoMethods);
         else RunCenter(autoMethods);
-
-
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(25,0.2);

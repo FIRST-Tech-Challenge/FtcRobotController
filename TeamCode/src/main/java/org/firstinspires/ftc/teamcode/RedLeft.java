@@ -37,12 +37,12 @@ public class RedLeft extends LinearOpMode {
         while(!opModeIsActive()){
 
             Double x = webcam.CheckCamera();
-            if (x < 150){
+            if (x > 450 || x == 0){
                 isLeft = true;
                 isRight = false;
                 isCenter = false;
             }
-            else if (x > 450 || x == null){
+            else if (x < 150){
                 isLeft = false;
                 isRight = true;
                 isCenter = false;
@@ -54,6 +54,7 @@ public class RedLeft extends LinearOpMode {
             }
             telemetry.addData("detected x", x);
             telemetry.update();
+            sleep (2000);
         }
 
 
