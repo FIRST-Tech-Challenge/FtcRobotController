@@ -137,67 +137,21 @@ public class DumpTest extends LinearOpMode {
         currTime=System.currentTimeMillis();
         startTime=currTime;
         resultROI = 0;
-        if (resultROI == 3) {
 
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            done = false;
-            while (!done && opModeIsActive()) {
-                if (currTime - startTime < 100) {
-                    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
-                } else {
-                    telemetry.addData("Time Delta: ", (currTime - startTime));
-                    resultROI = modifyPipeline.getResultROI();
-                    if (resultROI == 0) {
-                        telemetry.addData("Resulting ROI: ", "Left");
-                        done = true;
-                    } else if (resultROI == 1) {
-                        telemetry.addData("Resulting ROI: ", "Middle");
-                        done = true;
-                    } else if (resultROI == 2) {
-                        telemetry.addData("Resulting ROI: ", "Right");
-                        done = true;
-                    } else {
-                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
-                    }
-                }
-                telemetry.update();
-                currTime = System.currentTimeMillis();
 
-            }
 
-        }
+
         telemetry.update();
-        done = true;
+        done = false;
         //lift arm up
         //actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
-            switch (resultROI) {
-                case 0:
-                    // Far left
-                    beginAuto();
-                    moveUtils.strafeBuddy(-23);
-                    moveUtils.goStraight(28f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-                case 1:
-                    // Middle
-                    beginAuto();
-                    moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-                case 2:
-                    // Far right
-                    beginAuto();
-                    moveUtils.strafeBuddy(24);
-                    moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
-                    done=true;
-                    break;
-            }
+            actuatorUtils.dumpOpen();
+            sleep(2000);
+            actuatorUtils.dumpClose();
+            sleep(2000);
+
 
             currTime = System.currentTimeMillis();
 

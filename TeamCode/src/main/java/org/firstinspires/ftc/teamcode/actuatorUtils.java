@@ -171,10 +171,10 @@ public class actuatorUtils {
         arm.setPower(0.5);
     }
     public static void noElbowBoard() {
-        elbow.setPosition(0.93);
+        elbow.setPosition(0.1);
     }
     public static void elbowBoard() {
-        elbow.setPosition(0.08);
+        elbow.setPosition(0.265);
     }
     public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == ArmLevel.LOW_POLE)

@@ -139,7 +139,7 @@ public class CompetitionTeleop2024 extends OpMode {
                 RADIANS);
         double heading = (disableIMU) ? 0.0 : angles.firstAngle + Math.PI/2 + initHeading;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + heading;
-        double rightX = Math.pow(gamepad1.right_stick_x, 2.0)*(1-gamepad1.right_trigger);
+        double rightX = Math.pow(gamepad1.right_stick_x, 1.0)*(1-gamepad1.right_trigger);
         LBPower = r * Math.cos(robotAngle) - rightX;
         RBPower = r * Math.sin(robotAngle) + rightX;
         LFPower = r * Math.sin(robotAngle) - rightX;

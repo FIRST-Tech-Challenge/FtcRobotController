@@ -54,7 +54,7 @@ public class RedLeft extends LinearOpMode {
         dump = hardwareMap.get(Servo.class, "Dump");
         gripper = hardwareMap.get(Servo.class, "gripper");
         elbow = hardwareMap.get(Servo.class, "elbow");
-        elbow.setPosition(0.9);
+        elbow.setPosition(1);
         Pose2d startPose = new Pose2d(-55, 37,0);
         drive.setPoseEstimate(startPose);
         arm.setPower(0);

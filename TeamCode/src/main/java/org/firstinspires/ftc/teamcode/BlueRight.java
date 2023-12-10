@@ -57,7 +57,7 @@ public class BlueRight extends LinearOpMode {
         gripper = hardwareMap.get(Servo.class, "gripper");
         Pose2d startPose = new Pose2d(-55, -26,0);
         drive.setPoseEstimate(startPose);
-        elbow.setPosition(0.9);
+        elbow.setPosition(1);
 
         //TrajectorySequence aSeq = autoSeq(startPose);
 
