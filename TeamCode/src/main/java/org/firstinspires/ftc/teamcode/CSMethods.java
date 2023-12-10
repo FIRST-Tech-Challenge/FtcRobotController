@@ -33,6 +33,9 @@ public abstract class CSMethods extends LinearOpMode {
     public IMU imu = null;
     public DcMotor pixelLiftingMotor = null;
     public Servo droneServo = null;
+    public Servo pixelBackServo = null;
+    public Servo pixelFrontServo = null;
+    public Servo trayTiltingServo = null;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
      - Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -73,6 +76,9 @@ public abstract class CSMethods extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");
         droneServo = hardwareMap.get(Servo.class, "droneServo");
+        pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");
+        pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");
+        trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.REVERSE);

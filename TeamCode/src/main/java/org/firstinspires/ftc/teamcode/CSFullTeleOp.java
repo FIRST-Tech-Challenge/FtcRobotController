@@ -47,14 +47,13 @@ public class CSFullTeleOp extends CSMethods {
 
         while (opModeIsActive()) {
             double max;
-            if (gamepad1.right_trigger > 0.7) {
+            if (false) {
                 slow = 0.35;
                 turnSpeed = 1.25;
             } else {
                 slow = 0.75;
                 turnSpeed = 2.5;
             }
-            turnSpeed = 2.5 * (1 - gamepad1.right_trigger);
 
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -110,9 +109,9 @@ public class CSFullTeleOp extends CSMethods {
                 carWashMotor.setPower(-carWashPower);
             }
 
-            if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && runtime.seconds() > 90) {
+            if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && runtime.seconds() > 90) {
                 droneServo.setPosition(1);
-            } else if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && gamepad2.left_bumper && gamepad2.right_bumper) {
+            } else if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && gamepad1.left_bumper && gamepad1.right_bumper) {
                 droneServo.setPosition(1);
             }
 
