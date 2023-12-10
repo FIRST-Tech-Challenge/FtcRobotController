@@ -56,7 +56,7 @@ public class Arm {
         } else if (gamepad.y) {
             goToPixel();
         } else if (gamepad.right_stick_y != 0) {
-            moveOp(- gamepad.right_stick_y * speed);
+            moveOp(gamepad.right_stick_y * speed);
         } else {
             robot.motorArm.setPower(0);
         }

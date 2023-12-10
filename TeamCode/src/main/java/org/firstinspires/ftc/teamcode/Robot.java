@@ -14,7 +14,7 @@ public class Robot {
 
     public DcMotorEx motorSlider; // Slider
     public DcMotorEx motorArm; // Elbow or Arm
-    public DcMotor motorHanging; // Hanging
+    public DcMotorEx motorHang; // Hanging
 
     public Servo servoCR; // Claw Right
     public Servo servoCL; // Claw left
@@ -30,7 +30,7 @@ public class Robot {
         motorBR = hardwareMap.get(DcMotor.class, "back_right");
         motorSlider = hardwareMap.get(DcMotorEx.class, "sliders");
         motorArm = hardwareMap.get(DcMotorEx.class, "elbow");
-        motorHanging = hardwareMap.get(DcMotor.class, "hanging");
+        motorHang = hardwareMap.get(DcMotorEx.class, "hanging");
         servoCL = hardwareMap.get(Servo.class, "claw_left");
         servoCR = hardwareMap.get(Servo.class, "claw_right");
         servoDrone = hardwareMap.get(Servo.class, "drone");

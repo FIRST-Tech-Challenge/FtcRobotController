@@ -11,7 +11,7 @@ public class Slider {
     private double normal_speed = 1.0;
     private double slow_speed = 1.0;
     private int max_height_ticks = 4000;
-    private boolean verbose = true;
+    private boolean verbose = false;
     private int motor_ticks = 1425;
 
     private int rev_ticks = 250;
@@ -72,7 +72,9 @@ public class Slider {
         //robot.motorSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
          */
-        robot.telemetry.addData("SliderPower:", power);
+        if (verbose) {
+            robot.telemetry.addData("SliderPower:", power);
+        }
         robot.motorSlider.setPower(power);
     }
 
@@ -113,6 +115,8 @@ public class Slider {
 
          */
         moveOp(gamepad.left_stick_y * normal_speed);
-        robot.telemetry.update();
+        if (verbose) {
+            robot.telemetry.update();
+        }
     }
 }
