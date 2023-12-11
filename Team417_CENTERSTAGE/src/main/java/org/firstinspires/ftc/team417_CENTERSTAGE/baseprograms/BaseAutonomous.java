@@ -93,9 +93,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
             Actions.runBlocking(poseAndAction.action);
         }
 
-        //if (drive.myAprilTagPoseEstimator != null) {
-        //    drive.myAprilTagPoseEstimator.visionPortal.close();
-        //}
+        if (drive.myAprilTagPoseEstimator != null) {
+            drive.myAprilTagPoseEstimator.visionPortal.close();
+        }
     }
 
     public void runAuto(boolean red, boolean close) {

@@ -179,27 +179,6 @@ public class OpenCvColorDetection {
             targetPoint.y = -1;
             targetDetected = false;
             if (contoursList.size() > 0) {
-                // Code for offsetting the contours if full image is relayed to scrcpy
-                //    (doesn't work and throws an exception)
-                /*
-                offsetContoursList.clear();
-
-                System.out.println("Contour list: " + contoursList.size());
-                for (int i = 0; i < contoursList.size(); i++) {
-                    currentContour = contoursList.get(i);
-                    Point[] currentContourArray = currentContour.toArray();
-                    for (Point point : currentContourArray) {
-                        point.x += Constants.roi.x;
-                        point.y += Constants.roi.y;
-                    }
-                    offsetContour.fromArray(currentContourArray);
-                    offsetContoursList.add(offsetContour);
-                    System.out.println("Offset contour list: " + offsetContoursList.size());
-                }
-
-                contoursList = new ArrayList<>(offsetContoursList);
-                */
-
                 // iterate through list of contours, find max area contour
                 double maxArea = 0.0;
                 maxAreaContourIndex = 0;
@@ -215,9 +194,6 @@ public class OpenCvColorDetection {
 
                 // Draw the max area contour at index maxAreaContourIndex for debugging in scrcpy
                 Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, Constants.borderColor, 2, -1);
-
-                // draw rectangular bounding box around roi (use if using full image)
-                //Imgproc.rectangle(outputMat, Constants.roi, Constants.roiColor);
 
                 //   draw rectangular bounding box around the max area contour
                 //   and draw circle at the center of rectangular bounding box
