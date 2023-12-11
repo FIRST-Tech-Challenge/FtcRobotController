@@ -19,12 +19,11 @@ public class Hardware
     public DcMotorEx TransferM1;
     public DcMotorEx TransferM2;
     public CRServo TransferCR1;
-    public CRServo TransferCR2;
+    public CRServo TransferCRAxon;
 
     //Intake Servos Declaration
-    public CRServo counteroller;
-
-    public DcMotor intakeMotor;
+    public CRServo intakeFront;
+    public DcMotor intakeBack;
 
     //Deposit Servos Declaration
     public Servo depositServoOne;
@@ -64,14 +63,22 @@ public class Hardware
         TransferM2 = hardwareMap.get(DcMotorEx.class, "Transfer Motor 2");
 
         //Intake Config - Transfer servos spin with intake servos/motors
-        counteroller = hardwareMap.get(CRServo.class, "Intake Servo");
-        intakeMotor = hardwareMap.get(DcMotor.class, "Intake Motor");
+        intakeFront = hardwareMap.get(CRServo.class, "Intake Front");
+        intakeBack = hardwareMap.get(DcMotor.class, "Intake Back");
         TransferCR1 = hardwareMap.get(CRServo.class, "Transfer Servo 1");
-        TransferCR2 = hardwareMap.get(CRServo.class, "Transfer Servo 2");
+        TransferCRAxon = hardwareMap.get(CRServo.class, "Transfer Servo 2");
 
         //Deposit Servo Config
         depositServoOne = hardwareMap.get(Servo.class, "Right Deposit");
         depositServoTwo = hardwareMap.get(Servo.class, "Left Deposit");
+
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     //robot-oriented drive method
