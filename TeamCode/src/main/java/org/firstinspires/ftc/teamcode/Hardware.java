@@ -43,8 +43,8 @@ public class Hardware
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
 
     //used in our odo but not RoadRunner classes
-    public static final double ODOM_TICKS_PER_IN = 1831.471685;
-    public static double trackwidth = 10.976;
+    public static final double ODOM_TICKS_PER_IN = 335.4658854;
+    public static double trackwidth = 15.5093668;
 
     public Hardware(HardwareMap hardwareMap)
     {
