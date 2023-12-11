@@ -331,6 +331,16 @@ public final class MecanumDrive {
         }
     }
 
+    public void moveSlidesPreset(int targetPos) {
+        double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        this.moveSlides(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
+    }
+
+    // clamps value between a minimum and maximum value
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));

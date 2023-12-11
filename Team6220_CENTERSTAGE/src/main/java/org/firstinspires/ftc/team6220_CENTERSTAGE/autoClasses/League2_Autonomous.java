@@ -414,11 +414,17 @@ class AutoMechanismActions {
     private DcMotorEx intakeMotor;
     private Servo dumperServo;
     private Servo pixelLatchFront;
+    private DcMotorEx slideMotor;
+    private DcMotorEx returnMotor;
+    private MecanumDrive drive;
 
     public AutoMechanismActions(MecanumDrive drive) {
+        this.drive = drive;
         intakeMotor = drive.intakeMotor;
         dumperServo = drive.dumperServo;
         pixelLatchFront = drive.pixelLatchFront;
+        slideMotor = drive.slideMotor;
+        returnMotor = drive.returnMotor;
     }
 
     public Action spinIntakeFor(double timeSec, double power) {
@@ -443,12 +449,26 @@ class AutoMechanismActions {
         };
     }
 
+    //make sure to schmove the slides before doing this
     public Action releaseOuttake() {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 dumperServo.setPosition(0.5); // PLACEHOLDER HEHEHEHA
                 pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
+                dumperServo.setPosition(0);
+                return true;
+            }
+        };
+    };
+
+
+    // thingy to schmove the slides
+    public Action slideMove(Integer position) {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                drive.moveSlidesPreset(position);
                 return true;
             }
         };
