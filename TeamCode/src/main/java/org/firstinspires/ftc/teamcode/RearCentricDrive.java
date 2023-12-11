@@ -121,7 +121,7 @@ public class RearCentricDrive extends LinearOpMode {
           
         //if(armLocked == false){
 
-           if(armLocked == true){
+        if(armLocked == true){
              armRotate.setPower(0.05);
              armBrace.setPower(0.05);
            } else{
