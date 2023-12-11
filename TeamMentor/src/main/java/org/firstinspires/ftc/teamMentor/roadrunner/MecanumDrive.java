@@ -172,9 +172,6 @@ public final class MecanumDrive {
             rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
-            leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-            leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-
             // <<motor>>.setDirection(DcMotorEx.Direction.REVERSE);
 
             lastLeftFrontPos = leftFront.getPositionAndVelocity().position;
@@ -237,25 +234,13 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         // <<motor>>.setDirection(DcMotorEx.Direction.REVERSE);
-        if (isDevBot) {
-            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-            leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-            rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
-            leftBack.setDirection(DcMotor.Direction.REVERSE);
-        } else {
-            leftFront = hardwareMap.get(DcMotorEx.class, "FLMotor");
-            leftBack = hardwareMap.get(DcMotorEx.class, "BLMotor");
-            rightBack = hardwareMap.get(DcMotorEx.class, "BRMotor");
-            rightFront = hardwareMap.get(DcMotorEx.class, "FRMotor");
-
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
-            leftBack.setDirection(DcMotor.Direction.REVERSE);
-        }
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
