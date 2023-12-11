@@ -113,6 +113,8 @@ public final class MecanumDrive {
                 inPerTick = 0.0225669957686882;
                 
                 //RoadRunner tuning values
+                inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
+
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
                 trackWidthTicks = 616.0724803629631;
 

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 
 /*
-    Concept: most of the code has gotten encapsulated in another class, but this does well for testing
+    Concept: this is for testing the April-Tag concept.
 */
 
 @Disabled
