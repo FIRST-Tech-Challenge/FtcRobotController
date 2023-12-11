@@ -100,7 +100,17 @@ abstract public class League1BaseAutonomous extends BaseOpMode {
 
         telemetry.addData("Init State", "Init Finished");
 
+<<<<<<< HEAD
+        // Set last know encoder values
+        lastEncoderFR = FR.getCurrentPosition();
+        lastEncoderFL = FL.getCurrentPosition();
+        lastEncoderBL = BL.getCurrentPosition();
+        lastEncoderBR = BR.getCurrentPosition();
+
+        // Robot takes 5 seconds for camera to be able to detect meaningful images (as opposed to a bright flash of light)
+=======
         // Sleep for OpenCv to process
+>>>>>>> 417CenterstageLeague2
         sleep(5000);
 
         telemetry.clear();

@@ -58,19 +58,19 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
-    // For the April Tag latency calculation (added by Hank)
+    // For the April Tag latency calculation 
     public ElapsedTime clock = new ElapsedTime();
 
-    // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+    // To keep a record of twists to be used by April Tag latency compensation 
     public ArrayList<TwistWithTimestamp> twistList;
 
-    // To detect April Tags to correct drift (added by Hank)
+    // To detect April Tags to correct drift 
     public AprilTagPoseEstimator myAprilTagPoseEstimator;
 
-    // To detect the motion of the motors (added by Hank)
+    // To detect the motion of the motors 
     public DcMotorEx[] motors;
 
-    // Whether or not to use April Tags (added by Hank)
+    // Whether or not to use April Tags 
     public final static boolean USE_APRIL_TAGS = false;
 
     public static String getBotName() {
@@ -246,11 +246,11 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
-        // For the April Tag latency calculation (added by Hank)
+        // For the April Tag latency calculation 
         clock.reset();
 
         if (USE_APRIL_TAGS) {
-            // To detect April Tags to correct drift (added by Hank)
+            // To detect April Tags to correct drift 
             myAprilTagPoseEstimator = new AprilTagPoseEstimator(hardwareMap);
         }
 
@@ -302,16 +302,16 @@ public final class MecanumDrive {
             localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
         }
 
-        // To detect the motion of the motors (added by Hank)
+        // To detect the motion of the motors 
         motors = new DcMotorEx[]{rightBack, rightFront, leftBack, leftFront};
 
-        // To keep a record of twists to be used by April Tag latency compensation (added by Hank)
+        // To keep a record of twists to be used by April Tag latency compensation 
         twistList = new ArrayList<>();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
-    // Closes and releases resources (Added by Hank)
+    // Closes and releases resources 
     public void close() {
         if (myAprilTagPoseEstimator != null) {
             myAprilTagPoseEstimator.visionPortal.close();
@@ -499,6 +499,8 @@ public final class MecanumDrive {
     }
 
     public PoseVelocity2d updatePoseEstimate() {
+        // Twists are a change over a single sensor loop of the robot's position. It has
+        //    an angle and a line component, which can be converted to an x, y, and z.
         Twist2dDual<Time> twist = localizer.update();
 
         AprilTagLatencyCompensation.compensateForLatency(this, twist);
