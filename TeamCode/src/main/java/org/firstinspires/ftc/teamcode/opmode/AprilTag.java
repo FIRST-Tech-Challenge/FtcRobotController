@@ -42,6 +42,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -114,7 +115,7 @@ public class AprilTag extends LinearOpMode {
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .setOutputUnits(DistanceUnit.METER, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.METER, AngleUnit.RADIANS)
             .build();
 
         // Create the vision portal by using a builder.
@@ -148,6 +149,7 @@ public class AprilTag extends LinearOpMode {
 //                telemetry.addLine(String.format("RBE %6.3f %6.3f %6.3f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 telemetry.addData("range from tag", detection.ftcPose.range-0.035);
                 telemetry.addData("angle from tag", detection.ftcPose.bearing);
+                telemetry.addData("distance from wall", Math.sin(detection.ftcPose.bearing+Math.toRadians(Constants.cameraAngle))*(detection.ftcPose.range-0.035));
 //            } else {
 //                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
 //                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
