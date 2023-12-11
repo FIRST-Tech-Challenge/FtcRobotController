@@ -23,7 +23,7 @@
  * Example program to detect blue or red objects
  */
 
-package org.firstinspires.ftc.team417_CENTERSTAGE.opencv;
+package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -48,17 +48,23 @@ import java.util.List;
  */
 
 public class OpenCvColorDetection {
-    public OpenCvCamera robotCamera;
+    OpenCvCamera robotCamera;
     /* Declare OpMode members. */
-    public LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
+    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
-    public enum detectColorType {
+    enum detectColorType{
         BLUE,
-        RED,
-        UNSET,
+        RED
     }
 
-    public detectColorType myColor = detectColorType.UNSET;
+    public enum Position {
+        ONE,
+        TWO,
+        THREE,
+        FOUR
+    }
+
+    detectColorType myColor;
 
     // coordinates of largest detected image
     Point targetPoint = new Point(0, 0);
@@ -71,33 +77,28 @@ public class OpenCvColorDetection {
     }
 
     // set detection color
-    public void setDetectColor(detectColorType color) {
+   /* public void setDetectColor(detectColorType color) {
         myColor = color;
-    }
+    }*/
 
     // initialize the camera and openCV pipeline
     public void init() {
+
         // cameraMonitorViewId allows us to see the image pipeline using scrcpy
         //   for easy debugging
         //   You can disable it after testing completes
         int cameraMonitorViewId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myOpMode.hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(myOpMode.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(myOpMode.hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        // OR...  Do Not Activate the Camera Monitor View
-        // robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
-        // OR... use internal phone camera
-        // phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
-
+        //setDetectColor(detectColorType.BLUE);
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
             public void onOpened() {
                 startStreaming();
             }
-
-            @Override
             public void onError(int errorCode) {
+                stopStreaming();
             }
         });
     }
@@ -106,20 +107,9 @@ public class OpenCvColorDetection {
         robotCamera.stopStreaming();
     }
 
-    public void startStreaming() {
-        robotCamera.startStreaming(Constants.CAMERA_IMAGE_WIDTH, Constants.CAMERA_IMAGE_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+    public void startStreaming() { // resolution of camera stream
+        robotCamera.startStreaming(ConstantsOpenCV.CAMERA_IMAGE_WIDTH, ConstantsOpenCV.CAMERA_IMAGE_HEIGHT, OpenCvCameraRotation.UPRIGHT);
     }
-
-    // Four possibilities for the camera; SideDetected.INITIALIZED means the camera
-    //    hasn't had a chance to detect anything yet
-    public enum SideDetected {
-        INITIALIZED,
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    public SideDetected sideDetected = SideDetected.INITIALIZED;
 
     /* openCV image processing pipeline
      *   detects largest blue or red colored object
@@ -128,25 +118,16 @@ public class OpenCvColorDetection {
         boolean viewportPaused = false;
 
         // matrices in the processing pipeline
-        Mat roiMat = new Mat();
         Mat blurredMat = new Mat();
         Mat hsvMat = new Mat();
         Mat filteredMat = new Mat();
         Mat contourMask = new Mat();
         Mat outputMat = new Mat();
-        List<MatOfPoint> contoursList = new ArrayList<>();
-        MatOfPoint currentContour = new MatOfPoint();
-        List<MatOfPoint> offsetContoursList = new ArrayList<>();
-        MatOfPoint offsetContour = new MatOfPoint();
 
-        @Override
         public Mat processFrame(Mat inputMat) {
-            // resize the image to the roi so that stuff like volunteer's shirts aren't detected
-            roiMat = inputMat.submat(Constants.roi);
-
             // blur the image to reduce the impact of noisy pixels
             //   each pixel is "averaged" with its neighboring pixels
-            Imgproc.GaussianBlur(roiMat, blurredMat, Constants.BLUR_SIZE, 0);
+            Imgproc.GaussianBlur(inputMat, blurredMat, ConstantsOpenCV.BLUR_SIZE, 0);
 
             // convert image to HSV color space, which is better for detecting red and blue colors
             Imgproc.cvtColor(blurredMat, hsvMat, Imgproc.COLOR_RGB2HSV);
@@ -154,90 +135,77 @@ public class OpenCvColorDetection {
             // filter out the range of blue or red colors defined in
             //   Constants.BLUE_COLOR_DETECT_MIN_HSV and Constants.BLUE_COLOR_DETECT_MAX_HSV
             //   or Constants.RED_COLOR_DETECT_MIN_HSV and Constants.RED_COLOR_DETECT_MAX_HSV
-            switch (myColor) {
-                case BLUE:
-                    Core.inRange(hsvMat, Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV, filteredMat);
-                    break;
-                case RED:
-                    Core.inRange(hsvMat, Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV, filteredMat);
-                    break;
-                default:
+            if (myColor == detectColorType.BLUE) {
+                Core.inRange(hsvMat, ConstantsOpenCV.BLUE_COLOR_DETECT_MIN_HSV, ConstantsOpenCV.BLUE_COLOR_DETECT_MAX_HSV, filteredMat);
+            } else {
+                Core.inRange(hsvMat, ConstantsOpenCV.RED_COLOR_DETECT_MIN_HSV, ConstantsOpenCV.RED_COLOR_DETECT_MAX_HSV, filteredMat);
             }
 
-            // Clears list from the last loop to use as a empty
-            contoursList.clear();
-
             // create a list of contours surrounding groups of contiguous pixels that were filtered
+            List<MatOfPoint> contoursList = new ArrayList<>();
             Imgproc.findContours(filteredMat, contoursList, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
             // copy original image to output image for drawing overlay on
-            roiMat.copyTo(outputMat);
+            inputMat.copyTo(outputMat);
 
-            // if no contours are detected, do nothing
-            int maxAreaContourIndex;
+            //   iterate through list of contours, find max area contour
+            int maxAreaContourIndex = -1;
             targetPoint.x = -1;
             targetPoint.y = -1;
             targetDetected = false;
-            if (contoursList.size() > 0) {
-                // iterate through list of contours, find max area contour
+            if (contoursList.size() > 1) {
                 double maxArea = 0.0;
                 maxAreaContourIndex = 0;
                 for (int i = 0; i < contoursList.size(); i++) {
-                    currentContour = contoursList.get(i);
-                    double contourArea = Imgproc.contourArea(currentContour);
-                    if (contourArea > maxArea) {
-                        maxArea = contourArea;
+                    if (Imgproc.contourArea(contoursList.get(i)) > maxArea) {
+                        maxArea = Imgproc.contourArea(contoursList.get(i));
                         maxAreaContourIndex = i;
                     }
                 }
                 targetDetected = true;
-
                 // Draw the max area contour at index maxAreaContourIndex for debugging in scrcpy
-                Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, Constants.borderColor, 2, -1);
+                Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, ConstantsOpenCV.borderColor, 2, -1);
 
-                //   draw rectangular bounding box around the max area contour
+                // draw rectangular bounding box around the max area contour
                 //   and draw circle at the center of rectangular bounding box
                 Rect boundingRect = Imgproc.boundingRect(contoursList.get(maxAreaContourIndex));
                 double boundHeightX = boundingRect.x + boundingRect.width;
                 double boundHeightY = boundingRect.y + boundingRect.height;
-                Imgproc.rectangle(outputMat, new Point(boundingRect.x, boundingRect.y), new Point(boundHeightX, boundHeightY), Constants.borderColor, 3, Imgproc.LINE_8, 0);
+                Imgproc.rectangle(outputMat, new Point(boundingRect.x, boundingRect.y), new Point(boundHeightX, boundHeightY), ConstantsOpenCV.borderColor, 3, Imgproc.LINE_8, 0);
                 targetPoint.x = (int) boundingRect.width / 2.0 + boundingRect.x;
                 targetPoint.y = (int) boundingRect.height / 2.0 + boundingRect.y;
-                Imgproc.circle(outputMat, targetPoint, 10, Constants.borderColor, Imgproc.LINE_4, -1);
-
-                double width = inputMat.size().width;
-
-                // Update sideDetected so that robot can detect position with detectPosition()
-                // Takes the left fourth of the screen for left spike mark, right fourth for right, and
-                //    otherwise is center
-                if (targetPoint.x < width / 4) {
-                    sideDetected = SideDetected.LEFT;
-                } else if (targetPoint.x > (3 * width) / 4) {
-                    sideDetected = SideDetected.RIGHT;
-                } else {
-                    sideDetected = SideDetected.CENTER;
-                }
+                Imgproc.circle(outputMat, targetPoint, 10, ConstantsOpenCV.borderColor, Imgproc.LINE_4, -1);
             }
-
-            roiMat.release();
 
             // See this image on the computer using scrcpy
             return outputMat;
         }
 
-        @Override
-        public void onViewportTapped() {
+        //@Override
+        /*public void onViewportTapped() {
             viewportPaused = !viewportPaused;
 
-            if (viewportPaused) {
+            if(viewportPaused) {
                 robotCamera.pauseViewport();
-            } else {
+            }
+            else {
                 robotCamera.resumeViewport();
             }
-        }
+        }*/
     }
 
-    public SideDetected detectTeamProp() {
-        return sideDetected;
+
+    public Position detectColor() {
+        Position position = Position.FOUR;
+        if (targetPoint.x < 213.3) {
+            position = Position.ONE;
+        } else if ((targetPoint.x > 213.3) && (targetPoint.x < 426.6)) {
+            position = Position.TWO;
+        } else if ((targetPoint.x > 426.6) && (targetPoint.x < 640)) {
+            position = Position.THREE;
+        } else {
+            position = Position.FOUR;
+        }
+        return position;
     }
 }

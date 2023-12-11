@@ -26,9 +26,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public int lastEncoderFL = 0;
     public int lastEncoderBL = 0;
     public int lastEncoderBR = 0;
-    public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
-    MecanumDrive drive;
+    public static double INTAKE_SPEED = 1;
+    public static double INTAKE_TIME = 2; // in seconds
+
+    public static double INTAKE_SPEED2 = 1;
+
+    public static double INTAKE_TIME2 = 10; // in seconds
+
+    public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);;
 
@@ -36,15 +42,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFL = FL.getCurrentPosition();
-        lastEncoderBL = BL.getCurrentPosition();
-        lastEncoderBR = BR.getCurrentPosition();
 
         // Allow the OpenCV to process
         if (drive.USE_APRIL_TAGS) {
@@ -101,9 +101,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
             Actions.runBlocking(poseAndAction.action);
         }
 
-        //if (drive.myAprilTagPoseEstimator != null) {
-        //    drive.myAprilTagPoseEstimator.visionPortal.close();
-        //}
+        if (drive.myAprilTagPoseEstimator != null) {
+            drive.myAprilTagPoseEstimator.visionPortal.close();
+        }
     }
 
     public void runAuto(boolean red, boolean close) {
