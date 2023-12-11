@@ -115,6 +115,10 @@ public class Driver extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
+            // check arm position
+            telemetry.addData("Arm Position",armMotor.getCurrentPosition());
+            telemetry.update();
+
             // Declare Motors
 
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -206,14 +210,14 @@ public class Driver extends LinearOpMode {
 
                     if (gamepad2.y) {
                         wristServo.setPosition(WRIST_DROP_POS);
-                        moveArmMotorToPosition(ARM_DROP_POS);
+                        moveArmMotorToPosition(ARM_DROP_POS, 2);
                     }
                     else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
-                        moveArmMotorToPosition(ARM_INTAKE_POS);
+                        moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     } else if (gamepad2.dpad_up) {
-                        moveArmMotorToPosition(ARM_DRIVE_POS);
-                        //wristServo.setPosition(WRIST_INTAKE_POS);
+                        moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
+                        wristServo.setPosition(WRIST_INTAKE_POS);
                     }
 
                     //and here put your logic to move the arm up and down
@@ -227,12 +231,18 @@ public class Driver extends LinearOpMode {
         });
     }
 
-    private void moveArmMotorToPosition(int position) {
+    private void moveArmMotorToPosition(int position, double timeoutS) {
+        ElapsedTime runtime = new ElapsedTime();
+
+        runtime.reset();
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(ARM_SPEED); // Set your desired power
-        while (armMotor.isBusy()) {
-            // Optionally add code to do something while the motor is moving
+        while ((armMotor.isBusy()) && (runtime.seconds() < timeoutS)) {
+
+            telemetry.addData("Running to", "%7d", position);
+            telemetry.addData("Currently at", "%7d", armMotor.getCurrentPosition());
+            telemetry.update();
         }
         armMotor.setPower(0); // Stop the motor once the position is reached
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
