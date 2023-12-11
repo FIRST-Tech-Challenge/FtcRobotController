@@ -17,12 +17,7 @@ public class TeleOp extends BaseTeleOp {
             double x = gamepad1.left_stick_x;
             double pivot = gamepad1.right_stick_x;
 
-            double angle = Math.toDegrees(Math.atan2(y, x));
-            double power = calculateDistance(x, y);
-
-            driveMecanumGyro(angle, power, pivot);
-
-            // driveMecanum(x, y, pivot);
+            driveMecanum(x, y, pivot);
 
             idle();
         }
