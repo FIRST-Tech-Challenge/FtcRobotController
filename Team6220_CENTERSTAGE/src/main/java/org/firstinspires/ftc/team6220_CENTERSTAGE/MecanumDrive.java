@@ -331,9 +331,15 @@ public final class MecanumDrive {
         }
     }
 
-    public void moveSlidesPreset(int targetPos) {
+    /**
+     * move slides until within a position tolerance
+     * @param targetPos the destination position of the slides
+     * @return true if it is NOT yet close enough to target pos
+     */
+    public boolean moveSlidesPreset(int targetPos) {
         double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         this.moveSlides(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
+        return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
     }
 
     // clamps value between a minimum and maximum value

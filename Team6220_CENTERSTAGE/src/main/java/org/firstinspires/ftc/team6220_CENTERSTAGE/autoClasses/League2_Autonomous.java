@@ -457,7 +457,7 @@ class AutoMechanismActions {
                 dumperServo.setPosition(0.5); // PLACEHOLDER HEHEHEHA
                 pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
                 dumperServo.setPosition(0);
-                return true;
+                return false;
             }
         };
     };
@@ -468,8 +468,7 @@ class AutoMechanismActions {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                drive.moveSlidesPreset(position);
-                return true;
+                return drive.moveSlidesPreset(position); // returns if it's not close enough
             }
         };
     };
