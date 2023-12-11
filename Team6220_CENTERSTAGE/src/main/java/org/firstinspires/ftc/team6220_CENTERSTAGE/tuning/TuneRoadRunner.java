@@ -296,6 +296,7 @@ public class TuneRoadRunner extends LinearOpMode {
                     .endTrajectory()
                     .setTangent(Math.toRadians(-180))
                     .splineToLinearHeading(new Pose2d(0, 0, Math.toRadians(-0.0001)), Math.toRadians(-180))
+                    .endTrajectory()
                     .build();
             runCancelableAction(action);
         }

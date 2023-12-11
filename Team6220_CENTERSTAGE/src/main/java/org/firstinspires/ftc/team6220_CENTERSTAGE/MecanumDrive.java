@@ -105,22 +105,22 @@ public final class MecanumDrive {
                 lateralGain = 10.0;
                 headingGain = 10.0; // shared with turn
 
-            // is competition bot
+            // is competition bot:
             } else {
                 // drive model parameters
                 inPerTick = 72.0 / 3146.5;
-                lateralInPerTick = inPerTick;
-                trackWidthTicks = 1316.0487423269376;
+                lateralInPerTick = inPerTick * 56 / 72.0;
+                trackWidthTicks = 1313.928196861614;
 
                 // feedforward parameters (in tick units)
                 kS = 0.7120066356750563;
                 kV = 0.004248490354527058;
-                kA = 0.0005;
+                kA = 0.00065;
 
                 // path controller gains
-                axialGain = 10.0;
-                lateralGain = 10.0;
-                headingGain = 7.0; // shared with turn
+                axialGain = 20;
+                lateralGain = 10;
+                headingGain = 4; // shared with turn
             }
 
             // path profile parameters (in inches)
@@ -252,7 +252,7 @@ public final class MecanumDrive {
         leftBack = hardwareMap.get(DcMotorEx.class, "motBL");
         rightBack = hardwareMap.get(DcMotorEx.class, "motBR");
         rightFront = hardwareMap.get(DcMotorEx.class, "motFR");
-        if (!isDevBot) {
+        if (!isDevBot) { // is competition bot
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
@@ -270,10 +270,11 @@ public final class MecanumDrive {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (!isDevBot) {
+        if (!isDevBot) { // is competition bot
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
         if(!isDevBot) {
@@ -317,21 +318,17 @@ public final class MecanumDrive {
     }
 
     /**
-     * Calculates error then sets the slide powers to drive the slides to the target.
-     *
-     * Note: Does not actually go until the slides hit the target, this method is meant to be
-     * used in conjunction with a outside loop ♻
-     * {removed sorry :<} the position to target in encoder ticks
+     * moves the slides at a power
+     * @param power positive is slides up
      */
-/*    public void moveSlides(int targetPos) {
-        double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+    public void moveSlides(double power) {
         this.slideMotor.setPower(power);
-        this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
-    }*/
-
-    public void moveSlides(double power, boolean retracting) {
-        this.slideMotor.setPower(power);
-        this.returnMotor.setPower(power * Constants.SLIDE_RETURN_MOTOR_POWER_MUL + Constants.SLIDE_RETURN_MOTOR_POWER_OFFSET);
+        // if the power is negative, which is slides going down
+        if (power > 0) {
+            this.returnMotor.setPower(power * Constants.SLIDE_RETURN_UP_MUL);
+        } else {
+            this.returnMotor.setPower(power * Constants.SLIDE_RETURN_POWER_MULTIPLIER + Constants.SLIDE_RETURN_POWER_OFFSET);
+        }
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {

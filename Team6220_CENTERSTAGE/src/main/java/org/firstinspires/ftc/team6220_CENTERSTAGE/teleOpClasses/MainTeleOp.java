@@ -185,11 +185,11 @@ public class MainTeleOp extends LinearOpMode {
 
                 // Slides stuff
                 if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-                    drive.moveSlides(-0.5, true);
+                    drive.moveSlides(-0.5);
                 } else if (gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    drive.moveSlides(0.5, false);
+                    drive.moveSlides(0.5);
                 } else {
-                    drive.moveSlides(0, false);
+                    drive.moveSlides(0);
                 }
 
                 // move intake bar down to preset value with dpad but only if it can

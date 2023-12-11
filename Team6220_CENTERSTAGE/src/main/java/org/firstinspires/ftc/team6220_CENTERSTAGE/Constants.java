@@ -26,8 +26,9 @@ public class Constants {
             1, // open
     };
 
-    public static final double SLIDE_RETURN_MOTOR_POWER_MUL = 0.8;
-    public static final double SLIDE_RETURN_MOTOR_POWER_OFFSET = -0.05;
+    public static final double SLIDE_RETURN_POWER_MULTIPLIER = 1.2;
+    public static final double SLIDE_RETURN_POWER_OFFSET = -0.05;
+    public static final double SLIDE_RETURN_UP_MUL = 0.66;
     public static final double SLIDE_P_GAIN = 0.3;
 
     public static final double[] INTAKE_POSITIONS = {
