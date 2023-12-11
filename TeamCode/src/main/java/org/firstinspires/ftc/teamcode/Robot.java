@@ -1172,7 +1172,7 @@ public class Robot {
     }
 
     public void openHook () {
-        hook.setPosition(0.38); //started 0.49
+        hook.setPosition(0.37); //started 0.49
     }
 
     public void closeHook () {
