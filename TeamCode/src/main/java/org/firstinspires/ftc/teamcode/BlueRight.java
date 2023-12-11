@@ -46,7 +46,7 @@ public class BlueRight extends LinearOpMode {
                 isCenter = false;
             }
             else{
-                isLeft = true;
+                isLeft = false;
                 isRight = false;
                 isCenter = true;
             }
