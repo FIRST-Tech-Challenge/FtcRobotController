@@ -35,7 +35,7 @@ public class TestingStuff extends RobotOpMode {
             log("Test", "X is pressed");
             WristServoPositionModifier -= 0.01;
         }
-
+        /*
         moveServo(fingerServo, (float)(fingerServoPosition + FingerPositionModfier));
         fingerServoPosition += FingerPositionModfier;
 
@@ -75,6 +75,7 @@ public class TestingStuff extends RobotOpMode {
                     DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
             armMotor.setPower(Math.abs(ARM_POWER));
         }
+         */
     }
 
     @Override

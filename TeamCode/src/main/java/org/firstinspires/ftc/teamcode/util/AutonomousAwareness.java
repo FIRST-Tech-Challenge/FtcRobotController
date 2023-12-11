@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.util;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.arcrobotics.ftclib.command.OdometrySubsystem;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.arcrobotics.ftclib.purepursuit.Waypoint;
@@ -11,6 +13,7 @@ import com.arcrobotics.ftclib.command.PurePursuitCommand;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class AutonomousAwareness {
     /** Width of the track */
@@ -28,10 +31,10 @@ public class AutonomousAwareness {
     static OdometrySubsystem odometry;
 
     public static MecanumDrive m_robotDrive;
-    public static Motor fL, fR, bL, bR;
+    public static DcMotor fL, fR, bL, bR;
 
     public static Waypoint[] currentTask;
-    private PurePursuitCommand ppCommand;
+    private static PurePursuitCommand ppCommand;
 
     public enum StartingPosition {
         RED_LEFT, 
@@ -60,7 +63,7 @@ public class AutonomousAwareness {
 
         odometry = new OdometrySubsystem(holOdom);
 
-        m_robotDrive = new MecanumDrive(fL, fR, bL, bR);
+        m_robotDrive = new MecanumDrive((Motor) fL, (Motor) fR, (Motor) bL, (Motor) bR);
 
         newPursuit(
             new StartWaypoint(0, 0), 
@@ -77,8 +80,8 @@ public class AutonomousAwareness {
      * @param startingPosition the starting position of the robot
      * @param useDistanceSensor whether or not to use the distance sensor for more accurate positioning
      */
-    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor, 
-                Motor fL, Motor fR, Motor bL, Motor bR) {
+    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor,
+                               DcMotor fL, DcMotor fR, DcMotor bL, DcMotor bR) {
         initOdometry();
 
         // Init motors
@@ -89,7 +92,7 @@ public class AutonomousAwareness {
     }
 
     public static void newPursuit(StartWaypoint start, GeneralWaypoint general, EndWaypoint end) {
-        ppCommand = new PurePursuitCommand(m_robotDrive, holOdom, start, general, end);
-        schedule(ppCommand);
+        ppCommand = new PurePursuitCommand(m_robotDrive, odometry, start, general, end);
+        //schedule(ppCommand);
     }
 }
