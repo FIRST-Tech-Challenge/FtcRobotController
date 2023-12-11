@@ -41,7 +41,7 @@ public class SimplePIDF {
         double dt = 0.02; // Assume a constant time step for simplicity
         integral += error * dt;
 
-        derivative = (lastInput == Double.NaN) ? 0 : (currentPosition - lastInput) / dt;
+        derivative = (Double.isNaN(lastInput)) ? 0 : (currentPosition - lastInput) / dt;
 
         feedforward = F * targetPosition;
 

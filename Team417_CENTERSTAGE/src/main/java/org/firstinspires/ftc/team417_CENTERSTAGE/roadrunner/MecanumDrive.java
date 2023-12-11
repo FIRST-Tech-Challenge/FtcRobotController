@@ -107,7 +107,7 @@ public final class MecanumDrive {
 
         Params() {
             if (isDevBot) {
-                // drive model parameters
+                //4 tiles divided by the values given
                 inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
                 trackWidthTicks = 616.0724803629631;
