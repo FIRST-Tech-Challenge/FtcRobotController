@@ -61,7 +61,7 @@ public class Hardware
 
         //Transfer Motor Config -- Raise motor
         TransferM1 = hardwareMap.get(DcMotorEx.class, "Transfer Motor 1");
-        TransferM1 = hardwareMap.get(DcMotorEx.class, "Transfer Motor 2");
+        TransferM2 = hardwareMap.get(DcMotorEx.class, "Transfer Motor 2");
 
         //Intake Config - Transfer servos spin with intake servos/motors
         counteroller = hardwareMap.get(CRServo.class, "Intake Servo");
