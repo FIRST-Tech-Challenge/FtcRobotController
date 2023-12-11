@@ -7,6 +7,7 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.shared.GlobalState.ALLIANCE_POS;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -18,8 +19,11 @@ import java.util.List;
 
 public class VisionHardware {
 
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     private LinearOpMode myOpMode = null;
+
+    private ALLIANCE_POS alliancePos = null;
+
     public static double detectWait = 6.0;
     private ElapsedTime runtime = new ElapsedTime();
     private TfodProcessor tfod;
@@ -28,10 +32,10 @@ public class VisionHardware {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "model_spheres_20231202.tflite";
+    private static final String TFOD_MODEL_ASSET = "ModelSpheresClassWindowSLC.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20231015_125021.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/ModelSphereClassWindowSLC.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "Red Sphere",
@@ -44,8 +48,20 @@ public class VisionHardware {
         RIGHT
     }
 
-    public VisionHardware(LinearOpMode opmode) {
+    // Screen X axis division segments
+    // From Left Alliance Positions
+    private int ALLIANCE_LEFT_L = 400; // <=
+    private int ALLIANCE_LEFT_M = 400; // >
+
+    // From Right Alliance Positions
+    private int ALLIANCE_RIGHT_R = 624; // >=
+    private int ALLIANCE_RIGHT_M = 624; // <
+
+
+    public VisionHardware(LinearOpMode opmode) { myOpMode = opmode; };
+    public VisionHardware(LinearOpMode opmode, ALLIANCE_POS alliancePos) {
         myOpMode = opmode;
+        this.alliancePos = alliancePos;
     }
 
     public void init() {
@@ -114,6 +130,47 @@ public class VisionHardware {
                         double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
                         double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
+
+                        switch(alliancePos) {
+                            case LEFT:
+                                if (x < ALLIANCE_LEFT_L) {
+                                    myOpMode.telemetry.addData("Prop Left", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    return PropPosition.LEFT;
+                                } else if (x > ALLIANCE_LEFT_M) {
+                                    myOpMode.telemetry.addData("Prop Middle", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    //return PropPosition.RIGHT;
+                                    return PropPosition.MIDDLE;
+                                } else {
+                                    myOpMode.telemetry.addData("Prop Right", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    return PropPosition.RIGHT;
+                                }
+                            case RIGHT:
+                                if (x >= ALLIANCE_RIGHT_R) {
+                                    myOpMode.telemetry.addData("Prop Right", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    return PropPosition.RIGHT;
+                                } else if (x < ALLIANCE_RIGHT_M) {
+                                    myOpMode.telemetry.addData("Prop Middle", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    //return PropPosition.RIGHT;
+                                    return PropPosition.MIDDLE;
+                                } else {
+                                    myOpMode.telemetry.addData("Prop Left", "");
+                                    myOpMode.telemetry.update();
+                                    debugWait();
+                                    return PropPosition.LEFT;
+                                }
+                        }
+
+
                         if (x < 400) {
                             myOpMode.telemetry.addData("Prop Left", "");
                             myOpMode.telemetry.update();
@@ -131,6 +188,8 @@ public class VisionHardware {
                             debugWait();
                             return PropPosition.MIDDLE;
                         }
+
+
                     }
                 }
             }
