@@ -48,7 +48,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
-        
+    
     }
 
     // mecanum drive method
@@ -58,4 +58,5 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setPower(y - x + turning);
         motorBR.setPower(x + y - turning);
     }
+
 }
