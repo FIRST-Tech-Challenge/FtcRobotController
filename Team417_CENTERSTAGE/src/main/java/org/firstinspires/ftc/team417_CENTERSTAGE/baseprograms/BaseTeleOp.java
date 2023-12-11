@@ -4,26 +4,33 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmTeleOp;
+import org.firstinspires.ftc.team417_CENTERSTAGE.mechanisms.ArmMechanism;
 import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseTeleOp extends BaseOpMode {
-    private ArmTeleOp arm;
+    public MecanumDrive drive;
+    private ArmMechanism arm;
 
     @Override
     public void runOpMode() {
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         initializeHardware();
 
         if (armMotor != null) {
-            arm = new ArmTeleOp(gamepad2, armMotor, dumperServo);
+            arm = new ArmMechanism(gamepad2, armMotor, dumperServo);
             resetDumper();
         }
 
         waitForStart();
 
         while (opModeIsActive()) {
+            resetIMUIfNeeded();
             driveUsingControllers(false);
 
             drive.updatePoseEstimate();
@@ -48,6 +55,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
                 telemetry.addData("DumperServo", dumperServo.getPosition());
                 telemetry.addData("GateServo", gateServo.getPosition());
             }
+
             telemetry.update();
         }
 
@@ -57,7 +65,44 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     boolean leftBumperIsPressed = false;
 
+    public void resetIMUIfNeeded() {
+        if (gamepad1.left_bumper && !leftBumperIsPressed) {
+            IMU.Parameters parameters;
+            if (drive.isDevBot) {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+            } else {
+                parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP)); }
+            drive.imu.initialize(parameters);
+        }
+        leftBumperIsPressed = gamepad1.left_bumper;
+    }
+
     public boolean sensitive = false;
+
+    public void driveUsingControllers() {
+        sensitive = gamepad1.right_bumper;
+
+        double sensitivity, rotSensitivity;
+        double strafeConstant = 1.1;
+
+        if (sensitive) {
+            sensitivity = 0.5;
+            rotSensitivity = 0.8;
+        } else {
+            sensitivity = 1;
+            rotSensitivity = 1;
+        }
+
+        double x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
+        double y = curveStick(-gamepad1.left_stick_y) * sensitivity;
+        double rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
+
+        mecanumDrive(x, y, rot);
+    }
 
     public void driveUsingControllers(boolean curve) {
         sensitive = gamepad1.right_bumper;
@@ -84,10 +129,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
             rot = gamepad1.right_stick_x * rotSensitivity;
         }
         mecanumDrive(x, y, rot);
-    }
-
-    public void driveUsingControllers() {
-        driveUsingControllers(false);
     }
 
     public void intakeUsingControllers() {
