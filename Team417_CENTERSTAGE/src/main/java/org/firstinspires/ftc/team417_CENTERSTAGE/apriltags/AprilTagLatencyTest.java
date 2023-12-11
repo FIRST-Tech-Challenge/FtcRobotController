@@ -34,7 +34,7 @@ public class AprilTagLatencyTest extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // Code added to draw the pose, remove before competition, causes lags:
+            // Code added to draw the pose
             TelemetryPacket p = new TelemetryPacket();
             Canvas c = p.fieldOverlay();
 

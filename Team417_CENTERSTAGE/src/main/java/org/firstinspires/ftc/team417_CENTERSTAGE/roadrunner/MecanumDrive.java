@@ -107,8 +107,14 @@ public final class MecanumDrive {
 
         Params() {
             if (isDevBot) {
-                //4 tiles divided by the values given
+                // drive model parameters
+
+                //(Push robot for 4 tiles) 96.0 inches / FTCDashboard value 4254.0.
+                inPerTick = 0.0225669957686882;
+                
+                //RoadRunner tuning values
                 inPerTick = 0.0225669957686882; // 96.0 / 4254.0;
+
                 lateralInPerTick = 0.020179372197309417; // 49.5 / 2453
                 trackWidthTicks = 616.0724803629631;
 
