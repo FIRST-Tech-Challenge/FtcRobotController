@@ -13,6 +13,9 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseTeleOp extends BaseOpMode {
+    // Set to false for competitions to remove lags
+    public static final boolean TESTING = true;
+
     public MecanumDrive drive;
     private ArmMechanism arm;
 
@@ -39,14 +42,16 @@ public abstract class BaseTeleOp extends BaseOpMode {
             telemetry.addData("y", drive.pose.position.y);
             telemetry.addData("heading", drive.pose.heading);
 
-            // Code added to draw the pose, remove before competition, causes lags:
-            TelemetryPacket p = new TelemetryPacket();
-            Canvas c = p.fieldOverlay();
-            c.setStroke("#3F5100");
-            MecanumDrive.drawRobot(c, drive.pose);
+            // Code added to draw the pose, use only when testing
+            if (TESTING) {
+                TelemetryPacket p = new TelemetryPacket();
+                Canvas c = p.fieldOverlay();
+                c.setStroke("#3F5100");
+                MecanumDrive.drawRobot(c, drive.pose);
 
-            FtcDashboard dashboard = FtcDashboard.getInstance();
-            dashboard.sendTelemetryPacket(p);
+                FtcDashboard dashboard = FtcDashboard.getInstance();
+                dashboard.sendTelemetryPacket(p);
+            }
 
             if (armMotor != null && dumperServo != null && gateServo != null) {
                 outputUsingControllers();
