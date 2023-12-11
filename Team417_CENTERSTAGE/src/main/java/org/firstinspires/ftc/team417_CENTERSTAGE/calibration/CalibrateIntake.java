@@ -13,6 +13,6 @@ public class CalibrateIntake extends BaseAutonomous {
         initializeHardware();
         waitForStart();
 
-        Actions.runBlocking(dropPixel());
+        Actions.runBlocking(dropPixel(1, 2)); // time, speed
     }
 }
