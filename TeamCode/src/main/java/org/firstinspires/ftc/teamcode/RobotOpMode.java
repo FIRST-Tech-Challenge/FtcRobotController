@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -28,6 +29,7 @@ public abstract class RobotOpMode extends OpMode {
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor;
     public CRServo wristServo;
+    public MotorEx encoderLeft, encoderRight, encoderBack;
     public BNO055IMU imu;
     public RevColorSensorV3 colorSensor;
     public RevTouchSensor touchSensor;

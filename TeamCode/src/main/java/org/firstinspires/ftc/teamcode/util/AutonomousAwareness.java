@@ -3,14 +3,18 @@ package org.firstinspires.ftc.teamcode.util;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.arcrobotics.ftclib.command.OdometrySubsystem;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
+import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.Waypoint;
 import com.arcrobotics.ftclib.command.PurePursuitCommand;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class AutonomousAwareness {
     /** Width of the track */
@@ -28,10 +32,11 @@ public class AutonomousAwareness {
     static OdometrySubsystem odometry;
 
     public static MecanumDrive m_robotDrive;
-    public static Motor fL, fR, bL, bR;
+    public static DcMotor fL, fR, bL, bR;
 
     public static Waypoint[] currentTask;
-    private PurePursuitCommand ppCommand;
+    public static Path m_path = new Path();
+    private static PurePursuitCommand ppCommand;
 
     public enum StartingPosition {
         RED_LEFT, 
@@ -40,10 +45,10 @@ public class AutonomousAwareness {
         BLUE_RIGHT
     }
 
-    public void initOdometry() {
-        encoderLeft = new MotorEx(hardwareMap, "encoderLeft");
-        encoderRight = new MotorEx(hardwareMap, "encoderRight");
-        encoderBack = new MotorEx(hardwareMap, "encoderBack");
+    public void initOdometry(MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
+        encoderLeft = encodeLeft;
+        encoderRight = encodeRight;
+        encoderBack = encodeBack;
 
         TICKS_TO_INCHES = WHEEL_DIAMETER * Math.PI / encoderLeft.getCPR();
 
@@ -60,16 +65,15 @@ public class AutonomousAwareness {
 
         odometry = new OdometrySubsystem(holOdom);
 
-        m_robotDrive = new MecanumDrive(fL, fR, bL, bR);
+        m_robotDrive = new MecanumDrive((Motor) fL, (Motor) fR, (Motor) bL, (Motor) bR);
 
-        newPursuit(
-            new StartWaypoint(0, 0), 
-            new GeneralWaypoint(200, 0, 0.8, 0.8, 30), 
-            new EndWaypoint(
+        addToPath(new StartWaypoint(0, 0));
+        addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
+        addToPath(new EndWaypoint(
                 400, 0, 0, 0.5,
-                0.5, 30, 0.8, 1
-            )
-        );
+                0.5, 30, 0.8, 1));
+        initPath();
+        followPath();
     }
 
     /** 
@@ -77,9 +81,10 @@ public class AutonomousAwareness {
      * @param startingPosition the starting position of the robot
      * @param useDistanceSensor whether or not to use the distance sensor for more accurate positioning
      */
-    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor, 
-                Motor fL, Motor fR, Motor bL, Motor bR) {
-        initOdometry();
+    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor,
+                               DcMotor fL, DcMotor fR, DcMotor bL, DcMotor bR,
+                               MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
+        initOdometry(encodeLeft, encodeRight, encodeBack);
 
         // Init motors
         this.fL = fL;
@@ -88,8 +93,30 @@ public class AutonomousAwareness {
         this.bR = bR;
     }
 
+    @Deprecated
     public static void newPursuit(StartWaypoint start, GeneralWaypoint general, EndWaypoint end) {
-        ppCommand = new PurePursuitCommand(m_robotDrive, holOdom, start, general, end);
-        schedule(ppCommand);
+        ppCommand = new PurePursuitCommand(m_robotDrive, odometry, start, general, end);
+        ppCommand.schedule();
+    }
+
+    public static void addToPath(Waypoint waypoint) {
+        m_path.add(waypoint);
+    }
+
+    public static boolean initPath() {
+        try {
+            m_path.init();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void followPath() {
+        m_path.followPath(m_robotDrive, holOdom);
+    }
+
+    public static void resetPath() {
+        m_path.reset();
     }
 }

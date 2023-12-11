@@ -101,6 +101,7 @@ public final class AutoRobotOpMode {
 
     @Autonomous(name = "AutoRobotOpMode")
     public static class AutonomousRobotOpMode extends RobotOpMode {
+        public static AutonomousAwareness AA;
         @Override
         public void gamePadMoveRobot() {
             // Do nothing
@@ -109,12 +110,13 @@ public final class AutoRobotOpMode {
         @Override
         public void init() {
             super.init();
-            // Do nothing
+            AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
+                    this.leftFrontDrive, this.rightFrontDrive, this.leftBackDrive, this.rightBackDrive,
+                    this.encoderLeft, this.encoderRight, this.encoderBack);
         }
 
         @Override
         public void robotLoop() {
-
         }
     }
 }

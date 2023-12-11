@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.RobotOpMode.ERROR;
 import static org.firstinspires.ftc.teamcode.RobotOpMode.INFO;
 import static org.firstinspires.ftc.teamcode.RobotOpMode.WARNING;
 
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -30,6 +32,16 @@ public class RobotHardwareInitializer {
             robot.log("FATAL ERROR", "Could not initialize drive motors: "+e.getMessage());
             robot.sendTelemetryPacket(true);
             robot.terminateOpModeNow();
+        }
+
+        try {
+            robot.encoderLeft = new MotorEx(hardwareMap, "encoderLeft");
+            robot.encoderRight = new MotorEx(hardwareMap, "encoderRight");
+            robot.encoderBack = new MotorEx(hardwareMap, "encoderBack");
+        } catch(Exception e) {
+            robot.log("FATAL ERROR", "Could not initialize odometry: "+e.getMessage());
+            robot.sendTelemetryPacket(true);
+            //robot.terminateOpModeNow();
         }
     }
 
