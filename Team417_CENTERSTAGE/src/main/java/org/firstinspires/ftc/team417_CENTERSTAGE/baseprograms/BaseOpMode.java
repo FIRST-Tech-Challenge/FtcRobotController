@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE.baseprograms;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,15 +12,11 @@ import org.firstinspires.ftc.team417_CENTERSTAGE.roadrunner.MecanumDrive;
 
 @Config
 public abstract class BaseOpMode extends LinearOpMode {
+    MecanumDrive drive;
+
     //Declares LEDs on DevBot
     public DigitalChannel red;
     public DigitalChannel green;
-
-    //Declares drive-motors
-    public DcMotor FR;
-    public DcMotor FL ;
-    public DcMotor BR ;
-    public DcMotor BL ;
 
     public DcMotor intakeMotor ;
     public DcMotor armMotor ;
@@ -33,25 +30,15 @@ public abstract class BaseOpMode extends LinearOpMode {
     public final double GATE_SERVO_OPEN_POSITION = 0;
     public final double GATE_SERVO_CLOSE_POSITION = 0.55;
 
-    public static final double TICKS_PER_REVOLUTION = 537.7 * (24.0/27); // 5203 Series Yellow Jacket Motor, robot was overshooting so
-    public static final double GEAR_RATIO = 1.0;
-    public static final double WHEEL_DIAMETER = 3.7; // inches
-    public static final double TICKS_PER_INCH = (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
-    public static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
-    public static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
-
     //Declares IMU
     //public BNO055IMU imu;
 
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
         //Drive Motors, other motors, sensors, etc.
         if(MecanumDrive.isDevBot) {
-            FL = initializeMotor("leftFront", DcMotor.Direction.REVERSE);
-            FR = initializeMotor("rightFront", DcMotor.Direction.FORWARD);
-            BL = initializeMotor("leftBack", DcMotor.Direction.REVERSE);
-            BR = initializeMotor("rightBack", DcMotor.Direction.FORWARD);
-
             red = initializeDigitalChannel("red", DigitalChannel.Mode.OUTPUT);
             green = initializeDigitalChannel("green", DigitalChannel.Mode.OUTPUT);
 
@@ -59,11 +46,6 @@ public abstract class BaseOpMode extends LinearOpMode {
             red.setState(true);
             green.setState(true);
         } else {
-            FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
             //Mechanism Motors
             intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
             armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);//DcMotor.RunMode.RUN_TO_POSITION);
@@ -72,6 +54,8 @@ public abstract class BaseOpMode extends LinearOpMode {
             dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
             gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
         }
+
+        //In case we ever need an IMU
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -88,12 +72,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        */
 
-        // Waits so the imu can process 
-        //sleep(2000);
+        // Waits so the imu can process
+        sleep(2000);
+        */
     }
 
+    // A digital channel is a device that can accept either a 1 or a 0 of input.
+    // In this case "green" and "red" are LED lights.
     public DigitalChannel initializeDigitalChannel(String channelName, DigitalChannel.Mode mode) {
         DigitalChannel digitalChannel = hardwareMap.get(DigitalChannel.class, channelName);
         digitalChannel.setMode(mode);
@@ -132,17 +118,16 @@ public abstract class BaseOpMode extends LinearOpMode {
         double backLeftPower = (y - x + rot) / denominator;
         double backRightPower = (y + x - rot) / denominator;
 
-        FL.setPower(frontLeftPower);
-        FR.setPower(frontRightPower);
-        BL.setPower(backLeftPower);
-        BR.setPower(backRightPower);
+
+        drive.leftFront.setPower(frontLeftPower);
+        drive.rightFront.setPower(frontRightPower);
+        drive.leftBack.setPower(backLeftPower);
+        drive.rightBack.setPower(backRightPower);
     }
 
     public void runIntakeMechanism(double speed) {
         intakeMotor.setPower(speed);
     }
-
-
 
     public void tiltDumper() {
         dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);

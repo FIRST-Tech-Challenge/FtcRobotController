@@ -19,29 +19,14 @@ public class ArmMechanism {
     private DcMotor armMotor;
     private Servo dumperServo;
 
-    //where the arm should currently move to.
-    private double armGoalLocation;
-
-    //Used to make sure button inputs are only registered once
-    private boolean dpadDownPressed = false;
-
-    //Keeps track of if the arm is in stick control mode, or if it is in move to position mode.
-    private boolean dpadUpPressed = false;
-
-    //Keeps track of if the arm is in stick control mode, or if it is in move to position mode.
-    public static boolean usingStick = true;
-
-    //The PID constants for the arm
-    public static double armKp = 0.01, armKi = 0, armKd = 0;
-
-    //The acceleration of the arm every second, and the maxim highest velocity the arm will accelerate to.
-    public static double armAcceleration = 0.001, maxArmVelocity = 100;
-
-    //The velocity the code thinks the arm is at.
-    public static double armVelocity, currentArmLocation;
-
-    //The different phases the arm motion profiling can be in.
-    public enum armPhases {
+    private double armGoalLocation;  //where the arm should currently move to.
+    private boolean dpadDownPressed = false; //Used to make sure button inputs are only registered once
+    private boolean dpadUpPressed = false; //Keeps track of if the arm is in stick control mode, or if it is in move to position mode.
+    public static boolean usingStick = true; //Keeps track of if the arm is in stick control mode, or if it is in move to position mode.
+    public static double armKp = 0.01, armKi = 0, armKd = 0; //The PID constants for the arm
+    public static double armAcceleration = 0.001, maxArmVelocity = 100; //The acceleration of the arm every second, and the maxim highest velocity the arm will accelerate to.
+    public static double armVelocity, currentArmLocation; //The velocity the code thinks the arm is at.
+    public enum armPhases { //The different phases the arm motion profiling can be in.
         accelerating,
         maintainingSpeed,
         decelerating,
@@ -193,33 +178,21 @@ public class ArmMechanism {
     }
 
     public void armControl() {
-        //How much moving the right stick will effect arm speed outside and inside the robot.
-        double rStickSensitivity = 1, rStickSensitivityInsideRobot = rStickSensitivity / 3, rStickSensitivityOutsideRobot = rStickSensitivity;
+        double rStickSensitivity = 1, rStickSensitivityInsideRobot = rStickSensitivity / 3, rStickSensitivityOutsideRobot = rStickSensitivity; //How much moving the right stick will effect arm speed outside and inside the robot.
         double[] ArmPositions = new double[] {BaseOpMode.ARM_MOTOR_MIN_POSITION, BaseOpMode.ARM_MOTOR_MAX_POSITION / 2.0,
-                //array of arm positions the dpad can move to.
-                BaseOpMode.ARM_MOTOR_MAX_POSITION * (3.0/4.0), BaseOpMode.ARM_MOTOR_MAX_POSITION};
-        //The current distance the arm is from its init location
-        double armCurrentLocation = armMotor.getCurrentPosition();
-        //The amount the right stick has been moved
-        double rStickTilt = -gamepad2.right_stick_y;
-        //
-        //
-        //rStickDeadZone: zero space, armPosEpsilon: acceptable error in current vs. goal arm location.
-        final double rStickDeadZone = 0.1, armPosEpsilon = 25;
-        //Locations the dumper should tilt so the arm does not hit the robot.
-        final double startUpwardTiltPos = 75, startUpwardResetPos = 1500, endUpwardResetPos = 2000, startDownwardTiltPos = 1500, endDownwardTiltPos = 250;
-        //The speed the arm moves while in move to position mode
-        final double armMoveToPositionVelocity = 0.5;
+                BaseOpMode.ARM_MOTOR_MAX_POSITION * (3.0/4.0), BaseOpMode.ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
+        double armCurrentLocation = armMotor.getCurrentPosition(); //The current distance the arm is from its init location
+        double rStickTilt = -gamepad2.right_stick_y; //The amount the right stick has been moved
+        final double rStickDeadZone = 0.1, armPosEpsilon = 25; //rStickDeadZone: the amount of space that is considered zero, armPosEpsilon: the amount of error between the current location and the goal location that is acceptable.
+        final double startUpwardTiltPos = 75, startUpwardResetPos = 1500, endUpwardResetPos = 2000, startDownwardTiltPos = 1500, endDownwardTiltPos = 250; //Locations the dumper should tilt so the arm does not hit the robot.
+        final double armMoveToPositionVelocity = 0.5; //The speed the arm moves while in move to position mode
 
-        //If the arm is outside the dead zone switch to using stick control
-        if (gamepad2.left_stick_y < -rStickDeadZone || gamepad2.left_stick_y > rStickDeadZone) {
+        if (gamepad2.left_stick_y < -rStickDeadZone || gamepad2.left_stick_y > rStickDeadZone) { //If the arm is outside the dead zone switch to using stick control
             usingStick = true;
-            //If dpad up pressed, set arm location to next in arm positions array.
-        } else if (gamepad2.dpad_up && !dpadUpPressed) {
+        } else if (gamepad2.dpad_up && !dpadUpPressed) { //if dpad up is being pressed change the arm location to the next location in the arm positions array.
             armGoalLocation = findNextPosition(ArmPositions, armCurrentLocation, armPosEpsilon);
             usingStick = false;
-            //If dpad down pressed, set arm location to last in arm positions array.
-        } else if (gamepad2.dpad_down && !dpadDownPressed) {
+        } else if (gamepad2.dpad_down && !dpadDownPressed) { //if dpad down is being pressed change the arm location to the last location in the arm positions array.
             armGoalLocation = findLastPosition(ArmPositions, armCurrentLocation, armPosEpsilon);
             usingStick = false;
         }
@@ -241,14 +214,10 @@ public class ArmMechanism {
             //if the arm is within 50 encoder ticks of it's goal, stop it from moving.
             if (armMotor.getCurrentPosition() < armGoalLocation + armPosEpsilon && armMotor.getCurrentPosition() > armGoalLocation - armPosEpsilon) {
                 armMotor.setPower(0);
-                //If the arm is past it's goal, move backward.
-            } else if (armMotor.getCurrentPosition() > armGoalLocation)
+            } else if (armMotor.getCurrentPosition() > armGoalLocation) //If the arm is past it's goal, move backward.
                 armMotor.setPower(-armMoveToPositionVelocity);
-                //If the arm is before it's goal, move forward.
-            else if (armMotor.getCurrentPosition() < armGoalLocation)
+            else if (armMotor.getCurrentPosition() < armGoalLocation) //If the arm is before it's goal, move forward.
                 armMotor.setPower(armMoveToPositionVelocity);
-
-            //armPidMotionProfile(armGoalLocation);
         }
 
         if ((armMotor.getCurrentPosition() > startUpwardTiltPos && armMotor.getCurrentPosition() < startUpwardResetPos) && armMotor.getPower() > 0)

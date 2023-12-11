@@ -26,7 +26,7 @@ public class AprilTagLatencyTest extends BaseOpMode {
         // Turn red light to be off at beginning (counterintuitive, on = false, off = true)
         red.setState(true);
 
-        myAprilTagLatencyCompensation = new AprilTagPoseEstimator(this);
+        myAprilTagLatencyCompensation = new AprilTagPoseEstimator(hardwareMap, telemetry);
 
         myAprilTagLatencyCompensation.init();
 

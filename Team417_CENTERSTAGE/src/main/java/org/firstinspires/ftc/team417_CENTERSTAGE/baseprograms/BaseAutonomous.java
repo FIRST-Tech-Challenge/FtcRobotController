@@ -23,11 +23,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double APRIL_TAG_SLEEP_TIME = 500;
     public static double NO_APRIL_TAG_SLEEP_TIME = 2500;
 
-    public int lastEncoderFL = 0;
-    public int lastEncoderFR = 0;
-    public int lastEncoderBL = 0;
-    public int lastEncoderBR = 0;
-
     public static double INTAKE_SPEED = 1;
     public static double INTAKE_TIME = 2; // in seconds
 
@@ -37,24 +32,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public static double NANO_TO_SECONDS_MULTIPLIER = 1e-9;
 
-    MecanumDrive drive;
-
     public OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);;
 
     public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         myColorDetection.init();
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFR = FR.getCurrentPosition();
-        lastEncoderFL = FL.getCurrentPosition();
-        lastEncoderBL = BL.getCurrentPosition();
-        lastEncoderBR = BR.getCurrentPosition();
 
         // Allow the OpenCV to process
         if (drive.USE_APRIL_TAGS) {
