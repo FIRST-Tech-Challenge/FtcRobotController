@@ -38,22 +38,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <resources>
 
-  <string name="app_name">FTC Robot Controller</string>
+  <string name="app_name">FTC org.firstinspires.ftc.teamcode.Robot Controller</string>
 
   <!-- Menu -->
   <string name="inspection_mode_menu_item">Self Inspect</string>
   <string name="program_and_manage_menu_item">Program &amp; Manage</string>
   <string name="blocks_menu_item">Blocks</string>
   <string name="settings_menu_item">Settings</string>
-  <string name="restart_robot_menu_item">Restart Robot</string>
-  <string name="configure_robot_menu_item">Configure Robot</string>
+  <string name="restart_robot_menu_item">Restart org.firstinspires.ftc.teamcode.Robot</string>
+  <string name="configure_robot_menu_item">Configure org.firstinspires.ftc.teamcode.Robot</string>
   <string name="about_menu_item">About</string>
   <string name="exit_menu_item">Exit</string>
 
   <!-- Toast messages -->
   <string name="toastWifiConfigurationComplete">Configuration Complete</string>
-  <string name="toastRestartingRobot">Restarting Robot</string>
-  <string name="toastWifiUpBeforeProgrammingMode">The Robot Controller must be fully up and running before entering Program and Manage Mode.</string>
+  <string name="toastRestartingRobot">Restarting org.firstinspires.ftc.teamcode.Robot</string>
+  <string name="toastWifiUpBeforeProgrammingMode">The org.firstinspires.ftc.teamcode.Robot Controller must be fully up and running before entering Program and Manage Mode.</string>
 
   <!-- for interpreting pref_app_theme contents. may be override in merged resources -->
   <integer-array name="app_theme_ids">

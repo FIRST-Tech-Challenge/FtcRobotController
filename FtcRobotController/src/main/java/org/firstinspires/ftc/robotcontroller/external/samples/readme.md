@@ -27,7 +27,7 @@ Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
             It is not intended to drive a functioning robot, it is simply showing the minimal code
             required to read and display the sensor values.
 
-Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) drive base.
+org.firstinspires.ftc.teamcode.Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) drive base.
             It may be used to provide a common baseline driving OpMode, or
             to demonstrate how a particular sensor or concept can be used to navigate.
 
@@ -40,6 +40,6 @@ Concept:	This is a sample OpMode that illustrates performing a specific function
 After the prefix, other conventions will apply:
 
 * Sensor class names are constructed as:    Sensor - Company - Type
-* Robot class names are constructed as:     Robot - Mode - Action - OpModetype
+* org.firstinspires.ftc.teamcode.Robot class names are constructed as:     org.firstinspires.ftc.teamcode.Robot - Mode - Action - OpModetype
 * Concept class names are constructed as:   Concept - Topic - OpModetype
 
