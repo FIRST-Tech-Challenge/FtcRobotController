@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class TouchesOptimisées extends LinearOpMode {
+public class TestSetPos extends LinearOpMode {
     private DcMotor motorA;
     private DcMotor motorB;
     private DcMotorEx bras1;
@@ -129,17 +129,21 @@ public class TouchesOptimisées extends LinearOpMode {
                 if (coudeX<0) {
                     coudeX = 0;
                 }
+            } else {
+                coudeX = 0.5;
             }
             coude.setPosition(coudeX);
 
-            if (mains.getPosition() > 0.50) {
-                while (this.gamepad1.a) {
-                    mains.setPosition(0);
-                }}
-            if (mains.getPosition() < 0.20){
-                while (this.gamepad1.a) {
+            if (this.gamepad1.a) {
+                if (mains.getPosition() < 0.65) {
+                    mains.setPosition(mains.getPosition() + 0.0035);
+                } else {
                     mains.setPosition(0.65);
                 }
+            } else if (this.gamepad1.b) {
+                mains.setPosition(mains.getPosition());
+            } else {
+                mains.setPosition(0);
             }
 
             telemetry.addData("Target Power A", tgtPowerA);
