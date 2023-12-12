@@ -510,7 +510,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         claw.openClaw();
                         nextState = FSMState.DONE;
                         break;
-                    } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
+                    } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {                        //Drive straight until ready to scan the apriltag.
+                        //Drive straight until ready to scan the apriltag.
                         turnToHeading(TURN_SPEED * 10, sideMul * (90));
                         driveStraight(DRIVE_SPEED * 10, 79, sideMul * (90), true, false);
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
@@ -524,6 +525,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         nextState = FSMState.DONE;
                         break;
                     } else if (cubeIsFound == FoundTeamProp.FOUND_RIGHT) {
+                        //Drive straight until ready to scan the apriltag.
                         turnToHeading(TURN_SPEED * 10, sideMul * (90));
                         driveStraight(DRIVE_SPEED * 10, 79, sideMul * (90), true, false);
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
