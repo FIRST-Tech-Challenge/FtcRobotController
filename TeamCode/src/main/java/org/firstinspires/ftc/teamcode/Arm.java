@@ -3,62 +3,34 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class Arm {
+public class Arm extends EncoderMotorOps {
     private Robot robot;
     private Gamepad gamepad;
-    private double speed = 0.5;
-    private int pos_pixel  = 1000;
-    private boolean inAutoMove = false;
-    private int target = 0;
+    private double manual_speed_factor = 0.5;
+    static private double auto_power = 0.5;
+    static private int pos_pixel  = 1000;
+    static private int pos_folded  = 0;
+    private boolean inAutoOp = false;
     public Arm(Robot robot, Gamepad gamepad) {
+        super(robot, robot.motorArm, pos_folded, pos_pixel, auto_power,true);
         this.robot = robot;
         this.gamepad = gamepad;
-        robot.motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // Assume the starting is the top most position
-        robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorArm.setTargetPositionTolerance(3);
     }
 
-    private void goToPos(int pos) {
-        robot.motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorArm.setTargetPosition(pos);
-        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.motorArm.setPower(0.4);
-        //inAutoPixel = true;
-    }
-
-    private void goToPixel()
+    public void operate()
     {
-        goToPos(pos_pixel);
-    }
-
-    private void foldArm() {
-        goToPos(0);
-    }
-
-    private void moveOp(double power)
-    {
-        robot.motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorArm.setPower(power);
-    }
-
-    public void move()
-    {
-        int cur_position = robot.motorSlider.getCurrentPosition();
-        if (inAutoMove && cur_position != target) {
-            return;
-        } else {
-            inAutoMove = false;
-        }
+        autoOpCompletionCheck();
         if (gamepad.x) {
-            foldArm();
+            // Fold ARM
+            autoOp(pos_folded);
         } else if (gamepad.y) {
-            goToPixel();
+            // Goto the bottom
+            autoOp(pos_pixel);
         } else if (gamepad.right_stick_y != 0) {
-            moveOp(gamepad.right_stick_y * speed);
+            manualOp(gamepad.right_stick_y * manual_speed_factor);
         } else {
-            robot.motorArm.setPower(0);
+            manualDefaultStop();
         }
+        logUpdate();
     }
 }
