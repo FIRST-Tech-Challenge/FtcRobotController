@@ -113,9 +113,9 @@ public class BlueFar extends LinearOpMode {
             }
 
         } else if (elementPos == 2) { //middle
-            robot.runCommand(drivetrain.followTrajectory(
-                    drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(21, 6), Math.toRadians(180))
+            robot.runCommand(drivetrain.followTrajectorySequence(
+                    drivetrain.trajectorySequenceBuilder(new Pose2d())
+                            .splineTo(new Vector2d(24, -4), Math.toRadians(-180))
                             .build()
             ));
             //dump purple pixel
@@ -124,9 +124,9 @@ public class BlueFar extends LinearOpMode {
             // go to back drop
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                            .splineTo(new Vector2d(-4, -2), Math.toRadians(90))
-                            .splineTo(new Vector2d(-4, -68), Math.toRadians(90))
-                            .splineTo(new Vector2d(20, -86), Math.toRadians(90))
+                            .splineTo(new Vector2d(0, 2), Math.toRadians(90))
+                            .splineTo(new Vector2d(0, 68), Math.toRadians(90))
+                            .splineTo(new Vector2d(25, 86), Math.toRadians(90))
                             .build()
             ));
             //dump yellow pixel
@@ -135,7 +135,7 @@ public class BlueFar extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(50, -81))
+                                .lineTo(new Vector2d(44, 81))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -143,7 +143,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(-4, -81 ))
+                                .lineTo(new Vector2d(0, 81 ))
                                 .build()
                 ));
             }
