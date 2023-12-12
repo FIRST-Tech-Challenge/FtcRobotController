@@ -22,7 +22,7 @@ public class ShortBlueAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.shortMoveToBoard();
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);

@@ -21,7 +21,7 @@ public class LongBlueAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
