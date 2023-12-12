@@ -30,9 +30,9 @@ public class RedRightFTC extends LinearOpMode {
     static final Vector2d Traj2 = new Vector2d(29.25,-10.0);
     static final Vector2d Traj3 = new Vector2d(60.5, -17);
     static final Vector2d Traj4 = new Vector2d(52, -13.5);
-    static final Vector2d Location1 = new Vector2d(55, -13);
-    static final Vector2d Location2 = new Vector2d(36, -13);
-    static final Vector2d Location3 = new Vector2d(14,-13);
+//    static final Vector2d Location1 = new Vector2d(55, -13);
+//    static final Vector2d Location2 = new Vector2d(36, -13);
+//    static final Vector2d Location3 = new Vector2d(14,-13);
 
     //ElapsedTime carouselTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -58,7 +58,7 @@ public class RedRightFTC extends LinearOpMode {
     State currentState = State.IDLE;
 
     //    Pose2d startPose = new Pose2d(37, -65.5, Math.toRadians(90));
-    Pose2d startPose = new Pose2d(39.25, -63.5, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(60, 12, Math.toRadians(-90));
 
 
     //these are based on LiftTest
@@ -119,17 +119,17 @@ public class RedRightFTC extends LinearOpMode {
                 .lineTo(Traj3) //This is the same as traj3 except it starts at the ending of traj4 because we need to call it after traj4 as well for cycles
                 .build();
 
-        TrajectorySequence location1 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location1)
-                .build();
-
-        TrajectorySequence location2 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location2)
-                .build();
-
-        TrajectorySequence location3 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location3)
-                .build();
+//        TrajectorySequence location1 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location1)
+//                .build();
+//
+//        TrajectorySequence location2 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location2)
+//                .build();
+//
+//        TrajectorySequence location3 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location3)
+//                .build();
 
         drive.getExpansionHubs().update(getDt());
 
@@ -324,21 +324,21 @@ public class RedRightFTC extends LinearOpMode {
                     }
                     break;
 
-                case PARK:
-                    if(waitTimer.milliseconds() >= 2000){
-                        if(placement == 1){
-                            drive.followTrajectorySequenceAsync(location1);
-                        }
-                        else if(placement == 2){
-                            drive.followTrajectorySequenceAsync(location2);
-                        }
-                        else if(placement == 3){
-                            drive.followTrajectorySequenceAsync(location3);
-                        }
-                        currentState = State.IDLE;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case PARK:
+//                    if(waitTimer.milliseconds() >= 2000){
+//                        if(placement == 1){
+//                            drive.followTrajectorySequenceAsync(location1);
+//                        }
+//                        else if(placement == 2){
+//                            drive.followTrajectorySequenceAsync(location2);
+//                        }
+//                        else if(placement == 3){
+//                            drive.followTrajectorySequenceAsync(location3);
+//                        }
+//                        currentState = State.IDLE;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
                 case IDLE:
                     PoseStorage.currentPose = drive.getPoseEstimate();

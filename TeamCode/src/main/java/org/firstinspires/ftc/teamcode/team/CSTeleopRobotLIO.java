@@ -53,7 +53,7 @@ public abstract class CSTeleopRobotLIO extends Robot {
         drive.getExpansionHubs().update(getDt());
         drive.update();
         drive.robot.getIntakeSubsystem().update(getDt());
-        //drive.robot.getDroneSubsystem().update(getDt());
+        drive.robot.getDroneSubsystem().update(getDt());
         drive.robot.getOuttakeSubsystem().update(getDt());
         drive.robot.getLiftSubsystem().update(getDt());
     }

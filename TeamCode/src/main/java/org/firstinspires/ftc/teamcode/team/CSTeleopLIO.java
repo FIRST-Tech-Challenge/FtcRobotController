@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
 
+
 /*
  * This {@code class} acts as the driver-controlled program for FTC team 16598 for the CenterStage
  * challenge. By extending {@code CSRobot}, we already have access to all the robot subsystems,
@@ -52,14 +53,14 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
 @TeleOp(name = "CS TeleOp LIO", group = "Main")
 public class CSTeleopLIO extends CSTeleopRobotLIO {
 
-   // private double currentTime = 0; // keep track of current time
+    private double currentTime = 0; // keep track of current time
     private double speedMultiplier = 0.7;
     //these are based on LiftTest
-    private static final double HIGH = 24d;
-    private static final double MID = 23.5d;
-    private static final double LOW = 14d;
+    private static final double HIGH = 15d;
+    private static final double MID = 10d;
+    private static final double LOW = 5d;
     private boolean liftdown = true;
-    private boolean armMid = true;
+//    private boolean armMid = true;
 
     //private boolean coneloaded = false;
     private Pose2d poseEstimate;
@@ -136,13 +137,13 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
                 drive.robot.getLiftSubsystem().retract();
                 liftdown = true;
             }
-            else if((lastSetPoint == HIGH || lastSetPoint == MID) && armMid){
+            else if((lastSetPoint == HIGH || lastSetPoint == MID) ){
                 drive.robot.getLiftSubsystem().retract();
                 liftdown = true;
             }
         }
 
-        if(getEnhancedGamepad2().isbJustPressed() && armMid){
+        if(getEnhancedGamepad2().isbJustPressed()){  //&&arm mid
             drive.robot.getLiftSubsystem().extend(MID);
             liftdown = false;
         }
@@ -158,21 +159,25 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
 
         //Outtake
         //Allow moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
-        if (!liftdown) {
-//            if (getEnhancedGamepad2().isaJustPressed() || getEnhancedGamepad2().isyJustPressed()) {
-//                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+//        if (!liftdown) {
+            if (getEnhancedGamepad2().isDpadUpJustPressed()) {
+                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
 //                drive.robot.getLiftSubsystem().retract();
 //                liftdown = true;
-//                armMid = true;
-//            }
-            if (getEnhancedGamepad2().getLeft_trigger() > 0) {
+            }
+            if (getEnhancedGamepad2().isDpadDownJustPressed()) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             }
-
-            if (getEnhancedGamepad2().getRight_trigger() > 0) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-            }
+        if (getEnhancedGamepad2().isDpadRightJustPressed()) {
+            drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
         }
+
+
+
+//            if (getEnhancedGamepad2().getRight_trigger() > 0) {
+//                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
+//            }
+//        }
 
 //        if(getEnhancedGamepad2().isaJustPressed()){
 //            drive.robot.getElevSubsystem().getStateMachine().updateState(ElevStateMachine.State.RETRACT);
@@ -201,6 +206,6 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
 //            drive.robot.getLiftSubsystem().retract();
 //        }
         updateTelemetry(telemetry);
-        //currentTime = getRuntime();
+        currentTime = getRuntime();
     }
 }

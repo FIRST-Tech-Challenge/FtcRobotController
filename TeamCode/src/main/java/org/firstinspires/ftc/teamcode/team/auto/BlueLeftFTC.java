@@ -161,6 +161,7 @@ public class BlueLeftFTC extends LinearOpMode {
                                 //confidence = recog.getConfidence();
                                 //label = recog.getLabel(); //object name (redObject...)
                                 oldRecog = recog;
+                                detectCounter++;
                                 //add if location detected is left center or right (1,2,3) then itll move accordingly
                             }
                         }

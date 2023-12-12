@@ -130,7 +130,7 @@ public class BlueGameObjectTFOD extends LinearOpMode {
             //.setIsModelTensorFlow2(true)
             //.setIsModelQuantized(true)
             //.setModelInputSize(300)
-            //.setModelAspectRatio(16.0 / 9.0)
+            .setModelAspectRatio(16.0 / 10.0)
 
             .build();
 
@@ -179,17 +179,26 @@ public class BlueGameObjectTFOD extends LinearOpMode {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
+        int location = 3;
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData(""," ");
+              double centerX = recognition.getImageWidth()/2;
+                        if (x < centerX) {
+                            location = 1;//left
+                        }
+                        if (x > centerX) {
+                            location = 2;//center
+                        }
+
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
+        telemetry.addData("location",location);
 
     }   // end method telemetryTfod()
 

@@ -22,38 +22,40 @@ public class RedLeftFTC extends LinearOpMode {
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    static final Vector2d Traj0 = new Vector2d(-34,-65.5);
-    static final Vector2d Traj1 = new Vector2d(-34, -12.5);
-    static final Vector2d Traj2 = new Vector2d(-21.5,-12.5);
-    static final Vector2d Traj3 = new Vector2d(-54, -12.5);
-    static final Vector2d Location1 = new Vector2d(-52, -13);
-    static final Vector2d Location2 = new Vector2d(-34, -13);
-    static final Vector2d Location3 = new Vector2d(-12,-13);
+    static final Vector2d Traj0 = new Vector2d(38,-36);
+    static final Vector2d Traj1 = new Vector2d(38, -29);
+    static final Vector2d Traj2 = new Vector2d(38,-43);
+    static final Vector2d Traj3 = new Vector2d(12, -26);
+    static final Vector2d Traj4 = new Vector2d(12, 72);
+//    static final Vector2d Location1 = new Vector2d(-52, -13);
+//    static final Vector2d Location2 = new Vector2d(-34, -13);
+//    static final Vector2d Location3 = new Vector2d(-12,-13);
 
     //ElapsedTime carouselTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
         WAIT0,
-        CLAWCLOSE,
-        INITSTRAFE,
-        LIFTUP,
         FORWARD,
-        PRELOAD,
-        MOVEARM,
-        CLAWOPEN,
-        MOVEARMBACK,
-        LIFTDOWN,
         TODROP,
-        TOSTACK,
+
+        INITSTRAFE,
+        MOVEBACK,
         IDLE,
-        PARK,
-        GRAB
+        PARK
+//        CLAWCLOSE,
+//        LIFTUP,
+//        MOVEARM,
+//        CLAWOPEN,
+//        LIFTDOWN,
+//        PRELOAD,
+//        TOSTACK,
+//        GRAB
     }
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(-31, -65.5, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(60, -36, Math.toRadians(-90));
 
 
     //these are based on LiftTest
@@ -102,17 +104,17 @@ public class RedLeftFTC extends LinearOpMode {
                 .lineTo(Traj2)
                 .build();
 
-        TrajectorySequence location1 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location1)
-                .build();
-
-        TrajectorySequence location2 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location2)
-                .build();
-
-        TrajectorySequence location3 = drive.trajectorySequenceBuilder(traj4.end())
-                .lineTo(Location3)
-                .build();
+//        TrajectorySequence location1 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location1)
+//                .build();
+//
+//        TrajectorySequence location2 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location2)
+//                .build();
+//
+//        TrajectorySequence location3 = drive.trajectorySequenceBuilder(traj4.end())
+//                .lineTo(Location3)
+//                .build();
 
         drive.getExpansionHubs().update(getDt());
 
@@ -171,149 +173,149 @@ public class RedLeftFTC extends LinearOpMode {
                     else {
                         telemetry.addLine("NULL");
                     }
-                    if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
-                        currentState = State.CLAWCLOSE;
-                        placement = recog;
+//                    if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
+//                        currentState = State.CLAWCLOSE;
+//                        placement = recog;
                     }
                     break;
-                case CLAWCLOSE:
-                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
-                    //telemetry.addData("Label: ", label);
-                    //telemetry.addData("Confidence: ", confidence);
-                    telemetry.addData("#: ", detectCounter);
-                    if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
-                        currentState = State.INITSTRAFE;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case CLAWCLOSE:
+//                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
+//                    //telemetry.addData("Label: ", label);
+//                    //telemetry.addData("Confidence: ", confidence);
+//                    telemetry.addData("#: ", detectCounter);
+//                    if(waitTimer.milliseconds() >= 1000){
+//                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
+//                        currentState = State.INITSTRAFE;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case INITSTRAFE:
-                    if(waitTimer.milliseconds() >= 1000){
-                        drive.followTrajectorySequenceAsync(traj0);
-                        currentState = State.LIFTUP;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case INITSTRAFE:
+//                    if(waitTimer.milliseconds() >= 1000){
+//                        drive.followTrajectorySequenceAsync(traj0);
+//                        currentState = State.LIFTUP;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case LIFTUP:
-                    if(!drive.isBusy() && waitTimer.milliseconds() >= 750){
-                        drive.robot.getLiftSubsystem().extend(MID);
-                        if(tf){
-                            currentState = State.TODROP;
-                        }
-                        else {
-                            currentState = State.FORWARD;
-                            tf = true;
-                        }
-                        waitTimer.reset();
-                    }
-                    break;
+//                case LIFTUP:
+//                    if(!drive.isBusy() && waitTimer.milliseconds() >= 750){
+//                        drive.robot.getLiftSubsystem().extend(MID);
+//                        if(tf){
+//                            currentState = State.TODROP;
+//                        }
+//                        else {
+//                            currentState = State.FORWARD;
+//                            tf = true;
+//                        }
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case FORWARD:
-                    if (waitTimer.milliseconds() >= 2000) {
-                        drive.followTrajectorySequenceAsync(traj1);
-                        currentState = State.PRELOAD;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case FORWARD:
+//                    if (waitTimer.milliseconds() >= 2000) {
+//                        drive.followTrajectorySequenceAsync(traj1);
+//                        currentState = State.PRELOAD;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case PRELOAD:
-                    if(!drive.isBusy()){
-                        drive.followTrajectorySequenceAsync(traj2);
-                        currentState = State.MOVEARM;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case PRELOAD:
+//                    if(!drive.isBusy()){
+//                        drive.followTrajectorySequenceAsync(traj2);
+//                        currentState = State.MOVEARM;
+//                        waitTimer.reset();
+//                    }
+//                    break;
+//
+//                case MOVEARM:
+//                    if(!drive.isBusy()){
+//                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
+//                        currentState = State.CLAWOPEN;
+//                        waitTimer.reset();
+//                    }
+//                    break;
+//
+//                case CLAWOPEN:
+//                    if(waitTimer.milliseconds() >= 1000){
+//                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
+//                        currentState = State.MOVEARMBACK;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case MOVEARM:
-                    if(!drive.isBusy()){
-                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-                        currentState = State.CLAWOPEN;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case MOVEARMBACK:
+//                    if(waitTimer.milliseconds() >= 1000){
+//                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+//                        currentState = State.LIFTDOWN;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case CLAWOPEN:
-                    if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
-                        currentState = State.MOVEARMBACK;
-                        waitTimer.reset();
-                    }
-                    break;
-
-                case MOVEARMBACK:
-                    if(waitTimer.milliseconds() >= 1000){
-                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
-                        currentState = State.LIFTDOWN;
-                        waitTimer.reset();
-                    }
-                    break;
-
-                case LIFTDOWN:
-                    if(waitTimer.milliseconds() >= 1000){
+//                case LIFTDOWN:
+//                    if(waitTimer.milliseconds() >= 1000){
 //                        if(counter < 1) {
-//                            drive.robot.getLiftSubsystem().extend(6d);
+//                          drive.robot.getLiftSubsystem().extend(6d);
 //                            currentState = State.TOSTACK;
 //                        }
-                        //                       else{
-                        drive.robot.getLiftSubsystem().retract();
-                        currentState = State.PARK;
-                        //                     }
-                        waitTimer.reset();
-                    }
-                    break;
+//                        //                       else{
+//                        drive.robot.getLiftSubsystem().retract();
+//                        currentState = State.PARK;
+//                        //                     }
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case TOSTACK:
-                    if(waitTimer.milliseconds() >= 2000){
-                        drive.followTrajectorySequenceAsync(traj3);
-                        currentState = State.GRAB;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case TOSTACK:
+//                    if(waitTimer.milliseconds() >= 2000){
+//                        drive.followTrajectorySequenceAsync(traj3);
+//                        currentState = State.GRAB;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case GRAB:
-                    if(!drive.isBusy()){
-                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
-                        currentState = State.LIFTUP;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case GRAB:
+//                    if(!drive.isBusy()){
+//                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
+//                        currentState = State.LIFTUP;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case TODROP:
-                    if(waitTimer.milliseconds() >= 2000){
-                        drive.followTrajectorySequenceAsync(traj4);
-                        if(counter < 1){
-                            currentState = State.MOVEARM;
-                            waitTimer.reset();
-                            counter++;
-                        }
-                        else {
-                            currentState = State.LIFTDOWN;
-                            waitTimer.reset();
-                        }
-                    }
-                    break;
+//                case TODROP:
+//                    if(waitTimer.milliseconds() >= 2000){
+//                        drive.followTrajectorySequenceAsync(traj4);
+//                        if(counter < 1){
+//                            currentState = State.MOVEARM;
+//                            waitTimer.reset();
+//                            counter++;
+//                        }
+//                        else {
+//                            currentState = State.LIFTDOWN;
+//                            waitTimer.reset();
+//                        }
+//                    }
+//                    break;
 
-                case PARK:
-                    if(waitTimer.milliseconds() >= 2000){
-                        if(placement == 1){
-                            drive.followTrajectorySequenceAsync(location1);
-                        }
-                        else if(placement == 2){
-                            drive.followTrajectorySequenceAsync(location2);
-                        }
-                        else if(placement == 3){
-                            drive.followTrajectorySequenceAsync(location3);
-                        }
-                        currentState = State.IDLE;
-                        waitTimer.reset();
-                    }
-                    break;
+//                case PARK:
+//                    if(waitTimer.milliseconds() >= 2000){
+//                        if(placement == 1){
+//                            drive.followTrajectorySequenceAsync(location1);
+//                        }
+//                        else if(placement == 2){
+//                            drive.followTrajectorySequenceAsync(location2);
+//                        }
+//                        else if(placement == 3){
+//                            drive.followTrajectorySequenceAsync(location3);
+//                        }
+//                        currentState = State.IDLE;
+//                        waitTimer.reset();
+//                    }
+//                    break;
 
-                case IDLE:
-                    PoseStorage.currentPose = drive.getPoseEstimate();
-                    break;
+//                case IDLE:
+//                    PoseStorage.currentPose = drive.getPoseEstimate();
+//                    break;
             }
 
 
@@ -327,8 +329,8 @@ public class RedLeftFTC extends LinearOpMode {
             telemetry.update();
         }
 
-        drive.setMotorPowers(0.0,0.0,0.0,0.0);
-    }
+//        drive.setMotorPowers(0.0,0.0,0.0,0.0);
+//    }
     public static TimeProfiler getUpdateRuntime() {
         return updateRuntime;
     }
