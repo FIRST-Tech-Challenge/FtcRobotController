@@ -1243,11 +1243,11 @@ public class Robot {
                 frontFacing = -1;
             }
 
-            //left bumper uses faster mode, right bumper uses slower mode
-            if (gamepad1.left_bumper) {
-                slowMode = false;
-            } else if (gamepad1.right_bumper) {
+            //hold right bumper for slow mode
+            if (gamepad1.right_bumper) {
                 slowMode = true;
+            } else {
+                slowMode = false;
             }
 
             //setting forward and mecanum based on where the front is
@@ -1340,14 +1340,9 @@ public class Robot {
                 intake.setPower(0);
             }
 
-            // b - hanging mode
+            //b to use slow linear slide
             if (gamepad2.b) {
-                hangingMode = true;
-            }
-
-            //b to turn on hanging mode
-            if (!hangingMode) {
-                //if not hanging, power less
+                //if b is held linear slide is slow
                 if (-gamepad2.left_stick_y > 0) {
                     lsBack.setPower(0.5);
                     lsFront.setPower(0.5);
@@ -1358,8 +1353,8 @@ public class Robot {
                     lsBack.setPower(0);
                     lsFront.setPower(0);
                 }
-            } else if (hangingMode) {
-                //if hanging, power more
+            } else {
+                //if b is not held linear slide is fast
                 if (-gamepad2.left_stick_y > 0) {
                     lsBack.setPower(1);
                     lsFront.setPower(1);
@@ -1371,6 +1366,7 @@ public class Robot {
                     lsFront.setPower(0);
                 }
             }
+
 
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
         }
