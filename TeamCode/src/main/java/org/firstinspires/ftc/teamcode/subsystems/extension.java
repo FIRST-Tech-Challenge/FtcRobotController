@@ -131,7 +131,7 @@ public class extension {
         if((lift1.getCurrentPosition())<50) {
             setTilt(0);
         }
-        tilt.setPower(Range.clip((Range.scale(Range.clip(tilt.getCurrentPosition(),0,640),0,/*697*/640,1,0)*2),0.1,1));
+        tilt.setPower(Range.clip((Range.scale(Range.clip(tilt.getCurrentPosition(),0,640),0,640,0,1)*2),0.1,1));
     }
     public void setPlaceLow(){
             setTilt(tiltplacelowpos);

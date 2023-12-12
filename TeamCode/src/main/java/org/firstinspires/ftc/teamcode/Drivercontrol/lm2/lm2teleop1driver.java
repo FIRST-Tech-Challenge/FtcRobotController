@@ -56,7 +56,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="lm2drive2driver", group="Linear OpMode")
+@TeleOp(name="lm2drive1driver", group="Linear OpMode")
 
 public class lm2teleop1driver extends LinearOpMode {
     airplane air=new airplane();
