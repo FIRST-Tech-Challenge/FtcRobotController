@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 public class Arm {
 
@@ -54,6 +55,8 @@ public class Arm {
 
     DcMotor arm_right = null;
     DcMotor arm_left = null;
+
+    CRServo fibula = null;
     public Arm (LinearOpMode opmode) {
         myOpMode = opmode;
     }
@@ -62,6 +65,7 @@ public class Arm {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         arm_right = myOpMode.hardwareMap.get(DcMotor.class, "arm_right");
         arm_left = myOpMode.hardwareMap.get(DcMotor.class, "arm_left");
+        fibula = myOpMode.hardwareMap.get(CRServo.class, "fibula");
 
         arm_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -132,6 +136,7 @@ public class Arm {
 
             arm_right.setPower(power);
             arm_left.setPower(power);
+            
 
         } else {
             if (power > 0) {
@@ -151,7 +156,12 @@ public class Arm {
     public void listen() {
 
         // move arm according to the right stick y
-        moveArmByPower(-myOpMode.gamepad2.right_stick_y);
+        if (myOpMode.gamepad2.left_bumper) {
+            fibula.setPower(-myOpMode.gamepad2.right_stick_y);
+        } else {
+            moveArmByPower(-myOpMode.gamepad2.right_stick_y);
+        }
+
 
     }
 }
