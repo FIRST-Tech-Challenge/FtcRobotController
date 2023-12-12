@@ -154,6 +154,7 @@ public class Robot {
         telemetry.update();
     }
 
+
     public void setServoPosBlocking(Servo servo, double targetServoPos) {
         telemetry.addData("not started, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
@@ -1161,14 +1162,6 @@ public class Robot {
         if (blocking) {
             opMode.sleep(300);
         }
-    }
-
-    public void slideToOuttakePos () {
-        moveLinearSlideByTicksBlocking(-1650);
-    }
-
-    public void slideToIntakePos () {
-        moveLinearSlideByTicksBlocking(0);
     }
 
     public void openHook () {
