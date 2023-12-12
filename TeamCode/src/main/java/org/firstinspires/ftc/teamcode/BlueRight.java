@@ -63,36 +63,20 @@ public class BlueRight extends LinearOpMode {
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(20,0.2);
-        sleep(2500);
-        blar.ZeroMotors();
         blar.Turn90(true, 0.2);
-        sleep(2500);
-        blar.ZeroMotors();
         blar.StrafeByInch(5,true,0.2);
-        sleep(2000);
         motorIntake.setPower(-0.4);
         sleep(1500);
-        blar.ZeroMotors();
         motorIntake.setPower(0);
         blar.StrafeByInch(24, true, 0.2);
-        sleep(6000);
-        blar.ZeroMotors();
-        blar.RunMotors(83,0.5);
-        sleep(5000);
-        blar.ZeroMotors();
-        blar.StrafeByInch(21, false, 0.2);
         blar.RunMotorHang(6.5,0.75);
-        sleep(5000);
-        blar.ZeroMotors();
+        blar.RunMotors(83,0.5);
+        blar.StrafeByInch(25, false, 0.2);
         motorHang.setPower(0);
-        blar.RunMotors(6, 0.2);
-        sleep(3000);
-        blar.ZeroMotors();
+        blar.RunMotors(5, 0.2);
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
-        //autoMethods.StrafeByInch(24, true, 0.2);
         sleep(4000);
-        blar.ZeroMotors();
         motorHang.setPower(0);
 
 
@@ -132,36 +116,22 @@ public class BlueRight extends LinearOpMode {
         motorHang.setPower(0);
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
+        sleep(5000);
         blar.RunMotors(25,0.2);
-        sleep(7000);
-        blar.ZeroMotors();
         blar.StrafeByInch(4, false, 0.2);
-        sleep(1000);
-        blar.ZeroMotors();
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
+        blar.RunMotorHang(6.5,0.2);
         blar.StrafeByInch(72, false, 0.2);
-        sleep(8000);
-        blar.ZeroMotors();
         blar.Turn90(true, 0.2);
-        blar.RunMotorHang(6.5,0.75);
-        sleep(3000);
-        blar.ZeroMotors();
         blar.StrafeByInch(4, true, 0.2);
-        sleep(2000);
-        blar.ZeroMotors();
         blar.RunMotors(12, 0.2);
-        sleep(2000);
-        blar.ZeroMotors();
         motorHang.setPower(0);
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
-        sleep(1000);
         blar.ZeroMotors();
-        //autoMethods.StrafeByInch(24, true, 0.2);
         sleep(4000);
-        blar.ZeroMotors();
         motorHang.setPower(0);
     }
 
