@@ -104,8 +104,8 @@ public class Auto1_BlueFieldLeft extends OpMode {
     Servo conveyor;
     private IMU imu;
 
-    static final int low_linearslide_ticks = 200; // Low position for the linear slides
-    static final int bottom_linearslide_ticks = 0; // Bottom position for the linear slides
+    static final int LOW_LINEAR_SLIDE_TICKS = 200; // Low position for the linear slides
+    static final int BOTTOM_LINEAR_SLIDE_TICKS = 0; // Bottom position for the linear slides
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
@@ -128,13 +128,13 @@ public class Auto1_BlueFieldLeft extends OpMode {
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePositionFinder gamepiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.LEFT);
+        GamepiecePositionFinder gamePiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.LEFT);
         Point avgLoc = pipeline.avgContourCoord();
-        if (gamepiecePOS.getPOS() == GamePieceLocation.RIGHT){
+        if (gamePiecePOS.getPOS() == GamePieceLocation.RIGHT){
             rightCount += 1;
-        } else if (gamepiecePOS.getPOS() == GamePieceLocation.CENTER){
+        } else if (gamePiecePOS.getPOS() == GamePieceLocation.CENTER){
             centerCount += 1;
-        } else if (gamepiecePOS.getPOS() == GamePieceLocation.LEFT) {
+        } else if (gamePiecePOS.getPOS() == GamePieceLocation.LEFT) {
             leftCount += 1;
         }
 
@@ -294,7 +294,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Move backwards 10.5 inches
             moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
             // Moves the conveyor forward
             conveyor.setPosition(0);
             // Runs the conveyor for 4 seconds
@@ -302,7 +302,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 18 inches
@@ -338,7 +338,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Backwards 36.5 inches
             moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
             // Moves the conveyor forward
             conveyor.setPosition(0);
             // Runs the conveyor for 4 seconds
@@ -346,7 +346,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
@@ -369,7 +369,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
             moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
             moveTo.Backwards((int)((19.25 * ticksPerInch) * 0.94), 0.25);
-            linearSlideMove.Movelinearslide(low_linearslide_ticks);
+            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
             sleep(2000);
             // Moves the conveyor forward
             conveyor.setPosition(0);
@@ -378,7 +378,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(bottom_linearslide_ticks);
+            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
