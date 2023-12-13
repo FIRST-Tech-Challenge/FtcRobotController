@@ -168,6 +168,7 @@ public class HeadlessOpMode extends LinearOpMode {
 
             if (gamepad1.x) {
                 imu.resetYaw();
+                waitRuntime(0.1);
             }
 
             if (gamepad2.x) {
