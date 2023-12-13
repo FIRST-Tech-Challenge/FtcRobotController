@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="CenterStage OP Mode", group="Linear OpMode")
+@TeleOp(name="OPMode v4", group="Linear OpMode")
 
 public class OmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -34,14 +34,14 @@ public class OmniOpMode_Linear extends LinearOpMode {
         // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
         // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
+        // Reverse the direction (flip FORWARD <-> REVERSE) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (drivers' press PLAY)
         telemetry.addData("Status", "Ready to take the stage");
         telemetry.update();
 
@@ -53,12 +53,22 @@ public class OmniOpMode_Linear extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
+
+            if (gamepad1.dpad_up) {
+                axial = 1;}
+            if (gamepad1.dpad_right) {
+                lateral = 1;}
+            if (gamepad1.dpad_down) {
+                axial = -1;}
+            if (gamepad1.dpad_left) {
+                lateral = -1;}
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
+
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -81,11 +91,11 @@ public class OmniOpMode_Linear extends LinearOpMode {
             //
             // Uncomment the following code to test your motor directions.
             // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
+            //   1) First, get all the motors to take to correct positions on the robot
             //      by adjusting your Robot Configuration if necessary.
             //   2) Then make sure they run in the correct direction by modifying the
             //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
+            // Once the correct motors move in the correct direction, re-comment this code.
 
             /*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
@@ -99,6 +109,12 @@ public class OmniOpMode_Linear extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
+            leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

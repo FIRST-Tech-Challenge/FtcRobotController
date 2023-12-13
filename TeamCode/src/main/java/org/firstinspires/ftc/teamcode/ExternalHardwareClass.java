@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -41,8 +42,8 @@ import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
  * it is instantly available to other OpModes.
  *
  * The real benefit of this approach is that as you tweak your robot hardware, you only need to make changes in ONE place (the Hardware Class).
- * So, to be effective you should put as much or your hardware setup and access code as possible in the hardware class.
- * Essentially anything you do with hardware in BOTH Teleop and Auto should likely go in the hardware class.
+ * So, to be effective, you should put as much or your hardware setup and access code as possible in the hardware class.
+ * Essentially, anything you do with hardware in BOTH Teleop and Auto should likely go in the hardware class.
  *
  * The Hardware Class is created in a separate file, and then an "instance" of this class is created in each OpMode.
  * In order for the class to do typical OpMode things (like send telemetry data) it must be passed a reference to the
@@ -64,18 +65,19 @@ import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
  *  Also add another new file named RobotHardware.java, select the sample with that name, and select Not an OpMode.
  */
 
-@TeleOp(name="CenterStage Robot Hardware Class", group="Robot")
-
+@TeleOp(name="Robot Hardware Class", group="Robot")
+@Disabled
 public class ExternalHardwareClass extends LinearOpMode {
 
     // Create a RobotHardware object to be used to access robot hardware.
     // Prefix any hardware functions with "robot." to access this class.
-    RobotHardware robot       = new RobotHardware(this);
+    RobotHardware robot = new RobotHardware(this);
 
     @Override
     public void runOpMode() {
         double drive        = 0;
         double turn         = 0;
+        double strafe       = 0;
         double arm          = 0;
         double handOffset   = 0;
 
