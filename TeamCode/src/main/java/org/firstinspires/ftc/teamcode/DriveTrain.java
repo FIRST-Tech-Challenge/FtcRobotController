@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DriveTrain {
-    //
+
+    // The next intiates
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
 
     private int lfPos, rfPos, lrPos, rrPos;
@@ -32,10 +33,10 @@ public class DriveTrain {
         rightBackDrive = hwMap.get(DcMotor.class, "rightBack");
 
         // Initializes motor directions:
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 
     // This function needs an axial, lateral, and yaw input. It uses this input to drive the drive train motors.
