@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
     DcMotor intakeMotor, conveyorMotor;
     Servo intakeServo;
+
     public Intake(HardwareMap hwMap) {
         intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
