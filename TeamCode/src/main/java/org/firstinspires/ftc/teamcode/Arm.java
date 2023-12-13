@@ -71,7 +71,7 @@ public class Arm {
     }
 
     public void moveArmUp() {
-        moveToDegree(-110);
+        moveToDegree(110);
     }
 
     public void moveArmDown() {
@@ -119,7 +119,7 @@ public class Arm {
     }
 
     public void sendTelemetry() {
-        myOpMode.telemetry.addData("Arm pos Left/Right", "%4.2f / %4.2f",
+        myOpMode.telemetry.addData("Arm pos Left/Right", "%4d / %4 d",
                 arm_left.getCurrentPosition(),
                 arm_right.getCurrentPosition());
     }
