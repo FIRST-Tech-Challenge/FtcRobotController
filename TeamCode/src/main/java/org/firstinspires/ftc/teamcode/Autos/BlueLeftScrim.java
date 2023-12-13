@@ -23,7 +23,7 @@ public class BlueLeftScrim extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         //initializes robot
-        Hardware robot = new Hardware(hardwareMap);
+        Odometry robot = new Odometry(hardwareMap);
 
         //camera setup
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -66,7 +66,13 @@ public class BlueLeftScrim extends LinearOpMode
         //this loop runs after play pressed
         while(opModeIsActive())
         {
+            //strafe right
+            while(robot.x < 4 && opModeIsActive())
+            {
+                robot.robotODrive(0,.5,0);
+            }
 
+            robot.robotODrive(0,0,0);
         }
     }
 }

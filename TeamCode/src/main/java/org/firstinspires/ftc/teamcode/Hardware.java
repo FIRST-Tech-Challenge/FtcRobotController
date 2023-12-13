@@ -22,8 +22,8 @@ public class Hardware
     public CRServo transferCR2;
 
     //Intake Servos Declaration
-    public CRServo intakeFront;
-    public DcMotor intakeBack;
+    public CRServo intakeServo;
+    public DcMotor intakeMotor;
 
     //Deposit Servos Declaration
     public Servo depositServoOne;
@@ -53,6 +53,9 @@ public class Hardware
         backLeft = hardwareMap.get(DcMotorEx.class, "Back Left");
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //Odom
         leftOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
         rightOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
@@ -69,8 +72,8 @@ public class Hardware
         transferM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Intake Config - Transfer servos spin with intake servos/motors
-        intakeFront = hardwareMap.get(CRServo.class, "Intake Front");
-        intakeBack = hardwareMap.get(DcMotor.class, "Intake Back");
+        intakeServo = hardwareMap.get(CRServo.class, "Intake Servo");
+        intakeMotor = hardwareMap.get(DcMotor.class, "Intake Motor");
         transferCR1 = hardwareMap.get(CRServo.class, "Transfer Servo 1");
         transferCR2 = hardwareMap.get(CRServo.class, "Transfer Servo 2");
 

@@ -41,22 +41,22 @@ public class Teleop extends LinearOpMode
             //Intake code --
             //Spin Inwards
             if(gamepad1.right_trigger > .05) {
-                robot.intakeBack.setPower(-gamepad1.right_trigger);
-                robot.intakeFront.setPower(gamepad1.right_trigger);
+                robot.intakeMotor.setPower(-gamepad1.right_trigger);
+                robot.intakeServo.setPower(gamepad1.right_trigger);
                 robot.transferCR1.setPower(1);
                 robot.transferCR2.setPower(1);
             }
             //Spin Outwards
             else if(gamepad1.left_trigger > .05) {
-                robot.intakeBack.setPower(gamepad1.right_trigger);
-                robot.intakeFront.setPower(-gamepad1.right_trigger);
+                robot.intakeMotor.setPower(gamepad1.right_trigger);
+                robot.intakeServo.setPower(-gamepad1.right_trigger);
                 robot.transferCR1.setPower(-1);
                 robot.transferCR2.setPower(-1);
             }
             //If neither are pressed or both are pressed everything is set to it's zeroPowerBehavior()
             else if((gamepad1.left_trigger > .05  && gamepad1.right_trigger > .05) || (gamepad1.left_trigger < .05 && gamepad1.right_trigger < .05)) {
-                robot.intakeBack.setPower(0);
-                robot.intakeFront.setPower(0);
+                robot.intakeMotor.setPower(0);
+                robot.intakeServo.setPower(0);
                 robot.transferCR1.setPower(0);
                 robot.transferCR1.setPower(0);
             }
