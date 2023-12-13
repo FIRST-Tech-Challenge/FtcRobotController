@@ -316,7 +316,9 @@ class AutonDriveFactory {
                     .splineToConstantHeading(new Vector2d(50, 36 * teamInvert), Math.toRadians(0), limitVelo(4));
 
             // place yellow pixel (hopefully works :D)
-            build = build.stopAndAdd(new AutoMechanismActions(drive).releaseOuttake());
+            build = build.stopAndAdd(new AutoMechanismActions(drive).slideMove(800));  //schmove up
+            build = build.stopAndAdd(new AutoMechanismActions(drive).releaseOuttake()); // ploink
+            build = build.stopAndAdd(new AutoMechanismActions(drive).slideMove(100)); // schmove down
 
         } // end of params.placeYellowPixel
 
