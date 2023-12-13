@@ -88,6 +88,8 @@ public class MainTeleOp extends LinearOpMode {
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
+        boolean hasDroneLaunched = false;
+
         // Reset encoders of slide motor
         drive.slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -177,10 +179,11 @@ public class MainTeleOp extends LinearOpMode {
             if (!drive.isDevBot) {
 
                 // drive Drone Launcher
-                if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y) && !hasDroneLaunched) {
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_LAUNCHING_POS);
                 } else if (gp2.wasJustReleased(GamepadKeys.Button.Y)){
                     drive.droneServo.setPosition(Constants.DRONE_SERVO_PRIMED_POS);
+                    hasDroneLaunched = true;
                 }
 
                 // Slides stuff
@@ -211,6 +214,17 @@ public class MainTeleOp extends LinearOpMode {
                 // move intake bar up to preset value with dpad but only if it can
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
                         intakePreset = Constants.INTAKE_POSITIONS.length - 1;
+
+                // Moves the suspension arm (will be added in 3-5 business days) into position using drone button only after drone has launched
+                if (gp2.wasJustPressed(GamepadKeys.Button.Y) && hasDroneLaunched) {
+                    telemetry.addLine("CONFIRM HANG INITIALIZATION ACTUATION DO THE THING");
+                    if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                        telemetry.addLine("SCHMOVING AND GROOVING (HOPE THAT WAS ON PURPOSE (SPRINGLOCKS ENGAGED))");
+                        drive.moveSuspensionArmPreset(300); // moves arm up (ready to engage yoinky sploinky)
+                        // add line for suspension actuator lock thing (idk what it will look like yet)
+                        drive.moveSuspensionArmPreset(100); // move it back down, bringing robot up after it locked in
+                    }
+                }
 
                 double pushIntakeServoHarder = 0.0;
 

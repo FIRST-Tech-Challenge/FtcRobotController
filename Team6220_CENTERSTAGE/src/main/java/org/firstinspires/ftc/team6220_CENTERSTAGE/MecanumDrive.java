@@ -157,6 +157,7 @@ public final class MecanumDrive {
     public DcMotorEx intakeMotor;
     public DcMotorEx slideMotor;
     public DcMotorEx returnMotor;
+    public DcMotorEx motSuspension;
     public Servo intakeServo;
     public Servo droneServo;
     public Servo dumperServo;
@@ -256,6 +257,7 @@ public final class MecanumDrive {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
+            motSuspension = hardwareMap.get(DcMotorEx.class, "motSuspension");
             droneServo = hardwareMap.get(Servo.class, "droneServo");
             intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
             dumperServo = hardwareMap.get(ServoImplEx.class, "outtakeServo");
@@ -273,6 +275,7 @@ public final class MecanumDrive {
         if (!isDevBot) { // is competition bot
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motSuspension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
@@ -295,6 +298,7 @@ public final class MecanumDrive {
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             returnMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motSuspension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -339,6 +343,12 @@ public final class MecanumDrive {
     public boolean moveSlidesPreset(int targetPos) {
         double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         this.moveSlides(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
+        return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
+    }
+
+    public boolean moveSuspensionArmPreset(int targetPos) {
+        double power = (targetPos - this.motSuspension.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
+        this.motSuspension.setPower(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
         return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
     }
 
