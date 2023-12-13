@@ -45,7 +45,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.teamcode.pipeline.GripPipelineRedGamepieceRGB;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
+import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
@@ -115,7 +116,7 @@ public class Auto1_RedFieldRight extends OpMode {
 
     LinearSlideMovement linearSlideMove;
 
-    private String gamepieceLocation = "left";
+    private GamePieceLocation gamepieceLocation = GamePieceLocation.LEFT;
 
     int state;
 
@@ -126,21 +127,21 @@ public class Auto1_RedFieldRight extends OpMode {
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord(), "right");
+        GamepiecePositionFinder gamepiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.RIGHT);
         Point avgLoc = pipeline.avgContourCoord();
-        if (gamepiecePOS.getPOS() == "right"){
+        if (gamepiecePOS.getPOS() == GamePieceLocation.RIGHT){
             rightCount += 1;
-        } else if (gamepiecePOS.getPOS() == "center"){
+        } else if (gamepiecePOS.getPOS() == GamePieceLocation.CENTER){
             centerCount += 1;
         } else {
             leftCount += 1;
         }
         if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = "right";
+            gamepieceLocation = GamePieceLocation.RIGHT;
         } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = "center";
+            gamepieceLocation = GamePieceLocation.CENTER;
         } else if (leftCount > 5){
-            gamepieceLocation = "left";
+            gamepieceLocation = GamePieceLocation.LEFT;
         }
 
         // Reset the counters to lower values every 50 detects to allow for field condition changes
@@ -265,7 +266,7 @@ public class Auto1_RedFieldRight extends OpMode {
         // Wheel diameter is 100mm
         double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
-        if (gamepieceLocation == "right" && state == 0){
+        if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0){
             // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
@@ -313,7 +314,7 @@ public class Auto1_RedFieldRight extends OpMode {
 
 
             state = 1;
-        } else if (gamepieceLocation == "center" && state == 0) {
+        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
             // move forward 18 inches
             moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
