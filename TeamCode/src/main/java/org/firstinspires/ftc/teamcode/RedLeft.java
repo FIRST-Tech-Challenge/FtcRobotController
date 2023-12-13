@@ -13,9 +13,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class RedLeft extends LinearOpMode {
     Webcam webcam;
     private AutoMethods autoMethods;
+    private boolean isLeft = false, isRight = false, isCenter = false;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
-    private boolean isLeft = false, isRight = false, isCenter = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,13 +38,13 @@ public class RedLeft extends LinearOpMode {
 
             Double x = webcam.CheckCamera();
             if (x > 450 || x == 0){
-                isLeft = true;
-                isRight = false;
+                isLeft = false;
+                isRight = true;
                 isCenter = false;
             }
             else if (x < 150){
-                isLeft = false;
-                isRight = true;
+                isLeft = true;
+                isRight = false;
                 isCenter = false;
             }
             else{
@@ -55,37 +55,70 @@ public class RedLeft extends LinearOpMode {
             telemetry.addData("detected x", x);
             telemetry.update();
             sleep (2000);
+
         }
+        waitForStart();
+        if(isLeft) RunLeft(autoMethods);
+        else if (isRight) RunRight(autoMethods);
+        else RunCenter(autoMethods);
 
-
-        autoMethods.RunMotors(25,0.2);
-        sleep(8000);
-        autoMethods.ZeroMotors();
-        autoMethods.StrafeByInch(4, true, 0.2);
-        sleep(1000);
-        autoMethods.ZeroMotors();
+    }
+    void RunRight(AutoMethods blar) throws InterruptedException {
+        blar.RunMotors(20,0.2);
+        blar.Turn90(false, 0.2);
+        blar.StrafeByInch(11,false,0.2);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        autoMethods.StrafeByInch(72,true, 0.2);
-        sleep(8000);
-        autoMethods.ZeroMotors();
-        autoMethods.Turn90(false, 0.2);
-        autoMethods.RunMotorHang(6.5,0.75);
-        sleep(3000);
-        autoMethods.ZeroMotors();
-        //autoMethods.StrafeByInch(2, false, 0.2);
-        //sleep(1000);
-        autoMethods.RunMotors(12, 0.2);
-        sleep(2000);
-        autoMethods.ZeroMotors();
+        blar.StrafeByInch(18, false, 0.2);
+        blar.RunMotorHang(6.5,0.75);
+        blar.RunMotors(83,0.2);
+        blar.StrafeByInch(31, true, 0.2);
         motorHang.setPower(0);
-        autoMethods.RunMotorHang(-6.5,0.75);
-        autoMethods.RunMotors(-2,0.2);
-        sleep(1000);
-        autoMethods.ZeroMotors();
-        //autoMethods.StrafeByInch(24, false, 0.2);
+        blar.RunMotors(5, 0.2);
+        blar.RunMotorHang(-6.5,1);
+        blar.RunMotors(-4,0.5);
+        sleep(4000);
+        motorHang.setPower(0);
+
+
+    }
+    void RunLeft(AutoMethods blar) throws InterruptedException {
+        blar.RunMotors(17,0.3);
+        blar.StrafeByInch(13, false, 0.2);
+        motorIntake.setPower(-0.4);
+        sleep(1500);
+        motorIntake.setPower(0);
+        blar.StrafeByInch(13, true, 0.2);
+        blar.RunMotors(32,0.2);
+        blar.Turn90(false, 0.2);
+        blar.RunMotorHang(6.5,1);
+        blar.RunMotors(83, 0.3);
+        blar.StrafeByInch(14, true, 0.2);
+        blar.RunMotors(4,0.2);
+        blar.RunMotors(-4,0.2);
+        blar.RunMotorHang(-6.5,0.75);
+        sleep(5000);
+        motorHang.setPower(0);
+    }
+    void RunCenter(AutoMethods blar) throws InterruptedException {
+        sleep(5000);
+        blar.RunMotors(25,0.2);
+        blar.StrafeByInch(4, true, 0.2);
+        motorIntake.setPower(-0.4);
+        sleep(1500);
+        motorIntake.setPower(0);
+        blar.RunMotorHang(6.5,0.3);
+        blar.StrafeByInch(72, true, 0.2);
+        blar.Turn90(false, 0.2);
+        //blar.StrafeByInch(4, false, 0.2);
+        blar.RunMotors(12, 0.2);
+        motorHang.setPower(0);
+        blar.RunMotorHang(-6.5,1);
+        blar.RunMotors(-4,0.5);
+        blar.ZeroMotors();
         sleep(4000);
         motorHang.setPower(0);
     }
+
 }

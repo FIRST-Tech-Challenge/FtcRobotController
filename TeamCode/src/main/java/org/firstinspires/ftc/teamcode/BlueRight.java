@@ -70,7 +70,7 @@ public class BlueRight extends LinearOpMode {
         motorIntake.setPower(0);
         blar.StrafeByInch(24, true, 0.2);
         blar.RunMotorHang(6.5,0.75);
-        blar.RunMotors(83,0.5);
+        blar.RunMotors(83,0.2);
         blar.StrafeByInch(25, false, 0.2);
         motorHang.setPower(0);
         blar.RunMotors(5, 0.2);
@@ -83,34 +83,17 @@ public class BlueRight extends LinearOpMode {
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(17,0.5);
-        //sleep(1500);
-        //blar.ZeroMotors();
         blar.StrafeByInch(9, true, 0.2);
-        //sleep(2000);
-        //blar.ZeroMotors();
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.StrafeByInch(9, false, 0.2);
-        //sleep(2000);
-        //blar.ZeroMotors();
         blar.RunMotors(32,0.2);
         blar.Turn90(true, 0.2);
-        //sleep(3000);
-        //blar.ZeroMotors();
-        //blar.StrafeByInch(32, true, 0.2);
-        //sleep(4000);
-        //blar.ZeroMotors();
         blar.RunMotorHang(6.5,1);
         blar.RunMotors(83, 0.5);
-        //sleep(5000);
-        //blar.ZeroMotors();
         blar.StrafeByInch(12, false, 0.2);
-        //sleep(3000);
-        //blar.ZeroMotors();
         blar.RunMotors(4,0.2);
-        //sleep(2000);
-        //blar.ZeroMotors();
         blar.RunMotors(-4,0.2);
         blar.RunMotorHang(-6.5,0.75);
         sleep(5000);
