@@ -161,8 +161,8 @@ public class LiftSubsystem implements ISubsystem<LiftStateMachine, LiftStateMach
         return liftStateMachine;
     }
 
-    public static void setLiftStateMachine(LiftStateMachine liftStateMachine) {
-        LiftSubsystem.liftStateMachine = liftStateMachine;
+    public static void setLiftStateMachine(LiftStateMachine liftSM) {
+        LiftSubsystem.liftStateMachine = liftSM;
     }
 
     public RevMotor getLift() {

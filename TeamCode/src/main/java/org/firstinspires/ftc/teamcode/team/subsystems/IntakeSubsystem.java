@@ -49,8 +49,8 @@ public class IntakeSubsystem implements ISubsystem<IntakeStateMachine, IntakeSta
         return "Flywheel Subsystem";
     }
 
-    private static void setIntakeStateMachine(IntakeStateMachine intakeStateMachine) {
-        IntakeSubsystem.intakeStateMachine = intakeStateMachine;
+    private static void setIntakeStateMachine(IntakeStateMachine intakeSM) {
+        IntakeSubsystem.intakeStateMachine = intakeSM;
     }
 
     private void setIntakeWheels(RevMotor intakeMotor){

@@ -49,8 +49,8 @@ public class OuttakeSubsystem implements ISubsystem<OuttakeStateMachine, Outtake
         getOuttakeServo().setPosition(getState().getPosition());
     }
 
-    public static void setOuttakeStateMachine(OuttakeStateMachine outtakeStateMachineStateMachine){
-        OuttakeSubsystem.outtakeStateMachine = outtakeStateMachine;
+    public static void setOuttakeStateMachine(OuttakeStateMachine outtakeSM){
+        OuttakeSubsystem.outtakeStateMachine = outtakeSM;
     }
 
     public RevServo getOuttakeServo(){
