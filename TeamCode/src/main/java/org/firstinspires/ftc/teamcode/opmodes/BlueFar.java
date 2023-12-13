@@ -143,7 +143,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(0, 81 ))
+                                .lineTo(new Vector2d(5, 81 ))
                                 .build()
                 ));
             }
@@ -152,7 +152,7 @@ public class BlueFar extends LinearOpMode {
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(8, 10), Math.toRadians(180))
+                            .splineTo(new Vector2d(8, -10), Math.toRadians(180))
                             .build()
             ));
             Log.v("AUTODEBUG", "2: dump purple");
@@ -162,10 +162,9 @@ public class BlueFar extends LinearOpMode {
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                            .turn(Math.toRadians(45), 1,0.5)
-                            .splineTo(new Vector2d(-4, -2), Math.toRadians(90))
-                            .splineTo(new Vector2d(-4, -68), Math.toRadians(90))
-                            .splineTo(new Vector2d(26, -85), Math.toRadians(90)) // go to backdrop
+                            .splineTo(new Vector2d(0, 2), Math.toRadians(90))
+                            .splineTo(new Vector2d(0, 68), Math.toRadians(90))
+                            .splineTo(new Vector2d(32,  85), Math.toRadians(90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
@@ -177,7 +176,7 @@ public class BlueFar extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(50, -81))
+                                .lineTo(new Vector2d(44, 81))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -185,7 +184,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(-4, -81 ))
+                                .lineTo(new Vector2d(5, 81 ))
                                 .build()
                 ));
             }

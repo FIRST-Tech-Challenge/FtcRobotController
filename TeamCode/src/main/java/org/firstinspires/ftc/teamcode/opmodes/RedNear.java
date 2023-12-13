@@ -118,7 +118,7 @@ public class RedNear extends LinearOpMode {
             // go to back drop
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
-                            .splineTo(new Vector2d(22, -35), FACE_BACKDROP_HEADERING)
+                            .splineTo(new Vector2d(24, -35), FACE_BACKDROP_HEADERING)
                             .build()
             ));
             //dump yellow pixel
