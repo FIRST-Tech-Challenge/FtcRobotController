@@ -21,7 +21,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
         boolean droneToggle = false;
         ElapsedTime droneToggleTime = new ElapsedTime();
 
-        boolean trapToggle = false;
+//        boolean trapToggle = false;
         ElapsedTime trapToggleTime = new ElapsedTime();
 
         boolean directionToggle = false;
@@ -59,27 +59,17 @@ public class Centerstage_TeleOp extends LinearOpMode {
             if (gamepad2.y && droneToggleTime.time() > .75 && !droneToggle) {
                 droneToggle = true;
                 droneToggleTime.reset();
-                robot.outtake.launchDrone(droneToggle);
+                robot.miscMechs.launchDrone(droneToggle);
 
             }
             else if (gamepad2.y && droneToggleTime.time() > .75 && droneToggle) {
                 droneToggle = false;
                 droneToggleTime.reset();
-                robot.outtake.launchDrone(droneToggle);
+                robot.miscMechs.launchDrone(droneToggle);
             }
 
             // This function controls the trapdoor.
-            if (gamepad2.x && trapToggleTime.time() > .25 && !trapToggle) {
-                trapToggle = true;
-                trapToggleTime.reset();
-                robot.outtake.trapdoor(trapToggle);
-
-            }
-            else if (gamepad2.x && trapToggleTime.time() > .25 && trapToggle) {
-                trapToggle = false;
-                trapToggleTime.reset();
-                robot.outtake.trapdoor(trapToggle);
-            }
+            robot.outtake.trapdoor(gamepad2.x,trapToggleTime);
 
 
             // This controls the drive train using three double input methods:

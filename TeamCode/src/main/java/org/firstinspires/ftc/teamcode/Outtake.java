@@ -10,7 +10,7 @@ public class Outtake {
     DcMotor outtakeMotor;
     Servo droneServo, trapdoorServo;
     ElapsedTime trapdoorTime;
-    boolean trapdoor = false;
+    boolean trapToggle = false;
     boolean drone = false;
 
     public Outtake(HardwareMap hwMap) {
@@ -26,31 +26,19 @@ public class Outtake {
         outtakeMotor.setPower(power);
     }
 
-    public void launchDrone(boolean open) {
-        if (open) {
-            if (drone) {
-                drone = false;
-                droneServo.setPosition(1.0);
-            }
-            else {
-                drone = true;
-                droneServo.setPosition(0.0);
-            }
+
+    public void trapdoor(boolean button, ElapsedTime time) {
+        if (button && time.time() > .25 && !trapToggle) {
+            trapToggle = true;
+            time.reset();
+            trapdoorServo.setPosition(0.0);
+
         }
+        else if (button && time.time() > .25 && trapToggle) {
+            trapToggle = false;
+            time.reset();
+            trapdoorServo.setPosition(1.0);
 
-
-    }
-
-    public void trapdoor(boolean open) {
-        if (open) {
-            if (trapdoor) {
-                trapdoor = false;
-                trapdoorServo.setPosition(1.0);
-            }
-            else {
-                trapdoor = true;
-                trapdoorServo.setPosition(0.0);
-            }
         }
 
 

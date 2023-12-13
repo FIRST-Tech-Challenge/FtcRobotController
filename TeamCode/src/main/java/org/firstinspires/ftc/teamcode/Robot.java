@@ -11,10 +11,10 @@ public class Robot {
 
     // This combines all the subsystems.
     public Robot(HardwareMap hwMap) {
-        driveTrain = new DriveTrain(hwMap);
-        intake = new Intake(hwMap);
+//        driveTrain = new DriveTrain(hwMap);
+//        intake = new Intake(hwMap);
         outtake = new Outtake(hwMap);
-        miscMechs = new MiscMechs(hwMap);
+//        miscMechs = new MiscMechs(hwMap);
     }
 
 }
