@@ -123,7 +123,7 @@ public class Arm {
     }
 
     public void sendTelemetry() {
-        myOpMode.telemetry.addData("Arm pos Left/Right", "%4d / %4 d",
+        myOpMode.telemetry.addData("Arm pos Left/Right", "%4d / %4d",
                 arm_left.getCurrentPosition(),
                 arm_right.getCurrentPosition());
     }
