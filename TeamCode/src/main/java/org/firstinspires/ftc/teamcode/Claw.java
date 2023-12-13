@@ -20,9 +20,11 @@ public class Claw {
 
     public void operate()
     {
+        /*
         robot.telemetry.addData("Claw_Right: Status", cr_closed);
         robot.telemetry.addData("Claw_Left: Status", cl_closed);
         robot.telemetry.update();
+         */
 
         if (gamepad.right_trigger > 0.5) {
             robot.servoCL.setPosition(0); // open the claw
