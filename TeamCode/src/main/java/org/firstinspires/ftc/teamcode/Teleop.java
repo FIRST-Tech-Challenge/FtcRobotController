@@ -18,12 +18,23 @@ public class Teleop extends LinearOpMode
             robot.robotODrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             //Transfer Code --
-            if (gamepad2.left_stick_y > .05){
-                robot.TransferM1.setPower(1);
-                robot.TransferM2.setPower(1);
-            } else {
-                robot.TransferM1.setPower(0);
-                robot.TransferM2.setPower(0);
+            //Slides go up, joystick backwards for some reason
+            if (gamepad2.left_stick_y < -.05)
+            {
+                robot.transferM1.setPower(-1);
+                robot.transferM2.setPower(1);
+            }
+            //slides go down joystick still backwards
+            else if (gamepad2.left_stick_y > .05 && robot.transferM1.getCurrentPosition() < -50)
+            {
+                robot.transferM1.setPower(.25);
+                robot.transferM2.setPower(-.25);
+            }
+            //slides hold
+            else
+            {
+                robot.transferM1.setPower(0);
+                robot.transferM2.setPower(0);
             }
             // -- End Transfer code
 
@@ -32,22 +43,22 @@ public class Teleop extends LinearOpMode
             if(gamepad1.right_trigger > .05) {
                 robot.intakeBack.setPower(-gamepad1.right_trigger);
                 robot.intakeFront.setPower(gamepad1.right_trigger);
-                robot.TransferCR1.setPower(1);
-                robot.TransferCRAxon.setPower(1);
+                robot.transferCR1.setPower(1);
+                robot.transferCR2.setPower(1);
             }
             //Spin Outwards
             else if(gamepad1.left_trigger > .05) {
                 robot.intakeBack.setPower(gamepad1.right_trigger);
                 robot.intakeFront.setPower(-gamepad1.right_trigger);
-                robot.TransferCR1.setPower(-1);
-                robot.TransferCRAxon.setPower(-1);
+                robot.transferCR1.setPower(-1);
+                robot.transferCR2.setPower(-1);
             }
             //If neither are pressed or both are pressed everything is set to it's zeroPowerBehavior()
             else if((gamepad1.left_trigger > .05  && gamepad1.right_trigger > .05) || (gamepad1.left_trigger < .05 && gamepad1.right_trigger < .05)) {
                 robot.intakeBack.setPower(0);
                 robot.intakeFront.setPower(0);
-                robot.TransferCR1.setPower(0);
-                robot.TransferCRAxon.setPower(0);
+                robot.transferCR1.setPower(0);
+                robot.transferCR1.setPower(0);
             }
             // -- End Intake Code
 
@@ -62,4 +73,8 @@ public class Teleop extends LinearOpMode
              else
                 robot.depositServoTwo.setPosition(0);
             // -- End Deposit Code
+
+            //Telemetry
+            telemetry.addData("slide height", robot.transferM1.getCurrentPosition());
+            telemetry.update();
         }}}
