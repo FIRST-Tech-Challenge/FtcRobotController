@@ -44,6 +44,9 @@ public class CenterStageTeleop extends LinearOpMode {
 
     boolean clawClosed = true;
 
+    int backSlidesTargetPos = 0;
+    int v4bPresetTarget = 0;
+
     private enum DriveMode {
         NORMAL,
         PIXEL_SCORE,
@@ -129,6 +132,7 @@ RB - Hang up
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -151,34 +155,28 @@ RB - Hang up
             telemetry.addData("left x", gamepad1.left_stick_x);
             telemetry.addData("right x", gamepad1.right_stick_x);
 
-            switch (driveMode)  {
+            y = -gamepad1.left_stick_y;
+            x = gamepad1.left_stick_x;
+            rx = gamepad1.right_stick_x;
+
+            switch (driveMode) {
                 case NORMAL:
-                    /*
-D-pad up - extendo fully extended with four bar in position 4
-D-pad down - extendo out 1/3? with four bar in position 1
-X - auto aligns and switches to pixel scoring mode
-Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
-LB - four bar down (presets for stack positions)
-RB - four bar up (presets)
-LT - slides down (presets)
-RT - slides up (presets)
-                    */
-//                    if (gamepad1.dpad_up){
+                    if (gamepad1.dpad_up){
 //                      gp slides full extension
                     //  v4b preset 4 pixel high
                     //  claw open
-                    //  }
-                    if (gamepad1.dpad_right){
+                      }
+                    if (gamepad1.dpad_right) {
                         //gp slides 2/3rds extension
                         //v4b preset 1 pixel high
                         //claw open
                     }
-//                    if (gamepad1.dpad_down){
+                    if (gamepad1.dpad_down){
                     //gp slides 1/3rds extension
                     //v4b preset 1 pixel high
                     //claw open
-//                    }
-                    if (gamepad1.dpad_left){
+                    }
+                    if (gamepad1.dpad_left) {
                         //gp slides fully in
                         //v4b preset 4 pixel high
                         //claw open
@@ -197,32 +195,83 @@ RT - slides up (presets)
                         //v4b to deposit
                         //claw angle to deposit
                         //when not busy, open claw
-                        //right intake
+                        // outtake close hook
+                        //right the intake system
                     }
-//                    if (gamepad1.x) {
-//                        // Solinexi's april tag alignment
-//                        driveMode = DriveMode.PIXEL_SCORE;
-//                    }
-//                    if (gamepad1.left_stick_button) {
-//                        driveMode = DriveMode.PIXEL_SCORE;
-//                        sleep(300);
-//                    }
-//                    if (gamepad1.left_trigger > 0.5){
-//                        backSlides.setPower(-1);
-//                    } else if (gamepad1.right_trigger > 0.5) {
-//                        backSlides.setPower(1);
-//                    } else {
-//                        backSlides.setPower(0);
-//                    }
+                    if (gamepad1.x) {
+                        // Solinexi's april tag alignment
+                        driveMode = DriveMode.PIXEL_SCORE;
+                    }
+                    if (gamepad1.y) {
+                        //close hook
+                        //outtake movement and rotation to drop
+                        // open hook and wait hyper-specific amount of time
+                        if (!gamepad1.y) {
+                            //close hook
+                        } else {
+                            // open hook
+                            // wait slightly
+                            // outtake movement and rotation to transfer
+                        }
+                    }
+                    if (gamepad1.left_stick_button) {
+                        driveMode = DriveMode.PIXEL_SCORE;
+                        sleep(300);
+                    }
+                    if (gamepad1.right_stick_button) {
+                        driveMode = DriveMode.END_GAME;
+                        sleep(300);
+                    }
+                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
+                        v4bPresetTarget--;
+                    }
+                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
+                        v4bPresetTarget++;
+                    }
+                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
+                        backSlidesTargetPos--;
+                    }
+                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
+                        backSlidesTargetPos++;
+                    }
                     break;
                 case PIXEL_SCORE:
+                    y = 0;
+                    rx = 0;
+                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
+                        backSlidesTargetPos--;
+                    }
+                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
+                        backSlidesTargetPos++;
+                    }
+                    if (gamepad1.y) {
+                        //close hook
+                        //outtake movement and rotation to drop
+                        // open hook and wait hyper-specific amount of time
+                        if (!gamepad1.y) {
+                            //close hook
+                        } else {
+                            // open hook
+                            // wait slightly
+                            // outtake movement and rotation to transfer
+                        }
+                    }
                     break;
                 case END_GAME:
+                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
+                        //hanging down
+                    }
+                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
+                        //hanging up
+                    }
+                    if (gamepad1.x) {
+                        // Solinexi's april tag alignment
+                        //raise shooter
+                        //FIRE!
+                    }
                     break;
             }
-            y = -gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+
 
             if (Math.abs(y) < 0.2) {
                 y = 0;
@@ -253,6 +302,11 @@ RT - slides up (presets)
             leftRearMotor.setPower(leftRearPower);
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
+
+//            backSlides.setTargetPosition(CSCons.backSlidesPos[backSlidesTargetPos]);
+//            backSlides.setPower(102984375678349214824736483);
+//            clawArm.setPosition(CSCons.v4b_positions[v4bPresetTarget]);
+
 
             if(gamepad1.right_bumper){
                 hangingMotor.setPower(.3);
