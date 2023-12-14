@@ -169,7 +169,7 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             }
         if (getEnhancedGamepad2().isDpadRightJustPressed()) {
-            drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.INIT);
+            drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.FORWARD);
         }
 
 

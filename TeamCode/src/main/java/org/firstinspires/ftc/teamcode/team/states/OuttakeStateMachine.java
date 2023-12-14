@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 
 public class OuttakeStateMachine extends TimedState<OuttakeStateMachine.State> {
     public OuttakeStateMachine(){
-        super(State.INIT);
+        super(State.PICKUP);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class OuttakeStateMachine extends TimedState<OuttakeStateMachine.State> {
     }
 
     public enum State implements Namable{
-        PICKUP("PICKUP", 0.025d), INIT("Init", 0.5d), RELEASE("RELEASE", 0.975d); //KHALID TO-DO
+        PICKUP("PICKUP", 0.025d), FORWARD("Forward", 0.0d), RELEASE("RELEASE", 0.3d);
 
         private final String name;
         private final double position;
