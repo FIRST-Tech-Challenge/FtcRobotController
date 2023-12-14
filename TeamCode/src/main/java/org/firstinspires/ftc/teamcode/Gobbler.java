@@ -7,7 +7,7 @@ public class Gobbler {
     public DriveTrain driveTrain;
     public Intake intake;
     public Outtake outtake;
-    public MiscMechs miscMechs;
+    public PlaneHang planeHang;
 
     // This combines all the subsystems.
     public Gobbler(HardwareMap hwMap) {

@@ -29,7 +29,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
             // This function controls the drone.
             // The first input is the button used to control the drone.
             // The second input is the time the function uses to space out inputs.
-            gobbler.miscMechs.launchDrone(gamepad2.y, droneToggleTime);
+            gobbler.planeHang.launchDrone(gamepad2.y, droneToggleTime);
 
             // This function controls the intake and conveyor.
             // The first input is the button used to control the trap door.
@@ -56,7 +56,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
                    String.valueOf(gobbler.outtake.trapToggle));
             telemetry.addData("Stage Motor",
                    gobbler.outtake.stageMotor.getPower());
-            telemetry.addData("Drone Status", String.valueOf(gobbler.miscMechs.droneToggle));
+            telemetry.addData("Drone Status", String.valueOf(gobbler.planeHang.droneToggle));
 
             telemetry.update();
         }

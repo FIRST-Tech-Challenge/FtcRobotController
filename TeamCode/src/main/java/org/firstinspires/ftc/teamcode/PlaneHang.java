@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class MiscMechs {
+public class PlaneHang {
     Servo droneServo;
     boolean droneToggle = false;
 
-    public MiscMechs(HardwareMap hMap) {
+    public PlaneHang(HardwareMap hMap) {
         droneServo = hMap.get(Servo.class, "droneServo");
     }
 
