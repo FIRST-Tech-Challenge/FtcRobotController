@@ -71,6 +71,9 @@ public class Centerstage_TeleOp extends LinearOpMode {
             // This function controls the trapdoor.
             robot.outtake.trapdoor(gamepad2.x, trapToggleTime);
 
+            // This function controls the drone.
+            robot.miscMechs.launchDrone(gamepad2.y,droneToggleTime);
+
 
 //            // This controls the drive train using three double input methods:
 //            // It uses the last boolean input to reverse the controls:
