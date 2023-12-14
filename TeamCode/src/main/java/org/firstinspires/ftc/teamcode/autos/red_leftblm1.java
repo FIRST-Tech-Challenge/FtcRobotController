@@ -326,7 +326,7 @@ public class red_leftblm1 extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(0.5);}
+              //  if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(0.5);}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
@@ -443,8 +443,8 @@ public class red_leftblm1 extends LinearOpMode {
 
             // Display drive status for the driver.
             sendTelemetry(false);
-                if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
-            if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
+//                if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
+//            if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
 //            if (order==0&&(holdTimer.time()>holdTime*0.1)){
 //                wrist.setPosition(0.32);
 //                telemetry.addData("order", order);

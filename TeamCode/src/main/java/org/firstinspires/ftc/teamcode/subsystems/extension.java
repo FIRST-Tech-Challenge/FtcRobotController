@@ -101,13 +101,13 @@ public class extension {
         lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tilt.setPower(1);
     }
-    public void setIntake() {
-        setTilt(0);
-    }
-    public void sethang() {
-        setTilt(510);
-    }
-    public void setPlace() {setTilt(tiltplacepos);}
+   // public void setIntake() {
+     //   setTilt(0);
+    //}
+ //   public void sethang() {
+   //     setTilt(510);
+    //}
+    //public void setPlace() {setTilt(tiltplacepos);}
     public void setIntakeClosePos(){
         pos=0;
         setTilt(tiltintakeclosepos);
@@ -126,12 +126,15 @@ public class extension {
         }
     }
     public void setStowPos(){
+        boolean priorstate= pos<2;
+
         pos=2;
         setHeight(0);
         if((lift1.getCurrentPosition())<50) {
             setTilt(0);
         }
-        tilt.setPower(Range.clip((Range.scale(Range.clip(tilt.getCurrentPosition(),0,640),0,640,0,1)*2),0.1,1));
+        if(!priorstate)tilt.setPower(Range.clip((Range.scale(Range.clip(Math.abs(tilt.getTargetPosition()-tilt.getCurrentPosition()),0,300),0,300,0,1)*2),0.1,1));
+        if(priorstate)tilt.setPower(1);
     }
     public void setPlaceLow(){
             setTilt(tiltplacelowpos);

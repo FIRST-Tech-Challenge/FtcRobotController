@@ -160,7 +160,7 @@ public class lm2teleop2drivers extends LinearOpMode {
 
             state = gamepad2.left_bumper;//state for claw
 
-            if (gamepad2.dpad_up) {extend.setIntake();wrist.setPosition(1);wrist1.setPosition(1);}//set positions
+            if (gamepad2.dpad_up) {extend.setStowPos();wrist.setPosition(1);wrist1.setPosition(1);}//set positions
             else if (gamepad2.dpad_right) {extend.setIntakeClosePos();wrist.setPosition(0.315);wrist1.setPosition(0.315);}
             else if (gamepad2.x) {extend.setPlaceLow();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
             else if (gamepad2.circle) {extend.setPlaceMid();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
@@ -168,8 +168,8 @@ public class lm2teleop2drivers extends LinearOpMode {
             else if (gamepad2.triangle) {extend.setPlaceHigh();wrist.setPosition(0.95);wrist1.setPosition(0.95);}
 
             if (gamepad2.left_bumper && state != lastState) {//new claw code for easier driving
-                if (open) {claw.setPosition(0);claw1.setPosition(0);open = false;}
-                else {claw.setPosition(1);claw1.setPosition(1);open = true;}
+                if (open) {claw.setPosition(0.45);claw1.setPosition(0.2);open = false;}
+                else {claw.setPosition(0.2);claw1.setPosition(0.6);open = true;}
             }
            // if(!hangmode) {
                 if (gamepad2.dpad_down && gamepad1.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides

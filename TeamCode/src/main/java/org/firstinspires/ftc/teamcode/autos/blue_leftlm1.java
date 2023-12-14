@@ -326,7 +326,7 @@ public class blue_leftlm1 extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  /*wrist.setPosition(1);*/}
+                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){  /*wrist.setPosition(1);*/}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
