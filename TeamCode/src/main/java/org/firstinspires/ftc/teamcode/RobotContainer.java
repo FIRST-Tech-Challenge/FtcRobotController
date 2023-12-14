@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.utils.BTController.Axis.*;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,6 +15,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
      Chassis m_chassis;
      BTController m_controller;
      gripper m_gripper;
+
     public RobotContainer(HardwareMap map,Telemetry telemetry,Gamepad gamepad1,Gamepad gamepad2){
         m_controller = new BTController(gamepad1);
         m_gripper = new gripper(map,telemetry);
@@ -28,6 +28,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
     //bind commands to trigger
     public void bindCommands(){
+
         m_controller.assignCommand(m_chassis.drive(()-> m_gamepad1.left_stick_x, ()-> m_gamepad1.left_trigger+ m_gamepad1.right_trigger, ()-> m_gamepad1.left_stick_y),
                 true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER);
     }
