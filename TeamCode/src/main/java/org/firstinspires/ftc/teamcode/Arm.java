@@ -123,7 +123,7 @@ public class Arm {
     }
 
     public void sendTelemetry() {
-        myOpMode.telemetry.addData("Arm pos Left/Right", "%4d / %4 d",
+        myOpMode.telemetry.addData("Arm pos Left/Right", "%4d / %4d",
                 arm_left.getCurrentPosition(),
                 arm_right.getCurrentPosition());
     }
@@ -155,13 +155,9 @@ public class Arm {
 
     public void listen() {
 
-        // move arm according to the right stick y
-        if (myOpMode.gamepad2.left_bumper) {
-            fibula.setPower(-myOpMode.gamepad2.right_stick_y);
-        } else {
+        // move arm according to the left stick y
+            fibula.setPower(-myOpMode.gamepad2.left_stick_y);
             moveArmByPower(-myOpMode.gamepad2.right_stick_y);
-        }
-
 
     }
 }
