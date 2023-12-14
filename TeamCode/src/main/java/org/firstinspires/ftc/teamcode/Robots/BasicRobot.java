@@ -30,6 +30,7 @@ public class BasicRobot{
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
     public static double time= 0.0;
+    public static int loops = 0;
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
@@ -63,6 +64,7 @@ public class BasicRobot{
         gampad = new RFGamepad();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+
     }
 
     /**
@@ -71,6 +73,7 @@ public class BasicRobot{
      */
 
     public void update(){
+        loops++;
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();

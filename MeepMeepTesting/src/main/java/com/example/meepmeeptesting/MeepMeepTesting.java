@@ -18,7 +18,7 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(600);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setDimensions(16.5,17.5)
+                .setDimensions(15,19)
                 .setConstraints(100, 60, 4 * PI, 2 * PI, 16)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-38.5, -62, Math.toRadians(-90)))

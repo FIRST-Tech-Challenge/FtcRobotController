@@ -25,7 +25,7 @@ public class RedLeftPathTest extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -61, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -62, Math.toRadians(-90)));
     Waypoint start =
         new StartWaypoint(
             new com.arcrobotics.ftclib.geometry.Pose2d(
@@ -35,16 +35,16 @@ public class RedLeftPathTest extends LinearOpMode {
     Path dropPath = new Path(start, spike);
     Path toTruss = new Path();
     toTruss.add(new StartWaypoint(dropPath.get(dropPath.size() - 1).getPose().getTranslation()));
-    toTruss.add(new EndWaypoint(-40, -60, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
+    toTruss.add(new EndWaypoint(-40, -58.75, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
     Path toBackdrop = new Path();
     toBackdrop.add(new StartWaypoint(toTruss.get(toTruss.size() - 1).getPose().getTranslation()));
-    toBackdrop.add(new GeneralWaypoint(5, -60, toRadians(185), 1.0, 0.8, 10));
+    toBackdrop.add(new GeneralWaypoint(5, -58.75, toRadians(185), 1.0, 0.8, 10));
     toBackdrop.add(new EndWaypoint(45, -36, toRadians(180), 0.7, 0.8, 10, 4, toRadians(10)));
     Path backToTruss = new Path();
     backToTruss.add(
         new StartWaypoint(toBackdrop.get(toBackdrop.size() - 1).getPose().getTranslation()));
-    backToTruss.add(new GeneralWaypoint(20, -60.5, toRadians(180), 0.8, 0.8, 5));
-    backToTruss.add(new GeneralWaypoint(-35, -60, toRadians(180), 1.0, 0.8, 10));
+    backToTruss.add(new GeneralWaypoint(20, -58.75, toRadians(180), 0.8, 0.8, 5));
+    backToTruss.add(new GeneralWaypoint(-35, -58.75, toRadians(180), 1.0, 0.8, 10));
     backToTruss.add(new EndWaypoint(-45, -34, toRadians(180), 0.8, 0.8, 15, 4, toRadians(10)));
 
     Path testPath = new Path();

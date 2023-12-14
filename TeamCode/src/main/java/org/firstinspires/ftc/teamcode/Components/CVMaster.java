@@ -101,7 +101,7 @@ public class CVMaster {
               webcam.setPipeline(openSleeve);
             }
 
-            webcam.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+            webcam.startStreaming(864, 480, OpenCvCameraRotation.UPRIGHT);
             dashboard.startCameraStream(webcam, 10);
           }
 
@@ -181,7 +181,7 @@ public class CVMaster {
   public void update() {
     LOGGER.setLogLevel(RFLogger.Severity.FINEST);
     LOGGER.log("updating camera info");
-    if (!isTeleop && op.isStarted() && isStreaming) {
+    if (!isTeleop && isStreaming && op.isStarted()) {
       switchToApril();
       isStreaming = false;
     }

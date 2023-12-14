@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.apache.commons.math3.util.FastMath.max;
+import static org.apache.commons.math3.util.FastMath.min;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.types.PathType;
@@ -244,7 +249,13 @@ public class BradBot extends BasicRobot {
       packet.put("timedOUt", path.timedOut());
       packet.put("isFinished", path.isFinished());
       packet.put("equals", equals);
-      roadrun.setDrivePower(new Pose2d(speeds[0], speeds[1], speeds[2]));
+      var powers = MecanumKinematics.robotToWheelVelocities(
+              new Pose2d(speeds[0], speeds[1], speeds[2]*0.5),
+              12,
+              12,
+              1.1
+      ).toArray();
+      roadrun.setMotorPowers((double)powers[0], (double)powers[1], (double)powers[2], (double)powers[3]);
       }
   }
   public void followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
