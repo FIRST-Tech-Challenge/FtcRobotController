@@ -157,6 +157,7 @@ public class Arm {
 
         // move arm according to the left stick y
             fibula.setPower(-myOpMode.gamepad2.left_stick_y);
+            moveArmByPower(-myOpMode.gamepad2.right_stick_y);
 
     }
 }
