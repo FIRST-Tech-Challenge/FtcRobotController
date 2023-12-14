@@ -48,7 +48,7 @@ public class Robot {
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
-
+    Servo stackAttachment;
     double botHeading = 0;
     ElapsedTime elapsedTime = new ElapsedTime();
     public MarkerDetector.MARKER_POSITION markerPos;
@@ -91,6 +91,7 @@ public class Robot {
             hook = hardwareMap.servo.get("linearLocker");
             //planeLauncher = hardwareMap.servo.get("planeLauncher");
             spikeServo = hardwareMap.servo.get("spikeServo");
+            stackAttachment = hardwareMap.servo.get("stackAttachment");
         }
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -179,24 +180,8 @@ public class Robot {
 
     public void autoOuttake(boolean lowOuttake, double startingPosition) {
 
-        /*
-        //precautionary
-        trayToIntakePos();
-        closeClamp();
-
-        // move linear slide up
-        if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(-1550);
-        } else {
-            moveLinearSlideByTicksBlocking(-1700); //1750
-        }
-
-        trayToOuttakePos(); // pivot tray to outtake position
-        opMode.sleep(100);
-        */
-
         openClamp(true, true); // drop pixel
-        opMode.sleep(1000);
+        opMode.sleep(200);
 
         // move linear slide up
         if (lowOuttake) {
@@ -614,17 +599,15 @@ public class Robot {
 
     public void detectMarkerPosition() {
 
-        boolean isTesting = false;
+        //boolean isTesting = false;
         int visionTimeout = 2; // timeout detection after 2 seconds
         double time;
         MarkerDetector.MARKER_POSITION position;
 
-        if (isTesting) {
-            position = MarkerDetector.MARKER_POSITION.LEFT;
-        } else {
-            //detect marker position
-            position = markerProcessor.getPosition();
-        }
+
+        //detect marker position
+        position = markerProcessor.getPosition();
+
         elapsedTime.reset();
         time = elapsedTime.seconds();
 
@@ -770,10 +753,18 @@ public class Robot {
         int polarity = isRedAlliance ? -1 : 1;
         double PIXEL_SIZE = 4;
         int inchesMovedBack = 0;
+        int numberOfDetectionsProcessed = 0;
 
         while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
             while (!aligned) {
                 //get detections
+
+                if (numberOfDetectionsProcessed > 5) {
+                    break;
+                } else {
+                    numberOfDetectionsProcessed++;
+                }
+
                 myAprilTagDetections = aprilTagProcessor.getDetections();
                 //process detection list
                 for (AprilTagDetection detection : myAprilTagDetections) {
@@ -795,6 +786,8 @@ public class Robot {
                                 aligned = true;
                             }
                         }
+                    } else {
+                        tagVisible = false;
                     }
                 }
 
@@ -1179,6 +1172,7 @@ public class Robot {
         setUpIntakeOuttake();
         //planeLauncher = hardwareMap.servo.get("planeLauncher");
         planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
+        stackAttachment = hardwareMap.servo.get("stackAttachment");
 
         openHook();
         closeClamp(false);
@@ -1344,11 +1338,11 @@ public class Robot {
             if (gamepad2.b) {
                 //if b is held linear slide is slow
                 if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(0.5);
-                    lsFront.setPower(0.5);
+                    lsBack.setPower(0.3);
+                    lsFront.setPower(0.3);
                 } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-0.5);
-                    lsFront.setPower(-0.5);
+                    lsBack.setPower(-0.3);
+                    lsFront.setPower(-0.3);
                 } else {
                     lsBack.setPower(0);
                     lsFront.setPower(0);
@@ -1367,7 +1361,6 @@ public class Robot {
                 }
             }
 
-
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
         }
     }
@@ -1382,5 +1375,22 @@ public class Robot {
         }
 
         return max;
+    }
+
+    public void stackAttachmentOut () {
+        stackAttachment.setPosition(0.75);
+    }
+
+    public void stackAttachmentIn () {
+        stackAttachment.setPosition(0.1);
+    }
+
+    public void autoIntake () {
+        intake.setPower(-1);
+        straightBlockingFixHeading(6, true, 0.3);
+        straightBlockingFixHeading(3, false, 0.3);
+        straightBlockingFixHeading(3, true, 0.3);
+        opMode.sleep(1000);
+        intake.setPower(0);
     }
 }
