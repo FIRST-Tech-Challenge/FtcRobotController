@@ -59,6 +59,19 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 9.0.1 (20230929-083754)
+
+### Enhancements
+* Updates AprilTag samples to include Decimation and additional Comments.  Also corrects misleading tag ID warnings
+* Increases maximum size of Blocks inline comments to 140 characters
+* Adds Blocks sample BasicOmniOpMode.
+* Updated CENTERSTAGE library AprilTag orientation quaternions
+    * Thanks [@FromenActual](https://github.com/FromenActual)
+* Updated Java Sample ConceptTensorFlowObjectDetection.java to include missing elements needed for custom model support.
+
+### Bug Fixes
+* Fixes a problem where after October 1 the Driver Station will report as obsolete on v9.0 and prompt the user to update.
+
 ## Version 9.0 (20230830-154348)
 
 ### Breaking Changes
