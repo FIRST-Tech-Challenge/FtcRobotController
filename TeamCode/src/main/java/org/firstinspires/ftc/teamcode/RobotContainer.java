@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import static org.firstinspires.ftc.teamcode.utils.BTController.Axis.*;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -12,18 +12,24 @@ import org.firstinspires.ftc.teamcode.utils.BTController;
 
 
 public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
-    private Gamepad gamepad;
+    private Gamepad m_gamepad1,m_gamepad2;
      Chassis m_chassis;
      BTController m_controller;
      gripper m_gripper;
-    public RobotContainer(HardwareMap map){
-        m_controller = new BTController();
+    public RobotContainer(HardwareMap map,Telemetry telemetry,Gamepad gamepad1,Gamepad gamepad2){
+        m_controller = new BTController(gamepad1);
         m_gripper = new gripper(map,telemetry);
+        m_chassis= new Chassis(map, telemetry);
+        m_gamepad1=gamepad1;
+        m_gamepad2=gamepad2;
+
+
+        bindCommands();
     }
     //bind commands to trigger
     public void bindCommands(){
-        m_controller.assignCommand(m_chassis.drive(()->gamepad.left_stick_x, ()->gamepad.left_trigger+gamepad.right_trigger, ()->gamepad.left_stick_y),
-                true, BTController.Axis.LEFT_X, BTController.Axis.LEFT_Y, BTController.Axis.LEFT_TRIGGER, BTController.Axis.RIGHT_TRIGGER);
+        m_controller.assignCommand(m_chassis.drive(()-> m_gamepad1.left_stick_x, ()-> m_gamepad1.left_trigger+ m_gamepad1.right_trigger, ()-> m_gamepad1.left_stick_y),
+                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER);
     }
     public Command AutonomousCommand(){
         return null;
