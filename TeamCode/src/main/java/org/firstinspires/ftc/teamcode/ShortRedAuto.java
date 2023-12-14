@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,10 +18,16 @@ public class ShortRedAuto extends LinearOpMode {
         robot.initVisionProcessing();
         double slideStartingPosition;
 
+        robot.detectPropEarly();
+
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.detectMarkerPosition();
+            if (robot.markerPos == MarkerDetector.MARKER_POSITION.UNDETECTED ||
+                    robot.markerPos == MarkerDetector.MARKER_POSITION.UNKNOWN) {
+                robot.detectMarkerPosition();
+                Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
+            }
             robot.shortMoveToBoard();
 
             slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
@@ -28,7 +36,6 @@ public class ShortRedAuto extends LinearOpMode {
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-
             robot.alignToBoard();
             robot.autoOuttake(true, slideStartingPosition);
             robot.parkBot(false);

@@ -597,6 +597,19 @@ public class Robot {
         opMode.sleep(100);
     }
 
+    public void detectPropEarly () {
+        MarkerDetector.MARKER_POSITION position;
+
+        while (!opMode.isStarted()) {
+            //detect marker position
+            position = markerProcessor.getPosition();
+            //save marker position and apriltag position in robot class
+            setMarkerPos(position);
+            setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
+            Log.d("early vision", "detected position: " + position);
+        }
+    }
+
     public void detectMarkerPosition() {
 
         //boolean isTesting = false;
@@ -623,7 +636,7 @@ public class Robot {
             }
             break;
         }
-        //save marker position and Apriltag position in robot class
+        //save marker position and apriltag position in robot class
         setMarkerPos(position);
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
 
