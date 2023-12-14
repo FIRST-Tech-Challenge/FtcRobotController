@@ -11,10 +11,10 @@ public class Gobbler {
 
     // This combines all the subsystems.
     public Gobbler(HardwareMap hwMap) {
-//        driveTrain = new DriveTrain(hwMap);
-//        intake = new Intake(hwMap);
+        driveTrain = new DriveTrain(hwMap);
+        intake = new Intake(hwMap);
         outtake = new Outtake(hwMap);
-//        miscMechs = new MiscMechs(hwMap);
+        planeHang = new PlaneHang(hwMap);
     }
 
 }
