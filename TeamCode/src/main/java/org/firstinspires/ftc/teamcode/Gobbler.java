@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Robot {
+public class Gobbler {
     public DriveTrain driveTrain;
     public Intake intake;
     public Outtake outtake;
     public MiscMechs miscMechs;
 
     // This combines all the subsystems.
-    public Robot(HardwareMap hwMap) {
+    public Gobbler(HardwareMap hwMap) {
 //        driveTrain = new DriveTrain(hwMap);
 //        intake = new Intake(hwMap);
         outtake = new Outtake(hwMap);

@@ -77,9 +77,9 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(hardwareMap);
+        Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
-        robot.intake.intakeDown(false);
+        gobbler.intake.intakeDown(false);
         //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -99,21 +99,21 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 if (xValue > 300 && xValue < 530 && yValue > 110 && yValue < 140) {
                         // center
                         telemetry.addData("position","Center");
-                        robot.driveTrain.centerPos();
+                        gobbler.driveTrain.centerPos();
                         seen = true;
                         
                 }
                 else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
                         // left
                         telemetry.addData("position","Left");
-                        robot.driveTrain.leftPos();
+                        gobbler.driveTrain.leftPos();
                         seen = true;
                 }
 
             }
              if (!seen) {
                  telemetry.addData("position","Left");
-                 robot.driveTrain.rightPos();
+                 gobbler.driveTrain.rightPos();
              }
                 telemetryTfod();
 

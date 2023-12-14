@@ -7,26 +7,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Outtake {
-    DcMotor outtakeMotor;
-    Servo droneServo, trapdoorServo;
-    ElapsedTime trapdoorTime;
+    DcMotor stageMotor;
+    Servo trapdoorServo;
+
     boolean trapToggle = false;
-    boolean drone = false;
 
+    // Initiates the motors and servos we need for this subsystem.
     public Outtake(HardwareMap hwMap) {
-        outtakeMotor = hwMap.get(DcMotor.class, "outtakeMotor");
-
-        outtakeMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        droneServo = hwMap.get(Servo.class, "droneServo");
+        stageMotor = hwMap.get(DcMotor.class, "outtakeMotor");
+        stageMotor.setDirection(DcMotor.Direction.REVERSE);
+        
         trapdoorServo = hwMap.get(Servo.class, "trapdoorServo");
     }
 
-    public void driveLift(double power) {
-        outtakeMotor.setPower(power);
-    }
+    // This functions uses one double input to drive the lift.
+    public void driveLift(double power) { stageMotor.setPower(power); }
 
-
+    // This function controls the trapdoor.
+    // The first input is the button used to control the trap door.
+    // The second input is the time the function uses to space out inputs.
     public void trapdoor(boolean button, ElapsedTime time) {
         if (button && time.time() > .25 && !trapToggle) {
             trapToggle = true;
@@ -40,7 +39,5 @@ public class Outtake {
             trapdoorServo.setPosition(1.0);
 
         }
-
-
     }
 }

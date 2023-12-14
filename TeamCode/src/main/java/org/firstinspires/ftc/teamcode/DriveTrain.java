@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DriveTrain {
 
-    // The next intiates
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
 
     private int lfPos, rfPos, lrPos, rrPos;
@@ -23,7 +22,9 @@ public class DriveTrain {
     private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
     private ElapsedTime runtime = new ElapsedTime();
 
-    // All subsystems should have a hardware function that labels all of the hardware:
+    boolean directionToggle = false;
+
+    // All subsystems should have a hardware function that labels all of the hardware required of it.
     public DriveTrain(HardwareMap hwMap) {
 
         // Initializes motor names:
@@ -40,7 +41,8 @@ public class DriveTrain {
     }
 
     // This function needs an axial, lateral, and yaw input. It uses this input to drive the drive train motors.
-    public void drive(double axial, double lateral, double yaw, boolean direction) {
+    // The last two variables are for direction switching.
+    public void drive(double axial, double lateral, double yaw, boolean directionButton, ElapsedTime time) {
 
         double leftFrontPower = 0;
         double rightFrontPower = 0;
@@ -57,7 +59,7 @@ public class DriveTrain {
             rightBackPower = axial + lateral - yaw;
         }
 
-        // All code below this comment normalizes the values so no wheel power exceeds 100%:
+        // All code below this comment normalizes the values so no wheel power exceeds 100%.
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
@@ -69,8 +71,19 @@ public class DriveTrain {
             rightBackPower /= max;
         }
 
-        // The next four lines gives the calculated power to each motor:
-        if (direction) {
+        // The next few lines make the direction boolean switch when the button is pressed.
+        // It includes a timer to avoid mistakes.
+        if (time.time() > .25 && !directionToggle && !directionButton) {
+            directionToggle = true;
+            time.reset();
+        }
+        else if (time.time() > .25 && directionToggle && directionButton) {
+            directionToggle = false;
+            time.reset();
+        }
+
+        // The next eleven lines gives the calculated power to each motor.
+        if (directionToggle) {
             leftFrontDrive.setPower(leftFrontPower/2);
             rightFrontDrive.setPower(rightFrontPower/2);
             leftBackDrive.setPower(leftBackPower/2);

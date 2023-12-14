@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // This file is the main TeleOp file.
@@ -13,84 +12,53 @@ public class Centerstage_TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initiates the robots system and subsystems!
-        Robot robot = new Robot(hardwareMap);
+        Gobbler gobbler = new Gobbler(hardwareMap);
 
-        boolean intakeToggle = false;
         ElapsedTime intakeToggleTime = new ElapsedTime();
-
-        boolean droneToggle = false;
         ElapsedTime droneToggleTime = new ElapsedTime();
-
-//        boolean trapToggle = false;
         ElapsedTime trapToggleTime = new ElapsedTime();
-
-        boolean directionToggle = false;
         ElapsedTime directionToggleTime = new ElapsedTime();
 
-        boolean droneLaunched = false;
-        ElapsedTime droneTime = new ElapsedTime();
-
-
-
         waitForStart();
-
         while (opModeIsActive()) {
-
-
-            // This helps control the intake, it toggles the intake.
-//            if (gamepad2.a && intakeToggleTime.time() > .75 && !intakeToggle) {
-//                intakeToggle = true;
-//                intakeToggleTime.reset(); }
-//            else if (gamepad2.a && intakeToggleTime.time() > .75 && intakeToggle) {
-//                intakeToggle = false;
-//                intakeToggleTime.reset();
-//            }
-//
-//            // This function controls driving directions.
-//            if (gamepad1.x && directionToggleTime.time() > .75 && !directionToggle) {
-//                directionToggle = true;
-//                directionToggleTime.reset(); }
-//            else if (gamepad1.x && directionToggleTime.time() > .75 && directionToggle) {
-//                directionToggle = false;
-//                directionToggleTime.reset();
-//            }
-//
-//            // This function controls the drone.
-//            if (gamepad2.y && droneToggleTime.time() > .75 && !droneToggle) {
-//                droneToggle = true;
-//                droneToggleTime.reset();
-//                robot.miscMechs.launchDrone(droneToggle);
-//
-//            }
-//            else if (gamepad2.y && droneToggleTime.time() > .75 && droneToggle) {
-//                droneToggle = false;
-//                droneToggleTime.reset();
-//                robot.miscMechs.launchDrone(droneToggle);
-//            }
-
             // This function controls the trapdoor.
-            robot.outtake.trapdoor(gamepad2.x, trapToggleTime);
+            // The first input is the button used to control the trap door.
+            // The second input is the time the function uses to space out inputs.
+            gobbler.outtake.trapdoor(gamepad2.x, trapToggleTime);
 
             // This function controls the drone.
-            robot.miscMechs.launchDrone(gamepad2.y,droneToggleTime);
+            // The first input is the button used to control the drone.
+            // The second input is the time the function uses to space out inputs.
+            gobbler.miscMechs.launchDrone(gamepad2.y, droneToggleTime);
 
+            // This function controls the intake and conveyor.
+            // The first input is the button used to control the trap door.
+            // The second input is the time the function uses to space out inputs.
+            gobbler.intake.driveIntake(gamepad2.a, intakeToggleTime);
 
-//            // This controls the drive train using three double input methods:
-//            // It uses the last boolean input to reverse the controls:
-//            robot.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, directionToggle);
-//
-//            // This functions uses one double input to drive the lift.
-//            robot.outtake.driveLift(gamepad2.left_stick_y);
-//
-//            // This function uses a boolean to toggle the intakeMotors.
-//            robot.intake.driveIntake(intakeToggle);
+            // This controls the drive train using three double input methods.
+            // The fourth input is a boolean for the direction toggle.
+            // The last input is the time the function uses to space out inputs for the direction switch.
+            gobbler.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.x, directionToggleTime);
 
-//            telemetry.addData("Front Driving Motors (Left, Right), Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
-//                    robot.driveTrain.leftFrontDrive.getPower(),
-//                    robot.driveTrain.rightFrontDrive.getPower(),
-//                    robot.driveTrain.leftBackDrive.getPower(),
-//                    robot.driveTrain.rightBackDrive.getPower());
-//            telemetry.update();
+            // This functions uses one double input to drive the lift.
+            gobbler.outtake.driveLift(gamepad2.left_stick_y);
+
+            telemetry.addData("Front Driving Motors (Left, Right), Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
+                    gobbler.driveTrain.leftFrontDrive.getPower(),
+                    gobbler.driveTrain.rightFrontDrive.getPower(),
+                    gobbler.driveTrain.leftBackDrive.getPower(),
+                    gobbler.driveTrain.rightBackDrive.getPower());
+            telemetry.addData("Intake and Conveyor Motors", "%4.2f, %4.2f",
+                   gobbler.intake.intakeMotor.getPower(),
+                   gobbler.intake.conveyorMotor.getPower());
+            telemetry.addData("Trapdoor Status",
+                   String.valueOf(gobbler.outtake.trapToggle));
+            telemetry.addData("Stage Motor",
+                   gobbler.outtake.stageMotor.getPower());
+            telemetry.addData("Drone Status", String.valueOf(gobbler.miscMechs.droneToggle));
+
+            telemetry.update();
         }
     }
 }
