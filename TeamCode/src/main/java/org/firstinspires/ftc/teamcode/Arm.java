@@ -155,16 +155,8 @@ public class Arm {
 
     public void listen() {
 
-        // move arm according to the right stick y
-        if (myOpMode.gamepad2.left_bumper) {
-            fibula.setPower(-myOpMode.gamepad2.right_stick_y);
-            moveArmByPower(0);
-
-        } else {
-            fibula.setPower(0);
-            moveArmByPower(-myOpMode.gamepad2.right_stick_y);
-        }
-
+        // move arm according to the left stick y
+            fibula.setPower(-myOpMode.gamepad2.left_stick_y);
 
     }
 }
