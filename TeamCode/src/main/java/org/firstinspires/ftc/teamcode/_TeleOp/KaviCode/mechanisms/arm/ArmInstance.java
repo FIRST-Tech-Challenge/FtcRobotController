@@ -36,13 +36,17 @@ public class ArmInstance {
         currentArmPos = Arm_Motor_Encoder_Target_Position;
     }
     
-    public void setArmPosTo(int Ticks_To_Move_Arm_To) {
+    public void setArmPosTo(int Ticks_To_Move_Arm_To, double power) {
         int Arm_Motor_Encoder_Target_Position = Ticks_To_Move_Arm_To;
         Arm_Motor.setTargetPosition(Arm_Motor_Encoder_Target_Position);
-        Arm_Motor.setPower(0.2);
+        Arm_Motor.setPower(power);
         Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         currentArmPos = Arm_Motor_Encoder_Target_Position;
+    }
+
+    public void setArmPower(float power) {
+        Arm_Motor.setPower(power);
     }
 
     public int getCurrentArmPos() {

@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstanc
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "_ Genshin Impact")
-public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
+@TeleOp(name = "2 Gamepads Genshin Impact")
+public class _20231213_Cindy_Yam_Smart_TeleOp_2Gamepads extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
-    private double Driving_Speed = 0.7;
+    private double Driving_Speed = 0.85;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -57,7 +57,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
             double backRightPower = Math.round(((y + x - rx) / denominator));
 
             if (gamepad1.dpad_up) {
-                Driving_Speed = 0.7;
+                Driving_Speed = 0.85;
             }
             else if (gamepad1.dpad_down) {
                 Driving_Speed = 0.5;
@@ -68,57 +68,57 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower * Driving_Speed);
             backRightMotor.setPower(backRightPower * Driving_Speed);
 
-            if (gamepad1.y) {
+            if (gamepad2.y) {
                 Claw.Actuate_Claw_Top_Finger("open");
             }
-            if (gamepad1.x) {
+            if (gamepad2.x) {
                 Claw.Actuate_Claw_Top_Finger("close");
             }
 
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 Claw.Actuate_Claw_Bottom_Finger("open");
             }
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 Claw.Actuate_Claw_Bottom_Finger("close");
             }
 
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad2.right_trigger > 0) {
                 armDown = false;
-                Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
-            } else if (gamepad1.left_trigger > 0) {
+                Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad2.right_trigger));
+            } else if (gamepad2.left_trigger > 0) {
                 armDown = false;
-                Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
+                Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad2.left_trigger));
             }
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_up) {
                 DroneLauncher.launchDrone();
             }
 
-            if (Arm.Arm_Motor.getCurrentPosition() > 555) {
-                Arm.setArmPosTo(550);
+            if (Arm.Arm_Motor.getCurrentPosition() > 505) {
+                Arm.setArmPosTo(500, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
-                Arm.setArmPosTo(5);
+                Arm.setArmPosTo(5, 0.1);
             }
 
             //Smart TeleOp
 
-            if (gamepad1.right_bumper) {
+            if (gamepad2.right_bumper) {
                 armDown = false;
-                Arm.setArmPosTo(500);
+                Arm.setArmPosTo(475, 0.1);
                 while (Arm.Arm_Motor.isBusy()) {}
-                sleep(50);
+                sleep(750);
                 Claw.Actuate_Claw_Bottom_Finger("open");
-                sleep(250);
+                sleep(500);
                 Claw.Actuate_Claw_Top_Finger("open");
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper) {
                 if (armDown) {
                     armDown = false;
-                    Arm.setArmPosTo(100);
+                    Arm.setArmPosTo(100,0.3);
                 } else {
                     armDown = true;
-                    Arm.setArmPosTo(5);
+                    Arm.setArmPosTo(5,0.1);
                 }
             }
 
@@ -128,7 +128,7 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
                 Claw.Actuate_Claw_Top_Finger("close");
             }
 
-            Arm.setArmPosTo(Arm.getCurrentArmPos());
+            Arm.setArmPosTo(Arm.getCurrentArmPos(), 0.1);
             sleep(50);
 
             telemetry.addLine("Open Claw Top: y");
