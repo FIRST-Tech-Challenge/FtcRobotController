@@ -45,10 +45,6 @@ public class BTController{
         }
     }
 
-    public void setM_axis(Supplier<Boolean>[] m_axis) {
-        this.m_axis = m_axis;
-    }
-
     public enum Axis {
         LEFT_X,
         LEFT_Y,
