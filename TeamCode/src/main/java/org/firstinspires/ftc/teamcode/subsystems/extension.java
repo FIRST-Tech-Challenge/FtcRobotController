@@ -109,6 +109,7 @@ public class extension {
     //}
     //public void setPlace() {setTilt(tiltplacepos);}
     public void setIntakeClosePos(){
+        if(pos>2)setStowPos();
         pos=0;
         setTilt(tiltintakeclosepos);
         tilt.setPower(1);
@@ -118,6 +119,7 @@ public class extension {
         }
     }
     public void setIntakeFarPos(){
+        if(pos>2)setStowPos();
         pos=1;
         setTilt(tiltintakefarpos);
         tilt.setPower(1);
