@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import android.util.Log;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -20,8 +22,8 @@ public class Intake implements Subsystem {
     private double intakeposL = 0.814 - 0.01; //0.804
     private double intakeposR = 0.1403 + 0.01; //0.1503
     //placeholder outtake position, may change depending on outtake
-    private double outtakeposL = 0.129 + 0.02 ;
-    private double outtakeposR = 0.8595 - 0.02                                                                                                                                                                                                                               ;
+    private double outtakeposL = 0.129 + 0.01 ;
+    private double outtakeposR = 0.8595 - 0.01;
     private double lowerlimitL = 0.814;
     private double lowerlimitR = 0.13;
     private double upperlimitL = 0.09;
@@ -51,6 +53,7 @@ public class Intake implements Subsystem {
     public void toIntakePos(){
         intakeServoR.setPosition(intakeposR);
         intakeServoL.setPosition(intakeposL);
+        Log.v("intake", "to intake pos");
     }
     public void toOuttakePos(){
         intakeServoL.setPosition(outtakeposL);
@@ -73,6 +76,10 @@ public class Intake implements Subsystem {
             intakeServoL.setPosition(intakeServoL.getPosition() + (0.01 * -d)); //2 degrees??
             intakeServoR.setPosition(intakeServoR.getPosition() + (0.01 * d * syncFactor));
         }
+    }
+    public void moveArmNoLimit(double d){
+        intakeServoL.setPosition(intakeServoL.getPosition() + (0.04 * -d)); //2 degrees??
+        intakeServoR.setPosition(intakeServoR.getPosition() + (0.04 * d * syncFactor));
     }
     public double getRightServoPos() {
         return intakeServoR.getPosition();
@@ -123,7 +130,7 @@ public class Intake implements Subsystem {
             long time = System.currentTimeMillis();
             if (time - outtakeStartTime >= this.motorDelayForAuto) {
                 intakeState = 13;
-                intakeMotor.setPower(this.autoOutputPwr);
+                intakeMotor.setPower(-1*this.autoOutputPwr);
                 outtakeStartTime = System.currentTimeMillis();
             }
         } else if (intakeState == 13) {//output

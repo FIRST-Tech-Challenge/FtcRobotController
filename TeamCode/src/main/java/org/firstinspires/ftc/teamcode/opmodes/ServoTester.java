@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -43,10 +45,18 @@ public class ServoTester extends LinearOpMode {
             } if(dpadDown) {
                 robot.outtake.moveArm(-0.1);
             }
-            if(dpadRight){
-                robot.intake.moveArm(0.1);
-            } else if (dpadLeft){
-                robot.intake.moveArm(-0.1);
+            if(gamepad2.dpad_left){
+                robot.intake.moveArmNoLimit(0.1);
+                Log.v("intake", "isMoving " + (gamepad2.dpad_right || gamepad2.dpad_left));
+            } else if (gamepad2.dpad_right){
+                robot.intake.moveArmNoLimit(-0.1);
+                Log.v("intake", "isMoving " + (gamepad2.dpad_right || gamepad2.dpad_left));
+            }
+            if(gamepad2.a){
+                robot.intake.toBasePos();
+            }
+            if(gamepad2.b){
+                robot.intake.toBasePosYield();
             }
             if(gamepad1.left_bumper){
                 robot.intake.setPower(1);
@@ -87,7 +97,6 @@ public class ServoTester extends LinearOpMode {
             telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
             telemetry.addData("intake left arm position: ", robot.intake.getLeftServoPos());
             telemetry.addData("intake right arm position: ", robot.intake.getRightServoPos());
-            //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
 
         }
     }
