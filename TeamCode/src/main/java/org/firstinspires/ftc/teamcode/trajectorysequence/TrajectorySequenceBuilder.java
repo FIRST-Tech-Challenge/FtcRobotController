@@ -500,8 +500,9 @@ public class TrajectorySequenceBuilder {
                 sequenceSegments,
                 temporalMarkers, displacementMarkers, spatialMarkers
         );
+        projectGlobalMarkersToLocalSegments(globalMarkers, sequenceSegments);
 
-        return new TrajectorySequence(projectGlobalMarkersToLocalSegments(globalMarkers, sequenceSegments));
+        return new TrajectorySequence(sequenceSegments);
     }
 
     private List<TrajectoryMarker> convertMarkersToGlobal(
@@ -547,66 +548,34 @@ public class TrajectorySequenceBuilder {
         return trajectoryMarkers;
     }
 
-    private List<SequenceSegment> projectGlobalMarkersToLocalSegments(List<TrajectoryMarker> markers, List<SequenceSegment> sequenceSegments) {
-        if (sequenceSegments.isEmpty()) return Collections.emptyList();
+    private void projectGlobalMarkersToLocalSegments(List<TrajectoryMarker> markers, List<SequenceSegment> sequenceSegments) {
+        if (sequenceSegments.isEmpty()) return;
 
         markers.sort(Comparator.comparingDouble(TrajectoryMarker::getTime));
 
-        int segmentIndex = 0;
-        double currentTime = 0;
-
-        for (TrajectoryMarker marker : markers) {
-            SequenceSegment segment = null;
-
-            double markerTime = marker.getTime();
-            double segmentOffsetTime = 0;
-
-            while (segmentIndex < sequenceSegments.size()) {
-                SequenceSegment seg = sequenceSegments.get(segmentIndex);
-
-                if (currentTime + seg.getDuration() >= markerTime) {
-                    segment = seg;
-                    segmentOffsetTime = markerTime - currentTime;
+        double timeOffset = 0.0;
+        int markerIndex = 0;
+        for (SequenceSegment segment : sequenceSegments) {
+            while (markerIndex < markers.size()) {
+                TrajectoryMarker marker = markers.get(markerIndex);
+                if (marker.getTime() >= timeOffset + segment.getDuration()) {
                     break;
-                } else {
-                    currentTime += seg.getDuration();
-                    segmentIndex++;
                 }
-            }
-            if (segmentIndex >= sequenceSegments.size()) {
-                segment = sequenceSegments.get(sequenceSegments.size()-1);
-                segmentOffsetTime = segment.getDuration();
-            }
 
-            SequenceSegment newSegment = null;
-
-            if (segment instanceof WaitSegment) {
-                WaitSegment thisSegment = (WaitSegment) segment;
-                
-                List<TrajectoryMarker> newMarkers = new ArrayList<>(thisSegment.getMarkers());
-                newMarkers.add(new TrajectoryMarker(segmentOffsetTime, marker.getCallback()));
-
-                newSegment = new WaitSegment(thisSegment.getStartPose(), thisSegment.getDuration(), newMarkers);
-            } else if (segment instanceof TurnSegment) {
-                TurnSegment thisSegment = (TurnSegment) segment;
-                
-                List<TrajectoryMarker> newMarkers = new ArrayList<>(thisSegment.getMarkers());
-                newMarkers.add(new TrajectoryMarker(segmentOffsetTime, marker.getCallback()));
-
-                newSegment = new TurnSegment(thisSegment.getStartPose(), thisSegment.getTotalRotation(), thisSegment.getMotionProfile(), newMarkers);
-            } else if (segment instanceof TrajectorySegment) {
-                TrajectorySegment thisSegment = (TrajectorySegment) segment;
-
-                List<TrajectoryMarker> newMarkers = new ArrayList<>(thisSegment.getTrajectory().getMarkers());
-                newMarkers.add(new TrajectoryMarker(segmentOffsetTime, marker.getCallback()));
-
-                newSegment = new TrajectorySegment(new Trajectory(thisSegment.getTrajectory().getPath(), thisSegment.getTrajectory().getProfile(), newMarkers));
+                segment.getMarkers().add(new TrajectoryMarker(
+                        Math.max(0.0, marker.getTime()) - timeOffset, marker.getCallback()));
+                ++markerIndex;
             }
 
-            sequenceSegments.set(segmentIndex, newSegment);
+            timeOffset += segment.getDuration();
         }
 
-        return sequenceSegments;
+        SequenceSegment segment = sequenceSegments.get(sequenceSegments.size() - 1);
+        while (markerIndex < markers.size()) {
+            TrajectoryMarker marker = markers.get(markerIndex);
+            segment.getMarkers().add(new TrajectoryMarker(segment.getDuration(), marker.getCallback()));
+            ++markerIndex;
+        }
     }
 
     // Taken from Road Runner's TrajectoryGenerator.displacementToTime() since it's private
@@ -645,14 +614,13 @@ public class TrajectorySequenceBuilder {
                     return currentTime + timeInSegment;
                 } else {
                     currentDisplacement += segmentLength;
-                    currentTime += thisSegment.getTrajectory().duration();
                 }
-            } else {
-                currentTime += segment.getDuration();
             }
+
+            currentTime += segment.getDuration();
         }
 
-        return 0.0;
+        return currentTime;
     }
 
     private Double pointToTime(List<SequenceSegment> sequenceSegments, Vector2d point) {
