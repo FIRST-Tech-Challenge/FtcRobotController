@@ -9,98 +9,90 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class AutonBlueRight extends LinearOpMode {
     SpikeCam.location mySpikeLocation;
 
-// This is a LONG side Auton
+    // This is a LONG side Auton
     @Override
     public void runOpMode() {
-
         ElapsedTime runtime = new ElapsedTime();
+
+        telemetry.addLine("Starting Initialization");
+
+        // Set defaults for initialization options
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
         CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.RIGHT;
 
-        CyDogsSparky mySparky = new CyDogsSparky(this);
-        mySparky.initializeSpikeCam(SpikeCam.TargetColor.BLUE);
-        sleep(3000);
+        // Create the instance of sparky, initialize the SpikeCam, devices, and positions
+        CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.BLUE, 500);
+        mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
         mySparky.initializePositions();
+        mySparky.initializeAprilTags();
 
+        // Ask the initialization questions
         parkingSpot = mySparky.askParkingSpot();
-        //drivePath = mySparky.askDrivePath();
-
-
-      //  telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
-        telemetry.addData("ParkingSpot", parkingSpot.toString());
-        telemetry.addData("DrivePath", drivePath.toString());
-        telemetry.update();
-
-     //   telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
-     //   telemetry.addData("ParkingSpot", parkingSpot.toString());
-    //    telemetry.addData("DrivePath", drivePath.toString());
-     //   telemetry.update();
+       // drivePath = mySparky.askDrivePath();
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
 
+
         if(opModeIsActive()) {
-            mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
+
             int extraVerticalMovement=0;
-            mySparky.MoveStraight(-745, .5, 500);
+            mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
+
+            // Get to standard position before placing purple pixel
+            mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
+            mySparky.StrafeRight(100,0.5, mySparky.StandardAutonWaitTime);
+            mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
+
+            // Place purple pixel and back away from it
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
-     /*       switch (mySpikeLocation) {
+            mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
+
+
+            switch (mySpikeLocation) {
                 case LEFT:
-                    extraVerticalMovement-=50;
-                //    mySparky.MoveStraight(mySparky.BackUpDistanceFromSpike,.5,mySparky.StandardAutonWaitTime);
-                    switch (drivePath) {
-                        case LEFT:
-                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
-                            break;
-                        case RIGHT:
-                            mySparky.StrafeRight(CyDogsSparky.OneTileMM+170, .5, CyDogsSparky.StandardAutonWaitTime);
-                            break;
-                    }
-                    break;
-                case MIDDLE:
-                 //   mySparky.MoveStraight(50,.5,mySparky.StandardAutonWaitTime);
-                    mySparky.MoveStraight(55,.5,mySparky.StandardAutonWaitTime);
-                    mySparky.RotateLeft(91,.5,mySparky.StandardAutonWaitTime);
-                //    extraVerticalMovement;
-                    switch (drivePath) {
-                        case LEFT:
-                            mySparky.MoveStraight(-CyDogsChassis.OneTileMM+20,.5,mySparky.StandardAutonWaitTime);
-                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM+135,.5,CyDogsSparky.StandardAutonWaitTime);
-                            mySparky.MoveStraight(CyDogsChassis.OneTileMM,.5,mySparky.StandardAutonWaitTime);
-                            break;
-                        case RIGHT:
-                            mySparky.StrafeRight(CyDogsSparky.OneTileMM-35,.5,CyDogsSparky.StandardAutonWaitTime);
-                            break;
-                    }
-                    break;
-                case RIGHT:
-                    mySparky.MoveStraight(mySparky.BackUpDistanceFromSpike+50,.5,mySparky.StandardAutonWaitTime);
+
+                    mySparky.MoveStraight(CyDogsSparky.BackUpDistanceFromSpike+50,.5,mySparky.StandardAutonWaitTime);
                     extraVerticalMovement+=70;
                     mySparky.RotateRight(190,.5,mySparky.StandardAutonWaitTime);
-                    //mySparky.MoveStraight(-mySparky.BackUpDistanceFromSpike,.5,mySparky.StandardAutonWaitTime);
-                    switch (drivePath) {
-                        case LEFT:
-                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM,.5,CyDogsSparky.StandardAutonWaitTime);
-                            break;
-                        case RIGHT:
-                            mySparky.StrafeRight(CyDogsSparky.OneTileMM+120,.5,CyDogsSparky.StandardAutonWaitTime);
-                            break;
-                    }
+
+                    mySparky.StrafeLeft(CyDogsSparky.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+                    break;
+                case MIDDLE:
+
+                    mySparky.MoveStraight(55,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.RotateRight(91,.5,mySparky.StandardAutonWaitTime);
+
+                    mySparky.MoveStraight(-CyDogsChassis.OneTileMM+180,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.StrafeRight(CyDogsSparky.OneTileMM+240,.5,500);
+
+                    extraVerticalMovement+=410;
+
+                    break;
+                case RIGHT:
+                    extraVerticalMovement-=50;
+
+                    mySparky.StrafeRight(CyDogsSparky.OneTileMM, .5, mySparky.StandardAutonWaitTime);
+                    mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
+
                     break;
             }
+            // We move not all the way so we don't crash into a parker, then after strafe move the rest
+            mySparky.MoveStraight(1900+extraVerticalMovement,.5,500);
+            if(mySpikeLocation== SpikeCam.location.MIDDLE) {
+                mySparky.StrafeLeft(50,.5,mySparky.StandardAutonWaitTime);
+            }
 
-            mySparky.MoveStraight(2100+extraVerticalMovement,.5,CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
-            mySparky.MoveStraight(75,.5,CyDogsSparky.StandardAutonWaitTime);
+
             mySparky.AdjustToAprilTag(mySpikeLocation);
-            mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
+            mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
-       */ }
+            mySparky.LowerArmAtAutonEnd();
+        }
 
-
-        mySparky.LowerArmAtAutonEnd();
     }
 }
 

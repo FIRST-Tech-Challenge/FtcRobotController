@@ -79,7 +79,7 @@ public class UsingTwoCameraTestAuton extends LinearOpMode {
 
             CyDogsAprilTags cyTags = new CyDogsAprilTags(this);
             cyTags.initAprilTag(aprilTag, visionPortal);
-            CyDogsSparky mySparky = new CyDogsSparky(this);
+            CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.BLUE, 500);
 
             waitForStart();
 

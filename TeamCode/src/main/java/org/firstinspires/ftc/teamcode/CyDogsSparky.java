@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -24,6 +25,8 @@ public class CyDogsSparky extends CyDogsChassis{
     public Direction parkingSpot;
     private boolean isElbowOpen = false;
 
+    private Alliance myAlliance;
+
     private AprilTagProcessor aprilTag;
 
     private VisionPortal visionPortal;
@@ -32,11 +35,11 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int ArmLow = 1800;
     public static final int ArmMedium = 3600;
     public static final int ArmHigh = 6300;
-    public static final double ArmRaiseBeforeElbowMovement = 3400;
-    public static final double WristForDriving = 0.05;
-    public static final double WristForScoring = 0.33;
-    public static final double ElbowHomePosition = 0.51;
-    public static final double ElbowScoringPosition = 0.785;
+    public static final int ArmRaiseBeforeElbowMovement = 3400;
+    public static final double WristForDriving = 0.18;
+    public static final double WristForScoring = 0.45;
+    public static final double ElbowHomePosition = 0.233;
+    public static final double ElbowScoringPosition = 0.5;
     public static final double FingerLeftOpen = 0.4;
     public static final double FingerLeftClosed = 0.5;
     public static final double FingerRightOpen = 0.4;
@@ -47,7 +50,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int BackUpDistanceFromSpike = 30;
     public static final int DistanceBetweenScoreBoardAprilTags = 150;
 
-    public static final int StandardAutonWaitTime = 450;
+    public int StandardAutonWaitTime = 500;
 
 
     public Servo Wrist;
@@ -66,20 +69,22 @@ public class CyDogsSparky extends CyDogsChassis{
     final double MAX_AUTO_SPEED = 0.5;
     final double MAX_AUTO_STRAFE= 0.5;
     final double MAX_AUTO_TURN  = 0.3;
-    private static int targetTag =0;
 
 
 
-    public CyDogsSparky(LinearOpMode currentOp) {
+
+    public CyDogsSparky(LinearOpMode currentOp, Alliance currentAlliance, int standardWaitTime) {
         super(currentOp);
+        myAlliance = currentAlliance;
         myOpMode = currentOp;
+        StandardAutonWaitTime = standardWaitTime;
     }
 
-    public void initializeSpikeCam(SpikeCam.TargetColor targetColor){
+    public void initializeSpikeCam(){
         spikeCam = new SpikeCam();
         WebcamName webcam1 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera spikeCamera = OpenCvCameraFactory.getInstance().createWebcam(webcam1);
-        spikeCam.initialize(myOpMode, targetColor, spikeCamera);
+        spikeCam.initialize(myOpMode, myAlliance, spikeCamera);
     }
 
     public void initializeDevices() {
@@ -98,7 +103,7 @@ public class CyDogsSparky extends CyDogsChassis{
         // Initialize Arm Lift
         ArmLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ArmLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ArmLift.setDirection(DcMotor.Direction.REVERSE);
+        ArmLift.setDirection(DcMotor.Direction.FORWARD);
         ArmLift.setPower(0.8);
         ArmLift.setTargetPosition(0);
         ArmLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -120,7 +125,7 @@ public class CyDogsSparky extends CyDogsChassis{
         FingerRight.setPosition(FingerRightClosed);
     }
 
-    public void initializeAprilTags(AprilTagProcessor aprilTagProcessor, VisionPortal visPortal)
+    public void initializeAprilTags()
     {
         WebcamName webcam2 = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 2");
 
@@ -141,7 +146,7 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void returnLiftForDriving()
     {
-        ArmLift.setPower(0.6);
+        ArmLift.setPower(0.8);
         ArmLift.setTargetPosition(ArmHomePosition);
     }
 
@@ -154,17 +159,12 @@ public class CyDogsSparky extends CyDogsChassis{
 
     }
 
-    public void openFinger()
+    public void openFingers()
     {
         FingerLeft.setPosition(FingerLeftOpen);
         FingerRight.setPosition(FingerRightOpen);
     }
 
-    public void closeFinger()
-    {
-        FingerLeft.setPosition(FingerLeftClosed);
-        FingerRight.setPosition(FingerRightClosed);
-    }
 
     public void SetLiftToZero() {
         ArmLift.setPower(0.6);
@@ -186,34 +186,120 @@ public class CyDogsSparky extends CyDogsChassis{
         }
     }
 
-    public void scoreFromDrivingPositionAndReturn(int armHeight){
-        raiseArmToScore(armHeight);
-        myOpMode.sleep(1000);
+    public void scoreFromDrivingPositionAndReturn(){
+
         SwingElbow();
-        myOpMode.sleep(1500);
-        raiseArmToScore(100);
         myOpMode.sleep(800);
-        openFinger();
+        raiseArmToScore(ArmLow);
+        myOpMode.sleep(2000);
+        openFingers();
         myOpMode.sleep(400);
-        raiseArmToScore(600);
+
+    }
+    public void returnArmFromScoring(){
+        raiseArmToScore(ArmMedium);
         myOpMode.sleep(1700);
         SwingElbow();
         myOpMode.sleep(1500);
         returnLiftForDriving();
+        myOpMode.sleep(2000);
     }
 
     public void AdjustToAprilTag(SpikeCam.location mySpike)
     {
+
         if(mySpike==SpikeCam.location.LEFT) {
-            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 400);
+            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 300);
         } else if (mySpike==SpikeCam.location.RIGHT) {
-            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,400);
+            StrafeRight(DistanceBetweenScoreBoardAprilTags+130,.5,300);
         }
+        int targetTag = getAprilTagTarget(mySpike, myAlliance);
+        myOpMode.sleep(400);
+
+        double degreesBearing;
+        double inchesXMovement;
+        // Adjust once
+        AprilTagDetection foundTag = GetAprilTag(targetTag);
+        // X
+     //   if(foundTag != null) {
+    //        inchesXMovement = foundTag.ftcPose.x;
+     //       StrafeRight((int) (-(inchesXMovement)* 25.4), .5, 400);
+     //   }
+        // Bearing
+     //   if(foundTag != null) {
+      //      degreesBearing = foundTag.ftcPose.bearing;
+      //      RotateRight((int)-degreesBearing,.5,400);
+     //   }
+
+
+        // Adjust a 2nd Time
+      //  foundTag = GetAprilTag(targetTag);
+        // Bearing
+        if(foundTag != null) {
+            degreesBearing = foundTag.ftcPose.bearing;
+            RotateRight((int)(-degreesBearing*.9),.5,300);
+        }
+        // X
+        double extraInches =0;
+        if(targetTag==6 || targetTag==3)
+        {
+            extraInches += 1.5;
+        }
+        if(foundTag != null) {
+            inchesXMovement = foundTag.ftcPose.x;
+            StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 300);
+        }
+
+
+
+        if(foundTag != null) {
+            inchesXMovement = foundTag.ftcPose.y;
+            MoveStraight((int) (inchesXMovement * 25.4-6.5*25.4), .5, 400);
+            myOpMode.telemetry.addData("Target: ", getAprilTagTarget(mySpike, myAlliance));
+            myOpMode.telemetry.addData("Bearing: ", foundTag.ftcPose.bearing);
+            myOpMode.telemetry.addData("X adjustment: ", foundTag.ftcPose.x);
+            myOpMode.telemetry.addData("Y adjustment: ", foundTag.ftcPose.y);
+            myOpMode.telemetry.update();
+        }
+        if(foundTag ==null) {
+            MoveStraight(345,.5,450);
+    }
+     //     myOpMode.sleep(8000);
+    }
+
+    private int getAprilTagTarget(SpikeCam.location mySpike, Alliance myAlliance)
+    {
+        int targetTag;
+        if(myAlliance==Alliance.RED)
+        {
+            if(mySpike==SpikeCam.location.LEFT)
+            {
+                targetTag=4;
+            } else if (mySpike== SpikeCam.location.MIDDLE) {
+                targetTag=5;
+            }
+            else {   // RIGHT
+                targetTag=6;
+            }
+        }
+        else
+        {
+            if(mySpike==SpikeCam.location.LEFT)
+            {
+                targetTag=1;
+            } else if (mySpike== SpikeCam.location.MIDDLE) {
+                targetTag=2;
+            }
+            else {   // RIGHT
+                targetTag=3;
+            }
+        }
+        return targetTag;
     }
 
     public void dropPurplePixel(){
         FingerLeft.setPosition(FingerLeftOpen);
-        FingerLeft.setPosition(FingerRightOpen);
+     //   FingerRight.setPosition(FingerRightOpen);
         this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
     }
 
@@ -343,14 +429,14 @@ public class CyDogsSparky extends CyDogsChassis{
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike==SpikeCam.location.LEFT){
             RotateLeft(94,.5,StandardAutonWaitTime);
-            MoveStraight(-17,.5,200);
+            MoveStraight(-35,.5,200);
             dropPurplePixel();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
-            MoveStraight(50,.5,StandardAutonWaitTime);
+            MoveStraight(70,.5,StandardAutonWaitTime);
             dropPurplePixel();
         } else {
             RotateLeft(-90,.5,StandardAutonWaitTime);
-            MoveStraight(-23,.5,200);
+            MoveStraight(-5,.5,200);
             dropPurplePixel();
         }
     }

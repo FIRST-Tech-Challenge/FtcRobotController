@@ -29,15 +29,11 @@ public class SpikeCam {
         NOT_FOUND
     }
 
-    public enum TargetColor{
-        BLUE,RED
-    }
-
-    private TargetColor myColor;
+    private CyDogsChassis.Alliance myColor;
     location spikeLocation = location.NOT_FOUND;
     private LinearOpMode myOpMode;
 
-    public void initialize(LinearOpMode currentOp, SpikeCam.TargetColor targetColor, OpenCvCamera webcamInput) {
+    public void initialize(LinearOpMode currentOp, CyDogsChassis.Alliance targetColor, OpenCvCamera webcamInput) {
         webcam1 = webcamInput;
         myOpMode = currentOp;
         HardwareMap hardwareMap = myOpMode.hardwareMap;
@@ -65,6 +61,7 @@ public class SpikeCam {
     }
 
     public location getSpikeLocation() {
+        myOpMode.telemetry.addLine("SpikeLocation: " + spikeLocation.toString());
         return spikeLocation;
     }
     public void closeStream() {webcam1.stopStreaming();}
@@ -79,7 +76,7 @@ public class SpikeCam {
             Scalar lowHSV = new Scalar(150, 50, 70);
             Scalar highHSV = new Scalar(179, 255, 255);
 
-            if(myColor == TargetColor.RED) {
+            if(myColor == CyDogsChassis.Alliance.RED) {
                 lowHSV = new Scalar(150, 50, 70);
                 highHSV = new Scalar(179, 255, 255);
             } else {
