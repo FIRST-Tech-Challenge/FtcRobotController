@@ -1264,11 +1264,24 @@ public class Robot {
             //turning stays the same
             turning = gamepad1.right_stick_x;
 
+            //Pure Mecanum overrides straight and turn
+            if (gamepad1.right_trigger != 0) {
+                straight = 0;
+                turning = 0;
+                mecanuming = 1;
+            } else if (gamepad1.left_trigger != 0) {
+                straight = 0;
+                turning = 0;
+                mecanuming = -1;
+            }
+
             //set powers using this input
             fLeftPower = straight + turning + mecanuming;
             fRightPower = straight - turning - mecanuming;
             bLeftPower = straight + turning - mecanuming;
             bRightPower = straight - turning + mecanuming;
+
+
 
             //scale powers
             maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
