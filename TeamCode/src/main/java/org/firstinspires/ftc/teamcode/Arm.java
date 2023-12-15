@@ -7,12 +7,13 @@ public class Arm extends EncoderMotorOps {
     private Robot robot;
     private Gamepad gamepad;
     private double manual_speed_factor = 0.5;
-    static private double auto_power = 0.5;
-    static private int pos_pixel  = 1000;
+    static private double auto_power = 0.8;
+    static private int pos_pixel  = 2000;
     static private int pos_folded  = 0;
+    static private int pos_backdrop  = 1200;
     private boolean inAutoOp = false;
     public Arm(Robot robot, Gamepad gamepad) {
-        super(robot, robot.motorArm, pos_folded, pos_pixel, auto_power,true);
+        super(robot, robot.motorArm, pos_folded, pos_pixel, auto_power,false);
         this.robot = robot;
         this.gamepad = gamepad;
     }
@@ -26,8 +27,12 @@ public class Arm extends EncoderMotorOps {
         } else if (gamepad.y) {
             // Goto the bottom
             autoOp(pos_pixel);
+        } else if (gamepad.a) {
+            // Goto the backdrop
+            autoOp(pos_backdrop);
         } else if (gamepad.right_stick_y != 0) {
             manualOp(gamepad.right_stick_y * manual_speed_factor);
+            log("ARM: ", (double) gamepad.right_stick_y);
         } else {
             manualDefaultStop();
         }
