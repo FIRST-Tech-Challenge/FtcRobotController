@@ -167,14 +167,14 @@ public class Robot {
     public void trayToIntakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.411);
         if (blocking) {
-            opMode.sleep(1000);
+            opMode.sleep(500);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.36);
         if (blocking) {
-            opMode.sleep(300);
+            opMode.sleep(100);
         }
     }
 
@@ -1391,7 +1391,7 @@ public class Robot {
     }
 
     public void stackAttachmentOut () {
-        stackAttachment.setPosition(0.75);
+        stackAttachment.setPosition(0.8);
     }
 
     public void stackAttachmentIn () {
@@ -1400,10 +1400,151 @@ public class Robot {
 
     public void autoIntake () {
         intake.setPower(-1);
-        straightBlockingFixHeading(6, true, 0.3);
-        straightBlockingFixHeading(3, false, 0.3);
         straightBlockingFixHeading(3, true, 0.3);
-        opMode.sleep(1000);
+        opMode.sleep(500);
+        straightBlockingFixHeading(2, false, 0.3);
+        straightBlockingFixHeading(3, true, 0.3);
+        opMode.sleep(500);
         intake.setPower(0);
     }
+
+
+    public void fastStraightFixHeading (double inches, boolean forward, double maxPower) {
+
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        double power;
+        double leftPower;
+        double rightPower;
+        double prevLeftPower = 0;
+        double prevRightPower = 0;
+        double endTick;
+        final double KP = 100;
+        final double KD = 0;
+        final double minPower = 0.2;
+
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = 3.14159;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537 / wheelCircIn;  //45.24
+
+        double errorDer;
+        double currentTime;
+        double currentHeading;
+        double targetHeading = botHeading;
+        double headingError;
+        double currentTick;
+
+        if (forward) {
+            currentTick = fLeft.getCurrentPosition();
+        } else {
+            currentTick = bRight.getCurrentPosition();
+        }
+
+        double tickRange = inches * IN_TO_TICK;
+
+        int counter = 0;
+
+        //define desired position
+        if (forward) {
+            endTick = currentTick + tickRange;
+        } else {
+            endTick = currentTick - tickRange;
+        }
+
+        double tickError = endTick - currentTick;
+        double error;
+        boolean setPrevTime = false; //this becomes true when previous time has been set
+
+        while (counter < 10 && opMode.opModeIsActive()) {
+            if (Math.abs(tickError) < ERROR_TOLERANCE_IN_TICKS) {
+                counter++;
+            }
+
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            tickError = endTick - currentTick;
+            error = tickError/tickRange;
+
+            //don't use d component in first loop
+            if (setPrevTime) {
+                errorDer = (error - prevError) / (currentTime - prevTime);
+            } else {
+                errorDer = 0;
+            }
+
+            //find power using PID
+            power = (KP * error * error * error) + (KD * errorDer);
+
+            //make sure there is enough power
+            if (error > 0 && power < minPower) {
+                power = minPower;
+            } else if (error < 0 && power > (-1 * minPower)) {
+                power = (-1 * minPower);
+            }
+
+            //clip power
+            power = Range.clip(power, -1 * maxPower, maxPower);
+
+            //get heading & heading error
+            currentHeading = getCurrentHeading();
+            headingError = currentHeading - targetHeading;
+
+            //default l/r power
+            leftPower = power;
+            rightPower = power;
+
+            //correction based on the current heading
+            if (Math.abs(headingError) > 1) {
+                if (headingError < 0) {
+                    //turn left
+                    if (currentTick < endTick) {
+                        leftPower = 0.1;
+                        rightPower = 0.5;
+                    } else {
+                        leftPower = -0.5;
+                        rightPower = -0.1;
+                    }
+                } else if (headingError > 0) {
+                    //turn right
+                    if (currentTick < endTick) {
+                        leftPower = 0.5;
+                        rightPower = 0.1;
+                    } else {
+                        leftPower = -0.1;
+                        rightPower = -0.5;
+                    }
+                }
+            }
+
+            //set powers
+            if (leftPower != prevLeftPower || rightPower != prevRightPower) {
+                setMotorPower(leftPower, rightPower, leftPower, rightPower);
+            }
+
+            prevRightPower = rightPower;
+            prevLeftPower = leftPower;
+
+            //set variables
+
+            if (forward) {
+                currentTick = fLeft.getCurrentPosition();
+            } else {
+                currentTick = bRight.getCurrentPosition();
+            }
+
+            prevError = error;
+            prevTime = currentTime;
+
+            //when prev time is set, d component can be used - 2nd loop onward
+            setPrevTime = true;
+        }
+        //stop, sleep
+        setMotorPower(0, 0, 0, 0);
+        opMode.sleep(100);
+        currentHeading = getCurrentHeading();
+        currentTick = fLeft.getCurrentPosition();
+        Log.d("pid", "straightBlockingFixHeading: final currentTick is " + currentTick);
+        Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
+    }
+
 }
