@@ -882,13 +882,12 @@ public class Robot {
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "path: Inner Spike");
                 // calculate distances
-                vertical1 = 0;
+                vertical1 = 2;
                 horizontal2 = 20;
                 horizontal3 = 0;
-                vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 22;
+                vertical6 = VERTICAL_TOTAL + vertical1;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 25;
 
                 // move!
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
@@ -898,8 +897,9 @@ public class Robot {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
-                straightBlockingFixHeading(7, true, 0.7); //dropoff, back
+                straightBlockingFixHeading(7,   true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
+                mecanumBlocking(vertical1, isRedAlliance, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
                 straightBlockingFixHeading(vertical6, false, 0.7);
