@@ -950,7 +950,7 @@ public class Robot {
                 vertical4 = 13;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 25;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
