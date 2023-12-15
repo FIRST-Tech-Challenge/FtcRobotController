@@ -8,34 +8,56 @@ public class Claw {
     private Gamepad gamepad;
     private boolean cl_closed = true;
     private boolean cr_closed = true;
-    public Claw(Robot robot, Gamepad gamepad)
-    {
+
+    public Claw(Robot robot, Gamepad gamepad) {
         this.robot = robot;
         this.gamepad = gamepad;
         robot.servoCL.setPosition(0);
         robot.servoCR.setPosition(1);
     }
 
-
-
-    public void operate()
+    public void open_claw_right()
     {
-        if (gamepad.right_trigger > 0.9) {
+        if(cr_closed) {
             robot.servoCL.setPosition(0); // open the claw
+            cr_closed = false;
+        }
+    }
+
+    public void open_claw_left()
+    {
+        if (cl_closed) {
+            robot.servoCR.setPosition(1); // open the claw
             cl_closed = false;
-        } else {
-            if (cl_closed == false) {
-                robot.servoCL.setPosition(0.3); // open the claw
-            }
+        }
+    }
+
+    public void close_claw_left()
+    {
+        if (!cl_closed) {
+            robot.servoCR.setPosition(0.8); // close the claw
             cl_closed = true;
         }
-        if (gamepad.left_trigger > 0.9) {
-            robot.servoCR.setPosition(1);
-            cr_closed = false;
-        } else {
-            if (cr_closed == false) {
-                robot.servoCR.setPosition(0.8); // open the claw
-            }
+    }
+
+    public void close_claw_right()
+    {
+        if (!cr_closed) {
+            robot.servoCL.setPosition(0.3); // close the claw
             cr_closed = true;
         }
     }
+
+    public void operate() {
+        if (gamepad.right_trigger > 0.9) {
+            open_claw_right();
+        } else {
+            close_claw_right();
+        }
+        if (gamepad.left_trigger > 0.9) {
+            open_claw_left();
+        } else {
+            close_claw_left();
+        }
+    }
+}
