@@ -764,6 +764,40 @@ public class Robot {
         }
     }
 
+    public void goToAnyTag() {
+        List<AprilTagDetection> myAprilTagDetections;
+        double distanceToBoard = 12;
+        boolean tagVisible = false;
+        double PIXEL_SIZE = 4;
+        int numberOfDetectionsProcessed = 0;
+
+        while (opMode.opModeIsActive()) {
+            if (numberOfDetectionsProcessed > 5) {
+                break;
+            } else {
+                numberOfDetectionsProcessed++;
+            }
+            myAprilTagDetections = aprilTagProcessor.getDetections();
+            for (AprilTagDetection detection : myAprilTagDetections) {
+                if (detection.metadata != null) {
+                    distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
+                    tagVisible = true;
+                } else {
+                    tagVisible = false;
+                }
+                if (tagVisible)
+                    break;
+            }
+            if (tagVisible)
+                break;
+        }
+        straightBlocking(distanceToBoard, false, 0.6);
+        if (isRedAlliance) {
+            setHeading(-90, 0.75);
+        } else {
+            setHeading(90, 0.75);
+        }
+    }
     //contains most apriltag logic
     public void alignToBoard() {
 
@@ -1433,12 +1467,18 @@ public class Robot {
     }
 
     public void autoIntake () {
+        int count = 0;
+        openClamp(true, false);
         intake.setPower(-1);
-        straightBlockingFixHeading(3, true, 0.3);
-        opMode.sleep(500);
-        straightBlockingFixHeading(2, false, 0.3);
-        straightBlockingFixHeading(3, true, 0.3);
-        opMode.sleep(500);
+        while (count < 3) {
+            setMotorPower(0.3, 0.3, 0.3, 0.3);
+            opMode.sleep(400);
+            setMotorPower(-0.3, -0.3, -0.3, -0.3);
+            opMode.sleep(400);
+            count++;
+        }
+
+        setMotorPower(0, 0, 0, 0);
         intake.setPower(0);
         closeClamp(true);
     }
@@ -1453,7 +1493,7 @@ public class Robot {
         double prevLeftPower = 0;
         double prevRightPower = 0;
         double endTick;
-        final double KP = 100;
+        final double KP = 50;
         final double KD = 0;
         final double minPower = 0.2;
 
@@ -1583,14 +1623,29 @@ public class Robot {
     }
 
     public void boardToCenter () {
-        if ((isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.LEFT)
-                || (!isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.RIGHT)) { // inner tag
-            mecanumBlocking(19, isRedAlliance, 0.7);
-        } else if ((isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.RIGHT)
-                || (!isRedAlliance) && markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // outer tag
-            mecanumBlocking(27, isRedAlliance, 0.7);
-        } else { // center tag
-            mecanumBlocking(23, isRedAlliance, 0.7);
+
+        if (isRedAlliance) {
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { // outer tag
+                mecanumBlocking(28, isRedAlliance, 0.7);
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // inner tag
+                mecanumBlocking(15, isRedAlliance, 0.7);
+            } else { // center tag
+                mecanumBlocking(21, isRedAlliance, 0.7);
+            }
+        } else {
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { // inner tag
+                mecanumBlocking(21, isRedAlliance, 0.7);
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // outer tag
+                mecanumBlocking(34, isRedAlliance, 0.7);
+            } else { // center tag
+                mecanumBlocking(27, isRedAlliance, 0.7);
+            }
+        }
+
+        if (isRedAlliance) {
+            setHeading(-90, 0.7);
+        } else {
+            setHeading(90, 0.7);
         }
     }
 }
