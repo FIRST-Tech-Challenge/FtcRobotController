@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 
-@Autonomous(name = "Blue Right Pixel", group = "Pixel")
-public class BlueRightFTC extends LinearOpMode {
+@Autonomous(name = "BlueLeftTestCS", group = "Pixel")
+public class BlueLeftTestCS extends LinearOpMode {
     CSBaseLIO drive;
     private static double dt;
     private static TimeProfiler updateRuntime;
@@ -27,28 +27,17 @@ public class BlueRightFTC extends LinearOpMode {
     static final Vector2d Traj2 = new Vector2d(-38,-43);
     static final Vector2d Traj3 = new Vector2d(-12, -26);
     static final Vector2d Traj4 = new Vector2d(-12, 72);
-//    static final Vector2d Location2 = new Vector2d(-34, 13);
-//    static final Vector2d Location3 = new Vector2d(-12,13);
 
-    //ElapsedTime carouselTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
         WAIT0,
         FORWARD,
         TODROP,
-        INITSTRAFE,
+        STRAFE,
         MOVEBACK,
         IDLE,
         TOPARK
-//        CLAWCLOSE,
-//        LIFTUP,
-//        MOVEARM,
-//        CLAWOPEN,
-//        LIFTDOWN,
-//        PRELOAD,
-//        TOSTACK,
-//        GRAB
     }
 
     State currentState = State.IDLE;
@@ -77,9 +66,8 @@ public class BlueRightFTC extends LinearOpMode {
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
         drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
-//        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
+        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.FORWARD);
-        //drive.robot.getCappingArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.REST);
 
         TrajectorySequence traj0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(Traj0)
@@ -102,17 +90,6 @@ public class BlueRightFTC extends LinearOpMode {
                 .lineTo(Traj2)
                 .build();
 
-//        TrajectorySequence location1 = drive.trajectorySequenceBuilder(traj4.end())
-//                .lineTo(Traj4)
-//                .build();
-//
-//        TrajectorySequence location2 = drive.trajectorySequenceBuilder(traj4.end())
-//                .lineTo(Location2)
-//                .build();
-//
-//        TrajectorySequence location3 = drive.trajectorySequenceBuilder(traj4.end())
-//                .lineTo(Location3)
-//                .build();
 
         drive.getExpansionHubs().update(getDt());
 
@@ -123,7 +100,7 @@ public class BlueRightFTC extends LinearOpMode {
         double t1 = waitTimer.milliseconds();
 
         CSVP = new CSVP();
-        CSVP.initTfod(hardwareMap, "Blue");
+        CSVP.initTfod(hardwareMap);
 
         double t2 = waitTimer.milliseconds();
 
@@ -153,47 +130,26 @@ public class BlueRightFTC extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
-                    detectCounter++;
-                    if (recog != 0){
-                        if(oldRecog != 0) {
-                            if (CSVP.detect() == recog){
-                                //confidence = recog.getConfidence();
-                                //label = recog.getLabel();
-                                oldRecog = recog;
-                            }
-                        }
-                        else{
-                            oldRecog = recog;
-                        }
-                    }
-                    else {
-                        telemetry.addLine("NULL");
-                    }
-                    if (waitTimer.milliseconds() > 3000 && confidence > 0.01){
+                    if (waitTimer.milliseconds() > 3000){
                         currentState = State.FORWARD;
-                        placement = recog;
                     }
                     break;
-//                case CLAWCLOSE:
-//                    telemetry.addData("Location: ", placement); // added to return if left center or right is detected
-//                    //telemetry.addData("Label: ", label);
-//                    //telemetry.addData("Confidence: ", confidence);
-//                    telemetry.addData("#: ", detectCounter);
-//                    if(waitTimer.milliseconds() >= 1000){
-//                        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
-//                        currentState = State.INITSTRAFE;
-//                        waitTimer.reset();
-//                    }
-//                    break;
 
-//                case INITSTRAFE:
-//                    if(waitTimer.milliseconds() >= 1000){
-//                        drive.followTrajectorySequenceAsync(traj0);
-//                        currentState = State.LIFTUP;
-//                        waitTimer.reset();
-//                    }
-//                    break;
+                case FORWARD:
+                    if (waitTimer.milliseconds() >= 2000) {
+                        drive.followTrajectorySequenceAsync(traj1);
+                        currentState = State.MOVEBACK;
+                        waitTimer.reset();
+                    }
+                    break;
+
+                case STRAFE:
+                    if(waitTimer.milliseconds() >= 1000){
+                        drive.followTrajectorySequenceAsync(traj0);
+                        currentState = State.IDLE;
+                        waitTimer.reset();
+                    }
+                    break;
 
 //                case LIFTUP:
 //                    if(!drive.isBusy() && waitTimer.milliseconds() >= 750){
@@ -209,13 +165,6 @@ public class BlueRightFTC extends LinearOpMode {
 //                    }
 //                    break;
 
-                case FORWARD:
-                    if (waitTimer.milliseconds() >= 2000) {
-                        drive.followTrajectorySequenceAsync(traj1);
-                        currentState = State.MOVEBACK;
-                        waitTimer.reset();
-                    }
-                    break;
 
 //                case TODROP:
 //                    if(waitTimer.milliseconds() >= 2000){

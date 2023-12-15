@@ -125,8 +125,7 @@ public class RedLeftFTC extends LinearOpMode {
         double t1 = waitTimer.milliseconds();
 
         CSVP = new CSVP();
-        //ppcv.initVuforia(hardwareMap);
-        CSVP.initTfod(hardwareMap);
+        CSVP.initTfod(hardwareMap, "Red");
 
         double t2 = waitTimer.milliseconds();
 
