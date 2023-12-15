@@ -148,7 +148,27 @@ public class Intake implements Subsystem {
                 intakeMotor.setPower(0);
                 intakeState = 0;
             }
+        }  else if (intakeState == 31) {//Start output pre-load pixel. AUTO ONLY, DO NOT CHANGE
+            toIntakePos();
+            //intakeMotor.setPower(this.autoOutputPwr);
+            intakeState = 32;
+            outtakeStartTime = System.currentTimeMillis();
+        } else if (intakeState == 32) { //wait for intake to intakePos. AUTO ONLY, DO NOT CHANGE
+            long time = System.currentTimeMillis();
+            if (time - outtakeStartTime >= this.motorDelayForAuto) {
+                intakeState = 33;
+                intakeMotor.setPower(this.autoOutputPwr);
+                outtakeStartTime = System.currentTimeMillis();
+            }
+        } else if (intakeState == 33) {//output, AUTO ONLY, DO NOT CHANGE
+            if (System.currentTimeMillis() - outtakeStartTime >= this.motorDelayForAutoOutput) {
+                intakeState = 0;
+                intakeMotor.setPower(0);
+                toBasePosYield();
+            }
         }
+
+
         //intakeMotor.setPower(motorPosition);
     }
 }

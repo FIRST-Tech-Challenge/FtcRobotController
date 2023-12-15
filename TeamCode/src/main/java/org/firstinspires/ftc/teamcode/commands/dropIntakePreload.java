@@ -18,7 +18,7 @@ public class dropIntakePreload implements Command {
 
     @Override
     public void start() {
-        this.robot.intake.intakeState = 11;
+        this.robot.intake.intakeState = 31;
     }
 
     @Override
