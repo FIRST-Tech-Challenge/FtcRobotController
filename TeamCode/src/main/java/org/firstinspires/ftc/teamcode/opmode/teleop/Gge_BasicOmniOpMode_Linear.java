@@ -196,7 +196,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 leftBackDrive.setPower(0);
                 rightBackDrive.setPower(0);
                 // Pickup automation
-                intake.GrabAndStowPixel();  /// was intake.ClawOpen();
+                intake.GrabAndStowPixel();
                 conveyor.setPosition(0);
                 SystemClock.sleep (1500);
                 conveyor.setPosition(0.5);
