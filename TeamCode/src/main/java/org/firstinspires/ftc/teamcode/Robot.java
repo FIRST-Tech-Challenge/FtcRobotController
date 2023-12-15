@@ -875,7 +875,7 @@ public class Robot {
             Log.d("vision", "path: Pos " + markerPos);
             Log.d("vision", "path: Tag " + wantedAprTagId);
 
-            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 51;
+            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 53;
             VERTICAL_TOTAL = 76;
 
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
@@ -884,10 +884,9 @@ public class Robot {
                 // calculate distances
                 vertical1 = 2;
                 horizontal2 = 20;
-                horizontal3 = 0;
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2;
                 vertical6 = VERTICAL_TOTAL + vertical1;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 25;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
 
                 // move!
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
@@ -919,7 +918,7 @@ public class Robot {
                 vertical4 = vertical1; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 33;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 35;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
