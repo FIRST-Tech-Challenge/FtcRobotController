@@ -915,7 +915,7 @@ public class Robot {
                 vertical1 = 11;
                 horizontal2 = 20;
                 horizontal3 = 12;
-                vertical4 = vertical1; //adjust for left
+                vertical4 = 9; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
                 horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 35;
