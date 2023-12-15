@@ -80,7 +80,7 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
-    static final int top_linearslide_ticks = 1825; //should be changed to 2000
+    static final int top_linearslide_ticks = 1750; // adjusted to proper field height at T1 from memory
 
     static final int mid_linearslide_ticks = 1000;
 
@@ -103,6 +103,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     Servo rightClaw;
     Servo wrist;
     Servo conveyor;
+
     private IMU imu;
 
     IntakeMovement intake;
@@ -189,6 +190,12 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Controls the intake
             if (gamepad1.a){
+                // Added safety to stop robot if this happens while its still moving.
+                leftFrontDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                // Pickup automation
                 intake.GrabAndStowPixel();  /// was intake.ClawOpen();
                 conveyor.setPosition(0);
                 SystemClock.sleep (1500);
@@ -212,18 +219,22 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 linearslidemovement.Movelinearslide(top_linearslide_ticks);
             }
 
-            if (gamepad1.left_bumper){
+            if (gamepad1.left_trigger > 0.4) {
+                // Run conveyor
+                conveyor.setPosition(0); // Request from drive team to make the conveyor a toggle on left trigger.
+            } else if (gamepad1.left_trigger <= 0.4) {
+                // Stop conveyor
                 conveyor.setPosition(0.5);
-            } else if (gamepad1.right_bumper) {
-                conveyor.setPosition(0);
             }
 
             // Use an analog trigger to add up to a 50% boost to speed
             powerFactor = basePowerFacter + (gamepad1.right_trigger * boostPowerFacter);
 
             // If the linear slides are raised, force powerFactor to slow (i.e. 25%)
-            if (leftLinearSlide.getCurrentPosition() > 400) {
-                powerFactor = 0.25;
+            if (leftLinearSlide.getCurrentPosition() > mid_linearslide_ticks + 100) {
+                powerFactor = 0.35;
+            } else if (leftLinearSlide.getCurrentPosition() > low_linearslide_ticks + 100) {
+                powerFactor = 0.50;
             }
 
             double max;

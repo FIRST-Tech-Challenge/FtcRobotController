@@ -119,6 +119,7 @@ public class IntakeMovement {
 
             telemetry.update();
         }
+
         intakeIsSafe = true;
 
     }
@@ -178,9 +179,9 @@ public class IntakeMovement {
         while (servoMoveEndTime >= servoRuntime.time()){
             telemetry.addData("Running GrabAndSlowSequence...", FLIP_MIN_POS);
             telemetry.update();
-            ClawOpen();
-            FlipDown();
-            sleep(500);
+            //ClawOpen(); // This automation was removed because the drive team found it useful to
+            //FlipDown(); // lower the wrist and plow into the pixel before trying to close the
+            //sleep(500); // claw.  Will still Grab and Stow but wont Lower Grab and Stow.
             ClawClosed();
             sleep(500);
             FlipUp();
