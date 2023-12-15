@@ -16,9 +16,14 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.FTCDashboardPackets;
+
+import java.util.Arrays;
+
 public class AutonomousAwareness {
     /** Width of the track */
     static final double TRACK_WIDTH = 13.7;
+    public final static FTCDashboardPackets dbp = new FTCDashboardPackets();
 
     /** Amount of ticks per one inch */
     static double TICKS_TO_INCHES;
@@ -26,13 +31,13 @@ public class AutonomousAwareness {
     static final double CENTER_WHEEL_OFFSET = 2.4;
     static final double WHEEL_DIAMETER = 4.0; // inches
 
-    private static MotorEx encoderLeft, encoderRight, encoderBack;
+    private static DcMotor encoderLeft, encoderRight, encoderBack;
     static HolonomicOdometry holOdom;
     
     static OdometrySubsystem odometry;
 
     public static MecanumDrive m_robotDrive;
-    public static DcMotor fL, fR, bL, bR;
+    public static Motor fL, fR, bL, bR;
 
     public static Waypoint[] currentTask;
     public static Path m_path = new Path();
@@ -45,16 +50,19 @@ public class AutonomousAwareness {
         BLUE_RIGHT
     }
 
-    public void initOdometry(MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
+    public void initOdometry(DcMotor encodeLeft, DcMotor encodeRight, DcMotor encodeBack) { //MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
         encoderLeft = encodeLeft;
         encoderRight = encodeRight;
         encoderBack = encodeBack;
 
-        TICKS_TO_INCHES = WHEEL_DIAMETER * Math.PI / encoderLeft.getCPR();
+        //TICKS_TO_INCHES = WHEEL_DIAMETER * Math.PI / encoderLeft.getCPR();
+        TICKS_TO_INCHES = 15.3;
 
+        /*
         encoderLeft.setDistancePerPulse(TICKS_TO_INCHES);
         encoderRight.setDistancePerPulse(TICKS_TO_INCHES);
         encoderBack.setDistancePerPulse(TICKS_TO_INCHES);
+         */
 
         holOdom = new HolonomicOdometry(
             () -> encoderLeft.getCurrentPosition() * TICKS_TO_INCHES,
@@ -65,13 +73,16 @@ public class AutonomousAwareness {
 
         odometry = new OdometrySubsystem(holOdom);
 
-        m_robotDrive = new MecanumDrive((Motor) fL, (Motor) fR, (Motor) bL, (Motor) bR);
+        m_robotDrive = new MecanumDrive(false, fL, fR, bL, bR);
 
-        addToPath(new StartWaypoint(0, 0));
+        resetPath();
+        dbp.createNewTelePacket();
+        dbp.put("Waypoints", Arrays.toString(m_path.toArray()));
+        dbp.send(true);
+
+        addToPath(new StartWaypoint());
         addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
-        addToPath(new EndWaypoint(
-                400, 0, 0, 0.5,
-                0.5, 30, 0.8, 1));
+        addToPath(new EndWaypoint());
         initPath();
         followPath();
     }
@@ -82,15 +93,22 @@ public class AutonomousAwareness {
      * @param useDistanceSensor whether or not to use the distance sensor for more accurate positioning
      */
     public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor,
-                               DcMotor fL, DcMotor fR, DcMotor bL, DcMotor bR,
-                               MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
-        initOdometry(encodeLeft, encodeRight, encodeBack);
-
+                               Motor fL, Motor fR, Motor bL, Motor bR,
+                               DcMotor encodeLeft, DcMotor encodeRight, DcMotor encodeBack) {
         // Init motors
-        this.fL = fL;
-        this.fR = fR;
-        this.bL = bL;
-        this.bR = bR;
+        AutonomousAwareness.fL = fL;
+        AutonomousAwareness.fR = fR;
+        AutonomousAwareness.bL = bL;
+        AutonomousAwareness.bR = bR;
+
+        if (AutonomousAwareness.fL == null) {
+            dbp.createNewTelePacket();
+            dbp.put("Error", "Front Left Wheel is null");
+            dbp.send(false);
+            return;
+        }
+
+        initOdometry(encodeLeft, encodeRight, encodeBack);
     }
 
     @Deprecated
@@ -113,7 +131,15 @@ public class AutonomousAwareness {
     }
 
     public static void followPath() {
-        m_path.followPath(m_robotDrive, holOdom);
+        try {
+            m_path.followPath(m_robotDrive, holOdom);
+        } catch (IllegalStateException e) {
+            dbp.createNewTelePacket();
+            dbp.put("Follow Path", "Error");
+            dbp.send(false);
+            m_path.reset();
+            return;
+        }
     }
 
     public static void resetPath() {

@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.util.AutonomousAwareness;
 
 @Config
@@ -110,13 +114,34 @@ public final class AutoRobotOpMode {
         @Override
         public void init() {
             super.init();
+            Motor lFD = null;
+            Motor rFD = null;
+            Motor lBD = null;
+            Motor rBD = null;
+            // Temporary Fix
+            try {
+                lFD = new Motor(hardwareMap, "fl_drv");
+                rFD = new Motor(hardwareMap, "fr_drv");
+                lBD = new Motor(hardwareMap, "bl_drv");
+                rBD = new Motor(hardwareMap, "br_drv");
+            } catch(Exception e) {
+                log("FATAL ERROR", "Could not initialize drive motors: "+e.getMessage());
+                sendTelemetryPacket(true);
+                terminateOpModeNow();
+                return;
+            }
+            /*
             AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
                     this.leftFrontDrive, this.rightFrontDrive, this.leftBackDrive, this.rightBackDrive,
+                    this.encoderLeft, this.encoderRight, this.encoderBack);
+             */
+            AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
+                    lFD, rFD, lBD, rBD,
                     this.encoderLeft, this.encoderRight, this.encoderBack);
         }
 
         @Override
-        public void robotLoop() {
+        public void robotLoop(double delta) {
         }
     }
 }

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.RobotOpMode.ERROR;
 import static org.firstinspires.ftc.teamcode.RobotOpMode.INFO;
 import static org.firstinspires.ftc.teamcode.RobotOpMode.WARNING;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -35,13 +36,18 @@ public class RobotHardwareInitializer {
         }
 
         try {
+            /*
             robot.encoderLeft = new MotorEx(hardwareMap, "encoderLeft");
             robot.encoderRight = new MotorEx(hardwareMap, "encoderRight");
             robot.encoderBack = new MotorEx(hardwareMap, "encoderBack");
+             */
+            robot.encoderLeft = robot.hardwareMap.dcMotor.get("encoderLeft");
+            robot.encoderRight = robot.hardwareMap.dcMotor.get("encoderRight");
+            robot.encoderBack = robot.hardwareMap.dcMotor.get("encoderBack");
         } catch(Exception e) {
             robot.log("FATAL ERROR", "Could not initialize odometry: "+e.getMessage());
             robot.sendTelemetryPacket(true);
-            //robot.terminateOpModeNow();
+            robot.terminateOpModeNow();
         }
     }
 
@@ -50,8 +56,8 @@ public class RobotHardwareInitializer {
             robot.armMotor = robot.hardwareMap.get(DcMotor.class, "arm");
             robot.armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-            robot.wristServo = robot.hardwareMap.get(CRServo.class, "wrist_servo");
-            robot.wristServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            robot.wristServo = robot.hardwareMap.get(Servo.class, "wrist_servo");
+            robot.wristServo.setDirection(Servo.Direction.FORWARD);
 
             // Prepare the arm motors for movement
             robot.log(INFO, "Arm hardware initialized successfully!");

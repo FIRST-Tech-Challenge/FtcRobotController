@@ -16,11 +16,11 @@ public class DriverOp extends RobotOpMode {
     }
 
     @Override
-    public void robotLoop() {
+    public void robotLoop(double delta) {
         //gamePadMoveRobot();
 
         movement(gamepad1, AnalogInput.LEFT_STICK_Y, AnalogInput.LEFT_STICK_X, AnalogInput.RIGHT_STICK_X);
-        wrist(gamepad1, DigitalInput.DPAD_UP, DigitalInput.DPAD_DOWN);
+        wrist(gamepad1, DigitalInput.DPAD_UP, DigitalInput.DPAD_DOWN, delta);
         arm(gamepad1, AnalogInput.RIGHT_TRIGGER, AnalogInput.LEFT_TRIGGER);
 
         if(gamepad1.dpad_up) {
@@ -51,9 +51,12 @@ public class DriverOp extends RobotOpMode {
     public void extension(Gamepad gamepad, AnalogInput forward, AnalogInput backward) {
 
     }
-    public void wrist(Gamepad gamepad, DigitalInput up, DigitalInput down) {
-        double power = (up.getValue(gamepad)?1:0) + (down.getValue(gamepad)?-1:0);
-        wristServo.setPower(power/2d);
+
+    public void wrist(Gamepad gamepad, DigitalInput up, DigitalInput down, double delta) {
+        double power = ((up.getValue(gamepad)?1:0) + (down.getValue(gamepad)?-1:0));
+        power++;
+        power/=2d;
+        wristServo.setPosition(power);
         createTelemetryPacket();
         log("WRIST", "POWER: "+power);
         sendTelemetryPacket(true);

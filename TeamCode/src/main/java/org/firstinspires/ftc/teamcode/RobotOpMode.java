@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -28,8 +29,8 @@ public abstract class RobotOpMode extends OpMode {
     // Hardware variables
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor;
-    public CRServo wristServo;
-    public MotorEx encoderLeft, encoderRight, encoderBack;
+    public Servo wristServo;
+    public DcMotor encoderLeft, encoderRight, encoderBack;
     public BNO055IMU imu;
     public RevColorSensorV3 colorSensor;
     public RevTouchSensor touchSensor;
@@ -70,15 +71,21 @@ public abstract class RobotOpMode extends OpMode {
         RobotHardwareInitializer.initializeTouchSensor(this);
 
         RobotHardwareInitializer.endInitialization(this);
+
+        deltaTime = new ElapsedTime();
     }
+
+    ElapsedTime deltaTime;
 
     @Override
     public final void loop() {
-        robotLoop();
+        double millis = deltaTime.milliseconds();
+        deltaTime.reset();
+        robotLoop(millis);
         telemetry.update();
     }
 
-    public abstract void robotLoop();
+    public abstract void robotLoop(double delta);
 
     @Override
     public void stop() {
