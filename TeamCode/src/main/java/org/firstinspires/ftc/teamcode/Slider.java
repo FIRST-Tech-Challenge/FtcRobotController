@@ -18,7 +18,7 @@ public class Slider extends EncoderMotorOps {
 
     public Slider(Robot robot, Gamepad gamepad)
     {
-        super(robot, robot.motorSlider, pos_min, pos_max, auto_power, true);
+        super(robot, robot.motorSlider, pos_min, pos_max, auto_power, false);
         this.robot = robot;
         this.gamepad = gamepad;
     }
@@ -28,11 +28,9 @@ public class Slider extends EncoderMotorOps {
         if (gamepad.dpad_down) {
             // Go to the bottom
             autoOp(pos_min);
-            log("AutoOp GoDown", 0.0);
         } else if (gamepad.dpad_up) {
             // Goto the middle
             autoOp(pos_middle);
-            log("AutoOp GoMiddle", 0.0);
         } else if (gamepad.left_stick_y != 0) {
             manualOp(gamepad.left_stick_y * manual_speed_factor);
         } else {

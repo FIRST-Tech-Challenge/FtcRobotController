@@ -16,7 +16,6 @@ public class EncoderMotorOps {
     private int pos_min = 0;
     private int pos_max = 0;
     private double auto_power = 0.5;
-    private double cur_auto_power = 0.5;
     private double cur_manual_power = 0.5;
     private int cur_position = 0;
 
@@ -33,8 +32,6 @@ public class EncoderMotorOps {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setTargetPositionTolerance(tolerance);
-        robot.telemetry.addData("ENCODER OPSS: ", "CREATED");
-        robot.telemetry.update();
     }
     public void logUpdate()
     {
@@ -43,7 +40,7 @@ public class EncoderMotorOps {
         robot.telemetry.addData("AutoOp: ", inAutoOp);
         robot.telemetry.addData("AutoOp Ticks: ", auto_ticks);
         robot.telemetry.addData("Current Position: ", cur_position);
-        robot.telemetry.addData("AutoOp Power: ", cur_auto_power);
+        robot.telemetry.addData("AutoOp Power: ", auto_power);
         robot.telemetry.addData("ManualOp: ", !inAutoOp);
         robot.telemetry.addData("Manual Power: ", cur_manual_power);
         robot.telemetry.update();
@@ -56,11 +53,11 @@ public class EncoderMotorOps {
     private boolean limitCheck(boolean up) {
         cur_position = motor.getCurrentPosition();
         if (!up && cur_position <= 0) {
-            log("Reached Bottom: Stopping the Slider", 0.0);
+            //log("Reached Bottom: Stopping the Slider", 0.0);
             return true;
         }
         if (up && cur_position >= pos_max) {
-            log("Reached Max Height: Stopping the Slider", (double)pos_max);
+            //log("Reached Max Height: Stopping the Slider", (double)pos_max);
             return true;
         }
         return false;
@@ -74,10 +71,14 @@ public class EncoderMotorOps {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motor.setPower(0);
         }
+
+        /*
         if (limitCheck(power < 0)) {
-            //motor.setPower(0);
-           // return;
+            motor.setPower(0);
+            return;
         }
+        */
+        cur_position = motor.getCurrentPosition();
         motor.setPower(-power);
         cur_manual_power = -power;
     }
@@ -88,11 +89,10 @@ public class EncoderMotorOps {
         if (in_tolerance(cur_position, target)) {
             return;
         }
-        cur_auto_power = (target < cur_position) ? -auto_power : -auto_power;
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setTargetPosition(target);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(cur_auto_power);
+        motor.setPower(-auto_power);
         inAutoOp = true;
         auto_ticks = target;
     }
