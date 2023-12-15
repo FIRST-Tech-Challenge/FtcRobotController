@@ -22,7 +22,8 @@ public class Driver extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
 
     static final double ARM_SPEED = 1.0;
-    static final int ARM_DROP_POS = -4530;
+    static final int ARM_DROP_POS_LOW = -4530;
+    static final int ARM_DROP_POS_HIGH = -3550;
     static final int ARM_DRIVE_POS = -800;
     static final int ARM_INTAKE_POS = 0;
     static final double LEFT_GRIPPER_OPEN = 0.95;
@@ -33,7 +34,8 @@ public class Driver extends LinearOpMode {
 
     //was -0.5
     static final double RIGHT_GRIPPER_CLOSE = -0.9;
-    static final double WRIST_DROP_POS = 0.7;
+    static final double WRIST_DROP_POS_LOW = 0.75;
+    static final double WRIST_DROP_POS_HIGH = 0.9;
     static final double WRIST_INTAKE_POS = 0.3;
     private Servo leftGripper;
     private Servo rightGripper;
@@ -209,15 +211,18 @@ public class Driver extends LinearOpMode {
 
 
                     if (gamepad2.y) {
-                        wristServo.setPosition(WRIST_DROP_POS);
-                        moveArmMotorToPosition(ARM_DROP_POS, 2);
+                        wristServo.setPosition(WRIST_DROP_POS_HIGH);
+                        moveArmMotorToPosition(ARM_DROP_POS_HIGH, 2);
                     }
                     else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     } else if (gamepad2.dpad_up) {
-                        moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
                         wristServo.setPosition(WRIST_INTAKE_POS);
+                        moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
+                    }else if (gamepad2.dpad_down) {
+                        wristServo.setPosition(WRIST_DROP_POS_LOW);
+                        moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
                     }
 
                     //and here put your logic to move the arm up and down
