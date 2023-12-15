@@ -73,7 +73,7 @@ public class DriveTrain {
 
         // The next few lines make the direction boolean switch when the button is pressed.
         // It includes a timer to avoid mistakes.
-        if (time.time() > .25 && !directionToggle && !directionButton) {
+        if (time.time() > .25 && !directionToggle && directionButton) {
             directionToggle = true;
             time.reset();
         }

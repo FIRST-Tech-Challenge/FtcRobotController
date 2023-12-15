@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PlaneHang {
     Servo droneServo;
-    boolean droneToggle = false;
+    boolean droneToggle = true;
 
     public PlaneHang(HardwareMap hMap) {
         droneServo = hMap.get(Servo.class, "droneServo");
@@ -19,12 +19,12 @@ public class PlaneHang {
         if (button && time.time() > .75 && !droneToggle) {
             droneToggle = true;
             time.reset();
-
+            droneServo.setPosition(0.0);
 
         } else if (button && time.time() > .75 && droneToggle) {
             droneToggle = false;
             time.reset();
-
+            droneServo.setPosition(1.0);
         }
     }
 }
