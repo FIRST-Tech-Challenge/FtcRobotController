@@ -1235,16 +1235,8 @@ public class Robot {
 
             // GAMEPAD 1: DRIVER CONTROLS
 
-            // right bumper launches drone
+            // b aligns bot to board
             if (gamepad1.b) {
-                //planeLauncher.setPosition(0.45);
-                planeLauncher.setPower(-1);
-            } else {
-                planeLauncher.setPower(0);
-            }
-
-            // x aligns bot to board
-            if (gamepad1.x) {
                 if (isRedAlliance) {
                     setHeading(-90, 0.7);
                 } else {
@@ -1266,6 +1258,14 @@ public class Robot {
                 slowMode = false;
             }
 
+            // both bumper launches drone
+            if (gamepad1.right_bumper && gamepad1.left_bumper) {
+                planeLauncher.setPower(-1);
+            } else {
+                planeLauncher.setPower(0);
+            }
+
+
             //setting forward and mecanum based on where the front is
             straight = gamepad1.left_stick_y * frontFacing * -1;
             mecanuming = gamepad1.left_stick_x * frontFacing;
@@ -1277,11 +1277,11 @@ public class Robot {
             if (gamepad1.right_trigger != 0) {
                 straight = 0;
                 turning = 0;
-                mecanuming = 1;
+                mecanuming = 0.7;
             } else if (gamepad1.left_trigger != 0) {
                 straight = 0;
                 turning = 0;
-                mecanuming = -1;
+                mecanuming = -0.7;
             }
 
             //set powers using this input
@@ -1396,7 +1396,7 @@ public class Robot {
                 }
             }
 
-
+/*
             if (gamepad2.x) {
                 linearSlideFlag = true;
                 targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
@@ -1406,6 +1406,8 @@ public class Robot {
                 boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
                 linearSlideFlag = !done;
             }
+            */
+
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
         }
     }
