@@ -861,7 +861,7 @@ public class Robot {
         double vertical6;
         double horizontal2;
         double horizontal3;
-        double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
+        double HORIZONTAL_TOTAL;
         double horizontal5;
         double horizontal7;
 
@@ -883,7 +883,7 @@ public class Robot {
             Log.d("vision", "path: Pos " + markerPos);
             Log.d("vision", "path: Tag " + wantedAprTagId);
 
-            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 53;
+            HORIZONTAL_TOTAL = 53;
             VERTICAL_TOTAL = 76;
 
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
@@ -892,9 +892,9 @@ public class Robot {
                 // calculate distances
                 vertical1 = 2;
                 horizontal2 = 20;
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2;
+                horizontal5 = HORIZONTAL_TOTAL - horizontal2;
                 vertical6 = VERTICAL_TOTAL + vertical1;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
+                horizontal7 = HORIZONTAL_TOTAL - 27;
 
                 // move!
                 straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
@@ -924,9 +924,9 @@ public class Robot {
                 horizontal2 = 20;
                 horizontal3 = 12;
                 vertical4 = 9; //adjust for left
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                horizontal5 = HORIZONTAL_TOTAL - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 35;
+                horizontal7 = HORIZONTAL_TOTAL - 35;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -955,9 +955,9 @@ public class Robot {
                 horizontal2 = 30;
                 horizontal3 = 10;
                 vertical4 = 13;
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                horizontal5 = HORIZONTAL_TOTAL - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
+                horizontal7 = HORIZONTAL_TOTAL - 30;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
