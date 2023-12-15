@@ -984,7 +984,7 @@ public class Robot {
 
     public void parkBot(boolean longPath) {
         /*
-         * Where to park depends on 3 actors
+         * Where to park depends on 3 factors
          * long or short run  (not optimized for combining this yet)
          * Red or blue alliance
          * position of april tag
@@ -1438,6 +1438,7 @@ public class Robot {
         straightBlockingFixHeading(3, true, 0.3);
         opMode.sleep(500);
         intake.setPower(0);
+        closeClamp(true);
     }
 
 
@@ -1579,4 +1580,15 @@ public class Robot {
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
     }
 
+    public void boardToCenter () {
+        if ((isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.LEFT)
+                || (!isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.RIGHT)) { // inner tag
+            mecanumBlocking(19, isRedAlliance, 0.7);
+        } else if ((isRedAlliance && markerPos == MarkerDetector.MARKER_POSITION.RIGHT)
+                || (!isRedAlliance) && markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // outer tag
+            mecanumBlocking(27, isRedAlliance, 0.7);
+        } else { // center tag
+            mecanumBlocking(23, isRedAlliance, 0.7);
+        }
+    }
 }
