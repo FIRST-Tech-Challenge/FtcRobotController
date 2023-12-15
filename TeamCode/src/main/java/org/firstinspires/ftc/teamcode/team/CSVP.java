@@ -80,10 +80,10 @@ public class CSVP {
         tfod = new TfodProcessor.Builder()
                 .setModelAssetName(TFOD_MODEL_ASSET)
                 .setModelLabels(LABELS)
-                .setIsModelTensorFlow2(true)
-                .setIsModelQuantized(true)
-                .setModelInputSize(300)
-                .setModelAspectRatio(16.0 / 9.0)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
                 .build();
 
         // Create the vision portal by using a builder.
@@ -129,8 +129,8 @@ public class CSVP {
     public void initTfod(HardwareMap hardwareMap) {
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
-                .setModelInputSize(300)
-                .setModelAspectRatio(16.0 / 9.0)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
                 .build();
 
         // Create the vision portal by using a builder.
