@@ -92,7 +92,7 @@ public class RedNear extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER - TAG_DIST)
+                                .lineTo(new Vector2d(48, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
@@ -100,7 +100,7 @@ public class RedNear extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER + TAG_DIST)
+                                .lineTo(new Vector2d(5, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
@@ -127,7 +127,7 @@ public class RedNear extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER)
+                                .lineTo(new Vector2d(48, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
@@ -135,7 +135,7 @@ public class RedNear extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER)
+                                .lineTo(new Vector2d(5, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
@@ -162,7 +162,7 @@ public class RedNear extends LinearOpMode {
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeLeft(PARK_STRAFE_MIDDLE_TO_CENTER + TAG_DIST)
+                                .lineTo(new Vector2d(48, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
@@ -170,7 +170,7 @@ public class RedNear extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .strafeRight(PARK_STRAFE_MIDDLE_TO_CENTER - TAG_DIST)
+                                .lineTo(new Vector2d(5, -35))
                                 //.forward(PARK_FORWARD)
                                 .build()
                 ));
