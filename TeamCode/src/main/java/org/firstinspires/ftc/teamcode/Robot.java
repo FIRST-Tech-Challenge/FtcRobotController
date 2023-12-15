@@ -132,7 +132,7 @@ public class Robot {
         telemetry.update();
     }
 
-    public void moveLinearSlidesByTicksParallel(double targetDistanceInTicks) {
+    public boolean moveLinearSlidesByTicksParallel(double targetDistanceInTicks) {
 
         //target distance negative when going up
         double remainingDistanceLowParallel = targetDistanceInTicks - lsFront.getCurrentPosition();
@@ -147,12 +147,20 @@ public class Robot {
             lsBack.setPower(remainingDistanceLowParallel * 0.002);
 
             telemetry.update();
+            return false;
         } else {
             lsFront.setPower(0);
             lsBack.setPower(0);
+            return true;
         }
 
-        telemetry.update();
+    }
+
+    public double getCurrentLinearSlideTicks() {
+
+        double currentTicks = lsFront.getCurrentPosition();
+
+        return currentTicks;
     }
 
 
@@ -1220,7 +1228,9 @@ public class Robot {
         double bRightPowerPrev = 0;
         boolean willOpenClamp = false;
 
+        double targetLinearSlideTicks = 0;
 
+        boolean linearSlideFlag = false;
         while (opMode.opModeIsActive()) {
 
             // GAMEPAD 1: DRIVER CONTROLS
@@ -1386,6 +1396,16 @@ public class Robot {
                 }
             }
 
+
+            if (gamepad2.x) {
+                linearSlideFlag = true;
+                targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
+            }
+
+            if (linearSlideFlag = true) {
+                boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
+                linearSlideFlag = !done;
+            }
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
         }
     }
