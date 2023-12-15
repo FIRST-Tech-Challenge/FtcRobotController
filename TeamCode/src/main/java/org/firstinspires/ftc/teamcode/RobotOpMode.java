@@ -28,7 +28,7 @@ public abstract class RobotOpMode extends OpMode {
     // Hardware variables
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor;
-    public CRServo wristServo;
+    public Servo wristServo;
     public MotorEx encoderLeft, encoderRight, encoderBack;
     public BNO055IMU imu;
     public RevColorSensorV3 colorSensor;
@@ -70,15 +70,21 @@ public abstract class RobotOpMode extends OpMode {
         RobotHardwareInitializer.initializeTouchSensor(this);
 
         RobotHardwareInitializer.endInitialization(this);
+
+        deltaTime = new ElapsedTime();
     }
+
+    ElapsedTime deltaTime;
 
     @Override
     public final void loop() {
-        robotLoop();
+        double millis = deltaTime.milliseconds();
+        deltaTime.reset();
+        robotLoop(millis);
         telemetry.update();
     }
 
-    public abstract void robotLoop();
+    public abstract void robotLoop(double delta);
 
     @Override
     public void stop() {

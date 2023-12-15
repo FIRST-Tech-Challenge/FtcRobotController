@@ -116,7 +116,7 @@ public final class AutoRobotOpMode {
         }
 
         @Override
-        public void robotLoop() {
+        public void robotLoop(double delta) {
         }
     }
 }

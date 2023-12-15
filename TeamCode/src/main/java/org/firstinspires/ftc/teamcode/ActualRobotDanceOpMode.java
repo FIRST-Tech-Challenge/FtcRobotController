@@ -18,7 +18,7 @@ public class ActualRobotDanceOpMode extends RobotOpMode {
     }
 
     @Override
-    public void robotLoop() {
+    public void robotLoop(double delta) {
         if(currentState == null) {
             currentState = START;
         }

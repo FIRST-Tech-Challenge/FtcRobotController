@@ -79,7 +79,7 @@ public class TestingStuff extends RobotOpMode {
     }
 
     @Override
-    public void robotLoop() {
+    public void robotLoop(double delta) {
         gamePadMoveRobot();
     }
 }

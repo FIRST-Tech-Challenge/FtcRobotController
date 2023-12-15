@@ -50,8 +50,8 @@ public class RobotHardwareInitializer {
             robot.armMotor = robot.hardwareMap.get(DcMotor.class, "arm");
             robot.armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-            robot.wristServo = robot.hardwareMap.get(CRServo.class, "wrist_servo");
-            robot.wristServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            robot.wristServo = robot.hardwareMap.get(Servo.class, "wrist_servo");
+            robot.wristServo.setDirection(Servo.Direction.FORWARD);
 
             // Prepare the arm motors for movement
             robot.log(INFO, "Arm hardware initialized successfully!");
