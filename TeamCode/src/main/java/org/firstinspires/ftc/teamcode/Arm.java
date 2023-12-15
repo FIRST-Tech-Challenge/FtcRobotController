@@ -115,11 +115,12 @@ public class Arm {
         }
 
         // Stop all motion & Turn off RUN_TO_POSITION
+        arm_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         arm_right.setPower(0);
         arm_left.setPower(0);
 
-        arm_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void sendTelemetry() {

@@ -511,16 +511,16 @@ public class FirstAutonomousIteration extends LinearOpMode {
                     if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
                         //Drive straight until ready to scan the apriltag.
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 26.5, sideMul * (90), false, true);
+                        driveStraight(DRIVE_SPEED * 5, 26.5 * sideMul, sideMul * (90), false, true);
 
                     } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {                        //Drive straight until ready to scan the apriltag.
                         //Drive straight until ready to scan the apriltag.
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 20, sideMul * (90), false, true);
+                        driveStraight(DRIVE_SPEED * 5, 20* sideMul, sideMul * (90), false, true);
 
                     } else if (cubeIsFound == FoundTeamProp.FOUND_RIGHT) {
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 33, sideMul * (90), false, true);
+                        driveStraight(DRIVE_SPEED * 5, 33* sideMul, sideMul * (90), false, true);
 
                     }
 
