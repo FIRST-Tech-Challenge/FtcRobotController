@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class BlueLeft extends LinearOpMode {
     Webcam webcam;
     private AutoMethods autoMethods;
-    private boolean isLeft = true, isRight = false, isCenter = false;
+
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
 
@@ -30,32 +30,21 @@ public class BlueLeft extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Webcam.Position pos= Webcam.Position.Left;
 
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         while(!opModeIsActive()) {
 
-            Double x = webcam.CheckCamera();
-            if (x > 450 || x == 0) {
-                isLeft = false;
-                isRight = true;
-                isCenter = false;
-            } else if (x < 150) {
-                isLeft = true;
-                isRight = false;
-                isCenter = false;
-            } else {
-                isLeft = false;
-                isRight = false;
-                isCenter = true;
-            }
-            telemetry.addData("detected x", x);
+            pos = webcam.CheckCamera();
+
+            telemetry.addData("detected x", pos);
             telemetry.update();
             sleep (2000);
 
         }
-        if(isLeft) RunLeft(autoMethods);
-        else if (isRight) RunRight(autoMethods);
+        if(pos == Webcam.Position.Left) RunLeft(autoMethods);
+        else if (pos == Webcam.Position.Right) RunRight(autoMethods);
         else RunCenter(autoMethods);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {

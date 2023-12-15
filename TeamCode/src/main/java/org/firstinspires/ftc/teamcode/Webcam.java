@@ -50,6 +50,12 @@ public class Webcam {
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
 
+    public enum Position {
+        Left,
+        Center,
+        Right
+    }
+
     public Webcam(CameraName camera, boolean isRed) {
 
 
@@ -109,14 +115,23 @@ public class Webcam {
 
     }
 
-    public double CheckCamera() {
+    public Position CheckCamera() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         double x = 0;
+        Position pos = Position.Center;
 
         for (Recognition recognition : currentRecognitions) {
             x = ((recognition.getLeft() + recognition.getRight()) / 2);
         }
-        return x;
+
+        if (x > 450 || x == 0){
+             pos = Position.Right;
+        }
+        else if (x < 150){
+          pos = Position.Left;
+        }
+
+        return pos;
 
     }
 
