@@ -17,6 +17,7 @@ public class ShortRedAuto extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
+        boolean secondPath = false;
 
         robot.detectPropEarly();
 
@@ -41,28 +42,40 @@ public class ShortRedAuto extends LinearOpMode {
             robot.parkBot(false);
 
             //second trip
-            /*
-            robot.mecanumBlocking(23,true, 0.7); // mecanum directly in front of board left if blue
-            robot.setHeading(-90, 0.7);
-            robot.stackAttachmentOut(); //stack attachment out
-            robot.fastStraightFixHeading(107, true, 1); // move forward while stack attachment is moving
-            robot.mecanumBlocking(11, true, 0.3); // strafe to knock over stack
-            robot.stackAttachmentIn(); // attachment in
-            robot.mecanumBlocking(11, false, 0.7); // move back to knocked stack
-            robot.autoIntake(); //intake
-            robot.closeClamp(true);
-            robot.fastStraightFixHeading(100, false, 1); // drive across field
-            robot.mecanumBlocking(25, false, 0.7); // mecanum to board
 
-            // move linear slide up
-            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
+            if (secondPath) { // mecanum directly in front of board left if blue
+                robot.boardToCenter();
 
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
-            robot.fastStraightFixHeading(12, false, 0.7);
-            //robot.alignToBoard();
+                // move forward and fast
+                robot.setHeading(-90, 0.7);
+                robot.stackAttachmentOut(); //stack attachment out
+                robot.fastStraightFixHeading(107, true, 1); // move forward while stack attachment is moving
 
-            robot.autoOuttake(false, slideStartingPosition);
-            */
+                sleep(10000);
+
+                // remove top 4 pixels
+                robot.mecanumBlocking(11, true, 0.3); // strafe to knock over stack
+                robot.stackAttachmentIn(); // attachment in
+                robot.mecanumBlocking(11, false, 0.7); // move back to knocked stack
+
+                // gobble more pixels
+                robot.autoIntake();
+
+                // return to board
+                robot.fastStraightFixHeading(100, false, 1); // drive across field
+
+                robot.mecanumBlocking(25, !robot.isRedAlliance, 0.7); // mecanum to board
+
+                // move linear slide up
+                robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
+                robot.trayToOuttakePos(true); // pivot tray to outtake position
+
+                // move to board and drop
+                robot.fastStraightFixHeading(12, false, 0.7);
+                robot.autoOuttake(false, slideStartingPosition);
+
+                //robot.alignToBoard();
+            }
 
 
             break;
