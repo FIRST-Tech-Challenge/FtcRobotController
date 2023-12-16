@@ -36,7 +36,7 @@ public class SecondPathBlue extends LinearOpMode {
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
 
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.trayToOuttakePos(false); // pivot tray to outtake position
             robot.alignToBoard();
             robot.autoOuttake(true, slideStartingPosition);
 
@@ -62,7 +62,7 @@ public class SecondPathBlue extends LinearOpMode {
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.trayToOuttakePos(false); // pivot tray to outtake position
 
             // move to board and drop
             robot.goToAnyTag();
