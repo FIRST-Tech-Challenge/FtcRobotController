@@ -14,6 +14,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 public class drivesample extends LinearOpMode
 {
+    
+    private void wrist_servo(Servo s1, Servo s2, double position) {
+        s1.setPosition(position);
+        s2.setPosition(position);
+    }
+
     RevBlinkinLedDriver lights;
     @Override
     public void runOpMode() throws InterruptedException
@@ -104,8 +110,7 @@ public class drivesample extends LinearOpMode
 
                 }
             if(gamepad1.x){
-                PixelGrabberWrist1.setPosition(0.21);
-                PixelGrabberWrist2.setPosition(0.21);
+                wrist_servo(PixelGrabberWrist1, PixelGrabberWrist2, 0.21);
                 ArmWrist.setPosition(0.1);
             }
             if(gamepad1.a){
