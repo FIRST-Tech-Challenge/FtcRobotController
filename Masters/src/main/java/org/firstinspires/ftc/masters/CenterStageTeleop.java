@@ -52,7 +52,15 @@ public class CenterStageTeleop extends LinearOpMode {
         PIXEL_SCORE,
         END_GAME
     }
+
+    private enum Retract {
+        back,
+        flip_bar,
+        cartridge
+    }
+
     private DriveMode driveMode = DriveMode.NORMAL;
+    private Retract retract = Retract.back;
     @Override
     public void runOpMode() {
         /*
@@ -184,18 +192,24 @@ RB - Hang up
                     if (gamepad1.a && clawClosed == true) {
                         clawClosed = false;
                         clawServo.setPosition(CSCons.claw[0]);
-                        sleep(300);
                     } else if (gamepad1.a && clawClosed == false) {
                         clawClosed = true;
                         clawServo.setPosition(CSCons.claw[1]);
-                        sleep(300);
                     }
                     if (gamepad1.b) {
-                        //slides in
-                        //v4b to deposit
-                        //claw angle to deposit
-                        //when not busy, open claw
-                        // outtake close hook
+                        switch (retract) {
+                            case back:
+                                retract=Retract.flip_bar;
+                                //slides in
+                                //check if in
+                            case flip_bar:
+                                clawAngle.setPosition(CSCons.clawArmAngles[4]);
+                                clawArm.setPosition(CSCons.clawAngles[2]);
+                            case cartridge:
+                                // check if flipped if not flip
+                                // when not busy, open claw
+                                // outtake close hook
+                        }
                         //right the intake system
                     }
                     if (gamepad1.x) {

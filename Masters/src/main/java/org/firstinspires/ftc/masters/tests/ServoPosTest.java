@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@TeleOp(name="Center Stage TeleOp", group = "competition")
+@TeleOp(name="ServerPosTest", group = "GRRRRR")
 public class ServoPosTest extends LinearOpMode {
     Servo planeLaunch;
     Servo planeRaise;
@@ -81,6 +81,8 @@ public class ServoPosTest extends LinearOpMode {
             telemetry.addData("outtakeRotation",servoPos[7]);
             telemetry.addData("outtakeMovementRight",servoPos[8]);
             telemetry.addData("outtakeMovementLeft",servoPos[9]);
+
+            telemetry.addData("Currently Editing: ", target);
 
             telemetry.update();
         }
