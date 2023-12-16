@@ -75,9 +75,11 @@ public class _20231216_RobotOriented_DevControls extends LinearOpMode {
 
             if (gamepad1.right_trigger > 0) {
                 armInAction = true;
+                backboardPos = false;
                 Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
             } else if (gamepad1.left_trigger > 0) {
                 armInAction = true;
+                backboardPos = false;
                 Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
             }
             if (gamepad1.dpad_down) {
@@ -86,13 +88,9 @@ public class _20231216_RobotOriented_DevControls extends LinearOpMode {
 
             if ((Arm.Arm_Motor.getCurrentPosition() > 505)){
                 Arm.setArmPosTo(500, 0.1);
-                backboardPos = false;
-                armInAction = false;
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
-                backboardPos = false;
-                armInAction = false;
             }
 
             //Smart TeleOp

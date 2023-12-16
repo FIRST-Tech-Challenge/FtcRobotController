@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstanc
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@TeleOp(name = "111 User Controls - Robot Oriented")
-public class _20231216_RobotOriented_UserControls extends LinearOpMode {
+@TeleOp(name = "111 RED Robot Oriented - User Controls")
+public class _20231216_RED_RobotOriented_UserControls extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
@@ -73,26 +73,15 @@ public class _20231216_RobotOriented_UserControls extends LinearOpMode {
                 Claw.Actuate_Claw_Bottom_Finger("toggle");
             }
 
-            if (gamepad1.right_trigger > 0) {
-                armInAction = true;
-                Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
-            } else if (gamepad1.left_trigger > 0) {
-                armInAction = true;
-                Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
-            }
-            if (gamepad1.dpad_down) {
+            if (gamepad1.right_bumper) {
                 DroneLauncher.launchDrone();
             }
 
             if ((Arm.Arm_Motor.getCurrentPosition() > 505)){
                 Arm.setArmPosTo(500, 0.1);
-                backboardPos = false;
-                armInAction = false;
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
-                backboardPos = false;
-                armInAction = false;
             }
 
             //Smart TeleOp
@@ -105,7 +94,7 @@ public class _20231216_RobotOriented_UserControls extends LinearOpMode {
             }
              */
 
-            if (gamepad1.right_bumper) {
+            if (gamepad1.left_bumper) {
                 armInAction = true;
                 if (!backboardPos) {
                     backboardPos = true;
