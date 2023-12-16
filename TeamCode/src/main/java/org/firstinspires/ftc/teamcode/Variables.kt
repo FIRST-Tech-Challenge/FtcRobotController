@@ -54,14 +54,14 @@ object Variables {
     var high = 1000
     var speed = 400
     var lPower = 0.8
-    var lPowerSlow = lPower/4
+    var lPowerSlow = lPower/3
     var rPower = -0.89122741664
     var rPowerSlow = rPower/4
     var lMax = 9850
-    var lSpeedMax = 8500
+    var lSpeedMax = 9500
     var rMax = -10000
     var rSpeedMax = -9500
-    var lMin = 400
+    var lMin = 200
     var lSpeedMin = 900
     var rMin = -300
     var rSpeedMin = -800

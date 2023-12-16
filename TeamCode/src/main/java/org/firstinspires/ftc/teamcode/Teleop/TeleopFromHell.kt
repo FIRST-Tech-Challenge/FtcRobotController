@@ -270,7 +270,6 @@ class TeleopFromHell: DriveMethods() {
          //   slideRotationMotor?.power = -(slideRotPos - abs(slideRottarget))/1000
           //  telemetry.addData("pos", slideRotationMotor!!.currentPosition)
          //   telemetry.addData("Tpos", slideRottarget)
-            telemetry.update()
 
 
 //            All Stuff for Temp Passive intake claw
