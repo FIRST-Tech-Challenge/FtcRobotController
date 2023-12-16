@@ -45,10 +45,6 @@ public class ArmInstance {
         currentArmPos = Arm_Motor_Encoder_Target_Position;
     }
 
-    public void setArmPower(float power) {
-        Arm_Motor.setPower(power);
-    }
-
     public int getCurrentArmPos() {
         return currentArmPos;
     }

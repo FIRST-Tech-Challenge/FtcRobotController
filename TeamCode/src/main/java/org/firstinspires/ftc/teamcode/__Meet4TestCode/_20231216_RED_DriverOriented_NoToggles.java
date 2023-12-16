@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstanc
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@TeleOp(name = "1111 RED Driver Oriented - No Toggles")
+@TeleOp(name = "0 RED Driver Oriented - No Toggles")
 public class _20231216_RED_DriverOriented_NoToggles extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
