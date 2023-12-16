@@ -10,11 +10,11 @@ public class ClawInstance {
 
     public Servo Claw_Bottom_Finger;
 
-    private double Claw_Bottom_Open_Position_Value = 0.3;
+    private double Claw_Bottom_Open_Position_Value = 0.4;
 
     private double Claw_Bottom_Close_Position_Value = 0;
 
-    private double Claw_Top_Open_Position_Value = 0.3;
+    private double Claw_Top_Open_Position_Value = 0.4;
 
     private double Claw_Top_Close_Position_Value = 0;
 

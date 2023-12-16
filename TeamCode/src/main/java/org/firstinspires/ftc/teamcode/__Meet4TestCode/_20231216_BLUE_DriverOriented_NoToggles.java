@@ -102,8 +102,8 @@ public class _20231216_BLUE_DriverOriented_NoToggles extends LinearOpMode {
                 DroneLauncher.launchDrone();
             }
 
-            if ((Arm.Arm_Motor.getCurrentPosition() > 505)) {
-                Arm.setArmPosTo(500, 0.1);
+            if ((Arm.Arm_Motor.getCurrentPosition() > 530)) {
+                Arm.setArmPosTo(525, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
@@ -120,7 +120,7 @@ public class _20231216_BLUE_DriverOriented_NoToggles extends LinearOpMode {
              */
 
             if (gamepad1.x) {
-                Arm.setArmPosTo(300, armSpeed);
+                Arm.setArmPosTo(525, armSpeed);
             }
 
             if (gamepad1.left_trigger > 0) {
@@ -150,22 +150,41 @@ public class _20231216_BLUE_DriverOriented_NoToggles extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
+                Driving_Speed = 0.1;
                 armDown = true;
                 Claw.Actuate_Claw_Bottom_Finger("open");
                 Claw.Actuate_Claw_Top_Finger("open");
                 sleep(700);
                 Arm.setArmPosTo(5, 0.15);
                 while (Arm.Arm_Motor.isBusy()) {}
-            }
-
-            if (gamepad1.dpad_up) {
-                Driving_Speed = 0.15;
                 backLeftMotor.setPower(-Driving_Speed);
                 backRightMotor.setPower(-Driving_Speed);
                 frontLeftMotor.setPower(-Driving_Speed);
                 frontRightMotor.setPower(-Driving_Speed);
 
-                sleep(700);
+                sleep(350);
+
+                Arm.setArmPosTo(5, 0.15);
+
+                while (!Arm.Arm_Motor.isBusy()) {
+                    backLeftMotor.setPower(0);
+                    backRightMotor.setPower(0);
+                    frontLeftMotor.setPower(0);
+                    frontRightMotor.setPower(0);
+                    break;
+                }
+
+                Driving_Speed = 0.85;
+            }
+
+            if (gamepad1.dpad_up) {
+                Driving_Speed = 0.1;
+                backLeftMotor.setPower(-Driving_Speed);
+                backRightMotor.setPower(-Driving_Speed);
+                frontLeftMotor.setPower(-Driving_Speed);
+                frontRightMotor.setPower(-Driving_Speed);
+
+                sleep(1000);
                 backLeftMotor.setPower(0);
                 backRightMotor.setPower(0);
                 frontLeftMotor.setPower(0);
