@@ -35,7 +35,7 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        boolean armDown = true;
+        boolean armInAction = true;
         boolean backboardPos = false;
 
         waitForStart();
@@ -73,10 +73,10 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
             }
 
             if (gamepad1.right_trigger > 0) {
-                armDown = false;
+                armInAction = false;
                 Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
             } else if (gamepad1.left_trigger > 0) {
-                armDown = false;
+                armInAction = false;
                 Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
             }
             if (gamepad1.dpad_down) {
@@ -101,7 +101,7 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
              */
 
             if (gamepad1.right_bumper) {
-                armDown = false;
+                armInAction = true;
                 if (!backboardPos) {
                     backboardPos = true;
                     Arm.setArmPosTo(300, armSpeed);
@@ -135,15 +135,15 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
 // genshin uid: 642041765
 // add me pls !!
             if (gamepad1.left_bumper) {
-                if (armDown) {
+                if (armInAction) {
                     Arm.setArmPosTo(100,0.15);
-                    armDown = false;
+                    armInAction = false;
                     while (Arm.Arm_Motor.isBusy()) {}
                 } else {
-                    armDown = true;
+                    armInAction = true;
                     Claw.Actuate_Claw_Bottom_Finger("open");
                     Claw.Actuate_Claw_Top_Finger("open");
-                    sleep(500);
+                    sleep(700);
                     Arm.setArmPosTo(5, 0.15);
                     while (Arm.Arm_Motor.isBusy()) {}
                 }
@@ -167,12 +167,12 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
                 while (Arm.Arm_Motor.isBusy()) {}
             }
 
-            if (!Arm.Arm_Motor.isBusy() && armDown) {
-                armDown = false;
-                sleep(100);
+            if (!Arm.Arm_Motor.isBusy() && armInAction) {
+                armInAction = false;
+                sleep(50);
                 Claw.Actuate_Claw_Bottom_Finger("close");
                 Claw.Actuate_Claw_Top_Finger("close");
-                sleep(300);
+                sleep(150);
                 Arm.setArmPosTo(100,0.15);
                 while (Arm.Arm_Motor.isBusy()) {}
             }
