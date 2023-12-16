@@ -684,7 +684,7 @@ public class Robot {
             VERTICAL_TOTAL = 68;
             HORIZONTAL_TOTAL = 48;
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) { //OUTER
 
                 // Calculate distances
 
@@ -709,10 +709,10 @@ public class Robot {
                 break;
 
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) { //INNER
 
                 horizontal1 = 20;
-                horizontal2 = 15;
+                horizontal2 = 16; //ORIGINALLY 15.
                 vertical1 = 3;
                 vertical2 = 26;
 
@@ -1630,7 +1630,7 @@ public class Robot {
             } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // inner tag
                 mecanumBlocking(15, isRedAlliance, 0.7);
             } else { // center tag
-                mecanumBlocking(21, isRedAlliance, 0.7);
+                mecanumBlocking(23, isRedAlliance, 0.7);
             }
         } else {
             if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { // inner tag
