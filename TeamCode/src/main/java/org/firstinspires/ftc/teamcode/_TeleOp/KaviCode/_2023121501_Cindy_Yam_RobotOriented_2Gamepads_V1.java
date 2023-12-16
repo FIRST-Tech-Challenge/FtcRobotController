@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode._TeleOp.KaviCode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
 @TeleOp(name = "2 Gamepads Robot Oriented")
-public class _2023121502_Cindy_Yam_DriverOriented_2Gamepads_V2 extends LinearOpMode {
+public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
