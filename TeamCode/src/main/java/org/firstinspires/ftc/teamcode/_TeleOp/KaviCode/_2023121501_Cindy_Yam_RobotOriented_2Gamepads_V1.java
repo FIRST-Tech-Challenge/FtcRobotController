@@ -135,12 +135,12 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
 // genshin uid: 642041765
 // add me pls !!
             if (gamepad1.left_bumper) {
-                if (!armDown) {
+                if (armDown) {
                     Arm.setArmPosTo(100,0.15);
-                    armDown = true;
+                    armDown = false;
                     while (Arm.Arm_Motor.isBusy()) {}
                 } else {
-                    armDown = false;
+                    armDown = true;
                     Claw.Actuate_Claw_Bottom_Finger("open");
                     Claw.Actuate_Claw_Top_Finger("open");
                     sleep(500);
