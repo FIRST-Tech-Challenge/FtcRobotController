@@ -30,12 +30,12 @@ public class SecondPathRed extends LinearOpMode {
             }
             robot.shortMoveToBoard();
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 15; //fake zero = 50 so slides don't slam down
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
 
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.trayToOuttakePos(false); // pivot tray to outtake position
             robot.alignToBoard();
             robot.autoOuttake(true, slideStartingPosition);
 
@@ -48,9 +48,9 @@ public class SecondPathRed extends LinearOpMode {
             robot.fastStraightFixHeading(109, true, 1); // move forward while stack attachment is moving
 
             // remove top 4 pixels
-            robot.mecanumBlocking(12, true, 0.5); // strafe to knock over stack
+            robot.mecanumBlocking(12, true, 0.7); // strafe to knock over stack
             robot.stackAttachmentIn(); // attachment in
-            robot.mecanumBlocking(12, false, 0.5); // move back to knocked stack
+            robot.mecanumBlocking(12, false, 0.7); // move back to knocked stack
 
             // gobble more pixels
             robot.autoIntake();
@@ -61,7 +61,7 @@ public class SecondPathRed extends LinearOpMode {
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.trayToOuttakePos(false); // pivot tray to outtake position
 
             // move to board and drop
             robot.goToAnyTag();

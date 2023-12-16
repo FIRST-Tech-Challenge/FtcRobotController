@@ -119,7 +119,7 @@ public class Robot {
 
             telemetry.update();
 
-            opMode.sleep(100);
+            // opMode.sleep(100); TIME OPTIMIZATION
 
             Log.d("vision ls", "moveLinearSlideByTicksBlocking: lsFront position " + lsFront.getCurrentPosition());
             Log.d("vision ls", "moving linear slide: remaining distance " + remainingDistanceLow);
@@ -199,7 +199,7 @@ public class Robot {
         }
 
         opMode.sleep(100);
-        straightBlocking(6, true, 0.7); //move back 2
+        straightBlocking(4, true, 0.7); //move back 2
         if (isRedAlliance) {
             setHeading(-90, 0.7);
         } else {
@@ -712,17 +712,17 @@ public class Robot {
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) { //INNER
 
                 horizontal1 = 20;
-                horizontal2 = 16; //ORIGINALLY 15.
+                horizontal2 = 14; //ORIGINALLY 15.
                 vertical1 = 3;
                 vertical2 = 26;
 
                 // move!
                 straightBlockingFixHeading(horizontal1, false, 0.7); //go forward FAST
-                setHeading(-45 * polarity, 0.25); //turn right
-                straightBlockingFixHeading(7, false, 0.25); //forward
+                setHeading(-45 * polarity, 0.7); //turn right
+                straightBlockingFixHeading(7, false, 0.7); //forward
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
-                    opMode.sleep(100);
+                    // opMode.sleep(100); TIME OPTIMIZATION
                 }
                 straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
@@ -832,7 +832,6 @@ public class Robot {
                                 Log.d("vision", "runOpMode: bearing > +/-5, move left");
                                 mecanumBlocking(1, (detection.ftcPose.bearing > 0), 0.75);
                                 setHeading(90 * polarity, 0.7);
-                                opMode.sleep(100);
                                 aligned = false;
                             } else {
                                 Log.d("vision", "runOpMode: aligned");
