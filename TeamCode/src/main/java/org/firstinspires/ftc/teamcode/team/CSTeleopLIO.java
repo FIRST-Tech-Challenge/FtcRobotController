@@ -56,8 +56,8 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
     private double currentTime = 0; // keep track of current time
     private double speedMultiplier = 0.7;
     //these are based on LiftTest
-    private static final double HIGH = 20d;
-    private static final double MID = 15d;
+    private static final double HIGH = 26d;
+    private static final double MID = 18d;
     private static final double LOW = 10d;
     private boolean liftdown = true;
     private boolean intakeOn = false;
@@ -175,15 +175,20 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         //This only allows moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
         //This also brings the lift down to the ground state when Outtake is Released
         if (!liftdown) {
-            if (getEnhancedGamepad2().getLeft_trigger() > 0) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-            }
             if (getEnhancedGamepad2().getRight_trigger() > 0) {
+                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PRERELEASE);
+            }
+            if (getEnhancedGamepad2().getLeft_trigger() > 0) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             }
             if (getEnhancedGamepad2().isRightBumperJustPressed()) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.FORWARD);
+                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
             }
+
+            if (liftdown) {
+                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
+            }
+
         }
 
 

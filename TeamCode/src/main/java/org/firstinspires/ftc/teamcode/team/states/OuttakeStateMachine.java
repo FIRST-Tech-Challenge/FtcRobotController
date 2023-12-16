@@ -20,7 +20,7 @@ public class OuttakeStateMachine extends TimedState<OuttakeStateMachine.State> {
     }
 
     public enum State implements Namable{
-        PICKUP("PICKUP", 1.0d), FORWARD("Forward", 1.0d), RELEASE("RELEASE", 0.45d);
+        PICKUP("PICKUP", 1.0d), FORWARD("Forward", 1.0d), PRERELEASE("RELEASE", 0.75d), RELEASE("RELEASE", 0.6d);
 
         private final String name;
         private final double position;

@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.team.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.lib.annotations.feedback.D;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.DbgLog;
@@ -19,6 +21,7 @@ import org.firstinspires.ftc.teamcode.team.states.FeederExtensionStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.VirtualFourBarStateMachine;
 import org.firstinspires.ftc.teamcode.team.subsystems.Feeder;
 
+@Disabled
 @Autonomous(name = "Red Right Pixel", group = "Pixel")
 public class RedRightFTC extends LinearOpMode {
     PPBaseFeeder drive;

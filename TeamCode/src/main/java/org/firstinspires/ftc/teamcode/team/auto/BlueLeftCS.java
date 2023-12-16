@@ -6,59 +6,57 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
 
-@Autonomous(name = "BlueLeftTestCS", group = "Pixel")
-public class BlueLeftTestCS extends LinearOpMode {
+@Autonomous(name = "Blue Left CS", group = "RoarAuto")
+public class BlueLeftCS extends LinearOpMode {
     CSBaseLIO drive;
+
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    static final Vector2d Traj0 = new Vector2d(-38,-36);
-    static final Vector2d Traj1 = new Vector2d(-38, -29);
-    static final Vector2d Traj2 = new Vector2d(-38,-43);
-    static final Vector2d Traj3 = new Vector2d(-12, -26);
-    static final Vector2d Traj4 = new Vector2d(-12, 72);
+    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
+    static final Vector2d TrajL0 = new Vector2d(23.5,43);
+    static final Vector2d TrajL1 = new Vector2d(23.5, 47);
+    static final Vector2d TrajL2 = new Vector2d(38,47);
+
+    static final Vector2d TrajC0 = new Vector2d(16.5,34);
+    static final Vector2d TrajC1 = new Vector2d(16.5, 30);
+    static final Vector2d TrajC2 = new Vector2d(38,30);
+
+    static final Vector2d TrajR0 = new Vector2d(16.5,34);
+    static final Vector2d TrajR1 = new Vector2d(16.5, -38);
+    static final Vector2d TrajR2 = new Vector2d(-43,-38);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
+        IDLE,
         WAIT0,
         FORWARD,
-        TODROP,
-        STRAFE,
+        DROP,
         MOVEBACK,
-        IDLE,
+        TOSTAGE,
+        LIFTUP,
+        OUTTAKE,
+        LIFTDOWN,
         TOPARK
     }
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(-60, -36, Math.toRadians(90));
-
-
-    //these are based on LiftTest
-//    private static final double HIGH = 24d;
-//    private static final double MID = 23.5d;
-//    private static final double LOW = 14d;
-
+    Pose2d startPose = new Pose2d(17, 63, Math.toRadians(270));
 
     CSVP CSVP;
-    boolean hasCVInit = false;
-    int placement = 1;
-    float confidence = 0;
-
-    boolean tf = false;
-
-    int counter = 0;
+    int placement = 3;
+    private static final double MID = 18d;
 
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
@@ -66,30 +64,48 @@ public class BlueLeftTestCS extends LinearOpMode {
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
         drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
-        drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.CLOSE);
-        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.FORWARD);
+        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
+        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 
-        TrajectorySequence traj0 = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(Traj0)
+        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajL0)
                 .build();
 
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(traj0.end())
-                .lineTo(Traj1)
+        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+                .lineTo(TrajL1)
+                .build();
+
+        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+                .lineTo(TrajL2)
+                .turn(Math.toRadians(180))
+                .build();
+
+        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajC0)
+                .build();
+
+        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
+                .lineTo(TrajC1)
+                .build();
+
+        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
+                .lineTo(TrajC2)
                 .turn(Math.toRadians(-101))
                 .build();
 
-        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(traj1.end())
-                .lineTo(Traj2)
+        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajR0)
+                .turn(Math.toRadians(180))
                 .build();
 
-        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(traj2.end())
-                .lineTo(Traj3)
+        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+                .lineTo(TrajR1)
                 .build();
 
-        TrajectorySequence traj4 = drive.trajectorySequenceBuilder(traj3.end())
-                .lineTo(Traj2)
+        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
+                .lineTo(TrajR2)
+                .turn(Math.toRadians(-101))
                 .build();
-
 
         drive.getExpansionHubs().update(getDt());
 
@@ -100,7 +116,7 @@ public class BlueLeftTestCS extends LinearOpMode {
         double t1 = waitTimer.milliseconds();
 
         CSVP = new CSVP();
-        CSVP.initTfod(hardwareMap);
+        CSVP.initTfod(hardwareMap, "Blue");
 
         double t2 = waitTimer.milliseconds();
 
@@ -108,8 +124,6 @@ public class BlueLeftTestCS extends LinearOpMode {
         telemetry.update();
 
         int detectCounter = 0;
-        double confidence = 0;
-        String label = "NONE";
         int oldRecog = 0;
         int recog;
 
@@ -117,9 +131,6 @@ public class BlueLeftTestCS extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-
-
-
         currentState = State.WAIT0;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -130,66 +141,95 @@ public class BlueLeftTestCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    if (waitTimer.milliseconds() > 3000){
+                    recog = CSVP.detect();
+                    detectCounter++;
+                    if (recog != 0) {//edited
+                        if (oldRecog != 0) {//edited
+                            if (CSVP.detect() == recog) {
+                                oldRecog = recog;
+                                detectCounter++;
+                            }
+                        } else {
+                            oldRecog = recog;
+                        }
+                    } else {
+                        telemetry.addLine("NULL");
+                    }
+                    if (waitTimer.milliseconds() > 3000 && detectCounter > 3) {
                         currentState = State.FORWARD;
+                        placement = recog;
                     }
                     break;
-
                 case FORWARD:
-                    if (waitTimer.milliseconds() >= 2000) {
-                        drive.followTrajectorySequenceAsync(traj1);
+                    if (placement == 1) {
+                        drive.followTrajectorySequenceAsync(trajL0);
+                    } else if (placement == 2) {
+                        drive.followTrajectorySequenceAsync(trajC0);
+                    } else {
+                        drive.followTrajectorySequenceAsync(trajR0);
+                    }
+                    currentState = State.DROP;
+                    break;
+
+                case DROP:
+                    if(!drive.isBusy()){
+                        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
                         currentState = State.MOVEBACK;
                         waitTimer.reset();
                     }
                     break;
 
-                case STRAFE:
-                    if(waitTimer.milliseconds() >= 1000){
-                        drive.followTrajectorySequenceAsync(traj0);
-                        currentState = State.IDLE;
+                case MOVEBACK:
+                    //give it 2 seconds to drop before moving back
+                    if(waitTimer.milliseconds() >= 2000) {
+                        //stop the intake first
+                        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
+                        if (placement == 1) {
+                            drive.followTrajectorySequenceAsync(trajL1);
+                        } else if (placement == 2) {
+                            drive.followTrajectorySequenceAsync(trajC1);
+                        } else {
+                            drive.followTrajectorySequenceAsync(trajR1);
+                        }
+                        currentState = State.TOSTAGE;
                         waitTimer.reset();
                     }
                     break;
 
-//                case LIFTUP:
-//                    if(!drive.isBusy() && waitTimer.milliseconds() >= 750){
-//                        drive.robot.getLiftSubsystem().extend(MID);
-//                        if(tf){
-//                            currentState = State.TODROP;
-//                        }
-//                        else {
-//                            currentState = State.FORWARD;
-//                            tf = true;
-//                        }
-//                        waitTimer.reset();
-//                    }
-//                    break;
+                case TOSTAGE:
+                    if(!drive.isBusy()) {
+                        if (placement == 1) {
+                            drive.followTrajectorySequenceAsync(trajL2);
+                        } else if (placement == 2) {
+                            drive.followTrajectorySequenceAsync(trajC2);
+                        } else {
+                            drive.followTrajectorySequenceAsync(trajR2);
+                        }
+                        currentState = State.LIFTUP;
+                    }
+                    break;
 
+                case LIFTUP:
+                    //lift up at the same time without waiting
+                    drive.robot.getLiftSubsystem().extend(MID);
+                    currentState = State.OUTTAKE;
+                    waitTimer.reset();
+                    break;
 
-//                case TODROP:
-//                    if(waitTimer.milliseconds() >= 2000){
-//                        drive.followTrajectorySequenceAsync(traj4);
-//                        if(counter < 1){
-//                            currentState = State.MOVEARM;
-//                            waitTimer.reset();
-//                            counter++;
-//                        }
-//                        else {
-//                            currentState = State.LIFTDOWN;
-//                            waitTimer.reset();
-//                        }
-//                    }
-//                    break;
-//
-//                case MOVEBACK:
-//                    if(waitTimer.milliseconds() >= 1000){
-//                        drive.followTrajectorySequenceAsync(startPose);
-//                        currentState = State.LIFTDOWN;
-//                        waitTimer.reset();
-//                    }
-//                    break;
+                case OUTTAKE:
+                    if(!drive.isBusy() && waitTimer.milliseconds() > 3000){
+                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
+                        currentState = State.OUTTAKE;
+                        waitTimer.reset();
+                    }
+                    break;
 
-
+                case LIFTDOWN:
+                    //lift up at the same time without waiting
+                    drive.robot.getLiftSubsystem().retract();
+                    currentState = State.IDLE;
+                    waitTimer.reset();
+                    break;
 //                case PRELOAD:
 //                    if(!drive.isBusy()){
 //                        drive.followTrajectorySequenceAsync(traj2);

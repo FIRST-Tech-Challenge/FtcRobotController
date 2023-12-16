@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 
+@Disabled
 @Autonomous(name = "Blue Left Pixel", group = "Pixel")
 public class BlueLeftFTC extends LinearOpMode {
     CSBaseLIO drive;
@@ -60,7 +62,6 @@ public class BlueLeftFTC extends LinearOpMode {
     private static final double HIGH = 24d;
     private static final double MID = 23.5d;
     private static final double LOW = 14d;
-
 
     CSVP CSVP;
     boolean hasCVInit = false;
