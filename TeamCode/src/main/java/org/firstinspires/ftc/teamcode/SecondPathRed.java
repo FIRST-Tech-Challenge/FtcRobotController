@@ -30,7 +30,7 @@ public class SecondPathRed extends LinearOpMode {
             }
             robot.shortMoveToBoard();
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition() + 15; //fake zero = 50 so slides don't slam down
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 15; //fake zero = 15 so slides don't slam down
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
