@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.IMU;
 
 @Autonomous(name = "SciRavens-Autonomous")
 public class RobotAutonomous extends LinearOpMode {
@@ -14,6 +13,10 @@ public class RobotAutonomous extends LinearOpMode {
     public Claw claw;
 
     public Hang hang;
+    public AprilTag tag;
+    public TgeDetection tge;
+    String curAlliance = "red";
+    public int zone = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,9 +27,36 @@ public class RobotAutonomous extends LinearOpMode {
         arm = new Arm(robot, gamepad2);
         claw = new Claw(robot, gamepad2);
         hang = new Hang(robot, gamepad2);
+        tag = new AprilTag(robot);
+        tge = new TgeDetection(robot.webcam);
 
         waitForStart();
         if(opModeIsActive()) {
+            while (zone <= 0 || zone > 3) {
+                if (gamepad1.x){
+                    curAlliance = "blue";
+                } else if (gamepad1.b){
+                    curAlliance = "red";
+                }
+                tge.setAlliance(curAlliance);
+                telemetry.addData("Select Alliance (Gamepad1 X = Blue, Gamepad1 B = Red)", "");
+                telemetry.addData("Current Alliance Selected : ", curAlliance.toUpperCase());
+                telemetry.update();
+                zone = tge.elementDetection(telemetry);
+            }
+
+            switch(zone) {
+                case 1:
+                    auton1();
+                    break;
+                case 2:
+                    auton2();
+                    break;
+                case 3:
+                    auton3();
+                    break;
+            }
+
             /*
             DT.drive_forward(100);
             sleep(5000);
@@ -59,4 +89,26 @@ public class RobotAutonomous extends LinearOpMode {
 
         }
     }
+
+    public void auton1() {
+
+    }
+    public void auton2() {
+        DT.drive_forward(100);
+        arm.arm_pixel();
+        claw.open_claw_right();
+        arm.arm_backdrop();
+        arm.arm_fold();
+        DT.strafe_right(30);
+        DT.drive_forward(100);
+        DT.twist_left(90);
+        DT.drive_forward(200);
+        DT.strafe_left(100);
+        DT.drive_forward(20);
+        DT.stopDrive();
+    }
+    public void auton3() {
+
+    }
 }
+

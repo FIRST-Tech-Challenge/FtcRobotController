@@ -12,7 +12,7 @@ public class EncoderMotorOps {
     private int rev_ticks = 250;
     private boolean inAutoOp = false;
     private int auto_ticks  = 0;
-    private int tolerance = 5;
+    private int tolerance = 10;
     private int pos_min = 0;
     private int pos_max = 0;
     private double auto_power = 0.5;
@@ -31,7 +31,7 @@ public class EncoderMotorOps {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setTargetPositionTolerance(tolerance);
+        motor.setTargetPositionTolerance(5);
     }
     public void logUpdate()
     {
@@ -52,14 +52,23 @@ public class EncoderMotorOps {
     }
     private boolean limitCheck(boolean up) {
         cur_position = motor.getCurrentPosition();
+        // NEW
+        if (cur_position < 0) {
+            // If the encoder is negative, this could be due slipping, reset the encoder to 0
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setPower(0);
+        }
         if (!up && cur_position <= 0) {
             //log("Reached Bottom: Stopping the Slider", 0.0);
             return true;
         }
+        /*
         if (up && cur_position >= pos_max) {
             //log("Reached Max Height: Stopping the Slider", (double)pos_max);
             return true;
         }
+        */
         return false;
     }
 
@@ -72,12 +81,11 @@ public class EncoderMotorOps {
             motor.setPower(0);
         }
 
-        /*
+        // NEW
         if (limitCheck(power < 0)) {
             motor.setPower(0);
             return;
         }
-        */
         cur_position = motor.getCurrentPosition();
         motor.setPower(-power);
         cur_manual_power = -power;
@@ -114,6 +122,9 @@ public class EncoderMotorOps {
         if (in_tolerance(cur_position, auto_ticks)) {
             inAutoOp = false;
             // set the motor back to manual control
+            if (cur_position < 0) {
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motor.setPower(0);
         }

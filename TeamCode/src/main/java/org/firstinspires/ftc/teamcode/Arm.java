@@ -18,20 +18,30 @@ public class Arm extends EncoderMotorOps {
         this.gamepad = gamepad;
     }
 
+    public void arm_pixel()
+    {
+        autoOp(pos_pixel);
+    }
+
+    public void arm_fold()
+    {
+        autoOp(pos_folded);
+    }
+
+    public void arm_backdrop() {
+        autoOp(pos_backdrop);
+    }
     public void operate()
     {
         autoOpCompletionCheck();
         if (gamepad.x) {
-            // Fold ARM
-            autoOp(pos_folded);
+            arm_pixel();
         } else if (gamepad.y) {
-            // Goto the bottom
-            autoOp(pos_pixel);
-        } else if (gamepad.a) {
-            // Goto the backdrop
-            autoOp(pos_backdrop);
+            arm_backdrop();
+        } else if (gamepad.b) {
+            arm_fold();
         } else if (gamepad.right_stick_y != 0) {
-            manualOp(gamepad.right_stick_y * manual_speed_factor);
+            manualOp(-gamepad.right_stick_y * manual_speed_factor);
             log("ARM: ", (double) gamepad.right_stick_y);
         } else {
             manualDefaultStop();
