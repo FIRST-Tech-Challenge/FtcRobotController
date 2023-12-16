@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode._TeleOp.KaviCode;
+package org.firstinspires.ftc.teamcode.__Meet4TestCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -73,17 +73,17 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
             }
 
             if (gamepad1.right_trigger > 0) {
-                armInAction = false;
+                armInAction = true;
                 Arm.moveArmBy((int) (Arm_Adjustment_Value * gamepad1.right_trigger));
             } else if (gamepad1.left_trigger > 0) {
-                armInAction = false;
+                armInAction = true;
                 Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
             }
             if (gamepad1.dpad_down) {
                 DroneLauncher.launchDrone();
             }
 
-            if ((Arm.Arm_Motor.getCurrentPosition() > 505) || (Arm.Arm_Motor.getTargetPosition() == 300)){
+            if ((Arm.Arm_Motor.getCurrentPosition() > 505)){
                 Arm.setArmPosTo(500, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
@@ -109,9 +109,9 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
                 }else {
                     backboardPos = false;
                     Claw.Actuate_Claw_Bottom_Finger("open");
-                    sleep(750);
+                    sleep(850);
 
-                    Driving_Speed = 0.2;
+                    Driving_Speed = 0.25;
                     backLeftMotor.setPower(Driving_Speed);
                     backRightMotor.setPower(-Driving_Speed);
                     frontLeftMotor.setPower(-Driving_Speed);
@@ -123,7 +123,7 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
                     backRightMotor.setPower(0);
                     frontLeftMotor.setPower(0);
                     frontRightMotor.setPower(0);
-                    while (Arm.Arm_Motor.isBusy()) {}
+                    while (backLeftMotor.isBusy() || backRightMotor.isBusy() || frontLeftMotor.isBusy() || frontRightMotor.isBusy()) {}
 
                     Claw.Actuate_Claw_Top_Finger("open");
                 }
@@ -136,8 +136,8 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
 // add me pls !!
             if (gamepad1.left_bumper) {
                 if (armInAction) {
-                    Arm.setArmPosTo(100,0.15);
                     armInAction = false;
+                    Arm.setArmPosTo(100,0.15);
                     while (Arm.Arm_Motor.isBusy()) {}
                 } else {
                     armInAction = true;
@@ -164,7 +164,7 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
 
                 Driving_Speed = 0.85;
 
-                while (Arm.Arm_Motor.isBusy()) {}
+                while (backLeftMotor.isBusy() || backRightMotor.isBusy() || frontLeftMotor.isBusy() || frontRightMotor.isBusy()) {}
             }
 
             if (!Arm.Arm_Motor.isBusy() && armInAction) {
@@ -177,15 +177,12 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
                 while (Arm.Arm_Motor.isBusy()) {}
             }
 
-            Arm.setArmPosTo(Arm.getCurrentArmPos(), 0.1);
+            Arm.setArmPosTo(Arm.getCurrentArmPos(), armSpeed);
 
-            telemetry.addLine("Open Claw Top: y");
-            telemetry.addLine("Close Claw Top: x");
-            telemetry.addLine("Open Claw Bottom: a");
-            telemetry.addLine("Close Claw Bottom: b");
+            telemetry.addData("Arm is busy: ", Arm.Arm_Motor.isBusy());
             telemetry.addData("Arm Position: ", Arm.Arm_Motor.getCurrentPosition());
-            telemetry.addData("Arm Target Position: ", Arm.getCurrentArmPos());
             telemetry.addData("Arm Target Position: ", Arm.Arm_Motor.getTargetPosition());
+            telemetry.addData("Top Claw Position: ", Claw.Claw_Top_Finger.getPosition());
             telemetry.addData("Bottom Claw Position: ", Claw.Claw_Bottom_Finger.getPosition());
             telemetry.addData("Drone Launcher Position: ", DroneLauncher.DroneLauncherServo.getPosition());
             telemetry.update();
