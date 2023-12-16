@@ -129,6 +129,8 @@ public class DriveTrain extends OpMode
         double frontRightPower;
         double rearRightPower;
 
+        int lift1Position = liftMotor1.getCurrentPosition();
+
         // mecanum drive
         double y = gamepad1.left_stick_y * -1;
         double x = gamepad1.left_stick_x * 1.5;
@@ -161,18 +163,27 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.a) {
-            if (liftMotor2.getCurrentPosition() < 10) {
+            lift1Position = liftMotor1.getCurrentPosition();
+            if (lift1Position > 1000) {
+                liftMotor1.setPower(-0.75);
+                liftMotor2.setPower(-0.75);
+            }
+            else if (lift1Position <= 1000) {
+                liftMotor1.setPower(-0.5);
+                liftMotor2.setPower(-0.5);
+            }
+            else if (lift1Position <= 500) {
+                liftMotor1.setPower(-0.2);
+                liftMotor2.setPower(-0.2);
+            }
+            else if (lift1Position <= 50) {
                 liftMotor1.setPower(0);
                 liftMotor2.setPower(0);
             }
-            else {
-                liftMotor1.setPower(-1);
-                liftMotor2.setPower(-1);
-            }
+        }
 //            liftMotor1.setTargetPosition(0);
 //            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            liftMotor1.setPower(-1);
-        }
         if (gamepad1.y) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
@@ -207,8 +218,29 @@ public class DriveTrain extends OpMode
             liftMotor1.setPower(-.8);
             liftMotor2.setPower(-.8);
         } else if (gamepad2.right_stick_y > 0.8) {
-            liftMotor1.setPower(-0.8);
-            liftMotor2.setPower(-0.8);
+            lift1Position = liftMotor1.getCurrentPosition();
+            if (lift1Position > 1000) {
+                liftMotor1.setPower(-0.75);
+                liftMotor2.setPower(-0.75);
+            }
+            else if (lift1Position <= 0) {
+                liftMotor1.setPower(0);
+                liftMotor2.setPower(0);
+            }
+            else if (lift1Position <= 50) {
+                liftMotor1.setPower(-0.35);
+                liftMotor2.setPower(-0.35);
+            }
+            else if (lift1Position <= 500) {
+                liftMotor1.setPower(-0.45);
+                liftMotor2.setPower(-0.45);
+            }
+            else if (lift1Position <= 1000) {
+                liftMotor1.setPower(-0.5);
+                liftMotor2.setPower(-0.5);
+            }
+
+
         } else if (gamepad2.right_stick_y < -0.8) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
@@ -224,7 +256,8 @@ public class DriveTrain extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "frontLeft (%.2f), rearLeft (%.2f), frontRight (%.2f), rearRight (%.2f)", frontLeftPower, rearLeftPower, frontRightPower, rearRightPower);
-        telemetry.addData("Lift Position", liftMotor1.getCurrentPosition());
+        telemetry.addData("Motor 1", lift1Position);
+        telemetry.addData("Motor 2", liftMotor2.getCurrentPosition());
         telemetry.update();
     }
 

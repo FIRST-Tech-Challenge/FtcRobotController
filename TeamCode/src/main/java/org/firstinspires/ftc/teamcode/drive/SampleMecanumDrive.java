@@ -75,9 +75,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     public DcMotorEx liftMotor1;
     public DcMotorEx liftMotor2;
-    public Servo clawServo;
     private List<DcMotorEx> motors;
-    public DistanceSensor distSensor;
 
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -121,8 +119,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 //        clawServo = hardwareMap.servo.get("claw");
-
-        distSensor = hardwareMap.get(DistanceSensor.class, "distance");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
