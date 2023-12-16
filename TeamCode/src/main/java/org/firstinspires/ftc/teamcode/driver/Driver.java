@@ -168,7 +168,7 @@ public class Driver extends LinearOpMode {
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
-                    if (gamepad2.dpad_left) {
+                   /* if (gamepad2.dpad_left) {
                         // move to 0 degrees.
                         DroneCoverServo.setPosition(0.3);
                     } else if (gamepad2.dpad_right) {
@@ -182,7 +182,7 @@ public class Driver extends LinearOpMode {
                     } else if (gamepad2.b || gamepad2.a) {
                         // move to 90 degrees.
                         launcherServo.setPosition(1);
-                    }
+                    }*/
                     if (gamepad1.dpad_left) {
                         // move to 0 degrees.
                         DroneCoverServo.setPosition(0.3);
