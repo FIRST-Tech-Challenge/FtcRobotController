@@ -102,8 +102,8 @@ public class _20231216_BLUE_DriverOriented_NoToggles extends LinearOpMode {
                 DroneLauncher.launchDrone();
             }
 
-            if ((Arm.Arm_Motor.getCurrentPosition() > 505)) {
-                Arm.setArmPosTo(500, 0.1);
+            if ((Arm.Arm_Motor.getCurrentPosition() > 530)) {
+                Arm.setArmPosTo(525, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
