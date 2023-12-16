@@ -25,7 +25,7 @@ public class DualMotorLift implements Subsystem {
     private DcMotorEx slideMotorR;
     private static final double TICKS_PER_REV = 751.8; //5203-2402-0027, 223 RPM
     private static final double PULLEY_DIAMETER_IN = (32.25 / 24.5); //3407-0002-0112 // = 1.269685 inches
-    private final int HEIGHT_DIFF_TOLERANCE = inchToTicks(0.5); //(int) (0.3*TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
+    private final int HEIGHT_DIFF_TOLERANCE = inchToTicks(0.2); //(int) (0.3*TICKS_PER_REV / (PULLEY_DIAMETER * Math.PI));
     private Telemetry telemetry;
     private boolean targetReached = true;
     private final double FAST_POWER = 0.6;
@@ -38,8 +38,8 @@ public class DualMotorLift implements Subsystem {
     };
     public Mode mode;
     // Public just to allow tuning through Dashboard
-    public static double  UP_VELOCITY = 500;
-    public static double[] LEVEL_HT = {6, 7, 17.0, 29.0}; // in inches, please fine-tune
+    public static double  UP_VELOCITY = 500; // x inches per 1 second
+    public static double[] LEVEL_HT = {3, 7, 17.0, 29.0}; // in inches, please fine-tune
     public static double[] LEVEL_HT_AUTO = {2, 4, 17.0, 29.0};
     //4 levels: 0 = minimum arm swing height; 1= ground, 2= low, 3= middle, 4= high,
     //0:5.0

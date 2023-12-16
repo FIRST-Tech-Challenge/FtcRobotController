@@ -53,7 +53,7 @@ public class Outtake implements Subsystem{
     private long tempStartTime;
     private long swingDelay = 500; //miliseconds
     private long swingDownDelay = 1200; //miliseconds
-    private long liftDelay = 600;
+    private long liftDelay = 400; // time it takes for intake to move away
     private long tempDelay = 5000;
 
     //Hardware
@@ -70,7 +70,7 @@ public class Outtake implements Subsystem{
         armServo_Right = robot.getServo("armServo_Right");
         armServo_Left = robot.getServo("armServo_Left");
         dumpServo = robot.getServo("dumpServo");
-        //toIntakePos();
+        toIntakePos();
     }
 
     //TODO: convert left/right positions?
@@ -194,13 +194,32 @@ public class Outtake implements Subsystem{
                 Log.v("StateMach", "swing done. moving dumper to CarryPos " + (time - swingStartTime));
             }
         }
-        if(swingState == 10) {
+        if(swingState == 10){ // = lower to intake pos
             long time = System.currentTimeMillis();
-            if (swingDelayDone(time, swingDownDelay)) {
+            if(armCanSwing(time)){
+                swingState = 11;
+                this.toTravelPos();
+                Log.v("StateMach", "lift moving to travelPos " + (time - liftStartTime));
+                tempStartTime = System.currentTimeMillis();
+                lift.goToHt(lift.inchToTicks(lift.LEVEL_HT[0]));
+            }
+        }
+        if(swingState == 11){
+            long time = System.currentTimeMillis();
+            if(swingDelayDone(time, swingDelay)){
+                swingState = 12;
+                lift.goToHt(lift.inchToTicks(-0.3));
+                Log.v("StateMach", "lower swing tate: 11 -> 12. lift.goToHt " + 0);
+            }
+        }
+        if(swingState == 12){
+            if(lift.getPosition()<2){
                 swingState = 0;
-                liftState = 10;
-                lift.goToHt(lift.inchToTicks(0.0));
-                Log.v("StateMach", "moving lift down " + (time - swingStartTime));
+                armServo_Right.setPosition(armIntake_Right);
+                armServo_Left.setPosition(armIntake_Left);
+                dumpServo.setPosition(dumpIntakePos);
+                lift.goToHt(lift.inchToTicks(-0.3));
+                Log.v("StateMach", "lower swing tate: 10 -> 22. lift.goToHt " + HT_TO_SWING_AUTO);
             }
         }
 
@@ -250,7 +269,7 @@ public class Outtake implements Subsystem{
                 this.toDumpPos();
             }
         }
-
+/*
         if(liftState == 10){
             if(lift.getPosition() < 1.0) {
                 Log.v("StateMach", "lift down reached. reset arm pos");
@@ -259,7 +278,7 @@ public class Outtake implements Subsystem{
                 dumpServo.setPosition(dumpIntakePos);
                 liftState = 0;
             }
-        }
+        }*/
         if(hangState == 1){
             long time = System.currentTimeMillis();
             if(liftDelayDone(time)){
