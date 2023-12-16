@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.__Meet4TestCode;
+package org.firstinspires.ftc.teamcode.__Meet4TestCode.DevControls;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstanc
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@TeleOp(name = "2 Gamepads Robot Oriented")
-public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMode {
+@TeleOp(name = "11 Dev Contols - Robot Oriented")
+public class _20231216_RobotOriented_DevControls extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
@@ -36,6 +36,7 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         boolean armInAction = true;
+        boolean armDown = true;
         boolean backboardPos = false;
 
         waitForStart();
@@ -85,9 +86,13 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
 
             if ((Arm.Arm_Motor.getCurrentPosition() > 505)){
                 Arm.setArmPosTo(500, 0.1);
+                backboardPos = false;
+                armInAction = false;
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
+                backboardPos = false;
+                armInAction = false;
             }
 
             //Smart TeleOp
@@ -137,10 +142,13 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
             if (gamepad1.left_bumper) {
                 if (armInAction) {
                     armInAction = false;
+                    armDown = false;
+                    backboardPos = false;
                     Arm.setArmPosTo(100,0.15);
                     while (Arm.Arm_Motor.isBusy()) {}
                 } else {
                     armInAction = true;
+                    armDown = true;
                     Claw.Actuate_Claw_Bottom_Finger("open");
                     Claw.Actuate_Claw_Top_Finger("open");
                     sleep(700);
@@ -167,8 +175,9 @@ public class _2023121501_Cindy_Yam_RobotOriented_2Gamepads_V1 extends LinearOpMo
                 while (backLeftMotor.isBusy() || backRightMotor.isBusy() || frontLeftMotor.isBusy() || frontRightMotor.isBusy()) {}
             }
 
-            if (!Arm.Arm_Motor.isBusy() && armInAction) {
+            if (!Arm.Arm_Motor.isBusy() && armDown) {
                 armInAction = false;
+                armDown = false;
                 sleep(50);
                 Claw.Actuate_Claw_Bottom_Finger("close");
                 Claw.Actuate_Claw_Top_Finger("close");
