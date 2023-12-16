@@ -1,22 +1,31 @@
 package org.firstinspires.ftc.teamcode._TeleOp.KaviCode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "_ Genshin Impact")
-public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
+@TeleOp(name = "2 Gamepads Driver Oriented")
+public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
-    private double Driving_Speed = 0.7;
+    private double Driving_Speed = 0.85;
+    double armSpeed = 0.15;
     @Override
     public void runOpMode() throws InterruptedException {
+        IMU imu = hardwareMap.get(IMU.class, "imu");
 
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
         ArmInstance Arm = new ArmInstance();
         ClawInstance Claw = new ClawInstance();
@@ -37,27 +46,38 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         boolean armDown = true;
+        boolean backboardPos = false;
 
         waitForStart();
 
         while (opModeIsActive()) {
-            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            x = x * 1.1;  // Counteract imperfect strafing
+            if (gamepad1.x) {
+                imu.resetYaw();
+            }
 
-            // Denominator is the largest motor power (absolute value) or 1a
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            // Rotate the movement direction counter to the bot's rotation
+            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+            rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+            // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = Math.round(((y + x + rx) / denominator));
-            double backLeftPower = Math.round(((y - x + rx) / denominator));
-            double frontRightPower = Math.round(((y - x - rx) / denominator));
-            double backRightPower = Math.round(((y + x - rx) / denominator));
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            double frontLeftPower = ((rotY + rotX + rx) / denominator);
+            double backLeftPower = ((rotY - rotX + rx) / denominator);
+            double frontRightPower = ((rotY - rotX - rx) / denominator);
+            double backRightPower = ((rotY + rotX - rx) / denominator);
 
             if (gamepad1.dpad_up) {
-                Driving_Speed = 0.7;
+                Driving_Speed = 0.85;
             }
             else if (gamepad1.dpad_down) {
                 Driving_Speed = 0.5;
@@ -93,8 +113,8 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
                 DroneLauncher.launchDrone();
             }
 
-            if (Arm.Arm_Motor.getCurrentPosition() > 555) {
-                Arm.setArmPosTo(550, 0.1);
+            if ((Arm.Arm_Motor.getCurrentPosition() > 505) || (Arm.Arm_Motor.getTargetPosition() == 300)){
+                Arm.setArmPosTo(500, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
@@ -102,23 +122,60 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
 
             //Smart TeleOp
 
+            /*if (gamepad1.a){
+                armSpeed = 0.2;
+            }
+            else if(gamepad1.b){
+                armSpeed = 0.15;
+            }
+             */
+
             if (gamepad1.right_bumper) {
                 armDown = false;
-                Arm.setArmPosTo(500, 0.3);
-                while (Arm.Arm_Motor.isBusy()) {}
-                sleep(50);
-                Claw.Actuate_Claw_Bottom_Finger("open");
-                sleep(250);
-                Claw.Actuate_Claw_Top_Finger("open");
+                if (backboardPos == false) {
+                    backboardPos = true;
+                    Arm.setArmPosTo(300, armSpeed);
+                }else {
+                    backboardPos = false;
+                    Claw.Actuate_Claw_Bottom_Finger("open");
+
+                    backLeftMotor.setPower(Driving_Speed);
+                    backRightMotor.setPower(Driving_Speed);
+                    frontLeftMotor.setPower(Driving_Speed);
+                    frontRightMotor.setPower(Driving_Speed);
+
+                    sleep(500);
+                    Claw.Actuate_Claw_Top_Finger("open");
+                }
+
+
+
             }
+
+// genshin uid: 642041765
+// add me pls !!
 
             if (gamepad1.left_bumper) {
                 if (armDown) {
+                    Driving_Speed = 0.05;
+                    backLeftMotor.setPower(Driving_Speed);
+                    backRightMotor.setPower(Driving_Speed);
+                    frontLeftMotor.setPower(Driving_Speed);
+                    frontRightMotor.setPower(Driving_Speed);
+                    
+                    sleep(1000);
+                    backLeftMotor.setPower(0);
+                    backRightMotor.setPower(0);
+                    frontLeftMotor.setPower(0);
+                    frontRightMotor.setPower(0);
+                    
                     armDown = false;
-                    Arm.setArmPosTo(100, 0.1);
+                    Arm.setArmPosTo(100,0.3);
+                    
+                    Driving_Speed = 0.85;
                 } else {
                     armDown = true;
-                    Arm.setArmPosTo(5, 0.1);
+                    Arm.setArmPosTo(5,0.2);
                 }
             }
 
@@ -133,8 +190,8 @@ public class _2023120202_Cindy_Yam_Smart_TeleOp_V2 extends LinearOpMode {
 
             telemetry.addLine("Open Claw Top: y");
             telemetry.addLine("Close Claw Top: x");
-            telemetry.addLine("Open Claw Bottom: b");
-            telemetry.addLine("Close Claw Bottom: a");
+            telemetry.addLine("Open Claw Bottom: a");
+            telemetry.addLine("Close Claw Bottom: b");
             telemetry.addData("Arm Position: ", Arm.Arm_Motor.getCurrentPosition());
             telemetry.addData("Arm Target Position: ", Arm.getCurrentArmPos());
             telemetry.addData("Arm Target Position: ", Arm.Arm_Motor.getTargetPosition());

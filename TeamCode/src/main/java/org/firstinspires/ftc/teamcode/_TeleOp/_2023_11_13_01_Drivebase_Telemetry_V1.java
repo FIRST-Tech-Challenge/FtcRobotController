@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V1 Drivebase w/ Telemetry")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "1 Drivebase w/ Telemetry")
 public class _2023_11_13_01_Drivebase_Telemetry_V1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,8 +27,8 @@ public class _2023_11_13_01_Drivebase_Telemetry_V1 extends LinearOpMode {
 
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB backward
         imu.initialize(parameters);
 

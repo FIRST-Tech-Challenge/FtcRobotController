@@ -4,16 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
 @TeleOp(name = "2 Gamepads Genshin Impact")
-public class _20231213_Cindy_Yam_Smart_TeleOp_2Gamepads extends LinearOpMode {
+public class _2023121301_Cindy_Yam_Smart_TeleOp_2Gamepads_V1 extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
     private double Driving_Speed = 0.85;
+    double armSpeed = 0.15;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -93,24 +95,38 @@ public class _20231213_Cindy_Yam_Smart_TeleOp_2Gamepads extends LinearOpMode {
                 DroneLauncher.launchDrone();
             }
 
-            if (Arm.Arm_Motor.getCurrentPosition() > 505) {
+            if ((Arm.Arm_Motor.getCurrentPosition() > 505) || (Arm.Arm_Motor.getTargetPosition() == 300)){
                 Arm.setArmPosTo(500, 0.1);
             }
             if (Arm.Arm_Motor.getCurrentPosition() < 5) {
                 Arm.setArmPosTo(5, 0.1);
             }
 
+
+
             //Smart TeleOp
+
+            if (gamepad1.a){
+                armSpeed = 0.2;
+            }
+            else if(gamepad1.b){
+                armSpeed = 0.15;
+            }
 
             if (gamepad2.right_bumper) {
                 armDown = false;
-                Arm.setArmPosTo(475, 0.1);
+                Arm.setArmPosTo(300, armSpeed);
                 while (Arm.Arm_Motor.isBusy()) {}
-                sleep(750);
-                Claw.Actuate_Claw_Bottom_Finger("open");
-                sleep(500);
-                Claw.Actuate_Claw_Top_Finger("open");
+                //sleep(750);
+                //Claw.Actuate_Claw_Bottom_Finger("open");
+                //sleep(500);
+                //Claw.Actuate_Claw_Top_Finger("open");
+
+
             }
+
+// genshin uid: 642041765
+// add me pls !!
 
             if (gamepad2.left_bumper) {
                 if (armDown) {
@@ -118,7 +134,7 @@ public class _20231213_Cindy_Yam_Smart_TeleOp_2Gamepads extends LinearOpMode {
                     Arm.setArmPosTo(100,0.3);
                 } else {
                     armDown = true;
-                    Arm.setArmPosTo(5,0.1);
+                    Arm.setArmPosTo(5,0.2);
                 }
             }
 
