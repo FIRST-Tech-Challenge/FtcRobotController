@@ -62,7 +62,7 @@ public class ConceptScanServo extends LinearOpMode {
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
 
-
+    //hello. This is emily saying hi
     @Override
     public void runOpMode() {
 
