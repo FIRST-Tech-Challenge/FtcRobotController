@@ -17,7 +17,6 @@ public class SecondPathBlue extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        boolean secondPath = true;
 
         robot.detectPropEarly();
 
@@ -31,7 +30,7 @@ public class SecondPathBlue extends LinearOpMode {
             }
             robot.shortMoveToBoard();
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 15; //fake zero = 15 so slides don't slam down
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
@@ -46,19 +45,19 @@ public class SecondPathBlue extends LinearOpMode {
 
             // move forward and fast
             robot.stackAttachmentOut(); //stack attachment out
-            robot.fastStraightFixHeading(107, true, 1); // move forward while stack attachment is moving
+            robot.fastStraightFixHeading(109, true, 1); // move forward while stack attachment is moving
 
             // remove top 4 pixels
-            robot.mecanumBlocking(12, true, 0.5); // strafe to knock over stack
+            robot.mecanumBlocking(12, true, 0.7); // strafe to knock over stack
             robot.stackAttachmentIn(); // attachment in
-            robot.mecanumBlocking(12, false, 0.5); // move back to knocked stack
+            robot.mecanumBlocking(12, false, 0.7); // move back to knocked stack
 
             // gobble more pixels
             robot.autoIntake();
 
             // return to board
-            robot.fastStraightFixHeading(92, false, 1); // drive across field
-            robot.mecanumBlocking(21, !robot.isRedAlliance, 0.7); // mecanum to board
+            robot.fastStraightFixHeading(100, false, 1); // drive across field
+            robot.mecanumBlocking(26, !robot.isRedAlliance, 0.7); // mecanum to board
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);

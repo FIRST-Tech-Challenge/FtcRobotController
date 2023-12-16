@@ -17,7 +17,6 @@ public class ShortBlueAuto extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        boolean secondPath = false;
 
         robot.detectPropEarly();
 
