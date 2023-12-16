@@ -45,7 +45,7 @@ public class SecondPathBlue extends LinearOpMode {
 
             // move forward and fast
             robot.stackAttachmentOut(); //stack attachment out
-            robot.fastStraightFixHeading(109, true, 1); // move forward while stack attachment is moving
+            robot.fastStraightFixHeading(105, true, 1); // move forward while stack attachment is moving
 
             // remove top 4 pixels
             robot.mecanumBlocking(12, true, 0.7); // strafe to knock over stack

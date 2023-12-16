@@ -45,7 +45,7 @@ public class SecondPathRed extends LinearOpMode {
 
             // move forward and fast
             robot.stackAttachmentOut(); //stack attachment out
-            robot.fastStraightFixHeading(109, true, 1); // move forward while stack attachment is moving
+            robot.fastStraightFixHeading(108.5, true, 1); // move forward while stack attachment is moving
 
             // remove top 4 pixels
             robot.mecanumBlocking(12, true, 0.7); // strafe to knock over stack
@@ -57,7 +57,7 @@ public class SecondPathRed extends LinearOpMode {
 
             // return to board
             robot.fastStraightFixHeading(100, false, 1); // drive across field
-            robot.mecanumBlocking(26, !robot.isRedAlliance, 0.7); // mecanum to board
+            robot.mecanumBlocking(24, !robot.isRedAlliance, 0.7); // mecanum to board
 
             // move linear slide up
             robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
