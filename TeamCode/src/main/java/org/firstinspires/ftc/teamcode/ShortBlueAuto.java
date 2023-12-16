@@ -17,7 +17,7 @@ public class ShortBlueAuto extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        boolean secondPath = true;
+        boolean secondPath = false;
 
         robot.detectPropEarly();
 
@@ -39,40 +39,7 @@ public class ShortBlueAuto extends LinearOpMode {
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.alignToBoard();
             robot.autoOuttake(true, slideStartingPosition);
-            if (!secondPath) {
-                robot.parkBot(false);
-            }
-
-            //second trip
-
-            if (secondPath) { // mecanum directly in front of board left if blue
-                robot.boardToCenter();
-
-                // move forward and fast
-                robot.stackAttachmentOut(); //stack attachment out
-                robot.fastStraightFixHeading(106, true, 1); // move forward while stack attachment is moving
-
-                // remove top 4 pixels
-                robot.mecanumBlocking(12, true, 0.5); // strafe to knock over stack
-                robot.stackAttachmentIn(); // attachment in
-                robot.mecanumBlocking(12, false, 0.5); // move back to knocked stack
-
-                // gobble more pixels
-                robot.autoIntake();
-
-                // return to board
-                robot.fastStraightFixHeading(92, false, 1); // drive across field
-                robot.mecanumBlocking(21, !robot.isRedAlliance, 0.7); // mecanum to board
-
-                // move linear slide up
-                robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
-                robot.trayToOuttakePos(true); // pivot tray to outtake position
-
-                // move to board and drop
-                robot.goToAnyTag();
-                robot.autoOuttake(false, slideStartingPosition);
-
-            }
+            robot.parkBot(false);
 
             break;
         }
