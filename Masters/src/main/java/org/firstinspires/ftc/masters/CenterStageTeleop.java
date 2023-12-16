@@ -42,17 +42,25 @@ public class CenterStageTeleop extends LinearOpMode {
     Servo outtakeMovementRight;
     Servo outtakeMovementLeft;
 
-    double[] servoPos = {.5,.5,.5,.5,.5,.5,.5,.5,.5,.5};
-    int target = 0;
+    boolean clawClosed = true;
 
-    int clawClosed = 0;
+    int backSlidesTargetPos = 0;
+    int v4bPresetTarget = 0;
 
     private enum DriveMode {
         NORMAL,
         PIXEL_SCORE,
         END_GAME
     }
+
+    private enum Retract {
+        back,
+        flip_bar,
+        cartridge
+    }
+
     private DriveMode driveMode = DriveMode.NORMAL;
+    private Retract retract = Retract.back;
     @Override
     public void runOpMode() {
         /*
@@ -132,6 +140,7 @@ RB - Hang up
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -154,69 +163,129 @@ RB - Hang up
             telemetry.addData("left x", gamepad1.left_stick_x);
             telemetry.addData("right x", gamepad1.right_stick_x);
 
-            switch (driveMode)  {
+            y = -gamepad1.left_stick_y;
+            x = gamepad1.left_stick_x;
+            rx = gamepad1.right_stick_x;
+
+            switch (driveMode) {
                 case NORMAL:
-                    /*
-X - auto aligns and switches to pixel scoring mode
-Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
-LB - four bar down (presets for stack positions)
-RB - four bar up (presets)
-LT - slides down (presets)
-RT - slides up (presets)
-                    */
                     if (gamepad1.dpad_up){
-                        //gp slides full extension
-                        //v4b preset 4 pixel high
-                        //claw open
-                    }
-                    if (gamepad1.dpad_right){
+//                      gp slides full extension
+                    //  v4b preset 4 pixel high
+                    //  claw open
+                      }
+                    if (gamepad1.dpad_right) {
                         //gp slides 2/3rds extension
                         //v4b preset 1 pixel high
                         //claw open
                     }
                     if (gamepad1.dpad_down){
-                        //gp slides 1/3rds extension
-                        //v4b preset 1 pixel high
-                        //claw open
+                    //gp slides 1/3rds extension
+                    //v4b preset 1 pixel high
+                    //claw open
                     }
-                    if (gamepad1.dpad_left){
+                    if (gamepad1.dpad_left) {
                         //gp slides fully in
                         //v4b preset 4 pixel high
                         //claw open
                     }
-                    if (gamepad1.a && clawClosed == 1) {
-                        //claw false
-                        //claw open
-                        sleep(300);
-                    } else if (gamepad1.a) {
-                        //claw true
-                        //claw close
-                        sleep(300);
+                    if (gamepad1.a && clawClosed == true) {
+                        clawClosed = false;
+                        clawServo.setPosition(CSCons.claw[0]);
+                    } else if (gamepad1.a && clawClosed == false) {
+                        clawClosed = true;
+                        clawServo.setPosition(CSCons.claw[1]);
                     }
                     if (gamepad1.b) {
-                        //slides in
-                        //v4b to deposit
-                        //claw angle to deposit
-                        //when not busy, open claw
-                        //right intake
+                        switch (retract) {
+                            case back:
+                                retract=Retract.flip_bar;
+                                //slides in
+                                //check if in
+                            case flip_bar:
+                                clawAngle.setPosition(CSCons.clawArmAngles[4]);
+                                clawArm.setPosition(CSCons.clawAngles[2]);
+                            case cartridge:
+                                // check if flipped if not flip
+                                // when not busy, open claw
+                                // outtake close hook
+                        }
+                        //right the intake system
                     }
                     if (gamepad1.x) {
                         // Solinexi's april tag alignment
                         driveMode = DriveMode.PIXEL_SCORE;
                     }
+                    if (gamepad1.y) {
+                        //close hook
+                        //outtake movement and rotation to drop
+                        // open hook and wait hyper-specific amount of time
+                        if (!gamepad1.y) {
+                            //close hook
+                        } else {
+                            // open hook
+                            // wait slightly
+                            // outtake movement and rotation to transfer
+                        }
+                    }
                     if (gamepad1.left_stick_button) {
                         driveMode = DriveMode.PIXEL_SCORE;
                         sleep(300);
                     }
+                    if (gamepad1.right_stick_button) {
+                        driveMode = DriveMode.END_GAME;
+                        sleep(300);
+                    }
+                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
+                        v4bPresetTarget--;
+                    }
+                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
+                        v4bPresetTarget++;
+                    }
+                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
+                        backSlidesTargetPos--;
+                    }
+                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
+                        backSlidesTargetPos++;
+                    }
                     break;
                 case PIXEL_SCORE:
+                    y = 0;
+                    rx = 0;
+                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
+                        backSlidesTargetPos--;
+                    }
+                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
+                        backSlidesTargetPos++;
+                    }
+                    if (gamepad1.y) {
+                        //close hook
+                        //outtake movement and rotation to drop
+                        // open hook and wait hyper-specific amount of time
+                        if (!gamepad1.y) {
+                            //close hook
+                        } else {
+                            // open hook
+                            // wait slightly
+                            // outtake movement and rotation to transfer
+                        }
+                    }
                     break;
                 case END_GAME:
+                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
+                        //hanging down
+                    }
+                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
+                        //hanging up
+                    }
+                    if (gamepad1.x) {
+                        // Solinexi's april tag alignment
+                        //raise shooter
+                        //FIRE!
+                    }
                     break;
             }
-            y = -gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+
 
             if (Math.abs(y) < 0.2) {
                 y = 0;
@@ -248,25 +317,10 @@ RT - slides up (presets)
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-            if (gamepad1.a && servoPos[target]< 1) {
-                servoPos[target]+=.005;
-            } else if (gamepad1.b && servoPos[target] > 0) {
-                servoPos[target]-=.005;
-            }
+//            backSlides.setTargetPosition(CSCons.backSlidesPos[backSlidesTargetPos]);
+//            backSlides.setPower(102984375678349214824736483);
+//            clawArm.setPosition(CSCons.v4b_positions[v4bPresetTarget]);
 
-            if (gamepad1.x) {
-                target++;
-                if (target == 10){
-                    target = 0;
-                }
-                sleep(300);
-            } else if (gamepad1.y) {
-                target--;
-                if (target == -1){
-                    target = 9;
-                }
-                sleep(300);
-            }
 
             if(gamepad1.right_bumper){
                 hangingMotor.setPower(.3);
@@ -276,37 +330,7 @@ RT - slides up (presets)
                 hangingMotor.setPower(0);
             }
 
-            if (gamepad1.right_trigger > .3) {
-                hangingMotor.setPower(.1);
-            } else if (gamepad1.left_trigger > .3) {
-                hangingMotor.setPower(-.1);
-            } else {
-                backSlides.setPower(0);
-            }
-
-            planeLaunch.setPosition(servoPos[0]);
-            planeRaise.setPosition(servoPos[1]);
-            clawServo.setPosition(servoPos[2]);
-            clawArm.setPosition(servoPos[3]);
-            clawAngle.setPosition(servoPos[4]);
-            cameraTurning.setPosition(servoPos[5]);
-            outtakeHook.setPosition(servoPos[6]);
-            outtakeRotation.setPosition(servoPos[7]);
-            outtakeMovementRight.setPosition(servoPos[8]);
-            outtakeMovementLeft.setPosition(servoPos[9]);
-
-            telemetry.addData("planeLaunch",servoPos[0]);
-            telemetry.addData("planeRaise",servoPos[1]);
-            telemetry.addData("clawServo",servoPos[2]);
-            telemetry.addData("clawArm",servoPos[3]);
-            telemetry.addData("clawAngle",servoPos[4]);
-            telemetry.addData("cameraTurning",servoPos[5]);
-            telemetry.addData("outtakeHook",servoPos[6]);
-            telemetry.addData("outtakeRotation",servoPos[7]);
-            telemetry.addData("outtakeMovementRight",servoPos[8]);
-            telemetry.addData("outtakeMovementLeft",servoPos[9]);
-            telemetry.addData("hangingMotor",hangingMotor.getCurrentPosition());
-            telemetry.addData("backSlides",backSlides.getCurrentPosition());
+            telemetry.addData("Arm", clawArm.getPosition());
 
             telemetry.update();
         }
