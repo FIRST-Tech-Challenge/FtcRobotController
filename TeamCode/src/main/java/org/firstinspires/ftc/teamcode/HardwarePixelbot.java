@@ -3,22 +3,27 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static java.lang.Thread.sleep;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
-
 
 /*
  * Hardware class for goBilda robot (12"x15" chassis with 96mm/3.8" goBilda mecanum wheels)
@@ -114,6 +119,19 @@ public class HardwarePixelbot
     public int collectorServoIndex = 1;
 
     public boolean collectorServoChanged = false;
+
+    //====== COLOR/DISTANCE SENSORS FOR PIXEL BIN ========================================================
+    private DistanceSensor pixel1Detector = null;        // lower
+    private DistanceSensor pixel2Detector = null;        // upper
+
+    private NormalizedColorSensor pixel1Color = null;  // lower
+    private NormalizedColorSensor pixel2Color = null;  // upper
+
+    public double pixel1Distance; // lower
+    public double pixel2Distance; // upper
+    public double pixel1Hue; // lower
+    public double pixel2Hue; // upper
+
 
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
     public Servo  elbowServo = null;
@@ -237,7 +255,14 @@ public class HardwarePixelbot
         strafeOdometer.setPower( 0.0 );
 
         /*--------------------------------------------------------------------------------------------*/
+        pixel1Color = hwMap.get(NormalizedColorSensor.class, "BinLowerSensor");  // ControlHub I2C "2"
+        pixel2Color = hwMap.get(NormalizedColorSensor.class, "BinUpperSensor");  // ControlHub I2C "1"
+        pixel1Detector = (DistanceSensor)pixel1Color;
+        pixel2Detector = (DistanceSensor)pixel2Color;
+        pixel1Color.setGain(5.0f);
+        pixel2Color.setGain(5.0f);
 
+        /*--------------------------------------------------------------------------------------------*/
         elbowServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
         elbowServo.setPosition(ELBOW_SERVO_INIT);
 
@@ -249,6 +274,7 @@ public class HardwarePixelbot
 
         fingerServo2 = hwMap.servo.get("Finger2Servo");       // servo port 3 (Expansion Hub)
         fingerServo2.setPosition(FINGER2_SERVO_DROP);
+
         // Initialize REV Control Hub IMU
         initIMU();
 
@@ -443,7 +469,24 @@ public class HardwarePixelbot
         // Return the verified power setting
         return powerNext;
     } // restrictDeltaPower
-    
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void assessPixelBin() {
+        pixel1Distance = pixel1Detector.getDistance(DistanceUnit.MM);
+        pixel2Distance = pixel2Detector.getDistance(DistanceUnit.MM);
+        return;
+    }
+
+    /*--------------------------------------------------------------------------------------------*/
+    public double getPixelColor( int bin_position ) {
+        float[] hsvValues = new float[3];
+        NormalizedRGBA colors = (bin_position == 1 )?
+                             pixel1Color.getNormalizedColors() 
+                           : pixel2Color.getNormalizedColors();
+        Color.colorToHSV( colors.toColor(), hsvValues );
+        return hsvValues[0];
+    }
+
     /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */
     /* - driveY -   true = Drive forward/back; false = Strafe right/left                          */

@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Drive To AprilTag", group = "Demo")
-@Disabled
+//@Disabled
 public class DemoRobotDriveToAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
@@ -278,10 +278,10 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         }
 
         // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        leftFrontDrive.setPower(-leftFrontPower);
+        rightFrontDrive.setPower(-rightFrontPower);
+        leftBackDrive.setPower(-leftBackPower);
+        rightBackDrive.setPower(-rightBackPower);
     }
 
     /**

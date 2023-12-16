@@ -223,6 +223,11 @@ public abstract class Teleop extends LinearOpMode {
             elapsedHz    =  1000.0 / elapsedTime;
 
             // Update telemetry data
+            robot.assessPixelBin();
+            robot.pixel1Hue = robot.getPixelColor(1);
+            robot.pixel2Hue = robot.getPixelColor(2);
+            telemetry.addData("Lower Bin", "%.2f mm (h = %.2f)", robot.pixel1Distance, robot.pixel1Hue);
+            telemetry.addData("Upper Bin", "%.2f mm (h = %.2f)", robot.pixel2Distance, robot.pixel2Hue);
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
             telemetry.addData("Viper", "%d cts (%.2f mA)", robot.viperMotorsPos, robot.viperMotorsPwr );
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
