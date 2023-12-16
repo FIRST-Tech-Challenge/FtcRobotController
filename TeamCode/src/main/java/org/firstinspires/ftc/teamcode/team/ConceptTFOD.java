@@ -101,6 +101,11 @@ public class ConceptTFOD extends LinearOpMode {
                         .forward(DISTANCE)
                         .build();
 
+                waitForStart();
+
+                if (isStopRequested()) return;
+
+                drive.followTrajectory(trajectory);
                 telemetryTfod();
 
                 // Push telemetry to the Driver Station.
