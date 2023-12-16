@@ -147,6 +147,8 @@ public class _20231216_BLUE_DriverOriented_NoToggles extends LinearOpMode {
             if (gamepad1.b) {
                 armDown = false;
                 Arm.setArmPosTo(100, 0.15);
+                Claw.Actuate_Claw_Bottom_Finger("close");
+                Claw.Actuate_Claw_Top_Finger("close");
             }
 
             if (gamepad1.right_trigger > 0) {
