@@ -120,7 +120,7 @@ public class _20231216_RED_DriverOriented_NoToggles extends LinearOpMode {
              */
 
             if (gamepad1.b) {
-                Arm.setArmPosTo(300, armSpeed);
+                Arm.setArmPosTo(525, armSpeed);
             }
 
             if (gamepad1.right_trigger > 0) {
