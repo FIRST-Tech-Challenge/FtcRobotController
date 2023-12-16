@@ -169,7 +169,7 @@ public class IntakeMovement {
     /**
      * A higher level "ease of use" fusion of several functions designed to let the
      * driver open the claw, lower the claw, close the claw, flip the claw, drop a
-     * gamepiece and retun to the FLIP_MID_POS in a single step.
+     * gamepiece and return to the FLIP_MID_POS in a single step.
      */
     public void GrabAndStowPixel() {
         intakeIsSafe = false;
