@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
@@ -15,10 +14,9 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 
 import java.util.Arrays;
 
-@Disabled
 @Config
-@Autonomous(name = "BBRight", group = "Linear OpMode")
-public class BackBlueAutoRightPixel extends MeepMeepBoilerplate{
+@Autonomous(name = "BCInLeft", group = "Linear OpMode")
+public class BCInLeft extends MeepMeepBoilerplate{
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -33,6 +31,13 @@ public class BackBlueAutoRightPixel extends MeepMeepBoilerplate{
                 new AngularVelocityConstraint(1)
 
         ));
+        TrajectoryVelocityConstraint fastConstraint = new MinVelocityConstraint(Arrays.asList(
+
+                new TranslationalVelocityConstraint(50),
+
+                new AngularVelocityConstraint(1)
+
+        ));
         while (opModeInInit()) {
             detection = getDetectionsSingleTFOD();
             telemetry.addData("Detection", detection);
@@ -42,58 +47,79 @@ public class BackBlueAutoRightPixel extends MeepMeepBoilerplate{
         switch (detection) {
             case LEFT -> drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(26.0)
-                            .turn(Math.toRadians(90))
-                            .forward(8)
+                            .forward(2.0)
+                            .waitSeconds(.25)
+                            .strafeLeft(9)
+                            .forward(21)
+                            .waitSeconds(.25)
                             .addTemporalMarker(() -> passiveServo.setPosition(0.1))
                             .waitSeconds(.25)
-                            .back(8)
-                            .strafeRight(25)
-                            .waitSeconds(.5)
-                            .forward(18)
-                            .setVelConstraint(slowConstraint)
+                            .back(6)
                             .waitSeconds(.25)
-                            .forward(63)
+                            .strafeLeft(10)
                             .waitSeconds(.25)
                             .turn(Math.toRadians(90))
                             .waitSeconds(.25)
-                            .forward(23)
-                            .waitSeconds(.25)
-                            .strafeLeft(4)
-                            .addTemporalMarker(() -> autoServo.setPosition(0.65))
+                            .forward(18.5)
+                            .waitSeconds(.5)
+                            .addTemporalMarker(() -> autoServo.setPosition(1))
+                            .waitSeconds(2)
+                            .addTemporalMarker(() -> autoServo.setPosition(0.8))
+                            .waitSeconds(.5)
+                            .back(2)
+                            .strafeRight(35)
+                            .forward(10)
                             .waitSeconds(1)
-                            .addTemporalMarker(() -> autoServo.setPosition(0.35))
+                            .addTemporalMarker(() -> autoServo.setPosition(0.6))
+                            .waitSeconds(1)
                             .build()
             );
             case CENTER -> { drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
-                            .forward(30)
+                            .forward(31)
+                            .waitSeconds(.25)
                             .addDisplacementMarker(() -> passiveServo.setPosition(0.1))
+                            .waitSeconds(.25)
+                            .back(11)
+                            .turn(Math.toRadians(90))
+                            .waitSeconds(.25)
+                            .forward(39.5)
+                            .waitSeconds(.25)
+                            .addTemporalMarker(() -> autoServo.setPosition(1))
+                            .waitSeconds(2)
+                            .addTemporalMarker(() -> autoServo.setPosition(0.8))
+                            .waitSeconds(.5)
+                            .back(2)
+                            .strafeRight(29)
+                            .forward(9)
+                            .waitSeconds(1)
+                            .addTemporalMarker(() -> autoServo.setPosition(0.6))
+                            .waitSeconds(1)
                             .build());
             }
             case RIGHT -> drive.followTrajectorySequence(
                     drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                             .forward(28.0)
                             .turn(Math.toRadians(-90))
-                            .forward(2)
+                            .forward(7)
                             .addTemporalMarker(() -> passiveServo.setPosition(0.1))
                             .waitSeconds(.25)
-                            .back(5)
-                            .strafeLeft(22)
+                            .back(32)
+                            .waitSeconds(.25)
+                            .turn(Math.toRadians(180))
+                            .waitSeconds(.25)
+                            .forward(13)
+                            .waitSeconds(.25)
+                            .addTemporalMarker(() -> autoServo.setPosition(1))
+                            .waitSeconds(2)
+                            .addTemporalMarker(() -> autoServo.setPosition(0.8))
                             .waitSeconds(.5)
-                            .back(18)
-                            .setVelConstraint(slowConstraint)
-                            .waitSeconds(.25)
-                            .back(63)
-                            .waitSeconds(.25)
-                            .turn(Math.toRadians(90))
-                            .waitSeconds(.25)
-                            .back(20)
-                            .waitSeconds(.25)
-                            .strafeLeft(4)
-                            .addTemporalMarker(() -> autoServo.setPosition(0.65))
+                            .back(2)
+                            .strafeRight(23)
+                            .forward(9)
                             .waitSeconds(1)
-                            .addTemporalMarker(() -> autoServo.setPosition(0.35))
+                            .addTemporalMarker(() -> autoServo.setPosition(0.6))
+                            .waitSeconds(1)
                             .build()
             );
             default -> {

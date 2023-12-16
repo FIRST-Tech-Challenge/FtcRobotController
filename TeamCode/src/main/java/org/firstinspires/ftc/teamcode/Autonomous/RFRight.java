@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 @Disabled
 @Config
 @Autonomous(name = "BackRedAuto", group = "LinearOpmode")
-public class BackRedAuto extends MeepMeepBoilerplate {
+public class RFRight extends MeepMeepBoilerplate {
 
     @Override
     public void runOpMode() {

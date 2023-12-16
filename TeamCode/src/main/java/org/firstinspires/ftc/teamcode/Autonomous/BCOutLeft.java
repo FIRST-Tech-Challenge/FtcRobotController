@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 import java.util.Arrays;
 
 @Config
-@Autonomous(name = "FrontBlueLeft(Actual)", group = "Linear OpMode")
-public class FrontBlueAutoLeft extends MeepMeepBoilerplate{
+@Autonomous(name = "BCOutLeft", group = "Linear OpMode")
+public class BCOutLeft extends MeepMeepBoilerplate{
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -27,6 +27,13 @@ public class FrontBlueAutoLeft extends MeepMeepBoilerplate{
         TrajectoryVelocityConstraint slowConstraint = new MinVelocityConstraint(Arrays.asList(
 
                 new TranslationalVelocityConstraint(20),
+
+                new AngularVelocityConstraint(1)
+
+        ));
+        TrajectoryVelocityConstraint fastConstraint = new MinVelocityConstraint(Arrays.asList(
+
+                new TranslationalVelocityConstraint(50),
 
                 new AngularVelocityConstraint(1)
 
