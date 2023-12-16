@@ -554,9 +554,8 @@ public class TinyWebServer extends Thread {
             t.start();
             System.out.println("Server Started !");
 
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -580,6 +579,7 @@ public class TinyWebServer extends Thread {
             File file=new File(WEB_DIR_PATH);
             if(file.isDirectory()){
                 File[] allFiles=file.listFiles();
+                assert allFiles != null;
                 for (File allFile : allFiles) {
                     //System.out.println(allFile.getName().split("\\.")[0]);
                     if(allFile.getName().split("\\.")[0].equalsIgnoreCase("index")){

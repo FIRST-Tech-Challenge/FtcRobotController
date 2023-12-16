@@ -31,40 +31,41 @@ class TeleopFromHell: DriveMethods() {
         initMotorsSecondBot() //init rack and pinion & wheel motors
         initSlideMotors() //init claw/slide motors
 
-        when ((0..31).random()) {
-            1 -> telemetry.addLine("good luck buddy")
-            2 -> telemetry.addLine("\"what spectrum?\"")
-            3 -> telemetry.addLine("MostlyOp >>> AHoT")
-            4 -> telemetry.addLine("01101011 01101001 01101100 01101100 00100000 01111001 01101111 01110101 01110010 01110011 01100101 01101100 01100110")
-            5 -> telemetry.addLine("I LOVE ULTRAKILL!!!!!!!!!!!!")
-            6 -> telemetry.addLine("\"just hit clean build\"")
-            7 -> telemetry.addLine("this match is gonna be ghoulish green")
-            8 -> telemetry.addLine("we are so back")
-            9 -> telemetry.addLine("ok so would you rather have a 1% chance of becoming a turkey everyday or...")
-            10 -> telemetry.addLine("RIP damien mode 2022-2023")
-            11 -> telemetry.addLine("build freeze at 3 AM challenge (GONE WRONG)")
-            12 -> telemetry.addLine("\"who unqueued my song?\"")
-            13 -> telemetry.addLine("at least we don't have a pushbot! (not confirmed, high likelyhood of pushbot)")
-            14 -> telemetry.addLine("whoever set continuous rotation as the default is my #1 opp")
-            15 -> telemetry.addLine("shoutout to Huy for being our insider <3")
-            16 -> telemetry.addLine("why does jack always come to TR3? Is he stupid?")
-            17 -> telemetry.addLine("Nick, I need you to sand this.")
-            18 -> telemetry.addLine("I wish fame and good fortune upon Sachals bloodline")
-            19 -> telemetry.addLine("-((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max")
-            20 -> telemetry.addLine("\"the grid system is stupid.\" *starts pointing at poles*")
-            21 -> telemetry.addLine("James, how many orange cups have you eaten today?")
-            22 -> telemetry.addLine("Tennisball is the newest sport sweeping across the nation!")
-            23 -> telemetry.addLine("our robot has been too big for the bounding box on 3 different occasions.")
-            24 -> telemetry.addLine("cord control is not real")
-            25 -> telemetry.addLine("in Raytheon we trust")
-            26 -> telemetry.addLine("drive practice is for nerds.")
-            27 -> telemetry.addLine("Sebastian (yum)")
-            28 -> telemetry.addLine("this is the abyss of our hero's journey.")
-            29 -> telemetry.addLine("beware the FTC to Raytheon pipeline")
-            30 -> telemetry.addLine("when build says 15 minutes, expect 30. When programming says 15 minutes, expect 2-60.")
-            31 -> telemetry.addLine("99% of programmers quit right before the working push")
-            32 -> telemetry.addLine("Tiger Woods PGA tour 2005 has always been there")
-        }
+        telemetry.addLine(when ((0..33).random()) {
+            1 -> "good luck buddy"
+            2 -> "\"what spectrum?\""
+            3 -> "MostlyOp >>> AHoT"
+            4 -> "01101011 01101001 01101100 01101100 00100000 01111001 01101111 01110101 01110010 01110011 01100101 01101100 01100110"
+            5 -> "I LOVE ULTRAKILL!!!!!!!!!!!!"
+            6 -> "\"just hit clean build\""
+            7 -> "this match is gonna be ghoulish green"
+            8 -> "we are so back"
+            9 -> "ok so would you rather have a 1% chance of becoming a turkey everyday or..."
+            10 -> "RIP damien mode 2022-2023"
+            11 -> "build freeze at 3 AM challenge (GONE WRONG)"
+            12 -> "\"who unqueued my song?\""
+            13 -> "at least we don't have a pushbot! (not confirmed, high likelyhood of pushbot)"
+            14 -> "whoever set continuous rotation as the default is my #1 opp"
+            15 -> "shoutout to Huy for being our insider <3"
+            16 -> "why does jack always come to TR3? Is he stupid?"
+            17 -> "Nick, I need you to sand this."
+            18 -> "I wish fame and good fortune upon Sachals bloodline"
+            19 -> "-((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max"
+            20 -> "\"the grid system is stupid.\" *starts pointing at poles*"
+            21 -> "James, how many orange cups have you eaten today?"
+            22 -> "Tennisball is the newest sport sweeping across the nation!"
+            23 -> "our robot has been too big for the bounding box on 3 different occasions."
+            24 -> "cord control is not real"
+            25 -> "in Raytheon we trust"
+            26 -> "drive practice is for nerds."
+            27 -> "Sebastian (yum)"
+            28 -> "this is the abyss of our hero's journey."
+            29 -> "beware the FTC to Raytheon pipeline"
+            30 -> "when build says 15 minutes, expect 30. When programming says 15 minutes, expect 2-60."
+            31 -> "99% of programmers quit right before the working push"
+            32 -> "Tiger Woods PGA tour 2005 has always been there"
+            else -> "Why did we add these?"
+        })
         telemetry.update()
 
         //slideGate?.position = 0.59
@@ -112,7 +113,7 @@ class TeleopFromHell: DriveMethods() {
             motorBL?.power = -(leftY + leftX - rightX) / speedDiv
             motorFR?.power = (leftY + leftX + rightX) / speedDiv
             motorBR?.power = (leftY - leftX + rightX) / speedDiv
-
+            /*
             //open/close claw
             if (gamepad2.b) {
                 //clawMotor!!.position = closedClaw
@@ -120,7 +121,7 @@ class TeleopFromHell: DriveMethods() {
             if (gamepad2.a) {
                 //clawMotor!!.position = openClaw
             }
-
+            */
             if (gamepad1.left_bumper) {
                 motorFL?.power = 1.0/speedDiv
                 motorBL?.power = -1.0/speedDiv
@@ -136,10 +137,10 @@ class TeleopFromHell: DriveMethods() {
             }
 
             if (gamepad1.a) {
-                if (speedDiv == 3.0) {
-                    speedDiv = 1.5
+                speedDiv = if (speedDiv == 3.0) {
+                    1.5
                 } else {
-                    speedDiv = 3.0
+                    3.0
                 }
             }
 
@@ -276,13 +277,12 @@ class TeleopFromHell: DriveMethods() {
 
             if(gamepad2.a) {
                 if (clawClamp) {
-                    clawClamp = !clawClamp
                     passiveServo.position = 0.1;
                 }
                 else {
-                    clawClamp = !clawClamp
                     passiveServo.position = .37
                 }
+                clawClamp = !clawClamp
                 sleep(200)
             }
             telemetry.addData("Claw Clamped: ", clawClamp)

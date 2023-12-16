@@ -64,10 +64,9 @@ class SimpleTeleop: DriveMethods() {
             }
 
             if (gamepad1.a) {
-                if (speedDiv == 3.0) {
-                    speedDiv = 1.5
-                } else {
-                    speedDiv = 3.0
+                speedDiv = when(speedDiv) {
+                    3.0 -> 1.5
+                    else -> 3.0
                 }
             }
             if (gamepad1.b) {
