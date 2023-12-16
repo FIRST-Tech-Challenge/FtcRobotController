@@ -140,10 +140,10 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                     Claw.Actuate_Claw_Bottom_Finger("open");
 
                     backLeftMotor.setPower(Driving_Speed);
-                    backRightMotor.setPower(Driving_Speed);
-                    frontLeftMotor.setPower(Driving_Speed);
+                    backRightMotor.setPower(-Driving_Speed);
+                    frontLeftMotor.setPower(-Driving_Speed);
                     frontRightMotor.setPower(Driving_Speed);
-
+                    while (backLeftMotor.isBusy() || frontLeftMotor.isBusy() || backRightMotor.isBusy() || frontRightMotor.isBusy()) {}
                     sleep(500);
                     Claw.Actuate_Claw_Top_Finger("open");
                 }
