@@ -86,7 +86,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double crossbowSetpoint;
             if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
                 telemetry.addLine("crossbowing!!");
-                crossbowSetpoint = 0.1;
+                crossbowSetpoint = 0.0;
             } else {
                 crossbowSetpoint = 0.2;
             }
