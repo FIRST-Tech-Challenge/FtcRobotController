@@ -110,12 +110,12 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         //Intake
         //spins the intake to intake a pixel
         if (getEnhancedGamepad1().getLeft_trigger() > 0) {
-            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.INTAKE);
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.OUTTAKE);
             intakeOn = true;
         }
         //spins the intake to outtake a pixel
         if (getEnhancedGamepad1().getRight_trigger() > 0) {
-            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.OUTTAKE);
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.INTAKE);
             intakeOn = true;
         }
         //stops spining the intake

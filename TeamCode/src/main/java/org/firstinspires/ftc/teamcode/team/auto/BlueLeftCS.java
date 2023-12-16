@@ -23,17 +23,17 @@ public class BlueLeftCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(23.5,43);
-    static final Vector2d TrajL1 = new Vector2d(23.5, 47);
-    static final Vector2d TrajL2 = new Vector2d(38,47);
+    static final Vector2d TrajL0 = new Vector2d(28.5,43);
+    static final Vector2d TrajL1 = new Vector2d(28.5, 45);
+    static final Vector2d TrajL2 = new Vector2d(52,45);
 
-    static final Vector2d TrajC0 = new Vector2d(16.5,34);
-    static final Vector2d TrajC1 = new Vector2d(16.5, 30);
-    static final Vector2d TrajC2 = new Vector2d(38,30);
+    static final Vector2d TrajC0 = new Vector2d(20,34);
+    static final Vector2d TrajC1 = new Vector2d(20, 36);
+    static final Vector2d TrajC2 = new Vector2d(52,36);
 
-    static final Vector2d TrajR0 = new Vector2d(16.5,34);
-    static final Vector2d TrajR1 = new Vector2d(16.5, -38);
-    static final Vector2d TrajR2 = new Vector2d(-43,-38);
+    static final Vector2d TrajR0 = new Vector2d(22,36);
+    static final Vector2d TrajR1 = new Vector2d(22, 37);
+    static final Vector2d TrajR2 = new Vector2d(52,32);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -52,7 +52,7 @@ public class BlueLeftCS extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(17, 63, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(23, 63, Math.toRadians(270));
 
     CSVP CSVP;
     int placement = 3;
@@ -73,11 +73,11 @@ public class BlueLeftCS extends LinearOpMode {
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
                 .lineTo(TrajL1)
+                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
                 .lineTo(TrajL2)
-                .turn(Math.toRadians(180))
                 .build();
 
         TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
@@ -86,16 +86,16 @@ public class BlueLeftCS extends LinearOpMode {
 
         TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
                 .lineTo(TrajC1)
+                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
                 .lineTo(TrajC2)
-                .turn(Math.toRadians(-101))
                 .build();
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(180))
+                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
@@ -104,7 +104,6 @@ public class BlueLeftCS extends LinearOpMode {
 
         TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
                 .lineTo(TrajR2)
-                .turn(Math.toRadians(-101))
                 .build();
 
         drive.getExpansionHubs().update(getDt());
@@ -153,19 +152,23 @@ public class BlueLeftCS extends LinearOpMode {
                             oldRecog = recog;
                         }
                     } else {
-                        telemetry.addLine("NULL");
+                        telemetry.addLine("NO DETECTION");
                     }
                     if (waitTimer.milliseconds() > 3000 && detectCounter > 3) {
                         currentState = State.FORWARD;
-                        placement = recog;
+                        CSVP.closeVP();
+                        placement = 3;//recog;
                     }
                     break;
                 case FORWARD:
                     if (placement == 1) {
+                        telemetry.addLine("Left");
                         drive.followTrajectorySequenceAsync(trajL0);
                     } else if (placement == 2) {
+                        telemetry.addLine("Center");
                         drive.followTrajectorySequenceAsync(trajC0);
                     } else {
+                        telemetry.addLine("Right");
                         drive.followTrajectorySequenceAsync(trajR0);
                     }
                     currentState = State.DROP;
@@ -205,20 +208,20 @@ public class BlueLeftCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR2);
                         }
-                        currentState = State.LIFTUP;
+                        currentState = State.IDLE;
                     }
                     break;
 
                 case LIFTUP:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().extend(MID);
+                    //drive.robot.getLiftSubsystem().extend(MID);
                     currentState = State.OUTTAKE;
                     waitTimer.reset();
                     break;
 
                 case OUTTAKE:
                     if(!drive.isBusy() && waitTimer.milliseconds() > 3000){
-                        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
+                        //drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
                         currentState = State.OUTTAKE;
                         waitTimer.reset();
                     }
@@ -226,7 +229,7 @@ public class BlueLeftCS extends LinearOpMode {
 
                 case LIFTDOWN:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().retract();
+                    //drive.robot.getLiftSubsystem().retract();
                     currentState = State.IDLE;
                     waitTimer.reset();
                     break;
@@ -318,7 +321,7 @@ public class BlueLeftCS extends LinearOpMode {
             drive.getExpansionHubs().update(getDt());
             drive.robot.getLiftSubsystem().update(getDt());
             drive.robot.getOuttakeSubsystem().update(getDt());
-            drive.robot.getDroneSubsystem().update(getDt());
+            drive.robot.getIntakeSubsystem().update(getDt());
             telemetry.update();
         }
 
