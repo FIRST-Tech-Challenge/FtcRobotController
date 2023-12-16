@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-import static android.os.SystemClock.sleep;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
-import android.annotation.SuppressLint;
-
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -25,9 +20,12 @@ public class IntakeMovement {
     // The lower the int the higher the wrist goes
     static final double FLIP_MAX_POS     =  0.99;     // Maximum rotational position of the wrist servo
     static final double FLIP_MIN_POS     =  0.35;     // Was 0.35 Minimum rotational position of the wrist servo
+    static final double SERVO_CLAW_DELAY = 0.6;
+
+    static final double SERVO_FLIP_DELAY = 0.5;
 
     // Tracks the amount of time a servo moving into position will take
-    public double servoDelayTime = 0.5; // safety delay for servo move
+    static final double servoDelayTime = 0.5; // safety delay for servo move
 
     private ElapsedTime servoRuntime = new ElapsedTime();
 
@@ -66,27 +64,12 @@ public class IntakeMovement {
     public void ClawOpen(){
         intakeIsSafe = false;
 
-        // Run this until the right claw and left claw are in an open position
-        while (rightClawPos<RIGHT_MAX_POS && leftClawPos>LEFT_MIN_POS) {
-
-            // Moves the right and left claw by 0.01
-            rightClawPos += .01;
-            leftClawPos -= .01;
-            rightClaw.setPosition(rightClawPos);
-            leftClaw.setPosition(leftClawPos);
-
-            // Adds the claw positions to the telemetry
-            telemetry.addData("right claw", rightClawPos);
-            telemetry.addData("left claw", leftClawPos);
-
-            // Debug for the console
-            System.out.println(rightClawPos);
-            System.out.println(rightClaw.getPosition());
-            System.out.println(leftClawPos);
-            System.out.println(leftClaw.getPosition());
-
-            telemetry.update();
+        double servoMoveEndTime = SERVO_CLAW_DELAY + servoRuntime.time();
+        while (servoMoveEndTime >= servoRuntime.time()) {
+            rightClaw.setPosition(RIGHT_MAX_POS);
+            leftClaw.setPosition(LEFT_MIN_POS);
         }
+
         intakeIsSafe = true;
 
     }
@@ -97,29 +80,11 @@ public class IntakeMovement {
     public void ClawClosed(){
         intakeIsSafe = false;
 
-        // Runs until the right and left claws are in a closed position
-        while (rightClawPos>RIGHT_MIN_POS && leftClawPos<LEFT_MAX_POS) {
-
-            // Moves the left and right claw by 0.01
-            rightClawPos -= .01;
-            leftClawPos += .01;
-            rightClaw.setPosition(rightClawPos);
-            leftClaw.setPosition(leftClawPos);
-
-            // Adds the claw positions to the telemetry
-            telemetry.addData("right claw", rightClawPos);
-            telemetry.addData("left claw", leftClawPos);
-            telemetry.update();
-
-            //Debug for the console
-            System.out.println(rightClawPos);
-            System.out.println(rightClaw.getPosition());
-            System.out.println(leftClawPos);
-            System.out.println(leftClaw.getPosition());
-
-            telemetry.update();
+        double servoMoveEndTime = SERVO_CLAW_DELAY + servoRuntime.time();
+        while (servoMoveEndTime >= servoRuntime.time()) {
+            rightClaw.setPosition((RIGHT_MIN_POS));
+            leftClaw.setPosition(LEFT_MAX_POS);
         }
-
         intakeIsSafe = true;
 
     }
@@ -131,7 +96,7 @@ public class IntakeMovement {
     public void FlipDown() {
         intakeIsSafe = false;
 
-        double servoMoveEndTime = servoDelayTime + servoRuntime.time();
+        double servoMoveEndTime = SERVO_FLIP_DELAY + servoRuntime.time();
         while (servoMoveEndTime >= servoRuntime.time()){
             intakeFlip.setPosition(FLIP_MAX_POS);
             telemetry.addData("flip pos", FLIP_MAX_POS);
@@ -147,7 +112,7 @@ public class IntakeMovement {
     public void FlipUp(){
         intakeIsSafe = false;
 
-        double servoMoveEndTime = servoDelayTime + servoRuntime.time();
+        double servoMoveEndTime = SERVO_FLIP_DELAY + servoRuntime.time();
         while (servoMoveEndTime >= servoRuntime.time()){
             intakeFlip.setPosition(FLIP_MIN_POS);
             telemetry.addData("flip pos", FLIP_MIN_POS);
@@ -155,16 +120,6 @@ public class IntakeMovement {
         }
         intakeIsSafe = true;
 
-        /*intakeIsSafe = true;
-        while (flipPos>FLIP_MIN_POS) {
-            flipPos -= .01;
-            intakeFlip.setPosition(flipPos);
-            telemetry.addData("flip pos", flipPos);
-            telemetry.update();
-            System.out.println(flipPos);
-            System.out.println(intakeFlip.getPosition());
-        }
-        */
     }
 
     /**
@@ -183,9 +138,9 @@ public class IntakeMovement {
             //FlipDown(); // lower the wrist and plow into the pixel before trying to close the
             //sleep(500); // claw.  Will still Grab and Stow but wont Lower Grab and Stow.
             ClawClosed();
-            sleep(500);
+            //sleep(500);
             FlipUp();
-            sleep(500);
+            //sleep(500);
             ClawOpen();
         }
 

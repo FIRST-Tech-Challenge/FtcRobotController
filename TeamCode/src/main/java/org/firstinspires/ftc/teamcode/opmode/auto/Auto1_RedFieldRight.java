@@ -110,6 +110,8 @@ public class Auto1_RedFieldRight extends AutoBase {
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
+        // Start by securing the loaded pixel
+        intake.ClawClosed();
 
         if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0){
             // move forward 2 inches
