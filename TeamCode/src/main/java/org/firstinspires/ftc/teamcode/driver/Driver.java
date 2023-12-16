@@ -26,17 +26,16 @@ public class Driver extends LinearOpMode {
     static final int ARM_DROP_POS_HIGH = -3550;
     static final int ARM_DRIVE_POS = -800;
     static final int ARM_INTAKE_POS = 0;
-    static final double LEFT_GRIPPER_OPEN = 0.95;
-
+    static final double LEFT_GRIPPER_OPEN = 0.90;
     //was 1.5
     static final double LEFT_GRIPPER_CLOSE = 2;
-    static final double RIGHT_GRIPPER_OPEN = 0.05;
+    static final double RIGHT_GRIPPER_OPEN = 0.1;
 
     //was -0.5
     static final double RIGHT_GRIPPER_CLOSE = -0.9;
-    static final double WRIST_DROP_POS_LOW = 0.75;
-    static final double WRIST_DROP_POS_HIGH = 0.9;
-    static final double WRIST_INTAKE_POS = 0.3;
+    static final double WRIST_DROP_POS_LOW = 0.85;
+    static final double WRIST_DROP_POS_HIGH = 01;
+    static final double WRIST_INTAKE_POS = 0.22;
     private Servo leftGripper;
     private Servo rightGripper;
     private Servo wristServo;
@@ -169,6 +168,21 @@ public class Driver extends LinearOpMode {
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
+                    if (gamepad2.dpad_left) {
+                        // move to 0 degrees.
+                        DroneCoverServo.setPosition(0.3);
+                    } else if (gamepad2.dpad_right) {
+                        // move to 90 degrees.
+                        DroneCoverServo.setPosition(.7);
+                    }
+
+                    if (gamepad2.a) {
+                        // move to 0 degrees.
+                        launcherServo.setPosition(0.3);
+                    } else if (gamepad2.b || gamepad2.a) {
+                        // move to 90 degrees.
+                        launcherServo.setPosition(1);
+                    }
                     if (gamepad1.dpad_left) {
                         // move to 0 degrees.
                         DroneCoverServo.setPosition(0.3);
@@ -180,7 +194,7 @@ public class Driver extends LinearOpMode {
                     if (gamepad1.left_bumper) {
                         // move to 0 degrees.
                         launcherServo.setPosition(0.3);
-                    } else if (gamepad1.right_bumper || gamepad1.left_bumper) {
+                    } else if (gamepad1.right_bumper|| gamepad1.left_bumper) {
                         // move to 90 degrees.
                         launcherServo.setPosition(1);
                     }
@@ -214,13 +228,13 @@ public class Driver extends LinearOpMode {
                         wristServo.setPosition(WRIST_DROP_POS_HIGH);
                         moveArmMotorToPosition(ARM_DROP_POS_HIGH, 2);
                     }
-                    else if (gamepad2.x) {
+                    else if (gamepad2.dpad_down) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     } else if (gamepad2.dpad_up) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
-                    }else if (gamepad2.dpad_down) {
+                    }else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_DROP_POS_LOW);
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
                     }
