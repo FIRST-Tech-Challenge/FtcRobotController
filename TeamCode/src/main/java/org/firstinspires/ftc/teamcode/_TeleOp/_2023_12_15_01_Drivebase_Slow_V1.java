@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "1 Drivebase w/ Telemetry")
-public class _2023_11_13_01_Drivebase_Telemetry_V1 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "1 Drivebase w/ Slow")
+public class _2023_12_15_01_Drivebase_Slow_V1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -49,7 +49,21 @@ public class _2023_11_13_01_Drivebase_Telemetry_V1 extends LinearOpMode {
                 imu.resetYaw();
             }
 
+            if (gamepad1.left_trigger > 0) {
+                Driving_Speed = 0.15;
 
+                backLeftMotor.setPower(-Driving_Speed);
+                backRightMotor.setPower(-Driving_Speed);
+                frontLeftMotor.setPower(-Driving_Speed);
+                frontRightMotor.setPower(-Driving_Speed);
+
+                sleep(700);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+
+            }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -68,14 +82,12 @@ public class _2023_11_13_01_Drivebase_Telemetry_V1 extends LinearOpMode {
             double frontRightPower = ((rotY - rotX - rx) / denominator);
             double backRightPower = ((rotY + rotX - rx) / denominator);
 
+            Driving_Speed = 0.85;
+
             frontLeftMotor.setPower(frontLeftPower * Driving_Speed);
             backLeftMotor.setPower(backLeftPower * Driving_Speed);
             frontRightMotor.setPower(frontRightPower * Driving_Speed);
             backRightMotor.setPower(backRightPower * Driving_Speed);
-
-            // ADDED CODE - sends info about current servo position to driver station
-            telemetry.addData("Bot Heading: ", botHeading);
-            telemetry.update();
         }
     }
 }

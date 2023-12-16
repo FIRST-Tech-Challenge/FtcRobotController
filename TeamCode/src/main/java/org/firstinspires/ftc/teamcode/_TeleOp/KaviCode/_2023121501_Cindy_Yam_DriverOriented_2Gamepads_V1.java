@@ -89,17 +89,10 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
             backRightMotor.setPower(backRightPower * Driving_Speed);
 
             if (gamepad1.y) {
-                Claw.Actuate_Claw_Top_Finger("open");
+                Claw.Actuate_Claw_Top_Finger("toggle");
             }
-            if (gamepad1.x) {
-                Claw.Actuate_Claw_Top_Finger("close");
-            }
-
             if (gamepad1.a) {
-                Claw.Actuate_Claw_Bottom_Finger("open");
-            }
-            if (gamepad1.b) {
-                Claw.Actuate_Claw_Bottom_Finger("close");
+                Claw.Actuate_Claw_Top_Finger("toggle");
             }
 
             if (gamepad1.right_trigger > 0) {
@@ -109,7 +102,7 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                 armDown = false;
                 Arm.moveArmBy((int) (-Arm_Adjustment_Value * gamepad1.left_trigger));
             }
-            if (gamepad1.dpad_up) {
+            if (gamepad1.b) {
                 DroneLauncher.launchDrone();
             }
 
@@ -143,8 +136,12 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                     backRightMotor.setPower(-Driving_Speed);
                     frontLeftMotor.setPower(-Driving_Speed);
                     frontRightMotor.setPower(Driving_Speed);
-                    while (backLeftMotor.isBusy() || frontLeftMotor.isBusy() || backRightMotor.isBusy() || frontRightMotor.isBusy()) {}
-                    sleep(500);
+                    sleep(700);
+                    backLeftMotor.setPower(0);
+                    backRightMotor.setPower(0);
+                    frontLeftMotor.setPower(0);
+                    frontRightMotor.setPower(0);
+
                     Claw.Actuate_Claw_Top_Finger("open");
                 }
 
@@ -156,33 +153,31 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
 // add me pls !!
 
             if (gamepad1.left_bumper) {
-                if (armDown) {
-                    Driving_Speed = 0.05;
-                    backLeftMotor.setPower(Driving_Speed);
-                    backRightMotor.setPower(Driving_Speed);
-                    frontLeftMotor.setPower(Driving_Speed);
-                    frontRightMotor.setPower(Driving_Speed);
-                    
-                    sleep(1000);
+                if (!armDown) {
+                    Driving_Speed = 0.15;
+                    backLeftMotor.setPower(-Driving_Speed);
+                    backRightMotor.setPower(-Driving_Speed);
+                    frontLeftMotor.setPower(-Driving_Speed);
+                    frontRightMotor.setPower(-Driving_Speed);
+
+                    sleep(700);
                     backLeftMotor.setPower(0);
                     backRightMotor.setPower(0);
                     frontLeftMotor.setPower(0);
                     frontRightMotor.setPower(0);
-                    
-                    armDown = false;
-                    Arm.setArmPosTo(100,0.3);
-                    
-                    Driving_Speed = 0.85;
-                } else {
+
                     armDown = true;
-                    Arm.setArmPosTo(5,0.2);
+                    Arm.setArmPosTo(100, 0.3);
+
+                    Driving_Speed = 0.85;
                 }
             }
 
             if (!Arm.Arm_Motor.isBusy() && armDown) {
-                sleep(50);
                 Claw.Actuate_Claw_Bottom_Finger("close");
                 Claw.Actuate_Claw_Top_Finger("close");
+                Driving_Speed = 0.85;
+                armDown = false;
             }
 
             Arm.setArmPosTo(Arm.getCurrentArmPos(), 0.1);
