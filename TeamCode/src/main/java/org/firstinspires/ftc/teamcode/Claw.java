@@ -12,8 +12,8 @@ public class Claw {
     public Claw(Robot robot, Gamepad gamepad) {
         this.robot = robot;
         this.gamepad = gamepad;
-        robot.servoCL.setPosition(0);
-        robot.servoCR.setPosition(1);
+        close_claw_left();
+        close_claw_right();
     }
 
     public void open_claw_right()
