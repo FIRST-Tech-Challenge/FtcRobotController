@@ -165,17 +165,14 @@ public class Robot {
 
 
     public void setServoPosBlocking(Servo servo, double targetServoPos) {
-        telemetry.addData("not started, servo pos" + servo.getDeviceName(), servo.getPosition());
-        telemetry.update();
+
         servo.setPosition(targetServoPos);
-        telemetry.addData("done, servo pos" + servo.getDeviceName(), servo.getPosition());
-        telemetry.update();
     }
 
     public void trayToIntakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.411);
         if (blocking) {
-            opMode.sleep(500);
+            opMode.sleep(700);
         }
     }
 
@@ -189,7 +186,7 @@ public class Robot {
     public void autoOuttake(boolean lowOuttake, double startingPosition) {
 
         openClamp(true, true); // drop pixel
-        opMode.sleep(200);
+        opMode.sleep(100);
 
         // move linear slide up
         if (lowOuttake) {
@@ -198,14 +195,14 @@ public class Robot {
             moveLinearSlideByTicksBlocking(startingPosition + 2100); //2200
         }
 
-        opMode.sleep(100);
+        //opMode.sleep(100);
         straightBlocking(4, true, 0.7); //move back 2
         if (isRedAlliance) {
             setHeading(-90, 0.7);
         } else {
             setHeading(90, 0.7);
         }
-        trayToIntakePos(true); //intake pos
+        trayToIntakePos(false); //intake pos
         moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
 
@@ -766,7 +763,7 @@ public class Robot {
 
     public void goToAnyTag() {
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 12;
+        double distanceToBoard = 10;
         boolean tagVisible = false;
         double PIXEL_SIZE = 4;
         int numberOfDetectionsProcessed = 0;
@@ -782,8 +779,10 @@ public class Robot {
                 if (detection.metadata != null) {
                     distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
                     tagVisible = true;
+                    Log.d("anytag", "goToAnyTag: distance to board is " + distanceToBoard);
                 } else {
                     tagVisible = false;
+                    Log.d("anytag", "goToAnyTag: NOT VISIBLE. distance to board is " + distanceToBoard);
                 }
                 if (tagVisible)
                     break;
@@ -798,6 +797,7 @@ public class Robot {
             setHeading(90, 0.75);
         }
     }
+
     //contains most apriltag logic
     public void alignToBoard() {
 
@@ -1471,9 +1471,9 @@ public class Robot {
         intake.setPower(-1);
         while (count < 3) {
             setMotorPower(0.3, 0.3, 0.3, 0.3);
-            opMode.sleep(400);
+            opMode.sleep(500);
             setMotorPower(-0.3, -0.3, -0.3, -0.3);
-            opMode.sleep(400);
+            opMode.sleep(300);
             count++;
         }
 
@@ -1627,7 +1627,7 @@ public class Robot {
             if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { // outer tag
                 mecanumBlocking(28, isRedAlliance, 0.7);
             } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // inner tag
-                mecanumBlocking(15, isRedAlliance, 0.7);
+                mecanumBlocking(16, isRedAlliance, 0.7);
             } else { // center tag
                 mecanumBlocking(23, isRedAlliance, 0.7);
             }
@@ -1637,7 +1637,7 @@ public class Robot {
             } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { // outer tag
                 mecanumBlocking(34, isRedAlliance, 0.7);
             } else { // center tag
-                mecanumBlocking(27, isRedAlliance, 0.7);
+                mecanumBlocking(28, isRedAlliance, 0.7);
             }
         }
 
