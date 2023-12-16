@@ -25,7 +25,7 @@ SpikeCam.location mySpikeLocation;
         CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.BLUE,350);
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
-        mySparky.initializePositions();
+
         mySparky.initializeAprilTags();
 
         // Ask the initialization questions
@@ -36,6 +36,8 @@ SpikeCam.location mySpikeLocation;
 
 
         if (opModeIsActive()) {
+            mySparky.initializePositions();
+            sleep(300);
             mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
             // Get to standard position before placing purple pixel
@@ -47,6 +49,8 @@ SpikeCam.location mySpikeLocation;
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
             if(mySpikeLocation== SpikeCam.location.LEFT) {
                 mySparky.MoveStraight(65, .5, mySparky.StandardAutonWaitTime);
+                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                sleep(400);
             }
             else {
                 mySparky.MoveStraight(30, .5, mySparky.StandardAutonWaitTime);
@@ -60,7 +64,7 @@ SpikeCam.location mySpikeLocation;
                 mySparky.StrafeRight(CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
                 mySparky.MoveStraight(-CyDogsChassis.OneTileMM-160, .5, mySparky.StandardAutonWaitTime);
                 mySparky.StrafeLeft(CyDogsChassis.OneTileMM-40, .5, mySparky.StandardAutonWaitTime);
-                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+
                 mySparky.RotateLeft(188, .5, 2000);
             } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
                 mySparky.RotateRight(92, .5, mySparky.StandardAutonWaitTime);
@@ -79,11 +83,13 @@ SpikeCam.location mySpikeLocation;
             }
 
 
-            mySparky.AdjustToAprilTag(mySpikeLocation);
+            mySparky.AdjustToAprilTag(mySpikeLocation,"BlueLeft");
             mySparky.scoreFromDrivingPositionAndReturn();
+            mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
             mySparky.returnArmFromScoring();
             mySparky.LowerArmAtAutonEnd();
+            //mySparky.MoveStraight(100,.5,300);
         }
     }
 

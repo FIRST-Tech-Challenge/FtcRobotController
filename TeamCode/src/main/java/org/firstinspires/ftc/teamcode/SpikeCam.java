@@ -85,9 +85,9 @@ public class SpikeCam {
             }
             Core.inRange(mat, lowHSV, highHSV, mat);
 
-            Rect leftRect = new Rect(1, 260, 159, 219);
-            Rect midRect = new Rect(160, 260, 319, 219);
-            Rect rightRect = new Rect(480, 260, 159, 219);
+            Rect leftRect = new Rect(1, 260, 174, 219);
+            Rect midRect = new Rect(175, 260, 289, 219);
+            Rect rightRect = new Rect(465, 260, 174, 219);
 
 
             Mat left = mat.submat(leftRect);

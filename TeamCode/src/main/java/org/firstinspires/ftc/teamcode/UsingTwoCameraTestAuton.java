@@ -5,6 +5,7 @@ import android.util.Size;
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 @Autonomous
+@Disabled
 public class UsingTwoCameraTestAuton extends LinearOpMode {
 
         OpenCvCamera spikeCam;

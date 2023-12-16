@@ -171,7 +171,7 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift.setTargetPosition(0);
     }
     public void SwingElbow() {
-        if (ArmLift.getCurrentPosition() > 590) {
+        if (ArmLift.getCurrentPosition() > ArmRaiseBeforeElbowMovement-20) {
             if (!isElbowOpen) {
                 Elbow.setPosition(ElbowScoringPosition);
                 Wrist.setPosition(WristForScoring);
@@ -195,6 +195,7 @@ public class CyDogsSparky extends CyDogsChassis{
         openFingers();
         myOpMode.sleep(400);
 
+
     }
     public void returnArmFromScoring(){
         raiseArmToScore(ArmMedium);
@@ -205,7 +206,7 @@ public class CyDogsSparky extends CyDogsChassis{
         myOpMode.sleep(2000);
     }
 
-    public void AdjustToAprilTag(SpikeCam.location mySpike)
+    public void AdjustToAprilTag(SpikeCam.location mySpike, String corner)
     {
 
         if(mySpike==SpikeCam.location.LEFT) {
@@ -218,6 +219,7 @@ public class CyDogsSparky extends CyDogsChassis{
 
         double degreesBearing;
         double inchesXMovement;
+        double inchesYMovement;
         // Adjust once
         AprilTagDetection foundTag = GetAprilTag(targetTag);
         // X
@@ -233,37 +235,74 @@ public class CyDogsSparky extends CyDogsChassis{
 
 
         // Adjust a 2nd Time
-      //  foundTag = GetAprilTag(targetTag);
+      // foundTag = GetAprilTag(targetTag);
         // Bearing
         if(foundTag != null) {
             degreesBearing = foundTag.ftcPose.bearing;
+            if(targetTag==3)
+            {
+                degreesBearing = degreesBearing*.9;
+            }
+
+
             RotateRight((int)(-degreesBearing*.9),.5,300);
         }
+     //   myOpMode.sleep(400);
+     //   foundTag = GetAprilTag(targetTag);
         // X
         double extraInches =0;
-        if(targetTag==6 || targetTag==3)
+        if(targetTag==6)
         {
             extraInches += 1.5;
+        }
+        if(targetTag==3){
+            extraInches -= 0.0;
         }
         if(foundTag != null) {
             inchesXMovement = foundTag.ftcPose.x;
             StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 300);
         }
 
+        // Y
+        double adjustY = 6.5;
+    //    if(targetTag==2)
+      //  {
+        //    adjustY = 6.5;
 
-
+        //}
+   //     myOpMode.sleep(400);
+   //     foundTag = GetAprilTag(targetTag);
         if(foundTag != null) {
-            inchesXMovement = foundTag.ftcPose.y;
-            MoveStraight((int) (inchesXMovement * 25.4-6.5*25.4), .5, 400);
+            inchesYMovement = foundTag.ftcPose.y;
+            MoveStraight((int) (inchesYMovement * 25.4-adjustY*25.4), .5, 400);
             myOpMode.telemetry.addData("Target: ", getAprilTagTarget(mySpike, myAlliance));
             myOpMode.telemetry.addData("Bearing: ", foundTag.ftcPose.bearing);
             myOpMode.telemetry.addData("X adjustment: ", foundTag.ftcPose.x);
             myOpMode.telemetry.addData("Y adjustment: ", foundTag.ftcPose.y);
             myOpMode.telemetry.update();
+        //    myOpMode.sleep(7000);
         }
+
         if(foundTag ==null) {
-            MoveStraight(345,.5,450);
-    }
+            MoveStraight(315,.5,450);
+        } else {
+            if (targetTag == 1 && corner == "BlueRight") {
+                MoveStraight(7, .5, 400);
+            }
+            if (targetTag == 3 && corner == "BlueLeft") {
+                MoveStraight(7, .5, 400);
+            }
+            if (targetTag == 3 && corner == "BlueRight") {
+                StrafeRight(40, .5, 400);
+            }
+            if (targetTag == 4 && corner == "RedLeft") {
+                StrafeLeft(30, .5, 400);
+            }
+            if (targetTag == 5 && corner == "RedLeft") {
+                StrafeRight(20, .5, 400);
+            }
+        }
+
      //     myOpMode.sleep(8000);
     }
 
@@ -300,7 +339,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public void dropPurplePixel(){
         FingerLeft.setPosition(FingerLeftOpen);
      //   FingerRight.setPosition(FingerRightOpen);
-        this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
+     //   this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
     }
 
     public Direction askParkingSpot(){
@@ -480,7 +519,7 @@ public class CyDogsSparky extends CyDogsChassis{
         } else if (myPath==Direction.CENTER) {
             // Should be aligned in the center already
         } else {
-            StrafeLeft(OneTileMM+70,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+110,.5,StandardAutonWaitTime);
         }
     }
 
@@ -500,11 +539,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment+75,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+leftAdjustment+90,.5,StandardAutonWaitTime);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment+65,.5,StandardAutonWaitTime);
+            StrafeRight(OneTileMM+rightAdjustment+80,.5,StandardAutonWaitTime);
         }
     }
 

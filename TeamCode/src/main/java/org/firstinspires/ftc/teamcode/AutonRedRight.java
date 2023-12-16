@@ -25,7 +25,7 @@ public class AutonRedRight extends LinearOpMode {
         CyDogsSparky mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.RED, 350);
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
-        mySparky.initializePositions();
+ //       mySparky.initializePositions();
         mySparky.initializeAprilTags();
 
         // Ask the initialization questions
@@ -36,6 +36,8 @@ public class AutonRedRight extends LinearOpMode {
 
 
         if (opModeIsActive()) {
+            mySparky.initializePositions();
+            sleep(300);
             mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
             // Get to standard position before placing purple pixel
@@ -45,7 +47,13 @@ public class AutonRedRight extends LinearOpMode {
 
             // Place purple pixel and back away from it
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
-            mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
+            if(mySpikeLocation== SpikeCam.location.MIDDLE) {
+                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                mySparky.MoveStraight(65, .5, mySparky.StandardAutonWaitTime);
+            }
+            else {
+                mySparky.MoveStraight(20, .5, mySparky.StandardAutonWaitTime);
+            }
 
             // First, let's get ourselves straight facing scoring area
             //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
@@ -55,29 +63,35 @@ public class AutonRedRight extends LinearOpMode {
                 mySparky.RotateRight(3,.5,mySparky.StandardAutonWaitTime);
                 mySparky.StrafeRight(40,.5,mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                // has long wait time to handle arm movement before it
                 mySparky.MoveStraight(675, .5, 2000);
       // I took 200 off the above to be far enough away to read april tags
             } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
                 mySparky.RotateLeft(92, .5, mySparky.StandardAutonWaitTime);
                 // We're 50mm further away from start position
                 mySparky.StrafeRight(-50,.5,mySparky.StandardAutonWaitTime);
-                mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+               // mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                // has long wait time to handle arm movement before it
                 mySparky.MoveStraight(500, .5, 2000);
             } else {  //RIGHT
                 mySparky.StrafeLeft(CyDogsChassis.OneTileMM, .5, mySparky.StandardAutonWaitTime);
                 mySparky.MoveStraight(-CyDogsChassis.OneTileMM-160, .5, mySparky.StandardAutonWaitTime);
                 mySparky.StrafeRight(CyDogsChassis.OneTileMM-40, .5, mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
+                // has long wait time to handle arm movement before it
                 mySparky.RotateRight(188, .5, 2000);
-              //  mySparky.MoveStraight(135,.5,CyDogsSparky.StandardAutonWaitTime);
+
              }
 
-          //  mySparky.StrafeLeft(20, .5, 450);
-            mySparky.AdjustToAprilTag(mySpikeLocation);
+
+            mySparky.AdjustToAprilTag(mySpikeLocation,"RedRight");
             mySparky.scoreFromDrivingPositionAndReturn();
+            mySparky.MoveStraight(-50,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
             mySparky.returnArmFromScoring();
             mySparky.LowerArmAtAutonEnd();
+            //mySparky.MoveStraight(100,.5,300);
+
         }
     }
 
