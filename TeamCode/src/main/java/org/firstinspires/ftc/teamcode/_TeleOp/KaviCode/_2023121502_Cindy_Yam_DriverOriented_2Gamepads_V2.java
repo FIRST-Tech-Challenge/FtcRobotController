@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ArmInstanc
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.ClawInstance;
 import org.firstinspires.ftc.teamcode._TeleOp.KaviCode.mechanisms.arm.DroneLauncherInstance;
 
-@TeleOp(name = "2 Gamepads Driver Oriented")
-public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpMode {
+@TeleOp(name = "2 Gamepads Robot Oriented")
+public class _2023121502_Cindy_Yam_DriverOriented_2Gamepads_V2 extends LinearOpMode {
 
     private int Arm_Adjustment_Value = 50;
 
@@ -20,13 +20,6 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
     double armSpeed = 0.15;
     @Override
     public void runOpMode() throws InterruptedException {
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
-
         ArmInstance Arm = new ArmInstance();
         ClawInstance Claw = new ClawInstance();
         DroneLauncherInstance DroneLauncher = new DroneLauncherInstance();
@@ -55,26 +48,11 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            if (gamepad1.x) {
-                imu.resetYaw();
-            }
-
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-            // Rotate the movement direction counter to the bot's rotation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            rotX = rotX * 1.1;  // Counteract imperfect strafing
-
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = ((rotY + rotX + rx) / denominator);
-            double backLeftPower = ((rotY - rotX + rx) / denominator);
-            double frontRightPower = ((rotY - rotX - rx) / denominator);
-            double backRightPower = ((rotY + rotX - rx) / denominator);
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = Math.round(((y + x + rx) / denominator));
+            double backLeftPower = Math.round(((y - x + rx) / denominator));
+            double frontRightPower = Math.round(((y - x - rx) / denominator));
+            double backRightPower = Math.round(((y + x - rx) / denominator));
 
             /*if (gamepad1.dpad_up) {
                 Driving_Speed = 0.85;
@@ -94,7 +72,7 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                 Claw.Actuate_Claw_Top_Finger("toggle");
             }
             if (gamepad1.a) {
-                Claw.Actuate_Claw_Top_Finger("toggle");
+                Claw.Actuate_Claw_Bottom_Finger("toggle");
             }
 
             if (gamepad1.right_trigger > 0) {
@@ -127,22 +105,28 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
 
             if (gamepad1.right_bumper) {
                 armDown = false;
-                if (backboardPos == false) {
+                if (!backboardPos) {
                     backboardPos = true;
                     Arm.setArmPosTo(300, armSpeed);
+                    while (Arm.Arm_Motor.isBusy()) {}
                 }else {
                     backboardPos = false;
                     Claw.Actuate_Claw_Bottom_Finger("open");
+                    sleep(750);
 
+                    Driving_Speed = 0.2;
                     backLeftMotor.setPower(Driving_Speed);
                     backRightMotor.setPower(-Driving_Speed);
                     frontLeftMotor.setPower(-Driving_Speed);
                     frontRightMotor.setPower(Driving_Speed);
-                    sleep(700);
+                    sleep(800);
+
+                    Driving_Speed = 0.85;
                     backLeftMotor.setPower(0);
                     backRightMotor.setPower(0);
                     frontLeftMotor.setPower(0);
                     frontRightMotor.setPower(0);
+                    while (Arm.Arm_Motor.isBusy()) {}
 
                     Claw.Actuate_Claw_Top_Finger("open");
                 }
@@ -154,14 +138,17 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
 // genshin uid: 642041765
 // add me pls !!
             if (gamepad1.left_bumper) {
-                if (armDown) {
+                if (!armDown) {
+                    Arm.setArmPosTo(100,0.15);
+                    armDown = true;
+                    while (Arm.Arm_Motor.isBusy()) {}
+                } else {
                     armDown = false;
-                    Arm.setArmPosTo(100,0.3);
                     Claw.Actuate_Claw_Bottom_Finger("open");
                     Claw.Actuate_Claw_Top_Finger("open");
-                } else {
-                    armDown = true;
-                    Arm.setArmPosTo(5, 0.3);
+                    sleep(500);
+                    Arm.setArmPosTo(5, 0.15);
+                    while (Arm.Arm_Motor.isBusy()) {}
                 }
             }
 
@@ -179,6 +166,8 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                 frontRightMotor.setPower(0);
 
                 Driving_Speed = 0.85;
+
+                while (Arm.Arm_Motor.isBusy()) {}
             }
 
             if (!Arm.Arm_Motor.isBusy() && armDown) {
@@ -187,7 +176,8 @@ public class _2023121501_Cindy_Yam_DriverOriented_2Gamepads_V1 extends LinearOpM
                 Claw.Actuate_Claw_Bottom_Finger("close");
                 Claw.Actuate_Claw_Top_Finger("close");
                 sleep(300);
-                Arm.setArmPosTo(100,0.3);
+                Arm.setArmPosTo(100,0.15);
+                while (Arm.Arm_Motor.isBusy()) {}
             }
 
             Arm.setArmPosTo(Arm.getCurrentArmPos(), 0.1);

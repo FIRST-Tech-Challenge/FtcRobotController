@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode._TeleOp;
+package org.firstinspires.ftc.teamcode._TeleOp.KaviCode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "1 Drivebase w/ Slow")
-public class _2023_12_15_01_Drivebase_Slow_V1 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "1 Red Drivebase w/ Slow")
+public class _2023_12_15_01_Red_Drivebase_Slow extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -49,7 +49,7 @@ public class _2023_12_15_01_Drivebase_Slow_V1 extends LinearOpMode {
                 imu.resetYaw();
             }
 
-            if (gamepad1.left_trigger > 0) {
+            if (gamepad1.dpad_up) {
                 Driving_Speed = 0.15;
 
                 backLeftMotor.setPower(-Driving_Speed);
@@ -88,6 +88,9 @@ public class _2023_12_15_01_Drivebase_Slow_V1 extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower * Driving_Speed);
             frontRightMotor.setPower(frontRightPower * Driving_Speed);
             backRightMotor.setPower(backRightPower * Driving_Speed);
+
+            telemetry.addData("botHeading: ", botHeading);
+            telemetry.update();
         }
     }
 }
