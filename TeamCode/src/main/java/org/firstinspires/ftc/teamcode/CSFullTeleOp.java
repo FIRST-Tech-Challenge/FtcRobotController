@@ -76,7 +76,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            if (carWashMotor == null) {
+            if (carWashMotor != null) {
                 if (gamepad2.a || gamepad2.x) {
                     carWashMotor.setPower(carWashPower);
                 }
@@ -88,7 +88,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            if (pixelBackServo == null) {
+            if (pixelBackServo != null) {
                 if (gamepad1.left_bumper && !lBack) {
                     lBack = true;
                     if (pixelBackServo.getPosition() == 1) {
@@ -101,7 +101,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            if (trayTiltingServo == null) {
+            if (trayTiltingServo != null) {
                 if (gamepad1.a && !a) {
                     a = true;
                     if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
@@ -114,7 +114,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            if (pixelFrontServo == null) {
+            if (pixelFrontServo != null) {
                 if (gamepad1.right_bumper && !rBack) {
                     rBack = true;
                     if (pixelFrontServo.getPosition() == 1) {
@@ -127,7 +127,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            if (droneServo == null) {
+            if (droneServo != null) {
                 if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && runtime.seconds() > 90) {
                     droneServo.setPosition(1);
                 } else if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && gamepad1.left_bumper && gamepad1.right_bumper) {
