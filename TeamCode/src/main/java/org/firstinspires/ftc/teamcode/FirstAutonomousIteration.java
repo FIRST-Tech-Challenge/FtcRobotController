@@ -126,6 +126,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
     private int sideMul = 1;
     private boolean isBack = false;
 
+    private Singleton ctx=null;
+
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
     private DcMotor         leftBackDrive   = null;
@@ -284,6 +286,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
         // initialize the TFOD
         initTfod();
+
+        // to save robots heading for others to use
+        ctx = ContextSingleton.getContext();
     }
 
     private void initTfod() {
@@ -405,6 +410,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
 //        nextState = FSMState.TEST_DRAW_TWO_PICK_ONE;
 
         while (nextState != FSMState.DONE) {
+            // save the current heading
+            ctx.setHeading(getHeading());
+
             prevState = currState;
             currState = nextState;
 
@@ -676,6 +684,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
+        ctx.setHeading(getHeading());
+
         sleep(1000);  // Pause to display last telemetry message.
     }
 

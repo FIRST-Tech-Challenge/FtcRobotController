@@ -72,6 +72,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 // @Disabled
 public class HeadlessOpMode extends LinearOpMode {
 
+    private Singleton context = ContextSingleton.getContext();
+    private double lastHeading = context.getHeading();
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -168,6 +170,7 @@ public class HeadlessOpMode extends LinearOpMode {
 
             if (gamepad1.x) {
                 imu.resetYaw();
+                lastHeading = 0.0;
                 waitRuntime(0.1);
             }
 
@@ -318,6 +321,6 @@ public class HeadlessOpMode extends LinearOpMode {
 
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
+        return lastHeading + orientation.getYaw(AngleUnit.DEGREES);
     }
 }
