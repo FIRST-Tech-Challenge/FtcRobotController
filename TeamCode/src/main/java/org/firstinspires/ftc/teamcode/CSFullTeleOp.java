@@ -52,79 +52,89 @@ public class CSFullTeleOp extends CSMethods {
             lb.setPower(leftBackPower);
             rb.setPower(rightBackPower);
 
-            if (gamepad2.dpad_up && !gamepad2.dpad_down) {
-                if (pixelLiftingMotor.getCurrentPosition() < 3000){
-                    pixelLiftingMotor.setPower(1);
+            if (pixelLiftingMotor != null) {
+                if (gamepad2.dpad_up && !gamepad2.dpad_down) {
+                    if (pixelLiftingMotor.getCurrentPosition() < 3000) {
+                        pixelLiftingMotor.setPower(1);
+                    } else {
+                        pixelLiftingMotor.setPower(0);
+                    }
                 }
-                else {
+
+
+                if (gamepad2.dpad_down && !gamepad2.dpad_up) {
+                    if (pixelLiftingMotor.getCurrentPosition() > 0) {
+                        pixelLiftingMotor.setPower(-1);
+                    } else {
+                        pixelLiftingMotor.setPower(0);
+                    }
+                }
+
+
+                if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                     pixelLiftingMotor.setPower(0);
                 }
             }
 
-            if (gamepad2.dpad_down && !gamepad2.dpad_up) {
-                if (pixelLiftingMotor.getCurrentPosition() > 0){
-                    pixelLiftingMotor.setPower(-1);
+            if (carWashMotor == null) {
+                if (gamepad2.a || gamepad2.x) {
+                    carWashMotor.setPower(carWashPower);
                 }
-                else {
-                    pixelLiftingMotor.setPower(0);
+                if (gamepad2.b || gamepad2.y) {
+                    carWashMotor.setPower(-carWashPower);
+                }
+                if (!gamepad2.a && !gamepad2.b && !gamepad2.y && !gamepad2.x) {
+                    carWashMotor.setPower(0);
                 }
             }
 
-            if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
-                pixelLiftingMotor.setPower(0);
-            }
-            
-            if (gamepad2.a || gamepad2.x) {
-                carWashMotor.setPower(carWashPower);
-            }
-
-            if (gamepad1.left_bumper && !lBack) {
-                lBack = true;
-                if (pixelBackServo.getPosition() == 1) {
-                    pixelBackServo.setPosition(0);
-                } else {
-                    pixelBackServo.setPosition(1);
+            if (pixelBackServo == null) {
+                if (gamepad1.left_bumper && !lBack) {
+                    lBack = true;
+                    if (pixelBackServo.getPosition() == 1) {
+                        pixelBackServo.setPosition(0);
+                    } else {
+                        pixelBackServo.setPosition(1);
+                    }
+                } else if (!gamepad1.left_bumper) {
+                    lBack = false;
                 }
-            } else if (!gamepad1.left_bumper) {
-                lBack = false;
             }
 
-            if (gamepad1.a && !a) {
-                a = true;
-                if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
-                    trayTiltingServo.setPosition(0);
-                } else {
-                    trayTiltingServo.setPosition(0.35);
+            if (trayTiltingServo == null) {
+                if (gamepad1.a && !a) {
+                    a = true;
+                    if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
+                        trayTiltingServo.setPosition(0);
+                    } else {
+                        trayTiltingServo.setPosition(0.35);
+                    }
+                } else if (!gamepad1.a) {
+                    a = false;
                 }
-            } else if (!gamepad1.a) {
-                a = false;
             }
 
-            if (gamepad1.right_bumper && !rBack) {
-                rBack = true;
-                if (pixelFrontServo.getPosition() == 1) {
-                    pixelFrontServo.setPosition(0);
-                } else {
-                    pixelFrontServo.setPosition(1);
+            if (pixelFrontServo == null) {
+                if (gamepad1.right_bumper && !rBack) {
+                    rBack = true;
+                    if (pixelFrontServo.getPosition() == 1) {
+                        pixelFrontServo.setPosition(0);
+                    } else {
+                        pixelFrontServo.setPosition(1);
+                    }
+                } else if (!gamepad1.right_bumper) {
+                    rBack = false;
                 }
-            } else if (!gamepad1.right_bumper) {
-
-                rBack = false;
             }
 
-            if (gamepad2.b || gamepad2.y) {
-                carWashMotor.setPower(-carWashPower);
+            if (droneServo == null) {
+                if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && runtime.seconds() > 90) {
+                    droneServo.setPosition(1);
+                } else if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && gamepad1.left_bumper && gamepad1.right_bumper) {
+                    droneServo.setPosition(1);
+                }
             }
 
-            if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && runtime.seconds() > 90) {
-                droneServo.setPosition(1);
-            } else if ((gamepad1.left_trigger > 0.85) && (gamepad1.right_trigger > 0.85) && gamepad1.left_bumper && gamepad1.right_bumper) {
-                droneServo.setPosition(1);
-            }
-
-            if (!gamepad2.a && !gamepad2.b && !gamepad2.y && !gamepad2.x) {
-                carWashMotor.setPower(0);
-            }
             telemetry.addData("Run Time", runtime.toString());
             if (runtime.seconds() > 90) {
                 telemetry.addData("Game Phase", "End Game");

@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -19,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
-
 
 public abstract class CSMethods extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
@@ -51,6 +51,7 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    static final double[] redFrontDetectionBoundaries = {0, 350, 999};
     double carWashPower = 1.0;
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET = null;
@@ -95,12 +96,12 @@ public abstract class CSMethods extends LinearOpMode {
         lf.setTargetPosition(lf.getCurrentPosition());
         rf.setTargetPosition(rf.getCurrentPosition());
 
-        try {
+        if (pixelLiftingMotor != null) {
             pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
             pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } catch (Exception e){except(e);}
+        }
 
         initTfod();
 
@@ -216,7 +217,7 @@ public abstract class CSMethods extends LinearOpMode {
         stopRobot();
     }
     public void ejectPixel() {
-        try {
+        if (carWashMotor != null) {
             int t = (int) runtime.milliseconds() + 1000;
             carWashMotor.setPower(carWashPower);
             while (true) {
@@ -225,9 +226,6 @@ public abstract class CSMethods extends LinearOpMode {
                 }
             }
             carWashMotor.setPower(0);
-        } catch (Exception e) {
-            telemetry.addData("ejectPixel failed", e);
-            telemetry.update();
         }
     }
     public void stopRobot() {
