@@ -46,25 +46,9 @@ import java.util.List;
  */
 @Autonomous(name = "Red Team Prop Detection", group = "Tests")
 public class TeamPropDetectionTest extends CSMethods {
-
-
-    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
-    // this is only used for Android Studio when using models in Assets.
-
-
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
-    private TfodProcessor tfod;
-
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
-
-    //@Override
     public void runOpMode() {
 
+        TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
         initTfod();
 
         // Wait for the DS start button to be touched.
