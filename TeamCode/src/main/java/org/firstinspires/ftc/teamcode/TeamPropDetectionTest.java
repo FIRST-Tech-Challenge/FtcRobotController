@@ -62,7 +62,7 @@ public class TeamPropDetectionTest extends CSMethods {
      */
     private VisionPortal visionPortal;
 
-    @Override
+    //@Override
     public void runOpMode() {
 
         initTfod();
@@ -70,6 +70,7 @@ public class TeamPropDetectionTest extends CSMethods {
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.addData("", tfod);
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
@@ -93,7 +94,7 @@ public class TeamPropDetectionTest extends CSMethods {
             if (x > 100 && x < 300){
                 telemetry.addData("Prop Position","Middle");
             }
-            else if (x > 500){
+            else if (x > 5300){
                 telemetry.addData("Prop Position","Right");
             }
             else {

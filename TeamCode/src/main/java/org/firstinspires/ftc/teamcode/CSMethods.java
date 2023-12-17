@@ -72,13 +72,13 @@ public abstract class CSMethods extends LinearOpMode {
         lb = hardwareMap.get(DcMotor.class, "leftBack");
         rf = hardwareMap.get(DcMotor.class, "rightFront");
         rb = hardwareMap.get(DcMotor.class, "rightBack");
-        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         imu = hardwareMap.get(IMU.class, "imu");
-        pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");
-        droneServo = hardwareMap.get(Servo.class, "droneServo");
-        pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");
-        //pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");
-        trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");
+        try {carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");}catch (Exception e){except(e);}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
+        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
+        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
+        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
+        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.REVERSE);
@@ -95,10 +95,12 @@ public abstract class CSMethods extends LinearOpMode {
         lf.setTargetPosition(lf.getCurrentPosition());
         rf.setTargetPosition(rf.getCurrentPosition());
 
-        pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
-        pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        try {
+            pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
+            pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } catch (Exception e){except(e);}
 
         initTfod();
 
@@ -214,14 +216,19 @@ public abstract class CSMethods extends LinearOpMode {
         stopRobot();
     }
     public void ejectPixel() {
-        int t = (int) runtime.milliseconds() + 1000;
-        carWashMotor.setPower(carWashPower);
-        while(true) {
-            if (!(t > ((int) runtime.milliseconds()))){
-                break;
+        try {
+            int t = (int) runtime.milliseconds() + 1000;
+            carWashMotor.setPower(carWashPower);
+            while (true) {
+                if (!(t > ((int) runtime.milliseconds()))) {
+                    break;
+                }
             }
+            carWashMotor.setPower(0);
+        } catch (Exception e) {
+            telemetry.addData("ejectPixel failed", e);
+            telemetry.update();
         }
-        carWashMotor.setPower(0);
     }
     public void stopRobot() {
         // Set target position to avoid an error
@@ -271,7 +278,6 @@ public abstract class CSMethods extends LinearOpMode {
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
 
                 .setModelAssetName(TFOD_MODEL_ASSET)
-
                 .setModelLabels(LABELS)
 
                 //.setIsModelTensorFlow2(true)
@@ -336,5 +342,10 @@ public abstract class CSMethods extends LinearOpMode {
         }   // end for() loop
         return currentRecognitions;
     }   // end method detectProp()
+
+    public void except(Exception e) {
+        telemetry.addData("Exception", e);
+        telemetry.update();
+    }
 
 }
