@@ -14,7 +14,6 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.JavaTextMenu.*;
 
 
-@Autonomous(name="DONT_RUN_League2_Autonomous", group ="amogus2")
-public class League2_Autonomous extends LinearOpMode {
+@Autonomous(name="Main Autonomous", group ="amogus2")
+public class MainAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -71,10 +70,11 @@ public class League2_Autonomous extends LinearOpMode {
 
             // update with input
             gp1.readButtons();
-            //menuInput.update(gp1.getLeftX(), gp1.getLeftY(), gp1.getButton(GamepadKeys.Button.A));
+            // feed stick and dpad input (both work), as well as A button into menuInput interpreter
             menuInput.update(
-                    gp1.getLeftX() + (gp1.getButton(GamepadKeys.Button.DPAD_LEFT) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0),
-                    gp1.getLeftY() + (gp1.getButton(GamepadKeys.Button.DPAD_DOWN) ? -1 : 0) + (gp1.getButton(GamepadKeys.Button.DPAD_UP) ? 1 : 0),
+                    gp1.getLeftX(), gp1.getLeftY(),
+                    gp1.getButton(GamepadKeys.Button.DPAD_LEFT), gp1.getButton(GamepadKeys.Button.DPAD_RIGHT),
+                    gp1.getButton(GamepadKeys.Button.DPAD_DOWN), gp1.getButton(GamepadKeys.Button.DPAD_UP),
                     gp1.getButton(GamepadKeys.Button.A)
             );
             menu.updateWithInput(menuInput);
@@ -272,7 +272,6 @@ class AutonDriveFactory {
             }
 
             // place purple pixel
-            //build = build.waitSeconds(1); // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             build = build.stopAndAdd(new AutoMechanismActions(drive).spinIntakeFor(3, 1));
 
             // return to the side of the field so that we can go towards the backdrop
@@ -344,8 +343,6 @@ class AutonDriveFactory {
 
         // finish parking
         build = build.splineToConstantHeading(new Vector2d(50, (36 + 24 * parkInvert) * teamInvert), Math.toRadians(0), limitVelo(15));
-
-        build = build.waitSeconds(1); // TEMPORARY FOR MEEPMEEP!!!!!!!!!
 
         // finish build
         return build.build();

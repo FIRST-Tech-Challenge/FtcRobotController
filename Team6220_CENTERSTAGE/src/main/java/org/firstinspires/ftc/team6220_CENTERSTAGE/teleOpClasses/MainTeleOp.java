@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
-@TeleOp(name="MainTeleOp", group ="vazkiiIsANeatByMod")
+@TeleOp(name="Main TeleOp", group ="amogus1")
 public class MainTeleOp extends LinearOpMode {
 
     // define states for turning, using slides, outtaking
@@ -29,7 +29,6 @@ public class MainTeleOp extends LinearOpMode {
     // ENUMS
     // GRAAAAHH
 
-    private double dumperPosLogger = 0;
     private int slidePreset = 0;
     private int intakePreset = Constants.INTAKE_POSITIONS.length - 1;
     private boolean resetProced = false;
@@ -39,21 +38,6 @@ public class MainTeleOp extends LinearOpMode {
         TURNING_MANUAL,
         TURNING_90,
         TURNING_FIELD_CENTRIC
-    }
-
-    SlideStates curSlideState = SlideStates.SLIDES_MANUAL;
-    enum SlideStates {
-        SLIDES_MANUAL,
-        SLIDES_FULL_EXTEND,
-        SLIDES_FULL_RETRACT
-    }
-
-    OuttakeStates curOuttakeState = OuttakeStates.OUTTAKE_REFILL;
-    enum OuttakeStates {
-        OUTTAKE_REFILL,
-        OUTTAKE_CLOSED,
-        OUTTAKE_DROP_1,
-        OUTTAKE_DROP_2
     }
 
     // drive powers, read from input and then manipulated every loop
@@ -215,6 +199,8 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
                         intakePreset = Constants.INTAKE_POSITIONS.length - 1;
 
+                /* WORK IN PROGRESS (please ignore)
+
                 // Moves the suspension arm (will be added in 3-5 business days) into position using drone button only after drone has launched
                 if (gp2.wasJustPressed(GamepadKeys.Button.Y) && hasDroneLaunched) {
                     telemetry.addLine("CONFIRM HANG INITIALIZATION ACTUATION DO THE THING");
@@ -226,7 +212,7 @@ public class MainTeleOp extends LinearOpMode {
                     }
                 }
 
-                double pushIntakeServoHarder = 0.0;
+                */
 
 
                 // drive the servo to position set by dpad using above code
@@ -239,7 +225,6 @@ public class MainTeleOp extends LinearOpMode {
                 // Sets everything back to constant positions if slides are at the bottom
                 if ((slidePreset == 0) && resetProced) {
                     drive.dumperServo.setPosition(Constants.DUMPER_INITIALIZATION_POS);
-                    dumperPosLogger = Constants.DUMPER_INITIALIZATION_POS;
                     drive.pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
                     drive.pixelLatchFront.setPosition(Constants.PIXEL_LATCH_POSITIONS[1]);
                     resetProced = true;

@@ -57,12 +57,41 @@ public class MenuInput {
 
     /**
      * updates the input values. considers current input type.
-     * @param x current raw x input
-     * @param y current raw y input
+     * converts to and sums x,y inputs.
+     * @param x current raw x stick input
+     * @param y current raw y stick input
+     * @param xLeft dPad left pressed
+     * @param xRight dPad right pressed
+     * @param yDown dPad down pressed
+     * @param yUp dPad up pressed
      * @param select current raw select input
-     * @return itself so you can use it immediately after updating it
      */
-    public MenuInput update(double x, double y, boolean select) {
+    public void update(double x, double y, boolean xLeft, boolean xRight, boolean yDown, boolean yUp, boolean select) {
+        double xVal = clamp((xLeft ? -1 : 0) + (xRight ? 1 : 0) + x, -1, 1);
+        double yVal = clamp((yDown ? -1 : 0) + (yUp ? 1 : 0) + y, -1, 1);
+        this.update(xVal, yVal, select);
+    }
+    /**
+     * updates the input values. considers current input type.
+     * converts to x,y inputs.
+     * @param xLeft dPad left pressed
+     * @param xRight dPad right pressed
+     * @param yDown dPad down pressed
+     * @param yUp dPad up pressed
+     * @param select current raw select input
+     */
+    public void update(boolean xLeft, boolean xRight, boolean yDown, boolean yUp, boolean select) {
+        double xVal = (xLeft ? -1 : 0) + (xRight ? 1 : 0);
+        double yVal = (yDown ? -1 : 0) + (yUp ? 1 : 0);
+        this.update(xVal, yVal, select);
+    }
+    /**
+     * updates the input values. considers current input type.
+     * @param x current raw x stick input
+     * @param y current raw y stick input
+     * @param select current raw select input
+     */
+    public void update(double x, double y, boolean select) {
 
         // reset all
         this.select = false;
@@ -72,7 +101,7 @@ public class MenuInput {
         switch (this.inputType) {
 
             case RAW:
-            
+
                 // directly apply the values
                 this.select = select;
                 this.x = (int)x;
@@ -89,7 +118,7 @@ public class MenuInput {
                 if (!this.hasAlreadySelected && select) {
                     this.select = true;
                     this.hasAlreadySelected = true;
-                // if select button isn't held anymore reset it
+                    // if select button isn't held anymore reset it
                 } else if (this.hasAlreadySelected && !select) {
                     this.hasAlreadySelected = false;
                 }
@@ -127,7 +156,7 @@ public class MenuInput {
                         this.isHoldingStick = true; // changes to holding cooldown mode
                         // allows the x and y values to pass through
 
-                    // if it's past the tap cooldown and is also past the hold cooldown
+                        // if it's past the tap cooldown and is also past the hold cooldown
                     } else if (this.isHoldingStick && this.stickTimer >= STICK_HOLD_COOLDOWN) {
                         this.stickTimer = this.stickTimer % STICK_HOLD_COOLDOWN;
                         // allows the x and y values to pass through
@@ -141,8 +170,6 @@ public class MenuInput {
 
                 break;
         }
-        
-        return this;
     }
 
     // updates the deltatime in seconds
@@ -151,7 +178,7 @@ public class MenuInput {
             this.deltaTime = (double)(System.nanoTime() - this.lastTime) / 1_000_000_000.0;
         }
         this.lastTime = System.nanoTime();
-    } 
+    }
 
     public int getX() {
         return this.x;
@@ -161,5 +188,10 @@ public class MenuInput {
     }
     public boolean getSelect() {
         return this.select;
-    }   
+    }
+
+    // clamps value between a minimum and maximum value
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
 }
