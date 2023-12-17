@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "perpendicularSlideMovement")
 public class perpendicularSlideMovement extends LinearOpMode {
@@ -10,11 +11,12 @@ public class perpendicularSlideMovement extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         
-        DcMotor leftHorizontal = hardwareMap.dcMotor.get("leftHorizontal");
-        DcMotor rightHorizontal = hardwareMap.dcMotor.get("rightHorizontal");
+        DcMotor leftHorizontal = hardwareMap.dcMotor.get("gpSlideLeft");
+        DcMotor rightHorizontal = hardwareMap.dcMotor.get("gpSlideRight");
         
 //        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 //        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftHorizontal.setDirection(DcMotorSimple.Direction.REVERSE);
         
         waitForStart();
 

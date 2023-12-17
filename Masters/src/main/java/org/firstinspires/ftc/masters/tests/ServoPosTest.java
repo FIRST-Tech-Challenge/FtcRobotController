@@ -41,9 +41,20 @@ public class ServoPosTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a && servoPos[target]< 1) {
-                servoPos[target]+=.005;
+                if (target==9 || target ==8){
+                    servoPos[8]+=.005;
+                    servoPos[9] += .005;
+                } else {
+                    servoPos[target] += .005;
+                }
+
             } else if (gamepad1.b && servoPos[target] > 0) {
-                servoPos[target]-=.005;
+                if (target==9 || target==8){
+                    servoPos[8]-=.005;
+                    servoPos[9] -= .005;
+                } else {
+                    servoPos[target] -= .005;
+                }
             }
 
             if (gamepad1.x) {

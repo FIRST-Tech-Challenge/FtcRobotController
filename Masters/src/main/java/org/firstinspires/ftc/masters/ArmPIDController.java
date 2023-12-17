@@ -2,9 +2,6 @@ package org.firstinspires.ftc.masters;
 
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -29,8 +26,6 @@ public class ArmPIDController {
 
         this.armMotor = armMotor;
         controller = new PIDController(p_arm, i_arm, d_arm);
-
-
 
     }
 
