@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -72,8 +73,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 // @Disabled
 public class HeadlessOpMode extends LinearOpMode {
 
+    static final double HOLD_TIME_HEADING_CORRECTION = 0.1;
+    static final double P_TURN_GAIN = 0.02;
+    static final double     DRIVE_GEAR_REDUCTION    = 5 ;     // No External Gearing.
+    static final double     TURN_SPEED              = 0.1/DRIVE_GEAR_REDUCTION;     // Max Turn speed to limit turn rate
+
     private Singleton context = ContextSingleton.getContext();
     private double lastHeading = context.getHeading();
+    private double targetHeading = context.getHeading();
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -171,6 +178,7 @@ public class HeadlessOpMode extends LinearOpMode {
             if (gamepad1.x) {
                 imu.resetYaw();
                 lastHeading = 0.0;
+                targetHeading = 0.0;
                 waitRuntime(0.1);
             }
 
@@ -186,6 +194,11 @@ public class HeadlessOpMode extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             x_ref = Math.abs(gamepad1.left_stick_x) > 0.1 ? gamepad1.left_stick_x  : 0;
             y_ref = -(Math.abs(gamepad1.left_stick_y) > 0.1 ? gamepad1.left_stick_y : 0);
+
+            // apply correction if error is above threshhold
+            if ( Math.abs(getHeading() - targetHeading) > 0.5 ) {
+                runHeadingCorrection();
+            }
 
             heading = getHeading();
             cos_heading = Math.cos(heading/180*Math.PI);
@@ -217,10 +230,16 @@ public class HeadlessOpMode extends LinearOpMode {
                 leftBackPower = rightFrontPower;
 
                 // go turn
-                leftFrontPower += gamepad1.right_stick_x * turnMulPower;
-                leftBackPower += gamepad1.right_stick_x * turnMulPower;
-                rightFrontPower += -gamepad1.right_stick_x * turnMulPower;
-                rightBackPower += -gamepad1.right_stick_x * turnMulPower;
+                if (Math.abs(gamepad1.right_stick_x) > 0.1) {
+                    leftFrontPower += gamepad1.right_stick_x * turnMulPower;
+                    leftBackPower += gamepad1.right_stick_x * turnMulPower;
+                    rightFrontPower += -gamepad1.right_stick_x * turnMulPower;
+                    rightBackPower += -gamepad1.right_stick_x * turnMulPower;
+
+                    // save the targetHeading everytime we have actions on the right joystick
+                    targetHeading = getHeading();
+                }
+
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -322,5 +341,65 @@ public class HeadlessOpMode extends LinearOpMode {
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return lastHeading + orientation.getYaw(AngleUnit.DEGREES);
+    }
+
+    public double getTargetHeading() {
+        return targetHeading;
+    }
+
+
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
+        double headingError;
+
+        // Determine the heading current error
+        headingError = desiredHeading - getHeading();
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180)  headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
+
+    public void moveRobot(double drive, double turn) {
+
+        double leftSpeed  = drive - turn;
+        double rightSpeed = drive + turn;
+
+        // Scale speeds down if either one exceeds +/- 1.0;
+        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (max > 1.0)
+        {
+            leftSpeed /= max;
+            rightSpeed /= max;
+        }
+
+        leftBackDrive.setPower(leftSpeed);
+        rightBackDrive.setPower(rightSpeed);
+        leftFrontDrive.setPower(leftSpeed);
+        rightFrontDrive.setPower(rightSpeed);
+    }
+    public void runHeadingCorrection() {
+        // apply correction so that getHeading == targetHeading
+        double turnSpeed = 0.0;
+
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        while (opModeIsActive() && (holdTimer.time() < HOLD_TIME_HEADING_CORRECTION)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(getTargetHeading(), P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -TURN_SPEED, TURN_SPEED);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+
+        }
+
     }
 }
