@@ -41,11 +41,11 @@ import com.qualcomm.robotcore.util.Range;
  * it is instantly available to other OpModes.
  *
  * The real benefit of this approach is that as you tweak your robot hardware, you only need to make changes in ONE place (the Hardware Class).
- * So, to be effective you should put as much or your hardware setup and access code as possible in the hardware class.
- * Essentially anything you do with hardware in BOTH Teleop and Auto should likely go in the hardware class.
+ * So, to be effective, you should put as much or your hardware setup and access code as possible in the hardware class.
+ * Essentially, anything you do with hardware in BOTH Teleop and Auto should likely go in the hardware class.
  *
  * The Hardware Class is created in a separate file, and then an "instance" of this class is created in each OpMode.
- * In order for the class to do typical OpMode things (like send telemetry data) it must be passed a reference to the
+ * In order for the class to do typical OpMode things (like send telemetry data), it must be passed a reference to the
  * OpMode object when it's created, so it can access all core OpMode functions.  This is illustrated below.
  *
  * In this concept sample, the hardware class file is called RobotHardware.java and it must accompany this sample OpMode.
@@ -58,7 +58,7 @@ import com.qualcomm.robotcore.util.Range;
  * View the RobotHardware.java class file for more details
  *
  *  Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+ *  Remove or comment on the @Disabled line to add this OpMode to the Driver Station OpMode list
  *
  *  In OnBot Java, add a new OpMode, select this sample, and select TeleOp.
  *  Also add another new file named RobotHardware.java, select the sample with that name, and select Not an OpMode.
@@ -69,7 +69,7 @@ import com.qualcomm.robotcore.util.Range;
 public class ConceptExternalHardwareClass extends LinearOpMode {
 
     // Create a RobotHardware object to be used to access robot hardware.
-    // Prefix any hardware functions with "robot." to access this class.
+    // Prefix any hardware functions with "robot" to access this class.
     RobotHardware   robot       = new RobotHardware(this);
 
     @Override
@@ -79,10 +79,10 @@ public class ConceptExternalHardwareClass extends LinearOpMode {
         double arm          = 0;
         double handOffset   = 0;
 
-        // initialize all the hardware, using the hardware class. See how clean and simple this is?
+        // Initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
 
-        // Send telemetry message to signify robot waiting;
+        // Send a telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 

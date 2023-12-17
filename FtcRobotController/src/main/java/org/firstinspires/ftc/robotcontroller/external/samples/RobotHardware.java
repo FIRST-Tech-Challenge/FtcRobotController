@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /*
- * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
+ * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java.
  * Please read the explanations in that Sample about how to use this class definition.
  *
  * This file defines a Java Class that performs all the setup and configuration for a sample robot's hardware (motors and sensors).
@@ -58,14 +58,14 @@ public class RobotHardware {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
-    // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
+    // Define Motor and Servo objects (Make them private, so they can't be accessed externally)
     private DcMotor leftDrive   = null;
     private DcMotor rightDrive  = null;
     private DcMotor armMotor = null;
     private Servo   leftHand = null;
     private Servo   rightHand = null;
 
-    // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
+    // Define Drive constants.  Make them public, so they CAN be used by the calling OpMode
     public static final double MID_SERVO       =  0.5 ;
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -80,7 +80,7 @@ public class RobotHardware {
      * Initialize all the robot's hardware.
      * This method must be called ONCE when the OpMode is initialized.
      * <p>
-     * All of the hardware devices are accessed via the hardware map, and initialized.
+     * All the hardware devices are accessed via the hardware map and initialized.
      */
     public void init()    {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
@@ -89,7 +89,7 @@ public class RobotHardware {
         armMotor   = myOpMode.hardwareMap.get(DcMotor.class, "arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
+        // Pushing the left stick forward MUST make the robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
