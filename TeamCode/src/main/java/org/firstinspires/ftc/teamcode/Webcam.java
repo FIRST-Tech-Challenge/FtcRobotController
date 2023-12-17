@@ -29,6 +29,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -47,8 +48,9 @@ import java.util.List;
 public class Webcam {
 
     static final boolean USE_WEBCAM = true;
-    private TfodProcessor tfod;
-    private VisionPortal visionPortal;
+    public TfodProcessor tfod;
+    public AprilTagProcessor tagProcessor;
+    public VisionPortal visionPortal;
 
     public enum Position {
         Left,
@@ -57,10 +59,7 @@ public class Webcam {
     }
 
     public Webcam(CameraName camera, boolean isRed) {
-
-
         initTfod(camera, isRed);
-
     }
 
 
@@ -75,6 +74,12 @@ public class Webcam {
                 .setModelInputSize(300)
                 .setModelAspectRatio(16.0 / 9.0)
 
+                .build();
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(false)
+                .setDrawTagOutline(false)
                 .build();
 
         // Create the vision portal by using a builder.
@@ -96,13 +101,10 @@ public class Webcam {
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
+        // :3
         // Set and enable the processor.
         builder.addProcessor(tfod);
+        builder.addProcessor(tagProcessor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();

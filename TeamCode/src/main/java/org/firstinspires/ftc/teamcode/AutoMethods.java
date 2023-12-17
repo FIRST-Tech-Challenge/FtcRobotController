@@ -54,6 +54,25 @@ public class AutoMethods {
         ZeroMotors();
     }
 
+    void Strafe( boolean sendright, double motorPower){
+        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (sendright) {
+            motorLeft.setPower(-motorPower);
+            motorRight.setPower(motorPower);
+            motorRight2.setPower(-motorPower);
+            motorLeft2.setPower(motorPower);
+        } else {
+            motorLeft.setPower(motorPower);
+            motorRight.setPower(-motorPower);
+            motorRight2.setPower(motorPower);
+            motorLeft2.setPower(-motorPower);
+        }
+
+    }
+
     void Turn90( boolean turnLeft, double motorPower)    {
         int Ticks = 915 ;
         if (turnLeft) {
@@ -125,10 +144,14 @@ public class AutoMethods {
         motorRight2.setPower(0);
         motorLeft2.setPower(0);
     }
-    private boolean AtTarget(){
+    private boolean AtTarget() {
         return motorLeft.getCurrentPosition() > leftTarget - 10 && motorLeft.getCurrentPosition() < leftTarget + 10 &&
                 motorLeft2.getCurrentPosition() > left2Target - 10 && motorLeft2.getCurrentPosition() < left2Target + 10 &&
                 motorRight.getCurrentPosition() > rightTarget - 10 && motorRight.getCurrentPosition() < rightTarget + 10 &&
                 motorRight2.getCurrentPosition() > right2Target - 10 && motorRight2.getCurrentPosition() < right2Target + 10;
     }
+        void FindTag ( boolean strafeRight){
+
+        }
+
 }
