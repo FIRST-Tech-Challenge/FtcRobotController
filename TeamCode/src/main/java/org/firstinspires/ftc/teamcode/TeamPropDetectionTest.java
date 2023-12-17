@@ -44,7 +44,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Team Prop Detection", group = "Tests")
+@Autonomous(name = "Red Team Prop Detection", group = "Tests")
 public class TeamPropDetectionTest extends CSMethods {
 
 
@@ -70,7 +70,6 @@ public class TeamPropDetectionTest extends CSMethods {
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.addData("", tfod);
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
@@ -94,7 +93,7 @@ public class TeamPropDetectionTest extends CSMethods {
             if (x > 100 && x < 300){
                 telemetry.addData("Prop Position","Middle");
             }
-            else if (x > 5300){
+            else if (x > 500){
                 telemetry.addData("Prop Position","Right");
             }
             else {
