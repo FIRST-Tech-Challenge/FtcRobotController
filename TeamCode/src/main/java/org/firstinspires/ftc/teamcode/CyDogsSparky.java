@@ -301,12 +301,15 @@ public class CyDogsSparky extends CyDogsChassis{
             if (targetTag == 5 && corner == "RedLeft") {
                 StrafeRight(20, .5, 400);
             }
+            if (targetTag == 6 && corner == "RedRight") {
+                StrafeRight(25, .5, 400);
+            }
         }
 
      //     myOpMode.sleep(8000);
     }
 
-    private int getAprilTagTarget(SpikeCam.location mySpike, Alliance myAlliance)
+    public int getAprilTagTarget(SpikeCam.location mySpike, Alliance myAlliance)
     {
         int targetTag;
         if(myAlliance==Alliance.RED)
@@ -468,7 +471,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike==SpikeCam.location.LEFT){
             RotateLeft(94,.5,StandardAutonWaitTime);
-            MoveStraight(-35,.5,200);
+            MoveStraight(-20,.5,200);
             dropPurplePixel();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
             MoveStraight(70,.5,StandardAutonWaitTime);
