@@ -13,12 +13,10 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "Team Prop Detection 3", group = "Tests")
+@Autonomous(name = "Team Prop Detection 2", group = "Tests")
 public class TeamPropDetectionTest2 extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-
     private TfodProcessor tfod;
 
     private ElapsedTime runtime = new ElapsedTime();

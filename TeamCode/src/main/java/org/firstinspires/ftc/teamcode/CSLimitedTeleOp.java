@@ -120,6 +120,5 @@ public class CSLimitedTeleOp extends LinearOpMode {
 
             sleep(25);
         }
-
-            }
+    }
 }
