@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -47,7 +46,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -105,6 +103,21 @@ public class FirstAutonomousIteration extends LinearOpMode {
     public enum FoundTeamProp {
         FOUND_NONE, FOUND_LEFT, FOUND_MIDDLE, FOUND_RIGHT;
     }
+
+    public String getFoundTeamPropString(FoundTeamProp foundTeamProp) {
+        switch(foundTeamProp) {
+            case FOUND_NONE:
+                return "None";
+            case FOUND_LEFT:
+                return "LEFT";
+            case FOUND_RIGHT:
+                return "RIGHT";
+            case FOUND_MIDDLE:
+                return "MIDDLE";
+        }
+        return "INTERNAL ERROR";
+    }
+
 
     public enum FSMState {
         UNINITIALIZED,
@@ -184,6 +197,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
     String msg = "";
 
     FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
+    int cubeIsFoundCount = 0;
 
 
     // This is needed for TFOD
@@ -385,6 +399,68 @@ public class FirstAutonomousIteration extends LinearOpMode {
         return false;
     }
 
+    public void detectCube() {
+        List<Recognition> currentRecognitions;
+        FoundTeamProp cubeLocationDetected = FoundTeamProp.FOUND_RIGHT;
+
+        waitRuntime(1);
+        currentRecognitions = tfod.getRecognitions();
+        if (currentRecognitions.size() > 0) {
+            // find with the highest confidence based on the smallest cube
+            double highestConfidence = -1;
+            double smallestSize = 1000;
+            Recognition recHighestConfidence = null;
+            Recognition recSmallestSize = null;
+            for (int ind=0; ind < currentRecognitions.size(); ind++ ) {
+                Recognition rec = currentRecognitions.get(ind);
+                double sz = rec.getRight() - rec.getLeft();
+                if (rec.getConfidence() > highestConfidence) {
+                    highestConfidence = rec.getConfidence();
+                    recHighestConfidence = rec;
+                }
+                if (sz < smallestSize) {
+                    smallestSize = sz;
+                    recSmallestSize = rec;
+                }
+            }
+
+            // build more confidence as we detect the cube more than 2x
+            // detect left if getLeft() < 100
+            // detect middle if getLeft() > 100
+            // detect right if not found
+            if (recSmallestSize.getLeft() < 120) {
+                cubeLocationDetected = FoundTeamProp.FOUND_LEFT;
+            } else {
+                cubeLocationDetected = FoundTeamProp.FOUND_MIDDLE;
+            }
+
+            telemetry.addData("HiConf: ", String.format("%.2f", recHighestConfidence.getLeft()) + "/" + String.format("%.2f", recHighestConfidence.getRight()));
+            telemetry.addData("Smallest: ", String.format("%.2f", recSmallestSize.getLeft()) + "/" + String.format("%.2f", recSmallestSize.getRight()));
+
+
+        }
+
+        // count the detection
+        // increase the confidence count if the same location is detected
+        // otherwise decrease the confidence count until zero before changes the perceived location
+        if (cubeIsFound == FoundTeamProp.FOUND_NONE || cubeIsFound == cubeLocationDetected) {
+            cubeIsFound = cubeLocationDetected;
+            cubeIsFoundCount += 1;
+            if (cubeIsFoundCount > 3) {
+                cubeIsFoundCount = 3;
+            }
+        } else {
+            cubeIsFoundCount -= 1;
+            if (cubeIsFoundCount <= 0) {
+                cubeIsFoundCount = 0;
+                cubeIsFound = cubeLocationDetected;
+            }
+        }
+
+        msg = "Cube Found!: " + getFoundTeamPropString(cubeIsFound);
+        sendTelemetry(true);
+    }
+
     @Override
     public void runOpMode() {
         initHardware();
@@ -397,7 +473,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
+            detectCube();
+
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            telemetry.addData("Detect cube: ", getFoundTeamPropString(cubeIsFound));
             telemetry.update();
         }
 
@@ -405,97 +484,87 @@ public class FirstAutonomousIteration extends LinearOpMode {
 //        nextState = FSMState.TEST_DRAW_TWO_PICK_ONE;
 
         while (nextState != FSMState.DONE) {
+
             prevState = currState;
             currState = nextState;
 
             switch (currState) {
                 case START_TO_DETECT_POS:
-                    driveStraight(DRIVE_SPEED*3, 22, 0.0);
                     holdHeading(TURN_SPEED, 0, 0.1);
-                    nextState = FSMState.DETECT_MIDDLE;
+                    switch(cubeIsFound) {
+                        case FOUND_MIDDLE:
+                            nextState = FSMState.DETECT_MIDDLE;
+                            break;
+                        case FOUND_LEFT:
+                            nextState = FSMState.DETECT_LEFT;
+                            break;
+                        default:
+                            nextState = FSMState.ASSUME_RIGHT;
+                            break;
+                    }
                     break;
 
                 case DETECT_MIDDLE:
-                    targetHeading = -12;
-                    turnToHeading( TURN_SPEED*5, targetHeading);
-                    holdHeading(TURN_SPEED, targetHeading, 0.1);
-                    if (isCubeThere()) {
-                        msg = "Cube Found Middle!!!";
-                        sendTelemetry(true);
+                    // go place the pixel and go back to starting position
+                    driveStraight(DRIVE_SPEED*3, 22, 0.0);
 
-                        driveStraight(DRIVE_SPEED, 2, targetHeading, false, true);
-                        driveStraight(DRIVE_SPEED, 2.8, targetHeading);
+                    // turn right, goes forward a little, place, and go back to initial state
+                    targetHeading = -20;
+                    turnToHeading(TURN_SPEED, targetHeading);
+                    driveStraight(DRIVE_SPEED, 2.8, targetHeading);
 
-                        dropTwoPickOne();
-                        driveStraight(DRIVE_SPEED, -(2.8-MOVE_BACK_AFTER_DROP), targetHeading);
+                    dropTwoPickOne();
+                    driveStraight(DRIVE_SPEED, -(2.8-MOVE_BACK_AFTER_DROP), targetHeading);
+                    turnToHeading(TURN_SPEED, 0);
 
-                        // get ready to park
-                        turnToHeading(TURN_SPEED*5, 90);
-                        holdHeading(TURN_SPEED, 90, 0.1);
+                    // go back ready to park
+                    driveStraight(DRIVE_SPEED*3, -(22), 0.0);
 
-                        driveStraight(DRIVE_SPEED*5,-18, 90,false, true);
-                        //This is where the robot will remember where the pixel should be.
-                        cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
-                        nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
-
-                    } else {
-                        nextState = FSMState.DETECT_LEFT;
-                    }
+                    nextState = FSMState.DONE;
                     break;
 
                 case DETECT_LEFT:
-                    targetHeading = 35
-                    ;
-                    turnToHeading( TURN_SPEED*5, targetHeading);
-                    driveStraight(DRIVE_SPEED, -2, targetHeading);
-                    holdHeading(TURN_SPEED, targetHeading, 0.1);
+                    driveStraight(DRIVE_SPEED*3, 17, 0.0);
 
-                    if (isCubeThere()) {
-                        msg = "Cube Found Left!!!";
-                        sendTelemetry(true);
+                    // turn left, goes forward a little, place, and go back to initial state
+                    targetHeading = 45;
+                    turnToHeading(TURN_SPEED*2, targetHeading);
+                    holdHeading(TURN_SPEED, targetHeading, 0.3);
+                    driveStraight(DRIVE_SPEED, 2.8, targetHeading);
 
-                        turnToHeading( TURN_SPEED*1, 90);
-                        holdHeading(TURN_SPEED*1, 90,0.1);
-                        driveStraight(DRIVE_SPEED*1,10, 90,false, true);
-                        driveStraight(DRIVE_SPEED, -1, 90);
+                    dropTwoPickOne();
+                    driveStraight(DRIVE_SPEED, -(2.8-MOVE_BACK_AFTER_DROP), targetHeading);
 
-                        dropTwoPickOne();
+                    turnToHeading(TURN_SPEED*2, 0);
+                    holdHeading(TURN_SPEED, 0, 0.3);
 
-                        // set up the place to where it is ready to go park
-                        driveStraight(DRIVE_SPEED*1,3, 90,false, false);
-                        driveStraight(DRIVE_SPEED*2,-27, 90,false, true);
-                        //This is where the robot will remember where the pixel should be.
-                        cubeIsFound = FoundTeamProp.FOUND_LEFT;
-                        nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
+                    // go back ready to park
+                    driveStraight(DRIVE_SPEED*3, -(17), 0.0);
 
-                    } else {
-                        nextState = FSMState.ASSUME_RIGHT;
-                    }
-
-                    driveStraight(DRIVE_SPEED, 2, targetHeading);
+                    nextState = FSMState.DONE;
                     break;
 
                 case ASSUME_RIGHT:
-                    targetHeading = -90;
-                    turnToHeading( TURN_SPEED*5, targetHeading);
-                    driveStraight(DRIVE_SPEED*2,-6.5, targetHeading,false, true);
+                    driveStraight(DRIVE_SPEED*3, 17, 0.0);
 
-                    driveStraight(DRIVE_SPEED*5, -6, targetHeading, true, false);
-                    holdHeading(TURN_SPEED, targetHeading, 0.1);
+                    // turn left, goes forward a little, place, and go back to initial state
+                    targetHeading = -45;
+                    turnToHeading(TURN_SPEED*2, targetHeading);
+                    holdHeading(TURN_SPEED, targetHeading, 0.3);
+                    driveStraight(DRIVE_SPEED, 2.8, targetHeading);
 
                     dropTwoPickOne();
-                    turnToHeading( TURN_SPEED*5, 90);
+                    driveStraight(DRIVE_SPEED, -(2.8-MOVE_BACK_AFTER_DROP), targetHeading);
 
-//                    driveStraight(DRIVE_SPEED*5, -(-4-MOVE_BACK_AFTER_DROP), targetHeading, true, false);
-                    driveStraight(DRIVE_SPEED*5, -4.5, 90, true, false);
+                    turnToHeading(TURN_SPEED*2, 0);
+                    holdHeading(TURN_SPEED, 0, 0.3);
 
-                    // get ready to go park
-                    // set up the place to where it is ready to go park
-                    driveStraight(DRIVE_SPEED*5,-24.5, 90,false, true);
-                    //This is where the robot will remember where the pixel should be.
-                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
-                    nextState = FSMState.GO_PARK_DROP_YELLOWPIXEL;
+                    // go back ready to park
+                    driveStraight(DRIVE_SPEED*3, -(17), 0.0);
+
+                    nextState = FSMState.DONE;
                     break;
+
 
                 case GO_PARK_DROP_YELLOWPIXEL:
 
@@ -674,8 +743,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
         //arm.moveArmDown();
         //waitRuntime(1.0);
 
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
         sleep(1000);  // Pause to display last telemetry message.
     }
 
