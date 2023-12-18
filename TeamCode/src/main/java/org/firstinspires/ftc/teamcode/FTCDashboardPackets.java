@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import org.firstinspires.ftc.teamcode.util.Logging;
 
 public class FTCDashboardPackets {
     public static final FtcDashboard DASHBOARD = FtcDashboard.getInstance();
@@ -11,14 +12,36 @@ public class FTCDashboardPackets {
      */
     public static String CONTEXT = null;
     private static TelemetryPacket packet;
+    public static final Logging LOGGING = new Logging();
+    public static boolean useLogging = false;
+
+    public static final String INFO = "[INFO]";
+    public static final String DEBUG = "[DEBUG]";
+    public static final String ERROR = "[ERROR]";
+    public static final String WARN = "[WARN]";
+
+    public static final enum LoggingLevels {
+        INFO,
+        DEBUG,
+        ERROR,
+        WARN
+    }
 
     public FTCDashboardPackets() {
         CONTEXT = "ROOT";
+        useLogging = true;
         createNewTelePacket();
     }
 
     public FTCDashboardPackets(String context) {
         CONTEXT = context.toUpperCase();
+        useLogging = true;
+        createNewTelePacket();
+    }
+
+    public FTCDashboardPackets(boolean useLogging) {
+        CONTEXT = "ROOT";
+        useLogging = useLogging;
         createNewTelePacket();
     }
 
@@ -29,6 +52,43 @@ public class FTCDashboardPackets {
      */
     public void createNewTelePacket() {
         packet = new TelemetryPacket();
+        if (useLogging)
+            LOGGING.setup();
+    }
+
+    private String getLoggingLevel(LoggingLevels level) {
+        switch (level) {
+            case INFO:
+                return INFO;
+            case DEBUG:
+                return DEBUG;
+            case ERROR:
+                return ERROR;
+            case WARN:
+                return WARN;
+            default:
+                return INFO;
+        }
+    }
+
+    public void log(String value) {
+        if (useLogging)
+            LOGGING.log("%s:%s\t%s", CONTEXT, INFO, value);
+    }
+
+    public void log(String value, LoggingLevels level) {
+        if (useLogging)
+            LOGGING.log("%s:%s\t%s", CONTEXT, getLoggingLevel(level), value);
+    }
+
+    public void log(String key, String value) {
+        if (useLogging)
+            LOGGING.log("%s:%s\t%s : %s", CONTEXT, INFO, key, value);
+    }
+
+    public void log(String key, String value, LoggingLevels level) {
+        if (useLogging)
+            LOGGING.log("%s:%s\t%s : %s", CONTEXT, getLoggingLevel(level), key, value);
     }
 
     /**
@@ -38,6 +98,7 @@ public class FTCDashboardPackets {
      */
     public void put(String key, String value) {
         packet.put(key, value);
+        log(key, value);
     }
 
     /**
@@ -46,6 +107,7 @@ public class FTCDashboardPackets {
      */
     public void put(String value) {
         packet.put(CONTEXT, value);
+        log(value);
     }
 
     /**
@@ -54,6 +116,7 @@ public class FTCDashboardPackets {
      */
     public void error(Exception e) {
         packet.put("Error", e.getMessage());
+        log(e.getMessage(), LoggingLevels.ERROR);
     }
 
     /**
@@ -74,6 +137,7 @@ public class FTCDashboardPackets {
      */
     public void info(String message) {
         packet.put(CONTEXT + " : INFO", message);
+        log(message);
     }
 
     /**
@@ -114,6 +178,7 @@ public class FTCDashboardPackets {
      */
     public void debug(String message) {
         packet.put(CONTEXT + " : DEBUG", message);
+        log(message, LoggingLevels.DEBUG);
     }
 
     /**
