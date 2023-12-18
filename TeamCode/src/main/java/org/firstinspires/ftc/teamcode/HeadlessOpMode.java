@@ -159,6 +159,7 @@ public class HeadlessOpMode extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Start Heading Offset: ", "%.2f", lastHeading);
         telemetry.update();
 
         waitForStart();

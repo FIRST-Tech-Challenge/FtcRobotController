@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 class Singleton {
-    double currentHeading;
+    double currentHeading = 0.0;
 
     public double getHeading() {
         return currentHeading;
