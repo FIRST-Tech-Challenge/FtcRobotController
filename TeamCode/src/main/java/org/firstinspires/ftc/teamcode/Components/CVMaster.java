@@ -101,7 +101,7 @@ public class CVMaster {
               webcam.setPipeline(openSleeve);
             }
 
-            webcam.startStreaming(864, 480, OpenCvCameraRotation.UPRIGHT);
+            webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             dashboard.startCameraStream(webcam, 10);
           }
 
@@ -164,7 +164,7 @@ public class CVMaster {
   /** switches to apriltag camera logs to general surface log */
   public void switchToApril() {
     webcam.stopRecordingPipeline();
-    webcam.stopStreaming();
+//    webcam.stopStreaming();
     cam = new RFAprilCam();
     isStreaming = false;
   }

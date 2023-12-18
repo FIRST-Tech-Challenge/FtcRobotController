@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 0, p1y =230, p2x = 80, p2y =380, p21x = 260, p21y =200, p22x = 420, p22y =370, threshhold = 1.0,
+    public static double p1x = 0, p1y =230, p2x = 80, p2y =360, p21x = 260, p21y =200, p22x = 420, p22y =340, threshhold = 1.0,
 
     //h3u and s3u: 71 and 90
     colour = 1, h1 = 0, h1H = 30, h2 =160, h2H = 180;

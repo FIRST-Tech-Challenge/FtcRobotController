@@ -23,6 +23,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.apache.commons.math3.analysis.function.Exp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -45,8 +46,8 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class RFAprilCam {
   public static double X_OFFSET = 4, Y_OFFSET = 1.5, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 7;
-  public static int EXPOSURE_MS = 5, GAIN = 70;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
+  public static int EXPOSURE_MS = 4200, GAIN = 200;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 5;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -120,7 +121,7 @@ public class RFAprilCam {
             .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
             .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
             .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-            .setLensIntrinsics(626.909f, 626.909f, 426.007f, 236.834f)
+            .setLensIntrinsics(463.566f, 463.566f, 316.402f, 176.412f)
             .build();
     aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
     aprilTag.setDecimation((float) UPSAMPLE);
@@ -132,8 +133,9 @@ public class RFAprilCam {
             .addProcessor(aprilTag)
             .enableLiveView(false)
             .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-            .setCameraResolution(new Size(864, 480))
+            .setCameraResolution(new Size(640, 360))
             .build();
+    visionPortal.getFps();
 
   }
 
@@ -145,8 +147,9 @@ public class RFAprilCam {
     if(visionPortal.getCameraState() == RFVisionPortal.CameraState.STREAMING&&!tuned){
       exposureControl = visionPortal.getCameraControl(ExposureControl.class);
       exposureControl.setMode(ExposureControl.Mode.Manual);
-      exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MILLISECONDS);
-      exposureControl.setAePriority(false);
+      exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MICROSECONDS);
+//      exposureControl.setAePriority(false);
+      exposureControl.setAePriority(true);
       gainControl = visionPortal.getCameraControl(GainControl.class);
       GAIN = min(GAIN, gainControl.getMaxGain());
       gainControl.setGain(GAIN);
@@ -186,7 +189,7 @@ public class RFAprilCam {
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(poseHistory.get(inde).getHeading()+PI)),
                   -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
-          if (poseFtc.range < UPSAMPLE_THRESHOLD && currentVelocity.vec().norm()<5) {
+          if (poseFtc.range < UPSAMPLE_THRESHOLD && currentVelocity.vec().norm()<10) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }
@@ -214,6 +217,7 @@ public class RFAprilCam {
                   + p_y);
           LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
           LOGGER.log("camPoseError" + camPoseError);
+          LOGGER.log("velMag" + currentVelocity.vec().norm());
           LOGGER.log("inde" + inde);
           LOGGER.log("time" + time);
         }
