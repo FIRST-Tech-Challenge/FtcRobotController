@@ -533,17 +533,17 @@ public class blue_rightblm1 extends LinearOpMode {
     }
     private void initTfod() {
 
-        // Create the TensorFlow processor the easy way.
-        tfod = TfodProcessor.easyCreateWithDefaults();
-
-        // Create the vision portal the easy way.
-        if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
-        } else {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    BuiltinCameraDirection.BACK, tfod);
-        }
+//        // Create the TensorFlow processor the easy way.
+//        tfod = TfodProcessor.easyCreateWithDefaults();
+//
+//        // Create the vision portal the easy way.
+//        if (USE_WEBCAM) {
+//            visionPortal = VisionPortal.easyCreateWithDefaults(
+//                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+//        } else {
+//            visionPortal = VisionPortal.easyCreateWithDefaults(
+//                    BuiltinCameraDirection.BACK, tfod);
+//        }
 
     }
 

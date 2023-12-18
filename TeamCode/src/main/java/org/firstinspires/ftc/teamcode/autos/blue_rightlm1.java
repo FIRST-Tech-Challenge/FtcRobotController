@@ -171,7 +171,7 @@ public class blue_rightlm1 extends LinearOpMode {
         ex= new extension(hardwareMap);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
-        initTfod();
+
         ex.setStowPos();
         //claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
@@ -531,21 +531,21 @@ public class blue_rightlm1 extends LinearOpMode {
         // Stop all motion;
         moveRobot(0, 0);
     }
-    private void initTfod() {
-
-        // Create the TensorFlow processor the easy way.
-        tfod = TfodProcessor.easyCreateWithDefaults();
-
-        // Create the vision portal the easy way.
-        if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
-        } else {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    BuiltinCameraDirection.BACK, tfod);
-        }
-
-    }
+//    private void initTfod() {
+//
+//        // Create the TensorFlow processor the easy way.
+//        tfod = TfodProcessor.easyCreateWithDefaults();
+//
+//        // Create the vision portal the easy way.
+//        if (USE_WEBCAM) {
+//            visionPortal = VisionPortal.easyCreateWithDefaults(
+//                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+//        } else {
+//            visionPortal = VisionPortal.easyCreateWithDefaults(
+//                    BuiltinCameraDirection.BACK, tfod);
+//        }
+//
+//    }
 
     private void telemetryTfod() {
 
