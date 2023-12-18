@@ -7,7 +7,6 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -30,7 +29,7 @@ public abstract class RobotOpMode extends OpMode {
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor;
     public Servo wristServo;
-    public DcMotor encoderLeft, encoderRight, encoderBack;
+    public MotorEx encoderLeft, encoderRight, encoderBack;
     public BNO055IMU imu;
     public RevColorSensorV3 colorSensor;
     public RevTouchSensor touchSensor;
