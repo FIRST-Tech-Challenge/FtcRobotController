@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.firstinspires.ftc.teamcode.util.Logging;
 
+import java.io.IOException;
+
 public class FTCDashboardPackets {
     public static final FtcDashboard DASHBOARD = FtcDashboard.getInstance();
     /**
@@ -20,7 +22,7 @@ public class FTCDashboardPackets {
     public static final String ERROR = "[ERROR]";
     public static final String WARN = "[WARN]";
 
-    public static final enum LoggingLevels {
+    public enum LoggingLevels {
         INFO,
         DEBUG,
         ERROR,
@@ -39,9 +41,9 @@ public class FTCDashboardPackets {
         createNewTelePacket();
     }
 
-    public FTCDashboardPackets(boolean useLogging) {
+    public FTCDashboardPackets(boolean _useLogging) {
         CONTEXT = "ROOT";
-        useLogging = useLogging;
+        useLogging = _useLogging;
         createNewTelePacket();
     }
 
@@ -52,14 +54,17 @@ public class FTCDashboardPackets {
      */
     public void createNewTelePacket() {
         packet = new TelemetryPacket();
-        if (useLogging)
-            LOGGING.setup();
+        if (useLogging) {
+            try {
+                LOGGING.setup();
+            } catch (IOException e) {
+                error(e, true, false);
+            }
+        }
     }
 
     private String getLoggingLevel(LoggingLevels level) {
         switch (level) {
-            case INFO:
-                return INFO;
             case DEBUG:
                 return DEBUG;
             case ERROR:
@@ -117,6 +122,15 @@ public class FTCDashboardPackets {
     public void error(Exception e) {
         packet.put("Error", e.getMessage());
         log(e.getMessage(), LoggingLevels.ERROR);
+    }
+
+    /**
+     * Takes in an exception and puts it into the current packet.
+     * @param message The message to be put into the packet
+     */
+    public void error(String message) {
+        packet.put("Error", message);
+        log(message, LoggingLevels.ERROR);
     }
 
     /**

@@ -265,9 +265,7 @@ public class Logging
         logDevices(map.dcMotor);
         logDevices(map.servoController);
         logDevices(map.servo);
-        logDevices(map.deviceInterfaceModule);
         logDevices(map.analogInput);
-        logDevices(map.analogOutput);
         logDevices(map.digitalChannel);
         logDevices(map.pwmOutput);
         logDevices(map.accelerationSensor);
@@ -281,7 +279,6 @@ public class Logging
         logDevices(map.opticalDistanceSensor);
         logDevices(map.touchSensor);
         logDevices(map.ultrasonicSensor);
-        logDevices(map.legacyModule);
     }
 
     @SuppressWarnings("unchecked")

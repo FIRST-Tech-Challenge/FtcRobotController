@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.arcrobotics.ftclib.command.OdometrySubsystem;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
-import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.Waypoint;
@@ -15,6 +11,7 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.FTCDashboardPackets;
 
@@ -55,6 +52,21 @@ public class AutonomousAwareness {
         encoderRight = encodeRight;
         encoderBack = encodeBack;
 
+        // Reset motors
+        encoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Reverse the directions of the odometry
+        encoderLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        encoderRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        encoderBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Set the mode of the encoders
+        encoderLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        encoderRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        encoderBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //TICKS_TO_INCHES = WHEEL_DIAMETER * Math.PI / encoderLeft.getCPR();
         TICKS_TO_INCHES = 15.3;
 
@@ -80,11 +92,13 @@ public class AutonomousAwareness {
         dbp.put("Waypoints", Arrays.toString(m_path.toArray()));
         dbp.send(true);
 
+        /*
         addToPath(new StartWaypoint());
         addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
         addToPath(new EndWaypoint());
         initPath();
         followPath();
+        */
     }
 
     /** 
@@ -102,43 +116,31 @@ public class AutonomousAwareness {
         AutonomousAwareness.bR = bR;
 
         if (AutonomousAwareness.fL == null) {
-            dbp.createNewTelePacket();
-            dbp.put("Error", "Front Left Wheel is null");
-            dbp.send(false);
+            dbp.error("Front Left Wheel is null");
             return;
         }
 
         initOdometry(encodeLeft, encodeRight, encodeBack);
     }
 
-    @Deprecated
-    public static void newPursuit(StartWaypoint start, GeneralWaypoint general, EndWaypoint end) {
-        ppCommand = new PurePursuitCommand(m_robotDrive, odometry, start, general, end);
-        ppCommand.schedule();
-    }
-
     public static void addToPath(Waypoint waypoint) {
         m_path.add(waypoint);
     }
 
-    public static boolean initPath() {
+    public static void initPath() {
         try {
             m_path.init();
         } catch (Exception e) {
-            return false;
+            dbp.error(e);
         }
-        return true;
     }
 
     public static void followPath() {
         try {
             m_path.followPath(m_robotDrive, holOdom);
         } catch (IllegalStateException e) {
-            dbp.createNewTelePacket();
-            dbp.put("Follow Path", "Error");
-            dbp.send(false);
+            dbp.error(e);
             m_path.reset();
-            return;
         }
     }
 

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
+import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
+import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,9 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.util.AutonomousAwareness;
 
 @Config
-public final class AutoRobotOpMode {
+public class AutoRobotOpMode {
 
-    public static enum RobotMovement {
+    public enum RobotMovement {
         FORWARD(1, 0, 0),
         BACKWARD(-1, 0, 0),
         LEFT(0, -1, 0),
@@ -105,6 +108,7 @@ public final class AutoRobotOpMode {
 
     @Autonomous(name = "AutoRobotOpMode")
     public static class AutonomousRobotOpMode extends RobotOpMode {
+        private boolean debugRunInitPath = true;
         public static AutonomousAwareness AA;
         @Override
         public void gamePadMoveRobot() {
@@ -114,10 +118,10 @@ public final class AutoRobotOpMode {
         @Override
         public void init() {
             super.init();
-            Motor lFD = null;
-            Motor rFD = null;
-            Motor lBD = null;
-            Motor rBD = null;
+            Motor lFD;
+            Motor rFD;
+            Motor lBD;
+            Motor rBD;
             // Temporary Fix
             try {
                 lFD = new Motor(hardwareMap, "fl_drv");
@@ -130,11 +134,6 @@ public final class AutoRobotOpMode {
                 terminateOpModeNow();
                 return;
             }
-            /*
-            AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
-                    this.leftFrontDrive, this.rightFrontDrive, this.leftBackDrive, this.rightBackDrive,
-                    this.encoderLeft, this.encoderRight, this.encoderBack);
-             */
             AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
                     lFD, rFD, lBD, rBD,
                     this.encoderLeft, this.encoderRight, this.encoderBack);
@@ -142,6 +141,14 @@ public final class AutoRobotOpMode {
 
         @Override
         public void robotLoop(double delta) {
+            if (debugRunInitPath) {
+                AA.addToPath(new StartWaypoint());
+                AA.addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
+                AA.addToPath(new EndWaypoint());
+                AA.initPath();
+                AA.followPath();
+                debugRunInitPath = false;
+            }
         }
     }
 }
