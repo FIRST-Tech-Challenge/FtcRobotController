@@ -121,16 +121,22 @@ public class HardwarePixelbot
     public boolean collectorServoChanged = false;
 
     //====== COLOR/DISTANCE SENSORS FOR PIXEL BIN ========================================================
-    private DistanceSensor pixel1Detector = null;        // lower
-    private DistanceSensor pixel2Detector = null;        // upper
+    private NormalizedColorSensor pixel1ColorSensor = null;  // lower
+    private NormalizedColorSensor pixel2ColorSensor = null;  // upper
 
-    private NormalizedColorSensor pixel1Color = null;  // lower
-    private NormalizedColorSensor pixel2Color = null;  // upper
+    private NormalizedRGBA  pixelRGBA;
+    private float[]         pixelHSV = new float[3];
+
+    public double pixel1Hue; // lower
+    public double pixel2Hue; // upper
+
+    private long pixelBinUpdateCount = 0;
+    
+    private DistanceSensor pixe1DistanceSensor = null;        // lower
+    private DistanceSensor pixe2DistanceSensor = null;        // upper
 
     public double pixel1Distance; // lower
     public double pixel2Distance; // upper
-    public double pixel1Hue; // lower
-    public double pixel2Hue; // upper
 
 
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
@@ -255,12 +261,15 @@ public class HardwarePixelbot
         strafeOdometer.setPower( 0.0 );
 
         /*--------------------------------------------------------------------------------------------*/
-        pixel1Color = hwMap.get(NormalizedColorSensor.class, "BinLowerSensor");  // ControlHub I2C "2"
-        pixel2Color = hwMap.get(NormalizedColorSensor.class, "BinUpperSensor");  // ControlHub I2C "1"
-        pixel1Detector = (DistanceSensor)pixel1Color;
-        pixel2Detector = (DistanceSensor)pixel2Color;
-        pixel1Color.setGain(5.0f);
-        pixel2Color.setGain(5.0f);
+        pixel1ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinLowerSensor");  // ControlHub I2C Bus2
+//      pixel1ColorSensor.enableLight(true);
+        pixel1ColorSensor.setGain(1.0f);   // TBD
+        pixe1DistanceSensor = (DistanceSensor) pixel1ColorSensor;
+
+        pixel2ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinUpperSensor");  // ControlHub I2C Bus1
+//      pixel2ColorSensor.enableLight(true);
+        pixel2ColorSensor.setGain(1.0f);
+        pixe2DistanceSensor = (DistanceSensor) pixel2ColorSensor;
 
         /*--------------------------------------------------------------------------------------------*/
         elbowServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
@@ -471,21 +480,31 @@ public class HardwarePixelbot
     } // restrictDeltaPower
 
     /*--------------------------------------------------------------------------------------------*/
-    public void assessPixelBin() {
-        pixel1Distance = pixel1Detector.getDistance(DistanceUnit.MM);
-        pixel2Distance = pixel2Detector.getDistance(DistanceUnit.MM);
-        return;
-    }
-
-    /*--------------------------------------------------------------------------------------------*/
-    public double getPixelColor( int bin_position ) {
-        float[] hsvValues = new float[3];
-        NormalizedRGBA colors = (bin_position == 1 )?
-                             pixel1Color.getNormalizedColors() 
-                           : pixel2Color.getNormalizedColors();
-        Color.colorToHSV( colors.toColor(), hsvValues );
-        return hsvValues[0];
-    }
+    public void pixelBinUpdateStatus( boolean forceUpdate ) {
+        // I2C reads are slow, so only update the pixel bin status every 10 cycles (unless forced)
+        pixelBinUpdateCount++;
+        boolean timeToUpdate = ((pixelBinUpdateCount % 10) == 0)? true : false;
+        if( timeToUpdate || forceUpdate ) {
+            //========== LOWER POSITION IN PIXEL BIN ==========
+            // 1) does the proximity detector detect a pixel?
+            pixel1Distance = pixe1DistanceSensor.getDistance(DistanceUnit.MM);
+            // 2) read the color sensor in RGBA mode (red/green/blue/alpha)
+            pixelRGBA = pixel1ColorSensor.getNormalizedColors();
+            // 3) Convert RGBA to a color integer, and then to HSV (hue/sat/value)
+            Color.colorToHSV( pixelRGBA.toColor(), pixelHSV );
+            // 4) Store the HUE
+            pixel1Hue = pixelHSV[0];
+            //========== UPPER POSITION IN PIXEL BIN ==========
+            // 1) does the proximity detector detect a pixel?
+            pixel2Distance = pixe2DistanceSensor.getDistance(DistanceUnit.MM);
+            // 2) read the color sensor in RGBA mode (red/green/blue/alpha)
+            pixelRGBA = pixel2ColorSensor.getNormalizedColors();
+            // 3) Convert RGBA to a color integer, and then to HSV (hue/sat/value)
+            Color.colorToHSV( pixelRGBA.toColor(), pixelHSV );
+            // 4) Store the HUE
+            pixel2Hue = pixelHSV[0];  // white=15 yellow=25 green=84 purple=335
+        }
+    } // pixelBinUpdateStatus
 
     /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */

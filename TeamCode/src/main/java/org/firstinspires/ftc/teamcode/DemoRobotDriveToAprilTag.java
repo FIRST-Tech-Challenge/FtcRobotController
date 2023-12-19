@@ -95,14 +95,14 @@ import java.util.concurrent.TimeUnit;
 public class DemoRobotDriveToAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
-    final double STRAFE_GAIN =  0.015;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.01  ;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double SPEED_GAIN  =  0.0100;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
+    final double STRAFE_GAIN =  0.0001;  //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.0001;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.50;  //  Clip the approach speed to this max value (adjust for your robot)
@@ -112,6 +112,8 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
     private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
+
+    private boolean rearFacingWebcam = false;
 
     // CENTERSTAGE AprilTag assignments:
     //  - Blue Alliance LEFT   Backdrop  = 1        - Red Alliance LEFT   Backdrop  = 4
@@ -127,9 +129,9 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     @Override public void runOpMode()
     {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  minDrvPwr       = 0.05;     // minimum power needed to drive robot forward
-        double  minStrafePwr    = 0.12;
-        double  minTurnPwr      = 0.06;
+        double  minDrvPwr       = 0.08;     // minimum power needed to drive robot forward
+        double  minStrafePwr    = 0.20;
+        double  minTurnPwr      = 0.17;
         double  driveErr        = 0.0;
         double  strafeErr       = 0.0;
         double  turnErr         = 0.0;
@@ -218,17 +220,40 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
                 double  rangeError   = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double  yawError     = -desiredTag.ftcPose.yaw;
                 double  headingError = desiredTag.ftcPose.bearing;
-                double  yawError     = desiredTag.ftcPose.yaw;
+                telemetry.addData("Error","Drive %.2f, Strafe %.2f, Turn %.2f", rangeError, yawError, headingError);
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
-                driveErr  = (Math.abs(rangeError) < 0.2)? 0.0 : (minDrvPwr + rangeError * SPEED_GAIN);
-                turnErr   = (Math.abs(headingError) < 0.4)? 0.0 : (minTurnPwr + headingError * TURN_GAIN);
-                strafeErr = (Math.abs(yawError) < 0.2)? 0.0 : (minStrafePwr - yawError * STRAFE_GAIN);
-                drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+                if( Math.abs(rangeError) < 0.3 ) {    // inches
+                    driveErr = 0.0;
+                } else if( rangeError > 0 ) {
+                    driveErr  = minDrvPwr + (rangeError * SPEED_GAIN);
+                }
+                else { // rangeError < 0
+                    driveErr  = -minDrvPwr + (rangeError * SPEED_GAIN);
+                }
 
+                if( Math.abs(yawError) < 3.0 ) {  // degrees
+                    strafeErr = 0.0;
+                } else if( yawError > 0 ) {
+                    strafeErr  = minStrafePwr + (yawError * STRAFE_GAIN);
+                }
+                else { // rangeError < 0
+                    strafeErr = -minStrafePwr + (yawError * STRAFE_GAIN);
+                }
+
+                if( Math.abs(headingError) < 3.0 ) {  // degrees
+                    turnErr = 0.0;
+                } else if( headingError > 0 ) {
+                    turnErr  = minTurnPwr + (headingError * TURN_GAIN);
+                }
+                else { // rangeError < 0
+                    turnErr = -minTurnPwr + (headingError * TURN_GAIN);
+                }
+                drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+                turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
 
@@ -244,7 +269,11 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
+            if( rearFacingWebcam ) {
+                moveRobot(-drive, -strafe, -turn);
+            } else {
+                moveRobot(drive, strafe, turn);
+            }
             sleep(10);
         }
     }
@@ -257,13 +286,28 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
      * Positive Y is strafe left
      * <p>
      * Positive Yaw is counter-clockwise
+     *
+     *       FORWARD-FACING CAMERA:             REAR-FACING CAMERA:
+     *
+     *    (left front)  == (right front)      (right back) === (left back)
+     *     ||                        ||        ||                       ||
+     *    (left back)  === (right back)       (right front) == (left front)
      */
     public void moveRobot(double x, double y, double yaw) {
+        double leftFrontPower, rightFrontPower, leftBackPower, rightBackPower;
         // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
+        if( rearFacingWebcam ) {
+            rightBackPower  = x -y -yaw;
+            leftBackPower   = x +y +yaw;
+            rightFrontPower = x +y -yaw;
+            leftFrontPower  = x -y +yaw;
+
+        } else {
+            leftFrontPower  =  x -y -yaw;
+            rightFrontPower =  x +y +yaw;
+            leftBackPower   =  x +y -yaw;
+            rightBackPower  =  x -y +yaw;
+        }
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -278,10 +322,10 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
         }
 
         // Send powers to the wheels.
-        leftFrontDrive.setPower(-leftFrontPower);
-        rightFrontDrive.setPower(-rightFrontPower);
-        leftBackDrive.setPower(-leftBackPower);
-        rightBackDrive.setPower(-rightBackPower);
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
     }
 
     /**
@@ -318,6 +362,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                 .setCameraResolution(new Size(1280,800))
                 .addProcessor(aprilTag)
                 .build();
+        rearFacingWebcam = true;
     }
 
     /*

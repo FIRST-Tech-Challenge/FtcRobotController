@@ -165,6 +165,7 @@ public abstract class Teleop extends LinearOpMode {
             ProcessFingerControls();
             ProcessLiftControls();
            //ProcessLiftStateMachine();
+            robot.pixelBinUpdateStatus( false );
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -223,9 +224,6 @@ public abstract class Teleop extends LinearOpMode {
             elapsedHz    =  1000.0 / elapsedTime;
 
             // Update telemetry data
-            robot.assessPixelBin();
-            robot.pixel1Hue = robot.getPixelColor(1);
-            robot.pixel2Hue = robot.getPixelColor(2);
             telemetry.addData("Lower Bin", "%.2f mm (h = %.2f)", robot.pixel1Distance, robot.pixel1Hue);
             telemetry.addData("Upper Bin", "%.2f mm (h = %.2f)", robot.pixel2Distance, robot.pixel2Hue);
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
