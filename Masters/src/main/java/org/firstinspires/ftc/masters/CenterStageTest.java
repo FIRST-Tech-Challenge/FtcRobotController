@@ -46,6 +46,7 @@ public class CenterStageTest extends LinearOpMode {
     TouchSensor touchSensor;
 
     boolean clawClosed = true;
+    boolean hookEngaged = true;
 
     int backSlidesTargetPos = 0;
     int v4bPresetTarget = 0;
@@ -205,12 +206,10 @@ RB - Hang up
                 clawAngle.setPosition(CSCons.clawAngles[2]);
             }
 
-            if (gamepad2.x) {
-                outtakeHook.setPosition(CSCons.outtakeHook[0]);
-            }
-
-            if (gamepad2.y) {
+            if (gamepad2.x && !hookEngaged) {
                 outtakeHook.setPosition(CSCons.outtakeHook[1]);
+            } else if (gamepad2.x && hookEngaged) {
+                outtakeHook.setPosition(CSCons.outtakeHook[0]);
             }
 
             if (gamepad2.left_stick_y > 0.2) {
