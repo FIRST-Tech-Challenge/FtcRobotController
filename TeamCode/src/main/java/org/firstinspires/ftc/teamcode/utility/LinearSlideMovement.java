@@ -33,8 +33,16 @@ public class LinearSlideMovement {
     }
 
     public void Movelinearslide(int ticks){
-        intake.intakeIsSafe = false;
-        intake.ClawOpen();
+        /* Removed the T1 concept of the safety toggle since the robot no longer has the ability
+           to end any motion with the claw closed and over the linear slide.  All claw / pickup
+           motion will end with the claw open, leaving the only action to do to be to ensure that
+           the intake is in the FlipSafety position.
+
+           intake.intakeIsSafe = false;
+           intake.ClawOpen();
+         */
+        intake.intakeIsSafe = true; // left in as intakeIsSafe disabled above, if could be removed entirely.
+        intake.FlipSafety();
         if (intake.setSafety() == true){
             leftLinearSlide.setTargetPosition(ticks);
             rightLinearSlide.setTargetPosition(ticks);
