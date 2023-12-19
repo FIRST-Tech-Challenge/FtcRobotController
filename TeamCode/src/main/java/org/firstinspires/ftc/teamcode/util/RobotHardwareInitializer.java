@@ -26,6 +26,11 @@ public class RobotHardwareInitializer {
             robot.leftBackDrive = robot.hardwareMap.get(DcMotor.class, "bl_drv");
             robot.rightBackDrive = robot.hardwareMap.get(DcMotor.class, "br_drv");
 
+            robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             robot.leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
             robot.leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             robot.rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);

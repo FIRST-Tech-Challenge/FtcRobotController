@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -112,6 +114,7 @@ public abstract class RobotOpMode extends OpMode {
      * @param endTime the nanoTime that the robot should stop doing the move action
      * @return if the nanoTime of elapsedTime has <strong>NOT</strong> exceeded endTime.
      */
+    @SuppressLint("DefaultLocale")
     public boolean moveRobot(double axial, double lateral, double yaw, long endTime) {
 
         double max;
@@ -119,11 +122,24 @@ public abstract class RobotOpMode extends OpMode {
             resetDriveMotors();
             return false;
         }
+        double leftFrontPower  = axial - lateral - yaw;
+        double rightFrontPower = axial + lateral + yaw;
+        double leftBackPower   = axial + lateral - yaw;
+        double rightBackPower  = axial - lateral + yaw;
 
+        dbp.createNewTelePacket();
+
+        log("LF", String.format("%f\n", leftFrontPower));
+        log("RF:", String.format(" %f\n", rightFrontPower));
+        log("LB:", String.format(" %f\n", leftBackPower));
+        log("RB:", String.format(" %f\n", rightBackPower));
+
+        /*
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
+         */
 
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));

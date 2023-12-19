@@ -108,8 +108,9 @@ public class AutoRobotOpMode {
 
     @Autonomous(name = "AutoRobotOpMode")
     public static class AutonomousRobotOpMode extends RobotOpMode {
-        private boolean debugRunInitPath = true;
-        public static AutonomousAwareness AA;
+        private static boolean debugRunInitPath = true;
+        public AutonomousAwareness AA;
+        private static boolean shouldStop = false;
         @Override
         public void gamePadMoveRobot() {
             // Do nothing
@@ -137,18 +138,33 @@ public class AutoRobotOpMode {
             AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
                     lFD, rFD, lBD, rBD,
                     this.encoderLeft, this.encoderRight, this.encoderBack);
+
+            log("Init","Following Path");
+            AA.addToPath(new StartWaypoint());
+            AA.addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
+            AA.addToPath(new EndWaypoint());
+            AA.initPath();
+            AA.followPath();
         }
 
         @Override
         public void robotLoop(double delta) {
+            if (shouldStop) {
+                log("Robot Loop", "Stopping");
+                terminateOpModeNow();
+            }
             if (debugRunInitPath) {
-                AA.addToPath(new StartWaypoint());
-                AA.addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
-                AA.addToPath(new EndWaypoint());
+                log("Robot Loop", "Initializing Path");
                 AA.initPath();
                 AA.followPath();
                 debugRunInitPath = false;
             }
+        }
+
+        @Override
+        public void stop() {
+            log("Stop", "Sending stop signal");
+            shouldStop = true;
         }
     }
 }
