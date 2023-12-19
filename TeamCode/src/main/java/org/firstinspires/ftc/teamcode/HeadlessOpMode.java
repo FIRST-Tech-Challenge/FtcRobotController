@@ -196,10 +196,6 @@ public class HeadlessOpMode extends LinearOpMode {
             x_ref = Math.abs(gamepad1.left_stick_x) > 0.1 ? gamepad1.left_stick_x  : 0;
             y_ref = -(Math.abs(gamepad1.left_stick_y) > 0.1 ? gamepad1.left_stick_y : 0);
 
-            // apply correction if error is above threshhold
-            if ( Math.abs(getHeading() - targetHeading) > 0.5 ) {
-                runHeadingCorrection();
-            }
 
             heading = getHeading();
             cos_heading = Math.cos(heading/180*Math.PI);
@@ -225,12 +221,21 @@ public class HeadlessOpMode extends LinearOpMode {
 //                rightFrontPower = rightBackPower = -gamepad1.right_stick_x;
 //            }
 
-                leftFrontPower = x_frame * 0.7 + y_frame * 0.7;
+                // consider straffing with left and right trigger
+                leftFrontPower = x_frame * 0.7 + y_frame * 0.7 + gamepad1.right_trigger - gamepad1.left_trigger;
                 rightBackPower = leftFrontPower;
-                rightFrontPower = -x_frame * 0.7 + y_frame * 0.7;
+                rightFrontPower = -x_frame * 0.7 + y_frame * 0.7 - gamepad1.right_trigger + gamepad1.left_trigger;
                 leftBackPower = rightFrontPower;
 
-                // go turn
+                // apply correction based on the heading
+                double turnSpeed = getSteeringCorrection(getTargetHeading(), P_TURN_GAIN);
+                leftFrontPower -= turnSpeed;
+                leftBackPower -= turnSpeed;
+                rightFrontPower += turnSpeed;
+                rightBackPower += turnSpeed;
+
+
+            // go turn
                 if (Math.abs(gamepad1.right_stick_x) > 0.1) {
                     leftFrontPower += gamepad1.right_stick_x * turnMulPower;
                     leftBackPower += gamepad1.right_stick_x * turnMulPower;
@@ -363,44 +368,6 @@ public class HeadlessOpMode extends LinearOpMode {
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
 
-    public void moveRobot(double drive, double turn) {
-
-        double leftSpeed  = drive - turn;
-        double rightSpeed = drive + turn;
-
-        // Scale speeds down if either one exceeds +/- 1.0;
-        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0)
-        {
-            leftSpeed /= max;
-            rightSpeed /= max;
-        }
-
-        leftBackDrive.setPower(leftSpeed);
-        rightBackDrive.setPower(rightSpeed);
-        leftFrontDrive.setPower(leftSpeed);
-        rightFrontDrive.setPower(rightSpeed);
-    }
-    public void runHeadingCorrection() {
-        // apply correction so that getHeading == targetHeading
-        double turnSpeed = 0.0;
-
-        ElapsedTime holdTimer = new ElapsedTime();
-        holdTimer.reset();
-
-        // keep looping while we have time remaining.
-        while (opModeIsActive() && (holdTimer.time() < HOLD_TIME_HEADING_CORRECTION)) {
-            // Determine required steering to keep on heading
-            turnSpeed = getSteeringCorrection(getTargetHeading(), P_TURN_GAIN);
-
-            // Clip the speed to the maximum permitted value.
-            turnSpeed = Range.clip(turnSpeed, -TURN_SPEED, TURN_SPEED);
-
-            // Pivot in place by applying the turning correction
-            moveRobot(0, turnSpeed);
 
 
-        }
-
-    }
 }
