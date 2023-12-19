@@ -168,18 +168,10 @@ public class MecDrive extends LinearOpMode {
         if (gamepad1.left_bumper) {
             RHook.setPosition(.70);
             LHook.setPosition(.30);
-            while (LHook.getPosition()< .25) {
-                RHang.setPower(-.2);
-                LHang.setPower(-.2);
-            }
         }
         if (gamepad1.right_trigger > .5) {
             RHook.setPosition(.4);
             LHook.setPosition(.4);
-            while (LHook.getPosition() < .4) {
-                RHang.setPower(-.3);
-                LHang.setPower(-.3);
-            }
         }
         if (gamepad1.left_trigger > .5) {
             airplane.setPosition(0);
@@ -227,16 +219,16 @@ public class MecDrive extends LinearOpMode {
             SLift.setPosition(.5);
         }
 
-        if (gamepad1.dpad_left) {
+        if (gamepad2.dpad_left) {
             Pivot.setPosition(.8);
             Door.setPosition(0);
         }
 
         if (gamepad2.right_bumper) {
-            Door.setPosition(.43);
+            Door.setPosition(.4);
         }
         if (gamepad2.left_bumper) {
-            Door.setPosition(.45);
+            Door.setPosition(.25);
         }
         // Door Open .45
         // Door Closed .3
@@ -247,7 +239,6 @@ public class MecDrive extends LinearOpMode {
         // SLift Store Posistion .75
 
         LiftCounts = Lift.getCurrentPosition();
-
 
         telemetry.addData("lift counts:", LiftCounts);
 
