@@ -25,6 +25,11 @@ public class RobotHardwareInitializer {
             robot.rightFrontDrive = robot.hardwareMap.get(DcMotor.class, "fr_drv");
             robot.leftBackDrive = robot.hardwareMap.get(DcMotor.class, "bl_drv");
             robot.rightBackDrive = robot.hardwareMap.get(DcMotor.class, "br_drv");
+
+            robot.leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+            robot.leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            robot.rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+            robot.rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         } catch(Exception e) {
             robot.log("FATAL ERROR", "Could not initialize drive motors: "+e.getMessage());
             robot.sendTelemetryPacket(true);
