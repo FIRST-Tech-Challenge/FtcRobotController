@@ -157,23 +157,31 @@ public class MecDrive extends LinearOpMode {
             intake.setPower(0);
         }
 //
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
             RHook.setPosition(1);
             LHook.setPosition(0);
             while (LHook.getPosition()> 0) {
-               LHang.setPower(1);
-               RHang.setPower(1);
+               LHang.setPower(-1);
+               RHang.setPower(-1);
             }
         }
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             RHook.setPosition(.70);
             LHook.setPosition(.30);
+            while (LHook.getPosition()> .30) {
+                LHang.setPower(-1);
+                RHang.setPower(-1);
+            }
         }
-        if (gamepad1.right_trigger > .5) {
+        if (gamepad2.right_trigger > .5) {
             RHook.setPosition(.4);
             LHook.setPosition(.4);
+            while (LHook.getPosition()> .4) {
+                LHang.setPower(-1);
+                RHang.setPower(-1);
+            }
         }
-        if (gamepad1.left_trigger > .5) {
+        if (gamepad2.left_trigger > .5) {
             airplane.setPosition(0);
         }
             else {
@@ -206,6 +214,12 @@ public class MecDrive extends LinearOpMode {
             Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             Lift.setPower(1);
         }
+        if (gamepad2.x) {
+            Door.setPosition(.23);
+        }
+        if (gamepad2.y) {
+            Door.setPosition(.4);
+        }
         if (gamepad2.dpad_down) {
             SLift.setPosition(.81);
             Pivot.setPosition(.7);
@@ -224,12 +238,6 @@ public class MecDrive extends LinearOpMode {
             Door.setPosition(0);
         }
 
-        if (gamepad2.right_bumper) {
-            Door.setPosition(.4);
-        }
-        if (gamepad2.left_bumper) {
-            Door.setPosition(.25);
-        }
         // Door Open .45
         // Door Closed .3
         // Pivot down score .45
