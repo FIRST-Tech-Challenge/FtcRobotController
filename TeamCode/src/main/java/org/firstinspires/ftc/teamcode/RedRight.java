@@ -57,15 +57,13 @@ public class RedRight extends LinearOpMode {
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(6);
-            RunRight(autoMethods);
+            //RunRight(autoMethods);
         }
         else{
             aprilTag.setId(5);
             RunCenter(autoMethods);
         }
-        GetToBorad();
-        //autoMethods.Strafe(false,0.5);
-        //sleep(20000);
+        GetToBoard();
 
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
@@ -125,13 +123,17 @@ public class RedRight extends LinearOpMode {
         sleep(2000);
         motorHang.setPower(0);
     }
-    void GetToBorad(){
+    void GetToBoard(){
         AprilTagTest.TagLocation location = null;
         while(location == null){
             location = aprilTag.GetPositon(webcam.tagProcessor);
             autoMethods.Strafe(false,0.2);
-
         }
+        telemetry.addData("detected x", location.x);
+        telemetry.addData("detected y", location.y);
+        telemetry.addData("detected pitch", location.pitch);
+        telemetry.update();
         autoMethods.ZeroMotors();
+        autoMethods.SquareOnTag(location.x, location.pitch,0.2);
     }
 }

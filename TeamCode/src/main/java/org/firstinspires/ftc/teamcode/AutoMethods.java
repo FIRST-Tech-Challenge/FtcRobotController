@@ -8,6 +8,8 @@ public class AutoMethods {
     double HangInchesPerRev = 0.25;
     double TPI = TicsPerRevolution / Circumference;
     double StrafeTPI = 50.2512563;
+    double TicksPerDeg = 10.17;
+    double DegAtBoard = -25;
     private DcMotor motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang;
     private int leftTarget,left2Target,rightTarget,right2Target;
 
@@ -150,8 +152,54 @@ public class AutoMethods {
                 motorRight.getCurrentPosition() > rightTarget - 10 && motorRight.getCurrentPosition() < rightTarget + 10 &&
                 motorRight2.getCurrentPosition() > right2Target - 10 && motorRight2.getCurrentPosition() < right2Target + 10;
     }
-        void FindTag ( boolean strafeRight){
 
+    void SquareOnTag (double x, double pitch, double motorPower){
+        int rightTicks, right2Ticks, leftTicks, left2Ticks;
+        int strafeTick = Math.abs(StrafeInchesToTicks(x-2));
+        double degree = pitch - DegAtBoard;
+        int angleTicks = Math.abs((int)( degree * TicksPerDeg));
+        boolean strafeRight = x-2 >= 0;
+        boolean turnRight = degree >= 0;
+        if(strafeRight && turnRight){
+            right2Ticks =  -strafeTick - angleTicks;
+            rightTicks =  strafeTick - angleTicks;
+            left2Ticks = strafeTick + angleTicks;
+            leftTicks = -strafeTick + angleTicks;
         }
+        else if(strafeRight){
+            right2Ticks = -strafeTick + angleTicks;
+            rightTicks = strafeTick + angleTicks;
+            left2Ticks = strafeTick - angleTicks;
+            leftTicks = -strafeTick - angleTicks;
+        }
+        else if(turnRight){
+            right2Ticks = strafeTick - angleTicks;
+            rightTicks = -strafeTick - angleTicks;
+            left2Ticks = -strafeTick + angleTicks;
+            leftTicks = strafeTick + angleTicks;
+        }
+        else{
+            right2Ticks = strafeTick + angleTicks;
+            rightTicks = -strafeTick + angleTicks;
+            left2Ticks = -strafeTick - angleTicks;
+            leftTicks = strafeTick - angleTicks;
+        }
+        int maxTicks = Math.max(left2Ticks, Math.max(leftTicks, Math.max(Math.abs(right2Ticks), Math.abs(rightTicks))));
+        motorRight2.setTargetPosition(motorRight2.getTargetPosition() + right2Ticks);
+        motorRight.setTargetPosition(motorRight.getCurrentPosition() + rightTicks);
+        motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() + left2Ticks);
+        motorLeft.setTargetPosition(motorLeft.getCurrentPosition() + leftTicks);
+        motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeft2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRight2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(!AtTarget()) {
+            motorLeft.setPower(motorPower * Math.abs(leftTicks) / maxTicks);
+            motorRight.setPower(motorPower * Math.abs(rightTicks) / maxTicks);
+            motorRight2.setPower(motorPower * Math.abs(right2Ticks) / maxTicks);
+            motorLeft2.setPower(motorPower * Math.abs(left2Ticks) / maxTicks);
+        }
+        ZeroMotors();
+    }
 
 }
