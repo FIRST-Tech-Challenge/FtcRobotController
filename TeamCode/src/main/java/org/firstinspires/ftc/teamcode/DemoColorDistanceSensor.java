@@ -67,7 +67,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name = "ColorDistanceSensor", group = "Demo")
-//@Disabled
+@Disabled
 public class DemoColorDistanceSensor extends LinearOpMode {
 
   /** The colorSensor field will contain a reference to our color sensor hardware object */
@@ -118,8 +118,8 @@ public class DemoColorDistanceSensor extends LinearOpMode {
     // you should use a smaller gain than in dark conditions. If your gain is too high, all of the
     // colors will report at or near 1, and you won't be able to determine what color you are
     // actually looking at. For this reason, it's better to err on the side of a lower gain
-    // (but always greater than  or equal to 1).
-    float gain = 2;
+    // (but always greater than or equal to 1).
+    float gain = 3;
 
     // Once per loop, we will update this hsvValues array. The first element (0) will contain the
     // hue, the second element (1) will contain the saturation, and the third element (2) will
@@ -136,6 +136,7 @@ public class DemoColorDistanceSensor extends LinearOpMode {
     // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
     // the values you get from ColorSensor are dependent on the specific sensor you're using.
     colorSensor = hardwareMap.get(NormalizedColorSensor.class, "BinLowerSensor");
+//  colorSensor = hardwareMap.get(NormalizedColorSensor.class, "BinUpperSensor");
 
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
@@ -149,14 +150,15 @@ public class DemoColorDistanceSensor extends LinearOpMode {
     // Loop until we are asked to stop
     while (opModeIsActive()) {
       // Explain basic gain information via telemetry
-      telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
+      telemetry.addLine("Press CROSS button on gamepad 1 to increase gain, or CIRCLE to decrease.\n");
       telemetry.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
+      telemetry.addLine("Press SQUARE to toggle the light.\n");
 
       // Update the gain value if either of the A or B gamepad buttons is being held
-      if (gamepad1.a) {
+      if (gamepad1.cross) {
         // Only increase the gain by a small amount, since this loop will occur multiple times per second.
         gain += 0.005;
-      } else if (gamepad1.b && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
+      } else if (gamepad1.circle && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
         gain -= 0.005;
       }
 
@@ -167,8 +169,8 @@ public class DemoColorDistanceSensor extends LinearOpMode {
       // not during the loop)
       colorSensor.setGain(gain);
 
-      // Check the status of the X button on the gamepad
-      xButtonCurrentlyPressed = gamepad1.x;
+      // Check the status of the SQUARE button on the gamepad
+      xButtonCurrentlyPressed = gamepad1.square;
 
       // If the button state is different than what it was, then act
       if (xButtonCurrentlyPressed != xButtonPreviouslyPressed) {

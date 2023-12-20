@@ -87,11 +87,12 @@ public abstract class Teleop extends LinearOpMode {
     int     aprilTagLeft   = 1;   // overriden in setAllianceSpecificBehavior()
     int     aprilTagCenter = 2;   // overriden in setAllianceSpecificBehavior()
     int     aprilTagRight  = 3;   // overriden in setAllianceSpecificBehavior()
-
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
-
+    long pixelBinUpdateCounter = 0;
+    int  previousPixelBinCount = 0;
     Gamepad.RumbleEffect visibleAprilTagRumble1;    // Use to build a custom rumble sequence.
-    Gamepad.RumbleEffect visibleAprilTagRumble2;    // Use to build a custom rumble sequence.
+    Gamepad.RumbleEffect rumblePixelBinSingle;
+    Gamepad.RumbleEffect rumblePixelBinDouble;
 
 //========== DRIVE-TO-APRILTAG variables ==========
 
@@ -127,10 +128,14 @@ public abstract class Teleop extends LinearOpMode {
         visibleAprilTagRumble1 = new Gamepad.RumbleEffect.Builder()
                 .addStep(1.0, 1.0, 500)  //  Rumble left/right motors 100% for 500 mSec
                 .build();
-        visibleAprilTagRumble2 = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
-                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
+        rumblePixelBinSingle = new Gamepad.RumbleEffect.Builder()
+                .addStep(1.0, 0.0, 250)  //  Rumble LEFT motor 100% for 250 mSec
+                .build();   // use different sides for SINGLE and DOUBLE in case they're signalled back-to-back
+
+        rumblePixelBinDouble = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0, 1.0, 250)  //  Rumble RIGHT motor 100% for 250 mSec
+                .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
+                .addStep(0.0, 1.0, 250)  //  Rumble RIGHT motor 100% for 250 mSec
                 .build();
 
         // Initialize robot hardware
@@ -162,10 +167,10 @@ public abstract class Teleop extends LinearOpMode {
 
            //ProcessAprilTagControls();
             ProcessCollectorControls();
+            ProcessPixelBinFeedback();
             ProcessFingerControls();
             ProcessLiftControls();
            //ProcessLiftStateMachine();
-            robot.pixelBinUpdateStatus( false );
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -224,8 +229,7 @@ public abstract class Teleop extends LinearOpMode {
             elapsedHz    =  1000.0 / elapsedTime;
 
             // Update telemetry data
-            telemetry.addData("Lower Bin", "%.2f mm (h = %.2f)", robot.pixel1Distance, robot.pixel1Hue);
-            telemetry.addData("Upper Bin", "%.2f mm (h = %.2f)", robot.pixel2Distance, robot.pixel2Hue);
+            telemetry.addData("PixelBin", "Lower=%s Upper=%s", robot.pixel1Color.name(), robot.pixel2Color.name());
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
             telemetry.addData("Viper", "%d cts (%.2f mA)", robot.viperMotorsPos, robot.viperMotorsPwr );
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
@@ -428,6 +432,24 @@ public abstract class Teleop extends LinearOpMode {
 
     }  // processCollectorControls
 
+    /*---------------------------------------------------------------------------------*/
+    void ProcessPixelBinFeedback() {
+        // I2C reads are slow, so only update the pixel bin status every 10 cycles
+        pixelBinUpdateCounter++;
+        if( (pixelBinUpdateCounter % 10) == 0 ){
+            // Update the status of our lower/upper pixel bin sensors
+            int currentPixelBinCount = robot.pixelBinUpdateStatus();
+            // Has the number of pixels detected changed since last time?
+            if( currentPixelBinCount != previousPixelBinCount ) {
+                // The three options are 0 (empty), 1 (single), and 2 (double)
+                // (going from 1 or 2 down to 0 doesn't result in a gamepad rumble notification)
+                if( currentPixelBinCount == 1 ) gamepad2.runRumbleEffect(rumblePixelBinSingle);
+                if( currentPixelBinCount == 2 ) gamepad2.runRumbleEffect(rumblePixelBinDouble);
+                // Store this, and wait for another change in pixel count
+                previousPixelBinCount = currentPixelBinCount;
+            } // count changed
+        } // time to do an update cycle
+    } // ProcessPixelBinFeedback
 
     /*---------------------------------------------------------------------------------*/
     void ProcessFingerControls() {

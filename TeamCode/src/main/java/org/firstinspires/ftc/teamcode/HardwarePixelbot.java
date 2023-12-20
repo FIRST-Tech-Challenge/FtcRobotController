@@ -129,9 +129,16 @@ public class HardwarePixelbot
 
     public double pixel1Hue; // lower
     public double pixel2Hue; // upper
-
-    private long pixelBinUpdateCount = 0;
-    
+    enum PixelColorsEnum {
+        EMPTY,
+        WHITE,
+        YELLOW,
+        GREEN,
+        PURPLE,
+        UNKNOWN
+    }
+    public PixelColorsEnum pixel1Color = PixelColorsEnum.EMPTY;  // lower
+    public PixelColorsEnum pixel2Color = PixelColorsEnum.EMPTY;  // upper
     private DistanceSensor pixe1DistanceSensor = null;        // lower
     private DistanceSensor pixe2DistanceSensor = null;        // upper
 
@@ -261,14 +268,12 @@ public class HardwarePixelbot
         strafeOdometer.setPower( 0.0 );
 
         /*--------------------------------------------------------------------------------------------*/
-        pixel1ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinLowerSensor");  // ControlHub I2C Bus2
-//      pixel1ColorSensor.enableLight(true);
-        pixel1ColorSensor.setGain(1.0f);   // TBD
+        pixel1ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinLowerSensor");  // ControlHub I2C Bus1
+        pixel1ColorSensor.setGain(3.0f);
         pixe1DistanceSensor = (DistanceSensor) pixel1ColorSensor;
 
-        pixel2ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinUpperSensor");  // ControlHub I2C Bus1
-//      pixel2ColorSensor.enableLight(true);
-        pixel2ColorSensor.setGain(1.0f);
+        pixel2ColorSensor = hwMap.get(NormalizedColorSensor.class, "BinUpperSensor");  // ControlHub I2C Bus2
+        pixel2ColorSensor.setGain(3.0f);
         pixe2DistanceSensor = (DistanceSensor) pixel2ColorSensor;
 
         /*--------------------------------------------------------------------------------------------*/
@@ -480,31 +485,67 @@ public class HardwarePixelbot
     } // restrictDeltaPower
 
     /*--------------------------------------------------------------------------------------------*/
-    public void pixelBinUpdateStatus( boolean forceUpdate ) {
-        // I2C reads are slow, so only update the pixel bin status every 10 cycles (unless forced)
-        pixelBinUpdateCount++;
-        boolean timeToUpdate = ((pixelBinUpdateCount % 10) == 0)? true : false;
-        if( timeToUpdate || forceUpdate ) {
-            //========== LOWER POSITION IN PIXEL BIN ==========
-            // 1) does the proximity detector detect a pixel?
-            pixel1Distance = pixe1DistanceSensor.getDistance(DistanceUnit.MM);
+    public int pixelBinUpdateStatus() {
+        final double MAX_DIST_OCCUPIED = 60.0; // minimum distance sensor can report is 54.52mm
+        int binPixelCount = 0;
+        //========== LOWER POSITION IN PIXEL BIN ==========
+        // 1) does the proximity detector detect a pixel?
+        pixel1Distance = pixe1DistanceSensor.getDistance(DistanceUnit.MM);
+        boolean binPosition1Empty = Double.isNaN(pixel1Distance) || (pixel1Distance > MAX_DIST_OCCUPIED);
+        if( binPosition1Empty ) {
+            pixel1Hue = 0.0;
+            pixel1Color = PixelColorsEnum.EMPTY;
+        } // binPositionIsEmpty
+        else {
+            binPixelCount++;
             // 2) read the color sensor in RGBA mode (red/green/blue/alpha)
             pixelRGBA = pixel1ColorSensor.getNormalizedColors();
             // 3) Convert RGBA to a color integer, and then to HSV (hue/sat/value)
             Color.colorToHSV( pixelRGBA.toColor(), pixelHSV );
             // 4) Store the HUE
             pixel1Hue = pixelHSV[0];
-            //========== UPPER POSITION IN PIXEL BIN ==========
-            // 1) does the proximity detector detect a pixel?
-            pixel2Distance = pixe2DistanceSensor.getDistance(DistanceUnit.MM);
+            // 5) Convert to an enumerated pixel color using hue & saturation
+            pixel1Color = pixelHueSatToColor( pixelHSV[0], pixelHSV[1] );
+        } // !binPositionIsEmpty
+        //========== UPPER POSITION IN PIXEL BIN ==========
+        // 1) does the proximity detector detect a pixel?
+        pixel2Distance = pixe2DistanceSensor.getDistance(DistanceUnit.MM);
+        boolean binPosition2Empty = Double.isNaN(pixel2Distance) || (pixel2Distance > MAX_DIST_OCCUPIED);
+        if( binPosition2Empty ) {
+            pixel2Hue = 0.0;
+            pixel2Color = PixelColorsEnum.EMPTY;
+        } // binPositionIsEmpty
+        else {
+            binPixelCount++;
             // 2) read the color sensor in RGBA mode (red/green/blue/alpha)
             pixelRGBA = pixel2ColorSensor.getNormalizedColors();
             // 3) Convert RGBA to a color integer, and then to HSV (hue/sat/value)
             Color.colorToHSV( pixelRGBA.toColor(), pixelHSV );
             // 4) Store the HUE
-            pixel2Hue = pixelHSV[0];  // white=15 yellow=25 green=84 purple=335
+            pixel2Hue = pixelHSV[0];
+            // 5) Convert to an enumerated pixel color using hue & saturation
+            pixel2Color = pixelHueSatToColor( pixelHSV[0], pixelHSV[1] );
         }
+        return binPixelCount;
     } // pixelBinUpdateStatus
+
+    /*--------------------------------------------------------------------------------------------*/
+    private PixelColorsEnum pixelHueSatToColor( double hue, double sat ) {
+        PixelColorsEnum pixelColor;
+        if((hue > 20.0) && (hue <= 65.0))
+            pixelColor = PixelColorsEnum.YELLOW; // hue typically 45-48
+        else if((hue > 70.0) && (hue <= 180.0)) {
+            if( sat > 0.350 )
+                pixelColor = PixelColorsEnum.GREEN;  // hue typically 109-117, saturation 0.560
+            else
+                pixelColor = PixelColorsEnum.WHITE;  // hue typically 100-142, saturation 0.160
+        }
+        else if((hue > 200.0) && (hue <= 250.0))
+            pixelColor = PixelColorsEnum.PURPLE;  // hue typically 216-225
+        else
+            pixelColor = PixelColorsEnum.UNKNOWN;
+        return pixelColor;
+    } // pixelHueSatToColor
 
     /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */
