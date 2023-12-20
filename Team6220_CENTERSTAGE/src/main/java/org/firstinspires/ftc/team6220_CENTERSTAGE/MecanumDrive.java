@@ -288,7 +288,6 @@ public final class MecanumDrive {
             pixelLatchBack.setPosition(Constants.PIXEL_LATCH_POSITIONS[0]);
         }
 
-        // now has been enabled, encoders are goodge :D
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // disabled for roadrunner
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

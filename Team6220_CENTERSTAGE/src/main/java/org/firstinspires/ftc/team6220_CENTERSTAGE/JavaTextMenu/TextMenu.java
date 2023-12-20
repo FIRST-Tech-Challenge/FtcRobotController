@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 /**
  * A highly advanced, very cool and professionally coded
  * text-based menu predominantly aimed at
- * choosing between enums via a controller.
+ * choosing between enums via a controller. (splendiferous)
  * <p>
  * <i>By valsei!!</i> [https://github.com/valsei/java-text-menu]
  * <p>

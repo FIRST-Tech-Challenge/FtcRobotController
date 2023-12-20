@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation 'org.openftc:easyopencv:1.6.2'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation "com.acmerobotics.roadrunner:ftc:0.1.8"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.14"
