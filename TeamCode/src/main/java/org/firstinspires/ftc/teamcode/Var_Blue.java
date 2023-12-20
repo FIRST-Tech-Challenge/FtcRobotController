@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Scalar;
 @Config
-public class Var {
+public class Var_Blue {
     public enum DetectionTypes {
         DAY,
         NIGHT

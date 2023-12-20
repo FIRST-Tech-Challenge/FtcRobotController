@@ -23,7 +23,7 @@ public class TeleOPcenterstageRX extends OpMode {
     private double y, x, rx, max;
     private double lastTime;
     private double pmotorBL, pmotorBR, pmotorFL, pmotorFR;
-    private boolean stop = false, aLansat = false, notEntered, aRetras = false;
+    private boolean stop = false, aLansat = false, notEntered, aRetras = false, aIntrat = false,aInchis = false;
     private final ChestiiDeAutonom c = new ChestiiDeAutonom();
 
     @Override
@@ -112,24 +112,24 @@ public class TeleOPcenterstageRX extends OpMode {
                 }
                 Log.wtf("AvionSiAGC","check1");
                 if (gamepad2.x) {
-                    c.setExtensorPower(-1, 1300);
+                    c.setExtensorPower(-1, 3000);
                 }
                 else if (!aLansat) {
-                    if (!notEntered && c.isRobotFolded()) {
-                        c.setExtensorPower(-1, 1300);
+                    if (!notEntered && c.getPotentiometruVoltage() > 1.7) {
+                        c.setExtensorPower(-1, 3000);
                         notEntered = true;
                     }
-                    else if (c.isRobotFolded()) {
+                    else if (c.getPotentiometruVoltage() > 1.7) {
                         c.setExtensorPower(gamepad2.left_stick_x, 1);
                     }
                     else if (notEntered) {
-                        c.setExtensorPower(1, 1300);
+                        c.setExtensorPower(1, 3000);
                         notEntered = false;
                     }
                 }
                 else {
                     if (!aRetras) {
-                        c.setExtensorPower(-1, 700);
+                        c.setExtensorPower(-1, 3000);
                         aRetras = true;
                     }
                 }
@@ -152,17 +152,25 @@ public class TeleOPcenterstageRX extends OpMode {
                 }
 
                 Log.wtf("systems","check1");
-                if (c.isRobotFolded()) {
+                if (c.getPotentiometruVoltage() > 1.7 && !aInchis) {
+                    aInchis=true;
                     c.inchidere();
                 }
+                else if(c.getPotentiometruVoltage() < 1.7){
+                    aInchis = false;
+                }
                 Log.wtf("systems","check2");
-                if (gamepad2.b != bl) {
+                if (gamepad2.b != bl && !aIntrat) {
+                    aIntrat = true;
                     if (gamepad2.b) {
-                        new Thread(() -> c.letPixelDrop(150)).start();
+                        new Thread(() -> c.letPixelDrop(100)).start();
                     }
                     bl = false;
                 }
-                else if (gamepad2.a) {
+                else if(gamepad2.b == bl){
+                    aIntrat = false;
+                }
+                if (gamepad2.a && !aIntrat) {
                     c.deschidere();
                 }
                 else if (gamepad2.y) {
@@ -194,6 +202,8 @@ public class TeleOPcenterstageRX extends OpMode {
         telemetry.addData("potentiometru:", c.getPotentiometruVoltage());
         telemetry.addData("distanceL:", c.getDistanceL(DistanceUnit.CM));
         telemetry.addData("distanceR:", c.getDistanceR(DistanceUnit.CM));
+        telemetry.addData("ghearaL:",c.getGhearaLPosition());
+        telemetry.addData("ghearaR:",c.getGhearaRPosition());
         telemetry.update();
     }
 }

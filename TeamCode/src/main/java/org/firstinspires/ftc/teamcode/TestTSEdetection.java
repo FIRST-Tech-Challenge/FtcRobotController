@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Var.Webcam_h;
-import static org.firstinspires.ftc.teamcode.Var.Webcam_w;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Webcam_h;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Webcam_w;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -18,7 +18,7 @@ public class TestTSEdetection extends LinearOpMode {
     double rectx, recty, hperw;
     int varrez = 2;
     public OpenCvCamera webcam;
-    public PipelineRosu pipelineRed = new PipelineRosu();
+    public PachetelNouRosu pipelineRed = new PachetelNouRosu();
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);

@@ -166,7 +166,12 @@ public class ChestiiDeAutonom{
         initAprilTag();
         setManualExposure(6, 250);
     }
-
+    public double getGhearaLPosition(){
+        return ghearaL.getPosition();
+    }
+    public double getGhearaRPosition(){
+        return ghearaR.getPosition();
+    }
     public void detectieTaguriAprilie(int DESIRED_TAG_ID) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
@@ -186,12 +191,12 @@ public class ChestiiDeAutonom{
         }
     }
 
-    public synchronized void deschidere() {
-        ghearaR.setPosition(0.15);
-        ghearaL.setPosition(0.63);
+    public void deschidere() {
+        ghearaR.setPosition(0.14);
+        ghearaL.setPosition(0.64);
     }
 
-    public synchronized void inchidere() {
+    public void inchidere() {
         ghearaR.setPosition(0.38);
         ghearaL.setPosition(0.38);
     }
@@ -263,7 +268,7 @@ public class ChestiiDeAutonom{
         isStopRequested = value;
     }
 
-    public synchronized void setExtensorPower(double pow, int t) {
+    public void setExtensorPower(double pow, int t) {
         extensorR.setPower(pow);
         extensorL.setPower(pow);
         try {
@@ -298,7 +303,7 @@ public class ChestiiDeAutonom{
         maceta.setPower(0);
     }
 
-    public synchronized void letPixelDrop(long delay) {
+    public void letPixelDrop(long delay) {
         deschidere();
         try {
             Thread.sleep(delay);
@@ -313,16 +318,12 @@ public class ChestiiDeAutonom{
         if (potentiometru.getVoltage() > pot) {
             melcsus.setVelocity(vel);
             melcjos.setVelocity(vel);
-            telemetry.addData("lastTime + t:", lastTime + t);
-            telemetry.addData("current time:", System.currentTimeMillis());
             while (potentiometru.getVoltage() > pot && lastTime + t > System.currentTimeMillis()) {
             }
         }
         else {
             melcsus.setVelocity(-vel);
             melcjos.setVelocity(-vel);
-            telemetry.addData("lastTime + t:", lastTime + t);
-            telemetry.addData("current time:", System.currentTimeMillis());
             while (potentiometru.getVoltage() < pot && lastTime + t > System.currentTimeMillis()) {
             }
         }

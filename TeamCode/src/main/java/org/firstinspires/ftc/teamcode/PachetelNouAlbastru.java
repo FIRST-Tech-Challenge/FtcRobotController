@@ -1,31 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Hhigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Hlow;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Hhigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Hlow;
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Shigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Slow;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Shigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Slow;
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Vhigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Day_Vlow;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Vhigh;
-import static org.firstinspires.ftc.teamcode.Var_Red.Night_Vlow;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_detectionType;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_kernel_pult_size;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_rect_x1;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_rect_x2;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_rect_y1;
-import static org.firstinspires.ftc.teamcode.Var_Red.CV_rect_y2;
-import static org.opencv.core.CvType.CV_8U;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Hhigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Hlow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Hhigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Hlow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Shigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Slow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Shigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Slow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Vhigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Day_Vlow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Vhigh;
+import static org.firstinspires.ftc.teamcode.Var_Blue.Night_Vlow;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_detectionType;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_kernel_pult_size;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_rect_x1;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_rect_x2;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_rect_y1;
+import static org.firstinspires.ftc.teamcode.Var_Blue.CV_rect_y2;
 import static org.opencv.core.CvType.CV_8UC1;
-
-import android.provider.ContactsContract;
-import android.util.Log;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -42,15 +35,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class PipelineRosu extends OpenCvPipeline {
+public class PachetelNouAlbastru extends OpenCvPipeline {
     //stabileste forma detectorului(dreptunghi)
     private final int elementType = Imgproc.CV_SHAPE_RECT;
     //asta e un dreptunghi(Rect = dreptunghi pentru webcam)
     private Rect dreptunghi;
     /*
      * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
-     * highly recommended to declare them here as instance Var_Rediables and re-use them for
-     * each invocation of processFrame(), rather than declaring them as new local Var_Rediables
+     * highly recommended to declare them here as instance variables and re-use them for
+     * each invocation of processFrame(), rather than declaring them as new local variables
      * each time through processFrame(). This removes the danger of causing a memory leak
      * by forgetting to call mat.release(), and it also reduces memory pressure by not
      * constantly allocating and freeing large chunks of memory.
@@ -80,10 +73,11 @@ public class PipelineRosu extends OpenCvPipeline {
             Scalar scalarLowerHSV, scalarUpperHSV;
 
             //daca e day da valorile de day, daca e night da valorile de night
-            if (CV_detectionType == Var_Red.DetectionTypes.DAY) {
+            if (CV_detectionType == Var_Blue.DetectionTypes.DAY) {
                 scalarLowerHSV = new Scalar(Day_Hlow, Day_Slow, Day_Vlow);
                 scalarUpperHSV = new Scalar(Day_Hhigh, Day_Shigh, Day_Vhigh);
-            } else {
+            }
+            else{
                 scalarLowerHSV = new Scalar(Night_Hlow, Night_Slow, Night_Vlow);
                 scalarUpperHSV = new Scalar(Night_Hhigh, Night_Shigh, Night_Vhigh);
             }
@@ -117,7 +111,7 @@ public class PipelineRosu extends OpenCvPipeline {
 
             //asta declara o lista de contururi;
             List<MatOfPoint> contours = new ArrayList<>();
-            //input e imaginea, contours este lista de contururi, retr_list doar da toate contururile, chain_approx_simple face ca formele sa fie facute numai din Var_Redfurile lor
+            //input e imaginea, contours este lista de contururi, retr_list doar da toate contururile, chain_approx_simple face ca formele sa fie facute numai din varfurile lor
             Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             //Aici se sorteaza contururile in mod descrescator;
             Collections.sort(contours, new Comparator<MatOfPoint>() {
