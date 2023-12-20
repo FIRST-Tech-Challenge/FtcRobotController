@@ -27,7 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.JavaTextMenu.*;
 
-
+/*
+This is our main autonomous class that is actively being developed/used.
+ */
 @Autonomous(name="Main Autonomous", group ="amogus2")
 public class MainAutonomous extends LinearOpMode {
     @Override

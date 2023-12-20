@@ -3,6 +3,10 @@ package org.firstinspires.ftc.team6220_CENTERSTAGE;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
+/*
+This class adds features that are not built into the roadrunner mecanum drive class.
+It enables us to control our different mechanisms like slides/intake/etc.
+ */
 public class ExtendedDriveFeatures {
 
     MecanumDrive drive;

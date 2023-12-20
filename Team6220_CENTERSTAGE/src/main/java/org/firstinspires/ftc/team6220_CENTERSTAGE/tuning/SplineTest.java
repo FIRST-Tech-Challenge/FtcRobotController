@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
-
+/*
+This is part of roadrunner's calibration classes.
+ */
 @Disabled
 public final class SplineTest extends LinearOpMode {
     @Override

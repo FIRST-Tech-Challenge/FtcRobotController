@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
-
+/*
+This is part of roadrunner's calibration classes.
+ */
 @Disabled
 @TeleOp
 public final class StrafeTest extends LinearOpMode {

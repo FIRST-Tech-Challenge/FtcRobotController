@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
+/*
+This is part of roadrunner's calibration classes.
+ */
 @Disabled
 public class LocalizationTest extends LinearOpMode {
     @Override

@@ -53,6 +53,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/*
+This is part of roadrunner.
+It allows us to control the drive to follow roadrunner paths.
+ */
 @Config
 public final class MecanumDrive {
 

@@ -4,6 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
+/*
+This class contains various constants that are used throughout our code, sorted into general catagories.
+ */
 @Config
 public class Constants {
   
