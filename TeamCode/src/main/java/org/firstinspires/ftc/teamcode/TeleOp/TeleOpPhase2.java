@@ -49,6 +49,10 @@ public class TeleOpPhase2 extends LinearOpMode {
         }
     }
 
+    private static double sigmoid(int x, double horiStretch, double horiOffset) {
+        return 1 / (1 + Math.exp(horiStretch * (-x + horiOffset)));
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -73,6 +77,7 @@ public class TeleOpPhase2 extends LinearOpMode {
         PIDFController liftPID = new PIDFController(new PIDCoefficients(1, 1, 1), 0, 0);
 
         liftPID.setTargetPosition(0);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         while (!isStopRequested()) {
 
@@ -123,16 +128,21 @@ public class TeleOpPhase2 extends LinearOpMode {
             // Arm stuff beyond this point:
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            int liftSpeed = 100;
-            if (gamepad1.left_bumper) {
-                liftPID.setTargetPosition(liftMotor.getCurrentPosition() + liftSpeed);
-            } else if (gamepad1.right_bumper) {
-                liftPID.setTargetPosition(liftMotor.getCurrentPosition() - liftSpeed);
-            }
-
             int liftStage0 = 20;
             int liftStage1 = -250;
             int liftStage2 = -523;
+            int liftSpeed = 90;
+
+            if (liftPID.getTargetPosition() - 90 <= liftStage2 && liftPID.getTargetPosition() + 90 > liftStage0) {
+                // Do nothing
+            } else {
+                if (gamepad1.left_bumper) { // Left bumper raises the arm
+                    liftPID.setTargetPosition(liftMotor.getCurrentPosition() - liftSpeed);
+                } else if (gamepad1.right_bumper) { // Right bumper lowers arm
+                    liftPID.setTargetPosition(liftMotor.getCurrentPosition() + liftSpeed);
+                }
+            }
+
             if (gamepad1.dpad_down) {
                 liftPID.setTargetPosition(liftStage0);
             } else if (gamepad1.dpad_right|| gamepad1.dpad_left) {
@@ -146,11 +156,9 @@ public class TeleOpPhase2 extends LinearOpMode {
 
             if (liftMotor.getCurrentPosition() != liftMotor.getTargetPosition()) {
                 liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                Ewma liftPower = new Ewma(0.3);
-                liftMotor.setPower(liftPower.update(1)); // This number should probably be dependent on error
+                int liftError = Math.abs((int) liftMotor.getCurrentPosition() - (int) liftPID.getTargetPosition());
+                liftMotor.setPower(sigmoid(liftError, 0.01, 250));
             }
-
-
 
             if (gamepad1.left_trigger > 0.03 || gamepad1.right_trigger > 0.03) {
                 intakeMotor.setPower(0.5);
