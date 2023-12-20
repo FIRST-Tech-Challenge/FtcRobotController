@@ -257,7 +257,7 @@ public final class MecanumDrive {
             intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             slideMotor = hardwareMap.get(DcMotorEx.class, "motSlides");
             returnMotor = hardwareMap.get(DcMotorEx.class, "motReturn");
-            motSuspension = hardwareMap.get(DcMotorEx.class, "motSuspension");
+            //motSuspension = hardwareMap.get(DcMotorEx.class, "motSuspension");
             droneServo = hardwareMap.get(Servo.class, "droneServo");
             intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
             dumperServo = hardwareMap.get(ServoImplEx.class, "outtakeServo");
@@ -275,7 +275,7 @@ public final class MecanumDrive {
         if (!isDevBot) { // is competition bot
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motSuspension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //motSuspension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             returnMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
@@ -298,7 +298,7 @@ public final class MecanumDrive {
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             returnMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motSuspension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            //motSuspension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -321,41 +321,6 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
-    /**
-     * moves the slides at a power
-     * @param power positive is slides up
-     */
-    public void moveSlides(double power) {
-        this.slideMotor.setPower(power);
-        // if the power is negative, which is slides going down
-        if (power > 0) {
-            this.returnMotor.setPower(power * Constants.SLIDE_RETURN_UP_MUL);
-        } else {
-            this.returnMotor.setPower(power * Constants.SLIDE_RETURN_POWER_MULTIPLIER + Constants.SLIDE_RETURN_POWER_OFFSET);
-        }
-    }
-
-    /**
-     * move slides until within a position tolerance
-     * @param targetPos the destination position of the slides
-     * @return true if it is NOT yet close enough to target pos
-     */
-    public boolean moveSlidesPreset(int targetPos) {
-        double power = (targetPos - this.slideMotor.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
-        this.moveSlides(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
-        return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
-    }
-
-    public boolean moveSuspensionArmPreset(int targetPos) {
-        double power = (targetPos - this.motSuspension.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
-        this.motSuspension.setPower(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
-        return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
-    }
-
-    // clamps value between a minimum and maximum value
-    private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
-    }
 
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
