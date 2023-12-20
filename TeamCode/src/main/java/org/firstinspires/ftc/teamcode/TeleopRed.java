@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
- * TeleOp RIGHT side of field
+ * TeleOp for RED alliance
  */
-@TeleOp(name="Teleop-Right", group="7592")
+@TeleOp(name="Teleop-Red", group="7592")
 //@Disabled
-public class TeleopRight extends Teleop {
+public class TeleopRed extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
@@ -27,4 +27,4 @@ public class TeleopRight extends Teleop {
         // Red Alliance 5-stack 5"/127mm = 7
 
     }
-} // TeleopRight
+} // TeleopRed
