@@ -22,7 +22,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.left_bumper) {
             motorIntakeWheels.setPower(0.5);
             servoReleasePixel.setPower(1.0);
-
         } else if (gamepad2.right_bumper) {
             motorIntakeWheels.setPower(-1.0);
             servoReleasePixel.setPower(-1.0);
@@ -30,6 +29,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
             motorIntakeWheels.setPower(0.0);
             servoReleasePixel.setPower(0.0);
         }
+
+        // button Y runs pixel release servo without intake running
         if (gamepad2.y) {
             servoReleasePixel.setPower(-1.0);
         } else {
@@ -45,13 +46,16 @@ abstract public class BaseTeleOp extends BaseOpMode {
             motorSlides.setPower(0.0);
         }
 
+        // flips arms in
         if (gamepad2.a) {
             servoFlipGondola.setPosition(0.25);
             servoRotateGondola.setPosition(0.6);
+        // flips arms out
         } else if (gamepad2.b) {
             servoFlipGondola.setPosition(0.95);
             servoRotateGondola.setPosition(0.8);
         }
+        // runs intake power proportional to how far right trigger is pressed down
         if (gamepad2.right_trigger != 0.0) {
             motorIntakeWheels.setPower(-gamepad2.right_trigger);
         }

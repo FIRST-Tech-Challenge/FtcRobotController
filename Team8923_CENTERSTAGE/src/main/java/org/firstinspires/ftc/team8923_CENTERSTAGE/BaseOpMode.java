@@ -80,10 +80,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         servoFlipGondola.setPosition(0.25);
 
-        // servoRotateGondola.setPosition(0.0);
-
-        // initializes position of drone launcher servo. careful!
-        // servoReleaseDrone.setPosition(0.5);
+        servoRotateGondola.setPosition(0.0);
     }
 
     // mecanum drive method
