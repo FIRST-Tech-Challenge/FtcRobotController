@@ -24,57 +24,57 @@ public class BlueAudience extends LinearOpMode {
         waitForStart();
 
         if(posOfTag == 1){
-            teamBot.moveWithoutEncoders(0.6, 0.6, 1000);
+            teamBot.moveStraightWithEncoders(0.6, 30);
             teamBot.gyroTurning(-90);
             teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
-            teamBot.moveWithoutEncoders(-0.6, -0.6, 500);
+            teamBot.moveStraightWithEncoders(-0.6,10);
             //Open Purple Pixel Claw Side
             //Shooting Purple Pixel onto SpikeMark with Intake
             teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 1500);
-            teamBot.moveWithoutEncoders(0.8,0.8,4800);
+            teamBot.moveStraightWithEncoders(0.8,220);
             //Open Yellow Pixel Claw Side
             //Shooting Yellow Pixel into Backstage
-            teamBot.moveWithoutEncoders(0.6,0.6,500);
+            teamBot.moveStraightWithEncoders(0.6,10);
             teamBot.strafing(RobotClass.Direction.LEFT, 0.4,500);
 
         }else if(posOfTag == 2){
-            teamBot.moveWithoutEncoders(0.6, 0.6, 2500);
+            teamBot.moveStraightWithEncoders(0.6, 46);
             //Open Purple Pixel Claw Side
             //Shooting Purple Pixel onto SpikeMark with Intake
             teamBot.strafing(RobotClass.Direction.RIGHT, 0.6, 2000);
-            teamBot.moveWithoutEncoders(0.6, 0.6, 1500);
+            teamBot.moveStraightWithEncoders(0.6, 26);
             teamBot.gyroTurning(-90);
-            teamBot.moveWithoutEncoders(0.8,0.8,4800);
+            teamBot.moveStraightWithEncoders(0.8,200);
             //Open Yellow Pixel Claw Side
             //Shooting Yellow Pixel into Backstage
-            teamBot.moveWithoutEncoders(0.6,0.6,500);
+            teamBot.moveStraightWithEncoders(0.6,10);
             teamBot.strafing(RobotClass.Direction.LEFT, 0.4,500);
 
         }else if(posOfTag == 3){
-            teamBot.moveWithoutEncoders(0.6,0.6,950);
+            teamBot.moveStraightWithEncoders(0.6,26);
             teamBot.strafing(RobotClass.Direction.RIGHT,0.4,500);
             //Open Purple Pixel Claw Side
             //Shooting Purple Pixel onto SpikeMark with Intake
             teamBot.strafing(RobotClass.Direction.RIGHT,0.4,500);
-            teamBot.moveWithoutEncoders(0.6,0.6,1700);
+            teamBot.moveStraightWithEncoders(0.6,100);
             teamBot.strafing(RobotClass.Direction.LEFT, 0.4,500);
             teamBot.gyroTurning(-90);
-            teamBot.moveWithoutEncoders(0.8,0.8,4500);
+            teamBot.moveStraightWithEncoders(0.8,200);
             //Open Yellow Pixel Claw Side
             //Shooting Yellow Pixel into Backstage
-            teamBot.moveWithoutEncoders(0.6,0.6,500);
+            teamBot.moveStraightWithEncoders(0.6,10);
             teamBot.strafing(RobotClass.Direction.LEFT,0.4,500);
 
         }else{
-            teamBot.moveWithoutEncoders(0.6,0.6,800);
+            teamBot.moveStraightWithEncoders(0.6,20);
             teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
-            teamBot.moveWithoutEncoders(0.6,0.6,2200);
+            teamBot.moveStraightWithEncoders(0.6,26);
             teamBot.strafing(RobotClass.Direction.LEFT, 0.5, 1000);
             teamBot.gyroTurning(-90);
-            teamBot.moveWithoutEncoders(0.8,0.8,4800);
+            teamBot.moveStraightWithEncoders(0.8,220);
             //Open Purple and Yellow Pixel Claw Sides
             //Shooting Purple and Yellow Pixels into Backstage
-            teamBot.moveWithoutEncoders(0.6,0.6,500);
+            teamBot.moveStraightWithEncoders(0.6,10);
             teamBot.strafing(RobotClass.Direction.LEFT, 0.4,500);
         }
     }

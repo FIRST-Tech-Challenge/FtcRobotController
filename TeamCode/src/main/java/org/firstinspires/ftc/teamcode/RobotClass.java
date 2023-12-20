@@ -75,7 +75,7 @@ public class RobotClass {
 
         //setting direction of motors
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -149,6 +149,8 @@ public class RobotClass {
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         //setting power of motors
         frontLeft.setPower(powerLeft);
         frontRight.setPower(powerRight);
@@ -159,6 +161,7 @@ public class RobotClass {
         //stops motors
         stopMotors();
     }
+
 
     //Moving using encoders
     public void moveStraightWithEncoders(double power, double cm) throws InterruptedException {
