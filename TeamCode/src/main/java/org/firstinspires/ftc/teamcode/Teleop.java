@@ -84,9 +84,14 @@ public abstract class Teleop extends LinearOpMode {
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
     boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior()
-    int     aprilTagLeft   = 1;   // overriden in setAllianceSpecificBehavior()
-    int     aprilTagCenter = 2;   // overriden in setAllianceSpecificBehavior()
-    int     aprilTagRight  = 3;   // overriden in setAllianceSpecificBehavior()
+    boolean blueAlliance = true;  // overriden in setAllianceSpecificBehavior()
+
+    int     aprilTagLeft   = 1;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
+    int     aprilTagCenter = 2;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
+    int     aprilTagRight  = 3;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
+    int     aprilTagSmall  = 9;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
+    int     aprilTagLarge  = 10;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
+
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
     long pixelBinUpdateCounter = 0;
     int  previousPixelBinCount = 0;
@@ -441,6 +446,7 @@ public abstract class Teleop extends LinearOpMode {
             int currentPixelBinCount = robot.pixelBinUpdateStatus();
             // Has the number of pixels detected changed since last time?
             if( currentPixelBinCount != previousPixelBinCount ) {
+                // TODO: test whether we need a waitCount (more than one cycle of detection before buzzing operator)
                 // The three options are 0 (empty), 1 (single), and 2 (double)
                 // (going from 1 or 2 down to 0 doesn't result in a gamepad rumble notification)
                 if( currentPixelBinCount == 1 ) gamepad2.runRumbleEffect(rumblePixelBinSingle);

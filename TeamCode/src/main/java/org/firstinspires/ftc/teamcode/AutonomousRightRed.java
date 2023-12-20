@@ -32,7 +32,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Right-Red", group="7592", preselectTeleOp = "Teleop-Right")
+@Autonomous(name="Autonomous Right-Red", group="7592", preselectTeleOp = "Teleop-Red")
 //@Disabled
 public class AutonomousRightRed extends AutonomousBase {
 

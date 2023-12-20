@@ -46,12 +46,22 @@ class CenterstageSuperPipeline implements VisionProcessor {
     public static int spikeMark = 1;
     protected String storageFolder = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//Default";
     protected boolean saveNextSpikeMark = false;
-    protected Point sub1PointA = new Point(80, 390);     // NOTE: webcam resolution is 1280 x 800
-    protected Point sub1PointB = new Point(170, 480);
-    protected Point sub2PointA = new Point(570, 375);
-    protected Point sub2PointB = new Point(660, 455);
-    protected Point sub3PointA = new Point(930, 395);
-    protected Point sub3PointB = new Point(1020, 485);
+    // NOTE: webcam resolution for the row/col values below is 1280 x 800
+	// LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
+    protected Point sub1PointALeft = new Point(80, 390); //Point1 is left spike mark, Point2 is center, Point3 is Right
+    protected Point sub1PointBLeft = new Point(170, 480); //Fix these values
+    protected Point sub2PointALeft = new Point(560, 375);
+    protected Point sub2PointBLeft = new Point(650, 455);
+    protected Point sub3PointALeft = new Point(930, 395);
+    protected Point sub3PointBLeft = new Point(1020, 485);
+	// RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
+    protected Point sub1PointARight = new Point(80, 390);
+    protected Point sub1PointBRight = new Point(170, 480);
+    protected Point sub2PointARight = new Point(560, 375);
+    protected Point sub2PointBRight = new Point(650, 455);
+    protected Point sub3PointARight = new Point(930, 395);
+    protected Point sub3PointBRight = new Point(1020, 485);
+    
     protected Point spikeMarkCenter = new Point(); // defined dynamically below
 //  protected Mat YCrCb = new Mat();
 //  protected Mat CrChan = new Mat();
@@ -106,10 +116,15 @@ class CenterstageSuperPipeline implements VisionProcessor {
         maxHueErr = 25;     // how far off can we go and still be the desired color??
 
         // Define permanent sampling areas from this color channel (HueChan -> submatHue)
-        subMat1Hue = HueChan.submat(new Rect(sub1PointA, sub1PointB));
-        subMat2Hue = HueChan.submat(new Rect(sub2PointA, sub2PointB));
-        subMat3Hue = HueChan.submat(new Rect(sub3PointA, sub3PointB));
-
+        if(leftSide) {
+            subMat1Hue = HueChan.submat(new Rect(sub1PointALeft, sub1PointBLeft));
+            subMat2Hue = HueChan.submat(new Rect(sub2PointALeft, sub2PointBLeft));
+            subMat3Hue = HueChan.submat(new Rect(sub3PointALeft, sub3PointBLeft));
+        } else {
+            subMat1Hue = HueChan.submat(new Rect(sub1PointARight, sub1PointBRight));
+            subMat2Hue = HueChan.submat(new Rect(sub2PointARight, sub2PointBRight));
+            subMat3Hue = HueChan.submat(new Rect(sub3PointARight, sub3PointBRight));
+        }
         // Compute the AVERAGE hue number for the sample region
         avg1 = (int)Core.mean(subMat1Hue).val[0];  hueErr1 = Math.abs(avg1-targetHue);
         avg2 = (int)Core.mean(subMat2Hue).val[0];  hueErr2 = Math.abs(avg2-targetHue);
@@ -129,25 +144,52 @@ class CenterstageSuperPipeline implements VisionProcessor {
 
         // Draw 4-pixel-wide RED or BLUE rectangles identifying sample areas on original frame
         if( redAlliance ) {
-            Imgproc.rectangle(frame, sub1PointA, sub1PointB, new Scalar(255, 0, 0), 4);
-            Imgproc.rectangle(frame, sub2PointA, sub2PointB, new Scalar(255, 0, 0), 4);
-            Imgproc.rectangle(frame, sub3PointA, sub3PointB, new Scalar(255, 0, 0), 4);
+            if(leftSide) {
+                Imgproc.rectangle(frame, sub1PointALeft, sub1PointBLeft, new Scalar(255, 0, 0), 4);
+                Imgproc.rectangle(frame, sub2PointALeft, sub2PointBLeft, new Scalar(255, 0, 0), 4);
+                Imgproc.rectangle(frame, sub3PointALeft, sub3PointBLeft, new Scalar(255, 0, 0), 4);
+            } else {
+                Imgproc.rectangle(frame, sub1PointARight, sub1PointBRight, new Scalar(255, 0, 0), 4);
+                Imgproc.rectangle(frame, sub2PointARight, sub2PointBRight, new Scalar(255, 0, 0), 4);
+                Imgproc.rectangle(frame, sub3PointARight, sub3PointBRight, new Scalar(255, 0, 0), 4);
+            }
         } else {
-            Imgproc.rectangle(frame, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 4);
-            Imgproc.rectangle(frame, sub2PointA, sub2PointB, new Scalar(0, 0, 255), 4);
-            Imgproc.rectangle(frame, sub3PointA, sub3PointB, new Scalar(0, 0, 255), 4);
+            if(leftSide) {
+                Imgproc.rectangle(frame, sub1PointALeft, sub1PointBLeft, new Scalar(0, 0, 255), 4);
+                Imgproc.rectangle(frame, sub2PointALeft, sub2PointBLeft, new Scalar(0, 0, 255), 4);
+                Imgproc.rectangle(frame, sub3PointALeft, sub3PointBLeft, new Scalar(0, 0, 255), 4);
+            } else {
+                Imgproc.rectangle(frame, sub1PointARight, sub1PointBRight, new Scalar(0, 0, 255), 4);
+                Imgproc.rectangle(frame, sub2PointARight, sub2PointBRight, new Scalar(0, 0, 255), 4);
+                Imgproc.rectangle(frame, sub3PointARight, sub3PointBRight, new Scalar(0, 0, 255), 4);
+            }
         }
 
         // Add a purple circle to the middle of the chosen sample
         if( spikeMark == 1 ) {
-            spikeMarkCenter.x = (sub1PointA.x + sub1PointB.x) / 2;
-            spikeMarkCenter.y = (sub1PointA.y + sub1PointB.y) / 2;
+            if(leftSide) {
+                spikeMarkCenter.x = (sub1PointALeft.x + sub1PointBLeft.x) / 2;
+                spikeMarkCenter.y = (sub1PointALeft.y + sub1PointBLeft.y) / 2;
+            } else {
+                spikeMarkCenter.x = (sub1PointARight.x + sub1PointBRight.x) / 2;
+                spikeMarkCenter.y = (sub1PointARight.y + sub1PointBRight.y) / 2;
+            }
         } else if ( spikeMark == 1 ) {
-            spikeMarkCenter.x = (sub2PointA.x + sub2PointB.x) / 2;
-            spikeMarkCenter.y = (sub2PointA.y + sub2PointB.y) / 2;
+            if(leftSide) {
+                spikeMarkCenter.x = (sub2PointALeft.x + sub2PointBLeft.x) / 2;
+                spikeMarkCenter.y = (sub2PointALeft.y + sub2PointBLeft.y) / 2;
+            } else {
+                spikeMarkCenter.x = (sub2PointARight.x + sub2PointBRight.x) / 2;
+                spikeMarkCenter.y = (sub2PointARight.y + sub2PointBRight.y) / 2;
+            }
         } else {
-            spikeMarkCenter.x = (sub3PointA.x + sub3PointB.x) / 2;
-            spikeMarkCenter.y = (sub3PointA.y + sub3PointB.y) / 2;
+            if(leftSide) {
+                spikeMarkCenter.x = (sub3PointALeft.x + sub3PointBLeft.x) / 2;
+                spikeMarkCenter.y = (sub3PointALeft.y + sub3PointBLeft.y) / 2;
+            } else {
+                spikeMarkCenter.x = (sub3PointARight.x + sub3PointBRight.x) / 2;
+                spikeMarkCenter.y = (sub3PointARight.y + sub3PointBRight.y) / 2;
+            }
         }
         Imgproc.circle(frame, spikeMarkCenter, 10, new Scalar(225, 52, 235), -1);
 

@@ -32,8 +32,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Left-Red", group="7592", preselectTeleOp = "Teleop-Left")
-@Disabled
+@Autonomous(name="Autonomous Left-Red", group="7592", preselectTeleOp = "Teleop-Red")
+//@Disabled
 public class AutonomousLeftRed extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics

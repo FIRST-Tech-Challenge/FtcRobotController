@@ -15,16 +15,16 @@ public class TeleopBlue extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
-        // PowerPlay is symmetric for Red vs. Blue, and Left vs. Right
-        // during Tele-Op.  We define this, but so far never use it.
-        leftAlliance = true;
+        // CENTERSTAGE has different AprilTags for Red vs. Blue.
+        // CENTERSTAGE has no differnces for Left vs. Right during Teleop
+        //leftAlliance = true;
+        blueAlliance = true;
 
         // CENTERSTAGE AprilTag assignments:
-        int  aprilTagLeft   = 1;  // Blue Alliance LEFT   Backdrop
-        int  aprilTagCenter = 2;  // Blue Alliance CENTER Backdrop
-        int  aprilTagRight  = 3;  // Blue Alliance RIGHT  Backdrop
-        // Blue Alliance 5-stack 2"/50mm  = 9
-        // Blue Alliance 5-stack 5"/127mm = 10
-
+        aprilTagLeft   = 1;  // Blue Alliance LEFT   Backdrop
+        aprilTagCenter = 2;  // Blue Alliance CENTER Backdrop
+        aprilTagRight  = 3;  // Blue Alliance RIGHT  Backdrop
+        aprilTagSmall  = 9;  // Blue Alliance SMALL Audience  5-stack 2"/50mm
+        aprilTagLarge  = 10; // Blue Alliance LARGE Audience  5-stack 5"/127mm
     }
 } // TeleopBlue
