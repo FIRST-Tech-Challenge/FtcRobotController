@@ -49,6 +49,8 @@ public class CenterStageTest extends LinearOpMode {
     boolean hookEngaged = true;
 
     int backSlidesTargetPos = 0;
+    int presetBackSlidesTargetPos = 0;
+
     int v4bPresetTarget = 0;
 
     private enum DriveMode {
@@ -238,160 +240,19 @@ RB - Hang up
 
             if (gamepad2.right_bumper){
                 backSlidesTargetPos= 0;
+                presetBackSlidesTargetPos = 0;
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 backSlides.setPower(0.7);
             }
-
-
-//            switch (driveMode) {
-//                case NORMAL:
-//                    if (gamepad1.dpad_up) {
-////                      gp slides full extension
-//                        //  v4b preset 4 pixel high
-//                        //  claw open
-//                    }
-//                    if (gamepad1.dpad_right) {
-//                        //gp slides 2/3rds extension
-//                        //v4b preset 1 pixel high
-//                        //claw open
-//                    }
-//                    if (gamepad1.dpad_down) {
-//                        //gp slides 1/3rds extension
-//                        //v4b preset 1 pixel high
-//                        //claw open
-//                        clawArm.setPosition(CSCons.clawArm[0]);
-//                        clawAngle.setPosition(CSCons.clawAngles[0]);
-//
-//                    }
-//                    if (gamepad1.dpad_left) {
-//                        //gp slides fully in
-//                        //v4b preset 4 pixel high
-//                        //claw open
-//                    }
-//                    if (gamepad2.a && clawClosed == true) {
-//                        clawClosed = false;
-//                        clawServo.setPosition(CSCons.claw[0]);
-//                    } else if (gamepad2.b && clawClosed == false) {
-//                        clawClosed = true;
-//                        clawServo.setPosition(CSCons.claw[1]);
-//                    }
-////                    if (gamepad1.b || isRetracting) {
-////                        isRetracting = true;
-////                        retract = Retract.back;
-////                        switch (retract) {
-////                            case back:
-////                                retract= Retract.flip_bar;
-////                                //slides in
-////                                //check if in
-////                            case flip_bar:
-////                                clawAngle.setPosition(CSCons.clawAngles[2]);
-////                                clawArm.setPosition(CSCons.clawArm[6]);
-////                            case cartridge:
-////                                if (touchSensor.isPressed()){
-////                                    //open claw
-////                                    clawServo.setPosition(CSCons.claw[2]);
-////
-////                                    //clawServo.setPosition();
-////                                }
-////                                // check if flipped if not flip
-////                                // when not busy, open claw
-////                                // outtake close hook
-////                        }
-////                        //right the intake system
-////                    }
-////                    if (gamepad1.x) {
-////                        // Solinexi's april tag alignment
-////                        driveMode = DriveMode.PIXEL_SCORE;
-////                        outtakeHook.setPosition(CSCons.outtakeHook[1]);
-////                        isRetracting = false;
-////                    }
-////                    if (gamepad1.y) {
-////                        //close hook
-////                        //outtake movement and rotation to drop
-////                        // open hook and wait hyper-specific amount of time
-//////                        if (!gamepad1.y) {
-//////                            //close hook
-//////
-//////                        } else {
-////                            // open hook
-////                            // wait slightly
-////                            // outtake movement and rotation to transfer
-//////                        }
-////                        outtakeHook.setPosition(CSCons.outtakeHook[0]);
-////                    }
-////                    if (gamepad1.left_stick_button) {
-////                        driveMode = DriveMode.PIXEL_SCORE;
-////                        //sleep(300);
-////                    }
-////                    if (gamepad1.right_stick_button) {
-////                        driveMode = DriveMode.END_GAME;
-////                       // sleep(300);
-////                    }
-////                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
-////                        v4bPresetTarget--;
-////                    }
-////                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
-////                        v4bPresetTarget++;
-////                    }
-////                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
-////                        backSlidesTargetPos--;
-////                    }
-////                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
-////                        backSlidesTargetPos++;
-////                    }
-////                    break;
-////                case PIXEL_SCORE:
-////                    y = 0;
-////                    rx = 0;
-////                    if (gamepad1.left_trigger > 0.5 && backSlidesTargetPos>0){
-////                        backSlidesTargetPos--;
-////                        backSlides.setTargetPosition(backSlidesTargetPos);
-////                        backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                        backSlides.setPower(0.5);
-////                    }
-////                    if (gamepad1.right_trigger > 0.5 && backSlidesTargetPos<10) {
-////                        backSlidesTargetPos++;
-////                        backSlides.setTargetPosition(backSlidesTargetPos);
-////                        backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                        backSlides.setPower(0.5);
-////                    }
-////                    if (gamepad1.y) {
-////                        //close hook
-////                        //outtake movement and rotation to drop
-////                        // open hook and wait hyper-specific amount of time
-////
-////                            // open hook
-////                            // wait slightly
-////                            // outtake movement and rotation to transfer
-////                        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[0]);
-////                        outtakeMovementRight.setPosition(CSCons.doubleServoBack[0]);
-////                        outtakeRotation.setPosition(CSCons.outtakeAngle[0]);
-////
-////                    }
-////                    if (gamepad1.x){
-////                        outtakeHook.setPosition(CSCons.outtakeHook[0]);
-////                        sleep(100);
-////                        outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
-////                        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
-////                        outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
-////                    }
-////                    break;
-////                case END_GAME:
-////                    if (gamepad1.left_bumper&&v4bPresetTarget>0) {
-////                        //hanging down
-////                    }
-////                    if (gamepad1.right_bumper && v4bPresetTarget < 4) {
-////                        //hanging up
-////                    }
-////                    if (gamepad1.x) {
-////                        // Solinexi's april tag alignment
-////                        //raise shooter
-////                        //FIRE!
-////                    }
-////                    break;
-////            }
-
+            if (gamepad2.left_bumper){
+                presetBackSlidesTargetPos++;
+                backSlidesTargetPos = CSCons.backSlidesPos[presetBackSlidesTargetPos];
+                backSlides.setTargetPosition(backSlidesTargetPos);
+                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backSlides.setPower(0.7);
+                sleep(300);
+            }
 
                     if (Math.abs(y) < 0.2) {
                         y = 0;
@@ -423,22 +284,8 @@ RB - Hang up
                     rightFrontMotor.setPower(rightFrontPower);
                     rightRearMotor.setPower(rightRearPower);
 
-
-//            backSlides.setTargetPosition(CSCons.backSlidesPos[backSlidesTargetPos]);
-//            backSlides.setPower(102984375678349214824736483);
-//            clawArm.setPosition(CSCons.v4b_positions[v4bPresetTarget]);
-
-
-//            if(gamepad1.right_bumper){
-//                hangingMotor.setPower(.3);
-//            } else if (gamepad1.left_bumper) {
-//                hangingMotor.setPower(-.3);
-//            } else {
-//                hangingMotor.setPower(0);
-//            }
-
-
                     telemetry.addData("Arm", clawArm.getPosition());
+                    telemetry.addData("backSlides",backSlidesTargetPos); // 1725, 2400,
 
                     telemetry.update();
             }
