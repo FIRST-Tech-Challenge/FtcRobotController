@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.ColorDetection;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.ExtendedDriveFeatures;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 import org.jetbrains.annotations.NotNull;
 
@@ -416,6 +417,7 @@ class AutoMechanismActions {
     private DcMotorEx slideMotor;
     private DcMotorEx returnMotor;
     private MecanumDrive drive;
+    private ExtendedDriveFeatures exDrive;
 
     public AutoMechanismActions(MecanumDrive drive) {
         this.drive = drive;
@@ -424,6 +426,7 @@ class AutoMechanismActions {
         pixelLatchFront = drive.pixelLatchFront;
         slideMotor = drive.slideMotor;
         returnMotor = drive.returnMotor;
+        this.exDrive = new ExtendedDriveFeatures(drive);
     }
 
     public Action spinIntakeFor(double timeSec, double power) {
@@ -467,7 +470,7 @@ class AutoMechanismActions {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                return drive.moveSlidesPreset(position); // returns if it's not close enough
+                return exDrive.moveSlidesPreset(position); // returns if it's not close enough
             }
         };
     };
