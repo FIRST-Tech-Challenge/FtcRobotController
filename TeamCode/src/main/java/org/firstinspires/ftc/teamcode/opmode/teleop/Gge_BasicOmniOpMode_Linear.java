@@ -91,6 +91,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
+
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -99,9 +100,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
 
+    private DcMotor wrist = null;
+
     Servo leftClaw;
     Servo rightClaw;
-    Servo wrist;
     Servo conveyor;
 
     private IMU imu;
@@ -121,16 +123,14 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         leftLinearSlide = hardwareMap.get(DcMotor.class, "left_linear_slide");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "right_linear_slide");
+        wrist = hardwareMap.get(DcMotor.class, "wrist");
 
         leftClaw = hardwareMap.get(Servo.class, "left_claw");
         rightClaw = hardwareMap.get(Servo.class, "right_claw");
-        wrist = hardwareMap.get(Servo.class, "wrist");
 
         conveyor = hardwareMap.get(Servo.class, "conveyor");
 
         imu = hardwareMap.get(IMU.class, "imu");
-
-
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -150,6 +150,8 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // For Lift, PIDF values set to reduce jitter on high lift
         ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
         ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
+        // For Wrist, PIDF values set to reduce jitter
+        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -166,16 +168,23 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        // Set default power effect to motor to cause braking for safety
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        wrist.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intake = new IntakeMovement(rightClaw, leftClaw, wrist, telemetry);
+        intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
-        double powerFactor = 0.40;
-        double basePowerFacter = 0.40;
-        double boostPowerFacter = 0.60;
+        double powerFactor;
+        double basePowerFacter = 0.50;
+        double boostPowerFacter = 0.50;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -197,9 +206,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 rightBackDrive.setPower(0);
                 // Pickup automation
                 intake.GrabAndStowPixel();
-                conveyor.setPosition(0);
-                SystemClock.sleep (1500);
-                conveyor.setPosition(0.5);
+                intake.AdvanceConveyor();
+//                conveyor.setPosition(0);
+//                SystemClock.sleep (1500);
+//                conveyor.setPosition(0.5);
             } else if (gamepad1.b) {
                 intake.ClawOpen();
             } else if (gamepad1.y) {
@@ -225,6 +235,11 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             } else if (gamepad1.left_trigger <= 0.4) {
                 // Stop conveyor
                 conveyor.setPosition(0.5);
+            }
+
+            // Add in the ability to retract the conveyor
+            if (gamepad1.left_bumper) {
+                intake.ReverseConveyor();
             }
 
             // Use an analog trigger to add up to a 50% boost to speed

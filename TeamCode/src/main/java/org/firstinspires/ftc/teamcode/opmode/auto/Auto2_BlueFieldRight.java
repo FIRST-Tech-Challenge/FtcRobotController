@@ -132,6 +132,10 @@ public class Auto2_BlueFieldRight extends AutoBase {
         //moveTo.Forward(200);
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        // Start by securing the loaded pixel
+        intake.ClawClosed();
+
         // Motor is 28 ticks per revolution
         // Gear Ratio is 12:1
         // Wheel diameter is 100mm

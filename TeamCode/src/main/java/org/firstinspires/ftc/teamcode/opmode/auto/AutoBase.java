@@ -38,7 +38,6 @@ public abstract class AutoBase extends OpMode {
     protected GamePieceLocation gamepieceLocation;
     Servo leftClaw;
     Servo rightClaw;
-    Servo wrist;
     Servo conveyor;
     OpenCvWebcam webcam;
     GripPipelineWhitePixelRGBT1 pipeline;
@@ -51,6 +50,7 @@ public abstract class AutoBase extends OpMode {
     double leftCount = 0;
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
+    private DcMotor wrist = null;
 
     // Motor is 28 ticks per revolution
     // Gear Ratio is 12:1
@@ -126,10 +126,10 @@ public abstract class AutoBase extends OpMode {
 
         leftLinearSlide = hardwareMap.get(DcMotor.class, "left_linear_slide");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "right_linear_slide");
+        wrist = hardwareMap.get(DcMotor.class, "wrist");
 
         leftClaw = hardwareMap.get(Servo.class, "left_claw");
         rightClaw = hardwareMap.get(Servo.class, "right_claw");
-        wrist = hardwareMap.get(Servo.class, "wrist");
 
         conveyor = hardwareMap.get(Servo.class, "conveyor");
 
@@ -153,6 +153,8 @@ public abstract class AutoBase extends OpMode {
         // For Lift, PIDF values set to reduce jitter on high lift
         ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
         ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
+        // For Wrist, PIDF values set to reduce jitter
+        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(8, 0, 0, 1);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -171,8 +173,9 @@ public abstract class AutoBase extends OpMode {
 
         leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        wrist.setDirection(DcMotor.Direction.FORWARD);
 
-        intake = new IntakeMovement(rightClaw, leftClaw, wrist, telemetry);
+        intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, telemetry);
         linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 

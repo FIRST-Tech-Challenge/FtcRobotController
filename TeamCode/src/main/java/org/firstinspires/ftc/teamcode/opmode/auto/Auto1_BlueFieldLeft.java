@@ -91,7 +91,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
         //moveTo.Forward(200);
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
+        // Start by securing the loaded pixel
+        intake.ClawClosed();
 
         if (gamepieceLocation == GamePieceLocation.LEFT && state == 0){
             // move forward 2 inches
