@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 
 
 @Autonomous(name="Saturation Baseline", group="OpMode")
-public class Baseline extends AutoBase{
+public class SaturationBaseline extends AutoBase{
 
     @Override
     public void init() {
