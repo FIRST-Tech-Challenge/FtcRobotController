@@ -52,16 +52,7 @@ public class DrivingTest extends CSMethods {
         setup(true);
 
         // Main code
-        double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double currentAngle;
-        drive(24);
-        while (opModeIsActive()) {
-            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            telemetry.addData("Start Angle", startAngle);
-            telemetry.addData("Angle", currentAngle);
-            telemetry.addData("Difference", startAngle - currentAngle);
-            telemetry.update();
-        }
+        drive(20);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
