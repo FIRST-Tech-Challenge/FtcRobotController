@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongBlueAuto extends LinearOpMode {
+public class JUICELongBlue extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -19,7 +19,7 @@ public class LongBlueAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
-            robot.longMoveToBoard(false);
+            robot.longMoveToBoard(true);
 
             slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
@@ -30,7 +30,6 @@ public class LongBlueAuto extends LinearOpMode {
 
             robot.alignToBoard();
             robot.autoOuttake(false, slideStartingPosition);
-            robot.parkBot(true);
 
             break;
         }

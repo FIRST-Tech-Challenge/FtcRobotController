@@ -19,7 +19,7 @@ public class LongRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
-            robot.longMoveToBoard();
+            robot.longMoveToBoard(false);
 
             slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
