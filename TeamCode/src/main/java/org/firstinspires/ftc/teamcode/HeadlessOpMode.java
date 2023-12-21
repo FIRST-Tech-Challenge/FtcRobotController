@@ -176,6 +176,11 @@ public class HeadlessOpMode extends LinearOpMode {
             claw.listen();
             wrist.listen();
 
+            if(gamepad2.left_bumper) {
+                wrist.wristUp();
+                arm.moveToDegree(140);
+            }
+
             if (gamepad1.x) {
                 imu.resetYaw();
                 lastHeading = 0.0;
@@ -236,7 +241,7 @@ public class HeadlessOpMode extends LinearOpMode {
 
 
             // go turn
-                if (Math.abs(gamepad1.right_stick_x) > 0.1) {
+                if (Math.abs (gamepad1.right_stick_x) > 0.1) {
                     leftFrontPower += gamepad1.right_stick_x * turnMulPower;
                     leftBackPower += gamepad1.right_stick_x * turnMulPower;
                     rightFrontPower += -gamepad1.right_stick_x * turnMulPower;
