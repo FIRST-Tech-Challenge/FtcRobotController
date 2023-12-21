@@ -42,27 +42,40 @@ public class CSAutoRedBack extends CSMethods {
         boolean isRed = true;
         setup(isRed);
 
+        // ---------------------
+        // ------Main Code------
+        // ---------------------
 
-        // Main code
         //dropCarWash();
-        turn(90);
-        drive(-12);
+        sleep(2000); // Wait to allow camera initialization (for detecting team prop)
         findPos(isRed);
+        sleep(1000);
+        drive(-10);
+        sleep(1000);
         if (pos == 1) {
-            turn(30);
+            turn(-30);
+            sleep(1000);
             ejectPixel(); // Filler for placing pixel down the road
-            turn(-30);
-        } else if (pos == 2) {
-            drive(3);
-            ejectPixel();
-            drive(-3);
-        } else if (pos == 3) {
-            turn(-30);
-            ejectPixel();
+            sleep(1000);
             turn(30);
+        } else if (pos == 2) {
+            drive(-3);
+            sleep(1000);
+            ejectPixel();
+            sleep(1000);
+            drive(3);
+        } else if (pos == 3) {
+            turn(30);
+            sleep(1000);
+            ejectPixel();
+            sleep(1000);
+            turn(-30);
         }
+        sleep(1000);
         turn(90);
-        drive(10);
+        sleep(1000);
+        drive(-10);
+        sleep(2500);
 
         //*/
 
@@ -70,6 +83,4 @@ public class CSAutoRedBack extends CSMethods {
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
-
 }
