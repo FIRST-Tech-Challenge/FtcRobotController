@@ -40,7 +40,7 @@ public class Arm {
     static final int SLEEP_TIME = 500;
 
     static final int COUNTS_PER_REVOLUTION = 288;
-    static final double GEAR_RATIO = 125 / 30;
+    static final double GEAR_RATIO = 40 / 10;
     static final double POWER_AUTO_MOVE = 0.4;
 
     static final double THRESHOLD_TO_SLOW_IN_DEG = 60;
