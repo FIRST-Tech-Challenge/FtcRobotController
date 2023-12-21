@@ -26,9 +26,12 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
 
     double leftSpikeSaturation = 0;
     double centerSpikeSaturation = 0;
-
-
     double rightSpikeSaturation = 0;
+
+    // These are the values that we have to tune at each competition
+    static double LEFT_SPIKE_SATURATION_BASELINE = 22.21125992063492;
+    static double CENTER_SPIKE_SATURATION_BASELINE =6.122269404803341;
+    static double RIGHT_SPIKE_SATURATION_BASELINE =  0;
 
     public void setFieldPosition(FieldPosition fieldPosition) {
         this.fieldPosition = fieldPosition;
@@ -39,12 +42,12 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         switch(fieldPosition){
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
-                leftSpike = new Rect(4, 156, 380, 288); //bottom left coords 384, 444
-                centerSpike = new Rect(428, 157, 682, 221); //bottom left coords 1110, 397
+                leftSpike = new Rect(0, 330, 280, 288); //bottom left coords 384, 444
+                centerSpike = new Rect(400, 345, 650, 221); //bottom left coords 1110, 397
                 break;
             case BLUE_FIELD_RIGHT:
             case RED_FIELD_RIGHT:
-                rightSpike = new Rect(4, 156, 380, 288); //bottom left coords 384, 444
+                rightSpike = new Rect(400, 157, 180, 288); //bottom left coords 384, 444
                 centerSpike = new Rect(428, 157, 682, 221); //bottom left coords 1110, 397
                 break;
         }
@@ -76,15 +79,23 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
                 break;
         }
 
+        System.out.println(leftSpikeSaturation);
+        System.out.println(centerSpikeSaturation);
+        System.out.println(rightSpikeSaturation);
 
-        // assume one with the most saturation (least gray) is our TSE
-        if ((leftSpikeSaturation > centerSpikeSaturation) && (leftSpikeSaturation > rightSpikeSaturation)) {
+        if(leftSpikeSaturation > LEFT_SPIKE_SATURATION_BASELINE){
+            selectedRect = 1;
             return 1;
-            } else if ((centerSpikeSaturation > leftSpikeSaturation) && (centerSpikeSaturation > rightSpikeSaturation)) {
+        } else if (centerSpikeSaturation > CENTER_SPIKE_SATURATION_BASELINE) {
+            selectedRect = 2;
             return 2;
-            }
-        return 3; // It is either 3 or we can’t tell
+
+        } else {
+            selectedRect = 3;
+            return 3;
         }
+       // It is either 3 or we can’t tell
+    }
 
         protected double getAvgSaturation(Mat input, Rect rect) {
         Mat submat = input.submat(rect);
