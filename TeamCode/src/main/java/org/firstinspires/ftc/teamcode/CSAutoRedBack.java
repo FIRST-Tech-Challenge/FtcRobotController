@@ -46,7 +46,7 @@ public class CSAutoRedBack extends CSMethods {
         // Main code
         //dropCarWash();
         turn(90);
-        drive(-13.5);
+        drive(-12);
         findPos(isRed);
         if (pos == 1) {
             turn(30);
@@ -61,7 +61,7 @@ public class CSAutoRedBack extends CSMethods {
             ejectPixel();
             turn(30);
         }
-        turn(-90);
+        turn(90);
         drive(10);
 
         //*/

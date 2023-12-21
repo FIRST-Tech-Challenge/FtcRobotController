@@ -163,7 +163,7 @@ public abstract class CSMethods extends LinearOpMode {
                 telemetry.update();
             }
 
-            //  stopRobot();
+            stopRobot();
 
             // Turn off RUN_TO_POSITION
             // Note: Following code is technically redundant since called in stopRobot(), but the function
