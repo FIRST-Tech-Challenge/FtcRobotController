@@ -170,11 +170,11 @@ public class Robot {
     }
 
     public void trayToIntakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.411);
+        setServoPosBlocking(tray, 0.415);
         if (blocking) {
-            opMode.sleep(700);
+            opMode.sleep(500);
         }
-    }
+    }//
 
     public void trayToOuttakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.36);
@@ -202,7 +202,7 @@ public class Robot {
         } else {
             setHeading(90, 0.7);
         }
-        trayToIntakePos(false); //intake pos
+        trayToIntakePos(true); //intake pos
         moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
 
@@ -886,7 +886,7 @@ public class Robot {
         straightBlocking(inches % CHUNK_DISTANCE_INCHES, forward, maxPower);
     }
 
-    public void longMoveToBoard() {
+    public void longMoveToBoard(boolean isJuice) {
         int polarity;
         double VERTICAL_TOTAL;
         double vertical1;
@@ -942,6 +942,9 @@ public class Robot {
                 mecanumBlocking(vertical1, isRedAlliance, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
+                if (isJuice) {
+                    opMode.sleep(10000);
+                }
                 straightBlockingFixHeading(vertical6, false, 0.7);
                 //moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
@@ -975,6 +978,9 @@ public class Robot {
                 setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
+                if (isJuice) {
+                    opMode.sleep(10000);
+                }
                 straightBlockingFixHeading(vertical6, false, 0.7);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
@@ -1006,6 +1012,9 @@ public class Robot {
                 setHeading(0, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.8); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
+                if (isJuice) {
+                    opMode.sleep(10000);
+                }
                 straightBlockingFixHeading(vertical6, false, 0.8);
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.7); //mecanum directly in front of board left if blue
@@ -1192,7 +1201,7 @@ public class Robot {
     }
 
     public void closeClamp (boolean blocking) {
-        setServoPosBlocking(clamp, 0.522);
+        setServoPosBlocking(clamp, 0.55);
         if (blocking) {
             opMode.sleep(300);
         }
