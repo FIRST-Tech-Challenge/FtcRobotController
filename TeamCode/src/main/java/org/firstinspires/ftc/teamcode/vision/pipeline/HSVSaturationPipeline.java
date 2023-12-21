@@ -117,6 +117,9 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         return rightSpikeSaturation;
     }
 
+    public SpikePosition getSpikePos() {
+        return spikePos;
+    }
 
     public void drawRectangles(Mat input) {
         Imgproc.rectangle(input, leftSpike, nonSelectedColor);
