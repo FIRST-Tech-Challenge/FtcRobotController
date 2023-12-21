@@ -46,7 +46,7 @@ public class CenterStageTest extends LinearOpMode {
     TouchSensor touchSensor;
 
     boolean clawClosed = true;
-    boolean hookEngaged = true;
+    boolean hookEngaged = false;
 
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
@@ -166,6 +166,7 @@ RB - Hang up
         outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
         outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
         outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+        outtakeHook.setPosition(CSCons.outtakeHook[0]);
 
 
         waitForStart();
@@ -209,8 +210,10 @@ RB - Hang up
             }
 
             if (gamepad2.x && !hookEngaged) {
+                hookEngaged = true;
                 outtakeHook.setPosition(CSCons.outtakeHook[1]);
             } else if (gamepad2.x && hookEngaged) {
+                hookEngaged = false;
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
             }
 
@@ -246,12 +249,14 @@ RB - Hang up
                 backSlides.setPower(0.7);
             }
             if (gamepad2.left_bumper){
-                presetBackSlidesTargetPos++;
+                if (presetBackSlidesTargetPos<2) {
+                    presetBackSlidesTargetPos++;
+                }
                 backSlidesTargetPos = CSCons.backSlidesPos[presetBackSlidesTargetPos];
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 backSlides.setPower(0.7);
-                sleep(300);
+                //sleep(300);
             }
 
                     if (Math.abs(y) < 0.2) {
