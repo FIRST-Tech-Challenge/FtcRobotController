@@ -12,7 +12,7 @@ This is a copy of the FirstAutonomousIterationMirror just the last portion to ma
 @Autonomous(name="Red Back: Auto V0.2", group="Robot")
 //@Disabled
 
-public class FirstAutonomousIterationRedBack extends FirstAutonomousIteration {
+public class FirstAutonomousIterationRedBack extends FirstAutonomousIteration_OpMode {
 
     public FirstAutonomousIterationRedBack() {
         super(-1, true);

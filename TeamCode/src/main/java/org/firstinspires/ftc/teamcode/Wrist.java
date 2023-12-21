@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -39,10 +40,10 @@ public class Wrist {
     // Define class members
 
 
-    private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
+    private OpMode myOpMode;   // gain access to methods in the calling OpMode.
 
     Servo servo = null;
-    public Wrist(LinearOpMode opmode) {
+    public Wrist(OpMode opmode) {
         myOpMode = opmode;
     }
 

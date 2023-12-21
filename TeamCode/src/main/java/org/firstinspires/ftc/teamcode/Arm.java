@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 
@@ -51,13 +52,13 @@ public class Arm {
     // Define class members
 
 
-    private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
+    private OpMode myOpMode;   // gain access to methods in the calling OpMode.
 
     DcMotor arm_right = null;
     DcMotor arm_left = null;
 
     CRServo fibula = null;
-    public Arm (LinearOpMode opmode) {
+    public Arm (OpMode opmode) {
         myOpMode = opmode;
     }
 
@@ -100,7 +101,7 @@ public class Arm {
         arm_left.setPower(POWER_AUTO_MOVE);
 
         // keep looping while we are still active, and BOTH motors are running.
-        while (myOpMode.opModeIsActive() && arm_right.isBusy() && arm_left.isBusy()) {
+        while (arm_right.isBusy() && arm_left.isBusy()) {
 
             if (
                     arm_right.getCurrentPosition() > degToPosition(THRESHOLD_TO_SLOW_IN_DEG)

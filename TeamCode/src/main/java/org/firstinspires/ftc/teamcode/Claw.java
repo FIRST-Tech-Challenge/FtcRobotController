@@ -29,7 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
@@ -41,10 +41,10 @@ public class Claw {
     // Define class members
 
 
-    private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
+    private OpMode myOpMode;   // gain access to methods in the calling OpMode.
 
     Servo clawDrive = null;
-    public Claw (LinearOpMode opmode) {
+    public Claw (OpMode opmode) {
         myOpMode = opmode;
     }
 
