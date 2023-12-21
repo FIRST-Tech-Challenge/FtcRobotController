@@ -31,7 +31,7 @@ public class AUTOBLleft {
 
     AUTO22715 mainLoopClass;
 
-    public void initBeforeOpMode(){
+    private void initBeforeOpMode(){
         leftclaw = hardwareMap.get(Servo.class, "left claw");
         rightclaw = hardwareMap.get(Servo.class, "right claw");
         flip = hardwareMap.get(Servo.class, "flip");
@@ -65,6 +65,8 @@ public class AUTOBLleft {
         mainLoopClass = main;
         hardwareMap = mainLoopClass.hardwareMap;
         telemetry = mainLoopClass.telemetry;
+
+        initBeforeOpMode();
     }
 
     private void waitForStart(){
@@ -75,11 +77,11 @@ public class AUTOBLleft {
         mainLoopClass.sleep(milliseconds);
     }
 
-    public boolean opModeIsActive() {
+    private boolean opModeIsActive() {
         return mainLoopClass.opModeIsActive();
     }
 
-    public void idle() {
+    private void idle() {
         mainLoopClass.idle();
     }
 

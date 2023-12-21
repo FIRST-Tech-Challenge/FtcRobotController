@@ -22,9 +22,8 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
+
 dependencies {
-    implementation 'org.ftclib.ftclib:core:2.0.1' // core
-    
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

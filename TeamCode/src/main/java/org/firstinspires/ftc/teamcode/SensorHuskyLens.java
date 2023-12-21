@@ -70,6 +70,7 @@ public class SensorHuskyLens {
 
     private static final int BLOCK_NUM_DETECTED_3 = 3;
     private static final int BLOCK_NUM_DETECTED_4 = 4;
+    private static final int MAX_BLOCK_DISTANCE = 100;
     private TagDirection tagDirection = TagDirection.UNKOWN;
     private Boolean bDetectedtag = false;
 
@@ -80,9 +81,11 @@ public class SensorHuskyLens {
         telemetry = t;
 
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
+
+        initBeforeOpMode();
     }
 
-    public void initBeforeOpMode(){
+    private void initBeforeOpMode(){
         /*
          * Basic check to see if the device is alive and communicating.  This is not
          * technically necessary here as the HuskyLens class does this in its
@@ -147,6 +150,25 @@ public class SensorHuskyLens {
                 blocksArray.add(blocks[i]);
             }
         }
+
+        //
+        //如果识别的blocks太多，可能是有误识别的情况
+        if(BLOCK_NUM_DETECTED_4 <= blocksArray.size()){
+            Collections.sort(blocksArray, new Comparator<HuskyLens.Block>() {
+                @Override
+                public int compare(HuskyLens.Block block1, HuskyLens.Block block2) {
+                    return Integer.compare(block1.y, block2.y);
+                }
+            });
+
+            int nDistance = blocksArray.get(1).y - blocksArray.get(0).y;
+            if(nDistance > MAX_BLOCK_DISTANCE){
+                blocksArray.remove(0);
+                telemetry.addData(">>>", "remove one detected block");
+                telemetry.update();
+            }
+        }
+
         return blocksArray;
     }
 

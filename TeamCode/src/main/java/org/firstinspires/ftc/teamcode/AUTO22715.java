@@ -25,23 +25,10 @@ public class AUTO22715 extends LinearOpMode {
     Boolean bQuit = false;
     @Override
     public void runOpMode() {
-        /*
-         * This sample rate limits the reads solely to allow a user time to observe
-         * what is happening on the Driver Station telemetry.  Typical applications
-         * would not likely rate limit.
-         */
-        Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
-
-        /*
-         * Immediately expire so that the first time through we'll do the read.
-         */
-        rateLimit.expire();
-
         // Put initialization blocks here.
         huskyLens.init(hardwareMap, telemetry);
-        huskyLens.initBeforeOpMode();
 
-        // 创建一个新的Thread对象
+        // 创建一个新的Thread去检测摄像头，并且显示当前tag所放置的方向
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -52,7 +39,7 @@ public class AUTO22715 extends LinearOpMode {
                         direction = huskyLens.getTagDirection();
                         telemetry.addData(">>>", direction);
                         telemetry.update();
-                        sleep(1000);
+                        sleep(500);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -64,36 +51,27 @@ public class AUTO22715 extends LinearOpMode {
         bQuit = false;
         thread.start();
 
-
         left.init(this);
         middle.init(this);
         right.init(this);
 
-        left.initBeforeOpMode();
-        middle.initBeforeOpMode();
-        right.initBeforeOpMode();
-
         waitForStart();
 
         bQuit = true;
-        sleep(10);
+        //
+        //等待检测方向的子线程退出
+        sleep(1000);
 
-        telemetry.addData(">>>", "init complete");
-        telemetry.update();
         while (opModeIsActive()) {
-
-            if (!rateLimit.hasExpired()) {
-                continue;
-            }
-            rateLimit.reset();
-
             // Put run blocks here.
-            if(direction == SensorHuskyLens.TagDirection.UNKOWN){
+            do{
+                //
+                //更新一次方向
                 huskyLens.calculateDirection();
                 direction = huskyLens.getTagDirection();
                 telemetry.addData(">>>", direction);
                 telemetry.update();
-            }
+            } while(direction != SensorHuskyLens.TagDirection.UNKOWN);
 
             if(direction == SensorHuskyLens.TagDirection.LEFT){
                 left.runOpMode();
