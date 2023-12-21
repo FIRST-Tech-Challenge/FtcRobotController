@@ -23,8 +23,6 @@ public abstract class MeepMeepBoilerplate {
 
     private MeepMeep meepMeep;
 
-    private RoadRunnerBotEntity myBot;
-
     public ArrayList<TrajectorySequence> sequences = new ArrayList<TrajectorySequence>();
 
     public void drive(Pose2d startingPos) {
@@ -32,7 +30,7 @@ public abstract class MeepMeepBoilerplate {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
 
-        myBot = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
