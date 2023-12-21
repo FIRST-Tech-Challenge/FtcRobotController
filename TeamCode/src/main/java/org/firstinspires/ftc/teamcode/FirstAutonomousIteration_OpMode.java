@@ -293,7 +293,7 @@ public class FirstAutonomousIteration_OpMode  extends OpMode
     @Override
     public void stop() {
         ctx.setHeading(getHeading());
-        waitRuntime(1);
+        waitRuntime(5);
 
     }
 
