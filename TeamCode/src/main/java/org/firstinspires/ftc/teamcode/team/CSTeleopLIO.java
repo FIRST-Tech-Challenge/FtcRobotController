@@ -76,6 +76,7 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         drive = new CSBaseLIO(hardwareMap, true);
         //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         super.init();
+        drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
     }
 
     @Override

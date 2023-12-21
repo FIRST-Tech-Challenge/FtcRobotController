@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team;
 
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.team.states.FeederConeGripperStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.VirtualFourBarStateMachine;
 import org.firstinspires.ftc.teamcode.team.subsystems.Feeder;
 
+@Disabled
 @TeleOp(name = "PP TeleOp Feeder", group = "Main")
 public class PPTeleopFeeder extends PPTeleopRobotFeeder {
     private double speedMultiplier = 0.7;

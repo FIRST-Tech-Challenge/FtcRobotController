@@ -11,29 +11,29 @@ import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
-@Autonomous(name = "Blue Left CS", group = "RoarAuto")
-public class BlueLeftCS extends LinearOpMode {
+@Autonomous(name = "Blue Left CS MV", group = "RoarAuto")
+public class BlueLeftCSmv extends LinearOpMode {
     CSBaseLIO drive;
 
     private static double dt;
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(26.5,43);
-    static final Vector2d TrajL1 = new Vector2d(28.5, 45);
-    static final Vector2d TrajL2 = new Vector2d(52,45);
+    static final Vector2d TrajL0 = new Vector2d(5.5,-20);
+    static final Vector2d TrajL1 = new Vector2d(5.5, -18);
+    static final Vector2d TrajL2 = new Vector2d(29,-18);
 
-    static final Vector2d TrajC0 = new Vector2d(18,34);
-    static final Vector2d TrajC1 = new Vector2d(20, 36);
-    static final Vector2d TrajC2 = new Vector2d(52,36);
+    static final Vector2d TrajC0 = new Vector2d(-3,-29);
+    static final Vector2d TrajC1 = new Vector2d(-3, -27);
+    static final Vector2d TrajC2 = new Vector2d(29,-27);
 
-    static final Vector2d TrajR0 = new Vector2d(20,36);
-    static final Vector2d TrajR1 = new Vector2d(22, 37);
-    static final Vector2d TrajR2 = new Vector2d(52,32);
+    static final Vector2d TrajR0 = new Vector2d(-1,-27);
+    static final Vector2d TrajR1 = new Vector2d(-1, -26);
+    static final Vector2d TrajR2 = new Vector2d(29,-31);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -52,7 +52,7 @@ public class BlueLeftCS extends LinearOpMode {
 
     State currentState = State.IDLE;
     //Old x,y = 23,63
-    Pose2d startPose = new Pose2d(23, 63, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(270));
 
     CSVP CSVP;
     int placement = 3;

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.team;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name="Lift Test", group="Test")
 public class LiftTest extends PPRobot {
     @Override
