@@ -76,7 +76,7 @@ public class Arm {
     }
 
     public void moveArmUp() {
-        moveToDegree(110);
+        moveToDegree(140);
     }
 
     public void moveArmDown() {

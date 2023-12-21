@@ -169,8 +169,9 @@ public class FirstAutonomousIteration_OpMode  extends OpMode
 
                     // go back ready to park
                     driveStraight(DRIVE_SPEED*3, -(22), 0.0);
-
-                    nextState = FirstAutonomousIteration.FSMState.DONE;
+                    waitRuntime(1);
+                    cubeIsFound = FirstAutonomousIteration.FoundTeamProp.FOUND_MIDDLE;
+                    nextState = FirstAutonomousIteration.FSMState.GO_PARK_DROP_YELLOWPIXEL;
                     break;
 
                 case DETECT_LEFT:
@@ -190,8 +191,9 @@ public class FirstAutonomousIteration_OpMode  extends OpMode
 
                     // go back ready to park
                     driveStraight(DRIVE_SPEED*3, -(17), 0.0);
-
-                    nextState = FirstAutonomousIteration.FSMState.DONE;
+                    waitRuntime(1);
+                    cubeIsFound = FirstAutonomousIteration.FoundTeamProp.FOUND_LEFT;
+                    nextState = FirstAutonomousIteration.FSMState.GO_PARK_DROP_YELLOWPIXEL;
                     break;
 
                 case ASSUME_RIGHT:
@@ -211,44 +213,49 @@ public class FirstAutonomousIteration_OpMode  extends OpMode
 
                     // go back ready to park
                     driveStraight(DRIVE_SPEED*3, -(17), 0.0);
-
-                    nextState = FirstAutonomousIteration.FSMState.DONE;
+                    waitRuntime(1);
+                    cubeIsFound = FirstAutonomousIteration.FoundTeamProp.FOUND_RIGHT;
+                    nextState = FirstAutonomousIteration.FSMState.GO_PARK_DROP_YELLOWPIXEL;
                     break;
 
 
                 case GO_PARK_DROP_YELLOWPIXEL:
-
-                    double go_to_back_distance = 79;
-                    if (isBack) {
-                        go_to_back_distance = 28;
+                    if (isBack == false) {
+                        driveStraight(DRIVE_SPEED * 5, 4, 0, false, false);
+                        driveStraight(DRIVE_SPEED*2, -51 * sideMul,  0, false, true);
+                        driveStraight(DRIVE_SPEED*5, -46 * sideMul,  0, false, true);
+                        nextState = FirstAutonomousIteration.FSMState.DONE;
                     }
 
                     //Drive straight until ready to scan the apriltag.
-                    turnToHeading(TURN_SPEED * 10, sideMul * (90));
-                    driveStraight(DRIVE_SPEED * 10, go_to_back_distance, sideMul * (90), true, false);
+                    turnToHeading(TURN_SPEED * 10, sideMul * (-90));
+                    driveStraight(DRIVE_SPEED * 10, -28, sideMul * (-90), false, false);
 
                     if (cubeIsFound == FirstAutonomousIteration.FoundTeamProp.FOUND_MIDDLE) {
                         //Drive straight until ready to scan the apriltag.
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 26.5 * sideMul, sideMul * (90), false, true);
+                        holdHeading(TURN_SPEED,-90,0.4);
+                        driveStraight(DRIVE_SPEED * 5, -26.5 * sideMul, sideMul * (-90), false, true);
 
                     } else if (cubeIsFound == FirstAutonomousIteration.FoundTeamProp.FOUND_LEFT) {                        //Drive straight until ready to scan the apriltag.
                         //Drive straight until ready to scan the apriltag.
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 20* sideMul, sideMul * (90), false, true);
+                        holdHeading(TURN_SPEED,-90,0.4);
+                        driveStraight(DRIVE_SPEED * 5, -20* sideMul, sideMul * (-90), false, true);
 
                     } else if (cubeIsFound == FirstAutonomousIteration.FoundTeamProp.FOUND_RIGHT) {
                         //Then strafe inline with the backboard according to the position of where the team prop was found.
-                        driveStraight(DRIVE_SPEED * 5, 33* sideMul, sideMul * (90), false, true);
-
+                        holdHeading(TURN_SPEED,-90,0.4);
+                        driveStraight(DRIVE_SPEED * 5, -33* sideMul, sideMul * -(90), false, true);
                     }
 
                     //Go front then face your back to the backdrop
-                    turnToHeading(TURN_SPEED * 10, sideMul * (-90));
-                    driveStraight(DRIVE_SPEED * 10, -10, sideMul * (-90), true, false);
+                    // ;[driveStraight(DRIVE_SPEED * 10, -10, sideMul * (-90), true, false);
                     //Drop yellow pixel.
+                    driveStraight(DRIVE_SPEED * 2, -6, sideMul * -(90), false, false);
                     arm.moveArmUp();
                     claw.openClaw();
+                    waitRuntime(3);
 
                     nextState = FirstAutonomousIteration.FSMState.DONE;
 
