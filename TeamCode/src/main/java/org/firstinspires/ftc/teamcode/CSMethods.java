@@ -66,16 +66,17 @@ public abstract class CSMethods extends LinearOpMode {
     public void setup(boolean isRed) {
         if (isRed) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
-        }
-        else{
+        } else {
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
         }
 
-        lf = hardwareMap.get(DcMotor.class, "leftFront");
-        lb = hardwareMap.get(DcMotor.class, "leftBack");
-        rf = hardwareMap.get(DcMotor.class, "rightFront");
-        rb = hardwareMap.get(DcMotor.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
+        try {
+            lf = hardwareMap.get(DcMotor.class, "leftFront");
+            lb = hardwareMap.get(DcMotor.class, "leftBack");
+            rf = hardwareMap.get(DcMotor.class, "rightFront");
+            rb = hardwareMap.get(DcMotor.class, "rightBack");
+        } catch (Exception e) {except(e);}
         try {carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");}catch (Exception e){except(e);}
         try {pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
@@ -83,21 +84,22 @@ public abstract class CSMethods extends LinearOpMode {
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        if (lf != null) {
+            lf.setDirection(DcMotor.Direction.REVERSE);
+            lb.setDirection(DcMotor.Direction.REVERSE);
+            rf.setDirection(DcMotor.Direction.FORWARD);
+            rb.setDirection(DcMotor.Direction.FORWARD);
 
-        /*
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//*/
+            lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
+            lb.setTargetPosition(lb.getCurrentPosition());
+            rb.setTargetPosition(rb.getCurrentPosition());
+            lf.setTargetPosition(lf.getCurrentPosition());
+            rf.setTargetPosition(rf.getCurrentPosition());
+        }
 
         if (pixelLiftingMotor != null) {
             pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -122,7 +124,7 @@ public abstract class CSMethods extends LinearOpMode {
         int newRightFrontTarget;
 
         // Ensure that the OpMode is still active
-        if (opModeIsActive()) {
+        if (opModeIsActive() && lf != null) {
             // Determine new target position, and pass to motor controller
             newLeftBackTarget = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newRightBackTarget = rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
@@ -209,6 +211,9 @@ public abstract class CSMethods extends LinearOpMode {
             }
             stopRobot();
         }
+    }
+    public void strafe(double inches) {
+
     }
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
