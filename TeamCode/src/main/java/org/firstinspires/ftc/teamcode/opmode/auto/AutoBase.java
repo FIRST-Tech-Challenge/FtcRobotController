@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
+import org.firstinspires.ftc.teamcode.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
@@ -40,7 +41,7 @@ public abstract class AutoBase extends OpMode {
     Servo rightClaw;
     Servo conveyor;
     OpenCvWebcam webcam;
-    GripPipelineWhitePixelRGBT1 pipeline;
+    HSVSaturationPipeline pipeline;
     Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearSlideMove;
@@ -101,7 +102,7 @@ public abstract class AutoBase extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new GripPipelineWhitePixelRGBT1();
+        pipeline = new HSVSaturationPipeline();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
