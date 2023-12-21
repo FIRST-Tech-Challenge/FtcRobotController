@@ -39,39 +39,32 @@ import java.util.List;
 public class CSAutoRedBack extends CSMethods {
     @Override
     public void runOpMode() {
-        setup(true);
+        boolean isRed = true;
+        setup(isRed);
 
 
         // Main code
         //dropCarWash();
-        drive(13.5);
-        drive(1);
-        //*
-        List<Recognition> pixels = detectProp();
-        if (pixels.size() > 0) {
-            drive(6);
-            ejectPixel();
-            drive(-6);
-        } else {
+        turn(90);
+        drive(-13.5);
+        findPos(isRed);
+        if (pos == 1) {
+            turn(30);
+            ejectPixel(); // Filler for placing pixel down the road
             turn(-30);
-            pixels = detectProp();
-            if (pixels.size() > 0) {
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(30);
-            } else {
-                turn(60);
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(-30);
-            }
+        } else if (pos == 2) {
+            drive(3);
+            ejectPixel();
+            drive(-3);
+        } else if (pos == 3) {
+            turn(-30);
+            ejectPixel();
+            turn(30);
         }
+        turn(-90);
+        drive(10);
+
         //*/
-        turn(60);
-        drive(20);
-        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

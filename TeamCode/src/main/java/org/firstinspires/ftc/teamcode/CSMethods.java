@@ -51,8 +51,10 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double[] redFrontDetectionBoundaries = {0, 350, 999};
+    static final double[] redBoundaries = {0, 350};
+    static final double[] blueBoundaries = {0, 350};
     double carWashPower = 1.0;
+    double pos; // Team prop position
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET = null;
 
@@ -86,10 +88,11 @@ public abstract class CSMethods extends LinearOpMode {
         rf.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.FORWARD);
 
+        /*
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//*/
 
         lb.setTargetPosition(lb.getCurrentPosition());
         rb.setTargetPosition(rb.getCurrentPosition());
@@ -182,16 +185,16 @@ public abstract class CSMethods extends LinearOpMode {
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
-            double difference;
+            double difference = 999;
             double turnModifier;
             double turnPower;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle > TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle < -TURN_ACCURACY)) {
+            while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = Math.min(1, (difference + 5) / 30);
+                turnModifier = Math.min(1, (difference + 1) / 30);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setPower(-turnPower);
                 rb.setPower(turnPower);
@@ -324,22 +327,48 @@ public abstract class CSMethods extends LinearOpMode {
     /**
      * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
      */
-    public List<Recognition> detectProp() {
+    public double detectProp() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-
+        double x = -1;
+        double y = -1;
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
             telemetry.addData(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
-        return currentRecognitions;
+        telemetry.update();
+        return x;
     }   // end method detectProp()
+
+    public double findPos(boolean isRed) {
+        double x = detectProp();
+        if (isRed) {
+            if (x > redBoundaries[0] && x < redBoundaries[1]){
+                pos = 2; // Middle
+            }
+            else if (x > redBoundaries[1]){
+                pos = 3; // Right
+            } else {
+                pos = 1; // Left
+            }
+        } else {
+            if (x > blueBoundaries[0] && x < blueBoundaries[1]){
+                pos = 2; // Middle
+            }
+            else if (x > blueBoundaries[1]){
+                pos = 3; // Right
+            } else {
+                pos = 1; // Left
+            }
+        }
+        return pos;
+    }
 
     public void except(Exception e) {
         telemetry.addData("Exception", e);

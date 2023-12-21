@@ -52,10 +52,10 @@ public class TurningTest extends LinearOpMode {
 
     private TfodProcessor tfod;
     private final ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor lf = null;
+    private DcMotor lb = null;
+    private DcMotor rf = null;
+    private DcMotor rb = null;
     private DcMotor carWashMotor = null;
     private IMU imu = null;
 
@@ -77,27 +77,26 @@ public class TurningTest extends LinearOpMode {
 
     public void runOpMode() {
         // Initialize the drive system variables.
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-        carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        lf = hardwareMap.get(DcMotor.class, "leftFront");
+        lb = hardwareMap.get(DcMotor.class, "leftBack");
+        rf = hardwareMap.get(DcMotor.class, "rightFront");
+        rb = hardwareMap.get(DcMotor.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        lf.setDirection(DcMotor.Direction.REVERSE);
+        lb.setDirection(DcMotor.Direction.REVERSE);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.FORWARD);
 
-        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition());
-        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition());
-        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition());
-        rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition());
+        lb.setTargetPosition(lb.getCurrentPosition());
+        rb.setTargetPosition(rb.getCurrentPosition());
+        lf.setTargetPosition(lf.getCurrentPosition());
+        rf.setTargetPosition(rf.getCurrentPosition());
 
         initTfod();
 
@@ -141,28 +140,28 @@ public class TurningTest extends LinearOpMode {
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
-            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftBackTarget = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightBackTarget = rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightFrontTarget = rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
-            leftBackDrive.setTargetPosition(newLeftBackTarget);
-            rightBackDrive.setTargetPosition(newRightBackTarget);
-            leftFrontDrive.setTargetPosition(newLeftFrontTarget);
-            rightFrontDrive.setTargetPosition(newRightFrontTarget);
+            lb.setTargetPosition(newLeftBackTarget);
+            rb.setTargetPosition(newRightBackTarget);
+            lf.setTargetPosition(newLeftFrontTarget);
+            rf.setTargetPosition(newRightFrontTarget);
 
             // Turn On RUN_TO_POSITION
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftBackDrive.setPower(abs(speed));
-            rightBackDrive.setPower(abs(speed));
-            leftFrontDrive.setPower(abs(speed));
-            rightFrontDrive.setPower(abs(speed));
+            lb.setPower(abs(speed));
+            rb.setPower(abs(speed));
+            lf.setPower(abs(speed));
+            rf.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -170,11 +169,11 @@ public class TurningTest extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (leftBackDrive.isBusy() && rightBackDrive.isBusy() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy())) {
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (lb.isBusy() && rb.isBusy() && lf.isBusy() && rf.isBusy())) {
                 // Display it for the driver.
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget,  newRightFrontTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d", leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
+                telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -183,10 +182,10 @@ public class TurningTest extends LinearOpMode {
             // Turn off RUN_TO_POSITION
             // Note: Following code is technically redundant since called in stopRobot(), but the function
             // may be changed, so do not delete.
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //sleep(250);   // optional pause after each move.
         }
@@ -203,21 +202,21 @@ public class TurningTest extends LinearOpMode {
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
-            double difference;
+            double difference = 999;
             double turnModifier;
             double turnPower;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle > TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle < -TURN_ACCURACY)) {
+            while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = Math.min(1, (difference + 5) / 30);
+                turnModifier = Math.min(1, (difference + 1) / 30);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
-                leftBackDrive.setPower(-turnPower);
-                rightBackDrive.setPower(turnPower);
-                leftFrontDrive.setPower(-turnPower);
-                rightFrontDrive.setPower(turnPower);
+                lb.setPower(-turnPower);
+                rb.setPower(turnPower);
+                lf.setPower(-turnPower);
+                rf.setPower(turnPower);
                 telemetry.addData("Corrected Goal", correctedGoalAngle);
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
@@ -239,7 +238,7 @@ public class TurningTest extends LinearOpMode {
         stopRobot();
     }
 
-    public void ejectPixel() {
+    public void ejectPixel() {/*
         int t = (int) runtime.milliseconds() + 1000;
         carWashMotor.setPower(carWashPower);
         while(true) {
@@ -247,32 +246,32 @@ public class TurningTest extends LinearOpMode {
                 break;
             }
         }
-        carWashMotor.setPower(0);
+        carWashMotor.setPower(0);//*/
     }
 
     public void stopRobot() {
         // Turn On RUN_TO_POSITION
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Stop all motion
-        leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition());
-        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition());
-        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition());
-        rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition());
+        lb.setTargetPosition(lb.getCurrentPosition());
+        rb.setTargetPosition(rb.getCurrentPosition());
+        lf.setTargetPosition(lf.getCurrentPosition());
+        rf.setTargetPosition(rf.getCurrentPosition());
 
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
+        lb.setPower(0);
+        rb.setPower(0);
+        lf.setPower(0);
+        rf.setPower(0);
 
         // Turn off RUN_TO_POSITION
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void dropCarWash() {

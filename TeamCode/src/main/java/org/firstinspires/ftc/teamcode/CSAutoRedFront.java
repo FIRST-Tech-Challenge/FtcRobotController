@@ -45,6 +45,7 @@ public class CSAutoRedFront extends CSMethods {
         //dropCarWash();
         drive(13.5);
         //drive(1);
+        /*
         List<Recognition> pixels = detectProp();
         while (opModeIsActive()) {
             telemetry.addData("Team Prop Detection", pixels);

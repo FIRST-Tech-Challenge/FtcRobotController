@@ -47,7 +47,7 @@ public class CSAutoBlueBack extends CSMethods {
         //dropCarWash();
         drive(13.5);
         //drive(1);
-        //*
+        /*
         List<Recognition> pixels = detectProp();
         if (pixels.size() > 0) {
             drive(6);
