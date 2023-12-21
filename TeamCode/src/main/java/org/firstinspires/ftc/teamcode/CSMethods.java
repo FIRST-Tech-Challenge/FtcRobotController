@@ -51,7 +51,8 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     VELOCITY                = 2000;
     static final double     VEL_MODIFIER            = 1.12485939258;
-    static final double     TIME_MODIFIER           = 1.1375;
+    static final double     b           = 1.1375;
+    static final double     m           = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     static final double[] redBoundaries = {0, 350};
@@ -143,12 +144,14 @@ public abstract class CSMethods extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            lb.setVelocity(VELOCITY * VEL_MODIFIER);
-            rb.setVelocity(VELOCITY * VEL_MODIFIER);
-            lf.setVelocity(VELOCITY * VEL_MODIFIER);
-            rf.setVelocity(VELOCITY * VEL_MODIFIER);
+            lb.setVelocity(VELOCITY);
+            rb.setVelocity(VELOCITY);
+            lf.setVelocity(VELOCITY);
+            rf.setVelocity(VELOCITY);
 
-            double duration = abs(leftInches * COUNTS_PER_INCH / VELOCITY + TIME_MODIFIER);
+            double inches = (leftInches + b) / m;
+
+            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
