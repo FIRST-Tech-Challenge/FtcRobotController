@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Chassis implements Subsystem {
 
@@ -24,9 +26,11 @@ public class Chassis implements Subsystem {
     private MotorEx encoderLeft;
     private MotorEx encoderRight;
     private MotorEx encoderCenter;
-    public Chassis(HardwareMap map, Telemetry telemetry){
+    private Supplier<Pose2d> m_tagSupplier;
+    public Chassis(HardwareMap map, Telemetry telemetry, Supplier<Pose2d> tagSupplier){
         this.map=map;
         this.m_telemetry=telemetry;
+        this.m_tagSupplier = tagSupplier;
         motor_FL = new MotorEx(map, "motor_FL");
         motor_FR = new MotorEx(map, "motor_FR");
         motor_BL = new MotorEx(map, "motor_BL");
@@ -73,4 +77,5 @@ public class Chassis implements Subsystem {
     public void setDefaultCommand(Command defaultCommand) {
         Subsystem.super.setDefaultCommand(defaultCommand);
     }
+
     }
