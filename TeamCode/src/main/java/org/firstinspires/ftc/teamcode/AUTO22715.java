@@ -10,10 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "AUTO22715 (Blocks to Java)")
 
 public class AUTO22715 extends LinearOpMode {
-
     SensorHuskyLens huskyLens = new SensorHuskyLens();
-    private final int READ_PERIOD = 1;
-
     SensorHuskyLens.TagDirection direction = SensorHuskyLens.TagDirection.UNKOWN;
 
     AUTOBLleft left = new AUTOBLleft() ;
