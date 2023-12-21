@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.pipeline.HSVSaturationPipeline;
-import org.openftc.easyopencv.OpenCvPipeline;
+import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 
 
 @Autonomous(name="Saturation Baseline", group="OpMode")
@@ -14,6 +14,8 @@ public class Baseline extends AutoBase{
 
         // create the opencv pipeline we are going to use for this opmode
         hsvPipe = new HSVSaturationPipeline();
+
+        hsvPipe.setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
         // give the AutoBase our pipeline so it can attach it to the camera
         setPipeline(hsvPipe);
 

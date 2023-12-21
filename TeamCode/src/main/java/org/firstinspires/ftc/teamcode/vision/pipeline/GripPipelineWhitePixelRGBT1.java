@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pipeline;
+package org.firstinspires.ftc.teamcode.vision.pipeline;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -236,8 +236,7 @@ public class GripPipelineWhitePixelRGBT1 extends OpenCvPipeline {
 	 * @param blue The min and max blue.
 	 * @param output The image in which to store the output.
 	 */
-	private void rgbThreshold(Mat input, double[] red, double[] green, double[] blue,
-		Mat out) {
+	private void rgbThreshold(Mat input, double[] red, double[] green, double[] blue, Mat out) {
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2RGB);
 		Core.inRange(out, new Scalar(red[0], green[0], blue[0]),
 			new Scalar(red[1], green[1], blue[1]), out);
