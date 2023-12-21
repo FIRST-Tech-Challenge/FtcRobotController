@@ -22,7 +22,9 @@ public class Constants {
 
 
 
-
+    public static final double TRACKWIDTH = 1;
+    public static final double WHEEL_OFFSET = 1;
+    public static final double TICKS_TO_CM = 38.862;
 
 
 

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
-public class ArmSubsystem extends Subsystem {
+public class ArmSubsystem implements Subsystem {
 
     private final HardwareMap map;
     MotorEx arm1;

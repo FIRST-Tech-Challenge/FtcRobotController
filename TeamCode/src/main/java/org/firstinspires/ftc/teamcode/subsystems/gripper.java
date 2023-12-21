@@ -34,14 +34,12 @@ public class gripper implements Subsystem {
         return new RunCommand(()->{
             serv0.setPosition(0);
             serv1.setPosition(180);
-            telemetry.addLine("aaa open");
         },this);
     };
     public Command closeGripper(){
         return new RunCommand(()->{
             serv0.setPosition(180);
             serv1.setPosition(0);
-            telemetry.addLine("aaa close");
         },this);
     };
 //    todo: maybe add toggle option
