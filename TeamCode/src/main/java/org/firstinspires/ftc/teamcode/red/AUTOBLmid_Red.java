@@ -1,16 +1,14 @@
+package org.firstinspires.ftc.teamcode.red;
 
-package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blue.AUTO22715_Blue;
 
-public class AUTOBLleft {
+public class AUTOBLmid_Red {
 
     private Servo leftclaw;
     private Servo rightclaw;
@@ -29,7 +27,31 @@ public class AUTOBLleft {
     protected HardwareMap hardwareMap = null;
     protected Telemetry telemetry;
 
-    AUTO22715 mainLoopClass;
+    AUTO22715_Red mainLoopClass;
+
+    public void init(AUTO22715_Red main){
+        mainLoopClass = main;
+        hardwareMap = mainLoopClass.hardwareMap;
+        telemetry = mainLoopClass.telemetry;
+
+        initBeforeOpMode();
+    }
+
+    private void waitForStart(){
+        mainLoopClass.waitForStart();
+    }
+
+    private void sleep(long milliseconds){
+        mainLoopClass.sleep(milliseconds);
+    }
+
+    private boolean opModeIsActive() {
+        return mainLoopClass.opModeIsActive();
+    }
+
+    private void idle() {
+        mainLoopClass.idle();
+    }
 
     private void initBeforeOpMode(){
         leftclaw = hardwareMap.get(Servo.class, "left claw");
@@ -61,29 +83,6 @@ public class AUTOBLleft {
         rightmotor2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void init(AUTO22715 main){
-        mainLoopClass = main;
-        hardwareMap = mainLoopClass.hardwareMap;
-        telemetry = mainLoopClass.telemetry;
-
-        initBeforeOpMode();
-    }
-
-    private void waitForStart(){
-        mainLoopClass.waitForStart();
-    }
-
-    private void sleep(long milliseconds){
-        mainLoopClass.sleep(milliseconds);
-    }
-
-    private boolean opModeIsActive() {
-        return mainLoopClass.opModeIsActive();
-    }
-
-    private void idle() {
-        mainLoopClass.idle();
-    }
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -91,19 +90,14 @@ public class AUTOBLleft {
     public void runOpMode() {
         waitForStart();
         forward_1();
-        sleep(500);
-        right_turn();
-        sleep(500);
-        black1();
-        sleep(1000);
         rightclaw.setPosition(0.3);
         sleep(1000);
         black1();
         rightclaw.setPosition(0.6);
         sleep(1000);
-        Right_translation2();
+        right_turn();
+        sleep(1000);
         black2();
-        sleep(500);
         turnleft.setPosition(1);
         turnright.setPosition(1);
         sleep(1000);
@@ -157,35 +151,28 @@ public class AUTOBLleft {
      * Describe this function...
      */
     private void forward_1() {
-        forward_encoder((1000 / 53) * 75, (1000 / 53) * 75, (1000 / 53) * 75, (1000 / 53) * 75, 0.5);
+        forward_encoder((1000 / 53) * 77, (1000 / 53) * 77, (1000 / 53) * 77, (1000 / 53) * 77, 0.5);
     }
 
     /**
      * Describe this function...
      */
     private void black1() {
-        forward_encoder(-((1000 / 53) * 40), -((1000 / 53) * 40), -((1000 / 53) * 40), -((1000 / 53) * 40), 0.5);
+        forward_encoder(-((1000 / 53) * 23), -((1000 / 53) * 23), -((1000 / 53) * 23), -((1000 / 53) * 23), 0.5);
     }
 
     /**
      * Describe this function...
      */
     private void right_turn() {
-        forward_encoder((1000 / 53) * 46, (1000 / 53) * 46, -((1000 / 53) * 46), -((1000 / 53) * 46), 0.5);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void forward_2() {
-        forward_encoder((1000 / 53) * 20, (1000 / 53) * 20, (1000 / 53) * 20, (1000 / 53) * 20, 0.5);
+        forward_encoder((1000 / 53) * 48, (1000 / 53) * 48, -((1000 / 53) * 48), -((1000 / 53) * 48), 0.5);
     }
 
     /**
      * Describe this function...
      */
     private void black2() {
-        forward_encoder(-((1000 / 53) * 12), -((1000 / 53) * 12), -((1000 / 53) * 12), -((1000 / 53) * 12), 0.5);
+        forward_encoder(-((1000 / 53) * 87), -((1000 / 53) * 87), -((1000 / 53) * 87), -((1000 / 53) * 87), 0.5);
     }
 
     /**
@@ -193,12 +180,5 @@ public class AUTOBLleft {
      */
     private void Right_translation() {
         forward_encoder((1000 / 53) * 60, -((1000 / 53) * 60), -((1000 / 53) * 60), (1000 / 53) * 60, 0.5);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void Right_translation2() {
-        forward_encoder((1000 / 53) * 38, -((1000 / 53) * 38), -((1000 / 53) * 38), (1000 / 53) * 38, 0.5);
     }
 }

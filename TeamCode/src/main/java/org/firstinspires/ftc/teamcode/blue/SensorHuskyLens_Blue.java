@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.blue;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -55,7 +55,7 @@ import java.util.Comparator;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-public class SensorHuskyLens {
+public class SensorHuskyLens_Blue {
     public static final int ID_BLUE = 1;
     public static final int ID_RED = 2;
     private static final int ID = ID_BLUE;
@@ -177,7 +177,7 @@ public class SensorHuskyLens {
     }
 
     public static double calculateBlockDistance(HuskyLens.Block blockOne, HuskyLens.Block blockTwo) {
-        return SensorHuskyLens.calculateDistance(blockOne.x, blockOne.y, blockTwo.x, blockTwo.y);
+        return SensorHuskyLens_Blue.calculateDistance(blockOne.x, blockOne.y, blockTwo.x, blockTwo.y);
     }
 
     //
@@ -194,7 +194,7 @@ public class SensorHuskyLens {
         //2. 计算相邻的block之间的距离
         double nDistanceArray[] = new double[3];
         for (int i = 0; i + 1 < blocksArray.size(); i++) {
-            nDistanceArray[i] = SensorHuskyLens.calculateBlockDistance(blocksArray.get(i), blocksArray.get(i+1));
+            nDistanceArray[i] = SensorHuskyLens_Blue.calculateBlockDistance(blocksArray.get(i), blocksArray.get(i+1));
         }
 
         //3. 找到block之间的距离最小的索引

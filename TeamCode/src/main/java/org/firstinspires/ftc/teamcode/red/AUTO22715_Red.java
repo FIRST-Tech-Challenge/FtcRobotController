@@ -1,21 +1,19 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.red;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import org.firstinspires.ftc.teamcode.blue.AUTOBLleft_Blue;
 
-import java.util.concurrent.TimeUnit;
+@Autonomous(name = "AUTO22715_Blue (Red)")
 
-@Autonomous(name = "AUTO22715 (Blocks to Java)")
+public class AUTO22715_Red extends LinearOpMode {
+    SensorHuskyLens_Red huskyLens = new SensorHuskyLens_Red();
+    SensorHuskyLens_Red.TagDirection direction = SensorHuskyLens_Red.TagDirection.UNKOWN;
 
-public class AUTO22715 extends LinearOpMode {
-    SensorHuskyLens huskyLens = new SensorHuskyLens();
-    SensorHuskyLens.TagDirection direction = SensorHuskyLens.TagDirection.UNKOWN;
-
-    AUTOBLleft left = new AUTOBLleft() ;
-    AUTOBLmid middle = new AUTOBLmid();
-    AUTOBLright right = new AUTOBLright();
+    AUTOBLleft_Red left = new AUTOBLleft_Red() ;
+    AUTOBLmid_Red middle = new AUTOBLmid_Red();
+    AUTOBLright_Red right = new AUTOBLright_Red();
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -68,15 +66,15 @@ public class AUTO22715 extends LinearOpMode {
                 direction = huskyLens.getTagDirection();
                 telemetry.addData(">>>", direction);
                 telemetry.update();
-            } while(direction != SensorHuskyLens.TagDirection.UNKOWN);
+            } while(direction != SensorHuskyLens_Red.TagDirection.UNKOWN);
 
-            if(direction == SensorHuskyLens.TagDirection.LEFT){
+            if(direction == SensorHuskyLens_Red.TagDirection.LEFT){
                 left.runOpMode();
                 break;
-            } else if(direction == SensorHuskyLens.TagDirection.MIDDLE){
+            } else if(direction == SensorHuskyLens_Red.TagDirection.MIDDLE){
                 middle.runOpMode();
                 break;
-            } else if(direction == SensorHuskyLens.TagDirection.RIGHT){
+            } else if(direction == SensorHuskyLens_Red.TagDirection.RIGHT){
                 right.runOpMode();
                 break;
             }
