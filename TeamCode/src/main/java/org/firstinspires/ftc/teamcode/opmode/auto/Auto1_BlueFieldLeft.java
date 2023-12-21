@@ -33,11 +33,8 @@ import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
-// import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
+import org.firstinspires.ftc.teamcode.vision.pipeline.GripPipelineWhitePixelRGBT1;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 

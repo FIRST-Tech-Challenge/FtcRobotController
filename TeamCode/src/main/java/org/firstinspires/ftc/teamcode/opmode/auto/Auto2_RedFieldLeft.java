@@ -32,29 +32,13 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.teamcode.pipeline.GripPipelineRedGamepieceRGB;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
+import org.firstinspires.ftc.teamcode.vision.pipeline.GripPipelineWhitePixelRGBT1;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
-import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
-import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
-import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.opencv.core.Point;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 /*
  * This file contains an example of a Linear "OpMode".
