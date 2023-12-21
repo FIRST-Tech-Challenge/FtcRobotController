@@ -6,7 +6,7 @@ import static java.lang.Math.min;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -52,11 +52,11 @@ public class TurningTest extends LinearOpMode {
 
     private TfodProcessor tfod;
     private final ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lf = null;
-    private DcMotor lb = null;
-    private DcMotor rf = null;
-    private DcMotor rb = null;
-    private DcMotor carWashMotor = null;
+    private DcMotorEx lf = null;
+    private DcMotorEx lb = null;
+    private DcMotorEx rf = null;
+    private DcMotorEx rb = null;
+    private DcMotorEx carWashMotor = null;
     private IMU imu = null;
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -70,33 +70,38 @@ public class TurningTest extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
     static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     TURN_SPEED              = 500;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
 
     public void runOpMode() {
         // Initialize the drive system variables.
-        lf = hardwareMap.get(DcMotor.class, "leftFront");
-        lb = hardwareMap.get(DcMotor.class, "leftBack");
-        rf = hardwareMap.get(DcMotor.class, "rightFront");
-        rb = hardwareMap.get(DcMotor.class, "rightBack");
+        lf = hardwareMap.get(DcMotorEx.class, "leftFront");
+        lb = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rf = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        lf.setDirection(DcMotorEx.Direction.REVERSE);
+        lb.setDirection(DcMotorEx.Direction.REVERSE);
+        rf.setDirection(DcMotorEx.Direction.FORWARD);
+        rb.setDirection(DcMotorEx.Direction.FORWARD);
 
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lf.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         lb.setTargetPosition(lb.getCurrentPosition());
         rb.setTargetPosition(rb.getCurrentPosition());
         lf.setTargetPosition(lf.getCurrentPosition());
         rf.setTargetPosition(rf.getCurrentPosition());
+
+        lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         initTfod();
 
@@ -151,10 +156,10 @@ public class TurningTest extends LinearOpMode {
             rf.setTargetPosition(newRightFrontTarget);
 
             // Turn On RUN_TO_POSITION
-            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -182,17 +187,17 @@ public class TurningTest extends LinearOpMode {
             // Turn off RUN_TO_POSITION
             // Note: Following code is technically redundant since called in stopRobot(), but the function
             // may be changed, so do not delete.
-            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
             //sleep(250);   // optional pause after each move.
         }
     }
 
     public void turn(double degrees) {
-        double TURN_ACCURACY = 0.75;
+        double TURN_ACCURACY = 5;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
@@ -202,6 +207,7 @@ public class TurningTest extends LinearOpMode {
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
+            double thirdGoalAngle = initialGoalAngle - abs(initialGoalAngle) / initialGoalAngle * 360;
             double difference = 999;
             double turnModifier;
             double turnPower;
@@ -210,13 +216,13 @@ public class TurningTest extends LinearOpMode {
             }
             while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-                difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = Math.min(1, (difference + 1) / 30);
+                difference = min(abs(initialGoalAngle - currentAngle), min(abs(correctedGoalAngle - currentAngle), abs(thirdGoalAngle - currentAngle)));
+                turnModifier = Math.min(1, (difference + 3) / 45);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
-                lb.setPower(-turnPower);
-                rb.setPower(turnPower);
-                lf.setPower(-turnPower);
-                rf.setPower(turnPower);
+                lb.setVelocity(-turnPower);
+                rb.setVelocity(turnPower);
+                lf.setVelocity(-turnPower);
+                rf.setVelocity(turnPower);
                 telemetry.addData("Corrected Goal", correctedGoalAngle);
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
@@ -251,10 +257,10 @@ public class TurningTest extends LinearOpMode {
 
     public void stopRobot() {
         // Turn On RUN_TO_POSITION
-        lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         // Stop all motion
         lb.setTargetPosition(lb.getCurrentPosition());
@@ -268,10 +274,10 @@ public class TurningTest extends LinearOpMode {
         rf.setPower(0);
 
         // Turn off RUN_TO_POSITION
-        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
     public void dropCarWash() {

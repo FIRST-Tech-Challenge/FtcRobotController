@@ -50,7 +50,7 @@ public class CSAutoRedBack extends CSMethods {
         sleep(2000); // Wait to allow camera initialization (for detecting team prop)
         findPos(isRed);
         sleep(1000);
-        drive(-10);
+        drive(-20);
         sleep(1000);
         if (pos == 1) {
             turn(-30);

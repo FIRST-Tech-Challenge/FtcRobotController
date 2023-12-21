@@ -55,8 +55,7 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     m           = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double[] redBoundaries = {0, 350};
-    static final double[] blueBoundaries = {0, 350};
+    static final double[] boundaries = {0, 350};
     double carWashPower = 1.0;
     double pos; // Team prop position
     public VisionPortal visionPortal;
@@ -202,7 +201,7 @@ public abstract class CSMethods extends LinearOpMode {
             while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = min(1, (difference + 1) / 30);
+                turnModifier = min(1, (difference + 5) / 30);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setPower(-turnPower);
                 rb.setPower(turnPower);
@@ -364,24 +363,13 @@ public abstract class CSMethods extends LinearOpMode {
 
     public double findPos(boolean isRed) {
         double x = detectProp();
-        if (isRed) {
-            if (x > redBoundaries[0] && x < redBoundaries[1]){
-                pos = 2; // Middle
-            }
-            else if (x > redBoundaries[1]){
-                pos = 3; // Right
-            } else {
-                pos = 1; // Left
-            }
+        if (x > boundaries[0] && x < boundaries[1]){
+            pos = 2; // Middle
+        }
+        else if (x > boundaries[1]){
+            pos = 3; // Right
         } else {
-            if (x > blueBoundaries[0] && x < blueBoundaries[1]){
-                pos = 2; // Middle
-            }
-            else if (x > blueBoundaries[1]){
-                pos = 3; // Right
-            } else {
-                pos = 1; // Left
-            }
+            pos = 1; // Left
         }
         telemetry.addData("Position", pos);
         telemetry.update();
