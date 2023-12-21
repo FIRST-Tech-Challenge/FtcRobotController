@@ -155,7 +155,7 @@
                  drone_launcher_pos = 1;
              }
              if (gamepad2.b) {
-                 drone_launcher_pos = 0.6;
+                 drone_launcher_pos = 0;
              }
              dronelaunch.setPosition(drone_launcher_pos);
  
