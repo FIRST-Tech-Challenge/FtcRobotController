@@ -37,6 +37,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // import org.firstinspires.ftc.teamcode.pipeline.GripPipelineBlueGamepieceRGB;
 // import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 
@@ -71,16 +72,18 @@ import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 @Autonomous(name="BlueFieldLeft", group="OpMode")
 //@Disabled
 public class Auto1_BlueFieldLeft extends AutoBase {
+    GripPipelineWhitePixelRGBT1 whitepipe;
     @Override
     public void init() {
-        super.init();
+        whitepipe = new GripPipelineWhitePixelRGBT1();
+        setPipeline(whitepipe);
         gamepieceLocation = GamePieceLocation.RIGHT; // this is the position that we can't see
     }
 
     @Override
     public void init_loop() {
         state = 0;
-        GamepiecePositionFinder gamePiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.LEFT);
+        GamepiecePositionFinder gamePiecePOS = new GamepiecePositionFinder(whitepipe.avgContourCoord(), GamePieceLocation.LEFT);
         estimateLocation(gamePiecePOS);
     }
     // run until the end of the match (driver presses STOP)

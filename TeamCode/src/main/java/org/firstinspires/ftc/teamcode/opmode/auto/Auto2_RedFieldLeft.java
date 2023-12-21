@@ -88,8 +88,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
 //@Disabled
 public class Auto2_RedFieldLeft extends AutoBase {
 
+    GripPipelineWhitePixelRGBT1 whitepipe;
     @Override
     public void init() {
+        whitepipe = new GripPipelineWhitePixelRGBT1();
+        setPipeline(whitepipe);
+
         super.init();
         gamepieceLocation = GamePieceLocation.RIGHT; // this is the position that we can't see
     }
@@ -97,8 +101,8 @@ public class Auto2_RedFieldLeft extends AutoBase {
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePositionFinder gamepiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.LEFT);
-        Point avgLoc = pipeline.avgContourCoord();
+        GamepiecePositionFinder gamepiecePOS = new GamepiecePositionFinder(whitepipe.avgContourCoord(), GamePieceLocation.LEFT);
+        Point avgLoc = whitepipe.avgContourCoord();
         if (gamepiecePOS.getPOS() == GamePieceLocation.RIGHT){
             rightCount += 1;
         } else if (gamepiecePOS.getPOS() == GamePieceLocation.CENTER){
