@@ -281,11 +281,22 @@ public class SensorHuskyLens_Blue {
     }
 
     private Boolean calBlocksDirection(ArrayList<HuskyLens.Block> blocksArray){
-
         //1. 计算block的面积
         double nAreaArray[] = new double[blocksArray.size()];
         for (int i = 0; i < blocksArray.size(); i++) {
-            nAreaArray[i] = blocksArray.get(i).width * blocksArray.get(i).height;
+            HuskyLens.Block block = blocksArray.get(i);
+            int nXPos = block.x;
+            double area = 0.0f;
+            if(nXPos < LEFT_AREA_X){
+                area = block.width * block.height;
+                area -= 25.0 * 25.0;
+            } else if(LEFT_AREA_X <= nXPos && nXPos <= RIGHT_AREA_X){
+                area = block.width * block.height;
+            } else if(nXPos > RIGHT_AREA_X){
+                area = block.width * block.height;
+                area -= 25.0 * 25.0;
+            }
+            nAreaArray[i] = area;
         }
 
         //2. 找到block之间的面积最大的索引
