@@ -42,7 +42,9 @@ public abstract class AutoBase extends OpMode {
     Servo rightClaw;
     Servo conveyor;
     OpenCvWebcam webcam;
+
     OpenCvPipeline pipeline = null;
+
     Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearSlideMove;
@@ -73,6 +75,7 @@ public abstract class AutoBase extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+
         assert pipeline != null : "The pipeline was not set before we called init.  Check your init method";
 
         webcam.setPipeline(pipeline);

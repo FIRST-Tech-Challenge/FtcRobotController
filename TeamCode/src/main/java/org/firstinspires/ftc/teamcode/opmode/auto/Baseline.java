@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pipeline.HSVSaturationPipeline;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+
 @Autonomous(name="Saturation Baseline", group="OpMode")
 public class Baseline extends AutoBase{
 
     @Override
     public void init() {
+
         // create the opencv pipeline we are going to use for this opmode
         hsvPipe = new HSVSaturationPipeline();
         // give the AutoBase our pipeline so it can attach it to the camera
@@ -25,6 +27,7 @@ public class Baseline extends AutoBase{
         telemetry.addData("LSpikeSaturation",hsvPipe.getLeftSpikeSaturation());
         telemetry.addData("RSpikeSaturation",hsvPipe.getRightSpikeSaturation());
         telemetry.addData("CSpikeSaturation",hsvPipe.getCenterSpikeSaturation());
+
         telemetry.update();
     }
 
