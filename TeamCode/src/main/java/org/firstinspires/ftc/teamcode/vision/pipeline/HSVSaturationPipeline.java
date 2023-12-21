@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.pipeline;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -14,12 +15,13 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
 
 
     //1280 x 960 camera resolution
-    public FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
-    public Rect leftSpike;
-    public Rect centerSpike;
-    public Rect rightSpike;
+    FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
+    Rect leftSpike;
+    Rect centerSpike;
+    Rect rightSpike;
 
-    public int selectedRect = 1;
+    SpikePosition spikePos = SpikePosition.UNKNOWN;
+
     Mat hsvMat = new Mat();
     Mat destMat = new Mat();
     Mat detectionMat = new Mat();
@@ -63,7 +65,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         return destMat;
     }
 
-    int findRectangle(Mat input) {
+    SpikePosition findRectangle(Mat input) {
 
 
         switch(fieldPosition) {
@@ -84,15 +86,15 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         System.out.println(rightSpikeSaturation);
 
         if(leftSpikeSaturation > LEFT_SPIKE_SATURATION_BASELINE){
-            selectedRect = 1;
-            return 1;
+            spikePos = SpikePosition.LEFT;
+            return spikePos;
         } else if (centerSpikeSaturation > CENTER_SPIKE_SATURATION_BASELINE) {
-            selectedRect = 2;
-            return 2;
+            spikePos = SpikePosition.CENTRE;
+            return spikePos;
 
         } else {
-            selectedRect = 3;
-            return 3;
+            spikePos = SpikePosition.RIGHT;
+            return spikePos;
         }
        // It is either 3 or we can’t tell
     }
@@ -120,11 +122,11 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         Imgproc.rectangle(input, leftSpike, nonSelectedColor);
         Imgproc.rectangle(input, centerSpike, nonSelectedColor);
 
-        switch (selectedRect) {
-            case 1:
+        switch (spikePos) {
+            case LEFT:
                 Imgproc.rectangle(input, leftSpike, selectedColor);
                 break;
-            case 2:
+            case CENTRE:
 
                 Imgproc.rectangle(input, centerSpike, selectedColor);
                 break;
