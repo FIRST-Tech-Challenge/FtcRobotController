@@ -152,23 +152,23 @@ public class SensorHuskyLens_Red {
             }
         }
 
-        //
-        //如果识别的blocks太多，可能是有误识别的情况
-        if(BLOCK_NUM_DETECTED_4 <= blocksArray.size()){
-            Collections.sort(blocksArray, new Comparator<HuskyLens.Block>() {
-                @Override
-                public int compare(HuskyLens.Block block1, HuskyLens.Block block2) {
-                    return Integer.compare(block1.y, block2.y);
-                }
-            });
-
-            int nDistance = blocksArray.get(1).y - blocksArray.get(0).y;
-            if(nDistance > MAX_BLOCK_DISTANCE){
-                blocksArray.remove(0);
-                telemetry.addData(">>>", "remove one detected block");
-                telemetry.update();
-            }
-        }
+//        //
+//        //如果识别的blocks太多，可能是有误识别的情况
+//        if(BLOCK_NUM_DETECTED_4 <= blocksArray.size()){
+//            Collections.sort(blocksArray, new Comparator<HuskyLens.Block>() {
+//                @Override
+//                public int compare(HuskyLens.Block block1, HuskyLens.Block block2) {
+//                    return Integer.compare(block1.y, block2.y);
+//                }
+//            });
+//
+//            int nDistance = blocksArray.get(1).y - blocksArray.get(0).y;
+//            if(nDistance > MAX_BLOCK_DISTANCE){
+//                blocksArray.remove(0);
+//                telemetry.addData(">>>", "remove one detected block");
+//                telemetry.update();
+//            }
+//        }
 
         return blocksArray;
     }
