@@ -120,10 +120,8 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         }
     }
 
-
-
-    public Point avgContourCoord(){
-        return new Point();
+    public Rect avgContourCoord(){
+        return new Rect();
     }
 
 }

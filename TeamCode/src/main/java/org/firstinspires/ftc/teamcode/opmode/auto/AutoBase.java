@@ -22,6 +22,7 @@ import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class AutoBase extends OpMode {
@@ -41,7 +42,7 @@ public abstract class AutoBase extends OpMode {
     Servo rightClaw;
     Servo conveyor;
     OpenCvWebcam webcam;
-    HSVSaturationPipeline pipeline;
+    OpenCvPipeline pipeline = null;
     Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearSlideMove;
@@ -49,6 +50,7 @@ public abstract class AutoBase extends OpMode {
     double rightCount = 0;
     double centerCount = 0;
     double leftCount = 0;
+    HSVSaturationPipeline hsvPipe;
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
     private DcMotor wrist = null;
@@ -59,40 +61,9 @@ public abstract class AutoBase extends OpMode {
     double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
 
-
+    //remove this when old autos are gone
     protected void estimateLocation(GamepiecePositionFinder gamePiecePOS) {
-        Point avgLoc = pipeline.avgContourCoord();
-        if (gamePiecePOS.getPOS() == GamePieceLocation.RIGHT) {
-            rightCount += 1;
-        } else if (gamePiecePOS.getPOS() == GamePieceLocation.CENTER) {
-            centerCount += 1;
-        } else if (gamePiecePOS.getPOS() == GamePieceLocation.LEFT) {
-            leftCount += 1;
-        }
 
-        if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = GamePieceLocation.RIGHT;
-        } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = GamePieceLocation.CENTER;
-        } else if (leftCount > 5) {
-            gamepieceLocation = GamePieceLocation.LEFT;
-        }
-
-        // Reset the counters to lower values every 50 detects to allow for field condition changes
-        if (rightCount + centerCount + leftCount > 50) {
-            rightCount = rightCount * 0.3;
-            centerCount = centerCount * 0.3;
-            leftCount = leftCount * 0.3;
-        }
-
-        telemetry.addData("AvgContour.x", avgLoc.x);
-        telemetry.addData("AvgContour.y", avgLoc.y);
-        telemetry.addData("Left Probability", leftCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("Center Probability", centerCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("Right Probability", rightCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("location", gamepieceLocation);
-        telemetry.addData("state", state);
-        telemetry.update();
     }
 
     @Override
@@ -102,7 +73,8 @@ public abstract class AutoBase extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new HSVSaturationPipeline();
+        assert pipeline != null : "The pipeline was not set before we called init.  Check your init method";
+
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -202,5 +174,10 @@ public abstract class AutoBase extends OpMode {
         telemetry.addData("state", state);
         telemetry.addData("location", gamepieceLocation);
         telemetry.update();
+    }
+
+
+    protected void setPipeline(OpenCvPipeline pipe) {
+        pipeline = pipe;
     }
 }
