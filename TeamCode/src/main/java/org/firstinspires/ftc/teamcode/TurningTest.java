@@ -137,23 +137,23 @@ public class TurningTest extends LinearOpMode {
      *  3) Driver stops the OpMode running.
      */
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
-        int newLeftBackTarget;
-        int newRightBackTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
+        int lbTarget;
+        int rbTarget;
+        int lfTarget;
+        int rfTarget;
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
-            newLeftBackTarget = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightBackTarget = rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftFrontTarget = lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            lbTarget = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            rbTarget = rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            lfTarget = lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            rfTarget = rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
-            lb.setTargetPosition(newLeftBackTarget);
-            rb.setTargetPosition(newRightBackTarget);
-            lf.setTargetPosition(newLeftFrontTarget);
-            rf.setTargetPosition(newRightFrontTarget);
+            lb.setTargetPosition(lbTarget);
+            rb.setTargetPosition(rbTarget);
+            lf.setTargetPosition(lfTarget);
+            rf.setTargetPosition(rfTarget);
 
             // Turn On RUN_TO_POSITION
             lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -177,7 +177,7 @@ public class TurningTest extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (lb.isBusy() && rb.isBusy() && lf.isBusy() && rf.isBusy())) {
                 // Display it for the driver.
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget,  newRightFrontTarget);
+                telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
                 telemetry.update();
             }

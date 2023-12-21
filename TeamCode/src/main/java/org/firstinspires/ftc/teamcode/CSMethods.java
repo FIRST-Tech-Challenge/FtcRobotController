@@ -122,10 +122,10 @@ public abstract class CSMethods extends LinearOpMode {
     }
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
-        int newLeftBackTarget = 0;
-        int newRightBackTarget = 0;
-        int newLeftFrontTarget = 0;
-        int newRightFrontTarget = 0;
+        int lbTarget = 0;
+        int rbTarget = 0;
+        int lfTarget = 0;
+        int rfTarget = 0;
 
         // Ensure that the OpMode is still active
         if (opModeIsActive() && lf != null) {
@@ -163,7 +163,7 @@ public abstract class CSMethods extends LinearOpMode {
 
 
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget,  newRightFrontTarget);
+                telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
                 telemetry.update();
             }
