@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pipeline;
 import org.firstinspires.ftc.teamcode.utility.FieldPosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -19,10 +20,16 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
     public Rect centerSpike;
     public Rect rightSpike;
 
-    public int selectedRect = 0;
+    public int selectedRect = 1;
     Mat hsvMat = new Mat();
     Mat destMat = new Mat();
     Mat detectionMat = new Mat();
+
+    double leftSpikeSaturation = 0;
+    double centerSpikeSaturation = 0;
+
+
+    double rightSpikeSaturation = 0;
 
     public void setFieldPosition(FieldPosition fieldPosition) {
         this.fieldPosition = fieldPosition;
@@ -47,17 +54,14 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         Core.extractChannel(hsvMat, detectionMat, 1);
         Imgproc.cvtColor(detectionMat, destMat, Imgproc.COLOR_GRAY2RGB);
 
+        findRectangle(destMat);
         drawRectangles(destMat);
 
         return destMat;
     }
 
     int findRectangle(Mat input) {
-        double leftSpikeSaturation = 0;
-        double centerSpikeSaturation = 0;
-        double rightSpikeSaturation = 0;
 
-        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
 
         switch(fieldPosition) {
             case BLUE_FIELD_LEFT:
@@ -71,6 +75,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
                 rightSpikeSaturation = getAvgSaturation(hsvMat, rightSpike);
                 break;
         }
+
 
         // assume one with the most saturation (least gray) is our TSE
         if ((leftSpikeSaturation > centerSpikeSaturation) && (leftSpikeSaturation > rightSpikeSaturation)) {
@@ -87,6 +92,18 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         return color.val[1];
         }
 
+    public double getLeftSpikeSaturation() {
+        return leftSpikeSaturation;
+    }
+
+    public double getCenterSpikeSaturation() {
+        return centerSpikeSaturation;
+    }
+
+    public double getRightSpikeSaturation() {
+        return rightSpikeSaturation;
+    }
+
 
     public void drawRectangles(Mat input) {
         Imgproc.rectangle(input, leftSpike, nonSelectedColor);
@@ -102,4 +119,11 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
                 break;
         }
     }
+
+
+
+    public Point avgContourCoord(){
+        return new Point();
+    }
+
 }
