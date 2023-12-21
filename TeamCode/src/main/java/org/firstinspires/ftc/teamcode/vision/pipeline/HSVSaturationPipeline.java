@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.pipeline;
-import org.firstinspires.ftc.teamcode.utility.FieldPosition;
+package org.firstinspires.ftc.teamcode.vision.pipeline;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -15,7 +14,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
 
 
     //1280 x 960 camera resolution
-    public FieldPosition fieldPosition;
+    public FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
     public Rect leftSpike;
     public Rect centerSpike;
     public Rect rightSpike;
@@ -34,6 +33,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
     public void setFieldPosition(FieldPosition fieldPosition) {
         this.fieldPosition = fieldPosition;
     }
+
     @Override
     public Mat processFrame(Mat input) {
         switch(fieldPosition){
