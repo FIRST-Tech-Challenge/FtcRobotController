@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.blue.AUTOBLleft_Blue;
 
-@Autonomous(name = "AUTO22715_Blue (Red)")
+@Autonomous(name = "AUTO22715_Red (Red)")
 
 public class AUTO22715_Red extends LinearOpMode {
     SensorHuskyLens_Red huskyLens = new SensorHuskyLens_Red();
