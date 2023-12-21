@@ -34,7 +34,7 @@ public class AUTO22715_Red extends LinearOpMode {
                         direction = huskyLens.getTagDirection();
                         telemetry.addData(">>>", direction);
                         telemetry.update();
-                        sleep(500);
+                        sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -55,7 +55,7 @@ public class AUTO22715_Red extends LinearOpMode {
         bQuit = true;
         //
         //等待检测方向的子线程退出
-        sleep(1000);
+        sleep(1500);
 
         while (opModeIsActive()) {
             // Put run blocks here.

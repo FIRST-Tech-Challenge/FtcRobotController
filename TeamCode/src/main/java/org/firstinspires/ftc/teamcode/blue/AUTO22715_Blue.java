@@ -32,7 +32,7 @@ public class AUTO22715_Blue extends LinearOpMode {
                         direction = huskyLens.getTagDirection();
                         telemetry.addData(">>>", direction);
                         telemetry.update();
-                        sleep(500);
+                        sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -53,7 +53,7 @@ public class AUTO22715_Blue extends LinearOpMode {
         bQuit = true;
         //
         //等待检测方向的子线程退出
-        sleep(1000);
+        sleep(1500);
 
         while (opModeIsActive()) {
             // Put run blocks here.
@@ -65,6 +65,7 @@ public class AUTO22715_Blue extends LinearOpMode {
                 telemetry.addData(">>>", direction);
                 telemetry.update();
             } while(direction != SensorHuskyLens_Blue.TagDirection.UNKOWN);
+
 
             if(direction == SensorHuskyLens_Blue.TagDirection.LEFT){
                 left.runOpMode();

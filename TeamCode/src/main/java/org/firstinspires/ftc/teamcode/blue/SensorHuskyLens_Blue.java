@@ -68,6 +68,7 @@ public class SensorHuskyLens_Blue {
         RIGHT,
     }
 
+    private static final int BLOCK_NUM_DETECTED_1 = 1;
     private static final int BLOCK_NUM_DETECTED_3 = 3;
     private static final int BLOCK_NUM_DETECTED_4 = 4;
     private static final int MAX_BLOCK_DISTANCE = 100;
@@ -261,13 +262,75 @@ public class SensorHuskyLens_Blue {
         return true;
     }
 
+    public static final int LEFT_AREA_X = 80;
+    public static final int RIGHT_AREA_X = 240;
+    private Boolean calObjectedDetectedBlocksDirection(ArrayList<HuskyLens.Block> blocksArray){
+        //
+        HuskyLens.Block block = blocksArray.get(0);
+        int nXPos = block.x;
+
+        if(nXPos < LEFT_AREA_X){
+            tagDirection = TagDirection.LEFT;
+        } else if(LEFT_AREA_X <= nXPos && nXPos <= RIGHT_AREA_X){
+            tagDirection = TagDirection.MIDDLE;
+        } else if(nXPos > RIGHT_AREA_X){
+            tagDirection = TagDirection.RIGHT;
+        }
+
+        return true;
+    }
+
+    private Boolean calBlocksDirection(ArrayList<HuskyLens.Block> blocksArray){
+
+        //1. 计算block的面积
+        double nAreaArray[] = new double[blocksArray.size()];
+        for (int i = 0; i < blocksArray.size(); i++) {
+            nAreaArray[i] = blocksArray.get(i).width * blocksArray.get(i).height;
+        }
+
+        //2. 找到block之间的面积最大的索引
+        int nIndex = 0;
+        double maxDistance = Arrays.stream(nAreaArray)
+                .max()
+                .orElse(Double.MIN_VALUE);
+        for (; nIndex < blocksArray.size(); nIndex++) {
+            if(maxDistance == nAreaArray[nIndex]){
+                break;
+            }
+        }
+
+        //
+        //3. 根据最大的block所在的位置来判断
+        HuskyLens.Block block = blocksArray.get(nIndex);
+        int nXPos = block.x;
+        if(nXPos < LEFT_AREA_X){
+            tagDirection = TagDirection.LEFT;
+        } else if(LEFT_AREA_X <= nXPos && nXPos <= RIGHT_AREA_X){
+            tagDirection = TagDirection.MIDDLE;
+        } else if(nXPos > RIGHT_AREA_X){
+            tagDirection = TagDirection.RIGHT;
+        }
+
+        return true;
+    }
+
     private void calculateDirectionInternal(ArrayList<HuskyLens.Block> blocksArray){
-        if(BLOCK_NUM_DETECTED_3 == blocksArray.size()){
-            cal3DetectedBlocksDirection(blocksArray);
-            bDetectedtag = true;
-        } else if(BLOCK_NUM_DETECTED_4 == blocksArray.size()){
-            cal4DetectedBlocksDirection(blocksArray);
-            bDetectedtag = true;
+//        if(BLOCK_NUM_DETECTED_1 == blocksArray.size()){
+//            calObjectedDetectedBlocksDirection(blocksArray);
+//            bDetectedtag = true;
+//        }
+//        else if(BLOCK_NUM_DETECTED_3 == blocksArray.size()){
+//            cal3DetectedBlocksDirection(blocksArray);
+//            bDetectedtag = true;
+//        } else if(BLOCK_NUM_DETECTED_4 == blocksArray.size()){
+//            cal4DetectedBlocksDirection(blocksArray);
+//            bDetectedtag = true;
+//        } else {
+//            telemetry.addData("Block ", "detected block nums ERROR!!!");
+//        }
+
+        if(BLOCK_NUM_DETECTED_1 <= blocksArray.size()){
+            calBlocksDirection(blocksArray);
         } else {
             telemetry.addData("Block ", "detected block nums ERROR!!!");
         }
@@ -290,7 +353,7 @@ public class SensorHuskyLens_Blue {
         }
 
         if(bDetectedtag){
-            telemetry.addData("Direction(0 unkown, 1 left, 2 middle, 3 right): ", tagDirection);
+            telemetry.addData("Direction(0 unkown, 1 left, 2 middle, 3 right) ", tagDirection);
         } else {
             telemetry.addData(">>>","NO detected ERROR!!");
         }
