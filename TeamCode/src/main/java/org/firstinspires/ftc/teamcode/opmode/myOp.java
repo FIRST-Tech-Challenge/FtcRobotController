@@ -12,9 +12,7 @@ public class myOp extends CommandOpMode {
     RobotContainer m_robot;
     @Override
     public void initialize() {
-        m_robot= new RobotContainer(hardwareMap);
-        enable();
-        m_robot.bindCommands();
+        m_robot= new RobotContainer(hardwareMap, telemetry,gamepad1,gamepad2);
         enable();
 
     }

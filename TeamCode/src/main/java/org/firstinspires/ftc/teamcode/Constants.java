@@ -29,4 +29,5 @@ public class Constants {
 
 
 
+    final public static double cameraAngle = 0;
 }
