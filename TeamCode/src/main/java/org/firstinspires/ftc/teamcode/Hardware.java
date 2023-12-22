@@ -24,16 +24,11 @@ public class Hardware {
     public DcMotorEx armMotor2;
 
     public DcMotorEx[] motors;
-
+    public DcMotor fd;
     public IMU imu;
 
     public VoltageSensor batteryVoltageSens;
 
-
-    public Servo servo1;
-    public Servo servo2;
-    public Servo servo3;
-    public Servo servo4;
 
     public Servo droneServo;
 
@@ -43,37 +38,13 @@ public class Hardware {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backLeft.getCurrentPosition();
 
         armMotor1 = hardwareMap.get(DcMotorEx.class, "leftArm");
         armMotor2 = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         droneServo = hardwareMap.get(Servo.class, "droneLauncher");
 
-        // Establish Servos
-        try {
-            servo1 = hardwareMap.get(Servo.class, "servo1");
-
-        } catch (IllegalArgumentException e) {
-
-        }
-        try {
-            servo2 = hardwareMap.get(Servo.class, "servo2");
-
-        } catch (IllegalArgumentException e) {
-
-        }
-        try {
-            servo3 = hardwareMap.get(Servo.class, "servo3");
-
-        } catch (IllegalArgumentException e) {
-
-        }
-        try {
-            servo4 = hardwareMap.get(Servo.class, "servo4");
-
-        } catch (IllegalArgumentException e) {
-
-        }
 
 
         motors = new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight};
