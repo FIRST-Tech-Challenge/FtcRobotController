@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
+@TeleOp(name = "REALDriverOperationMode")
 public class DriveCommandOpMode extends CommandOpMode {
 
     DriveSubsystem driveSubsystem;
