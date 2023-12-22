@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotVision;
 @Config
 @Autonomous
 public class RedNear extends LinearOpMode {
-    public static boolean parkCenter = true;
+    public static boolean parkCenter = false;
     public static boolean IS_RED = true;
     public static boolean ALIGN_RIGHT = true;
     public static double POS1_SPL1_X = 20;
@@ -31,7 +31,7 @@ public class RedNear extends LinearOpMode {
     public static double POS2_SPL1_X = 37;
     public static double POS2_SPL1_Y = -15;
     public static double POS3_SPL1_X = 26;
-    public static double POS3_SPL1_Y = -25;
+    public static double POS3_SPL1_Y = -23;
     public static double FACE_BACKDROP_HEADERING = Math.toRadians(-90);
     public static double PARK_CENTER_X = 50;
     public static double PARK_CORNER_X = 0;
@@ -61,20 +61,22 @@ public class RedNear extends LinearOpMode {
         double startTime, currentTime;
 
         // Start
+        telemetry.addData("Is parking center?: ", parkCenter);
         waitForStart();
         startTime = clock.seconds();
         if (isStopRequested()) return;
-        Log.v("AUTODEBUG", "0: start");
+        //Log.v("AUTODEBUG", "0: start");
         elementPos = rvis.getTeamPropOrientation(IS_RED, ALIGN_RIGHT);
         //Log.v("AUTODEBUG", "1: elementPos = %0d");
-        telemetry.addData("Element pos", elementPos);
+        //telemetry.addData("Element pos", elementPos);
+        telemetry.addData("Is parking center?: ", parkCenter);
 
 
         if (elementPos == 1) {//left
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS1_SPL1_X, POS1_SPL1_Y), FACE_BACKDROP_HEADERING)
-                            .lineTo(new Vector2d(POS1_SPL1_X, POS1_SPL1_Y+2.5))
+                            .splineTo(new Vector2d(POS1_SPL1_X+5, POS1_SPL1_Y), FACE_BACKDROP_HEADERING)
+                            .lineTo(new Vector2d(POS1_SPL1_X+5, POS1_SPL1_Y+2))
                             .build()
             ));
 
@@ -90,7 +92,7 @@ public class RedNear extends LinearOpMode {
             ));
             //dump yellow pixel
             robot.runCommand(outCmd);
-            Log.v("AUTODEBUG", "10: dump done");
+            //Log.v("AUTODEBUG", "10: dump done");
 
             // Park
             if(parkCenter){
@@ -149,7 +151,7 @@ public class RedNear extends LinearOpMode {
         } else {// right
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(POS3_SPL1_X, POS3_SPL1_Y), FACE_BACKDROP_HEADERING)
+                            .splineTo(new Vector2d(POS3_SPL1_X+5, POS3_SPL1_Y), FACE_BACKDROP_HEADERING)
                             .build()
             ));
             //dump purple pixel

@@ -33,7 +33,7 @@ public class outCmdTest extends LinearOpMode {
         // Start
         waitForStart();
         if (isStopRequested()) return;
-        Log.v("AUTODEBUG", "0: start");
+        //Log.v("AUTODEBUG", "0: start");
 
         robot.runCommand(outCmd);
     }

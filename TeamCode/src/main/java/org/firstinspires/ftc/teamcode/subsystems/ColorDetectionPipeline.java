@@ -16,18 +16,18 @@ import java.util.ArrayList;
 
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double ALIGN_R_L_X_OFFSET = 640;
-    public static double ALIGN_R_L_Y_OFFSET = 120;
-    public static double ALIGN_R_R_X_OFFSET = 50;
+    public static double ALIGN_R_L_X_OFFSET = 0;
+    public static double ALIGN_R_L_Y_OFFSET = 0;
+    public static double ALIGN_R_R_X_OFFSET = 0;
     public static double ALIGN_R_R_Y_OFFSET = 0;
 
-    public static double ALIGN_L_L_X_OFFSET = 550;
-    public static double ALIGN_L_L_Y_OFFSET = 120;
-    public static double ALIGN_L_R_X_OFFSET = 160;
-    public static double ALIGN_L_R_Y_OFFSET = 30;
+    public static double ALIGN_L_L_X_OFFSET = 0;
+    public static double ALIGN_L_L_Y_OFFSET = 0;
+    public static double ALIGN_L_R_X_OFFSET = 0;
+    public static double ALIGN_L_R_Y_OFFSET = 0;
 
-    static final int STREAM_WIDTH = 1280; // resolution of camera   1280
-    static final int STREAM_HEIGHT = 720; // resolution of camera  720
+    static final int STREAM_WIDTH = 640; // resolution of camera   1280
+    static final int STREAM_HEIGHT = 480; // resolution of camera  720
 
     int propPos = 3;
     boolean align_right = true;
@@ -79,9 +79,9 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         RectBBRCorner = (this.align_right) ?
                 (new Point(RectATopLeftAnchor.x + ALIGN_R_R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - ALIGN_R_R_Y_OFFSET + HeightRectB))
                 : (new Point(RectATopLeftAnchor.x + ALIGN_L_R_X_OFFSET + WidthRectB, RectATopLeftAnchor.y - ALIGN_L_R_Y_OFFSET + HeightRectB));
-        Log.v("vision", "ColorDetectionPipeline constructed. align_right = " + this.align_right);
-        Log.v("vision", String.format("ColorDetectionPipeline constructed. Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
-                RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
+        //Log.v("vision", "ColorDetectionPipeline constructed. align_right = " + this.align_right);
+        //Log.v("vision", String.format("ColorDetectionPipeline constructed. Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
+        //        RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
     }
 
     /*
@@ -99,7 +99,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     @Override
     public void init(Mat firstFrame) {
 
-        Log.v("vision", "init called.");
+        //Log.v("vision", "init called.");
     }
 
     @Override
@@ -109,13 +109,13 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
             return input;
         }
 
-        Log.v("vision", "processFrame called.");
+        //Log.v("vision", "processFrame called.");
         zoomedInput = input;
 
-        Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
-                RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
+        //Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)",
+        //        RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
         Mat leftArea = zoomedInput.submat(new Rect(RectATLCorner, RectABRCorner));
-        Log.v("vision", "submat created.");
+        //Log.v("vision", "submat created.");
 
         ArrayList<Mat> matInLHLS = inputMatToHLS(leftArea);
         avgLH = (int) Core.mean(matInLHLS.get(0)).val[0];
@@ -133,11 +133,11 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
                 new Scalar(0, 0, 255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
-        Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgLH, avgLL, avgLS));
+        //Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgLH, avgLL, avgLS));
 
-        Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
+        //Log.v("vision", String.format("Creating submat at (%4.2f, %4.2f), (%4.2f, %4.2f)", RectATLCorner.x, RectATLCorner.y, RectABRCorner.x, RectABRCorner.y));
         Mat centerArea = zoomedInput.submat(new Rect(RectBTLCorner, RectBBRCorner));
-        Log.v("vision", "submat created.");
+        //Log.v("vision", "submat created.");
 
         ArrayList<Mat> matInCHLS = inputMatToHLS(centerArea);
         avgCH = (int) Core.mean(matInCHLS.get(0)).val[0];
@@ -155,7 +155,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
                 new Scalar(0, 0, 255), // The color the rectangle is drawn in
                 5); // Thickness of the rectangle lines
 
-        Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgCH, avgCL, avgCS));
+        //Log.v("vision", String.format("processFrame result: avgH = %d, avgL = %d, avgS = %d.", avgCH, avgCL, avgCS));
 
 
         return zoomedInput;

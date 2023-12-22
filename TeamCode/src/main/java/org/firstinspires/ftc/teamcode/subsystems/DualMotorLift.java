@@ -200,9 +200,9 @@ public class DualMotorLift implements Subsystem {
             */
         }
         this.targetReached = (this.targetReached || (motorLVel <= 20 && Math.abs(targetPos - currPos) <= HEIGHT_DIFF_TOLERANCE));
-        telemetry.addData("slideMotorL.getVelocity() ", Math.abs(slideMotorL.getVelocity()));
-        telemetry.addData("lastError ", ticksToInches((int)Math.abs(targetPos - currPos)));
-        telemetry.addData("targetReached ", this.targetReached);
+        //telemetry.addData("slideMotorL.getVelocity() ", Math.abs(slideMotorL.getVelocity()));
+        //telemetry.addData("lastError ", ticksToInches((int)Math.abs(targetPos - currPos)));
+        //telemetry.addData("targetReached ", this.targetReached);
         //telemetry.update();
     }
 
@@ -234,12 +234,12 @@ public class DualMotorLift implements Subsystem {
     }
 
     public boolean armCanSwing(){
-        Log.v("StateMach Arm: can swing?", ticksToInches(slideMotorR.getCurrentPosition())+"");
+        //Log.v("StateMach Arm: can swing?", ticksToInches(slideMotorR.getCurrentPosition())+"");
         return slideMotorR.getCurrentPosition()>=inchToTicks(LEVEL_HT[0]);
     }
 
     public boolean armCanSwingAuto(){
-        Log.v("StateMach Arm: can swing?", ticksToInches(slideMotorR.getCurrentPosition())+"");
+        //Log.v("StateMach Arm: can swing?", ticksToInches(slideMotorR.getCurrentPosition())+"");
         return slideMotorR.getCurrentPosition()>=inchToTicks(LEVEL_HT_AUTO[0]);
     }
     public double getPIDPower(){
@@ -265,24 +265,24 @@ public class DualMotorLift implements Subsystem {
                 }
                 //Log.v("PIDLift: Debug: ", String.format("Target pos: %4.2f, current pos: %4.2f, last error: %4.2f, velocity: %4.2f, set power to: %4.2f",
                 //        pidfController.getTargetPosition(), measuredPosition, pidfController.getLastError(), slideMotorL.getVelocity(), powerFromPIDF));
-                telemetry.addData("Target pos", pidfController.getTargetPosition());
-                telemetry.addData("Measur pos", measuredPosition);
-                telemetry.addData("slidePower", powerFromPIDF);
+                //telemetry.addData("Target pos", pidfController.getTargetPosition());
+                //telemetry.addData("Measur pos", measuredPosition);
+                //telemetry.addData("slidePower", powerFromPIDF);
                 slideMotorL.setPower(powerFromPIDF);
                 slideMotorR.setPower(powerFromPIDF);
             }
         }
         //telemetry.addLine("Slide motor set to " + ticksToInches(slideMotorL.getTargetPosition()));
         //telemetry.addLine("current slide velocity: " + slideMotorL.getVelocity());
-        telemetry.addLine("current slide position: " + ticksToInches(slideMotorR.getCurrentPosition()));
+        //telemetry.addLine("current slide position: " + ticksToInches(slideMotorR.getCurrentPosition()));
         packet.put("target pos (inches)", ticksToInches(slideMotorR.getTargetPosition()));
         if (mode == Mode.BOTH_MOTORS_PID) {
             packet.put("PID target pos", pidfController.getTargetPosition());
         }
         packet.put("left velocity", slideMotorL.getVelocity());
         packet.put("right velocity", slideMotorR.getVelocity());
-        Log.v("SLIDE L pos (inches)", ""+ticksToInches(slideMotorL.getCurrentPosition()));
-        Log.v("SLIDE R pos (inches)", ""+ticksToInches(slideMotorR.getCurrentPosition()));
+        //Log.v("SLIDE L pos (inches)", ""+ticksToInches(slideMotorL.getCurrentPosition()));
+        //Log.v("SLIDE R pos (inches)", ""+ticksToInches(slideMotorR.getCurrentPosition()));
         //Log.v("PIDLift: power", String.format("Left power: %f, Right power: %f",slideMotorL.getPower(), slideMotorR.getPower()));
         //Log.v("PIDLift: modes", String.format("left mode: %s, right mode: %s", slideMotorL.getMode().toString(), slideMotorR.getMode().toString()));
         //packet.put("motor power", slideMotorL.getPower());

@@ -15,8 +15,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 public class RobotVision {
 
-    static final int STREAM_WIDTH = 1280; // modify for your camera
-    static final int STREAM_HEIGHT = 720; // modify for your camera
+    static final int STREAM_WIDTH = 640; // modify for your camera
+    static final int STREAM_HEIGHT = 480; // modify for your camera
 
     OpenCvWebcam webcam;
     ColorDetectionPipeline cdPipeline;
@@ -29,7 +29,7 @@ public class RobotVision {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        Log.v("vision", "RobotVision constructed. align_right = " + align_right);
+        //Log.v("vision", "RobotVision constructed. align_right = " + align_right);
         cdPipeline = new ColorDetectionPipeline(align_right);
         webcam.setPipeline(cdPipeline);
 

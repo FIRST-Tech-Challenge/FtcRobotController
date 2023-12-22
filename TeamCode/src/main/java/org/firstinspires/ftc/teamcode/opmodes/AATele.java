@@ -40,6 +40,20 @@ public class AATele extends LinearOpMode {
 
 //            robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
 
+            // do not move
+            if(smartGamepad1.right_bumper == false && robot.intake.intakeState == 21){// reverses the intake motor for a few seconds :)
+                robot.intake.intakeState = 0;
+            }
+            if(smartGamepad1.right_bumper){// reverses the intake motor for a few seconds :)
+                robot.intake.intakeState = 21;
+            }
+            if(smartGamepad1.right_trigger < 0.5 && robot.intake.intakeState == 22){// reverses the intake motor for a few seconds :)
+                robot.intake.intakeState = 0;
+            }
+            if(smartGamepad1.right_trigger >= 0.5){// reverses the intake motor for a few seconds :)
+                robot.intake.intakeState = 22;
+            }
+
             // INTAKE
             if(smartGamepad1.a_pressed()){
                 if(intakePosition == 0 && robot.intake.intakeState == 0) {
@@ -56,10 +70,8 @@ public class AATele extends LinearOpMode {
             if(smartGamepad1.x_pressed()){ // test auto output command
                 robot.intake.intakeState = 11;
             }
-            if(smartGamepad1.right_bumper){// reverses the intake motor for a few seconds :)
-                robot.intake.intakeState = 21;
 
-            }
+
 
 
             // Outtake automated
@@ -104,27 +116,32 @@ public class AATele extends LinearOpMode {
             if(smartGamepad2.right_stick_button){
                     robot.outtake.prepHang();
             }
+            /*if(smartGamepad2.leftJoystickButton()){
+                robot.outtake.lift.resetEncoder();;
+            }
 
+
+             */
             if (smartGamepad2.dpad_up) {
                 robot.outtake.lift.adjustLift(1, false);
-                telemetry.addLine("dpad up pressed");
-                Log.v("PIDLift: gamepad", "dpad up");
+                //telemetry.addLine("dpad up pressed");
+                //Log.v("PIDLift: gamepad", "dpad up");
             }
-            else if (smartGamepad2.dpad_down) {
+            else if (smartGamepad2.dpad_down) { 
                 robot.outtake.lift.adjustLift(-1, false);
-                telemetry.addLine("dpad down pressed");
-                Log.v("PIDLift: gamepad", "dpad down");
+                //telemetry.addLine("dpad down pressed");
+                //Log.v("PIDLift: gamepad", "dpad down");
             } else if (robot.outtake.lift.isLevelReached()){
                 robot.outtake.lift.stopMotor();
             }
 
-            telemetry.addData("intake pos", intakePosition);
+            //telemetry.addData("intake pos", intakePosition);
             //telemetry.addData("intake motor power", robot.intake.getPower());
 
             //telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
             //telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
             //telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
-            telemetry.addData("slide pos", robot.outtake.getLiftPos());
+            //telemetry.addData("slide pos", robot.outtake.getLiftPos());
             //telemetry.addData("slide power", robot.outtake.getLiftPower());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
             double currentTime = clock.seconds();

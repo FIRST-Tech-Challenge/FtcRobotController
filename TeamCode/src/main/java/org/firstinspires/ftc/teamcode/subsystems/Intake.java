@@ -53,7 +53,7 @@ public class Intake implements Subsystem {
     public void toIntakePos(){
         intakeServoR.setPosition(intakeposR);
         intakeServoL.setPosition(intakeposL);
-        Log.v("intake", "to intake pos");
+        //Log.v("intake", "to intake pos");
     }
     public void toOuttakePos(){
         intakeServoL.setPosition(outtakeposL);
@@ -140,14 +140,11 @@ public class Intake implements Subsystem {
                 toBasePosYield();
             }
         } else if(intakeState == 21) { // Start reverse intake roller motor
-            intakeReverseStartTime = System.currentTimeMillis();
-            intakeMotor.setPower(-1);
-            intakeState = 8;
+            //intakeReverseStartTime = System.currentTimeMillis();
+            intakeMotor.setPower(1);
+            //intakeState = 8;
         } else if(intakeState == 22){
-            if (System.currentTimeMillis() - intakeReverseStartTime >= 2000) {
-                intakeMotor.setPower(0);
-                intakeState = 0;
-            }
+            intakeMotor.setPower(-1);
         }  else if (intakeState == 31) {//Start output pre-load pixel. AUTO ONLY, DO NOT CHANGE
             toIntakePos();
             //intakeMotor.setPower(this.autoOutputPwr);
