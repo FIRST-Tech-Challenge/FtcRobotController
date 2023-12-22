@@ -73,6 +73,7 @@ public class TurningTest extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 500;
     double carWashPower = 1.0;
+    double offset = 0;
 
     private VisionPortal visionPortal;
 
@@ -197,14 +198,24 @@ public class TurningTest extends LinearOpMode {
         }
     }
 
+    public void resetIMU() {
+        sleep(250);
+        offset = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    }
+
+    public double getAngle() {
+        return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - offset;
+    }
+
     public void turn(double degrees) {
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
         } else {
+            resetIMU();
             double TURN_ACCURACY = 5;
             degrees *= -1;
-            double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            double startAngle = getAngle();
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
@@ -216,7 +227,7 @@ public class TurningTest extends LinearOpMode {
                 correctedGoalAngle = (correctedGoalAngle + 180) % 360 - 180;
             }
             while (opModeIsActive() && (difference > TURN_ACCURACY)) {
-                currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+                currentAngle = getAngle();
                 difference = min(abs(initialGoalAngle - currentAngle), min(abs(correctedGoalAngle - currentAngle), abs(thirdGoalAngle - currentAngle)));
                 turnModifier = Math.min(1, (difference + 3) / 45);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
