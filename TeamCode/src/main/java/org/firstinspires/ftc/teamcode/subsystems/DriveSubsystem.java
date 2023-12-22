@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.RobotOpMode.MIN_POWER;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import android.annotation.SuppressLint;
 
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
@@ -18,8 +20,15 @@ public class DriveSubsystem extends SubsystemBase {
     public final ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
+    public DriveSubsystem(HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors) {
+        this(driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_BACK),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT));
+    }
+
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
-                          final DcMotor leftBack, final DcMotor rightBack, final HardwareMap hMap) {
+                          final DcMotor leftBack, final DcMotor rightBack) {
         dbp.createNewTelePacket();
         lF = leftFront;
         rF = rightFront;

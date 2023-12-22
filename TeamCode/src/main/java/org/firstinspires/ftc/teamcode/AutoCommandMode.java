@@ -22,7 +22,7 @@ public class AutoCommandMode extends CommandOpMode {
     @Override
     public void initialize() {
         dbp.createNewTelePacket();
-        HashMap<String, DcMotor> motors = RobotHardwareInitializer.
+        HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> motors = RobotHardwareInitializer.
                 initializeDriveMotors(hardwareMap, this);
 
         Motor lFD;

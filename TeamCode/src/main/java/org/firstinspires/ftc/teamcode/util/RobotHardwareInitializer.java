@@ -14,10 +14,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotOpMode;
-import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The RobotHardwareInitializer abstracts the process of setting the hardware variables in RobotOpMode.
@@ -39,7 +37,17 @@ public class RobotHardwareInitializer {
         opMode.terminateOpModeNow();
     }
 
-    public static HashMap<String, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
+    public enum DriveMotor {
+        LEFT_FRONT,
+        RIGHT_FRONT,
+        LEFT_BACK,
+        RIGHT_BACK,
+        ENCODER_LEFT,
+        ENCODER_RIGHT,
+        ENCODER_BACK;
+    }
+
+    public static HashMap<DriveMotor, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
         DcMotor rightFrontDrive;
         DcMotor leftBackDrive;
@@ -77,15 +85,15 @@ public class RobotHardwareInitializer {
             return null;
         }
 
-        HashMap<String, DcMotor> motorMap = new HashMap<>();
+        HashMap<DriveMotor, DcMotor> motorMap = new HashMap<>();
 
-        motorMap.put("leftFrontDrive", leftFrontDrive);
-        motorMap.put("rightFrontDrive", rightFrontDrive);
-        motorMap.put("leftBackDrive", leftBackDrive);
-        motorMap.put("rightBackDrive", rightBackDrive);
-        motorMap.put("encoderLeft",encoderLeft);
-        motorMap.put("encoderRight",encoderRight);
-        motorMap.put("encoderBack",encoderBack);
+        motorMap.put(DriveMotor.LEFT_FRONT, leftFrontDrive);
+        motorMap.put(DriveMotor.RIGHT_FRONT, rightFrontDrive);
+        motorMap.put(DriveMotor.LEFT_BACK, leftBackDrive);
+        motorMap.put(DriveMotor.RIGHT_BACK, rightBackDrive);
+        motorMap.put(DriveMotor.ENCODER_LEFT, encoderLeft);
+        motorMap.put(DriveMotor.ENCODER_RIGHT, encoderRight);
+        motorMap.put(DriveMotor.ENCODER_BACK, encoderBack);
 
         return motorMap;
     }
