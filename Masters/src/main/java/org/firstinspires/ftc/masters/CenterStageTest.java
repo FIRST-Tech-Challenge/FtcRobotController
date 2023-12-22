@@ -47,6 +47,8 @@ public class CenterStageTest extends LinearOpMode {
 
     boolean clawClosed = true;
     boolean hookEngaged = false;
+    boolean hookPressed = false;
+    boolean presetPushed = false;
 
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
@@ -168,7 +170,6 @@ RB - Hang up
         outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
         outtakeHook.setPosition(CSCons.outtakeHook[0]);
 
-
         waitForStart();
 
         runtime.reset();
@@ -209,12 +210,16 @@ RB - Hang up
                 clawAngle.setPosition(CSCons.clawAngles[2]);
             }
 
-            if (gamepad2.x && !hookEngaged) {
+            if (gamepad2.x && !hookEngaged && !hookPressed) {
                 hookEngaged = true;
+                hookPressed = true;
                 outtakeHook.setPosition(CSCons.outtakeHook[1]);
-            } else if (gamepad2.x && hookEngaged) {
+            } else if (gamepad2.x && hookEngaged && !hookPressed) {
                 hookEngaged = false;
+                hookPressed = true;
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
+            } else {
+                hookPressed = false;
             }
 
             if (gamepad2.left_stick_y > 0.2) {
@@ -234,11 +239,11 @@ RB - Hang up
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 backSlides.setPower(0.7);
             }
-            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 2500) {
+            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 2700) {
                 backSlidesTargetPos= backSlidesTargetPos+25;
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.7);
+                backSlides.setPower(0.8);
             }
 
             if (gamepad2.right_bumper){
@@ -246,17 +251,24 @@ RB - Hang up
                 presetBackSlidesTargetPos = 0;
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.7);
+                backSlides.setPower(0.8);
             }
-            if (gamepad2.left_bumper){
+            if (gamepad2.left_bumper &&!presetPushed){
                 if (presetBackSlidesTargetPos<2) {
                     presetBackSlidesTargetPos++;
                 }
+                presetPushed = true;
                 backSlidesTargetPos = CSCons.backSlidesPos[presetBackSlidesTargetPos];
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.7);
+                backSlides.setPower(0.8);
                 //sleep(300);
+            } else {
+                presetPushed = false;
+            }
+
+            if (gamepad1.a){
+                clawServo.setPosition(CSCons.claw[2]);
             }
 
                     if (Math.abs(y) < 0.2) {
