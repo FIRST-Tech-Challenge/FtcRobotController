@@ -29,7 +29,7 @@ public class RobotVision {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        Log.v("vision", "RobotVision constructed. align_right = " + align_right);
+        //Log.v("vision", "RobotVision constructed. align_right = " + align_right);
         cdPipeline = new ColorDetectionPipeline(align_right);
         webcam.setPipeline(cdPipeline);
 

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Utilities;
 @TeleOp
 public class CameraTest extends LinearOpMode {
     public static boolean IS_RED = false;
-    public static boolean ALIGN_RIGHT = false;
+    public static boolean ALIGN_RIGHT = true;
     @Override
     public void runOpMode() throws InterruptedException {
         Utilities.getSharedUtility().initialize(this);

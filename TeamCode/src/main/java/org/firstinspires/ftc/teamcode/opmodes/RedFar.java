@@ -61,40 +61,42 @@ public class RedFar extends LinearOpMode {
         double startTime, currentTime;
 
         // Start
+        telemetry.addData("Is parking center?: ", parkCenter);
         waitForStart();
         startTime = clock.seconds();
         if (isStopRequested()) return;
-        Log.v("AUTODEBUG", "0: start");
+        //Log.v("AUTODEBUG", "0: start");
         elementPos = rvis.getTeamPropOrientation(IS_RED, ALIGN_RIGHT);
-        Log.v("AUTODEBUG", "1: elementPos = " + elementPos);
-        telemetry.addData("Element pos", elementPos);
+        //Log.v("AUTODEBUG", "1: elementPos = " + elementPos);
+        //telemetry.addData("Element pos", elementPos);
+        telemetry.addData("Is parking center?: ", parkCenter);
 
 
         if (elementPos == 1) {//left
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(8, 10), Math.toRadians(-180))
+                            .splineTo(new Vector2d(11+4, 10), Math.toRadians(-180))
                             .build()
             ));
-            Log.v("AUTODEBUG", "2: dump purple");
+            //Log.v("AUTODEBUG", "2: dump purple");
             //dump purple pixel
             robot.runCommand(dropIntakePreload);
-            Log.v("AUTODEBUG", "3: go to backdrop");
+            //Log.v("AUTODEBUG", "3: go to backdrop");
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
                             .turn(Math.toRadians(45), 1,0.5)
-                            .splineTo(new Vector2d(-4, -2), Math.toRadians(-90))
-                            .splineTo(new Vector2d(-4, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(26, -85), Math.toRadians(-90)) // go to backdrop
+                            .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
+                            .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
+                            .splineTo(new Vector2d(31, -85), Math.toRadians(-90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
-            Log.v("AUTODEBUG", "4: dump yellow");
+            //Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
             robot.runCommand(outCmd);
-            Log.v("AUTODEBUG", "5: park");
+            //Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
@@ -124,9 +126,9 @@ public class RedFar extends LinearOpMode {
             // go to back drop
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                            .splineTo(new Vector2d(-4, -2), Math.toRadians(-90))
-                            .splineTo(new Vector2d(-4, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(20, -86), Math.toRadians(-90))
+                            .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
+                            .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
+                            .splineTo(new Vector2d(22, -84), Math.toRadians(-90))
                             .build()
             ));
             //dump yellow pixel
@@ -152,28 +154,28 @@ public class RedFar extends LinearOpMode {
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(21, 7), Math.toRadians(90))
+                            .splineTo(new Vector2d(24+4, 7), Math.toRadians(90))
                             .back(6)
                             .build()
             ));
-            Log.v("AUTODEBUG", "2: dump purple");
+            //Log.v("AUTODEBUG", "2: dump purple");
             //dump purple pixel
             robot.runCommand(dropIntakePreload);
-            Log.v("AUTODEBUG", "3: go to backdrop");
+            //Log.v("AUTODEBUG", "3: go to backdrop");
 
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
                             .turn(Math.toRadians(45), 1,0.5)
-                            .splineTo(new Vector2d(-4, -2), Math.toRadians(-90))
-                            .splineTo(new Vector2d(-4, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(14, -85), Math.toRadians(-90)) // go to backdrop
+                            .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
+                            .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
+                            .splineTo(new Vector2d(16, -84), Math.toRadians(-90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
-            Log.v("AUTODEBUG", "4: dump yellow");
+            //Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
             robot.runCommand(outCmd);
-            Log.v("AUTODEBUG", "5: park");
+            //Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(

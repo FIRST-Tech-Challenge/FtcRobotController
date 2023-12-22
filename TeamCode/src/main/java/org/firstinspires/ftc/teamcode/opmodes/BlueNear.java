@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.util.Utilities;
 @Config
 @Autonomous
 public class BlueNear extends LinearOpMode {
-    public static boolean parkCenter = true; // Park center of field
+    public static boolean parkCenter = false; // Park center of field
     public static boolean IS_RED = false;     // IS_RED side?
     public static boolean ALIGN_RIGHT = false; // Align 1 inch from tile right side
     public static double POS1_SPL1_X = 23;
@@ -37,7 +37,7 @@ public class BlueNear extends LinearOpMode {
     public static double TAG_DIST = 6;
     public static double PARK_X_CORNER = 0;
     public static double PARK_X_CENTER = 53;
-    public static double PARK_Y = 35;
+    public static double PARK_Y = 35.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,19 +61,21 @@ public class BlueNear extends LinearOpMode {
         double startTime, currentTime;
 
         // Start
+        telemetry.addData("Is parking center?: ", parkCenter);
         waitForStart();
         startTime = clock.seconds();
         if (isStopRequested()) return;
-        Log.v("AUTODEBUG", "0: start");
+        //Log.v("AUTODEBUG", "0: start");
         elementPos = rvis.getTeamPropOrientation(IS_RED, ALIGN_RIGHT);
         //Log.v("AUTODEBUG", "1: elementPos = %0d");
-        telemetry.addData("Element pos", elementPos);
+        //telemetry.addData("Element pos", elementPos);
+        telemetry.addData("Is parking center?: ", parkCenter);
 
 
         if (elementPos == 1) {//left
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(22, 24), FACE_BACKDROP_HEADERING)
+                            .splineTo(new Vector2d(27, 24), FACE_BACKDROP_HEADERING)//22
                             .build()
             ));
             //dump purple pixel
@@ -82,12 +84,12 @@ public class BlueNear extends LinearOpMode {
             // go to back drop
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
-                            .lineTo(new Vector2d(22, PARK_Y))
+                            .lineTo(new Vector2d(20, PARK_Y))
                             .build()
             ));
             //dump yellow pixel
             robot.runCommand(outCmd);
-            Log.v("AUTODEBUG", "10: dump done");
+            //Log.v("AUTODEBUG", "10: dump done");
 
             // Park
             if(!parkCenter){
@@ -109,7 +111,7 @@ public class BlueNear extends LinearOpMode {
         } else if (elementPos == 2) { //middle
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(new Pose2d())
-                            .splineTo(new Vector2d(39, 22), FACE_BACKDROP_HEADERING)
+                            .splineTo(new Vector2d(39, 21), FACE_BACKDROP_HEADERING)
                             .build()
             ));
             //dump purple pixel
@@ -119,7 +121,7 @@ public class BlueNear extends LinearOpMode {
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
                             //.splineTo(new Vector2d(24, 35), FACE_BACKDROP_HEADERING)
-                            .lineTo(new Vector2d(24, 35))
+                            .lineTo(new Vector2d(25, 37)) //24 previous
                             .build()
             ));
             //dump yellow pixel
@@ -143,8 +145,8 @@ public class BlueNear extends LinearOpMode {
         } else {// right
             robot.runCommand(drivetrain.followTrajectorySequence(
                     drivetrain.trajectorySequenceBuilder(new Pose2d())
-                            .splineTo(new Vector2d(22, 6), FACE_BACKDROP_HEADERING)
-                            .lineTo(new Vector2d(22, 2))
+                            .splineTo(new Vector2d(25, 6), FACE_BACKDROP_HEADERING)
+                            .lineTo(new Vector2d(26, 2))
                             .build()
             ));
             //dump purple pixel
@@ -154,7 +156,7 @@ public class BlueNear extends LinearOpMode {
             robot.runCommand(drivetrain.followTrajectory(
                     drivetrain.trajectoryBuilder(drivetrain.getPoseEstimate())
                             //.splineTo(new Vector2d(32, PARK_Y), FACE_BACKDROP_HEADERING)
-                            .lineTo(new Vector2d(33, PARK_Y))
+                            .lineTo(new Vector2d(34, 34))
                             .build()
             ));
             //dump yellow pixel
