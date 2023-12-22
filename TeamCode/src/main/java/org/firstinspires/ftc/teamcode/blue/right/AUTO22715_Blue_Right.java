@@ -1,17 +1,18 @@
-package org.firstinspires.ftc.teamcode.blue;
+package org.firstinspires.ftc.teamcode.blue.right;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "AUTO22715_Blue (Blue)")
+import org.firstinspires.ftc.teamcode.blue.SensorHuskyLens_Blue;
 
-public class AUTO22715_Blue extends LinearOpMode {
+@Autonomous(name = "AUTO22715_Blue_Right (Blue Right)")
+public class AUTO22715_Blue_Right extends LinearOpMode {
     SensorHuskyLens_Blue huskyLens = new SensorHuskyLens_Blue();
     SensorHuskyLens_Blue.TagDirection direction = SensorHuskyLens_Blue.TagDirection.UNKOWN;
 
-    AUTOBLleft_Blue left = new AUTOBLleft_Blue() ;
-    AUTOBLmid_Blue middle = new AUTOBLmid_Blue();
-    AUTOBLright_Blue right = new AUTOBLright_Blue();
+    AUTOBLleft_Blue_Right left = new AUTOBLleft_Blue_Right() ;
+    AUTOBLmid_Blue_Right middle = new AUTOBLmid_Blue_Right();
+    AUTOBLright_Blue_Right right = new AUTOBLright_Blue_Right();
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */

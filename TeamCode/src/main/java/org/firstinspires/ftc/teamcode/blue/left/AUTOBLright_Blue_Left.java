@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blue;
+package org.firstinspires.ftc.teamcode.blue.left;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class AUTOBLmid_Blue {
+public class AUTOBLright_Blue_Left {
 
     private Servo leftclaw;
     private Servo rightclaw;
@@ -26,9 +26,9 @@ public class AUTOBLmid_Blue {
     protected HardwareMap hardwareMap = null;
     protected Telemetry telemetry;
 
-    AUTO22715_Blue mainLoopClass;
+    AUTO22715_Blue_Left mainLoopClass;
 
-    public void init(AUTO22715_Blue main){
+    public void init(AUTO22715_Blue_Left main){
         mainLoopClass = main;
         hardwareMap = mainLoopClass.hardwareMap;
         telemetry = mainLoopClass.telemetry;
@@ -82,27 +82,27 @@ public class AUTOBLmid_Blue {
         rightmotor2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
     public void runOpMode() {
         waitForStart();
         forward_1();
+        right_turn();
+        forward_2();
+        sleep(1000);
         rightclaw.setPosition(0.3);
         sleep(1000);
         black1();
         rightclaw.setPosition(0.6);
         sleep(1000);
-        right_turn();
-        sleep(1000);
         black2();
         turnleft.setPosition(1);
         turnright.setPosition(1);
         sleep(1000);
-        upleft.setPower(-0.65);
-        upright.setPower(0.65);
-        sleep(1000);
+        upleft.setPower(-0.8);
+        upright.setPower(0.8);
+        sleep(800);
         flip.setPosition(1);
         sleep(1000);
         leftclaw.setPosition(1);
@@ -150,7 +150,7 @@ public class AUTOBLmid_Blue {
      * Describe this function...
      */
     private void forward_1() {
-        forward_encoder((1000 / 53) * 77, (1000 / 53) * 77, (1000 / 53) * 77, (1000 / 53) * 77, 0.5);
+        forward_encoder((1000 / 53) * 75, (1000 / 53) * 75, (1000 / 53) * 75, (1000 / 53) * 75, 0.5);
     }
 
     /**
@@ -170,8 +170,15 @@ public class AUTOBLmid_Blue {
     /**
      * Describe this function...
      */
+    private void forward_2() {
+        forward_encoder((1000 / 53) * 23, (1000 / 53) * 23, (1000 / 53) * 23, (1000 / 53) * 23, 0.5);
+    }
+
+    /**
+     * Describe this function...
+     */
     private void black2() {
-        forward_encoder(-((1000 / 53) * 87), -((1000 / 53) * 87), -((1000 / 53) * 87), -((1000 / 53) * 87), 0.5);
+        forward_encoder(-((1000 / 53) * 83), -((1000 / 53) * 83), -((1000 / 53) * 83), -((1000 / 53) * 83), 0.5);
     }
 
     /**

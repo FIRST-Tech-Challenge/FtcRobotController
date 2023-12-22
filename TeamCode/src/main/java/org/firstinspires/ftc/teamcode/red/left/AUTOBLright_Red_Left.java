@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.red;
+package org.firstinspires.ftc.teamcode.red.left;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blue.AUTO22715_Blue;
 
-public class AUTOBLright_Red {
+public class AUTOBLright_Red_Left {
 
     private Servo leftclaw;
     private Servo rightclaw;
@@ -27,9 +26,9 @@ public class AUTOBLright_Red {
     protected HardwareMap hardwareMap = null;
     protected Telemetry telemetry;
 
-    AUTO22715_Red mainLoopClass;
+    AUTO22715_Red_Left mainLoopClass;
 
-    public void init(AUTO22715_Red main){
+    public void init(AUTO22715_Red_Left main){
         mainLoopClass = main;
         hardwareMap = mainLoopClass.hardwareMap;
         telemetry = mainLoopClass.telemetry;

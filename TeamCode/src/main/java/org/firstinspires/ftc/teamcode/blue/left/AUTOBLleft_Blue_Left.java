@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.blue;
+package org.firstinspires.ftc.teamcode.blue.left;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class AUTOBLleft_Blue {
+public class AUTOBLleft_Blue_Left {
 
     private Servo leftclaw;
     private Servo rightclaw;
@@ -27,7 +27,7 @@ public class AUTOBLleft_Blue {
     protected HardwareMap hardwareMap = null;
     protected Telemetry telemetry;
 
-    AUTO22715_Blue mainLoopClass;
+    AUTO22715_Blue_Left mainLoopClass;
 
     private void initBeforeOpMode(){
         leftclaw = hardwareMap.get(Servo.class, "left claw");
@@ -59,7 +59,7 @@ public class AUTOBLleft_Blue {
         rightmotor2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void init(AUTO22715_Blue main){
+    public void init(AUTO22715_Blue_Left main){
         mainLoopClass = main;
         hardwareMap = mainLoopClass.hardwareMap;
         telemetry = mainLoopClass.telemetry;
