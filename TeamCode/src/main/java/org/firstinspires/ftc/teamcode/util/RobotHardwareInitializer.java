@@ -7,17 +7,88 @@ import static org.firstinspires.ftc.teamcode.RobotOpMode.WARNING;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotOpMode;
+import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The RobotHardwareInitializer abstracts the process of setting the hardware variables in RobotOpMode.
  * Using this class helps to increase readability inside of the RobotOpMode class.
  */
 public class RobotHardwareInitializer {
+
+    private static void Error(Exception e, RobotOpMode robot) {
+        robot.log("FATAL ERROR", "Could not initialize drive motors: "+e.getMessage());
+        robot.sendTelemetryPacket(true);
+        robot.terminateOpModeNow();
+    }
+
+    private static void Error(Exception e, OpMode opMode) {
+        FTCDashboardPackets dbp = new FTCDashboardPackets("RobotHardwareInit");
+        dbp.createNewTelePacket();
+
+        dbp.error(e, true, false);
+        opMode.terminateOpModeNow();
+    }
+
+    public static HashMap<String, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
+        DcMotor leftFrontDrive;
+        DcMotor rightFrontDrive;
+        DcMotor leftBackDrive;
+        DcMotor rightBackDrive;
+        try {
+            leftFrontDrive = hMap.get(DcMotor.class, "fl_drv");
+            rightFrontDrive = hMap.get(DcMotor.class, "fr_drv");
+            leftBackDrive = hMap.get(DcMotor.class, "bl_drv");
+            rightBackDrive = hMap.get(DcMotor.class, "br_drv");
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        } catch (Exception e) {
+            Error(e, opMode);
+            return null;
+        }
+
+        DcMotor encoderLeft;
+        DcMotor encoderRight;
+        DcMotor encoderBack;
+
+        try {
+            encoderLeft = hMap.dcMotor.get("encoderLeft");
+            encoderRight = hMap.dcMotor.get("encoderRight");
+            encoderBack = hMap.dcMotor.get("encoderBack");
+        } catch (Exception e) {
+            Error(e, opMode);
+            return null;
+        }
+
+        HashMap<String, DcMotor> motorMap = new HashMap<>();
+
+        motorMap.put("leftFrontDrive", leftFrontDrive);
+        motorMap.put("rightFrontDrive", rightFrontDrive);
+        motorMap.put("leftBackDrive", leftBackDrive);
+        motorMap.put("rightBackDrive", rightBackDrive);
+        motorMap.put("encoderLeft",encoderLeft);
+        motorMap.put("encoderRight",encoderRight);
+        motorMap.put("encoderBack",encoderBack);
+
+        return motorMap;
+    }
 
     public static void initializeDriveMotors(RobotOpMode robot) {
         try {
@@ -35,10 +106,8 @@ public class RobotHardwareInitializer {
             robot.leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             robot.rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             robot.rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        } catch(Exception e) {
-            robot.log("FATAL ERROR", "Could not initialize drive motors: "+e.getMessage());
-            robot.sendTelemetryPacket(true);
-            robot.terminateOpModeNow();
+        } catch (Exception e) {
+            Error(e, robot);
         }
 
         try {
@@ -50,10 +119,8 @@ public class RobotHardwareInitializer {
             robot.encoderLeft = robot.hardwareMap.dcMotor.get("encoderLeft");
             robot.encoderRight = robot.hardwareMap.dcMotor.get("encoderRight");
             robot.encoderBack = robot.hardwareMap.dcMotor.get("encoderBack");
-        } catch(Exception e) {
-            robot.log("FATAL ERROR", "Could not initialize odometry: "+e.getMessage());
-            robot.sendTelemetryPacket(true);
-            robot.terminateOpModeNow();
+        } catch (Exception e) {
+            Error(e, robot);
         }
     }
 

@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.arcrobotics.ftclib.command.OdometrySubsystem;
+import com.arcrobotics.ftclib.command.PurePursuitCommand;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.Waypoint;
-import com.arcrobotics.ftclib.command.PurePursuitCommand;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.FTCDashboardPackets;
 
 import java.util.Arrays;
 
@@ -38,6 +35,8 @@ public class AutonomousAwareness {
     public static Motor fL, fR, bL, bR;
 
     public Path m_path = new Path();
+
+    private final Boolean usePurePursuit;
 
     public enum StartingPosition {
         RED_LEFT, 
@@ -102,9 +101,9 @@ public class AutonomousAwareness {
     /** 
      * Constructor for the AutonomousAwareness class
      * @param startingPosition the starting position of the robot
-     * @param useDistanceSensor whether or not to use the distance sensor for more accurate positioning
+     * @param _usePurePursuit whether or not to use a pure pursuit command
      */
-    public AutonomousAwareness(StartingPosition startingPosition, boolean useDistanceSensor,
+    public AutonomousAwareness(StartingPosition startingPosition, boolean _usePurePursuit,
                                Motor fL, Motor fR, Motor bL, Motor bR,
                                DcMotor encodeLeft, DcMotor encodeRight, DcMotor encodeBack) {
         // Init motors
@@ -119,12 +118,18 @@ public class AutonomousAwareness {
             return;
         }
 
+        usePurePursuit = _usePurePursuit;
+
         initOdometry(encodeLeft, encodeRight, encodeBack);
     }
 
     public void addToPath(Waypoint waypoint) {
         dbp.debug("Adding waypoint to path", true, false);
         m_path.add(waypoint);
+    }
+
+    public PurePursuitCommand createNewPurePursuitCommand() {
+        return null;
     }
 
     public void initPath() {

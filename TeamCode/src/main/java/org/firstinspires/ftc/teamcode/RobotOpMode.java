@@ -2,16 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import android.annotation.SuppressLint;
 
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.Locale;
@@ -22,10 +21,10 @@ public abstract class RobotOpMode extends OpMode {
     /**
      * Used in the endTime parameter in moveRobot()
      */
-    public static long STOP_NEVER = Long.MAX_VALUE;
-    public static float MIN_POWER = 0;
-    public static float MAX_POWER = 1;
-    public static float MAX_ARM_POWER = 0.5f;
+    public final static long STOP_NEVER = Long.MAX_VALUE;
+    public final static float MIN_POWER = 0;
+    public final static float MAX_POWER = 1;
+    public final static float MAX_ARM_POWER = 0.5f;
 
     // Hardware variables
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
