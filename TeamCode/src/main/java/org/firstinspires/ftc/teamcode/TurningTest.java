@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.lang.Math.signum;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -197,22 +198,22 @@ public class TurningTest extends LinearOpMode {
     }
 
     public void turn(double degrees) {
-        double TURN_ACCURACY = 5;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
         } else {
+            double TURN_ACCURACY = 5;
             degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
-            double thirdGoalAngle = initialGoalAngle - abs(initialGoalAngle) / initialGoalAngle * 360;
+            double thirdGoalAngle = (initialGoalAngle + 180) % 360 - 180;
             double difference = 999;
             double turnModifier;
             double turnPower;
             if (abs(initialGoalAngle) > 180) {
-                correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
+                correctedGoalAngle = (correctedGoalAngle + 180) % 360 - 180;
             }
             while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -227,6 +228,7 @@ public class TurningTest extends LinearOpMode {
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
                 telemetry.addData("Angle", currentAngle);
+                telemetry.addData("Turn Modifier", turnModifier);
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }

@@ -5,7 +5,6 @@ import static java.lang.Math.min;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -160,8 +159,6 @@ public abstract class CSMethods extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() && (runtime.seconds() < duration)) {
                 // Display it for the driver.
-
-
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
@@ -416,7 +413,7 @@ public abstract class CSMethods extends LinearOpMode {
         return x;
     }   // end method detectProp()
 
-    public double findPos(boolean isRed) {
+    public void findPos() {
         double x = detectProp();
         if (x > boundaries[0] && x < boundaries[1]){
             pos = 2; // Middle
@@ -428,7 +425,6 @@ public abstract class CSMethods extends LinearOpMode {
         }
         telemetry.addData("Position", pos);
         telemetry.update();
-        return pos;
     }
 
     public void except(Exception e) {

@@ -48,7 +48,7 @@ public class CSAutoRedBack extends CSMethods {
 
         //dropCarWash();
         sleep(2000); // Wait to allow camera initialization (for detecting team prop)
-        findPos(isRed);
+        findPos();
         sleep(1000);
         drive(-20);
         sleep(1000);
