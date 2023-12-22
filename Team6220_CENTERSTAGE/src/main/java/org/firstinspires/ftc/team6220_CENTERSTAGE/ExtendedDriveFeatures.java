@@ -40,11 +40,12 @@ public class ExtendedDriveFeatures {
         return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
     }
 
-    public boolean moveSuspensionArmPreset(int targetPos) {
+    // PLACEHOLDER UNTIL WE HAVE THE ARM
+    /* public boolean moveSuspensionArmPreset(int targetPos) {
         double power = (targetPos - this.drive.motSuspension.getCurrentPosition()) * Constants.SLIDE_P_GAIN;
         this.drive.motSuspension.setPower(clamp(power, -Constants.AUTO_SLIDES_MAX_SPEED, Constants.AUTO_SLIDES_MAX_SPEED));
         return Math.abs(power) >= Constants.AUTO_SLIDES_PRESET_TOLERANCE;
-    }
+    } */
 
     // clamps value between a minimum and maximum value
     private static double clamp(double value, double min, double max) {
