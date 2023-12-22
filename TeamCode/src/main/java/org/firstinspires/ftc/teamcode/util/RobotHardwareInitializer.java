@@ -132,6 +132,15 @@ public class RobotHardwareInitializer {
         }
     }
 
+    public static DcMotor initializeArm(final OpMode opMode) {
+        try {
+            return opMode.hardwareMap.get(DcMotor.class,  "arm");
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
     public static void initializeArm(RobotOpMode robot) {
         try {
             robot.armMotor = robot.hardwareMap.get(DcMotor.class, "arm");
