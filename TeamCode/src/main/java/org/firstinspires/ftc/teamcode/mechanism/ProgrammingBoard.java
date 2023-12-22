@@ -17,6 +17,7 @@ public class ProgrammingBoard {
     private static DcMotor rightBackMotor_2;
     private static DcMotor rightFrontMotor_3;
     private static DcMotor intakeMotor;
+    private static DcMotor armMotor;
 
     // Defines the motors.
 
@@ -48,6 +49,10 @@ public class ProgrammingBoard {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        armMotor = hwMap.get(DcMotor.class, "armMotor");
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // intakeServo = hwMap.get(CRServo.class, "intakeServo");
 
     }
@@ -67,6 +72,8 @@ public class ProgrammingBoard {
 //        intakeServo.setPower(servoPower);
 //    }
 //    Used for testing the servo originally.
+
+    public void setArmPower(double armPower) {armMotor.setPower(armPower);}
 
 
 
