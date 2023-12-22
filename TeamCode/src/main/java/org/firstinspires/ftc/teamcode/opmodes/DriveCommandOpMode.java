@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
@@ -17,8 +18,9 @@ import java.util.function.DoubleSupplier;
 public class DriveCommandOpMode extends CommandOpMode {
 
     DriveSubsystem driveSubsystem;
-    DoubleSupplier axial, lateral, yaw;
     DefaultDrive driveCommand;
+
+    ArmSubsystem armSubsystem;
 
     @Override
     public void initialize() {
@@ -26,12 +28,13 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
         driveSubsystem = new DriveSubsystem(driveMotors);
-        axial = () -> -driverController.getLeftY();
-        lateral = () -> driverController.getLeftX();
-        yaw = () -> driverController.getRightX();
-        driveCommand = new DefaultDrive(driveSubsystem, axial, lateral, yaw);
+        driveCommand = new DefaultDrive(driveSubsystem,
+                () -> -driverController.getLeftY(),
+                () -> driverController.getLeftX(),
+                () -> driverController.getRightX());
 
         register(driveSubsystem);
-        driveSubsystem.setDefaultCommand(driveCommand);
+        schedule(driveCommand);
+        //driveSubsystem.setDefaultCommand(driveCommand);
     }
 }

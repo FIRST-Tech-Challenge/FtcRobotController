@@ -29,4 +29,9 @@ public class DefaultDrive extends CommandBase {
                 Integer.MAX_VALUE
         );
     }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
