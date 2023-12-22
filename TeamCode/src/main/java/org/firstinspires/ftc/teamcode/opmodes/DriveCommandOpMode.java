@@ -32,6 +32,6 @@ public class DriveCommandOpMode extends CommandOpMode {
         driveCommand = new DefaultDrive(driveSubsystem, axial, lateral, yaw);
 
         register(driveSubsystem);
-        driveSubsystem.setDefaultCommand(driveCommand);
+        schedule(driveCommand);
     }
 }

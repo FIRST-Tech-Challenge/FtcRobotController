@@ -19,10 +19,13 @@ public class RobotCommandMode extends CommandOpMode {
     GamepadEx driverOp = new GamepadEx(gamepad1);
     @Override
     public void initialize() {
+        /*
         HashMap<String, DcMotor> map = initializeDriveMotors(hardwareMap, this);
         schedule(new DefaultDrive(new DriveSubsystem(map.get("leftFrontDrive"),
                 map.get("rightFrontDrive"), map.get("leftBackDrive"), map.get("rightBackDrive"), hardwareMap)));
 
+
+         */
     }
 
     @Override

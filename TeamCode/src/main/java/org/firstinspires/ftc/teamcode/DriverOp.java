@@ -40,8 +40,8 @@ public class DriverOp extends RobotOpMode {
         }
 
         double axial   = -forwardBackward.getValue(gamepad);
-        double lateral =  strafeLeftRight.getValue(gamepad);
-        double yaw     =  rotateLeftRight.getValue(gamepad);
+        double lateral =  -strafeLeftRight.getValue(gamepad);
+        double yaw     =  -rotateLeftRight.getValue(gamepad);
         moveRobot(axial, lateral, yaw, Long.MAX_VALUE);
     }
 
