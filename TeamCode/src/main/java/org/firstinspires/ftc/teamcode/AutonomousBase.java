@@ -165,7 +165,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     // Create a time stamped folder in
     public void createAutoStorageFolder( boolean isBlue, boolean isLeft ) {
         // Create a subdirectory based on DATE
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+//      String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         storageDir = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
 
@@ -182,7 +182,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                 storageDir += "//red_right//";
             }
         }
-        storageDir += timeString;
+		// If we save more than one file per Autonomous run, use both DATE & TIME
+//      storageDir += timeString;
 
         // Create the directory structure to store the autonomous image used to start auto.
         File baseDir = new File(storageDir);

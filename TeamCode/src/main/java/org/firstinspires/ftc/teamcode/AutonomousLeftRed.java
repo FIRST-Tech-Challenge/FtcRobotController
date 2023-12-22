@@ -119,7 +119,7 @@ public class AutonomousLeftRed extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             pixelNumber = 0;
-            createAutoStorageFolder(redAlliance, true);
+            createAutoStorageFolder(redAlliance, pipelineBack.leftSide);
             pipelineBack.setStorageFolder(storageDir);
             spikeMark = pipelineBack.spikeMark;
             pipelineBack.saveSpikeMarkAutoImage();
@@ -242,4 +242,4 @@ public class AutonomousLeftRed extends AutonomousBase {
 
     } // mainAutonomous
 
-} /* AutonomousRightBlue */
+} /* AutonomousLeftRed */
