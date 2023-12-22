@@ -1,35 +1,32 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/java
+// .devcontainer/devcontainer.json
 {
-	"name": "Java",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/java:1-11",
+    // Name of the environment
+    "name":"FTC-Spudnik",
 
-	"features": {
-		"ghcr.io/devcontainers/features/java:1": {
-			"installGradle": true,
-			"version": "11",
-			"jdkDistro": "ms",
-			"gradleVersion": "7.2",
-			"mavenVersion": "latest",
-			"antVersion": "latest"
-		},
-		"ghcr.io/devcontainers-contrib/features/gradle-sdkman:2": {
-			"version": "latest",
-			"jdkVersion": "11",
-			"jdkDistro": "ms"
-		}
-	}
+    // Set the Docker image to use
+    // I will explain this below
+    "image":"ewpratten/frc_devcontainer:2020.3.2",
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+    // Set any default VSCode settings here
+    "settings": {
+        "terminal.integrated.shell.linux":"/bin/bash"
+    },
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
+    // Tell VSCode where to find the workspace directory
+    "workspaceMount": "source=${localWorkspaceFolder},target=/root/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/root/workspace",
 
-	// Configure tool-specific properties.
-	// "customizations": {},
+    // Allow the host and container docker daemons to communicate
+    "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind" ],
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+    // Any extensions you want can go here
+    "extensions": [
+        // Needed extensions for using WPILib
+        "redhat.java",
+        "ms-vscode.cpptools",
+        "vscjava.vscode-java-pack",
+
+        // The WPILib extension itself
+        "wpilibsuite.vscode-wpilib"
+    ]
 }
