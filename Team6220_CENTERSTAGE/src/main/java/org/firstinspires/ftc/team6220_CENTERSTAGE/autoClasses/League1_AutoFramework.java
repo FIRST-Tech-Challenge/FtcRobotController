@@ -41,7 +41,7 @@ abstract public class League1_AutoFramework extends LinearOpMode {
 
             case SHORT:
 
-                driveInches(0, 24 * 2); // drive forward to parking spot
+                driveInches(0, -24 * 2); // drive forward to parking spot
 
                 break;
 
@@ -49,8 +49,8 @@ abstract public class League1_AutoFramework extends LinearOpMode {
 
                 sleep(15000); // wait for 15 seconds so alliance an finish
 
-                driveInches(-3 * strafeSignFlip, 0); // strafe away from the wall 3 inches
-                driveInches(0, 24 * 4); // drive forward to parking spot
+                driveInches(3 * strafeSignFlip, 0); // strafe away from the wall 3 inches
+                driveInches(0, -24 * 4); // drive forward to parking spot
 
                 break;
         }

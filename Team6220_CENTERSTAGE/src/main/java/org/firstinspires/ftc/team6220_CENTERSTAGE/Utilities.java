@@ -3,6 +3,9 @@ package org.firstinspires.ftc.team6220_CENTERSTAGE;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
+/*
+This holds some utility methods that we use in teleop and auto.
+ */
 public class Utilities {
 
     /**

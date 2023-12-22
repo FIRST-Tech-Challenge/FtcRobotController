@@ -20,7 +20,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+This class is used in processing the camera feed to find colors during autonomous.
+ */
 public class ColorDetection
 {
     // Initializes members
