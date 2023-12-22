@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Vslidetest")
 public class verticalSlideTest extends LinearOpMode {
@@ -12,6 +13,18 @@ public class verticalSlideTest extends LinearOpMode {
 
         DcMotor backSlides = hardwareMap.dcMotor.get("backSlides");
 
+        Servo outtakeRotation = hardwareMap.servo.get("outtakeRotation");
+        Servo outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
+        Servo outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
+        Servo outtakeHook = hardwareMap.servo.get("outtakeHook");
+
+        backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
+        outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
+        outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -19,9 +32,9 @@ public class verticalSlideTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.dpad_up) {
-                backSlides.setPower(.8);
+                backSlides.setPower(1);
             } else if (gamepad1.dpad_down) {
-                backSlides.setPower(-.8 );
+                backSlides.setPower(-.8);
             } else {
                 backSlides.setPower(0);
             }

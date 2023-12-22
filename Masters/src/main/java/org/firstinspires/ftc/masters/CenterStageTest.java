@@ -155,6 +155,8 @@ RB - Hang up
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
@@ -187,10 +189,10 @@ RB - Hang up
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
-            if (gamepad2.a && clawClosed == true) {
+            if (gamepad2.b && clawClosed == true) {
                 clawClosed = false;
                 clawServo.setPosition(CSCons.claw[0]);
-            } else if (gamepad2.b && clawClosed == false) {
+            } else if (gamepad2.a && clawClosed == false) {
                 clawClosed = true;
                 clawServo.setPosition(CSCons.claw[1]);
             }
@@ -239,7 +241,7 @@ RB - Hang up
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 backSlides.setPower(0.7);
             }
-            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 2700) {
+            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 3000) {
                 backSlidesTargetPos= backSlidesTargetPos+25;
                 backSlides.setTargetPosition(backSlidesTargetPos);
                 backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
