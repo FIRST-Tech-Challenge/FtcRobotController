@@ -66,7 +66,7 @@ public class AUTO22715_Red_Left extends LinearOpMode {
                 direction = huskyLens.getTagDirection();
                 telemetry.addData(">>>", direction);
                 telemetry.update();
-            } while(direction != SensorHuskyLens_Red.TagDirection.UNKOWN);
+            } while(direction == SensorHuskyLens_Red.TagDirection.UNKOWN);
 
             if(direction == SensorHuskyLens_Red.TagDirection.LEFT){
                 left.runOpMode();
