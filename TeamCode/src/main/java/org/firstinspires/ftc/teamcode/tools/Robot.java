@@ -168,6 +168,7 @@ public class Robot {
         // intaking pixels
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
+                        .servoRunToPosition(clawGrip, clawOpen)
                         .startMotor(intakeMotor, 0.15));
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
@@ -179,6 +180,15 @@ public class Robot {
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
                         .stopMotor(lift.liftMotor)
                         .stopMotor(intakeMotor));
+
+        holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
+                new ActionBuilder()
+                        .startMotor(lift.liftMotor, -1)
+                        .waitForTouchSensorPressed(liftTouchDown)
+                        .stopMotor(lift.liftMotor)
+                        .resetMotorEncoder(lift.liftMotor)
+                        .servoRunToPosition(clawGrip, clawOpen)
+                        .startMotor(intakeMotor, 0.15));
 
         // rejecting pixels
         holdingPixels.addTransitionTo(idle, handlerButtonLeftTriggerPressed,
