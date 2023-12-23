@@ -134,7 +134,7 @@ public final class MecanumDrive {
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
             // TODO: reverse encoders if needed
-            // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
             lastLeftFrontPos = leftFront.getPositionAndVelocity().position;
             lastLeftBackPos = leftBack.getPositionAndVelocity().position;

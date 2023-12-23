@@ -150,7 +150,7 @@ public final class TankDrive {
             }
 
             // TODO: reverse encoder directions if needed
-            // leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+            //   leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
 
             for (Encoder e : leftEncs) {
                 lastLeftPos += e.getPositionAndVelocity().position;
