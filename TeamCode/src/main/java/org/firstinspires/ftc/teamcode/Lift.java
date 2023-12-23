@@ -8,7 +8,7 @@ public class Lift {
 
     public final int liftEncoderHolding = 800; // Set your minimum encoder value here
     public final int liftEncoderHoldingTeleop = 50; // Set your minimum encoder value here
-    public final int liftEncoderMin = 1200; // Set your minimum encoder value here
+    public final int liftEncoderMin = 1600; // Set your minimum encoder value here
     private final int liftEncoderMax = 3500;
     public DcMotor liftMotor;
     Gamepad gamepad2;
@@ -17,6 +17,7 @@ public class Lift {
     public Lift(HardwareMap hardwareMap, Gamepad gamepad2){
         liftMotor = hardwareMap.dcMotor.get("liftMotor");
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.gamepad2 = gamepad2;
     }
