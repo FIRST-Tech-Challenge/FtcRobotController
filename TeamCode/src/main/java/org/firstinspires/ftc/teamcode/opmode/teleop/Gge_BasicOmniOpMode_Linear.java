@@ -47,6 +47,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
+import org.firstinspires.ftc.teamcode.utility.Movement;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -132,7 +133,14 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
+        // Set DirectionNow to be the current angle of the robot continuously updated.
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        // set TargetDirection to hold the desired direction of the robot while driving.
+        // this is inially 0.0
+        double targetDirection = 0.0;
+        // set a boolean to hold the state as to if the driver has locked onto a desired bearing.
+        boolean directionLocked = false;
 
         // Adding in PIDF Config values learned from previous testing
         // These may need to be tuned anytime the motor weights or config changes.
@@ -195,7 +203,13 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
             DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            if (gamepad1.back){
+                //Reset Yaw with the back button
+                imu.resetYaw();
+            }
 
             // Controls the intake
             if (gamepad1.a){
@@ -218,7 +232,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 intake.FlipDown();
             }
 
-            
             if(gamepad1.dpad_down){
                 linearslidemovement.Movelinearslide(low_linearslide_ticks);
             } else if (gamepad1.dpad_left) {
@@ -259,12 +272,43 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             double lateral =  -gamepad1.left_stick_x;
             double yaw     = -gamepad1.right_stick_x;
 
+            // Set deadzone of the joysticks for very low values
+            if (Math.abs (axial) < 0.05) {
+                axial = 0;
+            }
+            if (Math.abs (lateral) < 0.05) {
+                lateral = 0;
+            }
+            if (Math.abs (yaw) < 0.05) {
+                yaw = 0;
+            }
+
+            // Compensate the stick values to ensure that the IMU considers when the robot pulls to one side or another.
+            if (yaw == 0.0 && gamepad1.back == false) {
+                // if the driver is not turning or resetting the Yaw, take the bearing desired
+                if (directionLocked == false){
+                    directionLocked = true;
+                    targetDirection = DirectionNow;
+                }
+                // We already know that joystick yaw is 0, apply an automatic rotational angle to compensate for rotation.
+                yaw = 0.005 * Movement.CalcTurnError (targetDirection, DirectionNow);
+            } else {
+                // if there is rotational input, continuously set the desired angle to the current angle.
+                directionLocked = false;
+            }
+
+
+            // Reorient the stick inputs to field orientation
+            // The current orientation is DirectionNow
+            double field_axial = axial * Math.cos(Math.toRadians(DirectionNow)) - lateral * Math.sin(Math.toRadians(DirectionNow));
+            double field_lateral = axial * Math.sin(Math.toRadians(DirectionNow)) + lateral * Math.cos(Math.toRadians(DirectionNow));
+
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = field_axial + field_lateral + yaw;
+            double rightFrontPower = field_axial - field_lateral - yaw;
+            double leftBackPower   = field_axial - field_lateral + yaw;
+            double rightBackPower  = field_axial + field_lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.

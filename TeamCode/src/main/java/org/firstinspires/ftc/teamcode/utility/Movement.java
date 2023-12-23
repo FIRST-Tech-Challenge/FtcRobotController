@@ -257,13 +257,13 @@ public class Movement {
      * @param desiredDirection - which direction you want to go to
      * @param currentDirection - your current direction
      */
-    public double CalcTurnError(double desiredDirection, double currentDirection){
-        turnError = desiredDirection - currentDirection;
-        if (turnError < -180) {
-            turnError = turnError + 360;
-        } else if (turnError > 180) {
-            turnError = turnError - 360;
+    public static double CalcTurnError(double desiredDirection, double currentDirection){
+        double turnDiff = desiredDirection - currentDirection;
+        if (turnDiff < -180) {
+            turnDiff = turnDiff + 360;
+        } else if (turnDiff > 180) {
+            turnDiff = turnDiff - 360;
         }
-        return turnError;
+        return turnDiff;
     }
 }
