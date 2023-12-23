@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.tools;
 
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -9,11 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 
 @TeleOp
@@ -31,7 +28,7 @@ public class SetDriveMotors extends OpMode {
     private final DcMotor backRightMotor;
     private final DcMotor frontRightMotor;
     private final Gamepad gamepad1;
-    private final IMU imu;
+    //private final IMU imu;
     public double powerValues[] = new double[4];
     private SampleMecanumDrive drive;
 
@@ -51,18 +48,23 @@ public class SetDriveMotors extends OpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        if (AutoDataStorage.comingFromAutonomous){
+            drive.setPoseEstimate(AutoDataStorage.currentPose);
+        }
+        else {
+            drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
+        }
 
         this.gamepad1 = gamepad1;
         // Retrieve the IMU from the hardware map
-        imu = hardwareMap.get(IMU.class, "imu");
+        /*imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        imu.resetYaw();
+        imu.resetYaw();*/
         backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
@@ -131,8 +133,8 @@ public class SetDriveMotors extends OpMode {
             imu.resetYaw(); // Reset the IMU yaw angle when the 'options' button is pressed.
         }*/
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            //TelemetryManager.getTelemetry().addData("BotHeading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             // Rotate the movement direction counter to the bot's rotation
 
 //        double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
@@ -166,8 +168,13 @@ public class SetDriveMotors extends OpMode {
             // Then, rotate that vector by the inverse of that heading
             Vector2d input = new Vector2d(
                     vertical,
-                    horizontal // Note: if the robot has a flipped left / right direction, make this negative
+                    -horizontal // Note: if the robot has a flipped left / right direction, make this negative
             ).rotated(-poseEstimate.getHeading());
+
+            // If redSide is true, adjust the heading by 180 degrees
+            if (AutoDataStorage.redSide) {
+                input = input.rotated(Math.toRadians(180)); // Rotate by 180 degrees
+            }
 
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately
@@ -175,10 +182,11 @@ public class SetDriveMotors extends OpMode {
                     new Pose2d(
                             input.getX(),
                             input.getY(),
-                            turn // Note: if the robot has a flipped turn direction, make this negative
+                            -turn // Note: if the robot has a flipped turn direction, make this negative
                     )
             );
         }
+        drive.update();
 
 
     }

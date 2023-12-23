@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.aprilTags.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
@@ -45,6 +46,7 @@ public class TeleopDrive extends LinearOpMode {
                 }
         }
         }
+        AutoDataStorage.comingFromAutonomous = false;
 
     }
 

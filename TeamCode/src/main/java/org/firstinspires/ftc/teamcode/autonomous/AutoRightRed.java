@@ -10,6 +10,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
         import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
         import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
         import org.firstinspires.ftc.teamcode.teamProp.TeamPropDetection;
+        import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
         import org.firstinspires.ftc.teamcode.tools.Robot;
 
 
@@ -71,5 +72,6 @@ public class AutoRightRed extends AutoBase {
         robot.closeClaw = false;
         robot.updateSync();
         drive.followTrajectorySequence(parkRight);
+        AutoDataStorage.redSide = true;
     }
 }

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.teamProp.TeamPropDetection;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 
 
@@ -52,6 +53,7 @@ public class AutoLeftRed extends AutoBase {
         robot.updateSync();
         // Test propLoc here
         drive.followTrajectorySequence(dropPropPixelRight);
+        AutoDataStorage.redSide = true;
 //
 //        robot.outtakePixels = true;
 //        robot.updateSync();

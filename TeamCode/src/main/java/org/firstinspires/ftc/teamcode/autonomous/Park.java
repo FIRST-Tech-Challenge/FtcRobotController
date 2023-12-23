@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.tools.PoseStorage;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 
 @Autonomous(name="world_park")
 public class Park extends LinearOpMode
@@ -52,7 +52,7 @@ public class Park extends LinearOpMode
         // WRITE CODE FOR AUTONOMOUS
         drive.followTrajectorySequence(trajectoryRight);
         telemetry.update();
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        AutoDataStorage.currentPose = drive.getPoseEstimate();
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive()) {sleep(20);}

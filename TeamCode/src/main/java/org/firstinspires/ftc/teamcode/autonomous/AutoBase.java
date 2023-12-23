@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.teamProp.TeamPropDetection;
-import org.firstinspires.ftc.teamcode.tools.PoseStorage;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
@@ -111,7 +111,8 @@ public abstract class AutoBase extends LinearOpMode {
         waitForStart();
 
         runAutonomous(robot, drive, propLoc);
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        AutoDataStorage.currentPose = drive.getPoseEstimate();
+        AutoDataStorage.comingFromAutonomous = true;
     }
 
 

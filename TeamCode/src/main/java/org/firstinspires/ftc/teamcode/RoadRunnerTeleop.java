@@ -9,7 +9,7 @@ package org.firstinspires.ftc.teamcode;
 
         import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
         import org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWheelLocalizer;
-        import org.firstinspires.ftc.teamcode.tools.PoseStorage;
+        import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 
         import java.util.ArrayList;
         import java.util.List;
@@ -44,7 +44,7 @@ public class RoadRunnerTeleop extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        myLocalizer.setPoseEstimate(PoseStorage.currentPose);
+        myLocalizer.setPoseEstimate(AutoDataStorage.currentPose);
 
         waitForStart();
 
