@@ -69,7 +69,8 @@ public class TurningTest extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
+    static final double     PI                      = 3.141592653589793238462643383279502884169399
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 500;
     double carWashPower = 1.0;
@@ -213,23 +214,23 @@ public class TurningTest extends LinearOpMode {
             stopRobot();
         } else {
             resetIMU();
-            double TURN_ACCURACY = 5;
+            double tolerance = 5;
             degrees *= -1;
             double startAngle = getAngle();
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
             double thirdGoalAngle = (initialGoalAngle + 180) % 360 - 180;
-            double difference = 999;
+            double error = 999;
             double turnModifier;
             double turnPower;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle = (correctedGoalAngle + 180) % 360 - 180;
             }
-            while (opModeIsActive() && (difference > TURN_ACCURACY)) {
+            while (opModeIsActive() && (error > tolerance)) {
                 currentAngle = getAngle();
-                difference = min(abs(initialGoalAngle - currentAngle), min(abs(correctedGoalAngle - currentAngle), abs(thirdGoalAngle - currentAngle)));
-                turnModifier = Math.min(1, (difference + 3) / 45);
+                error = min(abs(initialGoalAngle - currentAngle), min(abs(correctedGoalAngle - currentAngle), abs(thirdGoalAngle - currentAngle)));
+                turnModifier = Math.min(1, (error + 3) / 45);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setVelocity(-turnPower);
                 rb.setVelocity(turnPower);
@@ -240,7 +241,7 @@ public class TurningTest extends LinearOpMode {
                 telemetry.addData("Start", startAngle);
                 telemetry.addData("Angle", currentAngle);
                 telemetry.addData("Turn Modifier", turnModifier);
-                telemetry.addData("Distance from goal", difference);
+                telemetry.addData("Raw error", error);
                 telemetry.update();
             }
             stopRobot();
