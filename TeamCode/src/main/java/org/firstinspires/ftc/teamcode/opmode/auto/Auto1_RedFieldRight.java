@@ -86,10 +86,9 @@ public class Auto1_RedFieldRight extends AutoBase {
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        // Start by securing the loaded pixel
-        intake.ClawClosed();
-
         if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0){
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
@@ -128,16 +127,15 @@ public class Auto1_RedFieldRight extends AutoBase {
             moveTo.Left((int)((18 * ticksPerInch) * 1.04), 0.5);
             // Backward 12 inches
             moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
-
-
-
+            // Finish all autos with the wrist up
+            intake.FlipUp();
             // Add telemetry
             telemetry.addData("run", state);
             telemetry.update();
-
-
             state = 1;
         } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 18 inches
             moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
@@ -172,10 +170,12 @@ public class Auto1_RedFieldRight extends AutoBase {
             moveTo.Left((int)((21 * ticksPerInch) * 1.04), 0.5);
             // Backward 6 inches
             moveTo.Backwards((int)((13 * ticksPerInch) * 0.94), 0.25);
-
-
-                state = 2;
+            // Finish all autos with the wrist up
+            intake.FlipUp();
+            state = 2;
         } else if (state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
             moveTo.Rotate(-90);
             sleep(700);
@@ -204,6 +204,8 @@ public class Auto1_RedFieldRight extends AutoBase {
             moveTo.Left((int)((30 * ticksPerInch) * 1.04), 0.5);
             // Backward 6 inches
             moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
+            // Finish all autos with the wrist up
+            intake.FlipUp();
             state = 3;
         }
 

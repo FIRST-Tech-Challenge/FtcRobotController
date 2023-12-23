@@ -85,10 +85,9 @@ public class Auto2_RedFieldLeft extends AutoBase {
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        // Start by securing the loaded pixel
-        intake.ClawClosed();
-
         if (gamepieceLocation == GamePieceLocation.LEFT && state == 0){
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
@@ -100,7 +99,7 @@ public class Auto2_RedFieldLeft extends AutoBase {
             sleep (500);
             // Open the claw
             intake.ClawOpen();
-            // Move the claw up
+            // End all autos with the wrist up
             intake.FlipUp();
             // Add telemetry
             telemetry.addData("run", state);
@@ -108,6 +107,8 @@ public class Auto2_RedFieldLeft extends AutoBase {
             state = 1;
 
         } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 18 inches
             moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
@@ -117,11 +118,13 @@ public class Auto2_RedFieldLeft extends AutoBase {
             moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
             // Open the claw
             intake.ClawOpen();
-            // Move the claw up
+            // End all autos with the wrist up
             intake.FlipUp();
             state = 2;
 
         } else if (gamepieceLocation==GamePieceLocation.RIGHT&& state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // Move forward 25 inches
             moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
             // Rotate 90 degrees
@@ -135,7 +138,7 @@ public class Auto2_RedFieldLeft extends AutoBase {
             // Open the claw
             intake.ClawOpen();
             sleep(500);
-            // Move the claw up
+            // // End all autos with the wrist up
             intake.FlipUp();
             state = 3;
         }

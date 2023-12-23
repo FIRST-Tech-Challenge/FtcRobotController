@@ -143,7 +143,7 @@ public abstract class AutoBase extends OpMode {
 
         leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        wrist.setDirection(DcMotor.Direction.FORWARD);
+        wrist.setDirection(DcMotor.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, telemetry);
