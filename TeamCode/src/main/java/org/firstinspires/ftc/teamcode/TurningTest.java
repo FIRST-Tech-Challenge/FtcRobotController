@@ -69,7 +69,7 @@ public class TurningTest extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
-    static final double     PI                      = 3.141592653589793238462643383279502884169399
+    static final double     PI                      = 3.141592653589793238462643383279502884169399;
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 500;
@@ -212,7 +212,7 @@ public class TurningTest extends LinearOpMode {
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
-        } else {
+        } else if (true) {
             resetIMU();
             double tolerance = 5;
             degrees *= -1;
@@ -224,6 +224,7 @@ public class TurningTest extends LinearOpMode {
             double error = 999;
             double turnModifier;
             double turnPower;
+            double lastAngle = startAngle;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle = (correctedGoalAngle + 180) % 360 - 180;
             }
@@ -236,6 +237,7 @@ public class TurningTest extends LinearOpMode {
                 rb.setVelocity(turnPower);
                 lf.setVelocity(-turnPower);
                 rf.setVelocity(turnPower);
+                telemetry.addData("Delta Angle", lastAngle - currentAngle);
                 telemetry.addData("Corrected Goal", correctedGoalAngle);
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
@@ -243,8 +245,11 @@ public class TurningTest extends LinearOpMode {
                 telemetry.addData("Turn Modifier", turnModifier);
                 telemetry.addData("Raw error", error);
                 telemetry.update();
+                lastAngle = currentAngle;
             }
             stopRobot();
+        } else {
+
         }
     }
 
