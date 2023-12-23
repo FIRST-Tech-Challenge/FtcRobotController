@@ -43,9 +43,9 @@ public class Ultrasonics {
 //        ultraFront.enable(true);
         ultraLeft.enable(true);
         logger.createFile("Ultrasonics","error0, error1");
-        rFilter = new LineRegressionFilter(trust,histLength);
-        lFilter = new LineRegressionFilter(trust,histLength);
-        aFilter = new LineRegressionFilter(trust,histLength);
+//        rFilter = new LineRegressionFilter(trust,histLength);
+//        lFilter = new LineRegressionFilter(trust,histLength);
+//        aFilter = new LineRegressionFilter(trust,histLength);
     }
 
     public boolean updateUltra(double xpos, double ypos, double angle) {

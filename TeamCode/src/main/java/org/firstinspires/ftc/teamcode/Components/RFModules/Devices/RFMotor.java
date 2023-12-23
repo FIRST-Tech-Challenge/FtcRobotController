@@ -175,6 +175,7 @@ public class RFMotor {
         }
 //        LOGGER.log("motor power :" + power+" pos " + position + " targetPos " + targetPos);
         setRawPower(power);
+        packet.put("slides debugging power", power);
         lastTime = time;
     }
 

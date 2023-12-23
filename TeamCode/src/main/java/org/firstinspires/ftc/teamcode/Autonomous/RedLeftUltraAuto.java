@@ -69,8 +69,8 @@ public class RedLeftUltraAuto extends LinearOpMode {
                         .trajectorySequenceBuilder(spikePosition[1].end())
                         .lineToLinearHeading(new Pose2d(-39.5, -29.5, toRadians(-90)))
                         .setReversed(true)
-                        .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
-                        .splineTo(new Vector2d(10, -55.5), toRadians(5))
+                        .lineToLinearHeading(new Pose2d(-40, -56, toRadians(180)))
+                        .splineTo(new Vector2d(10, -54), toRadians(5))
                         .splineTo(new Vector2d(30, -35), toRadians(0))
                         .waitSeconds(2)
                         .lineToLinearHeading(new Pose2d(52.5, -36, toRadians(180)))
@@ -137,7 +137,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
                         .addTemporalMarker(robot::done)
                         .build();
         while (!isStarted()) {
-            pos = robot.getSpikePos();
+            pos = 1; //robot.getSpikePos();
             op.telemetry.addData("spike pos", pos);
             op.telemetry.update();
             robot.update();
@@ -152,7 +152,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
             robot.preloadAuto();
             robot.queuer.addDelay(1.5);
             robot.followTrajSeq(throughTruss[pos]);
-            robot.followTrajSeq(detect[pos], !robot.checkAlliance() && previousCheck);
+            robot.followTrajSeq(detect[pos], !previousCheck);
             robot.queuer.addDelay(6.5);
 //            robot.flipAuto();
 //            robot.loadAuto();

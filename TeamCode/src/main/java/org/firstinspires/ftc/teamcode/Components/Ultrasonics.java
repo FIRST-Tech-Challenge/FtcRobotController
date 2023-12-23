@@ -57,6 +57,10 @@ public class Ultrasonics {
         return backLeft.isDetected();
 //        frontRight.isDetected();
     }
+
+    public boolean movingCloser() {
+        return backLeft.getMovingCloser();
+    }
     /**
      * Updates if the pins on the ultrasonics have been flipped.
      * Logs the status of the pins.

@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /** William */
+@Config
 public class Lift extends RFDualMotor {
   private double lastPower = 0.0;
   private double target = 0.0;
@@ -182,17 +184,17 @@ public class Lift extends RFDualMotor {
   public void setPosition(LiftPositionStates p_state) {
     if (!Wrist.WristStates.INTAKE.state) {
       if (p_state.equals(LiftPositionStates.AT_ZERO)) {
-        if (Arm.ArmStates.UNFLIPPED.getState()
-            && Arm.ArmTargetStates.UNFLIPPED.getState()) {
-          super.setPosition(p_state.position - 15, 0);
-        } else {
+//        if (Arm.ArmStates.UNFLIPPED.getState() && Arm.ArmTargetStates.UNFLIPPED.getState()) {
+//          super.setPosition(p_state.position - 15, 0);
+//        } else {
           super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
-        }
+        Wrist.WristTargetStates.INTAKE.state = true;
+//        }
       } else {
         super.setPosition(p_state.position, 0);
       }
     } else {
-      LOGGER.log(RFLogger.Severity.SEVERE, "Wrist state FLAT, can't move");
+      super.setPosition(p_state.position, 0);
     }
     if (!LiftMovingStates.values()[p_state.ordinal()].state) {
       LiftMovingStates.values()[p_state.ordinal()].setStateTrue();
