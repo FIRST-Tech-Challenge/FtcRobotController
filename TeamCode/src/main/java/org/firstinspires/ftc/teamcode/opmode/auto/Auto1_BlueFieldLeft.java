@@ -33,10 +33,12 @@ import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.vision.pipeline.GripPipelineWhitePixelRGBT1;
+
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
+
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -69,19 +71,29 @@ import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 @Autonomous(name="BlueFieldLeft", group="OpMode")
 //@Disabled
 public class Auto1_BlueFieldLeft extends AutoBase {
-    GripPipelineWhitePixelRGBT1 whitepipe;
+
     @Override
     public void init() {
-        whitepipe = new GripPipelineWhitePixelRGBT1();
-        setPipeline(whitepipe);
-        gamepieceLocation = GamePieceLocation.RIGHT; // this is the position that we can't see
+        super.init();
+        gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
     }
 
     @Override
     public void init_loop() {
         state = 0;
-        GamepiecePositionFinder gamePiecePOS = new GamepiecePositionFinder(whitepipe.avgContourCoord(), GamePieceLocation.LEFT);
-        estimateLocation(gamePiecePOS);
+        SpikePosition spikePos = getSpikePosition();
+        switch (spikePos){
+            case LEFT:
+                gamepieceLocation = GamePieceLocation.LEFT;
+                break;
+            case CENTRE:
+                gamepieceLocation = GamePieceLocation.CENTER;
+                break;
+            default:
+                gamepieceLocation = GamePieceLocation.RIGHT;
+        }
+        telemetry.addData("GamePiece Spike line",gamepieceLocation);
+        telemetry.update();
     }
     // run until the end of the match (driver presses STOP)
 

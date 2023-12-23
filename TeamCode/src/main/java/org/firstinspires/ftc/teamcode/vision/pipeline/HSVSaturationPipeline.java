@@ -9,10 +9,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class HSVSaturationPipeline extends OpenCvPipeline {
-    public Scalar nonSelectedColor = new Scalar(0, 255, 0);
-    public Scalar selectedColor = new Scalar(0, 0, 255);
-
-
+    public Scalar nonSelectedColor = new Scalar(0, 255, 0); // Green
+    public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
 
     //1280 x 960 camera resolution
     FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
@@ -34,10 +32,6 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
     static double LEFT_SPIKE_SATURATION_BASELINE = 22.21125992063492;
     static double CENTER_SPIKE_SATURATION_BASELINE =6.122269404803341;
     static double RIGHT_SPIKE_SATURATION_BASELINE =  0;
-
-    public void setFieldPosition(FieldPosition fieldPosition) {
-        this.fieldPosition = fieldPosition;
-    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -81,10 +75,6 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
                 break;
         }
 
-        System.out.println(leftSpikeSaturation);
-        System.out.println(centerSpikeSaturation);
-        System.out.println(rightSpikeSaturation);
-
         if(leftSpikeSaturation > LEFT_SPIKE_SATURATION_BASELINE){
             spikePos = SpikePosition.LEFT;
             return spikePos;
@@ -119,6 +109,10 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
 
     public SpikePosition getSpikePos() {
         return spikePos;
+    }
+
+    public void setFieldPosition(FieldPosition fieldPosition) {
+        this.fieldPosition = fieldPosition;
     }
 
     public void drawRectangles(Mat input) {

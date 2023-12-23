@@ -12,12 +12,9 @@ public class SaturationBaseline extends AutoBase{
     @Override
     public void init() {
 
-        // create the opencv pipeline we are going to use for this opmode
-        hsvPipe = new HSVSaturationPipeline();
 
-        hsvPipe.setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
-        // give the AutoBase our pipeline so it can attach it to the camera
-        setPipeline(hsvPipe);
+
+        setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
 
         // finally do the init in the AutoBase that will set up the camera and motors
         super.init();
@@ -26,9 +23,9 @@ public class SaturationBaseline extends AutoBase{
 
     @Override
     public void init_loop() {
-        telemetry.addData("LSpikeSaturation",hsvPipe.getLeftSpikeSaturation());
-        telemetry.addData("RSpikeSaturation",hsvPipe.getRightSpikeSaturation());
-        telemetry.addData("CSpikeSaturation",hsvPipe.getCenterSpikeSaturation());
+        telemetry.addData("LSpikeSaturation",getLeftSpikeSaturation());
+        telemetry.addData("RSpikeSaturation",getRightSpikeSaturation());
+        telemetry.addData("CSpikeSaturation",getCenterSpikeSaturation());
 
         telemetry.update();
     }

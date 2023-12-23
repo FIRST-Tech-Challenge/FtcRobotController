@@ -13,14 +13,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class AutoBase extends OpMode {
@@ -41,7 +41,7 @@ public abstract class AutoBase extends OpMode {
     Servo conveyor;
     OpenCvWebcam webcam;
 
-    OpenCvPipeline pipeline = null;
+    HSVSaturationPipeline pipeline;
 
     Movement moveTo;
     IntakeMovement intake;
@@ -50,7 +50,6 @@ public abstract class AutoBase extends OpMode {
     double rightCount = 0;
     double centerCount = 0;
     double leftCount = 0;
-    HSVSaturationPipeline hsvPipe;
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
     private DcMotor wrist = null;
@@ -60,12 +59,6 @@ public abstract class AutoBase extends OpMode {
     // Wheel diameter is 100mm
     double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
-
-    //remove this when old autos are gone
-    protected void estimateLocation(GamepiecePositionFinder gamePiecePOS) {
-
-    }
-
     @Override
     public void init() {
 
@@ -74,7 +67,7 @@ public abstract class AutoBase extends OpMode {
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
-        assert pipeline != null : "The pipeline was not set before we called init.  Check your init method";
+        pipeline = new HSVSaturationPipeline();
 
         webcam.setPipeline(pipeline);
 
@@ -177,8 +170,24 @@ public abstract class AutoBase extends OpMode {
         telemetry.update();
     }
 
-
-    protected void setPipeline(OpenCvPipeline pipe) {
-        pipeline = pipe;
+    protected void setFieldPosition(FieldPosition fPos){
+        pipeline.setFieldPosition(fPos);
     }
+
+    protected SpikePosition getSpikePosition(){
+        return pipeline.getSpikePos();
+    }
+
+    protected double getLeftSpikeSaturation(){
+        return pipeline.getLeftSpikeSaturation();
+    }
+
+    protected double getCenterSpikeSaturation(){
+        return pipeline.getCenterSpikeSaturation();
+    }
+
+    protected double getRightSpikeSaturation(){
+        return pipeline.getRightSpikeSaturation();
+    }
+
 }

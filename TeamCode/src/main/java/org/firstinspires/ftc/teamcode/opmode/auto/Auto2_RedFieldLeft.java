@@ -34,11 +34,11 @@ import static android.os.SystemClock.sleep;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-//import org.firstinspires.ftc.teamcode.pipeline.GripPipelineRedGamepieceRGB;
-import org.firstinspires.ftc.teamcode.vision.pipeline.GripPipelineWhitePixelRGBT1;
+
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
-import org.opencv.core.Point;
+
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -72,47 +72,28 @@ import org.opencv.core.Point;
 //@Disabled
 public class Auto2_RedFieldLeft extends AutoBase {
 
-    GripPipelineWhitePixelRGBT1 whitepipe;
+
     @Override
     public void init() {
-        whitepipe = new GripPipelineWhitePixelRGBT1();
-        setPipeline(whitepipe);
-
         super.init();
-        gamepieceLocation = GamePieceLocation.RIGHT; // this is the position that we can't see
+        gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
     }
 
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePositionFinder gamepiecePOS = new GamepiecePositionFinder(whitepipe.avgContourCoord(), GamePieceLocation.LEFT);
-        Point avgLoc = whitepipe.avgContourCoord();
-        if (gamepiecePOS.getPOS() == GamePieceLocation.RIGHT){
-            rightCount += 1;
-        } else if (gamepiecePOS.getPOS() == GamePieceLocation.CENTER){
-            centerCount += 1;
-        } else {
-            leftCount += 1;
+        SpikePosition spikePos = getSpikePosition();
+        switch (spikePos){
+            case RIGHT:
+                gamepieceLocation = GamePieceLocation.RIGHT;
+                break;
+            case CENTRE:
+                gamepieceLocation = GamePieceLocation.CENTER;
+                break;
+            default:
+                gamepieceLocation = GamePieceLocation.LEFT;
         }
-        if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = GamePieceLocation.RIGHT;
-        } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = GamePieceLocation.CENTER;
-        } else if (leftCount > 5){
-            gamepieceLocation = GamePieceLocation.LEFT;
-        }
-
-        // Reset the counters to lower values every 50 detects to allow for field condition changes
-        if (rightCount + centerCount + leftCount > 50) {
-            rightCount = rightCount * 0.3;
-            centerCount = centerCount * 0.3;
-            leftCount = leftCount * 0.3;
-        }
-
-        telemetry.addData("AvgContour.x",avgLoc.x);
-        telemetry.addData("AvgContour.y",avgLoc.y);
-        telemetry.addData("location", gamepieceLocation);
-        telemetry.addData("state", state);
+        telemetry.addData("GamePiece Spike line",gamepieceLocation);
         telemetry.update();
     }
 
