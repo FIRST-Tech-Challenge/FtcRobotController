@@ -51,8 +51,9 @@ public class SetDriveMotors extends OpMode {
         if (AutoDataStorage.comingFromAutonomous){
             drive.setPoseEstimate(AutoDataStorage.currentPose);
         }
+
         else {
-            drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
+            drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(270)));
         }
 
         this.gamepad1 = gamepad1;
