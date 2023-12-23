@@ -156,8 +156,8 @@ RB - Hang up
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        clawArm.setPosition(CSCons.clawArm[5]);
-        clawAngle.setPosition(CSCons.clawAngles[2]);
+        clawArm.setPosition(CSCons.clawArmTransition);
+        clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.claw[2]);
 
 
@@ -195,8 +195,8 @@ RB - Hang up
                     //gp slides 1/3rds extension
                     //v4b preset 1 pixel high
                     //claw open
-                        clawArm.setPosition(CSCons.clawArm[0]);
-                        clawAngle.setPosition(CSCons.clawAngles[0]);
+                        clawArm.setPosition(CSCons.clawArmG);
+                        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
 
                     }
                     if (gamepad1.dpad_left) {
@@ -220,8 +220,8 @@ RB - Hang up
                                 //slides in
                                 //check if in
                             case flip_bar:
-                                clawAngle.setPosition(CSCons.clawAngles[2]);
-                                clawArm.setPosition(CSCons.clawArm[6]);
+                                clawAngle.setPosition(CSCons.clawAngleTransition);
+                                clawArm.setPosition(CSCons.clawArmTransfer);
                             case cartridge:
                                 if (touchSensor.isPressed()){
                                     //open claw
@@ -299,17 +299,17 @@ RB - Hang up
                             // open hook
                             // wait slightly
                             // outtake movement and rotation to transfer
-                        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[0]);
-                        outtakeMovementRight.setPosition(CSCons.doubleServoBack[0]);
-                        outtakeRotation.setPosition(CSCons.outtakeAngle[0]);
+                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
 
                     }
                     if (gamepad1.x){
                         outtakeHook.setPosition(CSCons.outtakeHook[0]);
                         sleep(100);
-                        outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
-                        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
-                        outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+                        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
                     }
                     break;
                 case END_GAME:

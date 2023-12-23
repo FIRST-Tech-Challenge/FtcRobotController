@@ -20,9 +20,9 @@ public class verticalSlideTest extends LinearOpMode {
 
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
-        outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
-        outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.outtakeHook[0]);
 
         waitForStart();

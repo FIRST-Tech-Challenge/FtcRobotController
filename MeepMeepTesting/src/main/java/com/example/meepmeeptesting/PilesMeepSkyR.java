@@ -18,7 +18,6 @@ public class PilesMeepSkyR {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
 
-                                        // Right Works
                                         .turn(Math.toRadians(13))
                                         .turn(Math.toRadians(-13))
                                         .forward(40)

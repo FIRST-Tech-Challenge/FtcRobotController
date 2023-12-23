@@ -16,8 +16,11 @@ public class BoardMeepSkyL {
                 .setDimensions(15, 17)
 
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
-
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+                                        .forward(26)
+                                        .back(10)
+                                        .splineToLinearHeading(new Pose2d(new Vector2d(30,50),Math.toRadians(180)),Math.toRadians(0))
+                                        .splineToLinearHeading(new Pose2d(new Vector2d(46,36),Math.toRadians(180)),Math.toRadians(-60))
                                         .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)

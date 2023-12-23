@@ -49,6 +49,9 @@ public class CenterStageTest extends LinearOpMode {
     boolean hookEngaged = false;
     boolean hookPressed = false;
     boolean presetPushed = false;
+    double claw2transfer_time = -1;
+    double claw2transfer_delay=.5;
+    double x_last_pressed=-1;
 
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
@@ -163,19 +166,18 @@ RB - Hang up
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        clawArm.setPosition(CSCons.clawArm[5]);
-        clawAngle.setPosition(CSCons.clawAngles[2]);
+        clawArm.setPosition(CSCons.clawArmTransition);
+        clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.claw[2]);
 
-        outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
-        outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
-        outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.outtakeHook[0]);
 
         waitForStart();
 
         runtime.reset();
-
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -198,20 +200,36 @@ RB - Hang up
             }
 
             if (gamepad2.dpad_down) {
-                clawArm.setPosition(CSCons.clawArm[0]);
-                clawAngle.setPosition(CSCons.clawAngles[0]);
+                clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                clawArm.setPosition(CSCons.clawArmG);
             }
 
+//            if (gamepad2.dpad_up) {
+//                claw2transfer_time = runtime.time();
+//                clawAngle.setPosition(CSCons.clawAngleTransfer);
+//            }
+//
+//            if (claw2transfer_time != -1) {
+//                if (runtime.time() > claw2transfer_time + claw2transfer_delay) {
+//                    clawArm.setPosition(CSCons.clawArmTransfer);
+//                    claw2transfer_time = -1;
+//                }
+//            }
             if (gamepad2.dpad_up) {
-                clawArm.setPosition(CSCons.clawArm[6]);
-                clawAngle.setPosition(CSCons.clawAngles[3]);
+                    clawAngle.setPosition(CSCons.clawAngleTransfer);
+                    clawArm.setPosition(CSCons.clawArmTransfer+CSCons.skewampus);
+            }
+
+            if (gamepad2.dpad_right) {
+                clawAngle.setPosition(CSCons.clawAngleTransfer);
+                clawArm.setPosition(CSCons.clawArmTransfer);
             }
 
             if (gamepad2.dpad_left){
-                clawArm.setPosition(CSCons.clawArm[5]);
-                clawAngle.setPosition(CSCons.clawAngles[2]);
+                clawAngle.setPosition(CSCons.clawAngleTransition);
+                clawArm.setPosition(CSCons.clawArmTransition);
             }
-
+/*
             if (gamepad2.x && !hookEngaged && !hookPressed) {
                 hookEngaged = true;
                 hookPressed = true;
@@ -223,16 +241,24 @@ RB - Hang up
             } else {
                 hookPressed = false;
             }
+*/
+            if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1]-.1 && runtime.time() > x_last_pressed + .2) {
+                outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                x_last_pressed = runtime.time();
+            } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0]-.1 && runtime.time() > x_last_pressed + .2) {
+                outtakeHook.setPosition(CSCons.outtakeHook[1]);
+                x_last_pressed = runtime.time();
+            }
 
             if (gamepad2.left_stick_y > 0.2) {
-                outtakeMovementLeft.setPosition(CSCons.doubleServoBack[0]);
-                outtakeMovementRight.setPosition(CSCons.doubleServoBack[0]);
-                outtakeRotation.setPosition(CSCons.outtakeAngle[0]);
+                outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
+                outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
             }
             if (gamepad2.left_stick_y < -0.2) {
-                outtakeMovementLeft.setPosition(CSCons.doubleServoBack[1]);
-                outtakeMovementRight.setPosition(CSCons.doubleServoBack[1]);
-                outtakeRotation.setPosition(CSCons.outtakeAngle[1]);
+                outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+                outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+                outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
             }
 
             if (gamepad2.left_trigger > 0.5 && backSlidesTargetPos > 0) {
@@ -305,6 +331,7 @@ RB - Hang up
 
                     telemetry.addData("Arm", clawArm.getPosition());
                     telemetry.addData("backSlides",backSlidesTargetPos); // 1725, 2400,
+                    telemetry.addData("time",runtime.time());
 
                     telemetry.update();
             }
