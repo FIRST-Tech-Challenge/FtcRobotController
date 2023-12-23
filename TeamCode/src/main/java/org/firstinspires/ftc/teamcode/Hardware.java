@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.commands.AnalogCommands;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Hardware {
 
@@ -22,9 +23,7 @@ public class Hardware {
 
     public DcMotorEx armMotor1;
     public DcMotorEx armMotor2;
-
     public DcMotorEx[] motors;
-    public DcMotor fd;
     public IMU imu;
 
     public VoltageSensor batteryVoltageSens;
