@@ -8,35 +8,35 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
 public class DriftForWyatt extends OpMode {
 
-    private DcMotor Bleft;
-    private DcMotor Bright;
-    private DcMotor Fleft;
-    private DcMotor Fright;
+    private DcMotor BLeft;
+    private DcMotor BRight;
+    private DcMotor FLeft;
+    private DcMotor FRight;
 
     public void moveRobot(){
         double vertical;
         double horizontal;
         double pivot;
 
-        vertical = 0.75 * gamepad1.left_stick_y;
-        horizontal = -0.75 * gamepad1.left_stick_x;
+        vertical = -0.75 * gamepad1.left_stick_y;
+        horizontal = 0.75 * gamepad1.left_stick_x;
         pivot = -gamepad1.right_stick_x;
 
-        Fright.setPower((pivot + (-vertical + horizontal)));
-        Bright.setPower(pivot + (-vertical - horizontal));
-        Fleft.setPower((-pivot + (-vertical - horizontal)));
-        Bleft.setPower((-pivot + (-vertical + horizontal)));
+        FRight.setPower((pivot + (-vertical + horizontal)));
+        BRight.setPower(pivot + (-vertical - horizontal));
+        FLeft.setPower((-pivot + (-vertical - horizontal)));
+        BLeft.setPower((-pivot + (-vertical + horizontal)));
     }
 
     public void init(){
 
-        Bleft = hardwareMap.dcMotor.get("Bleft");
-        Bright = hardwareMap.dcMotor.get("Bright");
-        Fleft  = hardwareMap.dcMotor.get("Fleft");
-        Fright = hardwareMap.dcMotor.get("Fright");
+        BLeft = hardwareMap.dcMotor.get("Bleft");
+        BRight = hardwareMap.dcMotor.get("Bright");
+        FLeft  = hardwareMap.dcMotor.get("Fleft");
+        FRight = hardwareMap.dcMotor.get("Fright");
 
-        Bleft.setDirection(DcMotorSimple.Direction.REVERSE);
-        Fleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        BLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        FLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
     }
