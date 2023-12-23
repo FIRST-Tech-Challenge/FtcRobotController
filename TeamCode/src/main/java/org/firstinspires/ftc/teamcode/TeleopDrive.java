@@ -91,8 +91,12 @@ public class TeleopDrive extends LinearOpMode {
                 // A little bit of a monkey patch, but it works to override, because distance 0 corresponds to "too far to detect"
                 distanceToWall = 0;
             }
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode);
 
+            if(gamepad1.a) {
+                setDriveMotorsObj.alignClosest();
+            }
+            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode);
+            setDriveMotorsObj.update();
 
             robot.update();
 

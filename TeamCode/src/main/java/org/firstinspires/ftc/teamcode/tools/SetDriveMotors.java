@@ -187,8 +187,15 @@ public class SetDriveMotors extends OpMode {
                     )
             );
         }
-        drive.update();
-
+    }
+    public void update() {
+            drive.update();
+    }
+    public void alignClosest()  {
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        double currentHeading = poseEstimate.getHeading();
+        double closestCardinalRad = Math.round(currentHeading / (Math.PI / 2)) * (Math.PI / 2);
+        drive.turn(closestCardinalRad - currentHeading);
 
     }
 
