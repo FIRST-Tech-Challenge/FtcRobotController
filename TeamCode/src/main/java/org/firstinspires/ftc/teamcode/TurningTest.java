@@ -216,6 +216,14 @@ public class TurningTest extends LinearOpMode {
         }
     }
 
+    public double fixError(double error) {
+        if (abs(error) > 180) {
+            return (error % 180) - 180;
+        } else {
+            return error;
+        }
+    }
+
     public double closestToZero(double a, double b) {
         if (abs(a) < abs(b)) {
             return a;
@@ -243,7 +251,7 @@ public class TurningTest extends LinearOpMode {
             double lastAngle = startAngle;
             while (opModeIsActive() && (sign * error > tolerance)) {
                 currentAngle = getAngle();
-                error = fixAngle(closestToZero(initialGoalAngle - currentAngle, correctedGoalAngle - currentAngle));
+                error = fixError(closestToZero(initialGoalAngle - currentAngle, correctedGoalAngle - currentAngle));
                 turnModifier = min(1, abs((error + 3) / 45));
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setVelocity(-turnPower);
