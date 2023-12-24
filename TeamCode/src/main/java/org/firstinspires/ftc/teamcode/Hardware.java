@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.commands.AnalogCommands;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Hardware {
 
@@ -20,14 +21,9 @@ public class Hardware {
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
 
-    public DcMotorEx leftSlider;
-    public DcMotorEx rightSlider;
-
-    public DcMotorEx leftArm;
-    public DcMotorEx rightArm;
-
+    public DcMotorEx armMotor1;
+    public DcMotorEx armMotor2;
     public DcMotorEx[] motors;
-    public DcMotor fd;
     public IMU imu;
 
     public VoltageSensor batteryVoltageSens;
@@ -43,11 +39,8 @@ public class Hardware {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backLeft.getCurrentPosition();
 
-        leftArm = hardwareMap.get(DcMotorEx.class, "leftArm");
-        rightArm = hardwareMap.get(DcMotorEx.class, "rightArm");
-
-        leftSlider = hardwareMap.get(DcMotorEx.class, "leftSlider");
-        rightSlider = hardwareMap.get(DcMotorEx.class, "rightSlider");
+        armMotor1 = hardwareMap.get(DcMotorEx.class, "leftArm");
+        armMotor2 = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         droneServo = hardwareMap.get(Servo.class, "droneLauncher");
 
