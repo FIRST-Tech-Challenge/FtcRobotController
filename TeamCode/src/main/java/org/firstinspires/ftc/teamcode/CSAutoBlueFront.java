@@ -35,7 +35,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Blue Front", group = "CenterStage")
+@Autonomous(name = "Blue Front", group = "CenterStage", preselectTeleOp = "Full")
 public class CSAutoBlueFront extends CSMethods {
     @Override
     public void runOpMode() {
