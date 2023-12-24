@@ -27,15 +27,12 @@ public class SpikeDetectorPipeline extends OpenCvPipeline {
     }};
 
     Mat original;
-    Mat z1, z2, z3;
 
     Scalar grey = new Scalar(93, 93, 93);
+    Scalar red = new Scalar(255, 0, 0);
+    Scalar blue = new Scalar(0, 0, 255);
 
     Scalar spikeColor;
-    Scalar z1AvgColor, z2AvgColor, z3AvgColor;
-
-    double z1Dist, z2Dist, z3Dist;
-
     int spikeZone = -1;
 
     public SpikeDetectorPipeline(Scalar spikeColor) {
@@ -46,6 +43,10 @@ public class SpikeDetectorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat frame) {
+        double blueDist[] = new double[3];
+        double redDist[] = new double[3];
+        Scalar z1AvgColor, z2AvgColor, z3AvgColor;
+        Mat z1, z2, z3;
 
         //Creating duplicate of original frame with no edits
         original = frame.clone();
@@ -58,16 +59,31 @@ public class SpikeDetectorPipeline extends OpenCvPipeline {
         z2AvgColor = Core.mean(z2);
         z3AvgColor = Core.mean(z3);
 
-        z1Dist = colorDist(z1AvgColor, spikeColor);
-        z2Dist = colorDist(z2AvgColor, spikeColor);
-        z3Dist = colorDist(z3AvgColor, spikeColor);
 
-        if (z1Dist < z2Dist && z1Dist < z3Dist) {
-            spikeZone = 1;
-        } else if (z2Dist < z3Dist) {
-            spikeZone = 2;
-        } else {
-            spikeZone = 3;
+        blueDist[0] = colorDist(z1AvgColor, blue);
+        blueDist[1] = colorDist(z2AvgColor, blue);
+        blueDist[2] = colorDist(z3AvgColor, blue);
+
+        redDist[0] = colorDist(z1AvgColor, red);
+        redDist[1] = colorDist(z2AvgColor, red);
+        redDist[2] = colorDist(z3AvgColor, red);
+
+        int bluemin = 0;
+        int redmin = 0;
+        for (int i = 1; i < 3; i++) {
+            if (blueDist[i] < blueDist[bluemin]) {
+                bluemin = i;
+            }
+            if (redDist[i] < redDist[redmin]) {
+                redmin = i;
+            }
+        }
+
+        spikeColor = blue;
+        spikeZone = bluemin + 1;
+        if (redDist[redmin] < blueDist[bluemin]) {
+            spikeZone = redmin + 1;
+            spikeColor = red;
         }
 
         for (int z = 1; z <= 3; z++) {
@@ -94,5 +110,8 @@ public class SpikeDetectorPipeline extends OpenCvPipeline {
 
     public int getSpikeZone() {
         return spikeZone;
+    }
+    public Scalar getSpikeColor() {
+        return spikeColor;
     }
 }
