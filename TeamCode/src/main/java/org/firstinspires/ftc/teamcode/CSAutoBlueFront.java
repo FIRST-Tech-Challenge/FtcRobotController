@@ -45,6 +45,7 @@ public class CSAutoBlueFront extends CSMethods {
         // Main code
         dropCarWash();
         drive(13.5);
+        /*
         List<Recognition> pixels = detectProp();
         if (pixels.size() > 0) {
             drive(6);
@@ -65,7 +66,7 @@ public class CSAutoBlueFront extends CSMethods {
                 drive(-6);
                 turn(-30);
             }
-        }
+        }//*/
         turn(-60);
         drive(40);
         ejectPixel();

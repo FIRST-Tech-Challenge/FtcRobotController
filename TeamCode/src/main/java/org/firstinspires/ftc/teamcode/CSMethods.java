@@ -5,9 +5,8 @@ import static java.lang.Math.min;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,13 +24,13 @@ public abstract class CSMethods extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
     public TfodProcessor tfod;
     public final ElapsedTime runtime = new ElapsedTime();
-    public DcMotor lf = null;
-    public DcMotor lb = null;
-    public DcMotor rf = null;
-    public DcMotor rb = null;
-    public DcMotor carWashMotor = null;
+    public DcMotorEx lf = null;
+    public DcMotorEx lb = null;
+    public DcMotorEx rf = null;
+    public DcMotorEx rb = null;
+    public DcMotorEx carWashMotor = null;
     public IMU imu = null;
-    public DcMotor pixelLiftingMotor = null;
+    public DcMotorEx pixelLiftingMotor = null;
     public Servo droneServo = null;
     public Servo pixelBackServo = null;
     public Servo pixelFrontServo = null;
@@ -45,14 +44,19 @@ public abstract class CSMethods extends LinearOpMode {
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
     static final double     PI                      = 3.141592653589793238462643383279502884197169399; // 47 digits of pi
-    static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
+    static final double     VELOCITY                = 2000;
+    static final double     VEL_MODIFIER            = 1.12485939258;
+    static final double     b           = 1.1375;
+    static final double     m           = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double[] redFrontDetectionBoundaries = {0, 350, 999};
+    static final double[] boundaries = {0, 350};
     double carWashPower = 1.0;
+    double pos; // Team prop position
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET = null;
 
@@ -64,46 +68,50 @@ public abstract class CSMethods extends LinearOpMode {
     public void setup(boolean isRed) {
         if (isRed) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
-        }
-        else{
+        } else {
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
         }
 
-        lf = hardwareMap.get(DcMotor.class, "leftFront");
-        lb = hardwareMap.get(DcMotor.class, "leftBack");
-        rf = hardwareMap.get(DcMotor.class, "rightFront");
-        rb = hardwareMap.get(DcMotor.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
-        try {carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");}catch (Exception e){except(e);}
-        try {pixelLiftingMotor = hardwareMap.get(DcMotor.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
+        try {
+            lf = hardwareMap.get(DcMotorEx.class, "leftFront");
+            lb = hardwareMap.get(DcMotorEx.class, "leftBack");
+            rf = hardwareMap.get(DcMotorEx.class, "rightFront");
+            rb = hardwareMap.get(DcMotorEx.class, "rightBack");
+        } catch (Exception e) {except(e);}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e);}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        initTfod();
 
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if (lf != null) {
+            lf.setDirection(DcMotorEx.Direction.REVERSE);
+            lb.setDirection(DcMotorEx.Direction.REVERSE);
+            rf.setDirection(DcMotorEx.Direction.FORWARD);
+            rb.setDirection(DcMotorEx.Direction.FORWARD);
 
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
+            lf.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            lb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            rf.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            rb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        if (pixelLiftingMotor != null) {
-            pixelLiftingMotor.setDirection(DcMotor.Direction.REVERSE);
-            pixelLiftingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pixelLiftingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            pixelLiftingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lb.setTargetPosition(lb.getCurrentPosition());
+            rb.setTargetPosition(rb.getCurrentPosition());
+            lf.setTargetPosition(lf.getCurrentPosition());
+            rf.setTargetPosition(rf.getCurrentPosition());
         }
 
-        initTfod();
+        if (pixelLiftingMotor != null) {
+            pixelLiftingMotor.setDirection(DcMotorEx.Direction.REVERSE);
+            pixelLiftingMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            pixelLiftingMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            pixelLiftingMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        }
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -113,36 +121,35 @@ public abstract class CSMethods extends LinearOpMode {
     }
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
-        int newLeftBackTarget;
-        int newRightBackTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
+        int lbTarget = 0;
+        int rbTarget = 0;
+        int lfTarget = 0;
+        int rfTarget = 0;
 
         // Ensure that the OpMode is still active
-        if (opModeIsActive()) {
+        if (opModeIsActive() && lf != null) {
+            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             // Determine new target position, and pass to motor controller
-            newLeftBackTarget = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightBackTarget = rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftFrontTarget = lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
-            lb.setTargetPosition(newLeftBackTarget);
-            rb.setTargetPosition(newRightBackTarget);
-            lf.setTargetPosition(newLeftFrontTarget);
-            rf.setTargetPosition(newRightFrontTarget);
-
-            // Turn On RUN_TO_POSITION
-            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Turn On RUN_TO_POSITION for front motors
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            lb.setPower(abs(speed));
-            rb.setPower(abs(speed));
-            lf.setPower(abs(speed));
-            rf.setPower(abs(speed));
+            lb.setVelocity(VELOCITY);
+            rb.setVelocity(VELOCITY);
+            lf.setVelocity(VELOCITY);
+            rf.setVelocity(VELOCITY);
+
+            double inches = (leftInches + b) / m;
+
+            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -150,23 +157,23 @@ public abstract class CSMethods extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (lb.isBusy() && rb.isBusy() && lf.isBusy() && rf.isBusy())) {
+            while (opModeIsActive() && (runtime.seconds() < duration)) {
                 // Display it for the driver.
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget,  newRightFrontTarget);
+                telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
                 telemetry.update();
             }
 
-            //  stopRobot();
+            stopRobot();
 
             // Turn off RUN_TO_POSITION
             // Note: Following code is technically redundant since called in stopRobot(), but the function
             // may be changed, so do not delete.
-            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
             //sleep(250);   // optional pause after each move.
         }
@@ -182,16 +189,16 @@ public abstract class CSMethods extends LinearOpMode {
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
             double correctedGoalAngle = initialGoalAngle;
-            double difference;
+            double difference = 999;
             double turnModifier;
             double turnPower;
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle > TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - correctedGoalAngle < -TURN_ACCURACY)) {
+            while (opModeIsActive() && (difference > TURN_ACCURACY)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = Math.min(1, (difference + 5) / 30);
+                turnModifier = min(1, (difference + 5) / 30);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setPower(-turnPower);
                 rb.setPower(turnPower);
@@ -207,6 +214,64 @@ public abstract class CSMethods extends LinearOpMode {
             stopRobot();
         }
     }
+    public void strafe(double inches) {
+        int lbTarget = 0;
+        int rbTarget = 0;
+        int lfTarget = 0;
+        int rfTarget = 0;
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive() && lf != null) {
+            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            // Determine new target position, and pass to motor controller
+
+            // Turn On RUN_TO_POSITION for front motors
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            lb.setVelocity(-VELOCITY);
+            rb.setVelocity(VELOCITY);
+            lf.setVelocity(-VELOCITY);
+            rf.setVelocity(VELOCITY);
+
+            //double inches = (inches + b) / m;
+
+            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() && (runtime.seconds() < duration)) {
+                // Display it for the driver.
+                telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
+                telemetry.update();
+            }
+
+            stopRobot();
+
+            // Turn off RUN_TO_POSITION
+            // Note: Following code is technically redundant since called in stopRobot(), but the function
+            // may be changed, so do not delete.
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+            //sleep(250);   // optional pause after each move.
+        }
+    }
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
@@ -217,6 +282,8 @@ public abstract class CSMethods extends LinearOpMode {
         stopRobot();
     }
     public void ejectPixel() {
+        telemetry.addData("Car Wash", "Ejecting Pixel");
+        telemetry.update();
         if (carWashMotor != null) {
             int t = (int) runtime.milliseconds() + 1000;
             carWashMotor.setPower(carWashPower);
@@ -236,10 +303,10 @@ public abstract class CSMethods extends LinearOpMode {
         rf.setTargetPosition(rf.getCurrentPosition());
 
         // Turn On RUN_TO_POSITION
-        lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         // Stop all motion
         lb.setTargetPosition(lb.getCurrentPosition());
@@ -253,10 +320,10 @@ public abstract class CSMethods extends LinearOpMode {
         rf.setPower(0);
 
         // Turn off RUN_TO_POSITION
-        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
     public void dropCarWash() {
@@ -324,22 +391,41 @@ public abstract class CSMethods extends LinearOpMode {
     /**
      * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
      */
-    public List<Recognition> detectProp() {
-
+    public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-
+        for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
+            sleep(100);
+            currentRecognitions = tfod.getRecognitions();
+        }
+        double x = -1;
+        double y = -1;
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
             telemetry.addData(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
-        return currentRecognitions;
+        telemetry.update();
+        return x;
     }   // end method detectProp()
+
+    public void findPos() {
+        double x = detectProp();
+        if (x > boundaries[0] && x < boundaries[1]){
+            pos = 2; // Middle
+        }
+        else if (x > boundaries[1]){
+            pos = 3; // Right
+        } else {
+            pos = 1; // Left
+        }
+        telemetry.addData("Position", pos);
+        telemetry.update();
+    }
 
     public void except(Exception e) {
         telemetry.addData("Exception", e);

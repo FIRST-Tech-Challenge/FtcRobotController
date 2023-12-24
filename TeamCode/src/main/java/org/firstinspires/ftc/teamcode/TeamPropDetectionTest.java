@@ -65,6 +65,7 @@ public class TeamPropDetectionTest extends CSMethods {
 
     }   // end runOpMode()
 
+    /*
     @Override
     public List<Recognition> detectProp() {
 
@@ -80,12 +81,13 @@ public class TeamPropDetectionTest extends CSMethods {
             else if (x > 500){
                 telemetry.addData("Prop Position","Right");
             }
-            else {
-                telemetry.addData("Prop Position","Left");
-            }
+            telemetry.addData("", recognition);
         }   // end for() loop
+        if(currentRecognitions.size() == 0) {
+            telemetry.addData("Prop Position","Left");
+        }
         telemetry.update();
         return currentRecognitions;
     }   // end method detectProp()
-
+    //*/
 }   // end class

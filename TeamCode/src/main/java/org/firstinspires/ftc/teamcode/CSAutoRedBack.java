@@ -39,44 +39,48 @@ import java.util.List;
 public class CSAutoRedBack extends CSMethods {
     @Override
     public void runOpMode() {
-        setup(true);
+        boolean isRed = true;
+        setup(isRed);
 
+        // ---------------------
+        // ------Main Code------
+        // ---------------------
 
-        // Main code
         //dropCarWash();
-        drive(13.5);
-        drive(1);
-        //*
-        List<Recognition> pixels = detectProp();
-        if (pixels.size() > 0) {
-            drive(6);
-            ejectPixel();
-            drive(-6);
-        } else {
+        sleep(2000); // Wait to allow camera initialization (for detecting team prop)
+        findPos();
+        sleep(1000);
+        drive(-20);
+        sleep(1000);
+        if (pos == 1) {
             turn(-30);
-            pixels = detectProp();
-            if (pixels.size() > 0) {
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(30);
-            } else {
-                turn(60);
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(-30);
-            }
+            sleep(1000);
+            ejectPixel(); // Filler for placing pixel down the road
+            sleep(1000);
+            turn(30);
+        } else if (pos == 2) {
+            drive(-3);
+            sleep(1000);
+            ejectPixel();
+            sleep(1000);
+            drive(3);
+        } else if (pos == 3) {
+            turn(30);
+            sleep(1000);
+            ejectPixel();
+            sleep(1000);
+            turn(-30);
         }
+        sleep(1000);
+        turn(90);
+        sleep(1000);
+        drive(-10);
+        sleep(2500);
+
         //*/
-        turn(60);
-        drive(20);
-        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
-
 }
