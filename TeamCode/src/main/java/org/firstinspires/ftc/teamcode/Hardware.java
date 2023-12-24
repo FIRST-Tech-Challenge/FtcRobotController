@@ -20,8 +20,11 @@ public class Hardware {
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
 
-    public DcMotorEx armMotor1;
-    public DcMotorEx armMotor2;
+    public DcMotorEx leftSlider;
+    public DcMotorEx rightSlider;
+
+    public DcMotorEx leftArm;
+    public DcMotorEx rightArm;
 
     public DcMotorEx[] motors;
     public DcMotor fd;
@@ -40,8 +43,11 @@ public class Hardware {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backLeft.getCurrentPosition();
 
-        armMotor1 = hardwareMap.get(DcMotorEx.class, "leftArm");
-        armMotor2 = hardwareMap.get(DcMotorEx.class, "rightArm");
+        leftArm = hardwareMap.get(DcMotorEx.class, "leftArm");
+        rightArm = hardwareMap.get(DcMotorEx.class, "rightArm");
+
+        leftSlider = hardwareMap.get(DcMotorEx.class, "leftSlider");
+        rightSlider = hardwareMap.get(DcMotorEx.class, "rightSlider");
 
         droneServo = hardwareMap.get(Servo.class, "droneLauncher");
 

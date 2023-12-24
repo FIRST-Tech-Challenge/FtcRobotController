@@ -101,8 +101,8 @@ class Testing extends LinearOpMode {
             throw new RuntimeException(e);
         }
         // Intiate Hardware
-        armMotor1 = drive.hardware.armMotor1;
-        armMotor2 = drive.hardware.armMotor2;
+        armMotor1 = drive.hardware.leftSlider;
+        armMotor2 = drive.hardware.rightSlider;
         try {
             motor0 = hardwareMap.get(DcMotorEx.class, "motor0");
         } catch (IllegalArgumentException e) {
@@ -319,8 +319,8 @@ class Testing extends LinearOpMode {
                             updateGamepad();
                             valueServo2 = Range.clip(ly, 0, 0.25);
                             valueServo1 = Range.clip(lx, 0, 0.25);
-                            drive.hardware.servo1.setPosition(valueServo1);
-                            drive.hardware.servo2.setPosition(valueServo2);
+                            servo1.setPosition(valueServo1);
+                            servo2.setPosition(valueServo2);
                             if (back) {
                                 started = false;
                             }
@@ -329,8 +329,8 @@ class Testing extends LinearOpMode {
                     }
                     if (buttonB) {
                         while (started) {
-                            valueServo1 = drive.hardware.servo1.getPosition();
-                            valueServo2 = drive.hardware.servo2.getPosition();
+                            valueServo1 = servo1.getPosition();
+                            valueServo2 = servo2.getPosition();
                             telemetries.addLine("Servo Position 1: " + valueServo1);
                             telemetries.addLine("Servo Position 2: " + valueServo2);
                             telemetries.update();
