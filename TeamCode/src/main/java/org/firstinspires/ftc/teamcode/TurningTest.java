@@ -205,7 +205,23 @@ public class TurningTest extends LinearOpMode {
     }
 
     public double getAngle() {
-        return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - offset;
+        return fixAngle(imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+    }
+
+    public double fixAngle(double angle) {
+        if (abs(angle) > 180) {
+            return (angle % 180) - 180 * signum(angle);
+        } else {
+            return angle;
+        }
+    }
+
+    public double closestToZero(double a, double b) {
+        if (abs(a) < abs(b)) {
+            return a;
+        } else {
+            return b;
+        }
     }
 
     public void turn(double degrees) {
@@ -216,22 +232,19 @@ public class TurningTest extends LinearOpMode {
             resetIMU();
             double tolerance = 5;
             degrees *= -1;
+            double sign = signum(degrees);
             double startAngle = getAngle();
             double currentAngle;
             double initialGoalAngle = startAngle + degrees;
-            double correctedGoalAngle = initialGoalAngle;
-            double thirdGoalAngle = (initialGoalAngle + 180) % 360 - 180;
-            double error = 999;
+            double correctedGoalAngle = fixAngle(initialGoalAngle);
+            double error = sign * 999;
             double turnModifier;
             double turnPower;
             double lastAngle = startAngle;
-            if (abs(initialGoalAngle) > 180) {
-                correctedGoalAngle = (correctedGoalAngle + 180) % 360 - 180;
-            }
-            while (opModeIsActive() && (error > tolerance)) {
+            while (opModeIsActive() && (sign * error > tolerance)) {
                 currentAngle = getAngle();
-                error = min(abs(initialGoalAngle - currentAngle), min(abs(correctedGoalAngle - currentAngle), abs(thirdGoalAngle - currentAngle)));
-                turnModifier = Math.min(1, (error + 3) / 45);
+                error = fixAngle(closestToZero(initialGoalAngle - currentAngle, correctedGoalAngle - currentAngle));
+                turnModifier = min(1, abs((error + 3) / 45));
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setVelocity(-turnPower);
                 rb.setVelocity(turnPower);
@@ -242,6 +255,7 @@ public class TurningTest extends LinearOpMode {
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
                 telemetry.addData("Angle", currentAngle);
+                telemetry.addData("True Angle", currentAngle + offset);
                 telemetry.addData("Turn Modifier", turnModifier);
                 telemetry.addData("Raw error", error);
                 telemetry.update();
