@@ -90,13 +90,14 @@ public class SetDriveMotors extends OpMode {
         horizontalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_X, 0.5);
         verticalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_Y, 0.4);
     }
-    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode) {
+    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode, boolean alignToCardinalPoint) {
         // Read pose
         Pose2d poseEstimate = drive.getPoseEstimate();
 
         //Driver assistance: takes over if too close to wall
         if (distanceToWallMeters != 0 && distanceToWallMeters < 0.4){
             if (vertical < BACKDROP_APPROACH_SPEED) {
+                telemetry.addData("Distance to wall: ", distanceToWallMeters);
                 vertical = BACKDROP_APPROACH_SPEED;
             }
         }
@@ -109,6 +110,10 @@ public class SetDriveMotors extends OpMode {
             horizontal = horizontalSlowDeadzone.computePower(horizontal);
             vertical = verticalSlowDeadzone.computePower(vertical);
             turn *= 0.6;
+        }
+
+        if (alignToCardinalPoint){
+            turn = getAngleToCardinalPoint() / Math.PI;
         }
 
         switch (driveMode){
@@ -191,11 +196,37 @@ public class SetDriveMotors extends OpMode {
     public void update() {
             drive.update();
     }
-    public void alignClosest()  {
+    public double getAngleToCardinalPoint()  {
         Pose2d poseEstimate = drive.getPoseEstimate();
-        double currentHeading = poseEstimate.getHeading();
+
+        // Normalize the heading to the range [0, 2π)
+        double currentHeading = (poseEstimate.getHeading() + 2 * Math.PI) % (2 * Math.PI);
+
+        // Calculate the closest cardinal direction in radians
         double closestCardinalRad = Math.round(currentHeading / (Math.PI / 2)) * (Math.PI / 2);
-        drive.turn(closestCardinalRad - currentHeading);
+
+        // Ensure the closestCardinalRad value is within [0, 2π)
+        closestCardinalRad = (closestCardinalRad + 2 * Math.PI) % (2 * Math.PI);
+
+        TelemetryManager.getTelemetry().addData("closestCard: ", Math.toDegrees(closestCardinalRad));
+        TelemetryManager.getTelemetry().addData("currHeading: ", Math.toDegrees(currentHeading));
+        // Calculate the difference between current and closest cardinal direction
+
+        double difference =  closestCardinalRad - currentHeading;
+
+        // Normalize the difference to be within (-π, π]
+        if (difference <= -Math.PI) {
+            difference += 2 * Math.PI;
+        } else if (difference > Math.PI) {
+            difference -= 2 * Math.PI;
+        }
+
+        // Check if the absolute difference is less than 1 degree (π/180 radians)
+        if (Math.abs(difference) < Math.PI / 180) {
+            return 0; // Stop adjustment when the difference is minimal
+        }
+
+        return difference;
 
     }
 

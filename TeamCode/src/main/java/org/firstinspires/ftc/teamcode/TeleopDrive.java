@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -82,20 +81,21 @@ public class TeleopDrive extends LinearOpMode {
             boolean goFast = gamepad1.left_bumper;
             boolean emergencyBrakeOverride = gamepad1.right_bumper;
             boolean switchDriveMode = gamepad1.b;
+            boolean alignToCardinalPoint = gamepad1.a;
 //            if (!drive.isBusy() || !atRest()) {
 //                setMotorsObj.driveCommands(hardwareMap, horizontal, vertical, turn, goFast);
 //            }
 
-            double distanceToWall = aprilTagDetection.GetDistanceAwayFromTheBackdrop();
-            if (emergencyBrakeOverride){
-                // A little bit of a monkey patch, but it works to override, because distance 0 corresponds to "too far to detect"
-                distanceToWall = 0;
+            double distanceToWall = 0;
+            if (!emergencyBrakeOverride){
+                // AprilTag detection of positions if costly
+                // Put calculation within if test so it s performed when needed only
+                // thus no calc is in emergency override
+                distanceToWall = aprilTagDetection.GetDistanceAwayFromTheBackdrop();
             }
 
-            if(gamepad1.a) {
-                setDriveMotorsObj.alignClosest();
-            }
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode);
+
+            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint);
             setDriveMotorsObj.update();
 
             robot.update();

@@ -174,12 +174,12 @@ public class Robot {
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
+                        .stopMotor(intakeMotor)
                         .resetTimer(timer)
                         .waitUntil(timer, 150)
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
-                        .stopMotor(lift.liftMotor)
-                        .stopMotor(intakeMotor));
+                        .stopMotor(lift.liftMotor));
 
         holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
@@ -302,9 +302,6 @@ public class Robot {
         if(stateMachine.getCurrentState() == outTakingPixels){
             lift.update();
         }
-        //lift.update();
-        TelemetryManager.getTelemetry().addLine(""+lift.liftMotor.getCurrentPosition());
-
     }
 
     public StateMachine.State currentState(){
