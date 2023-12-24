@@ -22,7 +22,7 @@ public class Robot {
     public DcMotor motorBL = null; // Back Left
 
     public DcMotorEx motorSlider; // Slider
-    public DcMotorEx motorArm; // Elbow or Arm
+    public Servo servoArm; // Elbow or Arm
     public DcMotorEx motorHang; // Hanging
 
     public Servo servoCR; // Claw Right
@@ -45,14 +45,15 @@ public class Robot {
         motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorSlider = hardwareMap.get(DcMotorEx.class, "sliders");
-        motorArm = hardwareMap.get(DcMotorEx.class, "elbow");
-        motorArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        servoArm = hardwareMap.get(Servo.class, "arm");
         motorHang = hardwareMap.get(DcMotorEx.class, "hanging");
         servoCL = hardwareMap.get(Servo.class, "claw_left");
         servoCR = hardwareMap.get(Servo.class, "claw_right");
         servoDrone = hardwareMap.get(Servo.class, "drone");
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         imu = hardwareMap.get(BHI260IMU.class, "imu");
+
+        servoArm.setPosition(0.2);
 
         imu.initialize(
             new IMU.Parameters(

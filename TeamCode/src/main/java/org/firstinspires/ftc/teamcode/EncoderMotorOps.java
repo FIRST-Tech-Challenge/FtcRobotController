@@ -82,10 +82,10 @@ public class EncoderMotorOps {
         }
 
         // NEW
-        if (limitCheck(power < 0)) {
-            motor.setPower(0);
-            return;
-        }
+        //if (limitCheck(power < 0)) {
+        //  motor.setPower(0);
+          //  return;
+        //}
         cur_position = motor.getCurrentPosition();
         motor.setPower(-power);
         cur_manual_power = -power;
