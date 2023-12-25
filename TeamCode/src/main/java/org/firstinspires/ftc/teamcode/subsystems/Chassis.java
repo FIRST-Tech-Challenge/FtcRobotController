@@ -7,6 +7,8 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.utils.PoseEstimator;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,6 +20,7 @@ import java.util.function.Supplier;
 public class Chassis implements Subsystem {
 
     private HardwareMap map;
+    ElapsedTime time = new ElapsedTime();
     private PoseEstimator m_poseEstimator;
     private Telemetry m_telemetry;
     private MotorEx motor_FL;
@@ -29,7 +32,7 @@ public class Chassis implements Subsystem {
     private MotorEx encoderCenter;
     private Pose2d m_postitionFromTag;
     HolonomicOdometry odometry;
-    public Chassis(HardwareMap map, Telemetry telemetry, Pose2d positionFromTag, PoseEstimator poseEstimator){
+    public Chassis(HardwareMap map, Telemetry telemetry, Pose2d positionFromTag, PoseEstimator poseEstimator, ElapsedTime time){
         this.map=map;
         this.m_telemetry=telemetry;
         this.m_postitionFromTag = positionFromTag;
@@ -46,8 +49,10 @@ public class Chassis implements Subsystem {
                 () -> encoderRight.getCurrentPosition() * Constants.TICKS_TO_CM,
                 () -> encoderCenter.getCurrentPosition() * Constants.TICKS_TO_CM,
                 Constants.TRACKWIDTH, Constants.WHEEL_OFFSET);
+        time.startTime();
 
     }
+
     public void setMotors (double FL, double FR, double BL, double BR){
         motor_FR.set(FR);
         motor_FL.set(FL);
@@ -68,11 +73,14 @@ public class Chassis implements Subsystem {
             setMotors(v1, v2, v3, v4);
         },this);
     }
-
     @Override
     public void periodic() {
-        m_poseEstimator.cameraMeasurements(m_postitionFromTag);
         odometry.updatePose();
+
+        if (Constants.TimeToAprilTagCheck > time.seconds()) {
+            m_poseEstimator.cameraMeasurements(m_postitionFromTag);
+            time.reset();
+        }
     }
     @Override
     public void setDefaultCommand(Command defaultCommand) {
