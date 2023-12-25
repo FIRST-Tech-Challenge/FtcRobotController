@@ -48,13 +48,20 @@ public class climb {
     public void stopMotors() {
         climb_motor.set(0);
     }
+    public Command climb_down(){
+        TrapezoidProfile.State gaol_down = new TrapezoidProfile.State(0, 0);
+        return climb(gaol_down);
+    }
+    public Command climb_up() {
+        TrapezoidProfile.State goal_up = new TrapezoidProfile.State(max_ticks, 0);
+        return climb(goal_up);
+    }
 
-    public Command climb() {
-        TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
+    public Command climb(TrapezoidProfile.State goal ) {
 
         Runnable init = () -> {
             TrapezoidProfile.State initPose = new TrapezoidProfile.State(climb_motor.encoder.getPosition(), climb_motor.encoder.getRawVelocity());
-            m_profile = new TrapezoidProfile(m_sysConstraints, goal, initPose);
+            m_profile = new TrapezoidProfile(m_sysConstraints,goal , initPose);
             m_elapsedTime.reset();
         };
         Runnable loop = () -> {
