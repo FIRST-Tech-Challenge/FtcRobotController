@@ -19,7 +19,8 @@ public class Constants {
     public static final double vMin = -1;//placeholder value
     final public static double cameraAngle = 0;
     public static class  Climb{
-        public static final double climb_speed = 0;// todo: this is not calibrated
+        public static final double climb_max_speed = 0;// todo: this is not calibrated
+        public static final double climb_max_accel = 0;// todo: this is not calibrated
         public static final double kp = 0;// todo: this is not calibrated
         public static final double ki = 0;// todo: this is not calibrated
         public static final double kd = 0;// todo: this is not calibrated
