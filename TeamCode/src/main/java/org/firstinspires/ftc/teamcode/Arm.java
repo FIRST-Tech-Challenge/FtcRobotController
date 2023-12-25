@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class Arm {
     private Robot robot;
     private Gamepad gamepad;
-    static private double pos_pixel  = 0.7;
+    static private double pos_pixel  = 0.65;
     static private double pos_folded  = 0.0;
     static private double pos_backdrop  = 0.4;
     public Arm(Robot robot, Gamepad gamepad) {

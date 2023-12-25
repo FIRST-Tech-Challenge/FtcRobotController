@@ -35,7 +35,7 @@ public class Claw {
     public void close_claw_left()
     {
         if (!cl_closed) {
-            robot.servoCR.setPosition(0.7); // close the claw
+            robot.servoCR.setPosition(0.75); // close the claw
             cl_closed = true;
         }
     }
