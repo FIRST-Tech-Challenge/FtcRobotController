@@ -88,6 +88,8 @@ public class AutonomousAwareness {
 
         m_robotDrive = new MecanumDrive(false, fL, fR, bL, bR);
 
+        createNewPurePursuitCommand();
+
         dbp.createNewTelePacket();
         dbp.put("Waypoints", Arrays.toString(m_path.toArray()));
         dbp.send(true);
@@ -128,8 +130,6 @@ public class AutonomousAwareness {
 
         dbp.debug(usePurePursuit ? "Using pure pursuit" : "Not using pure pursuit");
         dbp.send(false);
-
-        createNewPurePursuitCommand();
     }
 
     public void addToPath(Waypoint waypoint) {
