@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.botmodule.Claw
+import org.firstinspires.ftc.teamcode.botmodule.DroneLauncher
 import org.firstinspires.ftc.teamcode.botmodule.Intake
 import org.firstinspires.ftc.teamcode.botmodule.LSD
 import org.firstinspires.ftc.teamcode.botmodule.March
@@ -60,6 +61,10 @@ class BotShared(opMode: OpMode) {
     @JvmField val servoTrussRight:  Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "trussR"       ] }
     @JvmField val servoTrussLeft:   Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "trussL"       ] }
 
+    //Drone Launch
+    @JvmField val servoDroneLaunch:   Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "drone"       ] }
+
+
 
 
 
@@ -67,7 +72,7 @@ class BotShared(opMode: OpMode) {
     //@JvmField val lsd                 = motorSlide?.let {   LSD(opMode, it)     }
     @JvmField val claw                = if (servoClawLeft   != null && servoClawRight != null)  Claw(opMode, servoClawLeft, servoClawRight      )   else null
     @JvmField val intake              = if (servoIntakeLift != null || motorIntake != null) Intake(opMode, servoIntakeLift, motorIntake )   else null
-
+    @JvmField val droneLauncher        = if (servoDroneLaunch   != null )  DroneLauncher(opMode, servoDroneLaunch)   else null
     @JvmField var drive: MecanumDrive? = null
 
     init {
