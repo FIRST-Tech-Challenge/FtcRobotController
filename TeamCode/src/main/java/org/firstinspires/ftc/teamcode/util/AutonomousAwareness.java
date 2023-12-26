@@ -122,12 +122,12 @@ public class AutonomousAwareness {
 
         usePurePursuit = _usePurePursuit;
 
+        initOdometry(encodeLeft, encodeRight, encodeBack);
+
         dbp.debug(usePurePursuit ? "Using pure pursuit" : "Not using pure pursuit");
         dbp.send(false);
 
         createNewPurePursuitCommand();
-
-        initOdometry(encodeLeft, encodeRight, encodeBack);
     }
 
     public void addToPath(Waypoint waypoint) {
