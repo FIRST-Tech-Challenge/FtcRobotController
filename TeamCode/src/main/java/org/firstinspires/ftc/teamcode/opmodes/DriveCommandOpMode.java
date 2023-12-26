@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
+import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -66,5 +67,8 @@ public class DriveCommandOpMode extends CommandOpMode {
         wristSubsystem.setDefaultCommand(new MoveWristCommand(wristSubsystem,
                 () -> (controller1.getButton(GamepadKeys.Button.DPAD_UP) ? 0 : 1),
                 () -> (controller1.getButton(GamepadKeys.Button.DPAD_DOWN) ? 0 : 1)));
+        fingerSubsystem.setDefaultCommand(new MoveFingerCommand(fingerSubsystem,
+                () -> (controller1.getButton(GamepadKeys.Button.A) ? 0 : 1),
+                () -> (controller1.getButton(GamepadKeys.Button.B) ? 0 : 1)));
     }
 }

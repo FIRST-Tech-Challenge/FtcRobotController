@@ -15,8 +15,11 @@ public class FingerSubsystem extends SubsystemBase {
         this.finger = finger;
     }
 
-    public void locomoteFinger() {
-
+    public void locomoteFinger(double forward, double backward) {
+        double power = forward-backward;
+        power++;
+        power/=2d;
+        finger.setPosition(power);
     }
 
 }
