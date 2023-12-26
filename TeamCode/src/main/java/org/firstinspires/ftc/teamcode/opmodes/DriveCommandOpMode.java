@@ -36,8 +36,8 @@ public class DriveCommandOpMode extends CommandOpMode {
 
     @Override
     public void initialize() {
-        GamepadEx controller1 = new GamepadEx(gamepad1);
-        GamepadEx controller2 = new GamepadEx(gamepad2);
+        GamepadEx driverController = new GamepadEx(gamepad1);
+        GamepadEx armerController = new GamepadEx(gamepad2);
 
         dbp.createNewTelePacket();
         dbp.info("Initializing");
@@ -50,11 +50,51 @@ public class DriveCommandOpMode extends CommandOpMode {
         wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
 
-        driveCommand = new DefaultDrive(driveSubsystem,
-                controller1::getLeftY,
-                controller1::getLeftX,
-                controller1::getRightX);
+        GamepadKeys.Button slowdownButton = GamepadKeys.Button.A;
 
+        // TODO: Make the D-pad for the driver controller work like WASD
+        // TODO: Check if the current D-pad implementation works as intended
+
+        int dpadX =
+                (driverController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0) -
+                        (driverController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0);
+        int dpadY =
+                (driverController.getButton(GamepadKeys.Button.DPAD_UP) ? 1 : 0) -
+                        (driverController.getButton(GamepadKeys.Button.DPAD_DOWN) ? 1 : 0);
+
+        DoubleSupplier forwardBack = new DoubleSupplier() {
+            @Override
+            public double getAsDouble() {
+                if(dpadY != 0) {
+                    return dpadY / ((driverController.getButton(slowdownButton) ? 1d : 2d));
+                } else {
+                    return driverController.getLeftY() / ((driverController.getButton(slowdownButton) ? 1d : 2d));
+                }
+            }
+        };
+        DoubleSupplier leftRight = new DoubleSupplier() {
+            @Override
+            public double getAsDouble() {
+                if(dpadX != 0) {
+                    return dpadX / ((driverController.getButton(slowdownButton) ? 1d : 2d));
+                } else {
+                    return driverController.getLeftX() / ((driverController.getButton(slowdownButton) ? 1d : 2d));
+                }
+            }
+        };
+        DoubleSupplier rotation = new DoubleSupplier() {
+            @Override
+            public double getAsDouble() {
+                return driverController.getRightX() / ((driverController.getButton(slowdownButton) ? 1d : 2d));
+            }
+        };
+
+        driveCommand = new DefaultDrive(driveSubsystem,
+                forwardBack,
+                leftRight,
+                rotation);
+
+        // TODO: autonomous macro for arm positioning (aka bumpers automatically move the arm to the pickup position or to the board position)
 
         register(driveSubsystem);
         register(armSubsystem);
@@ -62,13 +102,13 @@ public class DriveCommandOpMode extends CommandOpMode {
         register(fingerSubsystem);
         driveSubsystem.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(new MoveArmCommand(armSubsystem,
-                () -> controller1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                () -> controller1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+                () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
+                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         wristSubsystem.setDefaultCommand(new MoveWristCommand(wristSubsystem,
-                () -> (controller1.getButton(GamepadKeys.Button.DPAD_UP) ? 0 : 1),
-                () -> (controller1.getButton(GamepadKeys.Button.DPAD_DOWN) ? 0 : 1)));
+                () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 0 : 1),
+                () -> (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 0 : 1)));
         fingerSubsystem.setDefaultCommand(new MoveFingerCommand(fingerSubsystem,
-                () -> (controller1.getButton(GamepadKeys.Button.A) ? 0 : 1),
-                () -> (controller1.getButton(GamepadKeys.Button.B) ? 0 : 1)));
+                () -> (armerController.getButton(GamepadKeys.Button.A) ? 0 : 1),
+                () -> (armerController.getButton(GamepadKeys.Button.B) ? 0 : 1)));
     }
 }
