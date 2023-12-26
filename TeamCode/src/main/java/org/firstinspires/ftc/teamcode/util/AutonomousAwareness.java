@@ -122,6 +122,8 @@ public class AutonomousAwareness {
 
         usePurePursuit = _usePurePursuit;
 
+        dbp.debug(usePurePursuit ? "Using pure pursuit" : "Not using pure pursuit");
+
         if (usePurePursuit) {
             createNewPurePursuitCommand();
         }
