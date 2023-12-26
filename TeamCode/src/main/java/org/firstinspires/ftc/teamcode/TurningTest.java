@@ -209,14 +209,16 @@ public class TurningTest extends LinearOpMode {
     }
 
     public double fixAngle(double angle) {
+        return (angle + 180) % 360 - 180
+        /*
         if (abs(angle) > 180) {
             return (angle % 180) - 180 * signum(angle);
         } else {
             return angle;
-        }
+        }//*/
     }
 
-    public double fixError(double error) {
+    public double fixError(double error) { // Don't use
         if (abs(error) > 180) {
             return (error % 180) - 180;
         } else {
