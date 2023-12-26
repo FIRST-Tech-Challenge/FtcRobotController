@@ -99,7 +99,6 @@ public class AutonomousAwareness {
         addToPath(new EndWaypoint());
         initPath();
         followPath();
-
     }
 
     /** 
