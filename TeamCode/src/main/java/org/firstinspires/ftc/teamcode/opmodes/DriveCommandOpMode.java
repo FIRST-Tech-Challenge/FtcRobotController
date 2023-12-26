@@ -24,7 +24,6 @@ public class DriveCommandOpMode extends CommandOpMode {
     DefaultDrive driveCommand;
 
     ArmSubsystem armSubsystem;
-    MoveArmCommand frontwardCommand, backwardCommand;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
@@ -32,6 +31,10 @@ public class DriveCommandOpMode extends CommandOpMode {
     public void initialize() {
         GamepadEx controller1 = new GamepadEx(gamepad1);
         GamepadEx controller2 = new GamepadEx(gamepad2);
+
+        dbp.createNewTelePacket();
+        dbp.info("Initializing");
+        dbp.send(true);
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
@@ -41,24 +44,18 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> controller1.getLeftX(),
                 () -> controller1.getRightX());
         */
+
         driveCommand = new DefaultDrive(driveSubsystem,
                 () -> -controller1.getLeftY(),
                 controller1::getLeftX,
                 controller1::getRightX);
 
         armSubsystem = new ArmSubsystem(hardwareMap, "arm");
-        frontwardCommand = new MoveArmCommand(armSubsystem, ArmSubsystem.Direction.FRONTWARD);
-        backwardCommand = new MoveArmCommand(armSubsystem, ArmSubsystem.Direction.BACKWARD);
-
-        controller1.getGamepadButton(GamepadKeys.Button.A).whenPressed(frontwardCommand);
-        controller1.getGamepadButton(GamepadKeys.Button.B).whenPressed(backwardCommand);
-
-        dbp.createNewTelePacket();
-        dbp.info("Initializing");
-        dbp.send(true);
 
         register(armSubsystem);
-        armSubsystem.setDefaultCommand(new MoveArmCommand(armSubsystem, null));
+        armSubsystem.setDefaultCommand(new MoveArmCommand(armSubsystem,
+                () -> controller1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
+                () -> controller1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         register(driveSubsystem);
         driveSubsystem.setDefaultCommand(driveCommand);
     }
