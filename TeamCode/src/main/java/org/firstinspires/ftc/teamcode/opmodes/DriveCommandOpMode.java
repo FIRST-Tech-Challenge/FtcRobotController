@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
@@ -19,6 +20,8 @@ public class DriveCommandOpMode extends CommandOpMode {
     DriveSubsystem driveSubsystem;
     DoubleSupplier axial, lateral, yaw;
     DefaultDrive driveCommand;
+
+    private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
     @Override
     public void initialize() {
@@ -32,6 +35,10 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> -controller1.getLeftY(),
                 () -> controller1.getLeftX(),
                 () -> controller1.getRightX());
+
+        dbp.createNewTelePacket();
+        dbp.info("Initializing");
+        dbp.send(true);
 
         register(driveSubsystem);
         driveSubsystem.setDefaultCommand(driveCommand);
