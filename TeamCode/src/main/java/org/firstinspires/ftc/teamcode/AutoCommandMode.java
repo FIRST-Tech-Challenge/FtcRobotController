@@ -68,6 +68,7 @@ public class AutoCommandMode extends CommandOpMode {
                 new GeneralWaypoint(200, 0, 0.8, 0.8, 30),
                 new EndWaypoint()
         );
-        ppCommand.schedule();
+        dbp.debug("Scheduling ppCommand", true);
+        schedule(ppCommand);
     }
 }
