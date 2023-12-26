@@ -60,7 +60,15 @@ public class AutoCommandMode extends CommandOpMode {
         /*
         AA.initPath();
         AA.followPath();
+
+        PurePursuitCommand ppCommand = new PurePursuitCommand(
+                AA.m_robotDrive, AA.odometry,
+                new StartWaypoint(),
+                new GeneralWaypoint(200, 0, 0.8, 0.8, 30),
+                new EndWaypoint()
+        );
          */
-        AA.ppCommand.schedule();
+        dbp.debug("Scheduling ppCommand", true);
+        schedule(AA.ppCommand);
     }
 }
