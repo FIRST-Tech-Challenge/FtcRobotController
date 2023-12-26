@@ -45,9 +45,13 @@ public class AutoCommandMode extends CommandOpMode {
 
         assert motors != null;
 
+        final RobotHardwareInitializer.DriveMotor ENCODER_LEFT = RobotHardwareInitializer.DriveMotor.ENCODER_LEFT;
+        final RobotHardwareInitializer.DriveMotor ENCODER_RIGHT = RobotHardwareInitializer.DriveMotor.ENCODER_RIGHT;
+        final RobotHardwareInitializer.DriveMotor ENCODER_BACK = RobotHardwareInitializer.DriveMotor.ENCODER_BACK;
+
         AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, true,
                 lFD, rFD, lBD, rBD,
-                motors.get("encoderLeft"), motors.get("encoderRight"), motors.get("encoderBack"));
+                motors.get(ENCODER_LEFT), motors.get(ENCODER_RIGHT), motors.get(ENCODER_BACK));
 
         dbp.debug("Following Path", true);
         AA.addToPath(new StartWaypoint());
