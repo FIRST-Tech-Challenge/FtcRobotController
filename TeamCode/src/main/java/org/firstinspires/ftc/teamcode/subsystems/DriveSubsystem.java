@@ -30,6 +30,8 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
                           final DcMotor leftBack, final DcMotor rightBack) {
         dbp.createNewTelePacket();
+        dbp.info(leftFront+", "+leftBack+", "+rightFront+", "+rightBack);
+        dbp.send(true);
         lF = leftFront;
         rF = rightFront;
         lB = leftBack;

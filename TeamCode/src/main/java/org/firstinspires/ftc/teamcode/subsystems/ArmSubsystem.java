@@ -30,6 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public void manualMoveArm(Direction direction, float power) {
         power = Math.max(0, Math.min(1, power));
+        power *= (direction == Direction.FRONTWARD) ? 1f : -1f;
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setPower(power);
     }
