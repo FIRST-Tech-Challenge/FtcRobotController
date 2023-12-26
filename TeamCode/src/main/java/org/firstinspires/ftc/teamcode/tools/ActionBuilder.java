@@ -103,7 +103,8 @@ public class ActionBuilder {
     }
 
     public ActionBuilder addLine(String text) {
-        ActionFunction function = () -> {TelemetryManager.getTelemetry().addLine(text); TelemetryManager.getTelemetry().update(); return true;};
+        ActionFunction function = () -> {
+            Global.telemetry.addLine(text); Global.telemetry.update(); return true;};
         String name = "";
         return add(name, function);
     }

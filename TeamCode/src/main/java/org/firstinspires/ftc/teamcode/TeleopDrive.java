@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.aprilTags.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+import org.firstinspires.ftc.teamcode.tools.Global;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOpDrive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
-    private SetDriveMotors setDriveMotorsObj;
+    private SetDriveMotors driveMotors;
 
     private boolean isLiftReset = false;
 
@@ -20,8 +20,8 @@ public class TeleopDrive extends LinearOpMode {
     AprilTagDetection aprilTagDetection;
 
     public void Setup(){
-        TelemetryManager.setTelemetry(telemetry);
-        setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
+        Global.telemetry = telemetry;
+        driveMotors = new SetDriveMotors(hardwareMap, gamepad1);
 
         robot = new Robot(hardwareMap, gamepad1, gamepad2, false);
 
@@ -49,15 +49,6 @@ public class TeleopDrive extends LinearOpMode {
 
     }
 
-    public boolean atRest(){
-        return(
-                Math.abs(gamepad1.left_stick_y) < setDriveMotorsObj.DEADZONE_MIN_Y &&
-                        Math.abs(gamepad1.right_stick_y) < setDriveMotorsObj.DEADZONE_MIN_Y &&
-                        Math.abs(gamepad1.left_stick_x) < setDriveMotorsObj.DEADZONE_MIN_X &&
-                        Math.abs(gamepad1.right_stick_x) < setDriveMotorsObj.DEADZONE_MIN_X);
-
-    }
-
     @Override
     public void runOpMode() throws InterruptedException {
         Setup();
@@ -71,10 +62,8 @@ public class TeleopDrive extends LinearOpMode {
                     isLiftReset = true;
                 }
             }
-//            if(drive.isBusy()&& atRest()){
-//                drive.update();
-//            }
-            telemetry.update();
+
+            Global.telemetry.update();
             double horizontal = gamepad1.left_stick_x;
             double vertical = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
@@ -82,9 +71,7 @@ public class TeleopDrive extends LinearOpMode {
             boolean emergencyBrakeOverride = gamepad1.right_bumper;
             boolean switchDriveMode = gamepad1.b;
             boolean alignToCardinalPoint = gamepad1.a;
-//            if (!drive.isBusy() || !atRest()) {
-//                setMotorsObj.driveCommands(hardwareMap, horizontal, vertical, turn, goFast);
-//            }
+
 
             double distanceToWall = 0;
             if (!emergencyBrakeOverride){
@@ -95,8 +82,8 @@ public class TeleopDrive extends LinearOpMode {
             }
 
 
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint);
-            setDriveMotorsObj.update();
+            driveMotors.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint);
+            driveMotors.update();
 
             robot.update();
 

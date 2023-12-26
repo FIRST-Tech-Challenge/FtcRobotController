@@ -45,6 +45,7 @@ public class RoadRunnerTeleop extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         myLocalizer.setPoseEstimate(AutoDataStorage.currentPose);
+        drive.setPoseEstimate(AutoDataStorage.currentPose);
 
         waitForStart();
 

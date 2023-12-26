@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tools;
 
+import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -55,6 +56,7 @@ public class Robot {
 
        // clawGrip.scaleRange(0.02, 0.22);  //old values
         clawGrip.scaleRange(0.05, 0.35);
+        //clawPitch.scaleRange(0.755, 0.950);
         clawPitch.scaleRange(0.755, 0.973);
         clawYaw.scaleRange(0.125, 0.675);
 
@@ -64,7 +66,8 @@ public class Robot {
         clawOpen = 1;
         clawClose = 0.30;
         clawCloseOnePixel = 0;
-        clawPitchIntake = 1;
+        clawPitchGoDown = 1;
+        clawPitchIntake = 0.894;
         clawPitchOutTake = 0;
 
         clawYawIntake = 0.5;
@@ -169,6 +172,13 @@ public class Robot {
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawOpen)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 150)
+                        .startMotor(lift.liftMotor, -1)
+                        .waitForTouchSensorPressed(liftTouchDown)
+                        .stopMotor(lift.liftMotor)
+                        .resetMotorEncoder(lift.liftMotor)
+                        .servoRunToPosition(clawPitch, clawPitchIntake)
                         .startMotor(intakeMotor, 0.15));
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
@@ -221,7 +231,7 @@ public class Robot {
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
                         .servoRunToPosition(clawYaw, clawYawIntake)
-                        .servoRunToPosition(clawPitch, clawPitchIntake)
+                        .servoRunToPosition(clawPitch, clawPitchGoDown)
                         .startMotor(lift.liftMotor, -1)
                         .waitForTouchSensorPressed(liftTouchDown)
                         .stopMotor(lift.liftMotor)
@@ -249,7 +259,7 @@ public class Robot {
     // TouchSensors
     public static TouchSensor liftTouchDown;
 
-    public static double clawPitchIntake, clawPitchOutTake;
+    public static double clawPitchGoDown, clawPitchIntake, clawPitchOutTake;
     public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake, clawYawLeft, clawYawRight;
     int liftOutTake;
 
@@ -290,6 +300,7 @@ public class Robot {
         }
         if(handlerX.On()) {
             planeLauncher.setPower(1);
+            sleep(200);
         }
         else{
             planeLauncher.setPower(0);

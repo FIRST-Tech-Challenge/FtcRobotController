@@ -13,7 +13,7 @@ public class Action {
         // Method to determine if the action is complete based on the BooleanSupplier
         public boolean evaluate() {
             if (msg != null){
-                TelemetryManager.getTelemetry().addLine(msg);
+                Global.telemetry.addLine(msg);
             }
             return performAction.evaluate();
         }

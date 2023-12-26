@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWheelLoca
 import org.firstinspires.ftc.teamcode.teamProp.TeamPropDetection;
 import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.Robot;
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+import org.firstinspires.ftc.teamcode.tools.Global;
 
 //@Autonomous(name="Autonomous Base")
 public abstract class AutoBase extends LinearOpMode {
@@ -76,7 +76,7 @@ public abstract class AutoBase extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TelemetryManager.setTelemetry(telemetry);
+        Global.telemetry = telemetry;
         Robot robot = new Robot(hardwareMap, gamepad1, gamepad2, true);
 
         TeamPropDetection teamPropDetection = new TeamPropDetection();

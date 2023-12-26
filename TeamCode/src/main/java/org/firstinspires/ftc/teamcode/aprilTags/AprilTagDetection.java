@@ -80,9 +80,9 @@ public class AprilTagDetection extends LinearOpMode
         zNew /= currentDetections.size();
         }
         z = zNew!=0? zNew : (z > 1.0? 0 : z);
-        if (numberOfZeroValuesSinceNonZero > 30){
-            z = 0;
-        }
+//        if (numberOfZeroValuesSinceNonZero > 30){
+//            z = 0;
+//        }
 
         return z;
     }
