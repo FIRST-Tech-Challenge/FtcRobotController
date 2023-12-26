@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
 import java.util.Objects;
+import java.util.function.DoubleSupplier;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -16,21 +17,11 @@ public class WristSubsystem extends SubsystemBase {
         this.wrist = wrist;
     }
 
-    public enum WristState {
-        OPEN(0.25),
-        PINCH(0);
-
-        public double position;
-
-        WristState(double position) {
-            this.position = position;
-        }
-
-    }
-
-    public void setWristState(WristState state) {
-        Objects.requireNonNull(state);
-        wrist.setPosition(state.position);
+    public void moveWrist(double frontward, double backward) {
+        double power = frontward-backward;
+        power++;
+        power/=2d;
+        wrist.setPosition(power);
     }
 
 }

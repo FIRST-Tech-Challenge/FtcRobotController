@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,8 +9,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
+import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
+import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
@@ -24,6 +29,8 @@ public class DriveCommandOpMode extends CommandOpMode {
     DefaultDrive driveCommand;
 
     ArmSubsystem armSubsystem;
+    WristSubsystem wristSubsystem;
+    FingerSubsystem fingerSubsystem;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
@@ -39,24 +46,29 @@ public class DriveCommandOpMode extends CommandOpMode {
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
         driveSubsystem = new DriveSubsystem(driveMotors);
-        /*driveCommand = new DefaultDrive(driveSubsystem,
-                () -> -controller1.getLeftY(),
-                () -> controller1.getLeftX(),
-                () -> controller1.getRightX());
-        */
+        armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
+        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
+        fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
 
         driveCommand = new DefaultDrive(driveSubsystem,
                 () -> -controller1.getLeftY(),
                 controller1::getLeftX,
                 controller1::getRightX);
 
-        armSubsystem = new ArmSubsystem(hardwareMap, "arm");
 
+        register(driveSubsystem);
         register(armSubsystem);
+        register(wristSubsystem);
+        register(fingerSubsystem);
+        driveSubsystem.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(new MoveArmCommand(armSubsystem,
                 () -> controller1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                 () -> controller1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        register(driveSubsystem);
-        driveSubsystem.setDefaultCommand(driveCommand);
+        wristSubsystem.setDefaultCommand(new MoveWristCommand(wristSubsystem,
+                () -> (controller1.getButton(GamepadKeys.Button.DPAD_UP) ? 0 : 1),
+                () -> (controller1.getButton(GamepadKeys.Button.DPAD_DOWN) ? 0 : 1)));
+        fingerSubsystem.setDefaultCommand(new MoveFingerCommand(fingerSubsystem,
+                () -> (controller1.getButton(GamepadKeys.Button.A) ? 0 : 1),
+                () -> (controller1.getButton(GamepadKeys.Button.B) ? 0 : 1)));
     }
 }

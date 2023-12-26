@@ -13,8 +13,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("ArmSubsystem");
 
-    public ArmSubsystem(final HardwareMap hMap, final String armName) {
-        armMotor = hMap.get(DcMotor.class, armName);
+    public ArmSubsystem(DcMotor armMotor) {
+        this.armMotor = armMotor;
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
