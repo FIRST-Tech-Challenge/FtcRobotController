@@ -46,7 +46,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                 controller1::getLeftX,
                 controller1::getRightX);
 
-        armSubsystem = new ArmSubsystem(hardwareMap, "armMotor");
+        armSubsystem = new ArmSubsystem(hardwareMap, "arm");
         frontwardCommand = new MoveArmCommand(armSubsystem, ArmSubsystem.Direction.FRONTWARD);
         backwardCommand = new MoveArmCommand(armSubsystem, ArmSubsystem.Direction.BACKWARD);
 
