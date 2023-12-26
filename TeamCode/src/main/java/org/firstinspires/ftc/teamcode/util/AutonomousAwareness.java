@@ -122,11 +122,10 @@ public class AutonomousAwareness {
 
         usePurePursuit = _usePurePursuit;
 
-        dbp.debug(usePurePursuit ? "Using pure pursuit" : "Not using pure pursuit", true);
+        dbp.debug(usePurePursuit ? "Using pure pursuit" : "Not using pure pursuit");
+        dbp.send(false);
 
-        if (usePurePursuit) {
-            createNewPurePursuitCommand();
-        }
+        createNewPurePursuitCommand();
 
         initOdometry(encodeLeft, encodeRight, encodeBack);
     }
@@ -134,7 +133,7 @@ public class AutonomousAwareness {
     public void addToPath(Waypoint waypoint) {
         dbp.debug("Adding waypoint to path", true, false);
         m_path.add(waypoint);
-        if (usePurePursuit) ppCommand.addWaypoint(waypoint);
+        ppCommand.addWaypoint(waypoint);
     }
 
     public void createNewPurePursuitCommand() {
