@@ -22,16 +22,18 @@ public class DriveCommandOpMode extends CommandOpMode {
 
     @Override
     public void initialize() {
-        GamepadEx driverController = new GamepadEx(gamepad1);
+        GamepadEx controller1 = new GamepadEx(gamepad1);
+        GamepadEx controller2 = new GamepadEx(gamepad2);
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
+
         driveSubsystem = new DriveSubsystem(driveMotors);
-        axial = () -> -driverController.getLeftY();
-        lateral = () -> driverController.getLeftX();
-        yaw = () -> driverController.getRightX();
-        driveCommand = new DefaultDrive(driveSubsystem, axial, lateral, yaw);
+        driveCommand = new DefaultDrive(driveSubsystem,
+                () -> -controller1.getLeftY(),
+                () -> controller1.getLeftX(),
+                () -> controller1.getRightX());
 
         register(driveSubsystem);
-        schedule(driveCommand);
+        driveSubsystem.setDefaultCommand(driveCommand);
     }
 }

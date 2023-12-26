@@ -38,13 +38,13 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     @SuppressLint("DefaultLocale")
-    public boolean moveRobot(double axial, double lateral, double yaw, long endTime) {
+    public boolean moveRobot(double axial, double lateral, double yaw) {
+
+        dbp.createNewTelePacket();
+        dbp.info("Moving robot in subsystem: "+axial+", "+lateral+", "+yaw);
+        dbp.send(true);
 
         double max;
-        if(elapsedTime.now(TimeUnit.NANOSECONDS) >= endTime) {
-            resetDriveMotors();
-            return false;
-        }
 
         double leftFrontPower  = axial - lateral - yaw;
         double rightFrontPower = axial + lateral + yaw;
