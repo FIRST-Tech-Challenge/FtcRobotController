@@ -58,10 +58,10 @@ public class RobotHardwareInitializer {
             leftBackDrive = hMap.get(DcMotor.class, "bl_drv");
             rightBackDrive = hMap.get(DcMotor.class, "br_drv");
 
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            /*leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
             leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotor.Direction.REVERSE);

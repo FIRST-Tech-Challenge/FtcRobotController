@@ -133,13 +133,6 @@ public abstract class RobotOpMode extends OpMode {
         log("LB:", String.format(" %f\n", leftBackPower));
         log("RB:", String.format(" %f\n", rightBackPower));
 
-        /*
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
-         */
-
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
