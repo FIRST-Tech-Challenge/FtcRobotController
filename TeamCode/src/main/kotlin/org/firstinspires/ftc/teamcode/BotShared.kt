@@ -16,8 +16,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.botmodule.Claw
 import org.firstinspires.ftc.teamcode.botmodule.DroneLauncher
 import org.firstinspires.ftc.teamcode.botmodule.Intake
-import org.firstinspires.ftc.teamcode.botmodule.LSD
 import org.firstinspires.ftc.teamcode.botmodule.March
+import org.firstinspires.ftc.teamcode.botmodule.UnwindTruss
+import org.firstinspires.ftc.teamcode.botmodule.outtake
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
 // TODO: should this be a superclass? our codebase has grown so much, and we might want to reconsider
@@ -51,7 +52,6 @@ class BotShared(opMode: OpMode) {
     @JvmField val servoClawRight:   Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "clawR"     ] }
     @JvmField val servoClawLeft:    Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "clawL"     ] }
 
-
     //Intake
     @JvmField val motorIntake:  DcMotorEx?  =   idc {   hardwareMap[DcMotorEx    ::class.java,   "intake"    ] }
     @JvmField val servoIntakeLift:    Servo?      =   idc {   hardwareMap[Servo        ::class.java,   "inlift"     ] }
@@ -69,12 +69,11 @@ class BotShared(opMode: OpMode) {
 
 
     @JvmField val march               = camera1?.    let {   March(opMode, it)   }
-    //@JvmField val lsd                 = motorSlide?.let {   LSD(opMode, it)     }
-    @JvmField val claw                = if (servoClawLeft   != null && servoClawRight != null)  Claw(opMode, servoClawLeft, servoClawRight      )   else null
-    @JvmField val intake              = if (servoIntakeLift != null || motorIntake != null) Intake(opMode, servoIntakeLift, motorIntake )   else null
+    @JvmField val outtake             = if (motorSlideRight != null &&  motorSlideLeft != null && servoArmRight != null && servoArmLeft != null && servoClawRight != null && servoClawLeft != null) outtake (opMode, motorSlideRight, motorSlideLeft, servoArmRight, servoArmLeft, servoClawRight, servoClawLeft) else null
+    @JvmField val intake              = if (servoIntakeLift != null && motorIntake != null) Intake(opMode, servoIntakeLift, motorIntake )   else null
     @JvmField val droneLauncher        = if (servoDroneLaunch   != null )  DroneLauncher(opMode, servoDroneLaunch)   else null
     @JvmField var drive: MecanumDrive? = null
-
+    @JvmField var hang = if (motorTruss != null && servoTrussRight != null && servoTrussLeft != null) UnwindTruss(opMode, motorTruss, servoTrussRight, servoTrussLeft) else null
     init {
         // IMU orientation/calibration
         val logo = LogoFacingDirection.UP

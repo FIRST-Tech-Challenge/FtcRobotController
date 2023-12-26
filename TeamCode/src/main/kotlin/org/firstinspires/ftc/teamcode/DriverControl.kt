@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.DriverControlBase.Action.ROTATION
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.SPIN_INTAKE
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.TOGGLE_DRIVER_RELATIVITY
 import org.firstinspires.ftc.teamcode.DriverControlBase.Action.TOGGLE_INTAKE_HEIGHT
+import org.firstinspires.ftc.teamcode.botmodule.Intake
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.math.PI
 import kotlin.math.abs
@@ -89,10 +90,71 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
     private lateinit var gamepadyn: Gamepadyn<Action>
 
     /**
+     * Update bot movement (drive motors)
+     */
+    private fun updateDrive() {
+        val drive = shared.drive!!
+
+        // counter-clockwise
+        val gyroYaw = shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+
+        // +X = forward
+        // +Y = left
+        val inputVector = Vector2d(
+                // up
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+
+                )
+
+        // angle of the stick
+        val inputTheta = atan2(inputVector.y, inputVector.x)
+        // evaluated theta
+        val driveTheta = inputTheta - gyroYaw // + PI
+        // magnitude of inputVector clamped to [0, 1]
+        val inputPower = clamp(sqrt(
+                (inputVector.x * inputVector.x) +
+                        (inputVector.y * inputVector.y)
+        ), 0.0, 1.0)
+
+        val driveRelativeX = cos(driveTheta) * inputPower
+        val driveRelativeY = sin(driveTheta) * inputPower
+
+        // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
+//        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - abs((gyroYaw % (PI / 2)) - (PI / 4)) / (PI / 4))))
+
+        val powerModifier = 1.0
+        val pv = PoseVelocity2d(
+                if (useBotRelative) Vector2d(
+                        driveRelativeX,
+                        driveRelativeY
+                ) else inputVector,
+                -gamepad1.right_stick_x.toDouble()
+        )
+        // +X = forward, +Y = left
+//        drive.setDrivePowers(pv)
+        val wheelVels = MecanumKinematics(1.0).inverse<Time>(PoseVelocity2dDual.constant(pv, 1));
+
+        shared.motorLeftFront.power = wheelVels.leftFront[0] / powerModifier
+        shared.motorLeftBack.power = wheelVels.leftBack[0] / powerModifier
+        shared.motorRightBack.power = wheelVels.rightBack[0] / powerModifier
+        shared.motorRightFront.power = wheelVels.rightFront[0] / powerModifier
+
+//        Actions.run
+
+        telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
+        telemetry.addLine("Input Yaw: " + if (inputVector.x > 0.05 && inputVector.y > 0.05) inputTheta * 180.0 / PI else 0.0)
+//        telemetry.addLine("Yaw Difference (bot - input): " + )
+    }
+
+    /**
      * Set up the robot
      */
     override fun init() {
-//        val setter = DriverControl::tagCamera.setter
+        //set intake down
+
+
+//        val setter = DriverControl2::tagCamera.setter
         shared = BotShared(this)
         shared.drive = MecanumDrive(hardwareMap, initialPose)
         gamepadyn = Gamepadyn(InputSystemFtc(this), true,
@@ -115,12 +177,12 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         gamepadyn.players[0].getEventDigital(TOGGLE_DRIVER_RELATIVITY)!!.addListener { if (it.digitalData) useBotRelative = !useBotRelative }
 
         val intake = shared.intake
-        if (intake != null) {
+      /**  if (intake != null) {
             // toggle intake height
             gamepadyn.players[0].getEventDigital(TOGGLE_INTAKE_HEIGHT)!!.addListener { if (intake.raised) intake.lower() else intake.raise() }
         } else {
             telemetry.addLine("WARNING: Safeguard triggered (intake not present)");
-        }
+        }**/
     }
 
     override fun start() {
@@ -139,9 +201,10 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
          * Run the various update functions
          */
         updateDrive()
-        updateSlide()
+        updateOuttake()
         updateIntake()
         updateTrussHang()
+        updateDroneLaunch()
 
         // Most input values are [-1.0, 1.0]
 
@@ -156,128 +219,107 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         shared.update()
     }
 
-    /**
-     * Handle controls for the truss pulley
-     */
-    private fun updateTrussHang() {
-        // TODO: should this be locked until endgame?
-        //       we could use (timer > xx.xx) or something
-        shared.motorTruss?.power =
-            if (gamepad2.right_bumper) -1.0     // pull it in
-            else if (gamepad2.left_bumper) 1.0  // let it loose
-            else 0.0
-    }
 
-    /**
-     * Update bot movement (drive motors)
-     */
-    private fun updateDrive() {
-        val drive = shared.drive!!
-
-        // counter-clockwise
-        val gyroYaw = shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
-
-        // +X = forward
-        // +Y = left
-        val inputVector = Vector2d(
-            // up
-            -gamepad1.left_stick_y.toDouble(),
-            -gamepad1.left_stick_x.toDouble(),
-
-        )
-
-        // angle of the stick
-        val inputTheta = atan2(inputVector.y, inputVector.x)
-        // evaluated theta
-        val driveTheta = inputTheta - gyroYaw // + PI
-        // magnitude of inputVector clamped to [0, 1]
-        val inputPower = clamp(sqrt(
-            (inputVector.x * inputVector.x) +
-                    (inputVector.y * inputVector.y)
-        ), 0.0, 1.0)
-
-        val driveRelativeX = cos(driveTheta) * inputPower
-        val driveRelativeY = sin(driveTheta) * inputPower
-
-        // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
-//        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - abs((gyroYaw % (PI / 2)) - (PI / 4)) / (PI / 4))))
-
-        val powerModifier = 1.0
-        val pv = PoseVelocity2d(
-            if (useBotRelative) Vector2d(
-                driveRelativeX,
-                driveRelativeY
-            ) else inputVector,
-            -gamepad1.right_stick_x.toDouble()
-        )
-        // +X = forward, +Y = left
-//        drive.setDrivePowers(pv)
-        val wheelVels = MecanumKinematics(1.0).inverse<Time>(PoseVelocity2dDual.constant(pv, 1));
-
-        shared.motorLeftFront.power = wheelVels.leftFront[0] / powerModifier
-        shared.motorLeftBack.power = wheelVels.leftBack[0] / powerModifier
-        shared.motorRightBack.power = wheelVels.rightBack[0] / powerModifier
-        shared.motorRightFront.power = wheelVels.rightFront[0] / powerModifier
-
-//        Actions.run
-
-        telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
-        telemetry.addLine("Input Yaw: " + if (inputVector.x > 0.05 && inputVector.y > 0.05) inputTheta * 180.0 / PI else 0.0)
-//        telemetry.addLine("Yaw Difference (bot - input): " + )
-    }
 
     /**
      * Update the linear slide
      */
-    private fun updateSlide() {
-        // TODO: replace with Linear Slide Driver
-        val slide = shared.motorSlide
-        //        val lsd = shared.lsd!!
-        if (slide != null) {
-            // lift/slide
-            slide.mode = RUN_WITHOUT_ENCODER
-            slide.power = if (abs(gamepad2.left_stick_y) > 0.1) -gamepad2.left_stick_y.toDouble() else 0.0
-        } else {
-            telemetry.addLine("WARNING: Safeguard triggered (slide not present)");
+    private fun updateOuttake() {
+        val outtake = shared.outtake
+
+        //Close Claws
+        if (gamepad1.y || gamepad2.left_bumper){
+            outtake?.closeClaws()
+        }
+
+        //Place Left Pixel
+        if (gamepad1.x){
+            outtake?.openLeftClaw()
+        }
+        //Place Right Pixel
+        if (gamepad1.b){
+            outtake?.openRightClaw()
+        }
+        //Place Both and go down
+        if (gamepad1.a ||gamepad2.right_bumper){
+            outtake?.place()
+        }
+        //Increase Count by 1
+        if (gamepad1.dpad_up || gamepad2.dpad_up){
+            outtake?.increaseRow()
+        }
+
+        //Decrease Count by 1
+        if (gamepad1.dpad_down|| gamepad2.dpad_down){
+            outtake?.decreaseRow()
+        }
+
+        //Reset Count
+        if (gamepad1.dpad_right||gamepad2.dpad_left){
+            outtake?.resetRow()
+        }
+
+        //Execute Count
+        if (gamepad1.right_trigger > 0.1 || gamepad2.right_trigger> 0.1){
+            outtake?.runToRow()
         }
     }
 
     /**
-     * Update the intake mechanisms (spinner, claw, arm)
+     * Update the intake mechanisms (spinner, lift)
      */
+
+
     private fun updateIntake() {
         val intake = shared.intake
-        val arm = shared.servoArm
-        val claw = shared.claw
-
-        // Claw
-        if (claw != null && shared.servoClawLeft != null && shared.servoClawRight != null) {
-            // TODO: need to make claw work
-            claw.state += 0.5 * 0.01 * (gamepad2.right_trigger - gamepad2.left_trigger)
-
-            //        claw.state +=
-            //        clawLeft.position +=    Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
-            //        clawRight.position +=   Servo.MAX_POSITION * 0.5 * deltaTime * (gamepad2.right_trigger - gamepad2.left_trigger)
-            telemetry.addLine("Claw Positions: L=${shared.servoClawLeft?.position} R=${shared.servoClawRight?.position}")
-            telemetry.addLine("Claw Module: ${claw.state}")
-        } else {
-            telemetry.addLine("WARNING: Safeguard triggered (claw not present)");
+        //Lift Intake
+        if (gamepad2.y){
+            intake?.raise()
         }
 
-        // Arm
-        if (arm != null) {
-            val armPos = (arm.position + Servo.MAX_POSITION * /*deltaTime*/ 0.01 * -gamepad2.right_stick_y)
-            arm.position = armPos.clamp(Servo.MIN_POSITION, Servo.MAX_POSITION)
-
-            telemetry.addLine("Arm Position: ${arm.position}")
-        } else {
-            telemetry.addLine("WARNING: Safeguard triggered (arm not present)");
+        if (gamepad2.a){
+            intake?.lower()
         }
+
 
         // spinner
-        intake?.active =
-            if (gamepad1.dpad_down) 1.0     // inwards
-            else if (gamepad1.dpad_up) -1.0 // outwards
-            else 0.0                        // off
+        if (gamepad1.left_trigger>0.1 || gamepad2.left_trigger>0.1){
+            if (gamepad1.left_trigger+gamepad2.left_trigger>1)
+            intake?.spin(1.0.toDouble())
+            else
+                intake?.spin((gamepad1.left_trigger+gamepad2.left_trigger).toDouble())
+
+        } else {
+            intake?.spin(0.0.toDouble())
+        }
+
     }
+
+    /**
+     * Handle controls for the truss pulley
+     */
+    private fun updateTrussHang() {
+        val trussHang = shared.hang
+
+        if(gamepad2.x){
+            trussHang?.raiseArms()
+        }
+
+        if(abs(gamepad2.right_stick_y) > 0.1){
+            trussHang?.lift(gamepad2.right_stick_y.toDouble())
+        }
+
+
+    }
+
+    //Everything for drone launch
+
+    private fun updateDroneLaunch() {
+        val droneLaunch = shared.droneLauncher
+
+        if (gamepad2.b){
+            droneLaunch?.launch()
+        }
+    }
+
 }

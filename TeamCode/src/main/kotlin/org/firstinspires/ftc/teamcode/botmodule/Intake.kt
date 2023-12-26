@@ -18,9 +18,6 @@ class Intake(opMode: OpMode, private val servoLift: Servo?, private val motorSpi
 
     init {
         setPos(intakePos)
-
-
-
     }
 
     // 0.0 is off, 1.0 is inwards, -1.0 is outwards
