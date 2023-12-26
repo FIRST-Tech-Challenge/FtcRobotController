@@ -24,14 +24,14 @@ public class DriveSubsystem extends SubsystemBase {
         this(driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_BACK),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT));
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_BACK));
     }
 
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
                           final DcMotor leftBack, final DcMotor rightBack) {
         dbp.createNewTelePacket();
         dbp.info(leftFront+", "+leftBack+", "+rightFront+", "+rightBack);
-        dbp.send(true);
+        dbp.send(false);
         lF = leftFront;
         rF = rightFront;
         lB = leftBack;

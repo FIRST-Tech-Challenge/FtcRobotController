@@ -98,6 +98,7 @@ public class RobotHardwareInitializer {
         return motorMap;
     }
 
+    @Deprecated
     public static void initializeDriveMotors(RobotOpMode robot) {
         try {
             robot.leftFrontDrive = robot.hardwareMap.get(DcMotor.class, "fl_drv");
@@ -133,14 +134,17 @@ public class RobotHardwareInitializer {
     }
 
     public static DcMotor initializeArm(final OpMode opMode) {
+        DcMotor arm = null;
         try {
-            return opMode.hardwareMap.get(DcMotor.class,  "arm");
-        } catch(Exception e) {
+            arm = opMode.hardwareMap.get(DcMotor.class, "arm");
+            arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        } catch (Exception e) {
             Error(e, opMode);
         }
-        return null;
+        return arm;
     }
 
+    @Deprecated
     public static void initializeArm(RobotOpMode robot) {
         try {
             robot.armMotor = robot.hardwareMap.get(DcMotor.class, "arm");
@@ -156,6 +160,29 @@ public class RobotHardwareInitializer {
         }
     }
 
+    public static Servo initializeWrist(final OpMode opMode) {
+        try {
+            Servo servo = opMode.hardwareMap.get(Servo.class, "wrist_servo");
+            servo.setDirection(Servo.Direction.FORWARD);
+            return servo;
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    public static Servo initializeFinger(final OpMode opMode) {
+        try {
+            Servo servo = opMode.hardwareMap.get(Servo.class, "finger_servo");
+            servo.setDirection(Servo.Direction.FORWARD);
+            return servo;
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    @Deprecated
     public static void initializeIMU(RobotOpMode robot) {
         try {
             robot.imu = robot.hardwareMap.get(BNO055IMU.class, "imu");
@@ -171,6 +198,7 @@ public class RobotHardwareInitializer {
         }
     }
 
+    @Deprecated
     public static void initializeColorSensor(RobotOpMode robot) {
         try {
             robot.colorSensor = robot.hardwareMap.get(RevColorSensorV3.class, "colorSensor");
@@ -184,6 +212,7 @@ public class RobotHardwareInitializer {
         }
     }
 
+    @Deprecated
     public static void initializeTouchSensor(RobotOpMode robot) {
         try {
             robot.touchSensor = robot.hardwareMap.get(RevTouchSensor.class, "touchSensor");

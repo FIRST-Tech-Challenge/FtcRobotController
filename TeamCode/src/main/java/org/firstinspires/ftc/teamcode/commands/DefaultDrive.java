@@ -13,7 +13,6 @@ public class DefaultDrive extends CommandBase {
     private final DoubleSupplier m_axial, m_lateral, m_yaw;
     private final DriveSubsystem m_drive;
 
-    MecanumDrive drive;
 
     public DefaultDrive(DriveSubsystem subsystem, DoubleSupplier axial,
                         DoubleSupplier lateral, DoubleSupplier yaw) {
