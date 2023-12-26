@@ -183,6 +183,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             // up
             -gamepad1.left_stick_y.toDouble(),
             -gamepad1.left_stick_x.toDouble(),
+
         )
 
         // angle of the stick
