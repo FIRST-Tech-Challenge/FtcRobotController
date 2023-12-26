@@ -34,7 +34,7 @@ public class AutonomousAwareness {
     public MecanumDrive m_robotDrive;
     public Motor fL, fR, bL, bR;
 
-    public Path m_path = new Path();
+    public Path m_path;
     public PurePursuitCommand ppCommand;
 
     private Boolean usePurePursuit = false;
@@ -120,6 +120,8 @@ public class AutonomousAwareness {
             return;
         }
 
+        m_path = new Path();
+
         usePurePursuit = _usePurePursuit;
 
         initOdometry(encodeLeft, encodeRight, encodeBack);
@@ -144,25 +146,25 @@ public class AutonomousAwareness {
 
     public void initPath() {
         try {
-            dbp.debug("Initializing Path...", true, true);
+            dbp.debug("Initializing Path...", true, false);
             m_path.init();
         } catch (Exception e) {
-            dbp.error(e, true, true);
+            dbp.error(e, true, false);
         }
     }
 
     public void followPath() {
         try {
-            dbp.debug("Following the path...", true, true);
+            dbp.debug("Following the path...", true, false);
             m_path.followPath(m_robotDrive, holOdom);
         } catch (IllegalStateException e) {
-            dbp.error(e, true, true);
+            dbp.error(e, true, false);
             //m_path.reset();
         }
     }
 
     public void resetPath() {
-        dbp.debug("Resetting the path...", true, true);
+        dbp.debug("Resetting the path...", true, false);
         m_path.reset();
     }
 }
