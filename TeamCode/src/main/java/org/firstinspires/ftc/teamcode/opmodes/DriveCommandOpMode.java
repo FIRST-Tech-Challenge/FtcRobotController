@@ -31,10 +31,15 @@ public class DriveCommandOpMode extends CommandOpMode {
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
         driveSubsystem = new DriveSubsystem(driveMotors);
-        driveCommand = new DefaultDrive(driveSubsystem,
+        /*driveCommand = new DefaultDrive(driveSubsystem,
                 () -> -controller1.getLeftY(),
                 () -> controller1.getLeftX(),
                 () -> controller1.getRightX());
+        */
+        driveCommand = new DefaultDrive(driveSubsystem,
+                controller1::getLeftY,
+                controller1::getLeftX,
+                controller1::getRightX);
 
         dbp.createNewTelePacket();
         dbp.info("Initializing");
