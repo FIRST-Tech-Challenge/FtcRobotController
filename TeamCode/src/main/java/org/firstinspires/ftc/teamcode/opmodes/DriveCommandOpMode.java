@@ -51,7 +51,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
 
         driveCommand = new DefaultDrive(driveSubsystem,
-                () -> -controller1.getLeftY(),
+                () -> controller1.getLeftY(),
                 controller1::getLeftX,
                 controller1::getRightX);
 
