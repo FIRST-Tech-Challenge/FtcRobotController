@@ -15,6 +15,7 @@ public class MoveFingerCommand extends CommandBase {
         this.fingerSubsystem = fingerSubsystem;
         this.forward = forward;
         this.backward = backward;
+        addRequirements(fingerSubsystem);
     }
 
     @Override
