@@ -91,13 +91,13 @@ public class AutonomousAwareness {
         dbp.createNewTelePacket();
         dbp.put("Waypoints", Arrays.toString(m_path.toArray()));
         dbp.send(true);
-        /*
+
         addToPath(new StartWaypoint());
         addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
         addToPath(new EndWaypoint());
         initPath();
         followPath();
-         */
+
     }
 
     /** 
