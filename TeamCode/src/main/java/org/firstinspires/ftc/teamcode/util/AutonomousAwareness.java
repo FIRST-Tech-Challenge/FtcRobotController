@@ -27,14 +27,15 @@ public class AutonomousAwareness {
     static final double WHEEL_DIAMETER = 4.0; // inches
 
     private DcMotor encoderLeft, encoderRight, encoderBack;
-    static HolonomicOdometry holOdom;
+    public HolonomicOdometry holOdom;
     
-    static OdometrySubsystem odometry;
+    public OdometrySubsystem odometry;
 
     public MecanumDrive m_robotDrive;
-    public static Motor fL, fR, bL, bR;
+    public Motor fL, fR, bL, bR;
 
     public Path m_path = new Path();
+    public PurePursuitCommand ppCommand;
 
     private Boolean usePurePursuit = false;
 
@@ -90,12 +91,13 @@ public class AutonomousAwareness {
         dbp.createNewTelePacket();
         dbp.put("Waypoints", Arrays.toString(m_path.toArray()));
         dbp.send(true);
-
+        /*
         addToPath(new StartWaypoint());
         addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
         addToPath(new EndWaypoint());
         initPath();
         followPath();
+         */
     }
 
     /** 
@@ -104,15 +106,15 @@ public class AutonomousAwareness {
      * @param _usePurePursuit whether or not to use a pure pursuit command
      */
     public AutonomousAwareness(StartingPosition startingPosition, boolean _usePurePursuit,
-                               Motor fL, Motor fR, Motor bL, Motor bR,
+                               Motor _fL, Motor _fR, Motor _bL, Motor _bR,
                                DcMotor encodeLeft, DcMotor encodeRight, DcMotor encodeBack) {
         // Init motors
-        AutonomousAwareness.fL = fL;
-        AutonomousAwareness.fR = fR;
-        AutonomousAwareness.bL = bL;
-        AutonomousAwareness.bR = bR;
+        fL = _fL;
+        fR = _fR;
+        bL = _bL;
+        bR = _bR;
 
-        if (AutonomousAwareness.fL == null) {
+        if (fL == null) {
             dbp.error("Front Left Wheel is null");
             dbp.send(false);
             return;
@@ -120,16 +122,23 @@ public class AutonomousAwareness {
 
         usePurePursuit = _usePurePursuit;
 
+        if (usePurePursuit) {
+            createNewPurePursuitCommand();
+        }
+
         initOdometry(encodeLeft, encodeRight, encodeBack);
     }
 
     public void addToPath(Waypoint waypoint) {
         dbp.debug("Adding waypoint to path", true, false);
         m_path.add(waypoint);
+        if (usePurePursuit) ppCommand.addWaypoint(waypoint);
     }
 
-    public PurePursuitCommand createNewPurePursuitCommand() {
-        return null;
+    public void createNewPurePursuitCommand() {
+        ppCommand = new PurePursuitCommand(
+                m_robotDrive, odometry
+        );
     }
 
     public void initPath() {
