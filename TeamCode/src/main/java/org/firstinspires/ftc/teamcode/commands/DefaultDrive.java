@@ -25,7 +25,7 @@ public class DefaultDrive extends CommandBase {
         m_drive.moveRobot(
                 forwardBackwardSupplier.getAsDouble(),
                 -leftRightSupplier.getAsDouble(),
-                rotationSupplier.getAsDouble()
+                -rotationSupplier.getAsDouble()
         );
     }
 
