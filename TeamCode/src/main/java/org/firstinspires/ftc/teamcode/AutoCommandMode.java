@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.PurePursuitCommand;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
@@ -44,7 +45,7 @@ public class AutoCommandMode extends CommandOpMode {
 
         assert motors != null;
 
-        AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, false,
+        AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, true,
                 lFD, rFD, lBD, rBD,
                 motors.get("encoderLeft"), motors.get("encoderRight"), motors.get("encoderBack"));
 
@@ -52,7 +53,10 @@ public class AutoCommandMode extends CommandOpMode {
         AA.addToPath(new StartWaypoint());
         AA.addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
         AA.addToPath(new EndWaypoint());
+        /*
         AA.initPath();
         AA.followPath();
+         */
+        AA.ppCommand.schedule();
     }
 }
