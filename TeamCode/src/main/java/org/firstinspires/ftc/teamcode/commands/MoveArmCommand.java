@@ -5,30 +5,30 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 
 import java.util.Objects;
+import java.util.function.DoubleSupplier;
 
 public class MoveArmCommand extends CommandBase {
 
     ArmSubsystem subsystem;
-    ArmSubsystem.Direction direction;
+    DoubleSupplier frontwardSupplier, backwardSupplier;
 
-    /**
-     *
-     * @param subsystem The arm subsystem
-     * @param direction The direction of the command. If null, the command will act as a halt command
-     */
-    public MoveArmCommand(ArmSubsystem subsystem, ArmSubsystem.Direction direction) {
+    public MoveArmCommand(ArmSubsystem subsystem, DoubleSupplier frontwardSupplier, DoubleSupplier backwardSupplier) {
         Objects.requireNonNull(subsystem);
         this.subsystem = subsystem;
-        this.direction = direction;
+        this.frontwardSupplier = frontwardSupplier;
+        this.backwardSupplier = backwardSupplier;
         addRequirements(subsystem);
     }
 
     @Override
     public void execute() {
-        if(direction == null) {
+
+        double power = frontwardSupplier.getAsDouble()-backwardSupplier.getAsDouble();
+
+        if(power == 0) {
             subsystem.haltArm();
         } else {
-            subsystem.manualMoveArm(direction, 1f);
+            subsystem.manualMoveArm(power);
         }
     }
 }

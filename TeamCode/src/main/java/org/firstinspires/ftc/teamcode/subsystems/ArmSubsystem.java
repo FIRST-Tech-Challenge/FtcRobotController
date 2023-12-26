@@ -28,9 +28,14 @@ public class ArmSubsystem extends SubsystemBase {
      * @param direction The direction that the arm will move towards.
      * @param power A power value set within the interval [0, 1]
      */
-    public void manualMoveArm(Direction direction, float power) {
+    public void manualMoveArm(Direction direction, double power) {
         power = Math.max(0, Math.min(1, power));
         power *= (direction == Direction.FRONTWARD) ? 1f : -1f;
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setPower(power);
+    }
+
+    public void manualMoveArm(double power) {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setPower(power);
     }
