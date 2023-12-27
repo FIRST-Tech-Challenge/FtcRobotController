@@ -36,5 +36,18 @@ public class CSCons {
 
     public static double outakeHookOpen = 0.309;
     public static double outakeHookClosed = 0.79;
+
+/**
+ *
+ *  ╚ ╔ ╩ ╦ ╠ ═ ╬ ╣ ║ ╗ ╝
+ *      THE WISDOM!
+ *  T H E   W I S D O M !
+ *                          ║
+ *           ╔══════╣
+ *           ║  ╔════╣
+ *           ║  ║         ║
+ *           ║  ║         ║
+ *                          ║
+ *  **/
 }
 

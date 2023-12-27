@@ -18,9 +18,13 @@ public class BoardMeepSkyL {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
                                         .forward(26)
-                                        .back(10)
-                                        .splineToLinearHeading(new Pose2d(new Vector2d(30,50),Math.toRadians(180)),Math.toRadians(0))
+                                        .turn(Math.toRadians(-60))
+                                        .turn(Math.toRadians(120))
+                                        .turn(Math.toRadians(-60))
+                                        .back(20)
+                                        //.splineToLinearHeading(new Pose2d(new Vector2d(30,50),Math.toRadians(180)),Math.toRadians(0))
                                         .splineToLinearHeading(new Pose2d(new Vector2d(46,36),Math.toRadians(180)),Math.toRadians(-60))
+                                        .splineToLinearHeading(new Pose2d(new Vector2d(56,56),Math.toRadians(180)),Math.toRadians(0))
                                         .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
