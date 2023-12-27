@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
@@ -147,7 +146,7 @@ public abstract class CSMethods extends LinearOpMode {
             lf.setVelocity(VELOCITY);
             rf.setVelocity(VELOCITY);
 
-            double inches = (leftInches + b) / m;
+            double inches = signum(leftInches) * (abs(leftInches) + b) / m;
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
@@ -243,7 +242,7 @@ public abstract class CSMethods extends LinearOpMode {
             lf.setVelocity(-VELOCITY);
             rf.setVelocity(VELOCITY);
 
-            inches = (inches + 1.0125) / 0.7155;
+            inches = (abs(inches) + 1.0125) / 0.7155;
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 

@@ -41,43 +41,12 @@ public class CSAutoRedFront extends CSMethods {
     public void runOpMode() {
         setup(true);
 
+        // ---------
         // Main code
-        //dropCarWash();
-        drive(13.5);
-        //drive(1);
-        /*
-        List<Recognition> pixels = detectProp();
-        while (opModeIsActive()) {
-            telemetry.addData("Team Prop Detection", pixels);
-        }
-        double pixel_distance = 3.0;
-        //*
-        if (pixels.size() > 0) {
-            drive(pixel_distance);
-            ejectPixel();
-            drive(-pixel_distance);
-            turn(90);
-        } else {
-            turn(-30);
-            pixels = detectProp();
-            if (pixels.size() > 0) {
-                drive(pixel_distance);
-                ejectPixel();
-                drive(-pixel_distance);
-                turn(30 + 90);
-            } else {
-                turn(60);
-                drive(pixel_distance);
-                ejectPixel();
-                drive(-pixel_distance);
-                turn(-30 + 90);
-            }
-        }
-        //*/
-        //ejectPixel();
-        turn(60);
-        drive(100);
-        //ejectPixel();
+        // ---------
+
+        drive(-5);
+        strafe(70);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
