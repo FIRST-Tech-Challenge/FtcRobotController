@@ -1,21 +1,18 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.deprecated;
 
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
-import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
-import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_CONE_INCREMENT;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BOTTOM;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BOTTOM_JUNCTION;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_CONE_STACK;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_CONE_INCREMENT;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_BACK;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_CENTER;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_FRONT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

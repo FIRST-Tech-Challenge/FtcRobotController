@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.deprecated;
 
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvPipeline;
