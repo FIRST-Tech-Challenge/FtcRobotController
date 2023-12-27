@@ -46,7 +46,7 @@ public class Twrist extends RFServo {
         public boolean getState(){
             return state;
         }
-        public void setStateTrue(){
+        public void setStateTrue(){ 
             LOGGER.log("twristTarget state set to : " + this.name());
             for(var i : Twrist.twristTargetStates.values()){
                 i.state=i==this;

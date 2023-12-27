@@ -158,7 +158,6 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(false, Wrist.WristStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        //        magazine.unmagazine();
       }
     }
   }
@@ -171,18 +170,6 @@ public class BradBot extends BasicRobot {
     }
   }
 
-  /**
-   * Empties the hopper in auto, hopper.update() will handle the rest Logs that this function called
-   * to general surface
-   */
-  public void depositAuto() {
-    if (queuer.queue(true, Hopper.HopperStates.ZERO.getState())) {
-      if (!queuer.isExecuted()) {
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("depositing until 0 pixels remain");
-      }
-    }
-  }
 
   /**
    * Calls other lift auto Logs that function is called

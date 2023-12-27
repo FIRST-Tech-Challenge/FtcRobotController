@@ -28,7 +28,8 @@ public class Wrist extends RFServo {
       return state;
     }
     public void setStateTrue(){
-      LOGGER.log("twrist state set to : " + this.name());
+      if(!this.state)
+        LOGGER.log("wrist state set to : " + this.name());
       for(var i : WristStates.values()){
         i.state=i==this;
       }
@@ -47,7 +48,7 @@ public class Wrist extends RFServo {
       return state;
     }
     public void setStateTrue(){
-      LOGGER.log("twristTarget state set to : " + this.name());
+      LOGGER.log("wristTarget state set to : " + this.name());
       for(var i : WristTargetStates.values()){
         i.state=i==this;
       }
@@ -58,14 +59,14 @@ public class Wrist extends RFServo {
       if (p_state == WristTargetStates.GRAB){
         if((Arm.ArmTargetStates.HOVER.state || Arm.ArmTargetStates.GRAB.state) && super.getPosition() != GRABBY){
           super.setPosition(GRABBY);
-          LOGGER.log("twrist to GRAB");
+          LOGGER.log("wrist to GRAB");
           lastTime = time;
         }
         WristTargetStates.GRAB.setStateTrue();
       } else if(p_state == WristTargetStates.DROP){
         if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != DROPPY){
           super.setPosition(DROPPY);
-          LOGGER.log("DROPPINg claw");
+          LOGGER.log("wrist to DROP");
           lastTime = time;
         }
         WristTargetStates.DROP.setStateTrue();

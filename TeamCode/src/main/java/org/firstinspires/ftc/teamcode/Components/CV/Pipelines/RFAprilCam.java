@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.loops;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -14,6 +15,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Size;
 
@@ -22,6 +24,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.apache.commons.math3.analysis.function.Exp;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCharacteristics;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -29,9 +35,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.robotcore.internal.camera.libuvc.api.UvcApiExposureControl;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
@@ -45,9 +56,10 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 4, Y_OFFSET = 1.5, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 7;
-  public static int EXPOSURE_MS = 4200, GAIN = 200;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 5;
+  public static double X_OFFSET = 5, Y_OFFSET = 2, UPSAMPLE_THRESHOLD = 50, NUMBER_OF_SAMPLES = 10;
+  public static int EXPOSURE_MS = 2, GAIN = 45;
+  public static double FOCAL_LENGTH = 820;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -121,22 +133,26 @@ public class RFAprilCam {
             .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
             .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
             .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-            .setLensIntrinsics(463.566f, 463.566f, 316.402f, 176.412f)
+            .setLensIntrinsics(FOCAL_LENGTH, FOCAL_LENGTH, 640f, 400f)
             .build();
-    aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
+    aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
     aprilTag.setDecimation((float) UPSAMPLE);
 
     // Create the WEBCAM vision portal by using a builder.
-    visionPortal =
-        new RFVisionPortal.Builder()
-            .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 1"))
+//    visionPortal = new RFVisionPortalImpl.Builder()
+//                .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
+//                .addProcessor(aprilTag)
+//                .enableLiveView(true)
+//                .setStreamFormat(RFVisionPortalImpl.StreamFormat.MJPEG)
+//                .setCameraResolution(new Size(1280, 800))
+//                .build();
+    visionPortal = new RFVisionPortal.Builder()
+            .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
+            .setCameraResolution(new Size(1280, 800))
             .addProcessor(aprilTag)
-            .enableLiveView(false)
             .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-            .setCameraResolution(new Size(640, 360))
             .build();
-    visionPortal.getFps();
-
+    tuned = false;
   }
 
   /**
@@ -146,14 +162,12 @@ public class RFAprilCam {
   public void update() {
     if(visionPortal.getCameraState() == RFVisionPortal.CameraState.STREAMING&&!tuned){
       exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-      exposureControl.setMode(ExposureControl.Mode.Manual);
-      exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MICROSECONDS);
-//      exposureControl.setAePriority(false);
-      exposureControl.setAePriority(true);
-      gainControl = visionPortal.getCameraControl(GainControl.class);
-      GAIN = min(GAIN, gainControl.getMaxGain());
-      gainControl.setGain(GAIN);
+      exposureControl.setMode(UvcApiExposureControl.Mode.Manual);
+      exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MILLISECONDS);
       tuned=true;
+      packet.put("tuned", true);
+      gainControl = visionPortal.getCameraControl(GainControl.class);
+      gainControl.setGain(GAIN);
     }
 
     ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
@@ -189,7 +203,7 @@ public class RFAprilCam {
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(poseHistory.get(inde).getHeading()+PI)),
                   -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
-          if (poseFtc.range < UPSAMPLE_THRESHOLD && currentVelocity.vec().norm()<10) {
+          if (poseFtc.range < UPSAMPLE_THRESHOLD) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }

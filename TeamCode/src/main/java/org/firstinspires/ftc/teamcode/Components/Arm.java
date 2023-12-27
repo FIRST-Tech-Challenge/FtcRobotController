@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /** Harry Class to contain all Arm functions */
 public class Arm extends RFServo {
-  static double DROP_POS = 1.0, HOVER_POS = 0.0, GRAB_POS = 0.1;
+  static double DROP_POS = 0.2, HOVER_POS = 0.8, GRAB_POS = 0.9;
   private double lastTime = 0, FLIP_TIME = 0.6;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -104,7 +104,7 @@ public class Arm extends RFServo {
           }
         }
         else{
-          Lift.LiftMovingStates.LOW.setStateTrue();
+          Lift.LiftMovingStates.LOW.state=true;
         }
       }
       if (p_state == ArmStates.GRAB && super.getPosition() != p_state.pos) {
@@ -118,7 +118,7 @@ public class Arm extends RFServo {
         }
       }
     }
-    ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
+    ArmTargetStates.values()[p_state.ordinal()].state=true;
   }
 
   /**

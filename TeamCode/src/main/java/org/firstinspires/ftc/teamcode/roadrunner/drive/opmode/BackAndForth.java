@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -29,27 +31,35 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 @Autonomous(group = "drive")
 public class BackAndForth extends LinearOpMode {
 
-    public static double DISTANCE = 70;
+  public static double DISTANCE = 40;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        BasicRobot robot = new BasicRobot(this, false);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+  @Override
+  public void runOpMode() throws InterruptedException {
+    BasicRobot robot = new BasicRobot(this, false);
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    currentPose = new Pose2d(0, 0, 0);
+    drive.update();
+    robot.update();
+    currentPose = new Pose2d(0, 0, 0);
+    drive.update();
+    robot.update();
+    Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d()).forward(DISTANCE).build();
 
+    Trajectory trajectoryBackward =
+        drive.trajectoryBuilder(trajectoryForward.end()).back(DISTANCE).build();
 
-        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
-                .build();
-
-        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
-                .back(DISTANCE)
-                .build();
-
-        waitForStart();
-
-        while (opModeIsActive() && !isStopRequested()) {
-            drive.followTrajectory(trajectoryForward);
-            drive.followTrajectory(trajectoryBackward);
-        }
+    waitForStart();
+    while (opModeIsActive() && !isStopRequested()) {
+      drive.followTrajectoryAsync(trajectoryForward);
+      while (opModeIsActive() && !isStopRequested() && drive.isBusy()) {
+        robot.update();
+        drive.update();
+      }
+      drive.followTrajectoryAsync(trajectoryBackward);
+      while (opModeIsActive() && !isStopRequested() && drive.isBusy()) {
+        robot.update();
+        drive.update();
+      }
     }
+  }
 }

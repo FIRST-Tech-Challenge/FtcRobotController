@@ -32,7 +32,7 @@ abstract class RFThreeTrackingWheelLocalizer(
             lastWheelPositions = emptyList()
             currentPose = value
         }
-
+    override var poseVelocity: Pose2d? = null
     private val forwardSolver: DecompositionSolver
 
     init {
@@ -82,6 +82,7 @@ abstract class RFThreeTrackingWheelLocalizer(
         val wheelVelocities = getWheelVelocities()
         if (wheelVelocities != null) {
             currentPOVVelocity = calculatePoseDelta(wheelVelocities)
+            poseVelocity = currentPOVVelocity
             currentVelocity = Pose2d(currentPOVVelocity.vec().rotated(currentPose.heading),
                 currentPOVVelocity.heading)
         }
@@ -97,5 +98,5 @@ abstract class RFThreeTrackingWheelLocalizer(
     /**
      * Returns the velocities of the tracking wheels in the desired distance units (not encoder counts!)
      */
-    open fun getWheelVelocities(): List<Double>? = null
+    abstract fun getWheelVelocities(): List<Double>
 }
