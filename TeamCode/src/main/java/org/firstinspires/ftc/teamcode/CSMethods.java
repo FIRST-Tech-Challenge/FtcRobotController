@@ -179,6 +179,8 @@ public abstract class CSMethods extends LinearOpMode {
         }
     }
     public void turn(double degrees) {
+        sleep(100);
+        imu.resetYaw();
         double TURN_ACCURACY = 0.75;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
@@ -236,12 +238,12 @@ public abstract class CSMethods extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            lb.setVelocity(-VELOCITY);
-            rb.setVelocity(VELOCITY);
+            lb.setVelocity(VELOCITY);
+            rb.setVelocity(-VELOCITY);
             lf.setVelocity(-VELOCITY);
             rf.setVelocity(VELOCITY);
 
-            //double inches = (inches + b) / m;
+            inches = (inches + 1.0125) / 0.7155;
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 

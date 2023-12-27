@@ -5,9 +5,12 @@ import static java.lang.Math.min;
 import static java.lang.Math.signum;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -75,7 +78,7 @@ public class TurningTest extends LinearOpMode {
     static final double     TURN_SPEED              = 500;
     double carWashPower = 1.0;
     double offset = 0;
-
+    IMU.Parameters imuparameters;
     private VisionPortal visionPortal;
 
     public void runOpMode() {
@@ -85,6 +88,24 @@ public class TurningTest extends LinearOpMode {
         rf = hardwareMap.get(DcMotorEx.class, "rightFront");
         rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
+
+        /*imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                new Orientation(
+                        AxesReference.INTRINSIC,
+                        AxesOrder.ZYX,
+                        AngleUnit.DEGREES,
+                        0,
+                        0,
+                        0,
+                        0  // acquisitionTime, not used
+                )
+        ));
+        boolean imuinit = imu.initialize(imuparameters);
+        if (!imuinit){
+            telemetry.addData("IMU","Initialization failed");
+        }*/
+
+        //imu.resetYaw();
 
         lf.setDirection(DcMotorEx.Direction.REVERSE);
         lb.setDirection(DcMotorEx.Direction.REVERSE);
@@ -205,11 +226,15 @@ public class TurningTest extends LinearOpMode {
     }
 
     public double getAngle() {
-        return fixAngle(imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        return (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
     public double fixAngle(double angle) {
-        return (angle + 180) % 360 - 180;
+        if (abs(angle) > 180) {
+            return (angle + 180) % 360 - 180;
+        } else {
+            return angle;
+        }
         /*
         if (abs(angle) > 180) {
             return (angle % 180) - 180 * signum(angle);
@@ -226,6 +251,7 @@ public class TurningTest extends LinearOpMode {
             return error;
         }
     }//*/
+
 
     public double closestToZero(double a, double b) {
         if (abs(a) < abs(b)) {
