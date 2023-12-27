@@ -48,7 +48,8 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.5; // in
+    //public static double TRACK_WIDTH = 11.75; // in
+    public static double TRACK_WIDTH = 13.12; // in Effective track width
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -88,10 +89,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 77.4402589109884;
-    public static double MAX_ACCEL = 77.4402589109884;
-    public static double MAX_ANG_VEL = Math.toRadians(328.6666666666667);
-    public static double MAX_ANG_ACCEL = Math.toRadians(328.6666666666667);
+    public static double MAX_VEL = 73.27176010881723;
+    public static double MAX_ACCEL = 73.27176010881723;
+    public static double MAX_ANG_VEL = Math.toRadians(369.1718709677419);
+    public static double MAX_ANG_ACCEL = Math.toRadians(369.1718709677419);
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
