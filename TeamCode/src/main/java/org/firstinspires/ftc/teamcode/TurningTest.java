@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.lang.Math.signum;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
@@ -75,7 +77,7 @@ public class TurningTest extends LinearOpMode {
     static final double     PI                      = 3.141592653589793238462643383279502884169399;
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 500;
+    static final double     TURN_SPEED              = 1000;
     double carWashPower = 1.0;
     double offset = 0;
     IMU.Parameters imuparameters;
@@ -89,7 +91,7 @@ public class TurningTest extends LinearOpMode {
         rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         imu = hardwareMap.get(IMU.class, "imu");
 
-        /*imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 new Orientation(
                         AxesReference.INTRINSIC,
                         AxesOrder.ZYX,
@@ -103,7 +105,7 @@ public class TurningTest extends LinearOpMode {
         boolean imuinit = imu.initialize(imuparameters);
         if (!imuinit){
             telemetry.addData("IMU","Initialization failed");
-        }*/
+        }
 
         //imu.resetYaw();
 
@@ -221,7 +223,8 @@ public class TurningTest extends LinearOpMode {
     }
 
     public void resetIMU() {
-        sleep(250);
+        sleep(100);
+        imu.resetYaw();
         offset = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
@@ -229,14 +232,16 @@ public class TurningTest extends LinearOpMode {
         return (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
-    public double fixAngle(double angle) {
-            while (angle > 180) {
-                angle -= 360;
-            }
-            while (angle < -180) {
-                angle += 360;
-            }
-            return angle;
+    // This function normalizes the angle so it returns a value between -180° and 180° instead of 0° to 360°.
+    public double fixAngle(double radians) {
+        radians = toRadians(radians);
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+        return toDegrees(radians);
     }
 
     /*
@@ -263,7 +268,7 @@ public class TurningTest extends LinearOpMode {
             stopRobot();
         } else if (true) {
             resetIMU();
-            double tolerance = 5;
+            double tolerance = 1;
             degrees *= -1;
             double sign = signum(degrees);
             double startAngle = getAngle();
@@ -277,7 +282,7 @@ public class TurningTest extends LinearOpMode {
             while (opModeIsActive() && (sign * error > tolerance)) {
                 currentAngle = getAngle();
                 error = fixAngle(closestToZero(initialGoalAngle - currentAngle, correctedGoalAngle - currentAngle));
-                turnModifier = min(1, abs((error + 3) / 45));
+                turnModifier = min(1, abs((error + 5) / 30));
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setVelocity(-turnPower);
                 rb.setVelocity(turnPower);
