@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.apache.commons.math3.util.FastMath.max;
+import static org.apache.commons.math3.util.FastMath.min;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.types.PathType;
@@ -16,6 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.Arm;
 import org.firstinspires.ftc.teamcode.Components.Arm.ArmStates;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
+import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.Magazine;
 import org.firstinspires.ftc.teamcode.Components.Hanger;
 import org.firstinspires.ftc.teamcode.Components.Hopper;
@@ -24,6 +30,7 @@ import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.Preloader;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Components.Twrist;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -32,18 +39,19 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 /** Warren Robot class to contain all the season's functions */
 public class BradBot extends BasicRobot {
   Arm arm;
-  Magazine magazine;
+  Claw claw;
   CVMaster cv;
   Hanger hanger;
   Intake intake;
   Launcher launcher;
   Lift lift;
+  Magazine magazine;
   Preloader preloader;
   public SampleMecanumDrive roadrun;
+  Twrist twrist;
   Ultrasonics ultras;
   Wrist wrist;
   Path path;
-
 
   /**
    * Instatiates all the hardware and sets up initial states of some software Logs that this
@@ -60,13 +68,15 @@ public class BradBot extends BasicRobot {
     if (!isTeleop) {
       cv = new CVMaster();
     }
-//    magazine = new Magazine();
+    //    claw = new Claw();
+    //    magazine = new Magazine();
     hanger = new Hanger();
     intake = new Intake();
     launcher = new Launcher();
     lift = new Lift();
     preloader = new Preloader();
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
+    //    twrist = new Twrist();
     //        ultras = new Ultrasonics();
     wrist = new Wrist();
     path = new Path();
@@ -80,11 +90,12 @@ public class BradBot extends BasicRobot {
     return cv.getRightPosition() - 1;
   }
 
-  public int getBlueSpikePos(){
-    return cv.getBluePosition() -1;
+  public int getBlueSpikePos() {
+    return cv.getBluePosition() - 1;
   }
-  public int getBlueRightSpikePos(){
-    return cv.getBlueRightPosition()-1;
+
+  public int getBlueRightSpikePos() {
+    return cv.getBlueRightPosition() - 1;
   }
 
   /**
@@ -119,23 +130,19 @@ public class BradBot extends BasicRobot {
   }
 
   public void flipAuto() {
-    if (queuer.queue(true, ArmStates.FLIPPED.getState())) {
+    if (queuer.queue(true, ArmStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
-        magazine.clamp();
-        arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        arm.flipTo(DROP);
         lift.iterateUp();
       }
     }
   }
 
   public void resetAuto() {
-    if (queuer.queue(true, !FLIPPED.getState())) {
+    if (queuer.queue(true, Lift.LiftPositionStates.AT_ZERO.getState())) {
       if (!queuer.isExecuted()) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
-        arm.flipTo(UNFLIPPED);
-        wrist.update();
-        wrist.flipTo(Wrist.WristTargetStates.INTAKE);
+        arm.flipTo(HOVER);
       }
     }
   }
@@ -151,32 +158,18 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(false, Wrist.WristStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        //        magazine.unmagazine();
       }
     }
   }
 
   public void drop() {
-    if (queuer.queue(false, !magazine.getClamped())) {
+    if (queuer.queue(false, Claw.clawTargetStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
-        magazine.unclamp();
+        claw.flipTo(Claw.clawTargetStates.DROP);
       }
     }
   }
 
-
-  /**
-   * Empties the hopper in auto, hopper.update() will handle the rest Logs that this function called
-   * to general surface
-   */
-  public void depositAuto() {
-    if (queuer.queue(true, Hopper.HopperStates.ZERO.getState())) {
-      if (!queuer.isExecuted()) {
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("depositing until 0 pixels remain");
-      }
-    }
-  }
 
   /**
    * Calls other lift auto Logs that function is called
@@ -224,16 +217,25 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-  public void followPPPath(Path p_path){
+
+  public void followPPPath(Path p_path) {
     boolean equals = false;
-    if(path.size()>0){
-      equals = path.get(0).getPose().equals (p_path.get(0).getPose());
+    if (path.size() > 0) {
+      equals = path.get(0).getPose().equals(p_path.get(0).getPose());
     }
-    if (queuer.queue(false, equals && (((path.isFinished() || path.timedOut())) || currentPose.vec().
-            distTo(new Vector2d(path.get(path.size()-1).getPose().getX(), path.get(path.size()-1).getPose().getY()))< 3))) {
+    if (queuer.queue(
+        false,
+        equals
+            && (((path.isFinished() || path.timedOut()))
+                || currentPose
+                        .vec()
+                        .distTo(
+                            new Vector2d(
+                                path.get(path.size() - 1).getPose().getX(),
+                                path.get(path.size() - 1).getPose().getY()))
+                    < 3))) {
       if (!queuer.isExecuted()) {
-        if(!p_path.equals(path))
-          path=p_path;
+        if (!p_path.equals(path)) path = p_path;
         path.init();
       }
       double[] speeds =
@@ -244,9 +246,15 @@ public class BradBot extends BasicRobot {
       packet.put("timedOUt", path.timedOut());
       packet.put("isFinished", path.isFinished());
       packet.put("equals", equals);
-      roadrun.setDrivePower(new Pose2d(speeds[0], speeds[1], speeds[2]));
-      }
+      var powers =
+          MecanumKinematics.robotToWheelVelocities(
+                  new Pose2d(speeds[0], speeds[1], speeds[2] * 0.5), 12, 12, 1.1)
+              .toArray();
+      roadrun.setMotorPowers(
+          (double) powers[0], (double) powers[1], (double) powers[2], (double) powers[3]);
+    }
   }
+
   public void followTrajSeq(TrajectorySequence p_traj, boolean isOptional) {
     if (queuer.isFirstLoop()) {
       queuer.queue(false, false, true);
@@ -285,12 +293,13 @@ public class BradBot extends BasicRobot {
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
-    boolean isRightBumper2 =         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");;
+    boolean isRightBumper2 =
+        gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
+    ;
     if (isA) {
-      arm.flipTo(UNFLIPPED);
+      arm.flipTo(HOVER);
       lift.update();
       wrist.update();
-      wrist.flipTo(Wrist.WristTargetStates.INTAKE);
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
@@ -303,41 +312,31 @@ public class BradBot extends BasicRobot {
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        if (Wrist.WristTargetStates.INTAKE.state
-            && Lift.LiftMovingStates.AT_ZERO.getState()) {
-          arm.flatten();
-          magazine.unclamp();
-        }
+        magazine.clampTo(Magazine.MagazineTargetStates.CLOSE);
         intake.intake();
       } else {
-        if (Wrist.WristTargetStates.INTAKE.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
-          magazine.clamp();
-          wrist.setIntake();
-          arm.unflatten();
-        }
+        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
         intake.stopIntake();
       }
     }
     if (left) {
-      if (magazine.getClamped()) magazine.unclamp();else magazine.clamp();
+      if ( Claw.clawStates.CLOSE.getState()|| Claw.clawStates.PINCH.getState()){
+        claw.flipTo(Claw.clawTargetStates.DROP);
+      }
+      else if(Claw.clawStates.GRAB.getState()){
+        claw.flipTo(Claw.clawTargetStates.CLOSE);
+      }
     }
     if (leftBumper) {
       intake.reverseIntake();
-      magazine.clamp();
     }
     if (up) {
-      if (Wrist.WristTargetStates.INTAKE.state) {
-        arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.DROP);
-      }
+      arm.flipTo(DROP);
       lift.iterateUp();
       intake.stopIntake();
     }
     if (down) {
-      if (Wrist.WristTargetStates.INTAKE.state) {
-        arm.flipTo(FLIPPED);
-        wrist.flipTo(Wrist.WristTargetStates.DROP);
-      }
+      arm.flipTo(DROP);
       lift.iterateDown();
       intake.stopIntake();
     }
@@ -366,7 +365,6 @@ public class BradBot extends BasicRobot {
       preloader.load();
     }
 
-
     roadrun.setWeightedDrivePower(
         new Pose2d(
             -op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x));
@@ -388,8 +386,7 @@ public class BradBot extends BasicRobot {
     arm.update();
     if (!isTeleop) {
       cv.update();
-      if(op.isStarted())
-        queuer.setFirstLoop(false);
+      if (op.isStarted()) queuer.setFirstLoop(false);
     }
     intake.update();
     lift.update();

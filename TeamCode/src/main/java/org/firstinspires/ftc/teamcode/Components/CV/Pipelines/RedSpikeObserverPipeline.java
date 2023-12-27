@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 0, p1y =230, p2x = 80, p2y =380, p21x = 260, p21y =200, p22x = 420, p22y =370, threshhold = 1.0,
+    public static double p1x = 0, p1y =230, p2x = 80, p2y =360, p21x = 260, p21y =200, p22x = 420, p22y =340, threshhold = 1.0,
 
     //h3u and s3u: 71 and 90
     colour = 1, h1 = 0, h1H = 30, h2 =160, h2H = 180;
@@ -51,8 +51,10 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
                 new Point(p21x,p21y),
                 new Point(p22x,p22y));
         Mat cone = input.submat(ROI1);
+        Mat nCone = new Mat();
         Mat newCone = new Mat();
-        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(cone, nCone, Imgproc.COLOR_GRAY2BGR);
+        Imgproc.cvtColor(nCone, newCone, Imgproc.COLOR_BGR2HSV);
         Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
     Scalar thresh2 = new Scalar(h2,59,0), hthresh2 = new Scalar(h2H,255,255);
         Mat filtered = new Mat(), filtered1 = new Mat();
@@ -83,6 +85,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         //release all the data
 //        input.release();
 //        mat.release();
+        nCone.release();
         Scalar color = new Scalar(255,0,0);
         Imgproc.rectangle(input, ROI1, color, 5);
         Imgproc.rectangle(input, ROI2, color, 5);

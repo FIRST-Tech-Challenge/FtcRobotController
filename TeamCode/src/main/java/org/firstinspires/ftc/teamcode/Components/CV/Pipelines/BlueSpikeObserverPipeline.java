@@ -25,7 +25,7 @@ import java.util.ArrayList;
 @Config
 public class BlueSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public double p1x = 500, p1y =230, p2x = 640, p2y =380, p21x = 150, p21y =200, p22x = 350, p22y =370;
+    public double p1x = 500, p1y =230, p2x = 640, p2y =340, p21x = 150, p21y =200, p22x = 350, p22y =320;
     public static double h1=100, h1H=130;
 
 

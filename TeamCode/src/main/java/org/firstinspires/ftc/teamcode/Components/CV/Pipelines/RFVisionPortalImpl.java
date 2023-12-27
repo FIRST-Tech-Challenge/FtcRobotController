@@ -64,7 +64,7 @@ import org.openftc.easyopencv.TimestampedOpenCvPipeline;
  */
 public class RFVisionPortalImpl extends RFVisionPortal
 {
-    protected OpenCvCamera camera;
+    public OpenCvCamera camera;
     protected volatile CameraState cameraState = CameraState.CAMERA_DEVICE_CLOSED;
     protected VisionProcessor[] processors;
     protected volatile boolean[] processorsEnabled;
@@ -127,12 +127,12 @@ public class RFVisionPortalImpl extends RFVisionPortal
                 {
                     ((OpenCvWebcam)camera).startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION,
                             webcamStreamFormat.eocvStreamFormat);
-                    dashboard.startCameraStream(camera,5);
+                    dashboard.startCameraStream(camera,2);
                 }
                 else
                 {
                     camera.startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION);
-                    dashboard.startCameraStream(camera,5);
+                    dashboard.startCameraStream(camera,2);
                 }
 
                 if (camera instanceof OpenCvWebcam)
@@ -156,6 +156,10 @@ public class RFVisionPortalImpl extends RFVisionPortal
                 RobotLog.ee("VisionPortalImpl", "Camera opening failed.");
             }
         });
+    }
+
+    public OpenCvCamera getCamera(){
+        return camera;
     }
 
     protected void createCamera(CameraName cameraName, int cameraMonitorViewId)

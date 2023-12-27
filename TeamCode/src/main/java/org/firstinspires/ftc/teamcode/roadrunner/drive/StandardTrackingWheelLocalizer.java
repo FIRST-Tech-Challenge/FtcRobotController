@@ -50,7 +50,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     public static double wheelrad2 = 1;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 13.12*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 12.4*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = -5.8*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
 
     private double[] lastTicks = {0,0,0};
@@ -74,9 +74,9 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         super(Arrays.asList(new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))));
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
@@ -106,11 +106,14 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
         //  compensation method
+        packet.put("leftSpeed",encoderTicksToInches(leftEncoder.getRawVelocity()*X_MULTIPLIER));
+        packet.put("rightSpeed",encoderTicksToInches(rightEncoder.getRawVelocity()*X_MULTIPLIER));
+        packet.put("backSpeed",encoderTicksToInches(frontEncoder.getRawVelocity()*2*PI/TICKS_PER_REV));
 
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCorrectedVelocity()*X_MULTIPLIER),
                 encoderTicksToInches(rightEncoder.getCorrectedVelocity()*X_MULTIPLIER),
-                encoderTicksToInches(frontEncoder.getCorrectedVelocity()*Y_MULTIPLIER)
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity()*2*PI/TICKS_PER_REV)
         );
     }
     public double[][] multiplyMatrix(int row1, int col1, double A[][], int row2, int col2, double B[][]) {

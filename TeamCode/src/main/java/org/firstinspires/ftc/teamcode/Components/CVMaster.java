@@ -44,9 +44,10 @@ public class CVMaster {
     LOGGER.log(RFLogger.Severity.INFO, "intializing OpenCV");
     webcam =
         OpenCvCameraFactory.getInstance()
-            .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
+            .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
     webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.NATIVE_VIEW);
-    observeSpike();
+//    observeSpike();
+    isStreaming = true;
   }
 
   public void setRed(boolean p_isRed) {
@@ -101,7 +102,7 @@ public class CVMaster {
               webcam.setPipeline(openSleeve);
             }
 
-            webcam.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+            webcam.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
             dashboard.startCameraStream(webcam, 10);
           }
 
@@ -163,8 +164,8 @@ public class CVMaster {
 
   /** switches to apriltag camera logs to general surface log */
   public void switchToApril() {
-    webcam.stopRecordingPipeline();
-    webcam.stopStreaming();
+//    webcam.stopRecordingPipeline();
+//    webcam.stopStreaming();
     cam = new RFAprilCam();
     isStreaming = false;
   }
@@ -181,7 +182,7 @@ public class CVMaster {
   public void update() {
     LOGGER.setLogLevel(RFLogger.Severity.FINEST);
     LOGGER.log("updating camera info");
-    if (!isTeleop && op.isStarted() && isStreaming) {
+    if (!isTeleop && isStreaming && op.isStarted()) {
       switchToApril();
       isStreaming = false;
     }
