@@ -171,8 +171,8 @@ public class lm2teleop2drivers extends LinearOpMode {
             else if (gamepad2.dpad_left&&!(gamepad2.left_trigger >= 0.5)) {extend.setPlaceLow();wrist.setPosition(0.65);wrist1.setPosition(0.35);}
 
             if (gamepad2.left_bumper && !lastState) {//new claw code for easier driving
-                if (open) {claw.setPosition(0.7);claw1.setPosition(0.33);open = false;}
-                else {claw.setPosition(0.35);claw1.setPosition(0.6);open = true;}
+                if (open) {claw.setPosition(0.5);claw1.setPosition(0.32);open = false;}
+                else {claw.setPosition(0.2);claw1.setPosition(0.6);open = true;}
             }
            // if(!hangmode) {
                 if (gamepad2.dpad_down && gamepad2.left_trigger >= 0.5) {extend.makelesstilt();}// pos over-rides
