@@ -30,6 +30,7 @@ public class Hardware {
 
     public VoltageSensor batteryVoltageSens;
 
+//servos
 
     public Servo droneLauncher;
     public Servo clawFront;
