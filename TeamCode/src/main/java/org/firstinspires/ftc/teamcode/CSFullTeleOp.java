@@ -55,7 +55,7 @@ public class CSFullTeleOp extends CSMethods {
             if (pixelLiftingMotor != null) {
                 if (gamepad2.dpad_up && !gamepad2.dpad_down) {
                     if (pixelLiftingMotor.getCurrentPosition() < 3000) {
-                        pixelLiftingMotor.setPower(1);
+                        pixelLiftingMotor.setPower(0.1);
                     } else {
                         pixelLiftingMotor.setPower(0);
                     }
@@ -64,7 +64,7 @@ public class CSFullTeleOp extends CSMethods {
 
                 if (gamepad2.dpad_down && !gamepad2.dpad_up) {
                     if (pixelLiftingMotor.getCurrentPosition() > 0) {
-                        pixelLiftingMotor.setPower(-1);
+                        pixelLiftingMotor.setPower(-0.1);
                     } else {
                         pixelLiftingMotor.setPower(0);
                     }
