@@ -4,6 +4,7 @@ import static java.lang.Math.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -63,7 +64,7 @@ public abstract class CSMethods extends LinearOpMode {
     public static final String[] LABELS = {
             "prop",
     };
-
+    IMU.Parameters imuparameters;
     public void setup(boolean isRed) {
         if (isRed) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
@@ -72,6 +73,21 @@ public abstract class CSMethods extends LinearOpMode {
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
+        imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                new Orientation(
+                        AxesReference.INTRINSIC,
+                        AxesOrder.ZYX,
+                        AngleUnit.DEGREES,
+                        0,
+                        0,
+                        0,
+                        0  // acquisitionTime, not used
+                )
+        ));
+        boolean imuinit = imu.initialize(imuparameters);
+        if (!imuinit){
+            telemetry.addData("IMU","Initialization failed");
+        }
         try {
             lf = hardwareMap.get(DcMotorEx.class, "leftFront");
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
