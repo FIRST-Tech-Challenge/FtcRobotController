@@ -23,13 +23,18 @@ public class Hardware {
 
     public DcMotorEx armMotor1;
     public DcMotorEx armMotor2;
+    public DcMotorEx leftSlider;
+    public DcMotorEx rightSlider;
     public DcMotorEx[] motors;
     public IMU imu;
 
     public VoltageSensor batteryVoltageSens;
 
 
-    public Servo droneServo;
+    public Servo droneLauncher;
+    public Servo clawFront;
+    public Servo clawBack;
+    public Servo clawWrist;
 
     public Hardware(HardwareMap hardwareMap) {
         //initialize variables
@@ -42,24 +47,30 @@ public class Hardware {
         armMotor1 = hardwareMap.get(DcMotorEx.class, "leftArm");
         armMotor2 = hardwareMap.get(DcMotorEx.class, "rightArm");
 
-        droneServo = hardwareMap.get(Servo.class, "droneLauncher");
+        rightSlider = hardwareMap.get(DcMotorEx.class, "rightSlider");
+        leftSlider = hardwareMap.get(DcMotorEx.class, "leftSlider");
+
+        droneLauncher = hardwareMap.get(Servo.class, "droneLauncher");
+        clawFront = hardwareMap.get(Servo.class, "clawFrontServo");
+        clawBack = hardwareMap.get(Servo.class, "clawBackServo");
+        clawWrist = hardwareMap.get(Servo.class, "ClawMountServo");
 
 
 
         motors = new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight};
 
-            // IMU
+        // IMU
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
-            // Control Hub
+        // Control Hub
 
-                // Battery
+        // Battery
         batteryVoltageSens = hardwareMap.voltageSensor.iterator().next();
 
-                //
+        //
 
 
         // Fix the things
@@ -75,3 +86,4 @@ public class Hardware {
         }
     }
 }
+
