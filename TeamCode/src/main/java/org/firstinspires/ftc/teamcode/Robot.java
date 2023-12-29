@@ -26,8 +26,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public class Robot {
-
-    public static final int CHUNK_DISTANCE_INCHES = 24;
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -40,9 +38,7 @@ public class Robot {
     DcMotor lsFront;
     Servo tray;
     Servo clamp;
-    Servo flipper;
     Servo hook;
-    //Servo planeLauncher; TODO: servo is kaitlyn launcher, dcmotor is ethan launcher
     DcMotor planeLauncher;
     Servo spikeServo;
     IMU imu;
@@ -57,17 +53,6 @@ public class Robot {
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     boolean isRedAlliance;
-
-    //for debugging :)
-    double avgLeftCb;
-    double avgRightCb;
-    double avgCenterCb;
-    double avgLeftCr;
-    double avgCenterCr;
-    double avgRightCr;
-    double avgLeftY;
-    double avgCenterY;
-    double avgRightY;
     boolean testingOnBert = false;
 
     //CONSTRUCTOR
@@ -93,8 +78,6 @@ public class Robot {
             spikeServo = hardwareMap.servo.get("spikeServo");
             stackAttachment = hardwareMap.servo.get("stackAttachment");
         }
-        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
@@ -132,38 +115,6 @@ public class Robot {
         telemetry.update();
     }
 
-    public boolean moveLinearSlidesByTicksParallel(double targetDistanceInTicks) {
-
-        //target distance negative when going up
-        double remainingDistanceLowParallel = targetDistanceInTicks - lsFront.getCurrentPosition();
-
-        if (opMode.opModeIsActive() && Math.abs(targetDistanceInTicks - lsFront.getCurrentPosition()) > 100) {
-            remainingDistanceLowParallel = targetDistanceInTicks - lsFront.getCurrentPosition();
-
-            telemetry.addData("linear slide pos in ticks", lsFront.getCurrentPosition());
-            telemetry.addData("linear slides power", remainingDistanceLowParallel * 0.02);
-
-            lsFront.setPower(remainingDistanceLowParallel * 0.002);
-            lsBack.setPower(remainingDistanceLowParallel * 0.002);
-
-            telemetry.update();
-            return false;
-        } else {
-            lsFront.setPower(0);
-            lsBack.setPower(0);
-            return true;
-        }
-
-    }
-
-    public double getCurrentLinearSlideTicks() {
-
-        double currentTicks = lsFront.getCurrentPosition();
-
-        return currentTicks;
-    }
-
-
     public void setServoPosBlocking(Servo servo, double targetServoPos) {
 
         servo.setPosition(targetServoPos);
@@ -174,7 +125,7 @@ public class Robot {
         if (blocking) {
             opMode.sleep(500);
         }
-    }//
+    }
 
     public void trayToOuttakePos(boolean blocking) {
         setServoPosBlocking(tray, 0.36);
@@ -319,48 +270,11 @@ public class Robot {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public double maxAbsValueDouble(double[] values) {
-
-        double max = -Double.MIN_VALUE;
-
-
-        for (double value : values) {
-            if (Math.abs(value) > Math.abs(max)) {
-                max = value;
-            }
-
-        }
-
-        return Math.abs(max);
-    }
-
-    public double[] scalePowers(double[] powers) {
-        double maxPower = maxAbsValueDouble(powers);
-
-        if (maxPower < 1) {
-            return powers;
-        }
-
-        return new double[]{
-                powers[0] / maxPower,
-                powers[1] / maxPower,
-                powers[2] / maxPower,
-                powers[3] / maxPower
-        };
-    }
-
     public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
         this.fRight.setPower(fRight);
         this.bLeft.setPower(bLeft);
         this.bRight.setPower(bRight);
         this.fLeft.setPower(fLeft);
-    }
-
-    public void setMotorPower(double[] powers) {
-        this.fLeft.setPower(powers[0]);
-        this.fRight.setPower(powers[1]);
-        this.bLeft.setPower(powers[2]);
-        this.bRight.setPower(powers[3]);
     }
 
     public double getCurrentHeading() {
@@ -427,78 +341,6 @@ public class Robot {
             opMode.sleep(100);
             currentHeading = getCurrentHeading();
             botHeading = targetAbsDegrees;
-            Log.d("pid", "setHeading: final heading is " + currentHeading);
-        }
-    }
-
-    //the desired heading must be relative to last imu reset. also, REMEMBER -180 < desired heading <= 180.
-    public void setHeading2(double targetAbsDegrees, double maxPower) {
-        if (targetAbsDegrees == 180) {
-            setHeading2(179.5, maxPower);
-        } else {
-
-            YawPitchRollAngles robotOrientation;
-
-            double KP = 3; //started 0.15 //started 20
-            double KD = 0;
-            double ERROR_TOLERANCE = 1; //degrees
-            double currentHeading = getCurrentHeading();
-            double error = targetAbsDegrees - currentHeading;
-            double headingRange = Math.abs(error);
-            double norError = error/headingRange;
-            double errorDer;
-            double power;
-            double currentTime;
-            double minPower = 0.15;
-            boolean setPrevTime = false;
-
-
-            //while start
-            while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
-                robotOrientation = imu.getRobotYawPitchRollAngles();
-                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
-                currentTime = SystemClock.elapsedRealtimeNanos();
-
-                if (setPrevTime) {
-                    errorDer = (error - prevError) / (currentTime - prevTime);
-                } else {
-                    errorDer = 0;
-                }
-
-                error = targetAbsDegrees - currentHeading; //error is degrees to goal
-                norError = error/headingRange;
-                errorDer = (error - prevError) / (currentTime - prevTime);
-                power = (KP * norError * norError * norError) + (KD * errorDer);
-
-                Log.d("pid", "setHeading: current heading is " + currentHeading);
-                Log.d("pid", "setHeading: Target heading is " + targetAbsDegrees);
-                Log.d("pid", "setHeading: time is " + currentTime);
-                Log.d("pid", "setHeading: heading error is " + error);
-                Log.d("pid", "setHeading: errorDer is " + errorDer);
-                Log.d("pid", "setHeading: calculated power is " + power);
-
-                if (power > 0 && power < minPower) {
-                    power = minPower;
-                    Log.d("pid", "setHeading: adjusted power is " + power);
-                } else if (power < 0 && power > (-1 * minPower)) {
-                    power = -1 * minPower;
-                    Log.d("pid", "setHeading: adjusted power is " + power);
-                }
-
-                //cap power
-                power = Range.clip(power, -1 * maxPower, maxPower);
-                Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
-
-                setMotorPower(-1 * power, power, -1 * power, power);
-
-                prevError = error;
-                prevTime = currentTime;
-                setPrevTime = true;
-            }
-            setMotorPower(0, 0, 0, 0);
-            opMode.sleep(100);
-            botHeading = targetAbsDegrees;
-            currentHeading = getCurrentHeading();
             Log.d("pid", "setHeading: final heading is " + currentHeading);
         }
     }
@@ -874,16 +716,6 @@ public class Robot {
             //TODO: do things based on apriltag id
             break;
         }
-    }
-
-    public void moveStraightChunkingDONT_USE_NEGATIVE(double inches, boolean forward, double maxPower, double globalHeading, double globalHeadingPower) {
-        assert inches > 0;
-        int chunkNumber = (int) Math.floor(inches / CHUNK_DISTANCE_INCHES);
-        for (int i = 0; i < chunkNumber; i++) {
-            straightBlocking(CHUNK_DISTANCE_INCHES, forward, maxPower);
-            setHeading(globalHeading, globalHeadingPower);
-        }
-        straightBlocking(inches % CHUNK_DISTANCE_INCHES, forward, maxPower);
     }
 
     public void longMoveToBoard(boolean isJuice) {
@@ -1490,7 +1322,6 @@ public class Robot {
         intake.setPower(0);
         closeClamp(true);
     }
-
 
     public void fastStraightFixHeading (double inches, boolean forward, double maxPower) {
 
