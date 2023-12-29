@@ -9,12 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 //to import is to be able to use methods and classes of modules
 
 //main class Opmode
-@Disabled
-public abstract class Opmode {
-
-    public abstract void init();
-
-    public abstract void loop();
 
     public class OpMode extends LinearOpMode {
         /// Decleration of DC motors switch them to the names of what is in you config
@@ -54,4 +48,4 @@ public abstract class Opmode {
         }
     }
 
-}
+
