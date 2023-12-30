@@ -32,9 +32,24 @@ public class ManualArm extends LinearOpMode {
                 arm.slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.slide.setPower(-1);
                 arm.setHandPosition(LiftArm.HandPosition.IN);
+            } else if (gamepad1.dpad_up) {
+                arm.slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.slide.setPower(.5);
+                arm.setHandPosition(LiftArm.HandPosition.IN);
             } else {
                 arm.slide.setPower(0);
                 arm.slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+
+            if (gamepad1.right_trigger > .75) {
+                arm.hand.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.hand.setPower(-.35);
+            } else if (gamepad1.left_trigger > .75) {
+                arm.hand.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.hand.setPower(.35);
+            } else {
+                arm.hand.setPower(0);
+                arm.hand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
         }
     }

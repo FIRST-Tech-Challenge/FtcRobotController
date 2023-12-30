@@ -129,12 +129,6 @@ public class SubsystemTest extends LinearOpMode {
             } else if (gamepad1.dpad_down) {
                 arm.retract();
             }
-            /**
-            *climber
-            */
-            if (gamepad1.right_stick_button) {
-                arm.releaseHook();
-            }
 
             /**
              * Trapdoor

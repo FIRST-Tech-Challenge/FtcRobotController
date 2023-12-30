@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.RoadRunnerDriving;
 
-@TeleOp(name="Drive Blue", group="Linear Opmode")
-public class MainDriveProgramBlue extends LinearOpMode {
+@TeleOp(name="comp bot drive", group="Linear Opmode")
+public class MainDriveProgram extends LinearOpMode {
 
 
     // Declare OpMode members for each of the 4 motors.
@@ -119,14 +119,6 @@ public class MainDriveProgramBlue extends LinearOpMode {
             }
 
             /**
-             * Climber
-             */
-            if (gamepad1.right_stick_button || gamepad2.right_stick_button) {
-                arm.releaseHook();
-            }
-
-
-            /**
              * Slow mode toggle
              */
             if (!gamepad1.y) {
@@ -161,6 +153,8 @@ public class MainDriveProgramBlue extends LinearOpMode {
             telemetry.addData("Horizontal input", gamepad1.left_stick_x);
             telemetry.addData("Vertical input: ", gamepad1.left_stick_y);
             telemetry.addData("Turn input: ", gamepad1.right_stick_x);
+
+
             telemetry.update();
         }
     }

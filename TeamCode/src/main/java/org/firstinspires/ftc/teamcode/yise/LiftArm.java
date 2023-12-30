@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.yise;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.opencv.core.Mat;
 
 public class LiftArm {
     public DcMotor slide, hand;
     public Servo trapdoor;
-    public Servo intakeHolder;
-
-    public Servo lifterL;
-    public Servo lifterR;
-
 
     public HandPosition handPosition;
     public double intakePower = 0;
@@ -30,48 +29,18 @@ public class LiftArm {
     }
 
 
-    public enum TrapdoorPositions{
-        OPEN,
-        CLOSE
-    }
-
-    public enum lifterPositions{
-        OPEN,
-        CLOSE
-    }
-
-    public enum holderPositions{
-        OPEN,
-        CLOSE
-    }
-
-    // Used to identify left and right slide motors
-    public enum Sides {
-        RIGHT,
-        LEFT
-    }
-
-
     //Constructor
     public LiftArm(HardwareMap hardwareMap) {
         //Initialize motors and servos
         hand = hardwareMap.get(DcMotor.class, "hand");
         slide = hardwareMap.get(DcMotor.class, "slide");
         trapdoor = hardwareMap.get(Servo.class, "trapdoor");
-        intakeHolder = hardwareMap.get(Servo.class, "intakeHolder");
-
-        lifterL = hardwareMap.get(Servo.class, "lifterL");
-        lifterR = hardwareMap.get(Servo.class, "lifterR");
-
-        intakeHolder.setDirection(Servo.Direction.REVERSE);
-
-        secureHook();
 
         trapdoor.setPosition(.2);
 
         //Set motor directions
         hand.setDirection(DcMotor.Direction.FORWARD);
-        slide.setDirection(DcMotor.Direction.REVERSE);
+        slide.setDirection(DcMotor.Direction.FORWARD);
 
         //Reset encoders
         hand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -114,7 +83,7 @@ public class LiftArm {
                 break;
         }
         hand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hand.setPower(1);
+        hand.setPower(.35);
 
     }
 
@@ -127,14 +96,6 @@ public class LiftArm {
         trapdoor.setPosition(0.2);
     }
 
-    public void releaseHook() {
-        lifterR.setPosition(Servo.MIN_POSITION);
-        lifterL.setPosition(Servo.MIN_POSITION);
-    }
-    public void secureHook() {
-        lifterR.setPosition(Servo.MAX_POSITION);
-        lifterL.setPosition(Servo.MAX_POSITION);
-    }
 
     public void extendAndDrop(Distance targetDistance) {
         setArmDistance(targetDistance);
@@ -143,8 +104,8 @@ public class LiftArm {
 
     public void retract() {
         closeTrapdoor();
-        setHandPosition(HandPosition.IN);
         setArmDistance(Distance.DEFAULT);
+        setHandPosition(HandPosition.IN);
     }
 
     public void holdArm() {
