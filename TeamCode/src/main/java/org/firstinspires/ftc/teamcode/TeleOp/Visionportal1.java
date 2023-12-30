@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -22,7 +21,7 @@ import java.util.*;
 @Disabled
 public class Visionportal1 extends LinearOpMode {
 
-//    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     private TfodProcessor myTfodProcessor;
     private AprilTagProcessor myAprilTagProcessor;
     private VisionPortal myVisionPortal;
@@ -44,25 +43,35 @@ public class Visionportal1 extends LinearOpMode {
                 .setDrawCubeProjection(true) // default = false
                 .build();
 
-        myVisionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1")) // change name depending on mech team wants to name it
-                .addProcessor(myAprilTagProcessor) // add apriltag processor
-                .addProcessor(myTfodProcessor) // add tfod processor
-                .setCameraResolution(new Size(640, 480)) // import android.util.Size;
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG) // changed to MJPEG instead of YUY2 since it uses less bandwidth
-                // .enableCameraMonitoring(true) // enableCameraMonitoring not identified? I also didn't find any related methods in VisionPortal.java
-                .enableLiveView(true) // manually added this method because it was the closest thing to enableCameraMonitoring
-                .setAutoStopLiveView(true)
-                .build();
+
+        if (USE_WEBCAM) {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1")) // change name depending on mech team wants to name it
+                    .addProcessor(myAprilTagProcessor) // add apriltag processor
+                    .addProcessor(myTfodProcessor) // add tfod processor
+                    .setCameraResolution(new Size(640, 480)) // import android.util.Size;
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG) // changed to MJPEG instead of YUY2 since it uses less bandwidth
+                    // .enableCameraMonitoring(true) // enableCameraMonitoring not identified? I also didn't find any related methods in VisionPortal.java
+                    .enableLiveView(true) // manually added this method because it was the closest thing to enableCameraMonitoring
+                    .setAutoStopLiveView(true)
+                    .build();
+        } else {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(myAprilTagProcessor) // add apriltag processor
+                    .addProcessor(myTfodProcessor) // add tfod processor
+                    .setCameraResolution(new Size(640, 480)) // import android.util.Size;
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG) // changed to MJPEG instead of YUY2 since it uses less bandwidth
+                    // .enableCameraMonitoring(true) // enableCameraMonitoring not identified? I also didn't find any related methods in VisionPortal.java
+                    .enableLiveView(true) // manually added this method because it was the closest thing to enableCameraMonitoring
+                    .setAutoStopLiveView(true)
+                    .build();
+        }
     }
 
     @Override
     public void runOpMode() {
         initProcessors();
-
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.update();
-
         waitForStart();
 
         if (!isStopRequested()) {
@@ -72,12 +81,14 @@ public class Visionportal1 extends LinearOpMode {
                 telemetry.update();
 
                 if (gamepad1.dpad_down) {
+                    myVisionPortal.stopLiveView();
                     myVisionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
+                    myVisionPortal.resumeLiveView();
                     myVisionPortal.resumeStreaming();
                 }
 
-                sleep(100); // so that it's not constantly runnning over and over
+                sleep(100); // no rapid toggling since turning on and off takes time
 
             }
         }
