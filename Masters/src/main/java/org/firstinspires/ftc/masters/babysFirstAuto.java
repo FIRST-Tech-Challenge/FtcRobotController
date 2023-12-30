@@ -58,8 +58,7 @@ public class babysFirstAuto extends LinearOpMode {
             }
         }
 
-        robot.init();
-        robot.forward(.3, .5);
+        //robot.init();
 
     }
 
@@ -81,7 +80,7 @@ public class babysFirstAuto extends LinearOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
