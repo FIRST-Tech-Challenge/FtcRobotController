@@ -1,16 +1,6 @@
 package org.firstinspires.ftc.masters.drive;
 
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BOTTOM;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_MID_TOP;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_CLOSED;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_CLOSED_AUTO;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_OPEN;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_BOTTOM;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_HIGH;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_MIDDLE;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_BACK;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_CENTER;
-import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_FRONT;
+import static org.firstinspires.ftc.masters.CSCons.claw;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -26,10 +16,8 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -51,7 +39,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.masters.PowerPlayComputerVisionPipelines;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -60,17 +47,13 @@ import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-/*
- * Simple mecanum drive hardware implementation for REV hardware.
- */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    public static double ALIGN_SPEED = .3;
+//    public static double ALIGN_SPEED = .3;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 1);
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 1);
 
     public static double LATERAL_MULTIPLIER = 60.0/64.0;
 
@@ -88,12 +71,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     //private Encoder leftEncoder, rightEncoder, middleEncoder;
     private List<DcMotorEx> motors;
-    public DcMotorEx linearSlide;
-    public DcMotorEx frontSlide;
-    public DcMotorEx slideOtherer;
-    public DcMotorEx armMotor;
+    DcMotor gpSlideRight = null;
+    DcMotor gpSlideLeft = null;
+    DcMotor backSlides = null;
+    DcMotor hangingMotor = null;
 
-    private Servo claw, tippingServo;
+    Servo planeLaunch;
+    Servo planeRaise;
+    Servo clawServo;
+    Servo clawArm;
+    Servo clawAngle;
+    Servo cameraTurning;
+    Servo outtakeHook;
+    Servo outtakeRotation;
+    Servo outtakeMovementRight;
+    Servo outtakeMovementLeft;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -101,8 +93,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
+//        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+//                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
 
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -146,27 +138,29 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
-
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        claw = hardwareMap.servo.get("clawServo");
-        tippingServo = hardwareMap.servo.get("tippingServo");
+        hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
+        gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
+        gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
+        backSlides = hardwareMap.dcMotor.get("backSlides");
 
+        planeLaunch = hardwareMap.servo.get("planeLaunch");
+        planeRaise = hardwareMap.servo.get("planeRaise");
+        clawServo = hardwareMap.servo.get("clawServo");
+        clawArm = hardwareMap.servo.get("clawArm");
+        clawAngle = hardwareMap.servo.get("clawAngle");
+        cameraTurning = hardwareMap.servo.get("cameraTurning");
+        outtakeHook = hardwareMap.servo.get("outtakeHook");
+        outtakeRotation = hardwareMap.servo.get("outtakeRotation");
+        outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
+        outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
         }
-
-
-        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
-        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
-
-        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
-
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -187,117 +181,117 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideOtherer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        hangingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        gpSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        gpSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slideOtherer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hangingMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        gpSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        gpSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideOtherer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        gpSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        gpSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void openClaw(){
-        claw.setPosition(CLAW_OPEN);
+        clawServo.setPosition(claw[0]);
     }
 
     public void closeClaw(){
-        claw.setPosition(CLAW_CLOSED);
+        clawServo.setPosition(claw[1]);
     }
 
-    public void closeAutoClaw(){
-        claw.setPosition(CLAW_CLOSED_AUTO);
-    }
+//    public void closeAutoClaw(){
+//        clawServo.setPosition(CLAW_CLOSED_AUTO);
+//    }
 
-    public void tipCenter(){
-        tippingServo.setPosition(TIP_CENTER);
-    }
+//    public void tipCenter(){
+//        tippingServo.setPosition(TIP_CENTER);
+//    }
 
-    public void tipFront(){
-        tippingServo.setPosition(TIP_FRONT);
-    }
+//    public void tipFront(){
+//        tippingServo.setPosition(TIP_FRONT);
+//    }
 
-    public void tipBack(){
-        tippingServo.setPosition(TIP_BACK);
-    }
+//    public void tipBack(){
+//        tippingServo.setPosition(TIP_BACK);
+//    }
 
-    public void liftTop(){
-        linearSlide.setTargetPosition(SLIDE_HIGH);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontSlide.setTargetPosition(SLIDE_HIGH);
-        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideOtherer.setTargetPosition(SLIDE_HIGH);
-        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(.6);
-        frontSlide.setPower(.6);
-        slideOtherer.setPower(.6);
-        //set arm to middle
-    }
+//    public void liftTop(){
+//        linearSlide.setTargetPosition(SLIDE_HIGH);
+//        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontSlide.setTargetPosition(SLIDE_HIGH);
+//        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideOtherer.setTargetPosition(SLIDE_HIGH);
+//        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        linearSlide.setPower(.6);
+//        frontSlide.setPower(.6);
+//        slideOtherer.setPower(.6);
+//        set arm to middle
+//    }
 
-    public void liftMiddle() {
-        closeClaw();
-        linearSlide.setTargetPosition(SLIDE_MIDDLE);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontSlide.setTargetPosition(SLIDE_MIDDLE);
-        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideOtherer.setTargetPosition(SLIDE_MIDDLE);
-        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(.2);
-        frontSlide.setPower(.2);
-        slideOtherer.setPower(.2);
-    }
+//    public void liftMiddle() {
+//        closeClaw();
+//        linearSlide.setTargetPosition(SLIDE_MIDDLE);
+//        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontSlide.setTargetPosition(SLIDE_MIDDLE);
+//        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideOtherer.setTargetPosition(SLIDE_MIDDLE);
+//        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        linearSlide.setPower(.2);
+//        frontSlide.setPower(.2);
+//        slideOtherer.setPower(.2);
+//    }
 
-    public void liftDown() {
-        closeClaw();
-        linearSlide.setTargetPosition(SLIDE_BOTTOM);
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontSlide.setTargetPosition(SLIDE_BOTTOM);
-        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideOtherer.setTargetPosition(SLIDE_BOTTOM);
-        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(.4);
-        frontSlide.setPower(.4);
-        slideOtherer.setPower(.4);
-    }
-
-    public void setArmServoTop() {
-        armMotor.setTargetPosition(ARM_MID_TOP);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.3);
-    }
-
-    public void setArmServoBottom() {
-        armMotor.setTargetPosition(ARM_BOTTOM);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.3);
-    }
-
-    public void setArmServoMiddle() {
-        armMotor.setTargetPosition(ARM_MID_TOP);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.3);
-    }
-
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
+//    public void liftDown() {
+//        closeClaw();
+//        linearSlide.setTargetPosition(SLIDE_BOTTOM);
+//        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontSlide.setTargetPosition(SLIDE_BOTTOM);
+//        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideOtherer.setTargetPosition(SLIDE_BOTTOM);
+//        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        linearSlide.setPower(.4);
+//        frontSlide.setPower(.4);
+//        slideOtherer.setPower(.4);
+//    }
+//
+//    public void setArmServoTop() {
+//        armMotor.setTargetPosition(ARM_MID_TOP);
+//        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armMotor.setPower(0.3);
+//    }
+//
+//    public void setArmServoBottom() {
+//        armMotor.setTargetPosition(ARM_BOTTOM);
+//        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armMotor.setPower(0.3);
+//    }
+//
+//    public void setArmServoMiddle() {
+//        armMotor.setTargetPosition(ARM_MID_TOP);
+//        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armMotor.setPower(0.3);
+//    }
+//
+//
+//    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
+//        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+//    }
+//
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
         return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
+//    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
+//        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+//    }
+//
     public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
         return new TrajectorySequenceBuilder(
                 startPose,
@@ -458,58 +452,58 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     }
 
-    public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
-        switch (pos) {
-            case LEFT2:
-            case LEFT3:
-            case LEFT4:
-            case LEFT5:
-            case LEFT6:
-            case LEFT7:
-            case LEFT8:
-                leftFront.setPower(-ALIGN_SPEED);
-                leftRear.setPower(-ALIGN_SPEED);
-                rightFront.setPower(ALIGN_SPEED);
-                rightRear.setPower(ALIGN_SPEED);
-                break;
+//    public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
+//        switch (pos) {
+//            case LEFT2:
+//            case LEFT3:
+//            case LEFT4:
+//            case LEFT5:
+//            case LEFT6:
+//            case LEFT7:
+//            case LEFT8:
+//                leftFront.setPower(-ALIGN_SPEED);
+//                leftRear.setPower(-ALIGN_SPEED);
+//                rightFront.setPower(ALIGN_SPEED);
+//                rightRear.setPower(ALIGN_SPEED);
+//                break;
+//
+//            case RIGHT3:
+//            case RIGHT2:
+//            case RIGHT4:
+//            case RIGHT5:
+//            case RIGHT6:
+//            case RIGHT7:
+//            case RIGHT8:
+//                leftFront.setPower(ALIGN_SPEED);
+//                leftRear.setPower(ALIGN_SPEED);
+//                rightFront.setPower(-ALIGN_SPEED);
+//                rightRear.setPower(-ALIGN_SPEED);
+//                break;
+//            case LEFT1:
+//            case LEFT2:
+//            case RIGHT1:
+//            case RIGHT2:
+//            case CENTER:
+//                leftFront.setPower(0);
+//                leftRear.setPower(0);
+//                rightFront.setPower(0);
+//                rightRear.setPower(0);
+//                return true;
+//
+//        }
+//        return false;
+//    }
 
-            case RIGHT3:
-            case RIGHT2:
-            case RIGHT4:
-            case RIGHT5:
-            case RIGHT6:
-            case RIGHT7:
-            case RIGHT8:
-                leftFront.setPower(ALIGN_SPEED);
-                leftRear.setPower(ALIGN_SPEED);
-                rightFront.setPower(-ALIGN_SPEED);
-                rightRear.setPower(-ALIGN_SPEED);
-                break;
-            case LEFT1:
-           // case LEFT2:
-            case RIGHT1:
-          //  case RIGHT2:
-            case CENTER:
-                leftFront.setPower(0);
-                leftRear.setPower(0);
-                rightFront.setPower(0);
-                rightRear.setPower(0);
-                return true;
-
-        }
-        return false;
-    }
-
-    public void switchFollower(){
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.1);
-        trajectorySequenceRunner.setFollower(follower);
-    }
-
-    public void switchOriginalFollower(){
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
-        trajectorySequenceRunner.setFollower(follower);
-    }
+//    public void switchFollower(){
+//        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+//                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.1);
+//        trajectorySequenceRunner.setFollower(follower);
+//    }
+//
+//    public void switchOriginalFollower(){
+//        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+//                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
+//        trajectorySequenceRunner.setFollower(follower);
+//    }
 
 }

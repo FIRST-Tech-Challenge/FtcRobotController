@@ -31,6 +31,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
     }
 
     SampleMecanumDrive drive;
+
     @Override
     public void runOpMode() throws InterruptedException {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -49,28 +50,28 @@ public class CenterStageBackdropBlue extends LinearOpMode {
 
         State currentState;
 
-        Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose)
+        Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
                 .lineToSplineHeading(new Pose2d(new Vector2d(12, 32.5), Math.toRadians(330)))
                 .build();
 
-        Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose)
+        Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false)
                 .lineToSplineHeading(new Pose2d(new Vector2d(12, 32.5), Math.toRadians(210)))
                 .build();
 
-        Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose)
+        Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
                 .lineToSplineHeading(new Pose2d(new Vector2d(12, 32.5), Math.toRadians(270)))
                 .build();
 
-        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end())
+        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
                 .back(20)
                 .build();
 
-        Trajectory yellowDepositPath = drive.trajectoryBuilder(backUpFromSpikes.end())
-                .splineToLinearHeading(new Pose2d(new Vector2d(46,36),Math.toRadians(180)),Math.toRadians(-60))
+        Trajectory yellowDepositPath = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+                .splineToLinearHeading(new Pose2d(new Vector2d(46, 36), Math.toRadians(180)), Math.toRadians(-60))
                 .build();
 
-        Trajectory park = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(new Vector2d(56,56),Math.toRadians(180)),Math.toRadians(0))
+        Trajectory park = drive.trajectoryBuilder(drive.getPoseEstimate(),false)
+                .splineToLinearHeading(new Pose2d(new Vector2d(56, 56), Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         waitForStart();
@@ -91,6 +92,52 @@ public class CenterStageBackdropBlue extends LinearOpMode {
             drive.followTrajectoryAsync(purpleDepositPathR);
         } else {
             drive.followTrajectoryAsync(purpleDepositPathC);
+        }
+
+        while (opModeIsActive() && !isStopRequested()) {
+            drive.update();
+            switch (currentState) {
+                case PURPLE_DEPOSIT_PATH:
+                    if (!drive.isBusy()) {
+                        currentState = State.PURPLE_DEPOSIT;
+                    } else {
+                        //claw arm down
+                        //claw arm angle
+                    }
+                    break;
+                case PURPLE_DEPOSIT:
+                    //deposit purple pixel
+                    //open claw
+                    currentState = State.BACKUP_FROM_SPIKES;
+                    drive.followTrajectoryAsync(backUpFromSpikes);
+                    break;
+                case BACKUP_FROM_SPIKES:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectory(yellowDepositPath);
+                        currentState = State.YELLOW_DEPOSIT_PATH;
+                    } else {
+                        //claw arm up
+                        //outtake to deposit
+                    }
+                    break;
+                case YELLOW_DEPOSIT_PATH:
+                    if (!drive.isBusy()) {
+                        currentState = State.YELLOW_DEPOSIT_PATH;
+                    } else {
+                        //claw arm up
+                        //outtake to deposit
+                    }
+                case YELLOW_DEPOSIT:
+                    //april tag alignment
+                    //if april tag is aligned drop and
+                    currentState = State.PARK;
+                    drive.followTrajectoryAsync(park);
+                    break;
+                case PARK:
+                    if (!drive.isBusy()) {
+                        //bring outtake to transfer
+                    }
+            }
         }
     }
 }

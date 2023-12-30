@@ -121,7 +121,6 @@ RB - Hang up
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
-
         gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
         gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
         backSlides = hardwareMap.dcMotor.get("backSlides");
