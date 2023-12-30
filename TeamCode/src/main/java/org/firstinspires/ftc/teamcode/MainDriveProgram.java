@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.RoadRunnerDriving;
 
-@TeleOp(name="comp bot drive", group="Linear Opmode")
+@TeleOp(name="Competition drive", group="Linear Opmode")
 public class MainDriveProgram extends LinearOpMode {
 
 
