@@ -17,7 +17,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.*;
 
 // LiveView refers only to the Robot Controller preview (example shown above). It’s completely separate from Driver Station Camera Stream, which still operates normally even if LiveView is stopped (manually or automatically).
-@TeleOp(name = "(vision) Djokovic will win the Golden Slam in 2024", group="Concept")
+@TeleOp(name = "(vision) Djokovic will win the Golden Slam in 2024")
 @Disabled
 public class Visionportal1 extends LinearOpMode {
 
@@ -81,10 +81,8 @@ public class Visionportal1 extends LinearOpMode {
                 telemetry.update();
 
                 if (gamepad1.dpad_down) {
-                    myVisionPortal.stopLiveView();
                     myVisionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
-                    myVisionPortal.resumeLiveView();
                     myVisionPortal.resumeStreaming();
                 }
 
@@ -114,8 +112,6 @@ public class Visionportal1 extends LinearOpMode {
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }
-
-        // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
