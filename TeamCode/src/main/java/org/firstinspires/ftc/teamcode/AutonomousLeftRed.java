@@ -123,6 +123,8 @@ public class AutonomousLeftRed extends AutonomousBase {
             pipelineBack.setStorageFolder(storageDir);
             spikeMark = pipelineBack.spikeMark;
             pipelineBack.saveSpikeMarkAutoImage();
+//          visionPortalBack.stopStreaming();
+//          visionPortalBack.close();
         }
 
         //---------------------------------------------------------------------------------

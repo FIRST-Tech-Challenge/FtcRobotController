@@ -47,14 +47,14 @@ class CenterstageSuperPipeline implements VisionProcessor {
     protected String storageFolder = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//Default";
     protected boolean saveNextSpikeMark = false;
     // NOTE: webcam resolution for the row/col values below is 1280 x 800
-	// LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
-    protected Point sub1PointALeft = new Point(80, 390); //Point1 is left spike mark, Point2 is center, Point3 is Right
-    protected Point sub1PointBLeft = new Point(170, 480); //Fix these values
-    protected Point sub2PointALeft = new Point(560, 375);
-    protected Point sub2PointBLeft = new Point(650, 455);
-    protected Point sub3PointALeft = new Point(930, 395);
-    protected Point sub3PointBLeft = new Point(1020, 485);
-	// RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
+    // LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
+    protected Point sub1PointALeft = new Point(330, 360); //Point1 is left spike mark, Point2 is center, Point3 is Right
+    protected Point sub1PointBLeft = new Point(460, 500);
+    protected Point sub2PointALeft = new Point(730, 370);
+    protected Point sub2PointBLeft = new Point(840, 485);
+    protected Point sub3PointALeft = new Point(1130, 370);
+    protected Point sub3PointBLeft = new Point(1275, 510);
+    // RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
     protected Point sub1PointARight = new Point(80, 390);
     protected Point sub1PointBRight = new Point(170, 480);
     protected Point sub2PointARight = new Point(560, 375);
@@ -94,29 +94,32 @@ class CenterstageSuperPipeline implements VisionProcessor {
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
 
+        //================ YCrCb-based detection ================
         // Convert the image from RGB to YCrCb (frame -> YCrCb)
 //      Imgproc.cvtColor(frame, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         // Extract the CrCb channels (YCrCb -> CrChan)
-//      Core.extractChannel(YCrCb, CrChan, 0);
-//      Core.extractChannel(YCrCb, CbChan, 1);
+//      Core.extractChannel(YCrCb, CrChan, 0);  // Cr (red)
+//      Core.extractChannel(YCrCb, CbChan, 1);  // Cb (blue)
         // NOTE: For RED  we need both large Cr + small Cb
         //       (large Cr with LARGE Cb would be purple, not red)
         //       For BLUE we need both small Cr + large Cb
         //       (small Cr with SMALL Cb would be green, not blue)
         // In poor lighting, red blue & purple are too close together to threshold.
+        //================ YCrCb based detection ================
 
+        //================ HSV-based detection ================
         // Convert the image from RGB to HSV  (frame -> HSV)
         Imgproc.cvtColor(frame, HSV, Imgproc.COLOR_RGB2HSV);
         // Extract the HUE channel data (HSV -> HueChan)
         Core.extractChannel(HSV, HueChan, 0);
         // What target hue  are we looking for on this alliance?
-        //   RED team prop      = 175     BLUE team prop      = 105
-        //   RED spikemark tape =         BLUE spikemark tape = 
+        //   RED team prop  = 175     BLUE team prop =
+        //   RED lion head  =         BLUE lion head = 105
         targetHue = (redAlliance)? 175 : 105;
         maxHueErr = 25;     // how far off can we go and still be the desired color??
 
-        // Define permanent sampling areas from this color channel (HueChan -> submatHue)
-        if(leftSide) {
+        // Define 3 permanent sampling areas from this color channel (HueChan -> submatHue)
+        if( leftSide ) {
             subMat1Hue = HueChan.submat(new Rect(sub1PointALeft, sub1PointBLeft));
             subMat2Hue = HueChan.submat(new Rect(sub2PointALeft, sub2PointBLeft));
             subMat3Hue = HueChan.submat(new Rect(sub3PointALeft, sub3PointBLeft));
@@ -130,7 +133,7 @@ class CenterstageSuperPipeline implements VisionProcessor {
         avg2 = (int)Core.mean(subMat2Hue).val[0];  hueErr2 = Math.abs(avg2-targetHue);
         avg3 = (int)Core.mean(subMat3Hue).val[0];  hueErr3 = Math.abs(avg3-targetHue);
 
-        // Determine which sample zone was closest to our target hue
+        // Determine which sample zone was closest to our target hue (and within max allowed error)
         if( (hueErr1 < maxHueErr) && (hueErr1 < hueErr2) && (hueErr1 < hueErr3) ) {
             spikeMark = 1;
         } else if ((hueErr2 < maxHueErr) && (hueErr2 <= hueErr1) && (hueErr2 <= hueErr3) ) {
@@ -138,8 +141,12 @@ class CenterstageSuperPipeline implements VisionProcessor {
         } else if((hueErr3 < maxHueErr) && (hueErr3 <= hueErr1) && (hueErr3 <= hueErr2)) {
             spikeMark = 3;
         }
-        else{ //default to center if nothing looks like target hue
-            spikeMark = 2;
+        else { //default to spike mark away from the truss
+            spikeMark = (leftSide)? 1:3;
+            // NOTE: We don't use CENTER as our default, as that's where the team prop is
+            // located during setup -- meaning we wouldn't know if auto-detection wasn't
+            // working as it would default to the CORRECT LOCATION.  If we see spike marks
+            // 1 or 3 during setup (when it should be 2) then we know we have an issue.
         }
 
         // Draw 4-pixel-wide RED or BLUE rectangles identifying sample areas on original frame
@@ -174,7 +181,7 @@ class CenterstageSuperPipeline implements VisionProcessor {
                 spikeMarkCenter.x = (sub1PointARight.x + sub1PointBRight.x) / 2;
                 spikeMarkCenter.y = (sub1PointARight.y + sub1PointBRight.y) / 2;
             }
-        } else if ( spikeMark == 1 ) {
+        } else if ( spikeMark == 2 ) {
             if(leftSide) {
                 spikeMarkCenter.x = (sub2PointALeft.x + sub2PointBLeft.x) / 2;
                 spikeMarkCenter.y = (sub2PointALeft.y + sub2PointBLeft.y) / 2;
@@ -182,7 +189,7 @@ class CenterstageSuperPipeline implements VisionProcessor {
                 spikeMarkCenter.x = (sub2PointARight.x + sub2PointBRight.x) / 2;
                 spikeMarkCenter.y = (sub2PointARight.y + sub2PointBRight.y) / 2;
             }
-        } else {
+        } else { // spikeMark == 3
             if(leftSide) {
                 spikeMarkCenter.x = (sub3PointALeft.x + sub3PointBLeft.x) / 2;
                 spikeMarkCenter.y = (sub3PointALeft.y + sub3PointBLeft.y) / 2;

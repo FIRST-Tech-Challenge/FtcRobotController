@@ -72,7 +72,7 @@ public class AutonomousRightRed extends AutonomousBase {
             // If vision pipeline disagrees with forced alliance setting, report it
             if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
-            telemetry.addData("STARTING", "%s", "LEFT");
+            telemetry.addData("STARTING", "%s", "RIGHT");
             telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
                                           ") L:"   + pipelineBack.avg1   +
                                           " C:"    + pipelineBack.avg2   + 
@@ -123,6 +123,8 @@ public class AutonomousRightRed extends AutonomousBase {
             pipelineBack.setStorageFolder(storageDir);
             spikeMark = pipelineBack.spikeMark;
             pipelineBack.saveSpikeMarkAutoImage();
+//          visionPortalBack.stopStreaming();
+//          visionPortalBack.close();
         }
 
         //---------------------------------------------------------------------------------
