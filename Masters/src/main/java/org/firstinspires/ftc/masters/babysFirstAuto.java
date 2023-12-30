@@ -80,7 +80,7 @@ public class babysFirstAuto extends LinearOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "backWebcam"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
