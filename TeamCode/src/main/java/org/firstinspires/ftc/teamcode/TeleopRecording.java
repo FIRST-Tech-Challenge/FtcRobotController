@@ -64,12 +64,12 @@ public class TeleopRecording extends LinearOpMode {
 
     // Instrumentation: writing to input/output is SLOW, so to avoid impacting loop time as we record
     // we store data to memory until the movement is complete, then dump to a file.
-    boolean          pathLogging   = false; // only enable during development!!
+    boolean          pathLogging   = false; // This is a top-level enable/disable of the feature
     final static int PATHLOG_SIZE  = 1024;  // 1024 entries 
     double[]         pathLogXpos   = new double[PATHLOG_SIZE];  // X-position
     double[]         pathLogYpos   = new double[PATHLOG_SIZE];  // Y-position
     double[]         pathLogAngle  = new double[PATHLOG_SIZE];  // Angle [degrees]
-    boolean          pathLogEnable = false;
+    boolean          pathLogEnable = false;  // This is the realtime start/stop recording flag
     int              pathLogIndex  = 0;
     
     double           prevXpos  = 0.0;   // inches
@@ -116,7 +116,31 @@ public class TeleopRecording extends LinearOpMode {
 
             // Bulk-refresh the Control/Expansion Hub device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+            
+            // Update our odometry math, and see if we need to record a new position
             globalCoordinatePositionUpdate();
+            updatePathLogging();
+
+            telemetry.addData("circle","Robot-centric (fwd/back modes)");
+            telemetry.addData("square","Driver-centric (set joystick!)");
+            telemetry.addData("d-pad","Fine control (30%)");
+            telemetry.addData(" "," ");
+            telemetry.addData("triangle","Enable recording");
+            telemetry.addData("cross","Stop recording & save");
+            telemetry.addData("stored points", "%d", pathLogIndex );
+
+            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
+            if( gamepad1_triangle_now && !gamepad1_triangle_last)
+            {
+                pathLogging = true;
+                pathLogEnable = true;
+            }
+
+            // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+            if( gamepad1_cross_now && !gamepad1_cross_last )
+            {
+                writePathLog();
+            }
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -137,11 +161,6 @@ public class TeleopRecording extends LinearOpMode {
                     backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
                 }
             }
-
-//            telemetry.addData("circle","Robot-centric (fwd/back modes)");
-//            telemetry.addData("square","Driver-centric (set joystick!)");
-//            telemetry.addData("d-pad","Fine control (30%)");
-//            telemetry.addData(" "," ");
 
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
@@ -211,9 +230,8 @@ public class TeleopRecording extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineDriveSpeed  = 0.50;
-        double fineStrafeSpeed = 0.50;
-        double autoDriveSpeed  = 0.56;
+        double fineDriveSpeed  = 0.30;
+        double fineStrafeSpeed = 0.30;
         double fineTurnSpeed   = 0.05;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
@@ -263,16 +281,6 @@ public class TeleopRecording extends LinearOpMode {
         }
  */
 
- /* TOUCHPAD CONTROL FOR AUTO-DRIVE NOT USED FOR TELEOP THIS YEAR
-       else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
-            telemetry.addData("Touchpad","FORWARD");
-            frontLeft  = autoDriveSpeed;
-            frontRight = autoDriveSpeed;
-            rearLeft   = autoDriveSpeed;
-            rearRight  = autoDriveSpeed;
-            autoDrive = true;
-        }
-  */
         else {
             dPadMode = false;
         }

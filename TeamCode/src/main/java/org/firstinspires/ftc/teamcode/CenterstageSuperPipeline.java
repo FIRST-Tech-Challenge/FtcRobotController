@@ -55,12 +55,12 @@ class CenterstageSuperPipeline implements VisionProcessor {
     protected Point sub3PointALeft = new Point(1130, 370);
     protected Point sub3PointBLeft = new Point(1275, 510);
     // RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
-    protected Point sub1PointARight = new Point(80, 390);
-    protected Point sub1PointBRight = new Point(170, 480);
-    protected Point sub2PointARight = new Point(560, 375);
-    protected Point sub2PointBRight = new Point(650, 455);
-    protected Point sub3PointARight = new Point(930, 395);
-    protected Point sub3PointBRight = new Point(1020, 485);
+    protected Point sub1PointARight = new Point(50, 370);
+    protected Point sub1PointBRight = new Point(195, 510);
+    protected Point sub2PointARight = new Point(550, 370);
+    protected Point sub2PointBRight = new Point(660, 485);
+    protected Point sub3PointARight = new Point(910, 370);
+    protected Point sub3PointBRight = new Point(1040, 510);
     
     protected Point spikeMarkCenter = new Point(); // defined dynamically below
 //  protected Mat YCrCb = new Mat();
@@ -114,8 +114,8 @@ class CenterstageSuperPipeline implements VisionProcessor {
         Core.extractChannel(HSV, HueChan, 0);
         // What target hue  are we looking for on this alliance?
         //   RED team prop  = 175     BLUE team prop =
-        //   RED lion head  =         BLUE lion head = 105
-        targetHue = (redAlliance)? 175 : 105;
+        //   RED lion head  = 160     BLUE lion head = 105
+        targetHue = (redAlliance)? 160 : 105;
         maxHueErr = 25;     // how far off can we go and still be the desired color??
 
         // Define 3 permanent sampling areas from this color channel (HueChan -> submatHue)

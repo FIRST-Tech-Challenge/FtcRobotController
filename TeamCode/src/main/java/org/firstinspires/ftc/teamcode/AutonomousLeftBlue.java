@@ -123,8 +123,6 @@ public class AutonomousLeftBlue extends AutonomousBase {
             pipelineBack.setStorageFolder(storageDir);
             spikeMark = pipelineBack.spikeMark;
             pipelineBack.saveSpikeMarkAutoImage();
-//          visionPortalBack.stopStreaming();
-//          visionPortalBack.close();
         }
 
         //---------------------------------------------------------------------------------
@@ -142,6 +140,8 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
         telemetry.addData("Program", "Complete");
         telemetry.update();
+
+        visionPortalBack.close();
     } /* runOpMode() */
 
     /*--------------------------------------------------------------------------------------------*/
