@@ -281,6 +281,7 @@ RB - Hang up
             }
 
             if (gamepad2.left_stick_y > 0.2) {
+                outtakeHook.setPosition(CSCons.outtakeHook[1]);
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
@@ -289,6 +290,7 @@ RB - Hang up
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+                outtakeHook.setPosition(CSCons.outtakeHook[0]);
             }
 
 //            if (gamepad2.left_trigger > 0.5 && backSlidesTargetPos > 0) {
