@@ -20,7 +20,23 @@ import java.util.Date;
 public class robot {
     Telemetry telemetry;
     DcMotor leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor;
-    DcMotor linearSlide;
+
+    DcMotor gpSlideRight = null;
+    DcMotor gpSlideLeft = null;
+    DcMotor backSlides = null;
+    DcMotor hangingMotor = null;
+
+    Servo planeLaunch;
+    Servo planeRaise;
+    Servo clawServo;
+    Servo clawArm;
+    Servo clawAngle;
+    Servo cameraTurning;
+    Servo outtakeHook;
+    Servo outtakeRotation;
+    Servo outtakeMovementRight;
+    Servo outtakeMovementLeft;
+
     BNO055IMU imu;
     LinearOpMode opMode;
 
@@ -41,7 +57,6 @@ public class robot {
 
         leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -188,6 +203,16 @@ public class robot {
             telemetry.update();
         }
         stopMotors();
+    }
+
+    public void clawOpen() {
+        clawServo.setPosition(CSCons.claw[0]);
+    }
+    public void clawClosed() {
+        clawServo.setPosition(CSCons.claw[1]);
+    }
+    public void clawTransfer() {
+        clawServo.setPosition(CSCons.claw[1]);
     }
 
     public void turnLeft(double angle, double speed) {

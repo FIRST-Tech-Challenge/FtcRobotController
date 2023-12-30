@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,6 +16,17 @@ import java.util.List;
 @Config
 @TeleOp(name="Center Stage TEST", group = "competition")
 public class CenterStageTest extends LinearOpMode {
+
+    static int target = 0;
+    static int backSlidePos = 0;
+
+    private final double ticks_in_degrees = 384.5 / 180;
+
+    PIDController controller;
+
+    public static double p = 0.01, i = 0, d = 0.0001;
+    public static double f = 0.05;
+
     double y = 0;
     double x = 0;
     double rx = 0;
@@ -174,6 +186,9 @@ RB - Hang up
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.outtakeHook[0]);
 
+        controller = new PIDController(p, i, d);
+        controller.setPID(p, i, d);
+
         waitForStart();
 
         runtime.reset();
@@ -181,6 +196,22 @@ RB - Hang up
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
+
+            int SlidePos = backSlides.getCurrentPosition();
+            double pid = controller.calculate(SlidePos, target);
+            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+
+            double liftPower = pid + ff;
+
+            backSlides.setPower(liftPower);
+
+            if (backSlidePos == 0) {
+                target = 30;
+            } else if (backSlidePos == 1) {
+                target = 1800;
+            } else if (backSlidePos == 2) {
+                target = 2600;
+            }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
             telemetry.addData("left x", gamepad1.left_stick_x);
@@ -254,45 +285,56 @@ RB - Hang up
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
             }
-            if (gamepad2.left_stick_y < -0.2) {
+            if (gamepad2.left_stick_y < -0.2 && backSlidePos != 0) {
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
             }
 
-            if (gamepad2.left_trigger > 0.5 && backSlidesTargetPos > 0) {
-                backSlidesTargetPos= backSlidesTargetPos-25;
-                backSlides.setTargetPosition(backSlidesTargetPos);
-                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.7);
+//            if (gamepad2.left_trigger > 0.5 && backSlidesTargetPos > 0) {
+//                backSlidesTargetPos= backSlidesTargetPos-25;
+//                backSlides.setTargetPosition(backSlidesTargetPos);
+//                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                backSlides.setPower(0.7);
+//            }
+//            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 3000) {
+//                backSlidesTargetPos= backSlidesTargetPos+25;
+//                backSlides.setTargetPosition(backSlidesTargetPos);
+//                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                backSlides.setPower(0.8);
+//            }
+
+            if (gamepad2.left_trigger > 0.5) {
+                backSlidePos = 1;
             }
-            if (gamepad2.right_trigger > 0.5 && backSlidesTargetPos < 3000) {
-                backSlidesTargetPos= backSlidesTargetPos+25;
-                backSlides.setTargetPosition(backSlidesTargetPos);
-                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.8);
+            if (gamepad2.right_trigger > 0.5) {
+                backSlidePos = 2;
             }
 
+
+
+
             if (gamepad2.right_bumper){
-                backSlidesTargetPos= 0;
-                presetBackSlidesTargetPos = 0;
-                backSlides.setTargetPosition(backSlidesTargetPos);
-                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.8);
+//                backSlidesTargetPos= 0;
+//                presetBackSlidesTargetPos = 0;
+//                backSlides.setTargetPosition(backSlidesTargetPos);
+//                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                backSlides.setPower(0.8);
+                backSlidePos = 0;
             }
-            if (gamepad2.left_bumper &&!presetPushed){
-                if (presetBackSlidesTargetPos<2) {
-                    presetBackSlidesTargetPos++;
-                }
-                presetPushed = true;
-                backSlidesTargetPos = CSCons.backSlidesPos[presetBackSlidesTargetPos];
-                backSlides.setTargetPosition(backSlidesTargetPos);
-                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backSlides.setPower(0.8);
-                //sleep(300);
-            } else {
-                presetPushed = false;
-            }
+//            if (gamepad2.left_bumper &&!presetPushed){
+//                if (presetBackSlidesTargetPos<2) {
+//                    presetBackSlidesTargetPos++;
+//                }
+//                presetPushed = true;
+//                backSlidesTargetPos = CSCons.backSlidesPos[presetBackSlidesTargetPos];
+//                backSlides.setTargetPosition(backSlidesTargetPos);
+//                backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                backSlides.setPower(0.8);
+//                //sleep(300);
+//            } else {
+//                presetPushed = false;
+//            }
 
             if (gamepad1.a){
                 clawServo.setPosition(CSCons.claw[2]);

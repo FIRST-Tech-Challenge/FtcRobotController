@@ -26,16 +26,16 @@ public class CSCons {
     public static double clawArmTransfer = .45;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
-    public static double outtakeAngleFolder=.234;
+    public static double outtakeAngleFolder=.33;
     public static double outtakeAngleTransfer=.9;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop = .7;
+    public static double outtakeMovementBackDrop = .625;
     public static double outtakeMovementBackTransfer = .15;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double[] outtakeHook = {0.309,0.79}; // open, close
 
     public static double outakeHookOpen = 0.309;
-    public static double outakeHookClosed = 0.79;
+    public static double outakeHookClosed = 0.78;
 
 /**
  *
