@@ -16,7 +16,7 @@ public class babysFirstAuto extends LinearOpMode {
         waitForStart();
 
         robot.init();
-        robot.forward(1, .5);
+        robot.forward(.3, .5);
 
     }
 
