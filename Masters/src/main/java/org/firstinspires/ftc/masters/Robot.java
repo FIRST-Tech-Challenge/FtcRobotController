@@ -40,7 +40,7 @@ public class Robot {
     BNO055IMU imu;
     LinearOpMode opMode;
 
-    final int TICKS_PER_ROTATION = 537;
+    final int TICKS_PER_ROTATION = 383;
 
     public void stopMotors() {
         leftFrontMotor.setPower(0);

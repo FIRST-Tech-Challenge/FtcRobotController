@@ -19,7 +19,7 @@ public class SampleMecanumDriveCancelable extends SampleMecanumDrive {
     public SampleMecanumDriveCancelable(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap);
 
-        trajectorySequenceRunner = new TrajectorySequenceRunnerCancelable(follower, HEADING_PID);
+        //trajectorySequenceRunner = new TrajectorySequenceRunnerCancelable(follower, HEADING_PID);
     }
 
 
