@@ -42,7 +42,7 @@ public class ElevatorControl {
     private double LOWERSNUBFACTOR = 0.25;// The factor that we slow the command down by when retracting
 
     public int PIXLE_DELIVER_POSITION = 250;
-    public int MID_POSITION = 660;
+    public int MID_POSITION = 1500;
     public int HIGH_POSITION = 2000;
 
     //Schultz Additions

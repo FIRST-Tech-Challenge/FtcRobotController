@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utilities.CASH_Drive_Library;
 import org.firstinspires.ftc.teamcode.utilities.ElevatorControl;
 import org.firstinspires.ftc.teamcode.utilities.IMUUtility;
 import org.firstinspires.ftc.teamcode.utilities.SweeperControl;
+import org.firstinspires.ftc.teamcode.utilities.WinchControl;
 
 public class Robot2024<_opMode> {
     public final OpMode _opMode; //holds opmode object
@@ -37,6 +38,11 @@ public class Robot2024<_opMode> {
         elevatorCode = new ElevatorControl();
     }
 
+    private WinchControl winchCode;
+    {
+        winchCode = new WinchControl();
+    }
+
     //Creates a new object of type Sweeper Control
     //All Sweeper Controls will be written in Sweeper Control
     private SweeperControl SweeperCode;
@@ -58,6 +64,8 @@ public class Robot2024<_opMode> {
     public int DELIVER_PIXLE_POSITION = elevatorCode.PIXLE_DELIVER_POSITION;
     public int ELEVATOR_MID_POSITION = elevatorCode.MID_POSITION;
     public int ELEVATOR_HIGH_POSITION = elevatorCode.HIGH_POSITION;
+
+    public int WINCH_RAISE_POSITION = winchCode.RAISE_LIMIT;
 
     //This is the initialization for this years robot.
     //It initializes the following:
@@ -103,6 +111,7 @@ public class Robot2024<_opMode> {
     public void initializeImplements() {
        elevatorCode.init(_opMode, "elevator_motor");
         SweeperCode.init(_opMode, "sweeper_motor");
+        winchCode.init(_opMode,"winch_motor");
 
     }
     //ONLY USE THIS FOR TELIPOP
@@ -110,6 +119,7 @@ public class Robot2024<_opMode> {
     public void initializeImplements2() {
         elevatorCode.init2(_opMode, "elevator_motor");
         SweeperCode.init(_opMode, "sweeper_motor");
+        winchCode.init2(_opMode,"winch_motor");
     }
 
 
@@ -176,5 +186,24 @@ public class Robot2024<_opMode> {
         elevatorCode.reset_launch_pin();
     }
 
+    public void setDesWinchPosition_Teliop(int desHoldPosition){
+        winchCode.set_winch_desired_position(desHoldPosition);
+    }
+    public void winchUpdate(double dt) {winchCode.updatePosControl(dt);}
+
+    public void raiseLowerWinch(double cmd) {
+        winchCode.raiseLowerWinch_T(cmd);
+    }
+
+    public int getWinchPositition(){
+        return winchCode.getCurrentPostion();
+    }
+
+    public void raise_hook(){
+        winchCode.raise_hook();
+    }
+    public void lower_hook(){
+        winchCode.reset_hookServo();
+    }
 }
 
