@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Date;
 
-public class robot {
+public class Robot {
     Telemetry telemetry;
     DcMotor leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor;
 
@@ -49,11 +49,22 @@ public class robot {
         rightRearMotor.setPower(0);
     }
 
-    public robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opMode) {
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opMode) {
         leftFrontMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         rightFrontMotor = hardwareMap.get(DcMotor.class, "backLeft");
         leftRearMotor = hardwareMap.get(DcMotor.class, "frontRight");
         rightRearMotor = hardwareMap.get(DcMotor.class, "backRight");
+
+        planeLaunch = hardwareMap.servo.get("planeLaunch");
+        planeRaise = hardwareMap.servo.get("planeRaise");
+        clawServo = hardwareMap.servo.get("clawServo");
+        clawArm = hardwareMap.servo.get("clawArm");
+        clawAngle = hardwareMap.servo.get("clawAngle");
+        cameraTurning = hardwareMap.servo.get("cameraTurning");
+        outtakeHook = hardwareMap.servo.get("outtakeHook");
+        outtakeRotation = hardwareMap.servo.get("outtakeRotation");
+        outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
+        outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
 
         leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -72,6 +83,17 @@ public class robot {
 
         this.opMode = opMode;
         this.telemetry = telemetry;
+    }
+
+    public void init(){
+        clawArm.setPosition(CSCons.clawArmTransition);
+        clawAngle.setPosition(CSCons.clawAngleTransition);
+        clawServo.setPosition(CSCons.claw[2]);
+
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+        outtakeHook.setPosition(CSCons.outtakeHook[0]);
     }
 
     public void forward(double distance, double speed) {
