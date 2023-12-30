@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -34,6 +35,7 @@ public class Robot {
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     public WebcamName webcam;
+    public SampleMecanumDrive sampleDrive;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -42,8 +44,8 @@ public class Robot {
         motorBL = hardwareMap.get(DcMotor.class, "back_left");
         motorBR = hardwareMap.get(DcMotor.class, "back_right");
         // change the direction for the FR and BR so that all positive direction is forward
-        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorSlider = hardwareMap.get(DcMotorEx.class, "sliders");
         servoArm = hardwareMap.get(Servo.class, "arm");
         motorHang = hardwareMap.get(DcMotorEx.class, "hanging");
@@ -51,10 +53,12 @@ public class Robot {
         servoCR = hardwareMap.get(Servo.class, "claw_right");
         servoDrone = hardwareMap.get(Servo.class, "drone");
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        sampleDrive = new SampleMecanumDrive(hardwareMap);
+
+        //servoArm.setPosition(0.2);
+
+        /*
         imu = hardwareMap.get(BHI260IMU.class, "imu");
-
-        servoArm.setPosition(0.2);
-
         imu.initialize(
             new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -63,6 +67,7 @@ public class Robot {
                 )
             )
         );
+         */
     }
 
     public double getYaw() {

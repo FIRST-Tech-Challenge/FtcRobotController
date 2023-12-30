@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
 public class DriveTrain {
     private Robot robot = null;
     private volatile Gamepad gamepad = null;
@@ -50,10 +52,8 @@ public class DriveTrain {
     }
 
     public void stopDrive() {
-        robot.motorFL.setPower(0);
-        robot.motorFR.setPower(0);
-        robot.motorBL.setPower(0);
-        robot.motorBR.setPower(0);
+        //sampleDrive.setMotorPowers(double FL, double BL, double BR, double FR);
+        robot.sampleDrive.setMotorPowers(0, 0, 0, 0);
     }
 
     private void drive(double left_y, double left_x, double right_x, double speed_factor) {
@@ -69,10 +69,14 @@ public class DriveTrain {
         log("SPEED1:", speeds[1]);
         log("SPEED2:", speeds[2]);
         log("SPEED3:", speeds[3]);
+        //sampleDrive.setMotorPowers(double FL, double BL, double BR, double FR);
+        robot.sampleDrive.setMotorPowers(-speeds[0], -speeds[2], -speeds[3], -speeds[1]);
+        /*
         robot.motorFL.setPower(speeds[0]);
         robot.motorFR.setPower(speeds[1]);
         robot.motorBL.setPower(speeds[2]);
         robot.motorBR.setPower(speeds[3]);
+         */
     }
 
     public void drive_normal() {
@@ -155,6 +159,7 @@ public class DriveTrain {
     }
 
 
+    /*
     static final int ticks_per_mm = 2000 / 48;  //2000 ticks per one rev(48mm) of Gobilda pod
     static final double autonomous_power = 0.1;
 
@@ -236,6 +241,7 @@ public class DriveTrain {
     public void twist_right(double degrees) {
         twist_left_right(degrees, false);
     }
+     */
 
 }
 

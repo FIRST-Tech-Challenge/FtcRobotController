@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
     private Robot robot;
     private Gamepad gamepad;
-    private boolean cl_closed = true;
-    private boolean cr_closed = true;
+    private boolean cl_closed = false;
+    private boolean cr_closed = false;
 
     public Claw(Robot robot, Gamepad gamepad) {
         this.robot = robot;
