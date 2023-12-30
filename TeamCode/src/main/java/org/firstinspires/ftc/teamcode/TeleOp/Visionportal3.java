@@ -18,10 +18,16 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
 // this opmode was copied and modified from RobotAutoDriveToAprilTagOmni.java
-@TeleOp(name="Omni Drive To AprilTag")
+/* this one includes code for the purpose that we want apriltags for: centering the robot to the correct position (left/center/right)
+during auto for the second part of the tensorflow object detection task
+(placing the yellow pixel? or purple pixel? I forgot)
+*/
+
+@TeleOp(name="#2 Omni Drive To AprilTag")
 @Disabled
-public class Visionportal2 extends LinearOpMode {
+public class Visionportal3 extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 6.0; //  this is how close the camera should get to the target (inches)
 
@@ -49,12 +55,11 @@ public class Visionportal2 extends LinearOpMode {
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
     private boolean goToLeftTag = false;
-    private boolean goToMiddleTag = false;
+    private boolean goToCenterTag = false;
     private boolean goToRightTag = false;
 
 
-    @Override public void runOpMode()
-    {
+    @Override public void runOpMode() {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -82,28 +87,59 @@ public class Visionportal2 extends LinearOpMode {
             targetFound = false;
             desiredTag  = null;
 
-            // Step through the list of detected tags and look for a matching tag
+            // assuming we are close enough so that the only apriltags detected are the three on the backboard:
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+
+                if (goToLeftTag) {
+                        double min = Integer.MAX_VALUE;
+                        for (AprilTagDetection detection : currentDetections) {
+                            if (detection.ftcPose.x < min) {
+                                desiredTag = detection;
+                                min = detection.ftcPose.x;
+                            }
+
+                            if (desiredTag.metadata != null) targetFound = true;
+                        }
                     }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+
+                if (goToCenterTag) {
+                    double min = Integer.MAX_VALUE;
+                    double max = Integer.MIN_VALUE;
+
+                    for (AprilTagDetection detection : currentDetections) {
+                        if (detection.ftcPose.x < min) {
+                            desiredTag = detection;
+                            min = detection.ftcPose.x;
+                        }
+                    }
+                    for (AprilTagDetection detection : currentDetections) {
+                        if (detection.ftcPose.x > max) {
+                            desiredTag = detection;
+                            max = detection.ftcPose.x;
+                        }
+
+                        currentDetections.remove(min);
+                        currentDetections.remove(max);
+
+                        desiredTag = currentDetections.get(0);
+                        if (desiredTag.metadata != null) targetFound = true;
+
+                    }
+                }
+
+                if (goToRightTag) {
+                    double max = Integer.MIN_VALUE;
+                    for (AprilTagDetection detection : currentDetections) {
+                        if (detection.ftcPose.x > max) {
+                            desiredTag = detection;
+                            max = detection.ftcPose.x;
+                        }
+
+                        if (desiredTag.metadata != null) targetFound = true;
+                    }
                 }
             }
 
-            // Tell the driver what we see, and what to do.
             if (targetFound) {
                 telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
                 telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
@@ -145,7 +181,7 @@ public class Visionportal2 extends LinearOpMode {
             moveRobot(drive, strafe, turn);
             sleep(10);
         }
-    }
+
 
     /**
      * Move robot according to desired axes motions
