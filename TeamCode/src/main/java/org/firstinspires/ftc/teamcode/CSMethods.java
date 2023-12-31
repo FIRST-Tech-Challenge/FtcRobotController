@@ -90,13 +90,13 @@ public abstract class CSMethods extends LinearOpMode {
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
             rf = hardwareMap.get(DcMotorEx.class, "rightFront");
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
-        } catch (Exception e) {except(e);}
-        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e);}
-        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
-        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
-        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
-        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
-        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
+        } catch (Exception e) {except(e); lf = null; lb = null; rf = null; rb = null;}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e); carWashMotor = null;}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e); pixelLiftingMotor = null;}
+        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e); droneServo = null;}
+        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e); pixelBackServo = null;}
+        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e); pixelFrontServo = null;}
+        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e); trayTiltingServo = null;}
 
         initTfod();
 
