@@ -44,10 +44,11 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     VELOCITY                = 2000;
+    static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     static final double     VEL_MODIFIER            = 1.12485939258;
-    static final double     b           = 1.1375;
-    static final double     m           = 0.889;
+    static final double     b                       = 1.1375;
+    static final double     m                       = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     static final double[] boundaries = {0, 350};
@@ -277,6 +278,10 @@ public abstract class CSMethods extends LinearOpMode {
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
+    }
+
+    public double tiles(double tiles) {
+        return tiles * TILE_LENGTH;
     }
     public void ejectPixel() {
         telemetry.addData("Car Wash", "Ejecting Pixel");

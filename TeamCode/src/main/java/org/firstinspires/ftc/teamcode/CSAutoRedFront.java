@@ -41,9 +41,9 @@ public class CSAutoRedFront extends CSMethods {
     public void runOpMode() {
         setup(true);
 
-        // ---------
-        // Main code
-        // ---------
+        // ---------------------
+        // ------Main Code------
+        // ---------------------
 
         drive(-20);
         drive(23);
