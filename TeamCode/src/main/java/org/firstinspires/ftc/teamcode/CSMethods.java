@@ -19,17 +19,10 @@ public abstract class CSMethods extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
     public TfodProcessor tfod;
     public final ElapsedTime runtime = new ElapsedTime();
-    public DcMotorEx lf = null;
-    public DcMotorEx lb = null;
-    public DcMotorEx rf = null;
-    public DcMotorEx rb = null;
-    public DcMotorEx carWashMotor = null;
-    public IMU imu = null;
-    public DcMotorEx pixelLiftingMotor = null;
-    public Servo droneServo = null;
-    public Servo pixelBackServo = null;
-    public Servo pixelFrontServo = null;
-    public Servo trayTiltingServo = null;
+    // All non-primitve datatypes initialze to null on default.
+    public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
+    public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
+    public IMU imu;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
      - Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -51,11 +44,11 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     m                       = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double[] boundaries = {0, 350};
-    double carWashPower = 1.0;
+    static final double[]   boundaries              = {0, 350};
+    double                  carWashPower            = 1.0;
     double pos; // Team prop position
     public VisionPortal visionPortal;
-    public static String TFOD_MODEL_ASSET = null;
+    public static String TFOD_MODEL_ASSET;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
@@ -92,13 +85,13 @@ public abstract class CSMethods extends LinearOpMode {
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
             rf = hardwareMap.get(DcMotorEx.class, "rightFront");
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
-        } catch (Exception e) {except(e); lf = null; lb = null; rf = null; rb = null;}
-        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e); carWashMotor = null;}
-        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e); pixelLiftingMotor = null;}
-        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e); droneServo = null;}
-        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e); pixelBackServo = null;}
-        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e); pixelFrontServo = null;}
-        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e); trayTiltingServo = null;}
+        } catch (Exception e) {except(e); lf = lb = rf = rb = null;}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e);}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
+        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
+        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
+        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
+        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
 
         initTfod();
 
