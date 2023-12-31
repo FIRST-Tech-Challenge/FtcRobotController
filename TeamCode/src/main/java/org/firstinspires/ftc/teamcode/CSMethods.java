@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
@@ -276,7 +275,7 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
-    public void strafeWithTagDetection(int idOfTag /* implement tag id detection later */) {
+    public void strafeUntilTagDetection(int idOfTag /* implement tag id detection later */) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

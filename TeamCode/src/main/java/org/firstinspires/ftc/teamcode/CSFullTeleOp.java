@@ -101,18 +101,18 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
 
-            /*if (trayTiltingServo != null) {
-                if (gamepad1.a && !a) {
+            if (trayTiltingServo != null) {
+                if ((gamepad2.left_trigger > 0.25) && !a) {
                     a = true;
                     if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
                         trayTiltingServo.setPosition(0);
                     } else {
                         trayTiltingServo.setPosition(0.35);
                     }
-                } else if (!gamepad1.a) {
+                } else if (!(gamepad2.left_trigger > 0.25)) {
                     a = false;
                 }
-            }*/
+            }
 
             if (pixelFrontServo != null) {
                 if (gamepad2.x && !rBack) {
