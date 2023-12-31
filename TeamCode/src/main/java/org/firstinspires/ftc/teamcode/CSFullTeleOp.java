@@ -77,7 +77,6 @@ public class CSFullTeleOp extends CSMethods {
 
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                     pixelLiftingMotor.setPower(0);
-                    addActTelemetry("pixelLiftingMotor no longer moving");
                 }
             }
 
@@ -92,7 +91,6 @@ public class CSFullTeleOp extends CSMethods {
                 }
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
-                    addActTelemetry("carWashMotor no longer moving");
                 }
             }
 
