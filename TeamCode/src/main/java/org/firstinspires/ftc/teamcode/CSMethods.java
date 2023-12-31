@@ -5,20 +5,15 @@ import static java.lang.Math.*;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.util.*;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import java.util.List;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
+import org.firstinspires.ftc.robotcore.external.tfod.*;
+import org.firstinspires.ftc.vision.*;
+import org.firstinspires.ftc.vision.tfod.*;
+import java.util.*;
 
 public abstract class CSMethods extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
