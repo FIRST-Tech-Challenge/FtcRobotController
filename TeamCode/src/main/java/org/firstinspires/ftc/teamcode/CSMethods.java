@@ -154,10 +154,10 @@ public abstract class CSMethods extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            lb.setVelocity(VELOCITY);
-            rb.setVelocity(VELOCITY);
-            lf.setVelocity(VELOCITY);
-            rf.setVelocity(VELOCITY);
+            lb.setVelocity(VELOCITY * signum(leftInches));
+            rb.setVelocity(VELOCITY * signum(leftInches));
+            lf.setVelocity(VELOCITY * signum(leftInches));
+            rf.setVelocity(VELOCITY * signum(leftInches));
 
             double inches = signum(leftInches) * (abs(leftInches) + b) / m;
 
@@ -193,7 +193,7 @@ public abstract class CSMethods extends LinearOpMode {
     public void turn(double degrees) {
         sleep(100);
         imu.resetYaw();
-        double TURN_ACCURACY = 0.75;
+        double offset = 0.75;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
@@ -209,7 +209,7 @@ public abstract class CSMethods extends LinearOpMode {
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (difference > TURN_ACCURACY)) {
+            while (opModeIsActive() && (difference > offset)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
                 turnModifier = min(1, (difference + 5) / 30);

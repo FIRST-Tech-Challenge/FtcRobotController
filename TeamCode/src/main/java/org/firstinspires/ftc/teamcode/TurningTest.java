@@ -92,15 +92,17 @@ public class TurningTest extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
 
         imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                new Orientation(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                /*new Orientation(
                         AxesReference.INTRINSIC,
                         AxesOrder.ZYX,
                         AngleUnit.DEGREES,
                         0,
                         0,
                         0,
-                        0  // acquisitionTime, not used
-                )
+                        0
+                )*/
         ));
         boolean imuinit = imu.initialize(imuparameters);
         if (!imuinit){
