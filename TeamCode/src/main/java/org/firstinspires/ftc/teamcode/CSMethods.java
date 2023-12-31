@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
@@ -31,7 +32,6 @@ public abstract class CSMethods extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    static final double     PI                      = Math.PI;
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
@@ -49,6 +49,8 @@ public abstract class CSMethods extends LinearOpMode {
     double pos; // Team prop position
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET;
+    public AprilTagProcessor tagProcessor;
+    public VisionPortal tagVisionPortal;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
@@ -92,6 +94,8 @@ public abstract class CSMethods extends LinearOpMode {
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
+
+        initAT();
 
         initTfod();
 
@@ -263,6 +267,41 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
+    public void strafeUntilTagDetection(int idOfTag /* implement tag id detection later */) {
+
+        if (opModeIsActive() && lf != null) {
+            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+
+            runtime.reset();
+            lb.setVelocity(VELOCITY);
+            rb.setVelocity(-VELOCITY);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
+
+
+            while (!detectTags()) {
+                telemetry.addData("Currently","Strafing until tag detection");
+                telemetry.update();
+            }
+
+            stopRobot();
+
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
@@ -382,10 +421,24 @@ public abstract class CSMethods extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
+    public void initAT(){
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
+        tagVisionPortal = new VisionPortal.Builder()
+                .addProcessor(tagProcessor)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .enableLiveView(true)
+                //.setCameraResolution(new Size(640, 480)) // not working for some reason
+                .build();
+    }
 
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
+    public boolean detectTags(){
+        return (tagProcessor.getDetections().size() != 0);
+    }
     public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {

@@ -55,18 +55,22 @@ public class CSFullTeleOp extends CSMethods {
             if (pixelLiftingMotor != null) {
                 if (gamepad2.dpad_up && !gamepad2.dpad_down) {
                     if (pixelLiftingMotor.getCurrentPosition() < 3000) {
-                        pixelLiftingMotor.setPower(0.1);
+                        pixelLiftingMotor.setPower(0.5);
+                        addActTelemetry("pixelLiftingMotor now moving");
                     } else {
                         pixelLiftingMotor.setPower(0);
+                        addActTelemetry("pixelLiftingMotor no longer moving");
                     }
                 }
 
 
                 if (gamepad2.dpad_down && !gamepad2.dpad_up) {
                     if (pixelLiftingMotor.getCurrentPosition() > 0) {
-                        pixelLiftingMotor.setPower(-0.1);
+                        pixelLiftingMotor.setPower(-0.5);
+                        addActTelemetry("pixelLiftingMotor now moving");
                     } else {
                         pixelLiftingMotor.setPower(0);
+                        addActTelemetry("pixelLiftingMotor no longer moving");
                     }
                 }
 
@@ -79,9 +83,11 @@ public class CSFullTeleOp extends CSMethods {
             if (carWashMotor != null) {
                 if (gamepad2.a) {
                     carWashMotor.setPower(carWashPower);
+                    addActTelemetry("carWashMotor now moving forward");
                 }
                 if (gamepad2.b) {
                     carWashMotor.setPower(-carWashPower);
+                    addActTelemetry("carWashMotor now moving backward");
                 }
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
@@ -93,34 +99,40 @@ public class CSFullTeleOp extends CSMethods {
                     lBack = true;
                     if (pixelBackServo.getPosition() == 1) {
                         pixelBackServo.setPosition(0);
+                        addActTelemetry("Set pixelBackServo to 0");
                     } else {
                         pixelBackServo.setPosition(1);
+                        addActTelemetry("Set pixelBackServo to 1");
                     }
                 } else if (!gamepad2.y) {
                     lBack = false;
                 }
             }
 
-            /*if (trayTiltingServo != null) {
-                if (gamepad1.a && !a) {
+            if (trayTiltingServo != null) {
+                if ((gamepad2.left_trigger > 0.25) && !a) {
                     a = true;
-                    if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
+                    if (trayTiltingServo.getPosition() != 0) {
                         trayTiltingServo.setPosition(0);
+                        addActTelemetry("Set trayTiltingServo to 0");
                     } else {
                         trayTiltingServo.setPosition(0.35);
+                        addActTelemetry("Set trayTiltingServo to 0.35");
                     }
-                } else if (!gamepad1.a) {
+                } else if (!(gamepad2.left_trigger > 0.25)) {
                     a = false;
                 }
-            }*/
+            }
 
             if (pixelFrontServo != null) {
                 if (gamepad2.x && !rBack) {
                     rBack = true;
                     if (pixelFrontServo.getPosition() == 1) {
                         pixelFrontServo.setPosition(0);
+                        addActTelemetry("Set pixelFrontServo to 0");
                     } else {
                         pixelFrontServo.setPosition(1);
+                        addActTelemetry("Set pixelFrontServo to 1");
                     }
                 } else if (!gamepad2.x) {
                     rBack = false;
@@ -132,14 +144,10 @@ public class CSFullTeleOp extends CSMethods {
                     droneServo.setPosition(1);
                 }
             }
-
-            telemetry.addData("Run Time", runtime.toString());
-            if (runtime.seconds() > 90) {
-                telemetry.addData("Game Phase", "End Game");
-            } else {
-                telemetry.addData("Game Phase", "Driver Controlled");
-            }
-            telemetry.update();
         }
+    }
+    public void addActTelemetry(String message){
+        telemetry.addData("Last Action",message);
+        telemetry.update();
     }
 }
