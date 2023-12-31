@@ -140,8 +140,6 @@ public class CSFullTeleOp extends CSMethods {
                 telemetry.addData("Game Phase", "Driver Controlled");
             }
             telemetry.update();
-
-            sleep(25);
         }
     }
 }
