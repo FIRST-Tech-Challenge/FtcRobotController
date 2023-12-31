@@ -88,7 +88,7 @@ public abstract class CSMethods extends LinearOpMode {
             rf = hardwareMap.get(DcMotorEx.class, "rightFront");
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         } catch (Exception e) {except(e); lf = lb = rf = rb = null;}
-        // If given an error, the motor is set to null
+        // If given an error, the motor is already null
         try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e);}
         try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
