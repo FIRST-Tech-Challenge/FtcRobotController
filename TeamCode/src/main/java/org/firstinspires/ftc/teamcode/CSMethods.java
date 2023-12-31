@@ -193,7 +193,7 @@ public abstract class CSMethods extends LinearOpMode {
     public void turn(double degrees) {
         sleep(100);
         imu.resetYaw();
-        double offset = 0.75;
+        double tolerance = 1;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
@@ -209,10 +209,10 @@ public abstract class CSMethods extends LinearOpMode {
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (difference > offset)) {
+            while (opModeIsActive() && (difference > tolerance)) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = min(1, (difference + 5) / 30);
+                turnModifier = min(1, (difference + 3) / 30);
                 turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
                 lb.setPower(-turnPower);
                 rb.setPower(turnPower);
