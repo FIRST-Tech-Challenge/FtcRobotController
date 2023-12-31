@@ -104,7 +104,7 @@ public class CSFullTeleOp extends CSMethods {
             if (trayTiltingServo != null) {
                 if ((gamepad2.left_trigger > 0.25) && !a) {
                     a = true;
-                    if (trayTiltingServo.getPosition() <= 0.355 && trayTiltingServo.getPosition() >= 0.345) {
+                    if (trayTiltingServo.getPosition() != 0) {
                         trayTiltingServo.setPosition(0);
                     } else {
                         trayTiltingServo.setPosition(0.35);
