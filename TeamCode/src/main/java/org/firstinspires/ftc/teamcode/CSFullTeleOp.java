@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class CSFullTeleOp extends CSMethods {
 
     // Declare OpMode members for each of the 4 motors.
-    boolean lBack = false;
-    boolean rBack = false;
-    boolean a = false;
+    boolean wasY = false;
+    boolean wasX = false;
+    boolean wasLT = false;
     double axial = 0.0;
     double lateral = 0.0;
     double yaw = 0.0;
@@ -95,8 +95,7 @@ public class CSFullTeleOp extends CSMethods {
             }
 
             if (pixelBackServo != null) {
-                if (gamepad2.y && !lBack) {
-                    lBack = true;
+                if (gamepad2.y && !wasY) {
                     if (pixelBackServo.getPosition() == 1) {
                         pixelBackServo.setPosition(0);
                         addActTelemetry("Set pixelBackServo to 0");
@@ -104,14 +103,13 @@ public class CSFullTeleOp extends CSMethods {
                         pixelBackServo.setPosition(1);
                         addActTelemetry("Set pixelBackServo to 1");
                     }
-                } else if (!gamepad2.y) {
-                    lBack = false;
                 }
+                wasY = gamepad2.y;
             }
 
             if (trayTiltingServo != null) {
-                if ((gamepad2.left_trigger > 0.25) && !a) {
-                    a = true;
+                boolean isLT = (gamepad2.left_trigger > 0.25);
+                if (isLT && !wasLT) {
                     if (trayTiltingServo.getPosition() != 0) {
                         trayTiltingServo.setPosition(0);
                         addActTelemetry("Set trayTiltingServo to 0");
@@ -119,14 +117,12 @@ public class CSFullTeleOp extends CSMethods {
                         trayTiltingServo.setPosition(0.35);
                         addActTelemetry("Set trayTiltingServo to 0.35");
                     }
-                } else if (!(gamepad2.left_trigger > 0.25)) {
-                    a = false;
                 }
+                wasLT = isLT;
             }
 
             if (pixelFrontServo != null) {
-                if (gamepad2.x && !rBack) {
-                    rBack = true;
+                if (gamepad2.x && !wasX) {
                     if (pixelFrontServo.getPosition() == 1) {
                         pixelFrontServo.setPosition(0);
                         addActTelemetry("Set pixelFrontServo to 0");
@@ -134,9 +130,8 @@ public class CSFullTeleOp extends CSMethods {
                         pixelFrontServo.setPosition(1);
                         addActTelemetry("Set pixelFrontServo to 1");
                     }
-                } else if (!gamepad2.x) {
-                    rBack = false;
                 }
+                wasX = gamepad2.x;
             }
 
             if (droneServo != null) {
@@ -147,7 +142,7 @@ public class CSFullTeleOp extends CSMethods {
         }
     }
     public void addActTelemetry(String message){
-        telemetry.addData("Last Action",message);
+        telemetry.addData("Last Action",message); // Last Action: message
         telemetry.update();
     }
 }
