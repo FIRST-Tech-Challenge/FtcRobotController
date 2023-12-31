@@ -45,6 +45,8 @@ public class CSAutoRedFront extends CSMethods {
         // Main code
         // ---------
 
+        drive(-20);
+        drive(23);
         drive(-3);
         turn(-90);
         drive(90);

@@ -44,6 +44,7 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     VELOCITY                = 2000;
+    static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     static final double     VEL_MODIFIER            = 1.12485939258;
     static final double     b           = 1.1375;
     static final double     m           = 0.889;
@@ -228,7 +229,7 @@ public abstract class CSMethods extends LinearOpMode {
             stopRobot();
         }
     }
-    public void strafe(/*double inches*/ double duration) {
+    public void strafe(double inches /*double duration*/) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -245,12 +246,12 @@ public abstract class CSMethods extends LinearOpMode {
             runtime.reset();
             lb.setVelocity(VELOCITY);
             rb.setVelocity(-VELOCITY);
-            lf.setVelocity(-VELOCITY);
-            rf.setVelocity(VELOCITY);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
 
-            //inches = (abs(inches) + 1.0125) / 0.7155;
+            inches = (abs(inches) + 1.0125) / 0.7155;
 
-            //double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
+            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
 
             while (opModeIsActive() && (runtime.seconds() < duration)) {
