@@ -38,7 +38,7 @@ public abstract class CSMethods extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    static final double     PI                      = 3.141592653589793238462643383279502884197169399; // 47 digits of pi
+    static final double     PI                      = Math.PI;
     static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
