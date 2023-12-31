@@ -46,7 +46,9 @@ public class CSAutoRedFront extends CSMethods {
         // ---------
 
         drive(-5);
-        strafe(70);
+        turn(90);
+        drive(20);
+        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

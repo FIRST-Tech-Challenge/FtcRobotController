@@ -267,6 +267,7 @@ public class TurningTest extends LinearOpMode {
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
             stopRobot();
         } else if (true) {
+            imu.resetYaw();
             resetIMU();
             double tolerance = 1;
             degrees *= -1;
@@ -288,6 +289,7 @@ public class TurningTest extends LinearOpMode {
                 rb.setVelocity(turnPower);
                 lf.setVelocity(-turnPower);
                 rf.setVelocity(turnPower);
+                telemetry.addData("All Angles", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
                 telemetry.addData("Delta Angle", lastAngle - currentAngle);
                 telemetry.addData("Corrected Goal", correctedGoalAngle);
                 telemetry.addData("Initial Goal", initialGoalAngle);
