@@ -81,7 +81,7 @@ public abstract class CSMethods extends LinearOpMode {
                         0,
                         0,
                         0,
-                        0  // acquisitionTime, not used
+                        0
                 )
         ));
         boolean imuinit = imu.initialize(imuparameters);
