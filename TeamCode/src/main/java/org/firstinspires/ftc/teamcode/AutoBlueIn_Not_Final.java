@@ -52,9 +52,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoRedIn_Final", group="Autonomous LinearOpMode")
+@Autonomous(name="AutoBlueIn_Not_Final", group="Autonomous LinearOpMode")
 //@Disabled
-public class AutoRedIn_Final extends LinearOpMode {
+public class AutoBlueIn_Not_Final extends LinearOpMode {
     Robot2024 robot;
     //This sensor is used to detect the team prop.  There are two of them, one on left and one on
     //right.  The each sensor is used for a different start location of the robot depending on
@@ -91,7 +91,7 @@ public class AutoRedIn_Final extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
 
         //Setup the Distance Sensor for sensing the team prop.
-        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range2");
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -101,7 +101,7 @@ public class AutoRedIn_Final extends LinearOpMode {
             robot.reset_pixle_bucket();
 
             //Step 1:  Setup robot to scan the first position for the team prop
-            robot.moveRobotAuto(robot.LEFT, 0.5, 2);
+            robot.moveRobotAuto(robot.RIGHT, 0.5, 2);
             robot.moveRobotAuto(robot.REVERSE, 0.3, 18);
 
             //Get Ave Distance from distance sensor
@@ -116,7 +116,7 @@ public class AutoRedIn_Final extends LinearOpMode {
                 telemetry.addLine("Found Team Prop at Location:  #1");
                 telemetry.update();
                 robot.moveRobotAuto(robot.REVERSE, 0.3, 2);
-                robot.moveRobotAuto(robot.LEFT, 0.5, 3);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 3);
                 if ( initimpliments == true ) {
                     robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                     robot.sweeperCommand(1.0);
@@ -124,22 +124,20 @@ public class AutoRedIn_Final extends LinearOpMode {
                     robot.sweeperCommand(0.0);
                 }
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 5);
-                robot.moveRobotAuto(robot.LEFT, 0.5, 15);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 15);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 11);
-                robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                robot.moveRobotAuto(robot.REVERSE, .5,11.5);
-                robot.moveRobotAuto(robot.LEFT, 0.3, 4);
+                robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
+                robot.moveRobotAuto(robot.REVERSE, .5,8);
 
                 if ( initimpliments == true ) {
-                    robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION-200);
+                    robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                     robot.dump_pixle();
                     sleep(2000);
-                    robot.moveRobotAuto(robot.FORWARD, 0.3, 1);
                     robot.reset_pixle_bucket();
                     sleep(2000);
                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
-                robot.moveRobotAuto(robot.LEFT, 0.5, 23);
+                robot.moveRobotAuto(robot.RIGHT, 0.5, 27);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 5);
 
                 sleep(30000);
@@ -148,7 +146,7 @@ public class AutoRedIn_Final extends LinearOpMode {
             telemetry.addLine("Didn't find team prop at location 1. Moving to chech number 2");
             telemetry.update();
             robot.moveRobotAuto(robot.REVERSE, 0.5, 3);
-            robot.moveRobotAuto(robot.RIGHT, 0.3, 10);
+            robot.moveRobotAuto(robot.LEFT, 0.3, 10);
 
             sleep(1000);
             Average = getAverageDistanceFromSensor(sensorRange);
@@ -156,8 +154,8 @@ public class AutoRedIn_Final extends LinearOpMode {
             if (Average<27) {
                 telemetry.addLine("Found Team Prop at Location:  #2");
                 telemetry.update();
-              robot.moveRobotAuto(robot.LEFT, 0.3, 4);
-                robot.moveRobotAuto(robot.REVERSE, 0.3, 5);
+              robot.moveRobotAuto(robot.RIGHT, 0.3, 4);
+                robot.moveRobotAuto(robot.REVERSE, 0.3, 7);
 
                 if ( initimpliments == true ) {
                     robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
@@ -165,23 +163,22 @@ public class AutoRedIn_Final extends LinearOpMode {
                     sleep(1000);
                     robot.sweeperCommand(0.0);
                 }
-                robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
+robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
                 robot.moveRobotAuto(robot.FORWARD, 0.5, 6);
-                robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
+                robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
                 robot.moveRobotAuto(robot.REVERSE, 0.3, 36);
-                robot.moveRobotAuto(robot.RIGHT, 0.3, 3);
+                robot.moveRobotAuto(robot.LEFT, 0.3, 3);
 
                 if ( initimpliments == true ) {
-                    robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION-200);
+                    robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                     robot.dump_pixle();
                     sleep(2000);
-                    robot.moveRobotAuto(robot.FORWARD, 0.3, 1);
                     robot.reset_pixle_bucket();
                     sleep(2000);
                     robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                 }
 
-                robot.moveRobotAuto(robot.LEFT, 0.3, 25);
+                robot.moveRobotAuto(robot.RIGHT, 0.3, 20);
                 robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
                 sleep(30000);
             }//end of second position
@@ -190,30 +187,31 @@ public class AutoRedIn_Final extends LinearOpMode {
             telemetry.update();
             //Now we know that the pixel is at the last location so just go there and drop pixel
 
-            robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
+            robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
             robot.moveRobotAuto(robot.REVERSE, 0.3, 1);
-            robot.moveRobotAuto(robot.LEFT, 0.3, 4);
+          //  robot.moveRobotAuto(robot.RIGHT, 0.3, 5);
             if ( initimpliments == true ) {
                 robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                 robot.sweeperCommand(1.0);
                 sleep(1000);
                 robot.sweeperCommand(0.0);
             }
-            robot.moveRobotAuto(robot.FORWARD, 0.75, 25);
-            robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
-            robot.moveRobotAuto(robot.REVERSE,.3,11);
-            robot.moveRobotAuto(robot.RIGHT,.3,1);
+            robot.moveRobotAuto(robot.FORWARD, 1, 25);
+            robot.rotateRobotAuto2(robot.TURN_RIGHT, 180, 0.5);
+            robot.moveRobotAuto(robot.REVERSE,.5,4);
+            robot.moveRobotAuto(robot.RIGHT,.5,4);
             if ( initimpliments == true ) {
-                robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION-400);
+                robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                 robot.dump_pixle();
                 sleep(2000);
-                robot.moveRobotAuto(robot.FORWARD, 0.3, 1);
-
+                robot.reset_pixle_bucket();
+                sleep(2000);
+                robot.raiseElevatorToPosition_Autonomous(-.5, 0);
             }
-            robot.reset_pixle_bucket();
-            robot.raiseElevatorToPosition_Autonomous(-.5, 0);
-            robot.moveRobotAuto(robot.LEFT, 0.8, 33);
-            robot.moveRobotAuto(robot.REVERSE, 0.5, 6);
+
+          //  robot.moveRobotAuto(robot.RIGHT, 0.8, 39);
+           /// robot.moveRobotAuto(robot.REVERSE, 0.5, 4);
+
             telemetry.addData("Done ", robot.getTicks());
             telemetry.update();
             sleep(30000);
@@ -227,7 +225,7 @@ public class AutoRedIn_Final extends LinearOpMode {
        double Sum=0;
        double Average;
        double dist;
-       while ( NumberOfSamples <= 30  && opModeIsActive() ) {
+       while ( NumberOfSamples <= 100  && opModeIsActive() ) {
            dist = dist_sensor.getDistance(DistanceUnit.INCH);
            Sum = Sum + dist;
            NumberOfSamples = NumberOfSamples + 1;

@@ -94,15 +94,11 @@ public class AutoRedOut_Final extends LinearOpMode {
              // team prop
              double MIN_DISTANCE_TO_PROP = 24;
 
-             robot.raiseElevatorToPosition_Autonomous(.5,250);
-             robot.moveRobotAuto(robot.LEFT, 0.3, 5);
-
-             sleep(1000);
              //If it is at location 1
              if (Average<MIN_DISTANCE_TO_PROP) {
                  telemetry.addLine("Found Team Prop at Location:  #1");
                  telemetry.update();
-
+                robot.moveRobotAuto(robot.LEFT, 0.3, 5);
                  robot.raiseElevatorToPosition_Autonomous(.5,10);
 
                  if ( initimpliments == true ) {
@@ -117,7 +113,7 @@ public class AutoRedOut_Final extends LinearOpMode {
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
                  robot.moveRobotAuto(robot.REVERSE, 1, 65);
                  robot.moveRobotAuto(robot.RIGHT, 0.8, 35);
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 20);
+                 robot.moveRobotAuto(robot.REVERSE, 0.3, 12);
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
@@ -134,24 +130,27 @@ public class AutoRedOut_Final extends LinearOpMode {
              telemetry.addLine("Didn't find team prop at location 1. Moving to chech number 2");
              telemetry.update();
 
-             robot.moveRobotAuto(robot.LEFT, 0.3, 11);
+             robot.moveRobotAuto(robot.LEFT, 0.3, 12);
              sleep(1000);
              Average = getAverageDistanceFromSensor(sensorRange);
 
              if (Average<27) {
                  telemetry.addLine("Found Team Prop at Location:  #2");
                  telemetry.update();
-                 robot.moveRobotAuto(robot.REVERSE, 0.3, 18);
+                 robot.moveRobotAuto(robot.LEFT, 0.3, 4);
+                 robot.moveRobotAuto(robot.REVERSE, 0.3, 9);
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                      robot.sweeperCommand(1.0);
                      sleep(1000);
                      robot.sweeperCommand(0.0);
                  }
-
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 10);
+                 robot.raiseElevatorToPosition_Autonomous(-.5, 0);
+                 robot.moveRobotAuto(robot.FORWARD, 0.5, 26);
                  robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 3);
+                 robot.moveRobotAuto(robot.REVERSE, 0.5, 67);
+                 robot.moveRobotAuto(robot.RIGHT, 0.3, 28);
+                 robot.moveRobotAuto(robot.REVERSE, 0.3, 16);
                  if ( initimpliments == true ) {
                      robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                      robot.dump_pixle();
@@ -160,40 +159,38 @@ public class AutoRedOut_Final extends LinearOpMode {
                      robot.raiseElevatorToPosition_Autonomous(-.5, 0);
                  }
 
-                 robot.moveRobotAuto(robot.LEFT, 0.3, 15);
-                 robot.moveRobotAuto(robot.REVERSE, 0.5, 6);  //
+
                  sleep(30000);
              }//end of second position
 
              telemetry.addLine("Didn't find 1 or 2 so assume #3");
              telemetry.update();
              //Now we know that the pixel is at the last location so just go there and drop pixle
-             robot.moveRobotAuto(robot.REVERSE, 0.3, 19);
-             robot.rotateRobotAuto2(robot.TURN_LEFT, 90, 0.5);
+
+             robot.rotateRobotAuto2(robot.TURN_RIGHT, 90, 0.5);
+             robot.moveRobotAuto(robot.RIGHT, 0.3, 3);
+             robot.moveRobotAuto(robot.REVERSE, 0.3, 9);
              if ( initimpliments == true ) {
                  robot.raiseElevatorToPosition_Autonomous(.5,robot.DELIVER_PIXLE_POSITION);
                  robot.sweeperCommand(1.0);
                  sleep(1000);
                  robot.sweeperCommand(0.0);
              }
-
-             robot.moveRobotAuto(robot.FORWARD, 0.3, 29);
-             robot.rotateRobotAuto2(robot.TURN_LEFT, 180, 0.5);
+             robot.raiseElevatorToPosition_Autonomous(-.5, 0);
+             robot.moveRobotAuto(robot.FORWARD, 0.3, 11);
+             robot.moveRobotAuto(robot.LEFT, 0.3, 25);
+             robot.moveRobotAuto(robot.REVERSE, 0.5, 69);
+             robot.moveRobotAuto(robot.RIGHT, 0.3, 28);
+             robot.moveRobotAuto(robot.REVERSE, 0.3, 16);
              if ( initimpliments == true ) {
                  robot.raiseElevatorToPosition_Autonomous(1, robot.ELEVATOR_MID_POSITION);
                  robot.dump_pixle();
                  sleep(1000);
                  robot.reset_pixle_bucket();
                  robot.raiseElevatorToPosition_Autonomous(-.5, 0);
+                 sleep(300000000);
              }
-
-
-
-             telemetry.addData("Done ", robot.getTicks());
-             telemetry.update();
-             sleep(30000);
          }
-
     }
 
     //This method is what is used to get the average from the desired sensor.
