@@ -37,42 +37,13 @@ public class CSAutoRedBackDummy extends CSMethods {
     public void runOpMode() {
         setup(true);
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        // ---------------------
+        // ------Main Code------
+        // ---------------------
 
-        waitForStart();
-        runtime.reset();
-
-
-        // Main code
-        //dropCarWash();
-        //drive(14);
-        drive(1);
-        /*
-        List<Recognition> pixels = detectProp();
-        if (pixels.size() > 0) {
-            drive(6);
-            ejectPixel();
-            drive(-6);
-        } else {
-            turn(-30);
-            pixels = detectProp();
-            if (pixels.size() > 0) {
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(30);
-            } else {
-                turn(60);
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(-30);
-            }
-        }
-        //*/
-        turn(60);
-        drive(30);
+        drive(tiles(-3.1));
+        turn(-90);
+        drive(tiles(2.5));
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

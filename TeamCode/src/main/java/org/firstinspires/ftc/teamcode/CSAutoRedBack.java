@@ -1,13 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-
-import java.util.List;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -46,36 +39,11 @@ public class CSAutoRedBack extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        //dropCarWash();
-        sleep(2000); // Wait to allow camera initialization (for detecting team prop)
-        findPos();
-        sleep(1000);
-        drive(-20);
-        sleep(1000);
-        if (pos == 1) {
-            turn(-30);
-            sleep(1000);
-            ejectPixel(); // Filler for placing pixel down the road
-            sleep(1000);
-            turn(30);
-        } else if (pos == 2) {
-            drive(-3);
-            sleep(1000);
-            ejectPixel();
-            sleep(1000);
-            drive(3);
-        } else if (pos == 3) {
-            turn(30);
-            sleep(1000);
-            ejectPixel();
-            sleep(1000);
-            turn(-30);
-        }
-        sleep(1000);
-        turn(90);
-        sleep(1000);
-        drive(-10);
-        sleep(2500);
+        drive(tiles(-1));
+        drive(tiles(-2.1));
+        turn(-90);
+        drive(tiles(2.5));
+        ejectPixel();
 
         //*/
 

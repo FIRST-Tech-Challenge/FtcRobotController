@@ -37,36 +37,13 @@ public class CSAutoBlueFrontDummy extends CSMethods {
     public void runOpMode() {
         setup(false);
 
+        // ---------------------
+        // ------Main Code------
+        // ---------------------
 
-        // Main code
-        //dropCarWash();
-        //drive(14);
-        drive(0);
-        /*
-        List<Recognition> pixels = detectProp();
-        if (pixels.size() > 0) {
-            drive(6);
-            ejectPixel();
-            drive(-6);
-        } else {
-            turn(-30);
-            pixels = detectProp();
-            if (pixels.size() > 0) {
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(30);
-            } else {
-                turn(60);
-                drive(6);
-                ejectPixel();
-                drive(-6);
-                turn(-30);
-            }
-        }
-        //*/
-        turn(-60);
-        drive(40);
+        drive(-3);
+        turn(90);
+        drive(90);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
