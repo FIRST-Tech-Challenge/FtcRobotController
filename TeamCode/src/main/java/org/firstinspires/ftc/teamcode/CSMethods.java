@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.util.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
@@ -54,6 +56,8 @@ public abstract class CSMethods extends LinearOpMode {
     double carWashPower = 1.0;
     double pos; // Team prop position
     public VisionPortal visionPortal;
+    public AprilTagProcessor tagProcessor;
+    public VisionPortal tagVisionPortal;
     public static String TFOD_MODEL_ASSET = null;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
@@ -98,6 +102,8 @@ public abstract class CSMethods extends LinearOpMode {
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e); pixelBackServo = null;}
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e); pixelFrontServo = null;}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e); trayTiltingServo = null;}
+
+        initAT();
 
         initTfod();
 
@@ -269,6 +275,41 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
+    public void strafeWithTagDetection(int idOfTag /* implement tag id detection later */) {
+
+        if (opModeIsActive() && lf != null) {
+            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+
+            runtime.reset();
+            lb.setVelocity(VELOCITY);
+            rb.setVelocity(-VELOCITY);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
+
+
+            while (!detectTags()) {
+                telemetry.addData("Currently","Strafing until tag detection");
+                telemetry.update();
+            }
+
+            stopRobot();
+
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
@@ -384,10 +425,24 @@ public abstract class CSMethods extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
+    public void initAT(){
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
+        tagVisionPortal = new VisionPortal.Builder()
+                .addProcessor(tagProcessor)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .enableLiveView(true)
+                //.setCameraResolution(new Size(640, 480)) // not working for some reason
+                .build();
+    }
 
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
+    public boolean detectTags(){
+        return (tagProcessor.getDetections().size() != 0);
+    }
     public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
