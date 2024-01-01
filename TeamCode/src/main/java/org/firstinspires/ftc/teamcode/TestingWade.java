@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,12 +17,13 @@ public class TestingWade extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
+        int distance = 10;
 
         waitForStart();
 
-        PIDController controller = new PIDController(0.003, 0.0000001, 0.4);
+        PIDController controller = new PIDController(0.003, 0.0000005, 0.4);
         double currentPos = robot.fLeft.getCurrentPosition();
-        double targetPos = currentPos + controller.convertInchesToTicks(12);
+        double targetPos = currentPos + controller.convertInchesToTicks(distance);
         double power;
         double ERROR_TOLERANCE_IN_TICKS = 15;
         int counter = 0;
@@ -38,5 +41,8 @@ public class TestingWade extends LinearOpMode {
         }
 
         robot.setMotorPower(0, 0, 0, 0); // stop, to be safe
+        this.sleep(500);
+        double distanceTraveled = controller.convertTicksToInches(targetPos - robot.fLeft.getCurrentPosition());
+        Log.d("new pid", "runOpMode: final error in inches " + distanceTraveled);
     }
 }
