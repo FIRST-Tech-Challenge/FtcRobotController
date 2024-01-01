@@ -41,7 +41,7 @@ public class CSAutoBlueBackDummy extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        drive(tiles(-2.15));
+        drive(tiles(-2.1));
         turn(90);
         drive(tiles(1.7));
         ejectPixel();

@@ -41,9 +41,9 @@ public class CSAutoRedBackDummy extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        drive(tiles(-2.15));
+        drive(tiles(-2.1));
         turn(-90);
-        drive(tiles(1.5));
+        drive(tiles(1.7));
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

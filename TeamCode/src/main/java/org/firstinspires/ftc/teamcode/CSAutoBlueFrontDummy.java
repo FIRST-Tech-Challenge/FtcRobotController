@@ -43,7 +43,7 @@ public class CSAutoBlueFrontDummy extends CSMethods {
 
         drive(-3);
         turn(90);
-        drive(90);
+        drive(85);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
