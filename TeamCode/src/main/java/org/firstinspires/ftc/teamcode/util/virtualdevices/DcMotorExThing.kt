@@ -14,14 +14,14 @@ package org.firstinspires.ftc.teamcode.util.virtualdevices
 //
 ///** The first motor will be the primary motor, and will be used to find most member information. */
 //class DcMotorExThing(public var motor1: DcMotorEx, public var motor2: DcMotorEx) : DcMotorEx {
-////    var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
-////    var power: Double = 0.0
-////    lateinit var motorType: MotorConfigurationType
-////    var speed: Double = 0.0
-////    lateinit var mode: DcMotor.RunMode
-////    var enabled: Boolean = true
-////    var position: Int = 0;
-////    lateinit var zeroPowerBehavior: DcMotor.ZeroPowerBehavior;
+//    var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
+//    var power: Double = 0.0
+//    lateinit var motorType: MotorConfigurationType
+//    var speed: Double = 0.0
+//    lateinit var mode: DcMotor.RunMode
+//    var enabled: Boolean = true
+//    var position: Int = 0;
+//    lateinit var zeroPowerBehavior: DcMotor.ZeroPowerBehavior;
 //    init {
 //
 //    }

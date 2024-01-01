@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCO
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,7 +33,7 @@ public class Hardware {
 
 //servos
 
-    public Servo droneLauncher;
+    public Servo droneServo;
     public Servo clawFront;
     public Servo clawBack;
     public Servo clawWrist;
@@ -45,13 +46,16 @@ public class Hardware {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backLeft.getCurrentPosition();
 
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         armMotor1 = hardwareMap.get(DcMotorEx.class, "leftArm");
         armMotor2 = hardwareMap.get(DcMotorEx.class, "rightArm");
 
         rightSlider = hardwareMap.get(DcMotorEx.class, "rightSlider");
         leftSlider = hardwareMap.get(DcMotorEx.class, "leftSlider");
 
-        droneLauncher = hardwareMap.get(Servo.class, "droneLauncher");
+        droneServo = hardwareMap.get(Servo.class, "droneLauncher");
         clawFront = hardwareMap.get(Servo.class, "clawFrontServo");
         clawBack = hardwareMap.get(Servo.class, "clawBackServo");
         clawWrist = hardwareMap.get(Servo.class, "ClawMountServo");
@@ -66,15 +70,7 @@ public class Hardware {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
-        // Control Hub
-
-        // Battery
         batteryVoltageSens = hardwareMap.voltageSensor.iterator().next();
-
-        //
-
-
-        // Fix the things
 
         if (RUN_USING_ENCODER) { // We are running using encoders
             for (DcMotor motor : motors){
@@ -87,4 +83,3 @@ public class Hardware {
         }
     }
 }
-
