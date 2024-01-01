@@ -40,7 +40,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Driving", group = "Tests")
+@Disabled
 public class DrivingTest extends CSMethods {
     public void runOpMode() {
         setup(true);

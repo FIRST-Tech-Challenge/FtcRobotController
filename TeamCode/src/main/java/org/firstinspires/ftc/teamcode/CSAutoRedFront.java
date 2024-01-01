@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
@@ -35,7 +36,8 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Red Front", group = "CenterStage", preselectTeleOp = "Full")
+//@Autonomous(name = "Red Front", group = "CenterStage", preselectTeleOp = "Full")
+@Disabled
 public class CSAutoRedFront extends CSMethods {
     @Override
     public void runOpMode() {
