@@ -8,6 +8,7 @@ public class PIDController {
     double integral;
     double KP, KI, KD;
     double lastTime, lastError;
+    double TICKS_IN_THIRTY_INCHES = convertInchesToTicks(30);
 
     public PIDController (double KP, double KI, double KD) {
         this.KP = KP;
@@ -24,9 +25,17 @@ public class PIDController {
         double currentError = targetPos - currentPos;
         double deltaError = currentError - lastError;
         double averageError = (currentError + lastError) / 2;
-        integral += averageError * deltaTime;
+
+        if (currentError < TICKS_IN_THIRTY_INCHES) {
+            integral += averageError * deltaTime;
+        } else {
+            integral = 0;
+        }
+
         double derivative = deltaError / deltaTime;
+
         double power = currentError * KP + integral * KI + derivative * KD;
+
 
         // set up for next loop
         lastError = currentError;
@@ -46,6 +55,15 @@ public class PIDController {
         final double wheelCircIn = wheelDiaMm * PI / 25.4;
         final double IN_TO_TICK = 537 / wheelCircIn;
 
-        return inches * IN_TO_TICK;
+        return inches * IN_TO_TICK + 90;
+    }
+
+    public double convertTicksToInches (double ticks) {
+        final double wheelDiaMm = 96;
+        final double PI = 3.14159;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4;
+        final double IN_TO_TICK = 537 / wheelCircIn;
+
+        return ticks / IN_TO_TICK;
     }
 }
