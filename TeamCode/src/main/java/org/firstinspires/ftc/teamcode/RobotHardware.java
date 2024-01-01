@@ -38,6 +38,10 @@ import android.view.View;
 
 public class RobotHardware {
 
+    public static enum MotorDirection {
+        FORWARD,
+        BACKWARD
+    }
     private Blinker control_Hub;
     private IMU imu;
 
@@ -122,8 +126,7 @@ public class RobotHardware {
         ticksPerRotationOfLeft = lfMotor.getMotorType().getTicksPerRev();
         ticksPerRotationOfRight = rfMotor.getMotorType().getTicksPerRev();
 
-        lfMotor.setDirection(DcMotor.Direction.REVERSE);
-        lbMotor.setDirection(DcMotor.Direction.REVERSE);
+        setMotorDirection(MotorDirection.FORWARD);
 
         //servos
         launcher = myOpMode.hardwareMap.get(Servo.class, "launcher");
@@ -250,11 +253,25 @@ public class RobotHardware {
         return rfMotor.isBusy();
     }
 
+    public void setMotorDirection(MotorDirection direction){
+        if (direction == MotorDirection.BACKWARD)
+        {
+            lfMotor.setDirection(DcMotor.Direction.FORWARD);
+            lbMotor.setDirection(DcMotor.Direction.FORWARD);
+            rfMotor.setDirection(DcMotor.Direction.REVERSE);
+            rbMotor.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else
+        {
+            lfMotor.setDirection(DcMotor.Direction.REVERSE);
+            lbMotor.setDirection(DcMotor.Direction.REVERSE);
+            rfMotor.setDirection(DcMotor.Direction.FORWARD);
+            rbMotor.setDirection(DcMotor.Direction.FORWARD);
+        }
+
+    }
     public void reverseMotors(){
-        lfMotor.setDirection(DcMotor.Direction.FORWARD);
-        lbMotor.setDirection(DcMotor.Direction.FORWARD);
-        rfMotor.setDirection(DcMotor.Direction.REVERSE);
-        rbMotor.setDirection(DcMotor.Direction.REVERSE);
+        setMotorDirection(MotorDirection.BACKWARD);
     }
 
 
