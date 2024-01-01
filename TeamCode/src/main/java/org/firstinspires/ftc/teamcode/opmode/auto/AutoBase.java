@@ -11,25 +11,28 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
+import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
-import org.opencv.core.Point;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class AutoBase extends OpMode {
+
+    // These are all the configurable parameters that can be tuned
     static final int LOW_LINEAR_SLIDE_TICKS = 200; // Low position for the linear slides
     static final int BOTTOM_LINEAR_SLIDE_TICKS = 0; // Bottom position for the linear slides
+
+    // <<<<<<end of configurable parameters >>>>>>>>>>>
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
-    // Declare OpMode members for each of the 4 motors.
-    protected ElapsedTime runtime = new ElapsedTime();
+    protected ElapsedTime runtime = new ElapsedTime(); //
     protected DcMotor leftFrontDrive = null;
     protected DcMotor leftBackDrive = null;
     protected DcMotor rightFrontDrive = null;
@@ -40,7 +43,9 @@ public abstract class AutoBase extends OpMode {
     Servo rightClaw;
     Servo conveyor;
     OpenCvWebcam webcam;
-    GripPipelineWhitePixelRGBT1 pipeline;
+
+    HSVSaturationPipeline pipeline;
+
     Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearSlideMove;
@@ -57,43 +62,6 @@ public abstract class AutoBase extends OpMode {
     // Wheel diameter is 100mm
     double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
-
-
-    protected void estimateLocation(GamepiecePositionFinder gamePiecePOS) {
-        Point avgLoc = pipeline.avgContourCoord();
-        if (gamePiecePOS.getPOS() == GamePieceLocation.RIGHT) {
-            rightCount += 1;
-        } else if (gamePiecePOS.getPOS() == GamePieceLocation.CENTER) {
-            centerCount += 1;
-        } else if (gamePiecePOS.getPOS() == GamePieceLocation.LEFT) {
-            leftCount += 1;
-        }
-
-        if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = GamePieceLocation.RIGHT;
-        } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = GamePieceLocation.CENTER;
-        } else if (leftCount > 5) {
-            gamepieceLocation = GamePieceLocation.LEFT;
-        }
-
-        // Reset the counters to lower values every 50 detects to allow for field condition changes
-        if (rightCount + centerCount + leftCount > 50) {
-            rightCount = rightCount * 0.3;
-            centerCount = centerCount * 0.3;
-            leftCount = leftCount * 0.3;
-        }
-
-        telemetry.addData("AvgContour.x", avgLoc.x);
-        telemetry.addData("AvgContour.y", avgLoc.y);
-        telemetry.addData("Left Probability", leftCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("Center Probability", centerCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("Right Probability", rightCount / (leftCount + rightCount + centerCount));
-        telemetry.addData("location", gamepieceLocation);
-        telemetry.addData("state", state);
-        telemetry.update();
-    }
-
     @Override
     public void init() {
 
@@ -101,7 +69,9 @@ public abstract class AutoBase extends OpMode {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new GripPipelineWhitePixelRGBT1();
+
+        pipeline = new HSVSaturationPipeline();
+
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -173,7 +143,7 @@ public abstract class AutoBase extends OpMode {
 
         leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        wrist.setDirection(DcMotor.Direction.FORWARD);
+        wrist.setDirection(DcMotor.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, telemetry);
@@ -202,4 +172,25 @@ public abstract class AutoBase extends OpMode {
         telemetry.addData("location", gamepieceLocation);
         telemetry.update();
     }
+
+    protected void setFieldPosition(FieldPosition fPos){
+        pipeline.setFieldPosition(fPos);
+    }
+
+    protected SpikePosition getSpikePosition(){
+        return pipeline.getSpikePos();
+    }
+
+    protected double getLeftSpikeSaturation(){
+        return pipeline.getLeftSpikeSaturation();
+    }
+
+    protected double getCenterSpikeSaturation(){
+        return pipeline.getCenterSpikeSaturation();
+    }
+
+    protected double getRightSpikeSaturation(){
+        return pipeline.getRightSpikeSaturation();
+    }
+
 }

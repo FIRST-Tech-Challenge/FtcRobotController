@@ -32,97 +32,52 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.pipeline.GripPipelineWhitePixelRGBT1;
-import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-import org.firstinspires.ftc.teamcode.utility.GamepiecePositionFinder;
-import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
-import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
-import org.firstinspires.ftc.teamcode.utility.Movement;
-import org.opencv.core.Point;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
-/*
- * This file contains an example of a Linear "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode is executed.
- *
- * This particular OpMode illustrates driving a 4-motor Omni-Directional (or Holonomic) robot.
- * This code will work with either a Mecanum-Drive or an X-Drive train.
- * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
- * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
- *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
- *
- * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
- * Each motion axis is controlled by one Joystick axis.
- *
- * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
- * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
- *
- * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
- * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
- * the direction of all 4 motors (see code below).
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+
+import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+
+/**
+ * Autonomous operation class for 'BlueFieldLeft' scenario.
+ * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
 
 @Autonomous(name="BlueFieldRight", group="OpMode")
 //@Disabled
 public class Auto2_BlueFieldRight extends AutoBase {
 
+    /**
+     * Runs once and initializes the autonomous program.
+     * Sets the initial state and the game piece location to UNDEFINED.
+     * If we ever come across an instance in our code where gamepieceLocation is UNDEFINED, there
+     * is likely a problem.
+     */
     @Override
     public void init() {
         super.init();
-        gamepieceLocation = GamePieceLocation.LEFT; // this is the position that we can't see
+        gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
     }
+
+    /**
+     * This loop is run continuously
+     */
     @Override
     public void init_loop(){
         state = 0;
-        GamepiecePositionFinder gamePiecePOS = new GamepiecePositionFinder(pipeline.avgContourCoord(), GamePieceLocation.RIGHT);
-        Point avgLoc = pipeline.avgContourCoord();
-        if (gamePiecePOS.getPOS() == GamePieceLocation.RIGHT){
-            rightCount += 1;
-        } else if (gamePiecePOS.getPOS() == GamePieceLocation.CENTER){
-            centerCount += 1;
-        } else {
-            leftCount += 1;
+        SpikePosition spikePos = getSpikePosition();
+        switch (spikePos){
+            case RIGHT:
+                gamepieceLocation = GamePieceLocation.RIGHT;
+                break;
+            case CENTRE:
+                gamepieceLocation = GamePieceLocation.CENTER;
+                break;
+            default:
+                gamepieceLocation = GamePieceLocation.LEFT;
         }
-        if (rightCount > centerCount && rightCount > 5) {
-            gamepieceLocation = GamePieceLocation.RIGHT;
-        } else if (centerCount > leftCount && centerCount > 5) {
-            gamepieceLocation = GamePieceLocation.CENTER;
-        } else if (leftCount > 5){
-            gamepieceLocation = GamePieceLocation.LEFT;
-        }
-
-        // Reset the counters to lower values every 50 detects to allow for field condition changes
-        if (rightCount + centerCount + leftCount > 50) {
-            rightCount = rightCount * 0.3;
-            centerCount = centerCount * 0.3;
-            leftCount = leftCount * 0.3;
-        }
-
-        telemetry.addData("AvgContour.x",avgLoc.x);
-        telemetry.addData("AvgContour.y",avgLoc.y);
-        telemetry.addData("location", gamepieceLocation);
-        telemetry.addData("state", state);
+        telemetry.addData("GamePiece Spike line",gamepieceLocation);
         telemetry.update();
     }
 
@@ -133,15 +88,9 @@ public class Auto2_BlueFieldRight extends AutoBase {
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        // Start by securing the loaded pixel
-        intake.ClawClosed();
-
-        // Motor is 28 ticks per revolution
-        // Gear Ratio is 12:1
-        // Wheel diameter is 100mm
-        double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
-
         if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0){
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
@@ -153,14 +102,15 @@ public class Auto2_BlueFieldRight extends AutoBase {
             sleep (500);
             // Open the claw
             intake.ClawOpen();
-            // Move the claw up
+            // End all autos with the wrist up
             intake.FlipUp();
             // Add telemetry
             telemetry.addData("run", state);
             telemetry.update();
             state = 1;
-
         } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // move forward 18 inches
             moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
@@ -170,11 +120,12 @@ public class Auto2_BlueFieldRight extends AutoBase {
             moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
             // Open the claw
             intake.ClawOpen();
-            // Move the claw up
+            // End all autos with the wrist up
             intake.FlipUp();
             state = 2;
-
         } else if (state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
             // Move forward 25 inches
             moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
             // Rotate 90 degrees
@@ -188,7 +139,7 @@ public class Auto2_BlueFieldRight extends AutoBase {
             // Open the claw
             intake.ClawOpen();
             sleep(500);
-            // Move the claw up
+            // End all autos with the wrist up
             intake.FlipUp();
             state = 3;
         }
