@@ -47,9 +47,9 @@ public class CSAutoBlueBack extends CSMethods {
         // ---------------------
 
         drive(tiles(-1));
-        drive(tiles(-2.1));
+        drive(tiles(-1.15));
         turn(90);
-        drive(tiles(2.5));
+        drive(tiles(1.7));
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
