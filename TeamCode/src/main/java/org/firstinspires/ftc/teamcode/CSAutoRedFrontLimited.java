@@ -50,6 +50,4 @@ public class CSAutoRedFrontLimited extends CSMethods {
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
-
 }

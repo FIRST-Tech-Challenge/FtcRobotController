@@ -53,58 +53,42 @@ public class CSFullTeleOp extends CSMethods {
             rb.setPower(rightBackPower);
 
             if (pixelLiftingMotor != null) {
-                if (gamepad2.dpad_up && !gamepad2.dpad_down) {
-                    if (pixelLiftingMotor.getCurrentPosition() < 3000) {
-                        pixelLiftingMotor.setPower(0.75);
-                        addActTelemetry("pixelLiftingMotor now moving");
-                    } else {
-                        pixelLiftingMotor.setPower(0);
-                        addActTelemetry("pixelLiftingMotor no longer moving");
-                    }
-                }
-
-
-                if (gamepad2.dpad_down && !gamepad2.dpad_up) {
-                    if (pixelLiftingMotor.getCurrentPosition() > 0) {
-                        pixelLiftingMotor.setPower(-0.75);
-                        addActTelemetry("pixelLiftingMotor now moving");
-                    } else {
-                        pixelLiftingMotor.setPower(0);
-                        addActTelemetry("pixelLiftingMotor no longer moving");
-                    }
-                }
-
-
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                     pixelLiftingMotor.setPower(0);
+                } else {
+                    if (gamepad2.dpad_up && !gamepad2.dpad_down) {
+                        if (pixelLiftingMotor.getCurrentPosition() < 3000) {
+                            pixelLiftingMotor.setPower(0.75);
+                            addActTelemetry("pixelLiftingMotor now moving");
+                        } else {
+                            pixelLiftingMotor.setPower(0);
+                            addActTelemetry("pixelLiftingMotor no longer moving");
+                        }
+                    }
+                    if (gamepad2.dpad_down && !gamepad2.dpad_up) {
+                        if (pixelLiftingMotor.getCurrentPosition() > 0) {
+                            pixelLiftingMotor.setPower(-0.75);
+                            addActTelemetry("pixelLiftingMotor now moving");
+                        } else {
+                            pixelLiftingMotor.setPower(0);
+                            addActTelemetry("pixelLiftingMotor no longer moving");
+                        }
+                    }
                 }
             }
 
             if (carWashMotor != null) {
-                if (gamepad2.a) {
-                    carWashMotor.setPower(carWashPower);
-                    addActTelemetry("carWashMotor now moving forward");
-                }
-                if (gamepad2.b) {
-                    carWashMotor.setPower(-carWashPower);
-                    addActTelemetry("carWashMotor now moving backward");
-                }
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
-                }
-            }
-
-            if (pixelBackServo != null) {
-                if (gamepad2.y && !wasY) {
-                    if (pixelBackServo.getPosition() == 1) {
-                        pixelBackServo.setPosition(0);
-                        addActTelemetry("Set pixelBackServo to 0");
-                    } else {
-                        pixelBackServo.setPosition(1);
-                        addActTelemetry("Set pixelBackServo to 1");
+                } else {
+                    if (gamepad2.a) {
+                        carWashMotor.setPower(carWashPower);
+                        addActTelemetry("carWashMotor now moving forward");
+                    } else if (gamepad2.b && !touchSensor.isPressed()) {
+                        carWashMotor.setPower(-carWashPower);
+                        addActTelemetry("carWashMotor now moving backward");
                     }
                 }
-                wasY = gamepad2.y;
             }
 
             if (trayTiltingServo != null) {
@@ -121,17 +105,33 @@ public class CSFullTeleOp extends CSMethods {
                 wasLT = isLT;
             }
 
+            if (pixelBackServo != null) {
+                if (gamepad2.y && !wasY) {
+                    if (pixelBackServo.getPosition() > 0.5 - 0.05 && pixelBackServo.getPosition() < 0.5 + 0.05) {
+                        pixelBackServo.setPosition(0);
+                        addActTelemetry("Set pixelBackServo to 0");
+                    } else {
+                        pixelBackServo.setPosition(0.5);
+                        addActTelemetry("Set pixelBackServo to 0.5");
+                    }
+                }
+                wasY = gamepad2.y;
+            }
+
             if (pixelFrontServo != null) {
                 if (gamepad2.x && !wasX) {
-                    if (pixelFrontServo.getPosition() == 1) {
-                        pixelFrontServo.setPosition(0);
-                        addActTelemetry("Set pixelFrontServo to 0");
+                    if (pixelFrontServo.getPosition() > 0.30 - 0.05 && pixelFrontServo.getPosition() < 0.30 + 0.05) {
+                        pixelFrontServo.setPosition(0.05);
+                        addActTelemetry("Set pixelFrontServo to 0.05");
                     } else {
-                        pixelFrontServo.setPosition(1);
-                        addActTelemetry("Set pixelFrontServo to 1");
+                        pixelFrontServo.setPosition(0.30);
+                        addActTelemetry("Set pixelFrontServo to 0.30");
                     }
                 }
                 wasX = gamepad2.x;
+                addActTelemetry("Did not move pixelFrontServo");
+            } else {
+                addActTelemetry("pixelFrontServo not connected");
             }
 
             if (droneServo != null) {
@@ -140,6 +140,7 @@ public class CSFullTeleOp extends CSMethods {
                 }
             }
         }
+        requestOpModeStop();
     }
     public void addActTelemetry(String message){
         telemetry.addData("Last Action",message); // Last Action: message

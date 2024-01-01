@@ -23,6 +23,7 @@ public abstract class CSMethods extends LinearOpMode {
     // All non-primitve datatypes initialze to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
+    public TouchSensor touchSensor;
     public IMU imu;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -95,6 +96,7 @@ public abstract class CSMethods extends LinearOpMode {
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
+        try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
 
         initAT();
 
