@@ -56,11 +56,11 @@ public class AprilTag extends LinearOpMode {
     double distancefromwall;
     Rotation2d rotation;
     Pose2d position;
-    private int     minExposure ;
-    private int     maxExposure ;
-    private int     myGain      ;
-    private int     minGain ;
-    private int     maxGain ;
+    private int     minExposure;
+    private int     maxExposure;
+    private int     myGain;
+    private int     minGain;
+    private int     maxGain;
     private DistanceUnit distance;
     // The variable to store our instance of the AprilTag processor.
     private AprilTagProcessor aprilTag;
@@ -189,7 +189,6 @@ public class AprilTag extends LinearOpMode {
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             minExposure = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
             maxExposure = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
-
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             minGain = gainControl.getMinGain();
             maxGain = gainControl.getMaxGain();

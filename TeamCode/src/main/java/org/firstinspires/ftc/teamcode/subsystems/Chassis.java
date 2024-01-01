@@ -75,7 +75,6 @@ public class Chassis implements Subsystem {
     @Override
     public void periodic() {
         odometry.updatePose();
-
         if (Constants.TimeToAprilTagCheck > time.seconds()) {
             m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
             time.reset();
@@ -85,5 +84,4 @@ public class Chassis implements Subsystem {
     public void setDefaultCommand(Command defaultCommand) {
         Subsystem.super.setDefaultCommand(defaultCommand);
     }
-
-    }
+}
