@@ -43,11 +43,11 @@ public class drivesample extends LinearOpMode
 	{
 		double armLength1 = 3;
 		double armLength2 = 2;
-		double distance = sqrt(x * x + y * y);
+		double distance = Math.sqrt(x * x + y * y);
 
-		double phi = arctan(y/x);
-		double theta = arccos((Math.pow(armLength1, 2) + Math.pow(distance, 2) - Math.pow(armLength2, 2)) / 2 * armLength1 * distance);
-		double alpha = arccos((Math.pow(armLength1, 2) + Math.pow(armLength2, 2) - Math.pow(distance, 2)) / 2 * armLength1 * armLength2);
+		double phi = Math.atan(y/x);
+		double theta = Math.acos((Math.pow(armLength1, 2) + Math.pow(distance, 2) - Math.pow(armLength2, 2)) / 2 * armLength1 * distance);
+		double alpha = Math.acos((Math.pow(armLength1, 2) + Math.pow(armLength2, 2) - Math.pow(distance, 2)) / 2 * armLength1 * armLength2);
 
 		setArmPos(phi + theta, arm);
 		setArmWristPos(alpha - 180, armWrist1, armWrist2);
