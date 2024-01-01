@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.utils.BTController;
 
+// todo: check the time from the start to when I have the cords
 
 public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     private Gamepad m_gamepad1,m_gamepad2;

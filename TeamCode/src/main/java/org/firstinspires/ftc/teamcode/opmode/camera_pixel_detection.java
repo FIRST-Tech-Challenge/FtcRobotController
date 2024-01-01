@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import static org.opencv.core.Core.inRange;
 
@@ -29,13 +29,9 @@ public class camera_pixel_detection extends OpMode {
     boolean lastA = false, lastB = false, lastY = false, lastX = false;
     double[] lowerPvals = new double[]{0, 0, 0};
     double[] upperPvals = new double[]{60, 255, 255};
-    Scalar lowerP = new Scalar(290, 40, 50); //48 65 60
-    Scalar upperP = new Scalar(320, 100, 65); //65 100 100
-    Scalar lowerG = new Scalar(32,104,18);
+    Scalar lowerG = new Scalar(50, 75, 80);
+    Scalar upperG = new Scalar(150, 250, 250);
 
-    Scalar upperG = new Scalar(123,171,111);
-    Scalar lowerO = new Scalar(15, 75, 45);
-    Scalar upperO = new Scalar(35, 100, 56);
 
 
     @Override
@@ -80,26 +76,6 @@ public class camera_pixel_detection extends OpMode {
 
     @Override
     public void init_loop() {
-        if (gamepad1.a && !lastA) {
-            lowerPvals[0]++;
-        }
-        lastA = gamepad1.a;
-        if (gamepad1.b && !lastB) {
-            lowerPvals[0]--;
-        }
-        lastB = gamepad1.b;
-        lowerP.set(lowerPvals);
-        if (gamepad1.x && !lastX) {
-            upperPvals[0]++;
-        }
-        lastX = gamepad1.x;
-        if (gamepad1.y && !lastY) {
-            upperPvals[0]--;
-        }
-        lastY = gamepad1.y;
-        upperP.set(upperPvals);
-        telemetry.addData("upperY: ", upperP.val[0]);
-        telemetry.addData("lowerY: ", lowerP.val[0]);
     }
 
     @Override
@@ -119,30 +95,6 @@ public class camera_pixel_detection extends OpMode {
         Mat binaryAfterO = new Mat(640, 480, CvType.CV_8UC1);
 
         List contours;
-
-        public Mat processFrameP(Mat input) {
-            try {
-
-                Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-//                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-                inRange(hsv, lowerP, upperP, binaryP);
-//                Imgproc.erode(binaryP,binaryAfterP,kernel);
-            } catch (Exception e) {
-                telemetry.addData("process frame error:", e.getMessage());
-                telemetry.update();
-            }
-
-            return binaryP;
-        }
-
-        public Mat processframeO(Mat input) {
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-            //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-            inRange(hsv, lowerO, upperO, binaryO);
-//                            Imgproc.erode(binaryO,binaryAfterO,kernel);
-            return binaryO;
-        }
-
         public Mat processframeG(Mat input) {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
