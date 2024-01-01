@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 
 import java.util.function.DoubleSupplier;
@@ -21,7 +19,7 @@ public class PoseEstimator extends HolonomicOdometry {
         super(trackwidth, centerWheelOffset);
     }
 
-    public void cameraMeasurements(Pose2d newPosition){
-        robotPose = newPosition;
+    public void setPoseToCameraPose(Pose2d cameraPose){
+        robotPose = cameraPose;
     }
 }

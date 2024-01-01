@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.utils.BTController.Axis.*;
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,12 +21,13 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
      gripper m_gripper;
      AprilTagDetector m_tagDetector;
      PoseEstimator m_poseEstimator;
+     ElapsedTime elapsedTime;
     AprilTag aprilTag;
     public RobotContainer(HardwareMap map,Telemetry telemetry,Gamepad gamepad1,Gamepad gamepad2){
         m_controller = new BTController(gamepad1);
         m_tagDetector = new AprilTagDetector(aprilTag);
         m_gripper = new gripper(map,telemetry);
-        m_chassis= new Chassis(map, telemetry, m_tagDetector.getTagPose(), m_poseEstimator);
+        m_chassis= new Chassis(map, telemetry, m_tagDetector.getTagPose(), m_poseEstimator, elapsedTime);
         m_gamepad1=gamepad1;
         m_gamepad2=gamepad2;
 

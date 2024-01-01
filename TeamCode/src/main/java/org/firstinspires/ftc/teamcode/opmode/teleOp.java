@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.hardware.AnalogInputController;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.SerialNumber;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 @TeleOp(name = "teleOp")
 public class teleOp extends OpMode {
-    RobotContainer robot =new RobotContainer(hardwareMap);
+    Telemetry telemetry;
+    RobotContainer robot =new RobotContainer(hardwareMap, telemetry, gamepad1,gamepad2);
     AnalogInput input;
     @Override
     public void init() {

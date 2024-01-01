@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class Chassis implements Subsystem {
 
@@ -78,7 +77,7 @@ public class Chassis implements Subsystem {
         odometry.updatePose();
 
         if (Constants.TimeToAprilTagCheck > time.seconds()) {
-            m_poseEstimator.cameraMeasurements(m_postitionFromTag);
+            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
             time.reset();
         }
     }
