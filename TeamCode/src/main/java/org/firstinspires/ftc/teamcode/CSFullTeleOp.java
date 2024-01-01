@@ -98,7 +98,7 @@ public class CSFullTeleOp extends CSMethods {
                         trayTiltingServo.setPosition(0);
                         addActTelemetry("Set trayTiltingServo to 0");
                     } else {
-                        trayTiltingServo.setPosition(0.35);
+                        trayTiltingServo.setPosition(1);
                         addActTelemetry("Set trayTiltingServo to 0.35");
                     }
                 }
