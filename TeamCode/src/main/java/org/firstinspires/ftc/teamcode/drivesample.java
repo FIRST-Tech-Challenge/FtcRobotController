@@ -9,16 +9,49 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.lang.Math;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 public class drivesample extends LinearOpMode
 {
     
-    private void wrist_servo(Servo s1, Servo s2, double position) {
-        s1.setPosition(position);
-        s2.setPosition(position);
+    private void wristServo(double pos, Servo s1, Servo s2)
+    {
+        s1.setPosition(pos);
+        s2.setPosition(pos);
     }
+    
+    private void setArmPos(double degrees, Servo arm)
+    {
+		degrees = (degrees + 360) % 360;
+        // TODO: some algorithm to get the 0-1 value for the servo
+        double pos = 0;
+        arm.setPosition(pos);
+    }
+
+	private void setArmWristPos(double degrees, Servo armWrist1, Servo armWrist2)
+	{
+		degrees = (degrees + 360) % 360;
+		// TODO: some algorithm to get the 0-1 value for the servo
+		double pos = 0;
+		wristServo(pos, armWrist1, armWrist2);
+	}
+
+	private void armInverseKinematics(double x, double y, Servo arm, Servo armWrist1, Servo armWrist2)
+	{
+		double armLength1 = 3;
+		double armLength2 = 2;
+		double distance = sqrt(x * x + y * y);
+
+		double phi = arctan(y/x);
+		double theta = arccos((Math.pow(armLength1, 2) + Math.pow(distance, 2) - Math.pow(armLength2, 2)) / 2 * armLength1 * distance);
+		double alpha = arccos((Math.pow(armLength1, 2) + Math.pow(armLength2, 2) - Math.pow(distance, 2)) / 2 * armLength1 * armLength2);
+
+		setArmPos(phi + theta, arm);
+		setArmWristPos(alpha - 180, armWrist1, armWrist2);
+	}
 
     RevBlinkinLedDriver lights;
     @Override
@@ -87,19 +120,22 @@ public class drivesample extends LinearOpMode
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
 
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper)
+            {
                 intakeMotor.setPower(0.5);
                 ArmWrist.setPosition(0.1);
                 PixelGrabberWrist1.setPosition(0.1);
                 PixelGrabberWrist2.setPosition(0.1);
 
             }
-            if (gamepad1.dpad_right){
+            if (gamepad1.dpad_right)
+            {
                 ArmWrist.setPosition(0.2);
                 PixelGrabberWrist1.setPosition(0.1);
                 PixelGrabberWrist2.setPosition(0.1);
             }
-            if(gamepad1.left_bumper){
+            if(gamepad1.left_bumper)
+            {
                 IntakeRaiser.setPosition(0.4);
                 intakeMotor.setPower(0);
 //                ArmWrist.setPosition(0.08);
@@ -109,19 +145,22 @@ public class drivesample extends LinearOpMode
 //                PixelGrabberWrist2.setPosition(0.1);
 
                 }
-            if(gamepad1.x){
-                wrist_servo(PixelGrabberWrist1, PixelGrabberWrist2, 0.21);
+            if(gamepad1.x)
+            {
+                wristServo(0.21, PixelGrabberWrist1, PixelGrabberWrist2);
                 ArmWrist.setPosition(0.1);
             }
-            if(gamepad1.a){
+            if(gamepad1.a)
+            {
                 PixelGrabber.setPosition(0.3);
             }
-            if(gamepad1.b){
+            if(gamepad1.b)
+            {
                 PixelGrabber.setPosition(0);
             }
-
-
-            }
+            
+            
 
         }
     }
+}
