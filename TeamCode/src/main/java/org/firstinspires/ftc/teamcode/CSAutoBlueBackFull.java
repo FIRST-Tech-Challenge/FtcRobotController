@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -31,8 +31,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Blue Front Final", group = "CenterStage", preselectTeleOp = "Full")
-public class CSAutoBlueFrontDummy extends CSMethods {
+//@Autonomous(name = "Blue Back", group = "CenterStage", preselectTeleOp = "Full")
+@Disabled
+public class CSAutoBlueBackFull extends CSMethods {
+
     @Override
     public void runOpMode() {
         setup(false);
@@ -41,15 +43,15 @@ public class CSAutoBlueFrontDummy extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        drive(-3);
+        drive(tiles(-1));
+        drive(tiles(-1.15));
         turn(90);
-        drive(85);
+        drive(tiles(1.7));
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
 
 }
