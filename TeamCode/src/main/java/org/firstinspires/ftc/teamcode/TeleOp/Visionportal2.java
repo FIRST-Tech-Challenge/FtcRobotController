@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 // this opmode was copied and modified from RobotAutoDriveToAprilTagOmni.java
 @TeleOp(name="Omni Drive To AprilTag")
-@Disabled
 public class Visionportal2 extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 6.0; //  this is how close the camera should get to the target (inches)

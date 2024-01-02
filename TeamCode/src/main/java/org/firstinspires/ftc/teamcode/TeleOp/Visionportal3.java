@@ -26,7 +26,6 @@ during auto for the second part of the tensorflow object detection task
 */
 
 @TeleOp(name="#2 Omni Drive To AprilTag")
-@Disabled
 public class Visionportal3 extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 6.0; //  this is how close the camera should get to the target (inches)
@@ -222,7 +221,6 @@ public class Visionportal3 extends LinearOpMode {
      * Initialize the AprilTag processor.
      */
     private void initAprilTag() {
-        // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
@@ -234,7 +232,7 @@ public class Visionportal3 extends LinearOpMode {
         // Note: Decimation can be changed on-the-fly to adapt during a match.
         aprilTag.setDecimation(2);
 
-        // Create the vision portal by using a builder.
+        // we will add all the custom settings in the last iteration of the vision code
         if (USE_WEBCAM) {
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
@@ -248,10 +246,7 @@ public class Visionportal3 extends LinearOpMode {
         }
     }
 
-    /*
-     Manually set the camera gain and exposure.
-     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
-    */
+    // not too useful but the sample code had it so
     private void setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 

@@ -18,7 +18,6 @@ import java.util.*;
 
 // LiveView refers only to the Robot Controller preview (example shown above). It’s completely separate from Driver Station Camera Stream, which still operates normally even if LiveView is stopped (manually or automatically).
 @TeleOp(name = "(vision) Djokovic will win the Golden Slam in 2024")
-@Disabled
 public class Visionportal1 extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
