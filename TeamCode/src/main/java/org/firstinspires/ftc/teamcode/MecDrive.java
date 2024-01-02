@@ -163,9 +163,7 @@ public class MecDrive extends LinearOpMode {
             intakeLift.setPosition(.5);
             intake.setPower(1);
         }
-        if (gamepad1.dpad_down) {
 
-        }
         if (gamepad1.dpad_left) {
             speedFactor = (float) .1;
         }
@@ -235,18 +233,27 @@ public class MecDrive extends LinearOpMode {
             LHang.setPower(0);
             RHang.setPower(0);
         }
+        if (gamepad1.left_bumper) {
+            RHook.setPosition(1);
+            LHook.setPosition(0);
+        }
+        if (gamepad1.right_bumper) {
+            RHook.setPosition(.5);
+            LHook.setPosition(.5);
+            intakeLift.setPosition(.5);
+        }
         if (gamepad2.dpad_left) {
             Pivot.setPosition(.8);
             Door.setPosition(0);
         }
-        if (gamepad1.left_trigger > .5) {
-           RCLaw.setPosition(1);
-           LCLaw.setPosition(0);
-        }
-        if (gamepad1.right_trigger > .5) {
-            RCLaw.setPosition(.65);
-            LCLaw.setPosition(.35);
-        }
+      //  if (gamepad1.left_trigger > .5) {
+        //   RCLaw.setPosition(1);
+          // LCLaw.setPosition(0);
+       // }
+       // if (gamepad1.right_trigger > .5) {
+         //   RCLaw.setPosition(.65);
+          //  LCLaw.setPosition(.35);
+       // }
 
 
         // Door Open .45
