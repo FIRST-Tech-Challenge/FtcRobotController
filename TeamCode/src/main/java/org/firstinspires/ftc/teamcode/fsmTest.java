@@ -16,10 +16,13 @@ public class fsmTest extends OpMode
 {
     public enum State
     {
-        WHAT
+        INTAKE,
+        OUTLOW,
+        OUTMID,
+        OUTHIGH
     }
 
-    State state = State.WHAT;
+    State state = State.INTAKE;
 
     RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
     DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FLeft");
@@ -63,10 +66,17 @@ public class fsmTest extends OpMode
     {
         switch (state)
         {
-            case WHAT:
+            case INTAKE:
+
+            case OUTLOW:
+
+            case OUTMID:
+
+            case OUTHIGH:
+
             default:
                 // should never be reached, as liftState should never be null
-                state = State.WHAT;
+                state = State.INTAKE;
         }
 
         double y = -gamepad1.left_stick_y;
