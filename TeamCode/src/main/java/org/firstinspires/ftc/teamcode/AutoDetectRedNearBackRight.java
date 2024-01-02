@@ -63,7 +63,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Auto Detect Blue Near Back Left", group="")
+@TeleOp(name="Auto Detect Red Near Back Right", group="")
 public class AutoDetectRedNearBackRight extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -92,6 +92,9 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
     public void runOpMode() {
         robot.init();
 
+        visionProcessor = new FirstVisionProcessor();
+        visionProcessor.colorToCheck = "red";
+
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "webcam1"), visionProcessor);
 
@@ -99,8 +102,6 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            visionProcessor = new FirstVisionProcessor();
-            visionProcessor.colorToCheck = "red";
 
             FirstVisionProcessor.Selected centerSelectedDirection = visionProcessor.getSelection();
             double[] centerColorValues = visionProcessor.colorValues;
