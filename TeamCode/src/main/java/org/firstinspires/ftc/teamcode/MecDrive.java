@@ -18,6 +18,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM2;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMBase;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine;
 
 
 @TeleOp
@@ -28,21 +32,22 @@ public class MecDrive extends LinearOpMode {
     private DcMotorEx RL;
     private DcMotorEx RR;
 
-    private DcMotorEx rightHook;
-    private DcMotorEx leftHook;
+
     private DcMotorEx intake;
     private DcMotorEx Lift;
-    private DcMotorEx RHang;
-    private DcMotorEx LHang;
-    private Servo RHook;
-    private Servo LHook;
+    public static DcMotorEx RHang;
+    public static DcMotorEx LHang;
+    public static Servo RHook;
+    public static Servo LHook;
     private Servo intakeLift;
-    private Servo airplane;
+    public static Servo airplane;
     private Servo Door;
-    private Servo RLock;
-    private Servo LLock;
+    public static Servo RLock;
+    public static Servo LLock;
     private Servo Pivot;
     private Servo SLift;
+    private Servo RCLaw;
+    private Servo LCLaw;
 
     private float Rservopos;
     private float Lservopos;
@@ -53,10 +58,15 @@ public class MecDrive extends LinearOpMode {
     private int LiftCounts;
     private float speedFactor;
 
+    public static boolean RESETME;
+
     NormalizedColorSensor colorSensor;
 
     CenterStageDriveBase centerStageDriveBase;
     TrackingWheelIntegrator trackingWheelIntegrator;
+
+    HangStateM HSM = new HangStateM();
+    HangStateM2 HSM2 = new HangStateM2();
 
     float[] hsvValues = new float[3];
 
@@ -86,11 +96,13 @@ public class MecDrive extends LinearOpMode {
         LLock=(Servo)  hardwareMap.get(Servo.class, "LLock");
         Pivot=(Servo)  hardwareMap.get(Servo.class, "Pivot");
         SLift=(Servo)  hardwareMap.get(Servo.class, "SLift");
+        RCLaw=(Servo)  hardwareMap.get(Servo.class, "RCLaw");
+        LCLaw=(Servo)  hardwareMap.get(Servo.class, "LCLaw");
         RHook=(Servo)  hardwareMap.get(Servo.class, "RHook");
         LHook=(Servo)  hardwareMap.get(Servo.class, "LHook");
 
 
-        colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+//        colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
         centerStageDriveBase = new CenterStageDriveBase();
         centerStageDriveBase.init(hardwareMap);
@@ -115,13 +127,27 @@ public class MecDrive extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            runGamepad();
+        if (RESETME) {
+            HSM.reset();
+        }
+        if (RESETME) {
+            HSM2.reset();
         }
 
 
 
+        while (opModeIsActive()) {
 
+            if (gamepad2.right_bumper) {
+                HSM.runIteration();
+                runGamepad();
+            }
+           // if (gamepad2.left_trigger > .5) {
+             //   HSM2.runIteration();
+             //   runGamepad();
+         //   }
+            runGamepad();
+        }
     }
 
     void runGamepad() {
@@ -137,7 +163,9 @@ public class MecDrive extends LinearOpMode {
             intakeLift.setPosition(.5);
             intake.setPower(1);
         }
+        if (gamepad1.dpad_down) {
 
+        }
         if (gamepad1.dpad_left) {
             speedFactor = (float) .1;
         }
@@ -149,60 +177,21 @@ public class MecDrive extends LinearOpMode {
         if (gamepad1.y) {
             intakeLift.setPosition(.3);
         }
+        // 0 = l0 r1 = neuteral
+        // .5 = half way for ap
+        // 1 = l1 r0 = all the way
 
-        if (gamepad1.x) {
-
-        }
         if (gamepad1.b) {
             intake.setPower(0);
         }
-//
-        if (gamepad1.right_bumper) {
-            RHook.setPosition(1);
-            LHook.setPosition(0);
-            while (LHook.getPosition()> 0) {
-               LHang.setPower(1);
-               RHang.setPower(1);
-            }
-        }
-        if (gamepad1.left_bumper) {
-            RHook.setPosition(.70);
-            LHook.setPosition(.30);
-            while (LHook.getPosition()< .25) {
-                RHang.setPower(-.2);
-                LHang.setPower(-.2);
-            }
-        }
-        if (gamepad1.right_trigger > .5) {
-            RHook.setPosition(.4);
-            LHook.setPosition(.4);
-            while (LHook.getPosition() < .4) {
-                RHang.setPower(-.3);
-                LHang.setPower(-.3);
-            }
-        }
-        if (gamepad1.left_trigger > .5) {
-            airplane.setPosition(0);
-        }
-            else {
-            airplane.setPosition(.3);
-        }
-        if (gamepad1.dpad_up) {
-            LHang.setPower(.3);
-            RHang.setPower(.3);
-        }
-        else {
-            LHang.setPower(0);
-            RHang.setPower(0);
-        }
-        if (gamepad1.dpad_down) {
-            LLock.setPosition(.1);
+
+        if (gamepad2.right_stick_button) {
+            LLock.setPosition(.0);
             RLock.setPosition(.1);
         }
-        else {
-            RLock.setPosition(0);
-            LLock.setPosition(0);
-        }
+        // hang lock locked = .1
+        // hang lock freed = 0
+
         if (gamepad2.a) {
            Lift.setTargetPosition(-1400);
            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -213,6 +202,12 @@ public class MecDrive extends LinearOpMode {
             Lift.setTargetPosition(-10);
             Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             Lift.setPower(1);
+        }
+        if (gamepad2.x) {
+            Door.setPosition(.23);
+        }
+        if (gamepad2.y) {
+            Door.setPosition(.4);
         }
         if (gamepad2.dpad_down) {
             SLift.setPosition(.81);
@@ -226,18 +221,34 @@ public class MecDrive extends LinearOpMode {
         if (gamepad2.dpad_right) {
             SLift.setPosition(.5);
         }
-
-        if (gamepad1.dpad_left) {
+        if (gamepad2.left_bumper) {
+            RHook.setPosition(.75);
+            LHook.setPosition(.25);
+        }
+        if (gamepad2.left_trigger > .5) {
+            RHook.setPosition(0);
+            LHook.setPosition(1);
+            LHang.setPower(1);
+            RHang.setPower(1);
+        }
+        else {
+            LHang.setPower(0);
+            RHang.setPower(0);
+        }
+        if (gamepad2.dpad_left) {
             Pivot.setPosition(.8);
             Door.setPosition(0);
         }
+        if (gamepad1.left_trigger > .5) {
+           RCLaw.setPosition(1);
+           LCLaw.setPosition(0);
+        }
+        if (gamepad1.right_trigger > .5) {
+            RCLaw.setPosition(.65);
+            LCLaw.setPosition(.35);
+        }
 
-        if (gamepad2.right_bumper) {
-            Door.setPosition(.43);
-        }
-        if (gamepad2.left_bumper) {
-            Door.setPosition(.45);
-        }
+
         // Door Open .45
         // Door Closed .3
         // Pivot down score .45
@@ -248,29 +259,28 @@ public class MecDrive extends LinearOpMode {
 
         LiftCounts = Lift.getCurrentPosition();
 
-
         telemetry.addData("lift counts:", LiftCounts);
 
         telemetry.addData("ServoRpos", Rservopos);
         telemetry.addData("ServoLpos", Lservopos);
 
-        NormalizedRGBA colors = colorSensor.getNormalizedColors();
-        Color.colorToHSV(colors.toColor(), hsvValues);
-        telemetry.addData("Color Sensor (Rev 3)", " %d %d %d", Math.round(colors.red * 10000), Math.round(colors.green * 10000), Math.round(colors.blue * 10000));
-        telemetry.addData( "Colors (hsv)", "%d %d %d %d", Math.round(hsvValues[0] * 1), Math.round(hsvValues[1] * 1), Math.round(hsvValues[2] * 1), Math.round(colors.alpha * 10000));
-        if ( colors.red * 10000 > 200 && colors.red * 10000 < 270) {
-            pixcol = "Purple";
-        }
-        if (colors.red * 10000 < 100 && colors.red * 10000 > 50) {
-            pixcol = "Green";
-        }
-        if (colors.red * 10000 < 350 && colors.red * 10000 > 270) {
-            pixcol = "Yellow";
-        }
-        if (colors.red * 10000 > 400) {
-            pixcol = "White";
-        }
-        telemetry.addData("Suspected Pixel Color", "%s", pixcol);
+//        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+//        Color.colorToHSV(colors.toColor(), hsvValues);
+//        telemetry.addData("Color Sensor (Rev 3)", " %d %d %d", Math.round(colors.red * 10000), Math.round(colors.green * 10000), Math.round(colors.blue * 10000));
+//        telemetry.addData( "Colors (hsv)", "%d %d %d %d", Math.round(hsvValues[0] * 1), Math.round(hsvValues[1] * 1), Math.round(hsvValues[2] * 1), Math.round(colors.alpha * 10000));
+//        if ( colors.red * 10000 > 200 && colors.red * 10000 < 270) {
+//            pixcol = "Purple";
+//        }
+//        if (colors.red * 10000 < 100 && colors.red * 10000 > 50) {
+//            pixcol = "Green";
+//        }
+//        if (colors.red * 10000 < 350 && colors.red * 10000 > 270) {
+//            pixcol = "Yellow";
+//        }
+//        if (colors.red * 10000 > 400) {
+//            pixcol = "White";
+//        }
+//        telemetry.addData("Suspected Pixel Color", "%s", pixcol);
         telemetry.update();
 
         MecanumDrive.cartesian(Globals.robot,
