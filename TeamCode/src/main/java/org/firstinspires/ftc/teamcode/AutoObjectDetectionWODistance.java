@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 //.robotcontroller.external.samples
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -22,6 +23,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 //@Autonomous(name = "Concept: Automatic Object Detection", group = "Concept")
+@Disabled
 @TeleOp(name = "HornetSquad Object Detection WO Distance Sensor" +
         "", group = "Concept")
 public class AutoObjectDetectionWODistance extends LinearOpMode {

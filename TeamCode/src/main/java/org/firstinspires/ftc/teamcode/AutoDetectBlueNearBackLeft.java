@@ -29,12 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -62,13 +63,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="HornetSquadRobo: Auto Drive By Encoder", group="Robot")
-public class AutoDriveByEncoder extends LinearOpMode {
+@TeleOp(name="Auto Detect Blue Near Back Left", group="")
+public class AutoDetectBlueNearBackLeft extends LinearOpMode {
 
     /* Declare OpMode members. */
     private RobotHardware robot = new RobotHardware(this);
     private ElapsedTime     runtime = new ElapsedTime();
+    private FirstVisionProcessor visionProcessor;
+    private VisionPortal visionPortal;
 
+    /************Encoder parameters*****************/
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
     // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
@@ -80,6 +84,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
+    /************Encoder params end****************/
     static final double     DRIVE_SPEED             = 0.3;
     static final double     TURN_SPEED              = 0.2;
 
@@ -87,34 +92,71 @@ public class AutoDriveByEncoder extends LinearOpMode {
     public void runOpMode() {
         robot.init();
 
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "webcam1"), visionProcessor);
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        if (opModeIsActive()) {
+            visionProcessor = new FirstVisionProcessor();
+            visionProcessor.colorToCheck = "blue";
+
+            FirstVisionProcessor.Selected centerSelectedDirection = visionProcessor.getSelection();
+            double[] centerColorValues = visionProcessor.colorValues;
+            telemetry.addData("CenterSelectionIdentified", centerSelectedDirection);
+            telemetry.update();
+
+            while (opModeIsActive() && !isStopRequested()) {
+
+                if (centerSelectedDirection == FirstVisionProcessor.Selected.LEFT) {
+                    telemetry.addData("Travelling Left", "");
+                    telemetry.update();
+                    travelLeft();
+                }
+                else if (centerSelectedDirection == FirstVisionProcessor.Selected.RIGHT) {
+                    telemetry.addData("Travelling Right", "");
+                    telemetry.update();
+                    travelRight();
+                }
+                else {
+                    telemetry.addData("Travelling Straight", "");
+                    telemetry.update();
+                    travelStraight();
+                }
+                break;
+            }
+        }
+    }
+
+    public void travelStraight(){
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at",  "%7d :%7d",
-                          robot.getLeftMotorCurrentPosition(),
-                          robot.getRightMotorCurrentPosition());
+                robot.getLeftMotorCurrentPosition(),
+                robot.getRightMotorCurrentPosition());
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
         // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
         telemetry.addData("go forward", "");
         telemetry.update();
         encoderDrive(DRIVE_SPEED, 0, 27,  27, 10);  // S1: Forward 47 Inches with 5 Sec timeout
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED, 0,   -25, -25, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
+
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, TURN_SPEED);
         sleep(3700);
 
+        //go straight
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
@@ -127,9 +169,120 @@ public class AutoDriveByEncoder extends LinearOpMode {
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
+        sleep(100);  // pause to display final telemetry message.
     }
 
+    public void travelLeft(){
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Starting at",  "%7d :%7d",
+                robot.getLeftMotorCurrentPosition(),
+                robot.getRightMotorCurrentPosition());
+        telemetry.update();
+
+        // Step through each leg of the path,
+        telemetry.addData("go forward", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+
+        //turn left
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0.1, TURN_SPEED);
+        sleep(2300);
+
+        //forward
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("go forward", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0, 8,  8, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+
+        //reverse
+        telemetry.addData("Reverse", "");
+        telemetry.update();
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        encoderDrive(DRIVE_SPEED, 0,   -12, -12, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        telemetry.addData("Turning left", "");
+        telemetry.update();
+
+        //turn left
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0, TURN_SPEED);
+        sleep(1200);
+
+        //go straight
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("go to back stage", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0,    55, 55, 10);
+        //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
+        telemetry.addData("Grabber", "released");
+        telemetry.update();
+        sleep(100);  // pause to display final telemetry message.
+    }
+
+    public void travelRight(){
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Starting at",  "%7d :%7d",
+                robot.getLeftMotorCurrentPosition(),
+                robot.getRightMotorCurrentPosition());
+        telemetry.update();
+
+        // Step through each leg of the path,
+        telemetry.addData("go forward", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+
+        //turn right
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0, -TURN_SPEED);
+        sleep(2000);
+
+        //forward
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("go forward", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+
+        //reverse
+        telemetry.addData("Reverse", "");
+        telemetry.update();
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        encoderDrive(DRIVE_SPEED, 0,   -12, -12, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        telemetry.addData("Turning left", "");
+        telemetry.update();
+
+        //turn left
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0, TURN_SPEED);
+        sleep(4700);
+
+        //go straight
+        robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("go to back stage", "");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 0,    55, 55, 10);
+        //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
+        telemetry.addData("Grabber", "released");
+        telemetry.update();
+        sleep(100);  // pause to display final telemetry message.
+    }
     /*
      *  Method to perform a relative move, based on encoder counts.
      *  Encoders are not reset as the move is based on the current position.

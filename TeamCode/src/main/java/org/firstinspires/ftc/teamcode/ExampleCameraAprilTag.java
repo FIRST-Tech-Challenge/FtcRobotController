@@ -49,6 +49,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
+@Disabled
 @TeleOp(name = "Concept: Double Vision", group = "Concept")
 
 public class ExampleCameraAprilTag extends LinearOpMode {

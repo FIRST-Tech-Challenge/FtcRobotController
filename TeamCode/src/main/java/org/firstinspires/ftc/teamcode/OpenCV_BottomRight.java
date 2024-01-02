@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
+@Disabled
 @TeleOp(name = "HornetSquad: OpenCV Detection Bottom Right", group = "Hornet Vision")
 public class OpenCV_BottomRight extends LinearOpMode {
     private RobotHardware robot = new RobotHardware(this);

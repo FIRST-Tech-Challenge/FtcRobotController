@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,7 +14,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class FirstVisionProcessor implements VisionProcessor {
+public class  FirstVisionProcessor implements VisionProcessor {
 
     public Rect rectLeft = new Rect(10, 10, 200, 450);
 
@@ -25,6 +27,11 @@ public class FirstVisionProcessor implements VisionProcessor {
     Mat submat = new Mat();
     Mat hsvMat = new Mat();
 
+    public String colorToCheck;
+    //Telemetry telemetry;
+
+    double[] colorValues = {};
+
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
     }
@@ -33,9 +40,14 @@ public class FirstVisionProcessor implements VisionProcessor {
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
 
-        double satRectLeft = getAvgSaturation(hsvMat, rectLeft);
-        double satRectMiddle = getAvgSaturation(hsvMat, rectMiddle);
-        double satRectRight = getAvgSaturation(hsvMat, rectRight);
+        double satRectLeft = getAvgSaturation(hsvMat, rectLeft, colorToCheck);
+        double satRectMiddle = getAvgSaturation(hsvMat, rectMiddle, colorToCheck);
+        double satRectRight = getAvgSaturation(hsvMat, rectRight, colorToCheck);
+        //double satRectLeft = getAvgRedBlueSaturation(hsvMat, rectLeft, colorToCheck);
+        //double satRectMiddle = getAvgRedBlueSaturation(hsvMat, rectMiddle, colorToCheck);
+        //double satRectRight = getAvgRedBlueSaturation(hsvMat, rectRight, colorToCheck);
+
+        colorValues = new double[]{satRectLeft, satRectMiddle, satRectRight};
 
         if ((satRectLeft > satRectMiddle) && (satRectLeft > satRectRight)) {
             return Selected.LEFT;
@@ -43,12 +55,43 @@ public class FirstVisionProcessor implements VisionProcessor {
             return Selected.MIDDLE;
         }
         return Selected.RIGHT;
+
     }
 
-    protected double getAvgSaturation(Mat input, Rect rect) {
+    protected double getAvgSaturation(Mat input, Rect rect, String colorToCheck) {
         submat = input.submat(rect);
+        int colorPosition = 1;
         Scalar color = Core.mean(submat);
-        return color.val[1];
+        /*telemetry.addData("blue color ", color.val[0]);
+        telemetry.addData("green color ", color.val[1]);
+        telemetry.addData("red color ", color.val[2]);
+        telemetry.update();
+*/
+        if (colorToCheck == "blue")
+            colorPosition = 0;
+        else if(colorToCheck == "red")
+            colorPosition = 2;
+
+        return color.val[colorPosition];
+    }
+    protected double getAvgRedBlueSaturation(Mat input, Rect rect, String colorName) {
+        //bgr - default blue
+        Scalar lower = new Scalar(50, 50, 100);
+        Scalar upper = new Scalar(255, 255, 140);
+        int colorPosition = 0;
+        submat = input.submat(rect);
+
+        if (colorName == "blue") {
+            //red
+            lower = new Scalar(50, 50, 100);
+            upper = new Scalar(255, 255, 140);
+            colorPosition = 2;
+        }
+        Mat colorMask = new Mat();
+        Core.inRange(submat, lower, upper, colorMask);
+
+        Scalar result = Core.mean(colorMask);
+        return result.val[colorPosition];
     }
 
     private android.graphics.Rect makeGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {
@@ -104,6 +147,7 @@ public class FirstVisionProcessor implements VisionProcessor {
     public Selected getSelection() {
         return selection;
     }
+
     public enum Selected {
         NONE,
         LEFT,

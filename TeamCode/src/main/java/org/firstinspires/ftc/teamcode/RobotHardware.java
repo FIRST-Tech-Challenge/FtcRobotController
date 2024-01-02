@@ -218,6 +218,7 @@ public class RobotHardware {
         rbMotor.setMode(MotorRunMode);
         lfMotor.setMode(MotorRunMode);
         lbMotor.setMode(MotorRunMode);
+
     }
 
     public int getLeftMotorCurrentPosition(){
