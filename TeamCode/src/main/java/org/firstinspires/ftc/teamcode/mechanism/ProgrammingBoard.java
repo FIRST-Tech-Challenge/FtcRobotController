@@ -19,9 +19,9 @@ public class ProgrammingBoard {
     private static DcMotor intakeMotor;
     private static DcMotor armMotor;
 
-    // Defines the motors.
+    private static Servo panServo;
 
-    // private static CRServo intakeServo;
+    // Defines the motors.
 
 
     public void init(HardwareMap hwMap) {
@@ -40,9 +40,9 @@ public class ProgrammingBoard {
         // Sets the mode. *See official FTC guide for more options.
 
         leftFrontMotor_0.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor_1.setDirection(DcMotor.Direction.FORWARD);
+        leftBackMotor_1.setDirection(DcMotor.Direction.REVERSE);
         rightBackMotor_2.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor_3.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor_3.setDirection(DcMotor.Direction.FORWARD);
         // Sets the direction.
 
         intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
@@ -53,7 +53,7 @@ public class ProgrammingBoard {
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // intakeServo = hwMap.get(CRServo.class, "intakeServo");
+        panServo = hwMap.get(Servo.class, "panServo");
 
     }
 
@@ -68,12 +68,10 @@ public class ProgrammingBoard {
     public void setIntakePower(double intakePower){
         intakeMotor.setPower(intakePower);
     }
-//    public void setIntakePower(double servoPower){
-//        intakeServo.setPower(servoPower);
-//    }
-//    Used for testing the servo originally.
 
     public void setArmPower(double armPower) {armMotor.setPower(armPower);}
+
+    public void setPanAngle (double panAngle) {panServo.setPosition(panAngle);}
 
 
 

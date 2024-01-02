@@ -44,14 +44,16 @@ public class CompetitionCode extends OpMode {
         Board.setIntakePower(intakePower);
         Board.setArmPower(armPower);
 
-//        DriveTrain.controllerDrive(axial, lateral, yaw);
+        DriveTrain.controllerDrive(axial, lateral, yaw);
         // This function sends the game pad inputs to the Traction class.
 
-//        Board.setIntakePower(gamepad1.left_trigger);
-        // We used this to test the CRServo.
+        if (gamepad1.dpad_up) {
+            Board.setPanAngle(0.5);
+        }
 
-
-
+        else if (gamepad1.dpad_down) {
+            Board.setPanAngle(0);
+        }
 
     }
 }

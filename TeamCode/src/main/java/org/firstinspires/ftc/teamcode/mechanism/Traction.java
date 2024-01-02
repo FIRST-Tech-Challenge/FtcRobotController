@@ -10,26 +10,26 @@ public class Traction {
         // Function takes in desired directions as parameters.
 
         double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial + lateral - yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double rightBackPower  = axial + lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial - lateral - yaw;
         // Calculates necessary motor speeds.
 
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
+        max = Math.max(max, Math.abs(leftBackPower));
         // Finds max value.
 
 
         if (max > 1.0) {
             leftFrontPower  /= max;
             rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
+            rightBackPower   /= max;
+            leftBackPower  /= max;
         }
         // Readjusts for max value to preserve the intention of the controller.
 
-        Board.setDCMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+        Board.setDCMotorPower(leftFrontPower, rightBackPower, rightFrontPower, leftBackPower);
         // Sends the desired inputs over to the Board class.
 
 
