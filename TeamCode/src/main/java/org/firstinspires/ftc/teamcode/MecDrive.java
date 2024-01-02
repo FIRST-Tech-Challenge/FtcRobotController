@@ -23,75 +23,76 @@ import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
 @TeleOp
 public class MecDrive extends LinearOpMode {
 
+    // Drive Motors
     private DcMotorEx FL;
     private DcMotorEx FR;
     private DcMotorEx RL;
     private DcMotorEx RR;
 
-    private DcMotorEx rightHook;
-    private DcMotorEx leftHook;
+    // Misc. Motors
     private DcMotorEx intake;
     private DcMotorEx Lift;
     private DcMotorEx RHang;
     private DcMotorEx LHang;
+
+    //Misc. Servos
     private Servo RHook;
     private Servo LHook;
     private Servo intakeLift;
     private Servo airplane;
+
+    //Lift Servos
     private Servo Door;
     private Servo RLock;
     private Servo LLock;
     private Servo Pivot;
     private Servo SLift;
 
+    // Various Variables (don't touch)
     private float Rservopos;
     private float Lservopos;
-
     private double leftStickX;
     private double leftStickY;
     private double rightStickX;
-    private int LiftCounts;
     private float speedFactor;
 
-    NormalizedColorSensor colorSensor;
-
+    // DONT REMOVE
     CenterStageDriveBase centerStageDriveBase;
     TrackingWheelIntegrator trackingWheelIntegrator;
 
-    float[] hsvValues = new float[3];
-
-    String pixcol;
-
     public void runOpMode() {
-
-
 
         trackingWheelIntegrator = new TrackingWheelIntegrator();
 
-        FL= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "FL");
-        FR= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "FR");
-        RL= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RL");
-        RR= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RR");
+        // CONFIGURATION AND HARDWAREMAP
 
-        intake= (DcMotorEx) hardwareMap.get(DcMotorEx.class, "intake");
-        Lift = (DcMotorEx) hardwareMap.get(DcMotorEx.class, "Lift");
-        LHang = (DcMotorEx) hardwareMap.get(DcMotorEx.class, "LHang");
-        RHang = (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RHang");
+        // Drive Motor Setup
+        FL =          (DcMotorEx) hardwareMap.get(DcMotorEx.class, "FL");
+        FR =          (DcMotorEx) hardwareMap.get(DcMotorEx.class, "FR");
+        RL =          (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RL");
+        RR =          (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RR");
+
+        // Other Motors
+        intake =      (DcMotorEx) hardwareMap.get(DcMotorEx.class, "intake");
+        Lift =        (DcMotorEx) hardwareMap.get(DcMotorEx.class, "Lift");
+        LHang =       (DcMotorEx) hardwareMap.get(DcMotorEx.class, "LHang");
+        RHang =       (DcMotorEx) hardwareMap.get(DcMotorEx.class, "RHang");
+
+        // Servos
+        intakeLift =  (Servo)  hardwareMap.get(Servo.class, "intakeLift");
+        airplane =    (Servo)  hardwareMap.get(Servo.class, "airplane");
+        Door =        (Servo)  hardwareMap.get(Servo.class, "Door");
+        RLock =       (Servo)  hardwareMap.get(Servo.class, "RLock");
+        LLock =       (Servo)  hardwareMap.get(Servo.class, "LLock");
+        Pivot =       (Servo)  hardwareMap.get(Servo.class, "Pivot");
+        SLift =       (Servo)  hardwareMap.get(Servo.class, "SLift");
+        RHook =       (Servo)  hardwareMap.get(Servo.class, "RHook");
+        LHook =       (Servo)  hardwareMap.get(Servo.class, "LHook");
 
 
-        intakeLift=(Servo) hardwareMap.get(Servo.class, "intakeLift");
-        airplane=(Servo)  hardwareMap.get(Servo.class, "airplane");
-        Door=(Servo)  hardwareMap.get(Servo.class, "Door");
-        RLock=(Servo)  hardwareMap.get(Servo.class, "RLock");
-        LLock=(Servo)  hardwareMap.get(Servo.class, "LLock");
-        Pivot=(Servo)  hardwareMap.get(Servo.class, "Pivot");
-        SLift=(Servo)  hardwareMap.get(Servo.class, "SLift");
-        RHook=(Servo)  hardwareMap.get(Servo.class, "RHook");
-        LHook=(Servo)  hardwareMap.get(Servo.class, "LHook");
+        //colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
-
-        colorSensor= (NormalizedColorSensor) hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
-
+        // Sys Internals (DONT TOUCH)
         centerStageDriveBase = new CenterStageDriveBase();
         centerStageDriveBase.init(hardwareMap);
         centerStageDriveBase.enablePID();
@@ -100,21 +101,26 @@ public class MecDrive extends LinearOpMode {
         Globals.trackingWheelIntegrator = trackingWheelIntegrator;
         Globals.opMode = this;
         Globals.robot.enableBrake(true);
+
+        // Servo initial positioning
         Rservopos = 1;
         Lservopos = -1;
-        speedFactor = (float) .5;
 
+        // Run to position stuff
         Lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         Lift.setTargetPosition(1);
         Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
+        // Telemetry
         telemetry.setMsTransmissionInterval(20);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        // DONT REMOVE
         waitForStart();
 
+        // DONT REMOVE
         while (opModeIsActive()) {
             runGamepad();
         }
@@ -124,155 +130,62 @@ public class MecDrive extends LinearOpMode {
 
     }
 
+    public void Hang(double Rightservpos, double Leftservpos, double endpos, double speed) {
+        RHook.setPosition(Rightservpos);
+        LHook.setPosition(Leftservpos);
+        while (LHook.getPosition() != endpos) {
+            LHang.setPower(speed);
+            RHang.setPower(speed);
+        }
+    }
+
     void runGamepad() {
 
+        // This is for the default speed, change it with care
         speedFactor = (float) .5;
 
+        // To sync the gamepad1 sticks with local variables
         leftStickX = gamepad1.left_stick_x;
         leftStickY = gamepad1.left_stick_y;
         rightStickX = gamepad1.right_stick_x;
 
+        // All controller mappings go here
+        if (gamepad1.a)                  { intakeLift.setPosition(.5); intake.setPower(1); }
+        if (gamepad1.dpad_left)          { speedFactor = (float) .1; }
+        if (gamepad1.dpad_right)         { speedFactor = (float) 1; }
+        if (gamepad1.y)                  { intakeLift.setPosition(.3); }
+        if (gamepad1.b)                  { intake.setPower(0); }
+        if (gamepad1.right_bumper)       { Hang(1, 0, 0, 1); }
+        if (gamepad1.left_bumper)        { Hang(0.7, 0.3, 0.25, -0.2); }
+        if (gamepad1.right_trigger > .5) { Hang(0.4, 0.4, 0.4, .3); }
+        if (gamepad1.left_trigger > .5)  { airplane.setPosition(0); } else { airplane.setPosition(.3); }
+        if (gamepad1.dpad_up)            { LHang.setPower(.3); RHang.setPower(.3); } else { LHang.setPower(0); RHang.setPower(0); }
+        if (gamepad1.dpad_down)          { LLock.setPosition(.1); RLock.setPosition(.1); } else { RLock.setPosition(0); LLock.setPosition(0); }
+        if (gamepad2.a)                  { Lift.setTargetPosition(-1400); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); Door.setPosition(.3); }
+        if (gamepad2.b)                  { Lift.setTargetPosition(-10); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); }
+        if (gamepad2.dpad_down)          { SLift.setPosition(.81); Pivot.setPosition(.7); Door.setPosition(.45); }
+        if (gamepad2.dpad_up)            { SLift.setPosition(.15); Pivot.setPosition(1); }
+        if (gamepad2.dpad_right)         { SLift.setPosition(.5); }
+        if (gamepad1.dpad_left)          { Pivot.setPosition(.8); Door.setPosition(0); }
+        if (gamepad2.right_bumper)       { Door.setPosition(.43); }
+        if (gamepad2.left_bumper)        { Door.setPosition(.45); }
 
-        if (gamepad1.a) {
-            intakeLift.setPosition(.5);
-            intake.setPower(1);
-        }
-
-        if (gamepad1.dpad_left) {
-            speedFactor = (float) .1;
-        }
-
-        if (gamepad1.dpad_right) {
-            speedFactor = (float) 1;
-        }
-
-        if (gamepad1.y) {
-            intakeLift.setPosition(.3);
-        }
-
-        if (gamepad1.x) {
-
-        }
-        if (gamepad1.b) {
-            intake.setPower(0);
-        }
-//
-        if (gamepad1.right_bumper) {
-            RHook.setPosition(1);
-            LHook.setPosition(0);
-            while (LHook.getPosition()> 0) {
-               LHang.setPower(1);
-               RHang.setPower(1);
-            }
-        }
-        if (gamepad1.left_bumper) {
-            RHook.setPosition(.70);
-            LHook.setPosition(.30);
-            while (LHook.getPosition()< .25) {
-                RHang.setPower(-.2);
-                LHang.setPower(-.2);
-            }
-        }
-        if (gamepad1.right_trigger > .5) {
-            RHook.setPosition(.4);
-            LHook.setPosition(.4);
-            while (LHook.getPosition() < .4) {
-                RHang.setPower(-.3);
-                LHang.setPower(-.3);
-            }
-        }
-        if (gamepad1.left_trigger > .5) {
-            airplane.setPosition(0);
-        }
-            else {
-            airplane.setPosition(.3);
-        }
-        if (gamepad1.dpad_up) {
-            LHang.setPower(.3);
-            RHang.setPower(.3);
-        }
-        else {
-            LHang.setPower(0);
-            RHang.setPower(0);
-        }
-        if (gamepad1.dpad_down) {
-            LLock.setPosition(.1);
-            RLock.setPosition(.1);
-        }
-        else {
-            RLock.setPosition(0);
-            LLock.setPosition(0);
-        }
-        if (gamepad2.a) {
-           Lift.setTargetPosition(-1400);
-           Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-           Lift.setPower(1);
-           Door.setPosition(.3);
-        }
-        if (gamepad2.b) {
-            Lift.setTargetPosition(-10);
-            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            Lift.setPower(1);
-        }
-        if (gamepad2.dpad_down) {
-            SLift.setPosition(.81);
-            Pivot.setPosition(.7);
-            Door.setPosition(.45);
-        }
-        if (gamepad2.dpad_up) {
-            SLift.setPosition(.15);
-            Pivot.setPosition(1);
-        }
-        if (gamepad2.dpad_right) {
-            SLift.setPosition(.5);
-        }
-
-        if (gamepad1.dpad_left) {
-            Pivot.setPosition(.8);
-            Door.setPosition(0);
-        }
-
-        if (gamepad2.right_bumper) {
-            Door.setPosition(.43);
-        }
-        if (gamepad2.left_bumper) {
-            Door.setPosition(.45);
-        }
+        // SERVO VALUES INDEX
         // Door Open .45
         // Door Closed .3
         // Pivot down score .45
         // Pivot store .65
         // Pivot up score 1
-        // SLift Placing posistion .15
-        // SLift Store Posistion .75
+        // SLift Placing Position .15
+        // SLift Store Position .75
 
-        LiftCounts = Lift.getCurrentPosition();
-
-
-        telemetry.addData("lift counts:", LiftCounts);
-
+        // Telemetry
+        telemetry.addData("lift counts:", Lift.getCurrentPosition());
         telemetry.addData("ServoRpos", Rservopos);
         telemetry.addData("ServoLpos", Lservopos);
-
-        NormalizedRGBA colors = colorSensor.getNormalizedColors();
-        Color.colorToHSV(colors.toColor(), hsvValues);
-        telemetry.addData("Color Sensor (Rev 3)", " %d %d %d", Math.round(colors.red * 10000), Math.round(colors.green * 10000), Math.round(colors.blue * 10000));
-        telemetry.addData( "Colors (hsv)", "%d %d %d %d", Math.round(hsvValues[0] * 1), Math.round(hsvValues[1] * 1), Math.round(hsvValues[2] * 1), Math.round(colors.alpha * 10000));
-        if ( colors.red * 10000 > 200 && colors.red * 10000 < 270) {
-            pixcol = "Purple";
-        }
-        if (colors.red * 10000 < 100 && colors.red * 10000 > 50) {
-            pixcol = "Green";
-        }
-        if (colors.red * 10000 < 350 && colors.red * 10000 > 270) {
-            pixcol = "Yellow";
-        }
-        if (colors.red * 10000 > 400) {
-            pixcol = "White";
-        }
-        telemetry.addData("Suspected Pixel Color", "%s", pixcol);
         telemetry.update();
 
+        // Applying stick positions to the wheels, don't remove
         MecanumDrive.cartesian(Globals.robot,
                 -leftStickY * speedFactor,
                 leftStickX * speedFactor,
