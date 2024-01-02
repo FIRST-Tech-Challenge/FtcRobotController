@@ -12,6 +12,7 @@ public class CSFullTeleOp extends CSMethods {
     double axial = 0.0;
     double lateral = 0.0;
     double yaw = 0.0;
+    boolean TS = false;
     final double speedMultiplier = 0.75;
     final double baseTurnSpeed = 2.5;
     double slowdownMultiplier = 0.0;
@@ -81,10 +82,16 @@ public class CSFullTeleOp extends CSMethods {
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
                 } else {
+                    try {
+                        TS = touchSensor.isPressed();
+                    } catch (Exception e) {
+                        except(e);
+                        TS = false;
+                    }
                     if (gamepad2.a) {
                         carWashMotor.setPower(carWashPower);
                         addActTelemetry("carWashMotor now moving forward");
-                    } else if (gamepad2.b && !touchSensor.isPressed()) {
+                    } else if (gamepad2.b && !TS) {
                         carWashMotor.setPower(-carWashPower);
                         addActTelemetry("carWashMotor now moving backward");
                     }
@@ -107,11 +114,11 @@ public class CSFullTeleOp extends CSMethods {
 
             if (pixelBackServo != null) {
                 if (gamepad2.y && !wasY) {
-                    if (pixelBackServo.getPosition() > 0.5 - 0.05 && pixelBackServo.getPosition() < 0.5 + 0.05) {
-                        pixelBackServo.setPosition(0);
+                    if (pixelBackServo.getPosition() > 1 - 0.05 && pixelBackServo.getPosition() < 1 + 0.05) {
+                        pixelBackServo.setPosition(0.5);
                         addActTelemetry("Set pixelBackServo to 0");
                     } else {
-                        pixelBackServo.setPosition(0.5);
+                        pixelBackServo.setPosition(1);
                         addActTelemetry("Set pixelBackServo to 0.5");
                     }
                 }
@@ -120,23 +127,21 @@ public class CSFullTeleOp extends CSMethods {
 
             if (pixelFrontServo != null) {
                 if (gamepad2.x && !wasX) {
-                    if (pixelFrontServo.getPosition() > 0.30 - 0.05 && pixelFrontServo.getPosition() < 0.30 + 0.05) {
-                        pixelFrontServo.setPosition(0.05);
+                    if (pixelFrontServo.getPosition() > 0.83 - 0.05 && pixelFrontServo.getPosition() < 0.83 + 0.05) {
+                        pixelFrontServo.setPosition(0.5);
                         addActTelemetry("Set pixelFrontServo to 0.05");
                     } else {
-                        pixelFrontServo.setPosition(0.30);
+                        pixelFrontServo.setPosition(0.83);
                         addActTelemetry("Set pixelFrontServo to 0.30");
                     }
                 }
                 wasX = gamepad2.x;
                 addActTelemetry("Did not move pixelFrontServo");
-            } else {
-                addActTelemetry("pixelFrontServo not connected");
             }
 
             if (droneServo != null) {
                 if (gamepad2.left_bumper && gamepad2.right_bumper) {
-                    droneServo.setPosition(1);
+                    droneServo.setPosition(0);
                 }
             }
         }
@@ -144,6 +149,12 @@ public class CSFullTeleOp extends CSMethods {
     }
     public void addActTelemetry(String message){
         telemetry.addData("Last Action",message); // Last Action: message
+        if(trayTiltingServo == null) {
+            telemetry.addData("Tray Tilting Servo", "Disconnected");
+        }
+        if (pixelFrontServo == null) {
+            telemetry.addData("Pixel Front Servo", "not connected");
+        }
         telemetry.update();
     }
 }
