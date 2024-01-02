@@ -64,12 +64,12 @@ public class SlideTest extends LinearOpMode {
 
  */
             if (smartGamepad2.dpad_up_pressed()) {
-                robot.dualMotorLift.goToRelativeOffset(2);
+                robot.outtake.lift.goToRelativeOffset(2);
                 telemetry.addLine("dpad up pressed");
                 //Log.v("PIDLift: gamepad", "dpad up");
             }
             else if (smartGamepad2.dpad_down_pressed()) {
-                robot.dualMotorLift.goToRelativeOffset(-2);
+                robot.outtake.lift.goToRelativeOffset(-2);
                 telemetry.addLine("dpad down pressed");
                 //Log.v("PIDLift: gamepad", "dpad down");
             }

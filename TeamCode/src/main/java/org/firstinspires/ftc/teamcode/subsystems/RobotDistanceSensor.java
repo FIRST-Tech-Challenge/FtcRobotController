@@ -18,8 +18,8 @@ public class RobotDistanceSensor implements Subsystem {
     private double threashold = 0.65;
 
     public RobotDistanceSensor(Robot robot, Telemetry telemetry) {
-        DistanceSensorL = robot.hardwareMap.get(DistanceSensor.class, "LDist");
-        DistanceSensorR = robot.hardwareMap.get(DistanceSensor.class,"RDist");
+        DistanceSensorL = robot.hardwareMap.get(DistanceSensor.class, "distanceL");
+        DistanceSensorR = robot.hardwareMap.get(DistanceSensor.class,"distanceR");
         this.telemetry = telemetry;
         dsL = 0;
         dsR = 0;

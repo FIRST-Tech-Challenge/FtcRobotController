@@ -15,6 +15,7 @@ public class CrabRobot extends Robot {
     public SmartGamepad smartGamepad1;
     public SmartGamepad smartGamepad2;
     public DroneLauncher droneLauncher;
+    public RobotDistanceSensor ds;
 
     public CrabRobot(LinearOpMode opMode) {
         super(opMode);
@@ -26,6 +27,7 @@ public class CrabRobot extends Robot {
         registerSubsystem(outtake); //dualMotorLift is initialized in outtake
         droneLauncher = new DroneLauncher(this, opMode.telemetry);
         registerSubsystem(droneLauncher);
+        ds = new RobotDistanceSensor(this, opMode.telemetry);
 
     }
 

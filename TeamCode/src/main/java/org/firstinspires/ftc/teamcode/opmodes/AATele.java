@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.CrabRobot;
+import org.firstinspires.ftc.teamcode.subsystems.RobotDistanceSensor;
 import org.firstinspires.ftc.teamcode.subsystems.SmartGamepad;
 
 @TeleOp
@@ -19,6 +20,7 @@ public class AATele extends LinearOpMode {
         robot.addGamepads(gamepad1, gamepad2);
         SmartGamepad smartGamepad1 = robot.smartGamepad1;
         SmartGamepad smartGamepad2 = robot.smartGamepad2;
+        RobotDistanceSensor distanceSensor = robot.ds;
 
         NanoClock clock = NanoClock.system();
         double prevTime = clock.seconds();
@@ -144,6 +146,8 @@ public class AATele extends LinearOpMode {
             //telemetry.addData("slide pos", robot.outtake.getLiftPos());
             //telemetry.addData("slide power", robot.outtake.getLiftPower());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
+            telemetry.addData("DistR: ",distanceSensor.distanceRight());
+            telemetry.addData("DistL: ",distanceSensor.distanceLeft());
             double currentTime = clock.seconds();
             //telemetry.addData("Update time: ", currentTime - prevTime);
             prevTime = currentTime;
