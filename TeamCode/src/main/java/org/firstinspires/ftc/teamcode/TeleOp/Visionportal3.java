@@ -25,6 +25,8 @@ during auto for the second part of the tensorflow object detection task
 (placing the yellow pixel? or purple pixel? I forgot)
 */
 
+// this is code for BLUE TEAM
+
 @TeleOp(name="#2 Omni Drive To AprilTag")
 public class Visionportal3 extends LinearOpMode {
     // Adjust these numbers to suit your robot.
@@ -47,7 +49,7 @@ public class Visionportal3 extends LinearOpMode {
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static int desiredTagID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
 
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
@@ -59,16 +61,16 @@ public class Visionportal3 extends LinearOpMode {
 
 
     @Override public void runOpMode() {
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+        boolean targetFound = false;    // Set to true when an AprilTag target is detected
+        double drive = 0;        // Desired forward power/speed (-1 to +1)
+        double strafe = 0;        // Desired strafe power/speed (-1 to +1)
+        double turn = 0;        // Desired turning power/speed (-1 to +1)
 
         initAprilTag();
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBack");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
 
 
@@ -81,106 +83,83 @@ public class Visionportal3 extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             targetFound = false;
-            desiredTag  = null;
+            desiredTag = null;
 
-            // assuming we are close enough so that the only apriltags detected are the three on the backboard:
+            if (goToLeftTag) {
+                desiredTagID = 1;
+            } else if (goToCenterTag) {
+                desiredTagID = 2;
+            } else if (goToRightTag) {
+                desiredTagID = 3;
+            } else {
+                telemetry.addData("ID Status", "None of the Blue team tags detected, will go to any detected tag now.");
+                telemetry.update();
+            }
+
+
+            // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-                if (goToLeftTag) {
-                        double min = Integer.MAX_VALUE;
-                        for (AprilTagDetection detection : currentDetections) {
-                            if (detection.ftcPose.x < min) {
-                                desiredTag = detection;
-                                min = detection.ftcPose.x;
-                            }
-
-                            if (desiredTag.metadata != null) targetFound = true;
-                        }
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((desiredTagID < 0) || (detection.id == desiredTagID)) {
+                        // Yes, we want to use this tag.
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                     }
-
-                if (goToCenterTag) {
-                    double min = Integer.MAX_VALUE;
-                    double max = Integer.MIN_VALUE;
-
-                    for (AprilTagDetection detection : currentDetections) {
-                        if (detection.ftcPose.x < min) {
-                            desiredTag = detection;
-                            min = detection.ftcPose.x;
-                        }
-                    }
-                    for (AprilTagDetection detection : currentDetections) {
-                        if (detection.ftcPose.x > max) {
-                            desiredTag = detection;
-                            max = detection.ftcPose.x;
-                        }
-
-                        currentDetections.remove(min);
-                        currentDetections.remove(max);
-
-                        desiredTag = currentDetections.get(0);
-                        if (desiredTag.metadata != null) targetFound = true;
-
-                    }
-                }
-
-                if (goToRightTag) {
-                    double max = Integer.MIN_VALUE;
-                    for (AprilTagDetection detection : currentDetections) {
-                        if (detection.ftcPose.x > max) {
-                            desiredTag = detection;
-                            max = detection.ftcPose.x;
-                        }
-
-                        if (desiredTag.metadata != null) targetFound = true;
-                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
             }
 
             if (targetFound) {
-                telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
+                telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
                 telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
-                telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+                telemetry.addData("\n>", "Drive using joysticks to find valid target\n");
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
             if (gamepad1.left_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing;
-                double  yawError        = desiredTag.ftcPose.yaw;
+                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double headingError = desiredTag.ftcPose.bearing;
+                double yawError = desiredTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
 
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
-                turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                drive = -gamepad1.left_stick_y / 2.0;  // Reduce drive rate to 50%.
+                strafe = -gamepad1.left_stick_x / 2.0;  // Reduce strafe rate to 50%.
+                turn = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+                telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             }
             telemetry.update();
-
-
 
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
             sleep(10);
         }
-
+    }
 
     /**
      * Move robot according to desired axes motions
