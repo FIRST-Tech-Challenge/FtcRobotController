@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Full", group = "CenterStage")
-public class CSFullTeleOp extends CSMethods {
+@TeleOp(name = "One Gamepad", group = "CenterStage")
+public class CSOneGamepadTeleOp extends CSMethods {
 
     // Declare OpMode members for each of the 4 motors.
     boolean wasY = false;
@@ -90,13 +90,13 @@ public class CSFullTeleOp extends CSMethods {
             }
 
             if (carWashMotor != null) {
-                if (!gamepad2.a && !gamepad2.b) {
+                if (!gamepad1.a && !gamepad1.b) {
                     carWashMotor.setPower(0);
                 } else {
-                    if (gamepad2.a) {
+                    if (gamepad1.a) {
                         carWashMotor.setPower(carWashPower);
                         addActTelemetry("carWashMotor now moving forward");
-                    } else if (gamepad2.b) {
+                    } else if (gamepad1.b) {
                         carWashMotor.setPower(-carWashPower);
                         addActTelemetry("carWashMotor now moving backward");
                     }
@@ -144,7 +144,7 @@ public class CSFullTeleOp extends CSMethods {
             }
 
             if (droneServo != null) {
-                if (gamepad2.left_bumper && gamepad2.right_bumper) {
+                if (gamepad1.left_bumper && gamepad1.right_bumper) {
                     droneServo.setPosition(0);
                 }
             }
