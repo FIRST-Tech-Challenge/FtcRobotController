@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 5, Y_OFFSET = 2, UPSAMPLE_THRESHOLD = 50, NUMBER_OF_SAMPLES = 10;
+  public static double X_OFFSET = 4.5, Y_OFFSET = -3.5, UPSAMPLE_THRESHOLD = 50, NUMBER_OF_SAMPLES = 10;
   public static int EXPOSURE_MS = 2, GAIN = 45;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
@@ -182,11 +182,6 @@ public class RFAprilCam {
     if (detections != null) {
       for (AprilTagDetection detection : detections) {
         double time = aprilTag.getPerTagAvgPoseSolveTime();
-        int inde = min((int)(time*.001*(loops/BasicRobot.time)), poseHistory.size()-1);
-        if(poseHistory.size()==0){
-          poseHistory.add(currentPose);
-          inde=0;
-        }
         AprilTagPoseFtc poseFtc = detection.ftcPose;
         if (poseFtc != null) {
           double p_x = poseFtc.y, p_y = -poseFtc.x;
@@ -201,14 +196,14 @@ public class RFAprilCam {
                   pos.plus(
                       new Vector2d(
                           -(p_x) * directions[p_ind][0] - offset.getX(),
-                          -(p_y) * directions[p_ind][1] - offset.getY()).rotated(poseHistory.get(inde).getHeading()+PI)),
+                          -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
                   -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
-          if (poseFtc.range < UPSAMPLE_THRESHOLD) {
+          if (poseFtc.range < UPSAMPLE_THRESHOLD && camPose.vec().distTo(currentPose.vec())<10) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }
             //                        upsample = true;
-            camPoseError = camPoseError.plus(camPose).minus(poseHistory.get(inde));
+            camPoseError = camPoseError.plus(camPose).minus(currentPose);
             poseCount++;
           }
           //                    } else {
@@ -232,7 +227,6 @@ public class RFAprilCam {
           LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
           LOGGER.log("camPoseError" + camPoseError);
           LOGGER.log("velMag" + currentVelocity.vec().norm());
-          LOGGER.log("inde" + inde);
           LOGGER.log("time" + time);
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {

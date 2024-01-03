@@ -6,6 +6,9 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualMotor;
@@ -18,7 +21,8 @@ public class Lift extends RFDualMotor {
   private double lastPower = 0.0;
   private double target = 0.0;
   private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
-  public static double max = 2200,
+  private int iterateHeight = 3;
+  public static double max = 1260,
       min = -15,
       RESISTANCE = 450,
       kS = 0.03,
@@ -33,8 +37,9 @@ public class Lift extends RFDualMotor {
 
   /** Constructor */
   public Lift() {
-    super("rightLiftMotor", "leftLiftMotor", !isTeleop);
-    super.setDirection(DcMotorSimple.Direction.FORWARD);
+    super("leftLiftMotor", "rightLiftMotor", !isTeleop);
+    super.setDirection(DcMotorSimple.Direction.REVERSE);
+    super.setDirection2(DcMotorSimple.Direction.FORWARD);
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     super.setTarget(0);
@@ -49,7 +54,7 @@ public class Lift extends RFDualMotor {
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
-    HIGH_SET_LINE(1800, false),
+    HIGH_SET_LINE(1250, false),
     MID_SET_LINE(800, false),
     LOW_SET_LINE(375, false),
     AT_ZERO(0, true);
@@ -134,13 +139,10 @@ public class Lift extends RFDualMotor {
     for (var i : LiftPositionStates.values()) {
       if (abs(super.getCurrentPosition() - i.position) < 20) {
         i.setStateTrue();
+        LiftMovingStates.values()[i.ordinal()].state=false;
       }
     }
-    for (var i : LiftPositionStates.values()) {
-      if (super.getCurrentPosition() == i.position) i.setStateTrue();
-      LiftMovingStates.values()[i.ordinal()].state = false;
-    }
-    if (super.getCurrentPosition() < 350) LiftPositionStates.AT_ZERO.setStateTrue();
+    if (super.getCurrentPosition() < 200) LiftPositionStates.AT_ZERO.setStateTrue();
 
     for (var i : LiftMovingStates.values()) {
       if (i.state
@@ -186,6 +188,7 @@ public class Lift extends RFDualMotor {
       } else {
         super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
       }
+      iterateHeight=3;
     } else {
       super.setPosition(p_state.position, 0);
     }
@@ -218,15 +221,10 @@ public class Lift extends RFDualMotor {
    * LiftMovingStates state machine.
    */
   public void iterateUp() {
-    for (var i : LiftMovingStates.values()) {
-      if (i.state && i != LiftMovingStates.HIGH) {
-        var targetState = LiftPositionStates.values()[(i.ordinal() - 1) % 4];
-        setPosition(targetState);
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("iterated up to state: " + targetState);
-        break;
-      }
-    }
+    iterateHeight--;
+    iterateHeight= max(iterateHeight,0);
+    setPosition(LiftPositionStates.values()[iterateHeight]);
+    LOGGER.log("iterated up to state: " + LiftPositionStates.values()[iterateHeight]);
   }
 
   /**
@@ -235,14 +233,9 @@ public class Lift extends RFDualMotor {
    * LiftMovingStates state machine.
    */
   public void iterateDown() {
-    for (var i : LiftMovingStates.values()) {
-      if (i.state && i != LiftMovingStates.AT_ZERO) {
-        var targetState = LiftPositionStates.values()[(i.ordinal() + 1) % 4];
-        setPosition(targetState);
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("iterated down to state: " + targetState);
-        break;
-      }
+    iterateHeight++;
+    iterateHeight = min(iterateHeight, 2);
+    setPosition(LiftPositionStates.values()[iterateHeight]);
+    LOGGER.log("iterated down to state: " + LiftPositionStates.values()[iterateHeight]);
     }
-  }
 }

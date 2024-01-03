@@ -11,26 +11,22 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double DROP_POS = 1.0,
-      GRAB_POS = 0.4,
+  public static double GRAB_POS = 1.0,
       CLOSE_POS = 0.3,
-      PINCH_POS = 0.2,
       FLIP_TIME = 0.2;
   private double lastTime = 0;
 
   public Claw() {
     super("clawServo", 1.0);
-    super.setPosition(PINCH_POS);
+    super.setPosition(CLOSE_POS);
     super.setFlipTime(FLIP_TIME);
     lastTime = -100;
     super.setLastTime(-100);
   }
 
   public enum clawStates {
-    DROP(false, DROP_POS),
-    GRAB(false, GRAB_POS),
     CLOSE(false, CLOSE_POS),
-    PINCH(true, PINCH_POS);
+    GRAB(false, GRAB_POS);
     boolean state;
     double pos;
 
@@ -52,10 +48,8 @@ public class Claw extends RFServo {
   }
 
   public enum clawTargetStates {
-    DROP(false, DROP_POS),
     GRAB(false, GRAB_POS),
-    CLOSE(false, CLOSE_POS),
-    PINCH(true, PINCH_POS);
+    CLOSE(false, CLOSE_POS);
     boolean state;
     double pos;
 
@@ -78,25 +72,14 @@ public class Claw extends RFServo {
 
   public void flipTo(clawTargetStates p_state) {
     if (!p_state.state && time - lastTime > FLIP_TIME) {
-      if (p_state == clawTargetStates.CLOSE || p_state == clawTargetStates.PINCH) {
+      if (p_state == clawTargetStates.CLOSE) {
         if (Arm.ArmStates.GRAB.state) {
-          if (pixels == 2) {
             if (super.getPosition() != CLOSE_POS) {
               super.setPosition(CLOSE_POS);
               LOGGER.log(RFLogger.Severity.INFO, "CLOSING claw");
               lastTime = time;
             }
             clawTargetStates.CLOSE.setStateTrue();
-          } else if (pixels == 1) {
-            if (p_state == clawTargetStates.PINCH && super.getPosition() != PINCH_POS) {
-              super.setPosition(PINCH_POS);
-              LOGGER.log(RFLogger.Severity.INFO, "PINCHING claw");
-              lastTime = time;
-            }
-            clawTargetStates.PINCH.setStateTrue();
-          } else if (super.getPosition() != PINCH_POS && super.getPosition() != CLOSE_POS) {
-            clawTargetStates.GRAB.setStateTrue();
-          }
         } else {
           Arm.ArmTargetStates.GRAB.setStateTrue();
         }
@@ -107,13 +90,6 @@ public class Claw extends RFServo {
           lastTime = time;
         }
         clawTargetStates.GRAB.setStateTrue();
-      } else if(p_state == clawTargetStates.DROP){
-        if((Arm.ArmStates.DROP.state) && super.getPosition() != DROP_POS){
-          super.setPosition(DROP_POS);
-          LOGGER.log("DROPPINg claw");
-          lastTime = time;
-        }
-        clawTargetStates.DROP.setStateTrue();
       }
     }}
 
