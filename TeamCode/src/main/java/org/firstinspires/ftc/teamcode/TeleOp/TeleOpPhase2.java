@@ -7,8 +7,13 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "drive")
@@ -58,8 +63,19 @@ public class TeleOpPhase2 extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Hardware map
-        DcMotor liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        DcMotorEx liftMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor");
+        DcMotorEx intakeMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakeMotor");
+        ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
+        ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+
+        PwmControl.PwmRange myrange = new PwmControl.PwmRange()
+
+        armServo1.setPwmEnable();
+        armServo1.setPwmRange(PwmControl.PwmRange.);
+        armServo2.setPwmEnable();
+        armServo2.setPwmRange();
+
+
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -133,23 +149,26 @@ public class TeleOpPhase2 extends LinearOpMode {
             int liftStage2 = -523;
             int liftSpeed = 90;
 
-            if (liftPID.getTargetPosition() - 90 <= liftStage2 && liftPID.getTargetPosition() + 90 > liftStage0) {
-                // Do nothing
-            } else {
-                if (gamepad1.left_bumper) { // Left bumper raises the arm
-                    liftPID.setTargetPosition(liftMotor.getCurrentPosition() - liftSpeed);
-                } else if (gamepad1.right_bumper) { // Right bumper lowers arm
-                    liftPID.setTargetPosition(liftMotor.getCurrentPosition() + liftSpeed);
-                }
+            if (gamepad1.left_bumper) { // Left bumper raises the arm
+                liftMotor.setPower(1);
+                liftPID.setTargetPosition(liftMotor.getCurrentPosition() - liftSpeed);
+            } else if (gamepad1.right_bumper) { // Right bumper lowers arm
+                liftMotor.setPower(1);
+                liftPID.setTargetPosition(liftMotor.getCurrentPosition() + liftSpeed);
             }
 
+            int liftStage = 0;
             if (gamepad1.dpad_down) {
+                liftStage = 0;
                 liftPID.setTargetPosition(liftStage0);
             } else if (gamepad1.dpad_right|| gamepad1.dpad_left) {
+                liftStage = 1;
                 liftPID.setTargetPosition(liftStage1);
             } else if (gamepad1.dpad_up) {
+                liftStage = 2;
                 liftPID.setTargetPosition(liftStage2);
             }
+
 
             liftMotor.setTargetPosition((int) liftPID.getTargetPosition());
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -161,7 +180,7 @@ public class TeleOpPhase2 extends LinearOpMode {
             }
 
             if (gamepad1.left_trigger > 0.03 || gamepad1.right_trigger > 0.03) {
-                intakeMotor.setPower(0.5);
+                intakeMotor.setPower(1);
             } else {
                 intakeMotor.setPower(0.0);
             }
@@ -172,17 +191,25 @@ public class TeleOpPhase2 extends LinearOpMode {
                 intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
+            armServo2.setDirection(Servo.Direction.REVERSE);
+
+            if (gamepad2.dpad_up) {
+                armServo1.setPosition(1);
+                armServo2.setPosition(1);
+            } else if (gamepad2.dpad_down) {
+                armServo1.setPosition(0);
+                armServo2.setPosition(0);
+            }
+
 
             // Here were any values that need to be broadcast on the drive station are declare
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("headingToHold", Math.toDegrees(headingToHold.getHeading()));
-            telemetry.addData("isHolding", isHolding);
-            telemetry.addData("joystick", -gamepad1.right_stick_x);
-            telemetry.addData("trigger" , -gamepad1.right_trigger);
             telemetry.addData("liftPosition", liftMotor.getCurrentPosition());
             telemetry.addData("targetLiftPosition", liftPID.getTargetPosition());
+            telemetry.addData("servoPosition", armServo1.getPosition());
             telemetry.update();
         }
     }
