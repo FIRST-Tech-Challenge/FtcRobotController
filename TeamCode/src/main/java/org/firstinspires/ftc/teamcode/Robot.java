@@ -54,6 +54,7 @@ public class Robot {
     private VisionPortal visionPortal;
     boolean isRedAlliance;
     boolean testingOnBert = false;
+    PIDController straightController;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
@@ -77,6 +78,7 @@ public class Robot {
             //planeLauncher = hardwareMap.servo.get("planeLauncher");
             spikeServo = hardwareMap.servo.get("spikeServo");
             stackAttachment = hardwareMap.servo.get("stackAttachment");
+            straightController = new PIDController(0.003, 0.0000005, 0.4);
         }
     }
 
@@ -88,7 +90,7 @@ public class Robot {
         while (opMode.opModeIsActive() && Math.abs(targetDistanceInTicks - lsFront.getCurrentPosition()) > 100) {
             remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
 
-            double power =  remainingDistanceLow * 0.002;
+            double power = remainingDistanceLow * 0.002;
 
             double minPower = 0.4;
             if (power > 0 && power < minPower) {
@@ -444,7 +446,7 @@ public class Robot {
         opMode.sleep(100);
     }
 
-    public void detectPropEarly () {
+    public void detectPropEarly() {
         MarkerDetector.MARKER_POSITION position;
 
         while (!opMode.isStarted()) {
@@ -769,7 +771,7 @@ public class Robot {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
-                straightBlockingFixHeading(7,   true, 0.7); //dropoff, back
+                straightBlockingFixHeading(7, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
                 mecanumBlocking(vertical1, isRedAlliance, 0.7);
                 straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
@@ -894,7 +896,7 @@ public class Robot {
         }
     }
 
-    public void straightBlockingFixHeading (double inches, boolean forward, double maxPower) {
+    public void straightBlockingFixHeading(double inches, boolean forward, double maxPower) {
 
         double ERROR_TOLERANCE_IN_TICKS = 15;
         double power;
@@ -948,7 +950,7 @@ public class Robot {
 
             currentTime = SystemClock.elapsedRealtimeNanos();
             tickError = endTick - currentTick;
-            error = tickError/tickRange;
+            error = tickError / tickRange;
 
             //don't use d component in first loop
             if (setPrevTime) {
@@ -1032,14 +1034,14 @@ public class Robot {
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
     }
 
-    public void closeClamp (boolean blocking) {
+    public void closeClamp(boolean blocking) {
         setServoPosBlocking(clamp, 0.55);
         if (blocking) {
             opMode.sleep(300);
         }
     }
 
-    public void openClamp (boolean wide, boolean blocking) {
+    public void openClamp(boolean wide, boolean blocking) {
         if (wide) {
             setServoPosBlocking(clamp, 0.472);
         } else {
@@ -1051,15 +1053,15 @@ public class Robot {
         }
     }
 
-    public void openHook () {
+    public void openHook() {
         hook.setPosition(0.37); //started 0.49
     }
 
-    public void closeHook () {
+    public void closeHook() {
         hook.setPosition(0.27);
     }
 
-    public void initForTeleOp () {
+    public void initForTeleOp() {
 
         // initialize robot class
         setUpDrivetrainMotors();
@@ -1077,7 +1079,7 @@ public class Robot {
         moveLinearSlideByTicksBlocking(0);
     }
 
-    public void teleOpWhileLoop (Gamepad gamepad1, Gamepad gamepad2) {
+    public void teleOpWhileLoop(Gamepad gamepad1, Gamepad gamepad2) {
 
         boolean hangingMode = false;
         int TRIGGER_PRESSED = 0; // TODO: test
@@ -1175,7 +1177,6 @@ public class Robot {
             bRightPower = straight - turning + mecanuming;
 
 
-
             //scale powers
             maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
 
@@ -1197,7 +1198,7 @@ public class Robot {
 
             //set motor power ONLY if a value has changed. else, use previous value.
             if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
-            || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
+                    || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
                 setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
                 fLeftPowerPrev = fLeftPower;
@@ -1321,15 +1322,15 @@ public class Robot {
         return max;
     }
 
-    public void stackAttachmentOut () {
+    public void stackAttachmentOut() {
         stackAttachment.setPosition(0.8);
     }
 
-    public void stackAttachmentIn () {
+    public void stackAttachmentIn() {
         stackAttachment.setPosition(0.1);
     }
 
-    public void autoIntake () {
+    public void autoIntake() {
         int count = 0;
         openClamp(true, false);
         intake.setPower(-1);
@@ -1346,7 +1347,7 @@ public class Robot {
         closeClamp(true);
     }
 
-    public void fastStraightFixHeading (double inches, boolean forward, double maxPower) {
+    public void fastStraightFixHeading(double inches, boolean forward, double maxPower) {
 
         double ERROR_TOLERANCE_IN_TICKS = 15;
         double power;
@@ -1400,7 +1401,7 @@ public class Robot {
 
             currentTime = SystemClock.elapsedRealtimeNanos();
             tickError = endTick - currentTick;
-            error = tickError/tickRange;
+            error = tickError / tickRange;
 
             //don't use d component in first loop
             if (setPrevTime) {
@@ -1484,7 +1485,7 @@ public class Robot {
         Log.d("pid turn", "straightBlockingFixHeading: currentHeading is " + currentHeading);
     }
 
-    public void boardToCenter () {
+    public void boardToCenter() {
 
         if (isRedAlliance) {
             if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { // outer tag
@@ -1509,5 +1510,28 @@ public class Robot {
         } else {
             setHeading(90, 0.7);
         }
+    }
+
+    public void straightBlocking2(double inches) {
+        double currentPos = fLeft.getCurrentPosition();
+        double targetPos = currentPos + straightController.convertInchesToTicks(inches);
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        int counter = 0;
+
+        while (opMode.opModeIsActive() && counter < 3) {
+            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS) {
+                counter++;
+            }
+
+            currentPos = fLeft.getCurrentPosition();
+            power = straightController.calculatePID(currentPos, targetPos);
+            // make sure there is enough power - unless integral takes care of it
+            // make sure there isn't too much power
+            setMotorPower(power, power, power, power);
+        }
+
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
     }
 }
