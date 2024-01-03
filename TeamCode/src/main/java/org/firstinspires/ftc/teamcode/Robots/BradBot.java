@@ -163,11 +163,11 @@ public class BradBot extends BasicRobot {
   }
 
   public void drop() {
-    if (queuer.queue(false, Claw.clawTargetStates.DROP.getState())) {
-      if (!queuer.isExecuted()) {
-        claw.flipTo(Claw.clawTargetStates.DROP);
-      }
-    }
+//    if (queuer.queue(false, Claw.clawTargetStates.DROP.getState())) {
+//      if (!queuer.isExecuted()) {
+//        claw.flipTo(Claw.clawTargetStates.DROP);
+//      }
+//    }
   }
 
 
@@ -293,6 +293,7 @@ public class BradBot extends BasicRobot {
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
+    boolean intUp = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "intake iterate up");
     boolean isRightBumper2 =
         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
     ;
@@ -312,20 +313,20 @@ public class BradBot extends BasicRobot {
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        magazine.clampTo(Magazine.MagazineTargetStates.CLOSE);
+//        magazine.clampTo(Magazine.MagazineTargetStates.CLOSE);
         intake.intake();
       } else {
-        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
+//        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
         intake.stopIntake();
       }
     }
     if (left) {
-      if ( Claw.clawStates.CLOSE.getState()|| Claw.clawStates.PINCH.getState()){
-        claw.flipTo(Claw.clawTargetStates.DROP);
-      }
-      else if(Claw.clawStates.GRAB.getState()){
-        claw.flipTo(Claw.clawTargetStates.CLOSE);
-      }
+//      if ( Claw.clawStates.CLOSE.getState()|| Claw.clawStates.PINCH.getState()){
+//        claw.flipTo(Claw.clawTargetStates.DROP);
+//      }
+//      else if(Claw.clawStates.GRAB.getState()){
+//        claw.flipTo(Claw.clawTargetStates.CLOSE);
+//      }
     }
     if (leftBumper) {
       intake.reverseIntake();
@@ -334,6 +335,9 @@ public class BradBot extends BasicRobot {
       arm.flipTo(DROP);
       lift.iterateUp();
       intake.stopIntake();
+    }
+    if(intUp){
+      intake.toggleIntakeHeight();
     }
     if (down) {
       arm.flipTo(DROP);

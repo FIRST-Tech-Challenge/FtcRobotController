@@ -27,22 +27,29 @@ public class Intake extends RFMotor {
   RFBreakBeam breakBeam;
   RFLimitSwitch limitSwitch;
   Motor motor;
+
+  RFServo intakeServo;
   double requestTime = 0.0;
 
-  private final double INTAKE_POWER = 0.9;
+  private final double INTAKE_POWER = 1.0;
   private final double REVERSE_POWER = -0.6;
 
   private boolean full = false;
   private double pixelCount = 0;
   public static double HALF_TICKS_PER_REV = 383.6 / 2;
+  public static double ONE=0.72, TWO=0.69, THREE = 0.65, FOUR = 0.59, FIVE =0.56;
+  int height = 1;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
     super("intakeMotor", !isTeleop);
+    intakeServo = new RFServo("intakeServo", 1.0);
     super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     super.setDirection(DcMotorSimple.Direction.REVERSE);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
+    intakeServo.setPosition(ONE);
+    intakeServo.setLastTime(-100);
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -91,6 +98,22 @@ public class Intake extends RFMotor {
     }
 
     IntakeStates.INTAKING.setStateTrue();
+  }
+
+  public void toggleIntakeHeight(){
+    if(height!=5){
+      height++;
+    }
+    else{
+      height = 1;
+    }
+    if(height==1)
+    intakeServo.setPosition(ONE);
+    if(height==2)
+      intakeServo.setPosition(TWO);if(height==3)
+      intakeServo.setPosition(THREE);if(height==4)
+      intakeServo.setPosition(FOUR);if(height==5)
+      intakeServo.setPosition(FIVE);
   }
 
   /**
