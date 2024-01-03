@@ -154,7 +154,7 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
+        robot.driveRobot(0, -TURN_SPEED);
         sleep(3700);
 
         //go straight
@@ -210,8 +210,8 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
-        sleep(1200);
+        robot.driveRobot(0, -TURN_SPEED);
+        sleep(7000);
 
         //go straight
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -247,7 +247,7 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         //turn right
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
-        sleep(2000);
+        sleep(2500);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -266,7 +266,7 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
+        robot.driveRobot(0, -TURN_SPEED);
         sleep(4700);
 
         //go straight

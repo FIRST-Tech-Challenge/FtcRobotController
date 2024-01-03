@@ -70,7 +70,7 @@ public class  FirstVisionProcessor implements VisionProcessor {
         if (colorToCheck == "blue")
             colorPosition = 0;
         else if(colorToCheck == "red")
-            colorPosition = 2;
+            colorPosition = 1;
 
         return color.val[colorPosition];
     }
