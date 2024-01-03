@@ -210,7 +210,7 @@ RB - Hang up
             } else if (backSlidePos == 1) {
                 target = 1800;
             } else if (backSlidePos == 2) {
-                target = 2600;
+                target = 3600;
             }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
