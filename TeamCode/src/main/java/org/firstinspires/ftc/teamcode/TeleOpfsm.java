@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-public class fsmTest extends OpMode
+public class TeleOpfsm extends OpMode
 {
     public enum State
     {
