@@ -57,13 +57,4 @@ public class PIDController {
 
         return inches * IN_TO_TICK + 90;
     }
-
-    public double convertTicksToInches (double ticks) {
-        final double wheelDiaMm = 96;
-        final double PI = 3.14159;
-        final double wheelCircIn = wheelDiaMm * PI / 25.4;
-        final double IN_TO_TICK = 537 / wheelCircIn;
-
-        return ticks / IN_TO_TICK;
-    }
 }
