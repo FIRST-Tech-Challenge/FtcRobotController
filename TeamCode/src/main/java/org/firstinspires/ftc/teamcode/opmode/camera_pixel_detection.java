@@ -29,8 +29,10 @@ public class camera_pixel_detection extends OpMode {
     boolean lastA = false, lastB = false, lastY = false, lastX = false;
     double[] lowerPvals = new double[]{0, 0, 0};
     double[] upperPvals = new double[]{60, 255, 255};
-    Scalar lowerG = new Scalar(50, 75, 80);
-    Scalar upperG = new Scalar(150, 250, 250);
+    Scalar lowerG = new Scalar(0, 0, 210);
+    Scalar upperG = new Scalar(360, 30, 255);
+//    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
+//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
 
 
 
