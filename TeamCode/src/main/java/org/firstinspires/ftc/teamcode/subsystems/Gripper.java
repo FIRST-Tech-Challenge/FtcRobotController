@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,12 +9,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
-public class gripper implements Subsystem {
+public class Gripper implements Subsystem {
     private HardwareMap map;
     Telemetry telemetry;
     Servo serv0;
     Servo serv1;
-    public gripper(HardwareMap map, Telemetry telemetry){
+    public Gripper(HardwareMap map, Telemetry telemetry){
         this.map=map;
         this.telemetry=telemetry;
         serv0=map.servo.get("serv0");
