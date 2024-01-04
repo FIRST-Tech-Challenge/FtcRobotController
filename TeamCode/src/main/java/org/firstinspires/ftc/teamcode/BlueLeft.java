@@ -32,6 +32,8 @@ public class BlueLeft extends LinearOpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DcMotor arm1 = null;
+
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -53,6 +55,7 @@ public class BlueLeft extends LinearOpMode {
         drive = new MecanumDrive2024(hardwareMap);
         utils = new actuatorUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
+        arm1 = hardwareMap.get(DcMotor.class, "arm1");
         dump = hardwareMap.get(Servo.class, "Dump");
         elbow = hardwareMap.get(Servo.class, "elbow");
         gripper = hardwareMap.get(Servo.class, "gripper");
@@ -64,11 +67,18 @@ public class BlueLeft extends LinearOpMode {
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
+        arm1.setDirection(DcMotor.Direction.REVERSE);
+        arm.setPower(0);
+        arm1.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         fUtils = new fileUtils();
         desiredHeading = getHeading();
 
-        utils.initializeActuator(arm, gripper, dump, elbow);
+        utils.initializeActuator(arm, arm1, gripper, dump, elbow);
         move.initialize(drive, utils);
 
 
@@ -130,19 +140,7 @@ public class BlueLeft extends LinearOpMode {
             } else {
                 RightPath();
             }
-            //set arm to lowest position
-       /*     while (gripperSensor.getDistance(DistanceUnit.INCH)>2 && !isStopRequested())
-            {
-                telemetry.addData("ARM Position = ", arm.getCurrentPosition());
-                telemetry.update();
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setPower(-0.7);
-            }
-            //disabling and resetting arm
-            arm.setPower(0);
-            arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-*/
+
             currTime = System.currentTimeMillis();
             done = true;
         }
@@ -158,13 +156,13 @@ public class BlueLeft extends LinearOpMode {
         move.driveSeq(-29,31,0);
         utils.dumpOpen();
         sleep(1000);
-        move.driveSeq(-29,35,0);
+        move.driveSeq(-29,37.5,0);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-35.5, 38, 90);
         move.driveToBoard(-35.5, 44.25, 90);
-        move.driveFromBoard(-53, 44.25, 90);
+        move.driveFromBoard(-53, 42.25, 90);
         move.driveSeq(-53, 50, 90);
     }
     private void MiddlePath() throws InterruptedException{
@@ -172,13 +170,13 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        move.driveSeq(-17, 29, 0);
+        move.driveSeq(-17, 35, 0);
         sleep(1000);
         utils.dumpClose();
-        move.driveSeq(-30, 38, -90);
-        move.driveToBoard(-30, 38.75, -90);
-        move.driveFromBoard(-58, 38.75, -90);
-        move.driveSeq(-58, 50, -90);
+        move.driveSeq(-30, 38, 90);
+        move.driveToBoard(-30, 44.75, 90);
+        move.driveFromBoard(-58, 42.75, 90);
+        move.driveSeq(-58, 50, 90);
     }
     private void RightPath()throws InterruptedException {
         move.driveSeq(-29,8.5,0);
@@ -188,10 +186,10 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        move.driveSeq(-24, 38, -90);
-        move.driveToBoard(-24, 39.75, -90);
-        move.driveFromBoard(-58, 39.75, -90);
-        move.driveSeq(-58, 50, -90);
+        move.driveSeq(-24, 38, 90);
+        move.driveToBoard(-24, 44.75, 90);
+        move.driveFromBoard(-58, 42.75, 90);
+        move.driveSeq(-58, 50, 90);
     }
 
     private void initOpenCV() {

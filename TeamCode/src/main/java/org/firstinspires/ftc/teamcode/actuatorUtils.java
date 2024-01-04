@@ -12,6 +12,8 @@ public class actuatorUtils {
     private static DcMotor RF = null; //declare right front motor
     private static DcMotor RB = null; //declare right back motor
     private static DcMotor arm = null; //declare arm
+    private static DcMotor arm1 = null; //declare arm
+
     private static Servo gripper = null; //declare gripper
     private static Servo dump = null; //declare dump
     private static Servo elbow = null; //declare dump
@@ -42,8 +44,9 @@ public class actuatorUtils {
     }
 
     //Initialize actuators
-    public static void initializeActuator(DcMotor arm, Servo gripper, Servo dump, Servo elbow) {
+    public static void initializeActuator(DcMotor arm,DcMotor arm1, Servo gripper, Servo dump, Servo elbow) {
         actuatorUtils.arm = arm;
+        actuatorUtils.arm1 = arm1;
         actuatorUtils.gripper = gripper;
         actuatorUtils.dump = dump;
         actuatorUtils.elbow = elbow;
@@ -164,14 +167,21 @@ public class actuatorUtils {
         armPole(newHeight, true);
     }
     public static void armBoard() {
-        arm.setTargetPosition(-100);
+        arm.setTargetPosition(-200);
+        arm1.setTargetPosition(-200);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
+        arm1.setPower(0.5);
+
     }
     public static void noArmBoard() {
         arm.setTargetPosition(0);
+        arm1.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.5);
+        arm1.setPower(0.5);
     }
     public static void noElbowBoard() {
         elbow.setPosition(1);

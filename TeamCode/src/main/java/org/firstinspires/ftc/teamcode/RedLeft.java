@@ -30,6 +30,8 @@ public class RedLeft extends LinearOpMode {
     private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DcMotor arm1 = null;
+
     private Servo elbow = null;
 
     static final float MAX_SPEED = 1.0f;
@@ -52,6 +54,7 @@ public class RedLeft extends LinearOpMode {
         drive = new MecanumDrive2024(hardwareMap);
         utils = new actuatorUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
+        arm1 = hardwareMap.get(DcMotor.class, "arm1");
         dump = hardwareMap.get(Servo.class, "Dump");
         gripper = hardwareMap.get(Servo.class, "gripper");
         elbow = hardwareMap.get(Servo.class, "elbow");
@@ -63,10 +66,17 @@ public class RedLeft extends LinearOpMode {
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
+        arm1.setDirection(DcMotor.Direction.REVERSE);
+        arm.setPower(0);
+        arm1.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fUtils = new fileUtils();
         desiredHeading = getHeading();
 
-        utils.initializeActuator(arm, gripper, dump, elbow);
+        utils.initializeActuator(arm, arm1, gripper, dump, elbow);
         move.initialize(drive, utils);
 
         Long startTime = System.currentTimeMillis();

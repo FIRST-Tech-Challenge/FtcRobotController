@@ -32,6 +32,8 @@ public class RedRight extends LinearOpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private Servo elbow = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DcMotor arm1 = null;
+
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -55,6 +57,7 @@ public class RedRight extends LinearOpMode {
         utils = new actuatorUtils();
         move = new moveUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
+        arm1 = hardwareMap.get(DcMotor.class, "arm1");
         dump = hardwareMap.get(Servo.class, "Dump");
         elbow = hardwareMap.get(Servo.class, "elbow");
         elbow.setPosition(1);
@@ -66,10 +69,16 @@ public class RedRight extends LinearOpMode {
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
-
+        arm1.setDirection(DcMotor.Direction.REVERSE);
+        arm.setPower(0);
+        arm1.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         desiredHeading = getHeading();
 
-        utils.initializeActuator(arm, gripper, dump, elbow);
+        utils.initializeActuator(arm, arm1, gripper, dump, elbow);
         move.initialize(drive, utils);
 
         Long startTime = System.currentTimeMillis();

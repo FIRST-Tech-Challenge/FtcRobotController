@@ -73,19 +73,20 @@ public class moveUtils {
         drive.followTrajectorySequence(seq);
     }
     public static void driveToBoard(double x, double y, double heading) throws InterruptedException{
-        utils.armBoard();
         utils.elbowBoard();
+        utils.armBoard();
+        sleep(1000);
         moveUtils.driveSeq(x, y, heading);
-        sleep(2000);
+        sleep(1000);
         utils.gripperOpen();
         sleep(1000);
     }
     public static void driveFromBoard(double x, double y, double heading) throws InterruptedException{
-        utils.noElbowBoard();
+        moveUtils.driveSeq(x,y,heading);
         utils.noArmBoard();
+        utils.noElbowBoard();
         sleep(1000);
         utils.gripperClose();
-        moveUtils.driveSeq(x,y,heading);
     }
 
 

@@ -38,6 +38,8 @@ public class DumpTest extends LinearOpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DcMotor arm1 = null;
+
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -79,6 +81,8 @@ public class DumpTest extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
+        arm1 = hardwareMap.get(DcMotor.class, "arm1");
+
         //gripper = hardwareMap.get(Servo.class, "gripper");
         dump = hardwareMap.get(Servo.class, "Dump");
 
@@ -115,7 +119,7 @@ public class DumpTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
-        actuatorUtils.initializeActuator(arm, gripper, dump, null);
+        actuatorUtils.initializeActuator(arm, arm1, gripper, dump, null);
 
 
         Long startTime = System.currentTimeMillis();
