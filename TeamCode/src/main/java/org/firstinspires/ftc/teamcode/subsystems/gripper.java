@@ -5,12 +5,13 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.BTCommand;
+import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
 public class gripper implements Subsystem {
     private HardwareMap map;
@@ -37,7 +38,7 @@ public class gripper implements Subsystem {
             telemetry.addLine("aaa open");
         },this);
     };
-    public Command closeGripper(){
+    public BTCommand closeGripper(){
         return new RunCommand(()->{
             serv0.setPosition(180);
             serv1.setPosition(0);
