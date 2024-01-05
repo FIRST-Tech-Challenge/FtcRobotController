@@ -51,7 +51,7 @@ public class WinchControl {
 
         hookServo = _opMode.hardwareMap.get(Servo.class, "hook_servo");
 
-        pos_pid.init_pid(.005,0,0);  //Position controller to control elevator to a specific position.
+        pos_pid.init_pid(.0005,0,0);  //Position controller to control elevator to a specific position.
     }
 
     public int getCurrentPostion() {

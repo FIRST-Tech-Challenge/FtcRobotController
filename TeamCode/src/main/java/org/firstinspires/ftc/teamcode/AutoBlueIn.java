@@ -70,6 +70,7 @@ public class AutoBlueIn extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot2024((this));
         robot.initializeRobot();
+        robot.resetIMU();//Added
         telemetry.addData("Status", "Initialized");
         sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range2");
         // Wait for the game to start (driver presses PLAY)

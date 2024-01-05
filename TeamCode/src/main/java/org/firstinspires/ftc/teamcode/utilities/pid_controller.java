@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.utilities;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.sun.tools.javac.tree.JCTree;
 
 public class pid_controller {
@@ -89,4 +90,13 @@ public class pid_controller {
         return out;
     }
 
+    public double getKp(){
+        return Kp;
+    }
+    public double getKi(){
+        return Ki;
+    }
+    public double getKd() {
+    return Kd;
+    }
 }

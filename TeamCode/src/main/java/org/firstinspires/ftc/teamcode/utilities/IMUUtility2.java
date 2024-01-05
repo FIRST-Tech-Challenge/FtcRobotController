@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,62 +12,47 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-public class IMUUtility {
+public class IMUUtility2 {
 
-    public IMU imu2;
+    public IMU imu;
 
     public Orientation             lastAngles = new Orientation();
     public double                  desiredGlobalAngle_d;
-    public BNO055IMU        imu;
-    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//    public BNO055IMU        imu;
+//    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public OpMode _opMode;
-
-    public IMUUtility() {
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
-    }
 
     public void initialize(OpMode opMode, String configName) {
         _opMode = opMode;
-        imu = _opMode.hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-
-//        this.resetAngle();
-    }
-
-    public void initialize2(OpMode opMode, String configName) {
-        _opMode = opMode;
-        imu2 = _opMode.hardwareMap.get(IMU.class, "imu");
+        imu = _opMode.hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters parameters2 = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu2.initialize(parameters2);
+        imu.initialize(parameters2);
 
 
 //        this.resetAngle();
     }
 
     public Orientation getCurrentAngle(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
         return angles;
     }
 
     public double getCurrentAbsoluteAngle(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
         return angles.firstAngle;
     }
 
     public double getCurrentAbsoluteAngle2(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.EXTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
         return angles.secondAngle;
     }
     public double getCurrentAbsoluteAngle3(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.EXTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
         return angles.thirdAngle;
     }
 
@@ -78,7 +63,7 @@ public class IMUUtility {
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
         // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
 
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
 //        RobotLog.i(String.format("Prev Angle %f Current angle %f",lastAngles.firstAngle,angles.firstAngle));
@@ -100,7 +85,7 @@ public class IMUUtility {
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
         // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
 
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.secondAngle - lastAngles.thirdAngle;
         RobotLog.i(String.format("Prev Angle %f Current angle %f",lastAngles.thirdAngle,angles.thirdAngle));
@@ -154,8 +139,8 @@ public class IMUUtility {
     }
     public void resetAngle()
     {
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
-
+        lastAngles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES);
+        imu.resetYaw();
 //        RobotLog.i(String.format("RESETTING IMU ANGLE: %f",lastAngles.firstAngle));
         desiredGlobalAngle_d = 0;
     }

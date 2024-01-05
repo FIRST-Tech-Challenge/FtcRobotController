@@ -84,6 +84,7 @@ public class AutoRedIn_Final extends LinearOpMode {
         //initializes the Driving portion of the robot
 
         robot.initializeRobot();
+        robot.resetIMU();
         if ( initimpliments == true ) {
             robot.initializeImplements();
             //NOTE:  We reset everything because this is beginning of match

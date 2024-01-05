@@ -72,6 +72,7 @@ public class AutoRedIn extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot2024((this));
         robot.initializeRobot();
+        robot.resetIMU();
         if ( initimpliments == true ) {
             robot.initializeImplements();
         }

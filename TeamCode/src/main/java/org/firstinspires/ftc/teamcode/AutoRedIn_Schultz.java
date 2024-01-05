@@ -81,6 +81,7 @@ public class AutoRedIn_Schultz extends LinearOpMode {
         robot = new Robot2024((this));
         //initializes the Driving portion of the robot
         robot.initializeRobot();
+        robot.resetIMU();
         if ( initimpliments == true ) {
             robot.initializeImplements();  //NOTE:  We reset everything because this is beginning of match
         }
