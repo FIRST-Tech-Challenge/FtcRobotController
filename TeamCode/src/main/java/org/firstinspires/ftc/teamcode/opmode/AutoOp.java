@@ -10,13 +10,13 @@ import org.opencv.objdetect.Board;
 @Autonomous
 public class AutoOp extends OpMode {
 
-    double lastTime;
     enum State {
+        STRAIGHT,
         STRAFE,
         STOP
     }
 
-    State state = State.STRAFE;
+    State state = State.STRAIGHT;
     ProgrammingBoard Board = new ProgrammingBoard();
     Traction DriveTrain = new Traction();
     @Override
@@ -26,17 +26,20 @@ public class AutoOp extends OpMode {
     @Override
     public void start(){
         resetRuntime();
-        lastTime = getRuntime();
-        State state = State.STRAFE;
+        State state = State.STRAIGHT;
 
     }
 
     @Override
     public void loop(){
-        telemetry.addData("Time", lastTime);
-        DriveTrain.controllerDrive(0.5, 0, 0);
+        telemetry.addData("Time", getRuntime());
 
         switch (state) {
+            case STRAIGHT:
+                DriveTrain.controllerDrive(0.5, 0, 0);
+                state = State.STRAFE;
+                break;
+
             case STRAFE:
                 if (getRuntime() >= 2) {
                     state = State.STOP;
@@ -49,13 +52,7 @@ public class AutoOp extends OpMode {
                 }
                 break;
         }
-
-
-
-
-
-
-
+        
         telemetry.update();
 
     }

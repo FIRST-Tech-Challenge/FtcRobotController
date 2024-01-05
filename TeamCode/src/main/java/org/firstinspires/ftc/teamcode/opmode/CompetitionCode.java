@@ -17,6 +17,8 @@ public class CompetitionCode extends OpMode {
     double yaw;
     double intakePower;
     double armPower;
+    boolean state;
+    boolean alreadyPressed;
 
     @Override
     public void init(){
@@ -28,10 +30,24 @@ public class CompetitionCode extends OpMode {
 
     @Override
     public void loop(){
-        axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        lateral =  gamepad1.left_stick_x;
-        yaw     =  gamepad1.right_stick_x;
-        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+
+        if (gamepad1.a && !alreadyPressed) {
+            state = !state;
+        }
+        alreadyPressed = gamepad1.a;
+
+        if (!state) {
+            axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            lateral =  gamepad1.left_stick_x;
+            yaw     =  gamepad1.right_stick_x;
+            intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+        } else {
+            axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            lateral =  -gamepad1.left_stick_x;
+            yaw     =  gamepad1.right_stick_x;
+            intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+        }
+
 
         if (gamepad1.right_bumper) {
             armPower = .5;
