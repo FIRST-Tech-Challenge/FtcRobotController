@@ -47,16 +47,25 @@ public class RobotHardwareInitializer {
         ENCODER_BACK;
     }
 
+    public static final String FRONT_LEFT_DRIVE = "fl_drv";
+    public static final String FRONT_RIGHT_DRIVE = "fr_drv";
+    public static final String BACK_LEFT_DRIVE = "bl_drv";
+    public static final String BACK_RIGHT_DRIVE = "br_drv";
+
+    public static final String LEFT_ENCODER = FRONT_LEFT_DRIVE;
+    public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
+    public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
+
     public static HashMap<DriveMotor, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
         DcMotor rightFrontDrive;
         DcMotor leftBackDrive;
         DcMotor rightBackDrive;
         try {
-            leftFrontDrive = hMap.get(DcMotor.class, "fl_drv");
-            rightFrontDrive = hMap.get(DcMotor.class, "fr_drv");
-            leftBackDrive = hMap.get(DcMotor.class, "bl_drv");
-            rightBackDrive = hMap.get(DcMotor.class, "br_drv");
+            leftFrontDrive = hMap.get(DcMotor.class, FRONT_LEFT_DRIVE);
+            rightFrontDrive = hMap.get(DcMotor.class, FRONT_RIGHT_DRIVE);
+            leftBackDrive = hMap.get(DcMotor.class, BACK_LEFT_DRIVE);
+            rightBackDrive = hMap.get(DcMotor.class, BACK_RIGHT_DRIVE);
 
             /*leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -77,9 +86,9 @@ public class RobotHardwareInitializer {
         DcMotor encoderBack;
 
         try {
-            encoderLeft = hMap.dcMotor.get("encoderLeft");
-            encoderRight = hMap.dcMotor.get("encoderRight");
-            encoderBack = hMap.dcMotor.get("encoderBack");
+            encoderLeft = hMap.dcMotor.get(LEFT_ENCODER);
+            encoderRight = hMap.dcMotor.get(RIGHT_ENCODER);
+            encoderBack = hMap.dcMotor.get(BACK_ENCODER);
         } catch (Exception e) {
             Error(e, opMode);
             return null;

@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.PurePursuitCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
@@ -9,16 +12,30 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.AutonomousAwareness;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
+import java.util.function.DoubleSupplier;
+
+import static org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem.FingerPositions;
+import static org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem.ArmPositions;
 
 @Autonomous(name = "AutoCommandMode")
 public class AutoCommandMode extends CommandOpMode {
-    private AutonomousAwareness AA;
+    // private AutonomousAwareness AA;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("AutoCommandMode");
+    public DriveSubsystem driveSubsystem;
+    public ArmSubsystem armSubsystem;
+    public WristSubsystem wristSubsystem;
+    public FingerSubsystem fingerSubsystem;
+
+    public SequentialCommandGroup autoCommand;
 
     @Override
     public void initialize() {
@@ -26,49 +43,31 @@ public class AutoCommandMode extends CommandOpMode {
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> motors = RobotHardwareInitializer.
                 initializeDriveMotors(hardwareMap, this);
 
-        Motor lFD;
-        Motor rFD;
-        Motor lBD;
-        Motor rBD;
-
-        // Temporary Fix
-        try {
-            lFD = new Motor(hardwareMap, "fl_drv");
-            rFD = new Motor(hardwareMap, "fr_drv");
-            lBD = new Motor(hardwareMap, "bl_drv");
-            rBD = new Motor(hardwareMap, "br_drv");
-        } catch(Exception e) {
-            dbp.error("Could not initialize drive motors: " + e.getMessage(), false);
-            terminateOpModeNow();
-            return;
-        }
-
         assert motors != null;
 
-        final RobotHardwareInitializer.DriveMotor ENCODER_LEFT = RobotHardwareInitializer.DriveMotor.ENCODER_LEFT;
-        final RobotHardwareInitializer.DriveMotor ENCODER_RIGHT = RobotHardwareInitializer.DriveMotor.ENCODER_RIGHT;
-        final RobotHardwareInitializer.DriveMotor ENCODER_BACK = RobotHardwareInitializer.DriveMotor.ENCODER_BACK;
+        driveSubsystem = new DriveSubsystem(motors);
+        armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
+        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
+        fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
 
-        AA = new AutonomousAwareness(AutonomousAwareness.StartingPosition.RED_LEFT, true,
-                lFD, rFD, lBD, rBD,
-                motors.get(ENCODER_LEFT), motors.get(ENCODER_RIGHT), motors.get(ENCODER_BACK));
-
-        dbp.debug("Following Path", true);
-        AA.addToPath(new StartWaypoint());
-        AA.addToPath(new GeneralWaypoint(200, 0, 0.8, 0.8, 30));
-        AA.addToPath(new EndWaypoint());
-        /*
-        AA.initPath();
-        AA.followPath();
-
-        PurePursuitCommand ppCommand = new PurePursuitCommand(
-                AA.m_robotDrive, AA.odometry,
-                new StartWaypoint(),
-                new GeneralWaypoint(200, 0, 0.8, 0.8, 30),
-                new EndWaypoint()
+        autoCommand = new SequentialCommandGroup(
+                new RunCommand(
+                        () -> driveSubsystem.moveRobot(0.5, 0, 0),
+                        driveSubsystem
+                ).withTimeout(1),
+                new RunCommand(
+                        () -> wristSubsystem.moveWrist(0.5, 0),
+                        wristSubsystem
+                ),
+                new RunCommand(
+                        () -> fingerSubsystem.locomoteFinger(FingerPositions.CLOSED),
+                        fingerSubsystem
+                ).whenFinished(() -> fingerSubsystem.locomoteFinger(FingerPositions.OPEN)),
+                new RunCommand(
+                        () -> armSubsystem.positionMoveArm(ArmPositions.BOARD)
+                )
         );
-         */
-        dbp.debug("Scheduling ppCommand", true);
-        schedule(AA.ppCommand);
+
+        schedule(autoCommand);
     }
 }

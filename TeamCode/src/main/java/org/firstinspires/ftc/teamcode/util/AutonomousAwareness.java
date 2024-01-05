@@ -46,6 +46,7 @@ public class AutonomousAwareness {
         BLUE_RIGHT
     }
 
+    @Deprecated
     public void initOdometry(DcMotor encodeLeft, DcMotor encodeRight, DcMotor encodeBack) { //MotorEx encodeLeft, MotorEx encodeRight, MotorEx encodeBack) {
         dbp.createNewTelePacket();
 

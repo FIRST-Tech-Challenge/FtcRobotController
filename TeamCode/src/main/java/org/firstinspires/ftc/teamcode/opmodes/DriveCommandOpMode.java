@@ -52,6 +52,7 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
 
+        assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
         armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
         wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
@@ -67,7 +68,9 @@ public class DriveCommandOpMode extends CommandOpMode {
         driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
         moveArmCommand = new MoveArmCommand(armSubsystem,
                 () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
+                () -> (armerController.getButton(GamepadKeys.Button.LEFT_BUMPER) ? 1 : 0),
+                () -> (armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 1 : 0));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
                 () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 0 : 1),
                 () -> (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 0 : 1));
@@ -83,7 +86,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                     return pressed ? 0 : 1;
                 });
 
-        // TODO: autonomous macro for arm positioning
+        // DONE: autonomous macro for arm positioning
         // (aka bumpers automatically move the arm to the pickup position or to the board position)
 
         // Register subsystems
