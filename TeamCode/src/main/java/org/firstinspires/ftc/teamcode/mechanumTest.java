@@ -1,18 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.lang.annotation.Target;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import static com.qualcomm.robotcore.util.Range.clip;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "MechanumTest (Blocks to Java)")
-public class MechanumTest extends LinearOpMode {
+@TeleOp(name = "MechanumTest")
+public class mechanumTest extends LinearOpMode {
 
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor screwLeft;
-    private DcMotor screwRight;
+    private DcMotorEx frontRight;
+    private DcMotorEx backRight;
+    private DcMotorEx frontLeft;
+    private DcMotorEx backLeft;
+    private DcMotorEx screwLeft;
+    private DcMotorEx screwRight;
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -63,10 +68,10 @@ public class MechanumTest extends LinearOpMode {
      * Describe this function...
      */
     private void Lift() {
-        if (gamepad1.dpad_up) {
+        if (gamepad2.dpad_down) {
             screwLeft.setPower(1);
             screwRight.setPower(1);
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad2.dpad_up) {
             screwLeft.setPower(-1);
             screwRight.setPower(-1);
         } else {
@@ -78,10 +83,45 @@ public class MechanumTest extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void mecanum() {
-        frontRight.setPower(Math.pow(gamepad1.left_stick_y, 3) + Math.pow(gamepad1.right_stick_x, 3) + Math.pow(gamepad1.left_stick_x, 3));
-        backRight.setPower((Math.pow(gamepad1.left_stick_y, 3) + Math.pow(gamepad1.right_stick_x, 3)) - Math.pow(gamepad1.left_stick_x, 3));
-        frontLeft.setPower((Math.pow(gamepad1.left_stick_y, 3) - Math.pow(gamepad1.right_stick_x, 3)) - Math.pow(gamepad1.left_stick_x, 3));
-        backLeft.setPower((Math.pow(gamepad1.left_stick_y, 3) - Math.pow(gamepad1.right_stick_x, 3)) + Math.pow(gamepad1.left_stick_x, 3));
+    private void mecanum(double LSY, double LSX, double RSX) {
+        /*
+        int Speed = 1600;
+    if (LSX != 0 || LSY != 0 || RSX != 0) {
+      ((DcMotorEx) frontRight).setVelocity(Speed*(clip(Math.pow(-LSY,3)-Math.pow(LSX,3),-1,1)-Math.pow(RSX,3))); //turn has to be last, LSX and LSY has to be min/maxed together.
+      ((DcMotorEx) backRight).setVelocity(Speed*(clip(Math.pow(-LSY,3)+ Math.pow(LSX,3),-1,1)-Math.pow(RSX,3)));
+      ((DcMotorEx) frontLeft).setVelocity(Speed*(Math.min(Math.max(Math.pow(-LSY,3)+Math.pow(LSX,3),1),-1)+ Math.pow(RSX,3)));
+      ((DcMotorEx) backLeft).setVelocity(Speed*(Math.min(Math.max(Math.pow(-LSY,3)-Math.pow(LSX,3),1),-1)+Math.pow(RSX,3)));
+    } else {
+      ((DcMotorEx) frontLeft).setVelocity(0);
+      ((DcMotorEx) frontRight).setVelocity(0);
+      ((DcMotorEx) backLeft).setVelocity(0);
+      ((DcMotorEx) backRight).setVelocity(0);
+      frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+      backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+      frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+      backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
+      RSX: + if direction:reverse, - if direction:forward
+      LSX:
+
+    }
+         */
+        int Speed = 1600;
+        double lx = Math.pow(LSY,3);
+        double ly = Math.pow(LSY,3);
+        double rx = Math.pow(RSX,3);
+        if(LSX != 0 || LSY != 0 || RSX != 0){
+            frontRight.setVelocity(Speed*(clip((ly)+lx,-1,1)+rx));
+            backRight.setVelocity(Speed*(clip((ly)-lx,-1,1)+rx));
+            frontLeft.setVelocity(Speed*(clip((ly)-lx,-1,1)-rx));
+            backLeft.setVelocity(Speed*(clip((ly)+lx,-1,1)-rx));
+        }
+        else{
+            frontLeft.setVelocity(0);
+            backLeft.setVelocity(0);
+            frontRight.setVelocity(0);
+            backRight.setVelocity(0);
+        }
     }
 }
