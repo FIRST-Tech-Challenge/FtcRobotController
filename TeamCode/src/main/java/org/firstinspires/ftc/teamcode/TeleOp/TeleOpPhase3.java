@@ -185,15 +185,18 @@ public class TeleOpPhase3 extends LinearOpMode {
         private ServoImplEx mFingerServo;
         private boolean mIsClawHolding;
         private boolean mIsClawIntaking;
-        private double mWristStage0, mWristStage1;
+        private int mWristStage;
+        private double mWristStage0, mWristStage1, mWristStage2, mWristStage3;
         private double mFingerStage0, mFingerStage1;
         private PwmControl.PwmRange mClawRange = new PwmControl.PwmRange(500, 2500);
 
-        public Claw(ServoImplEx wristServo, ServoImplEx fingerServo, double wristStage0, double wristStage1, double fingerStage0, double fingerStage1) {
+        public Claw(ServoImplEx wristServo, ServoImplEx fingerServo, double wristStage0, double wristStage1, double wristStage2, double wristStage3, double fingerStage0, double fingerStage1) {
             mWristServo = wristServo;
             mFingerServo = fingerServo;
             mWristStage0 = wristStage0;
             mWristStage1 = wristStage1;
+            mWristStage2 = wristStage2;
+            mWristStage3 = wristStage3;
             mFingerStage0 = fingerStage0;
             mFingerStage1 = fingerStage1;
         }
@@ -209,6 +212,10 @@ public class TeleOpPhase3 extends LinearOpMode {
             }
         }
 
+        public boolean isClawHolding() {
+            return mIsClawHolding;
+        }
+
         public void goToFingerStage() {
             // Hold claw
             if (mIsClawHolding) {
@@ -218,22 +225,32 @@ public class TeleOpPhase3 extends LinearOpMode {
             }
         }
 
-        public void setWrist(String intakeOrScore) {
-            switch (intakeOrScore) {
-                case "intake":
-                    mIsClawIntaking = true;
-                    break;
-                case "score":
-                    mIsClawIntaking = false;
-                    break;
-            }
+        public void setWrist(int x) {
+            mWristStage = x;
+        }
+
+        public int getWristStage(int x) {
+            return mWristStage;
         }
 
         public void goToWristStage() {
-            if (mIsClawIntaking) {
-                mWristServo.setPosition(mWristStage0);
-            } else {
-                mWristServo.setPosition(mWristStage1);
+            switch(mWristStage) {
+                case 0:
+                    mIsClawIntaking = true;
+                    mWristServo.setPosition(mWristStage0);
+                    break;
+                case 1:
+                    mIsClawIntaking = false;
+                    mWristServo.setPosition(mWristStage1);
+                    break;
+                case 2:
+                    mIsClawIntaking = false;
+                    mWristServo.setPosition(mWristStage2);
+                    break;
+                case 3:
+                    mIsClawIntaking = false;
+                    mWristServo.setPosition(mWristStage3);
+                    break;
             }
         }
 
@@ -367,6 +384,25 @@ public class TeleOpPhase3 extends LinearOpMode {
                 intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
+            // Claw stuff
+            int wristStage = 0;
+            double wristStage0 = 0;
+            double wristStage1 = 1;
+            double wristStage2 = 1;
+            double wristStage3 = 1;
+            double fingerStage0 = 0;
+            double fingerStage1 = 0;
+
+            Claw claw = new Claw(wristServo, fingerServo, wristStage0, wristStage1, wristStage2, wristStage3, fingerStage0, fingerStage1);
+            boolean clawToggle = false;
+            if (gamepad2.right_trigger > 0.03) {
+                if (claw.isClawHolding()) {
+                    claw.setFinger("release");
+                } else {
+                    claw.setFinger("hold");
+                }
+            }
+
             // Lift & Arm stuff
             int liftStage = 0;
             int liftSpeed = -90;
@@ -404,12 +440,15 @@ public class TeleOpPhase3 extends LinearOpMode {
             if (gamepad2.dpad_down || gamepad1.dpad_down) {
                 liftStage = 0;
                 armStage = 0;
+                wristStage = 0;
             } else if (gamepad2.dpad_left || gamepad1.dpad_left || gamepad2.dpad_right || gamepad1.dpad_right) {
                 liftStage = 1;
                 armStage = 1;
+                wristStage = 1;
             } else if (gamepad1.dpad_up || gamepad2.dpad_up) {
                 liftStage = 2;
                 armStage = 1;
+                wristStage = 2;
             }
             lift1.setLiftStage(liftStage);
             lift2.setLiftStage(liftStage);
@@ -419,6 +458,7 @@ public class TeleOpPhase3 extends LinearOpMode {
             arm2.setArmStage(armStage);
             arm1.goToArmStage();
             arm2.goToArmStage();
+            claw.setWrist(wristStage);
 
             // Manual lift control
             if (gamepad2.left_bumper) {
@@ -444,22 +484,6 @@ public class TeleOpPhase3 extends LinearOpMode {
                 arm1.setArmPosition(armServo1.getPosition() + 0.3);
                 arm2.setArmPosition(armServo2.getPosition() + 0.3);
             }
-
-            // Claw stuff
-            double wristStage0 = 0;
-            double wristStage1 = 1;
-            double fingerStage0 = 0;
-            double fingerStage1 = 0;
-
-            Claw claw = new Claw(wristServo, fingerServo, wristStage0, wristStage1, fingerStage0, fingerStage1)
-            if (gamepad2.right_trigger > 0.03) {
-                claw.setFinger("release");
-                claw.setWrist("intake");
-            } else {
-                claw.setFinger("hold");
-                claw.setWrist("score");
-            }
-
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
