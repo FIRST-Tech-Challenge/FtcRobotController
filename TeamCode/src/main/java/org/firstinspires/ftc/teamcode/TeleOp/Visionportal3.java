@@ -27,7 +27,7 @@ during auto for the second part of the tensorflow object detection task
 
 // this is code for BLUE TEAM
 
-@TeleOp(name="#2 Omni Drive To AprilTag")
+@TeleOp(name="Visionportal3")
 public class Visionportal3 extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 6.0; //  this is how close the camera should get to the target (inches)
