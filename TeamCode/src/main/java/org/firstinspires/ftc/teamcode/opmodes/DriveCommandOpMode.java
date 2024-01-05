@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
-@TeleOp(name = "REALDriverOperationMode")
+@TeleOp(name = "The Drive Op Mode")
 public class DriveCommandOpMode extends CommandOpMode {
 
     private GamepadEx driverController, armerController;
