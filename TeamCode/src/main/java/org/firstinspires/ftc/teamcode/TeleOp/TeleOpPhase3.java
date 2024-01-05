@@ -180,6 +180,71 @@ public class TeleOpPhase3 extends LinearOpMode {
         }
     }
 
+    class Claw {
+        private ServoImplEx mWristServo;
+        private ServoImplEx mFingerServo;
+        private boolean mIsClawHolding;
+        private boolean mIsClawIntaking;
+        private double mWristStage0, mWristStage1;
+        private double mFingerStage0, mFingerStage1;
+        private PwmControl.PwmRange mClawRange = new PwmControl.PwmRange(500, 2500);
+
+        public Claw(ServoImplEx wristServo, ServoImplEx fingerServo, double wristStage0, double wristStage1, double fingerStage0, double fingerStage1) {
+            mWristServo = wristServo;
+            mFingerServo = fingerServo;
+            mWristStage0 = wristStage0;
+            mWristStage1 = wristStage1;
+            mFingerStage0 = fingerStage0;
+            mFingerStage1 = fingerStage1;
+        }
+
+        public void setFinger(String holdOrRelease) {
+            switch (holdOrRelease) {
+                case "hold":
+                    mIsClawHolding = true;
+                    break;
+                case "release":
+                    mIsClawHolding = false;
+                    break;
+            }
+        }
+
+        public void goToFingerStage() {
+            // Hold claw
+            if (mIsClawHolding) {
+                mFingerServo.setPosition(mFingerStage1);
+            } else {
+                mFingerServo.setPosition(mFingerStage0);
+            }
+        }
+
+        public void setWrist(String intakeOrScore) {
+            switch (intakeOrScore) {
+                case "intake":
+                    mIsClawIntaking = true;
+                    break;
+                case "score":
+                    mIsClawIntaking = false;
+                    break;
+            }
+        }
+
+        public void goToWristStage() {
+            if (mIsClawIntaking) {
+                mWristServo.setPosition(mWristStage0);
+            } else {
+                mWristServo.setPosition(mWristStage1);
+            }
+        }
+
+        public String getClawState() {
+            return "isIntaking: " + mIsClawIntaking + ", isHolding: " + mIsClawHolding;
+        }
+
+    }
+
+
+
     public static void initializeLiftAndArm(Lift liftMotor1, Lift liftMotor2, Arm armServo1, Arm armServo2) {
         int liftThreshold = -50;
         double armThreshold = 0.3;
@@ -202,6 +267,9 @@ public class TeleOpPhase3 extends LinearOpMode {
         DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
         ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
         ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+        ServoImplEx wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
+        ServoImplEx fingerServo = hardwareMap.get(ServoImplEx.class, "fingerServo");
+
 
         waitForStart();
 
@@ -377,6 +445,22 @@ public class TeleOpPhase3 extends LinearOpMode {
                 arm2.setArmPosition(armServo2.getPosition() + 0.3);
             }
 
+            // Claw stuff
+            double wristStage0 = 0;
+            double wristStage1 = 1;
+            double fingerStage0 = 0;
+            double fingerStage1 = 0;
+
+            Claw claw = new Claw(wristServo, fingerServo, wristStage0, wristStage1, fingerStage0, fingerStage1)
+            if (gamepad2.right_trigger > 0.03) {
+                claw.setFinger("release");
+                claw.setWrist("intake");
+            } else {
+                claw.setFinger("hold");
+                claw.setWrist("score");
+            }
+
+
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
@@ -386,6 +470,8 @@ public class TeleOpPhase3 extends LinearOpMode {
             telemetry.addData("targetLiftPosition", liftPID.getTargetPosition());
             telemetry.addData("arm1Position", arm1.getArmPosition());
             telemetry.addData("arm2Position", arm2.getArmPosition());
+            telemetry.addData("clawState", claw.getClawState());
+
             telemetry.update();
         }
 
