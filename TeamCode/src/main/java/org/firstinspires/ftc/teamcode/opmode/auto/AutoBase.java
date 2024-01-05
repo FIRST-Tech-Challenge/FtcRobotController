@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,6 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
@@ -18,10 +22,17 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AutoBase extends OpMode {
 
@@ -39,6 +50,12 @@ public abstract class AutoBase extends OpMode {
     Servo rightClaw;
     Servo conveyor;
     OpenCvWebcam webcam;
+
+    // Used for managing the AprilTag detection process.
+    private AprilTagProcessor myAprilTagProcessor;
+
+    // Used to manage the video source.
+    private VisionPortal myVisionPortal;
 
     HSVSaturationPipeline pipeline;
 
@@ -82,6 +99,40 @@ public abstract class AutoBase extends OpMode {
                 telemetry.update();
             }
         });
+
+        // Build the AprilTag processor
+        // set parameters of AprilTagProcessor, then use Builder to build
+        myAprilTagProcessor = new AprilTagProcessor.Builder()
+                //.setTagLibrary(myAprilTagLibrary)
+                //.setNumThreads(tbd)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .build();
+
+        // set apriltag resolution decimation factor
+        myAprilTagProcessor.setDecimation(1);
+
+
+
+        // Build the vision portal
+        // set parameters,then use vision builder.
+        myVisionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "gge_backup_cam"))
+                .addProcessor(myAprilTagProcessor)
+                .setCameraResolution(new Size(640,480))
+                //.setCameraResolution(new Size(1280,720))
+                .enableLiveView(false)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .build();
+
+        // set camera exposure and gain
+        // values used from example code
+        //SetAutoCameraExposure();
+        // setCameraExposure(2, 250);
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -156,6 +207,37 @@ public abstract class AutoBase extends OpMode {
 
         runtime.reset();
     }
+
+    /** Set the camera gain and exposure. */
+//    public void setCameraExposure(int exposureMS, int gain) {
+//
+//        // wait until camera in streaming mode
+//        while (myVisionPortal.getCameraState()!= VisionPortal.CameraState.STREAMING)
+//        {}
+//
+//        // set exposure control to manual
+//        ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
+//        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+//            exposureControl.setMode(ExposureControl.Mode.Manual);
+//            Thread.sleep(50);
+//
+//        }
+//
+//        // set exposure and gain
+//        exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+//        sleep(20);
+//        GainControl gainControl = myVisionPortal.getCameraControl(GainControl.class);
+//        gainControl.setGain(gain);
+//        sleep(20);
+//    }
+
+    /** Sets the camera exposure to automatic */
+    public void SetAutoCameraExposure() {
+        ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
+        exposureControl.setMode(ExposureControl.Mode.Auto);
+    }
+
+
     protected void displayTelemetry(double DirectionNow) {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
@@ -189,4 +271,97 @@ public abstract class AutoBase extends OpMode {
         return pipeline.getRightSpikeSaturation();
     }
 
+
+    public void GoToAprilTag(int tagNumber) {
+        double turnDegrees = 0;
+        List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
+        for (int i = 0; i < tag.size(); i++) {
+
+
+            if (tag.get(i).id == tagNumber) {
+                telemetry.addData("tagid found: ", tag.get(i).id);
+                telemetry.addData("tagid x: ", tag.get(i).ftcPose.x);
+                telemetry.addData("tagid y: ", tag.get(i).ftcPose.y);
+                telemetry.addData("tagid yaw: ", tag.get(i).ftcPose.yaw);
+                telemetry.update();
+
+                //determines what direction to turn
+                if (tagNumber <= 3){
+                    turnDegrees = 90;
+                } else if (tagNumber > 3) {
+                    turnDegrees = -90;
+                }
+
+
+                //moves forward to ensure that the rigging is not in the way
+                while (tag.get(i).ftcPose.y>36){
+                    if (tag.get(i).ftcPose.y>36) {
+                        moveTo.Backwards(20, 25);
+                    }
+
+                }
+
+                //Rotate so Gege is square with the back drop
+                moveTo.Rotate(turnDegrees);
+
+                //move left or right to line up with backdrop
+                while (tag.get(i).ftcPose.x>0.5 && tag.get(i).ftcPose.x<0.5){
+                    if (tag.get(i).ftcPose.x>=0) {
+                        moveTo.Left(20, 25);
+                    } else if (tag.get(i).ftcPose.x<0) {
+                        moveTo.Right(20, 25);
+                    }
+                }
+
+                //moves forward to correct distance to place
+                while (tag.get(i).ftcPose.y>12.5 && tag.get(i).ftcPose.y<11.5){
+                    if (tag.get(i).ftcPose.y>12) {
+                        moveTo.Backwards(20, 25);
+                    } else if (tag.get(i).ftcPose.y<12) {
+                        moveTo.Forward(20, 25);
+                    }
+                }
+
+                /**
+                 * if (tagNumber <= 3){
+                 *     double turnDegrees = -90
+                 * }
+                 * else-if (tagNumber > 3){
+                 *     double turnDegrees = 90
+                 * }
+                 * */
+                /**
+                 * while (y>? && y<?)
+                 *  if Y is too far
+                 *      move ____ 20 ticks
+                 *
+                 *  else-if y is too close
+                 *      move ____ 20 ticks
+                 * */
+                /**
+                 * Rotate so Gege is square with the back drop
+                 * Rotate(turnDegrees)
+                 * */
+                /**
+                 * while (x>-0.5 && x<0.5)
+                 *  if x is positive
+                 *      move right 20 ticks
+                 *
+                 *  else-if x is negitive
+                 *      move left 20 ticks
+                 * */
+                /**
+                 * while (y>? && y<?)
+                 *  if Y is too far
+                 *      move ____ 20 ticks
+                 *
+                 *  else-if y is too close
+                 *      move ____ 20 ticks
+                 * */
+            }
+
+
+        }
+
+    }
 }

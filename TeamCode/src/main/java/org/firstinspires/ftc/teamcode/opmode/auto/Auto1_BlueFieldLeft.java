@@ -77,7 +77,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             default:
                 gamepieceLocation = GamePieceLocation.RIGHT;
         }
-        telemetry.addData("GamePiece Spike line",gamepieceLocation);
+
+        //telemetry.addData("GamePiece Spike line",gamepieceLocation);
         telemetry.update();
     }
     // run until the end of the match (driver presses STOP)

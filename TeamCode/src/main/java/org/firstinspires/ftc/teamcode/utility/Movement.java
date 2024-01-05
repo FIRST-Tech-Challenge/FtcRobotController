@@ -9,6 +9,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 /**
  * This class contains methods to control drive base movement
@@ -265,5 +269,17 @@ public class Movement {
             turnDiff = turnDiff - 360;
         }
         return turnDiff;
+    }
+
+    public void GoToAprilTag(int tagNumber, AprilTagProcessor myAprilTag){
+        List<AprilTagDetection> tag = myAprilTag.getDetections();
+        for (int i = 0; i<tag.size(); i++){
+
+            if(tag.get(i).id==tagNumber){
+
+            }
+
+
+        }
     }
 }
