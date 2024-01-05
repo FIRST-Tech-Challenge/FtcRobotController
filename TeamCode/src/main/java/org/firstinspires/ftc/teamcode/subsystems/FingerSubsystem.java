@@ -11,6 +11,21 @@ public class FingerSubsystem extends SubsystemBase {
     Servo finger;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("FingerSubsystem");
 
+    public enum FingerPositions {
+        OPEN(1),
+        CLOSED(0);
+
+        private final float position;
+
+        FingerPositions(float position) {
+            this.position = position;
+        }
+
+        public float getPosition() {
+            return position;
+        }
+    }
+
     public FingerSubsystem(final Servo finger) {
         this.finger = finger;
     }
@@ -20,6 +35,10 @@ public class FingerSubsystem extends SubsystemBase {
         power++;
         power/=2d;
         finger.setPosition(power);
+    }
+
+    public void locomoteFinger(FingerPositions position) {
+        finger.setPosition(position.getPosition());
     }
 
 }
