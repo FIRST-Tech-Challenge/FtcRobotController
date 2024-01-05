@@ -107,10 +107,6 @@ public abstract class Teleop extends LinearOpMode {
 
 //========== DRIVE-TO-APRILTAG variables ==========
 
-//  double elbowPos = 0.500;
-//  double wristPos = 0.500;
-//  double collPos  = 0.500;
-
     // LIFT STATE MACHINE VARIABLES
     final int LIFT_STATE_IDLE = 0;
     final int LIFT_STATE_ELBOW_INTO_BIN = 1;  // ready to rotate elbow into the pixel bin
@@ -201,10 +197,6 @@ public abstract class Teleop extends LinearOpMode {
 //            telemetry.addData("square","Driver-centric (set joystick!)");
 //            telemetry.addData("d-pad","Fine control (30%)");
 //            telemetry.addData(" "," ");
-
-//            telemetry.addData("Elbow", "%.3f", elbowPos );
-//            telemetry.addData("Wrist", "%.3f", wristPos );
-//            telemetry.addData("Coll", "%.3f", collPos);
 
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
@@ -409,22 +401,10 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
         {
           robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
-//        elbowPos -= 0.01;
-//        robot.elbowServo.setPosition(elbowPos);
-//        wristPos -= 0.01;
-//        robot.wristServo.setPosition(wristPos);
-//        collPos -= 0.01;
-//        robot.collectorServo.setPosition(collPos);
         }
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
           robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
-//        elbowPos += 0.01;
-//        robot.elbowServo.setPosition(elbowPos);
-//        wristPos += 0.01;
-//        robot.wristServo.setPosition(wristPos);
-//        collPos += 0.01;
-//        robot.collectorServo.setPosition(collPos);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         // - lowers collector for grabbing pixels
@@ -465,11 +445,10 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Make sure we're lifted before we allow the operator to command SCORE
             if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
-                robot.elbowServo.setPosition(robot.ELBOW_SERVO_DROP);
+                robot.pushServo.setPosition(robot.PUSH_SERVO_DROP);
                 robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
-                // Wait 2.5 seconds (1 sec to rotate the servos, plus 1.5 sec more to stop wobbling
-                // so we don't end up "flinging" the pixel against the backdrop.
-                sleep(2500 );
+                // Wait 1 sec so we don't "fling" the pixel against the backdrop
+                sleep(1000 );
                 robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
                 robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
             }
@@ -478,7 +457,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
         else if( gamepad2_square_now && !gamepad2_square_last)
         {
-            robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+            robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
             robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
             sleep(1000);
             robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
@@ -517,7 +496,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
-           robot.elbowServo.setPosition(robot.ELBOW_SERVO_SAFE);
+           robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
            sleep(750);
            robot.startViperSlideExtension( robot.VIPER_EXTEND_ZERO );

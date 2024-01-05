@@ -145,26 +145,25 @@ public class HardwarePixelbot
     public double pixel1Distance; // lower
     public double pixel2Distance; // upper
 
-
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
-    public Servo  elbowServo = null;
-    public double ELBOW_SERVO_INIT = 0.265;
-    public double ELBOW_SERVO_SAFE = 0.265;   // Safe to raise/lower the lift
-    public double ELBOW_SERVO_GRAB = 0.400;   // Rotate pixel fingers toward the pixel bin
-    public double ELBOW_SERVO_DROP = 0.950;   // Rotate pixel fingers toward the Backdrop
+    public Servo  pushServo = null;
+    public double PUSH_SERVO_INIT = 0.470;
+    public double PUSH_SERVO_SAFE = 0.470;   // Safe to raise/lower the lift
+    public double PUSH_SERVO_GRAB = 0.540;   // Retract linkage servo back behind the pixel bin
+    public double PUSH_SERVO_DROP = 0.890;   // Extend linkage servo and finger assembly toward the Backdrop
 
     public Servo  wristServo = null;
-    public double WRIST_SERVO_INIT = 0.490;   // higher is counter-clockwise
-    public double WRIST_SERVO_GRAB = 0.490;
-    public double WRIST_SERVO_DROP = 0.000;
+    public double WRIST_SERVO_INIT = 0.450;   // higher is counter-clockwise
+    public double WRIST_SERVO_GRAB = 0.450;
+    public double WRIST_SERVO_DROP = 0.810;
 
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
-    public double FINGER1_SERVO_DROP = 0.440;
-    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.420;
+    public double FINGER1_SERVO_DROP = 0.500;
+    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.242; // 0.742
 
 	public Servo  fingerServo2 = null;  // BOTTOM (bin) or LEFT (backdrop)
-    public double FINGER2_SERVO_DROP = 0.430;
-    public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.415;
+    public double FINGER2_SERVO_DROP = 0.480;
+    public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.262;  // 0.742
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
@@ -277,8 +276,8 @@ public class HardwarePixelbot
         pixe2DistanceSensor = (DistanceSensor) pixel2ColorSensor;
 
         /*--------------------------------------------------------------------------------------------*/
-        elbowServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
-        elbowServo.setPosition(ELBOW_SERVO_INIT);
+        pushServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
+        pushServo.setPosition(PUSH_SERVO_INIT);
 
         wristServo = hwMap.servo.get("WristServo");           // servo port 1 (Expansion Hub)
         wristServo.setPosition(WRIST_SERVO_INIT);

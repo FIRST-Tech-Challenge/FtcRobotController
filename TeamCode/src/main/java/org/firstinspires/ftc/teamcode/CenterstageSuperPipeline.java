@@ -48,19 +48,19 @@ class CenterstageSuperPipeline implements VisionProcessor {
     protected boolean saveNextSpikeMark = false;
     // NOTE: webcam resolution for the row/col values below is 1280 x 800
     // LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
-    protected Point sub1PointALeft = new Point(330, 360); //Point1 is left spike mark, Point2 is center, Point3 is Right
-    protected Point sub1PointBLeft = new Point(460, 500);
-    protected Point sub2PointALeft = new Point(730, 370);
-    protected Point sub2PointBLeft = new Point(840, 485);
-    protected Point sub3PointALeft = new Point(1130, 370);
+    protected Point sub1PointALeft = new Point(335, 370); //Point1 is left spike mark, Point2 is center, Point3 is Right
+    protected Point sub1PointBLeft = new Point(465, 500);
+    protected Point sub2PointALeft = new Point(735, 380);
+    protected Point sub2PointBLeft = new Point(845, 485);
+    protected Point sub3PointALeft = new Point(1130, 375);
     protected Point sub3PointBLeft = new Point(1275, 510);
     // RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
     protected Point sub1PointARight = new Point(50, 370);
-    protected Point sub1PointBRight = new Point(195, 510);
-    protected Point sub2PointARight = new Point(550, 370);
-    protected Point sub2PointBRight = new Point(660, 485);
-    protected Point sub3PointARight = new Point(910, 370);
-    protected Point sub3PointBRight = new Point(1040, 510);
+    protected Point sub1PointBRight = new Point(185, 510);
+    protected Point sub2PointARight = new Point(555, 400);
+    protected Point sub2PointBRight = new Point(605, 450);
+    protected Point sub3PointARight = new Point(895, 370);
+    protected Point sub3PointBRight = new Point(1025, 510);
     
     protected Point spikeMarkCenter = new Point(); // defined dynamically below
 //  protected Mat YCrCb = new Mat();
