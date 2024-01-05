@@ -73,7 +73,7 @@ public class ElevatorControl {
         bucket = _opMode.hardwareMap.get(Servo.class, "bucket_servo");
         launch = _opMode.hardwareMap.get(Servo.class, "launch_servo");
 
-        pos_pid.init_pid(.005,0,0);  //Position controller to control elevator to a specific position.
+        pos_pid.init_pid(.0025,0,0);  //Position controller to control elevator to a specific position.
     }
 
 
@@ -194,7 +194,7 @@ public class ElevatorControl {
     //Pixle Bucket Controls.
     //Dump_pixle - rotates the bucket so pixle drops out of bucket.
     public void dump_pixle() {
-        bucket.setPosition(-.2);
+        bucket.setPosition(.3);
 //       RobotLog.d(String.format("inrobot.dumpbucket"));
     }
     //Reset_bucket - returns the bucket to position to receive another pixle

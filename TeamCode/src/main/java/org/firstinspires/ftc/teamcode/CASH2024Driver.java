@@ -87,7 +87,7 @@ public class CASH2024Driver extends OpMode
 
         //This resets the angles to 0 degrees and will represent zero after robot is inicialized
         //This method can be used anytime you want to reset the angles to zero
-        robot.robotIMU.resetAngle();
+//        robot.robotIMU.resetAngle();
 
         telemetry.addData("Status", "Initialized");
         robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
@@ -148,9 +148,9 @@ public class CASH2024Driver extends OpMode
         float out = gamepad1.left_trigger;
 
 
-        if (loopTime.milliseconds() > 20) {
+        if (loopTime.milliseconds() > 60) {
             RobotLog.i(String.format("looptime: %.6f",loopTime.milliseconds()));
-            loopTime.reset();
+//            loopTime.reset();
 
             if (in > .1) {
                 sweeperCmd = 1.0;
@@ -294,7 +294,7 @@ public class CASH2024Driver extends OpMode
             telemetry.addData("Status", "Running");
             telemetry.addData("#ofTicks", robot.getTicks());
             telemetry.update();
-//        loopTime.reset();
+        loopTime.reset();
 
 
 
