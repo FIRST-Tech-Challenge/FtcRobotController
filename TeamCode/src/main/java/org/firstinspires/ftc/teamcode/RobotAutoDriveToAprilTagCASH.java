@@ -110,6 +110,7 @@ public class RobotAutoDriveToAprilTagCASH extends LinearOpMode
     {
         robot = new Robot2024((this));
         robot.initializeRobot();
+        robot.resetIMU();
 
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1) +ve is forward
