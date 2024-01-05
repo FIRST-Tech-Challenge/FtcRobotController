@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
+import edu.wpi.first.math.geometry.Translation2d;
 
-public class Constants {
+public class Constants  {
     public static final double l1ff = 1;// com distant from axis first arm METERS
     public static final double l2ff = 0.70;// com distant from axis second arm METERS
     public static final double first_arm_weight = 1.7; // first arm weight KG
@@ -18,7 +19,19 @@ public class Constants {
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
 
+    public enum ArmStates {
+        base(Arm.armBasePosition,false,ArmPlacingStates.base), // this doesn't need any boolean has a command on his own
 
+        public Translation2d desiredPoint;
+        //false is positive x true is negative
+        public boolean direction;
+        public ArmPlacingStates placingHeight;
+
+        private ArmStates(Translation2d point) {
+            this.desiredPoint = point;
+
+        }
+    }
 
 
 
