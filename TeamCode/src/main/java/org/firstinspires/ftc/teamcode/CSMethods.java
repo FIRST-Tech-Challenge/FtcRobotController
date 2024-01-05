@@ -270,7 +270,7 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
-    public void strafeUntilTagDetection(int idOfTag /* implement tag id detection later */) {
+    public void strafeUntilTagDetection(int idOfTag) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -291,8 +291,8 @@ public abstract class CSMethods extends LinearOpMode {
             rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
 
 
-            while (!detectTags()) {
-                telemetry.addData("Currently","Strafing until tag detection");
+            while (!detectTag(idOfTag)){
+                telemetry.addData("Currently","Strafing until tag " + idOfTag + " is detected");
                 telemetry.update();
             }
 
@@ -439,8 +439,15 @@ public abstract class CSMethods extends LinearOpMode {
                 .build();
     }
 
-    public boolean detectTags(){
-        return (tagProcessor.getDetections().size() != 0);
+    public boolean detectTag(int id){
+        int i;
+        for (i = 0; i < tagProcessor.getDetections().size(); i++)
+        {
+            if (tagProcessor.getDetections().get(i).id == id){
+                return true;
+            }
+        }
+        return false;
     }
     public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
