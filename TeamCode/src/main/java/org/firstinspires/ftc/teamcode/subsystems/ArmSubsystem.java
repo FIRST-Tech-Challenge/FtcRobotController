@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
 public class ArmSubsystem extends SubsystemBase {
     private final DcMotor armMotor;
+    private final int POSITION_MOVE_POWER = 1;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("ArmSubsystem");
 
@@ -38,6 +39,13 @@ public class ArmSubsystem extends SubsystemBase {
     public void manualMoveArm(double power) {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setPower(power);
+    }
+
+    // TODO: implement this for macros
+    @Deprecated
+    public void positionMoveArm(int position) {
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(POSITION_MOVE_POWER);
     }
 
     /**
