@@ -10,17 +10,12 @@ public class ArcadeRowan extends LinearOpMode {
 
     //Initializing motor variables
     DcMotor frontLeft;
-    //Initializing frontLeft motor variable
     DcMotor backLeft;
-    //Initializing frontLeft motor variable
     DcMotor frontRight;
-    //Initializing frontLeft motor variable
     DcMotor backRight;
-    //Initializing frontLeft motor variable
 
     DcMotor intake;
-
-    //DO NOT CHANGE FOLLOWING LINES OF CODE
+    DcMotor lift;
 
     public void runOpMode(){
         //Assigning configuration name to variable (for frontLeft, backLeft, frontRight, backRight)
@@ -30,6 +25,11 @@ public class ArcadeRowan extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         intake = hardwareMap.get(DcMotor.class, "intake");
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
+        //resetting encoder values for lift
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -46,13 +46,9 @@ public class ArcadeRowan extends LinearOpMode {
 
             //setting power for forward-backward movement
             frontLeft.setPower(throttle);
-            //setting the power for frontLeft
             backLeft.setPower(throttle);
-            //setting the power for backLeft
             frontRight.setPower(throttle);
-            //setting the power for frontRight
             backRight.setPower(throttle);
-            //setting the power for backRight
 
             //setting up strafing
             if(strafeR) {
@@ -68,10 +64,6 @@ public class ArcadeRowan extends LinearOpMode {
             }
 
             //setting power for turning
-            /*frontLeft and backLeft are -turn while frontRight and backRight are positive b/c two
-            of the motors need to be positive and two have to be negative in order to have the
-            robot properly turn
-            */
             frontLeft.setPower(turn);
             backLeft.setPower(turn);
             frontRight.setPower(-turn);
@@ -85,6 +77,28 @@ public class ArcadeRowan extends LinearOpMode {
             } else {
                 intake.setPower(0);
             }
+
+            //setting power for lift
+            lift.setPower(-1 * gamepad2.right_stick_y);
+            telemetry.addData("lift position", lift.getCurrentPosition());
+            telemetry.update();
+
+            if (lift.getCurrentPosition() <= 0) {
+                if (gamepad2.right_stick_y < 0) {
+                    lift.setPower(0);
+                } else {
+                    lift.setPower(-1 * gamepad2.right_stick_y);
+                }
+            } else if (gamepad2.right_stick_y >= 1000) {
+                if (gamepad2.right_stick_y > 0) {
+                    lift.setPower(0);
+                } else {
+                    lift.setPower(-1 * gamepad2.right_stick_y);
+                }
+            } else {
+                lift.setPower(-1 * gamepad2.right_stick_y);
+            }
+
         }
     }
 }
