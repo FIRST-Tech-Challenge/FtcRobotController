@@ -212,22 +212,20 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Controls the intake
-            if (gamepad1.a){
+            if (gamepad1.a) {
                 // Added safety to stop robot if this happens while its still moving.
                 leftFrontDrive.setPower(0);
                 rightFrontDrive.setPower(0);
                 leftBackDrive.setPower(0);
                 rightBackDrive.setPower(0);
-                // Pickup automation
-                intake.GrabAndStowPixel();
-                intake.AdvanceConveyor();
-//                conveyor.setPosition(0);
-//                SystemClock.sleep (1500);
-//                conveyor.setPosition(0.5);
-            } else if (gamepad1.b) {
-                intake.ClawOpen();
-            } else if (gamepad1.x) {
-                intake.FlipDown();
+                if (wrist.getCurrentPosition() > (intake.WRIST_DOWN_TICKS - 10)) {
+                    // Pickup automation
+                    intake.GrabAndStowPixel();
+                    intake.AdvanceConveyor();
+                } else {
+                    // If the wrist is up, put it down
+                    intake.FlipDown();
+                }
             }
 
             if(gamepad1.dpad_down){
