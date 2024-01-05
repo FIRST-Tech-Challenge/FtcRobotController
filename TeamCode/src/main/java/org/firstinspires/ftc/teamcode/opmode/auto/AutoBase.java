@@ -25,10 +25,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class AutoBase extends OpMode {
 
-    // These are all the configurable parameters that can be tuned
-    static final int LOW_LINEAR_SLIDE_TICKS = 500; // Low position for the linear slides
-    static final int BOTTOM_LINEAR_SLIDE_TICKS = 0; // Bottom position for the linear slides
-
     // <<<<<<end of configurable parameters >>>>>>>>>>>
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera

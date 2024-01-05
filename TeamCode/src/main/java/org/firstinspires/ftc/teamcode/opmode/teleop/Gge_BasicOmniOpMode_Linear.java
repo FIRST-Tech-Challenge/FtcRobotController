@@ -83,15 +83,6 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
-    static final int top_linearslide_ticks = 1750; // adjusted to proper field height at T1 from memory
-
-    static final int mid_linearslide_ticks = 1000;
-
-    static final int low_linearslide_ticks = 500;
-
-    static final int bottom_linearslide_ticks = 0;
-
-
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -240,17 +231,17 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             if(gamepad1.dpad_down){
-                linearslidemovement.Movelinearslide(low_linearslide_ticks);
+                linearslidemovement.LinearSlidesLow();
             } else if (gamepad1.dpad_left) {
-                linearslidemovement.Movelinearslide(mid_linearslide_ticks);
+                linearslidemovement.LinearSlidesMiddle();
             } else if (gamepad1.dpad_right) {
-                linearslidemovement.Movelinearslide(bottom_linearslide_ticks);
-                while (leftLinearSlide.getCurrentPosition() > (bottom_linearslide_ticks + 5)){
+                linearslidemovement.LinearSlidesBottom();
+                while (leftLinearSlide.getCurrentPosition() > (linearslidemovement.bottom_linearslide_ticks + 5)){
                     // pause to wait for the slide to lower before raising the wrist back up.
                 }
                 intake.FlipUp();
             } else if (gamepad1.dpad_up) {
-                linearslidemovement.Movelinearslide(top_linearslide_ticks);
+                linearslidemovement.LinearSlidesTop();
             }
 
             if (gamepad1.left_trigger > 0.4) {
@@ -270,9 +261,9 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             powerFactor = basePowerFacter + (gamepad1.right_trigger * boostPowerFacter);
 
             // If the linear slides are raised, force powerFactor to slow (i.e. 25%)
-            if (leftLinearSlide.getCurrentPosition() > mid_linearslide_ticks + 100) {
+            if (leftLinearSlide.getCurrentPosition() > linearslidemovement.mid_linearslide_ticks + 100) {
                 powerFactor = 0.35;
-            } else if (leftLinearSlide.getCurrentPosition() > low_linearslide_ticks + 100) {
+            } else if (leftLinearSlide.getCurrentPosition() > linearslidemovement.low_linearslide_ticks + 100) {
                 powerFactor = 0.50;
             }
             double max;

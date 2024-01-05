@@ -117,7 +117,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Move backwards 10.5 inches
             moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesLow();
             // Moves the conveyor forward
             conveyor.setPosition(0);
             // Runs the conveyor for 4 seconds
@@ -125,7 +125,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesBottom();
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 18 inches
@@ -160,7 +160,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Backwards 36.5 inches
             moveTo.Backwards((int)((35 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesLow();
             // Moves the conveyor forward
             conveyor.setPosition(0);
             // Runs the conveyor for 4 seconds
@@ -168,7 +168,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesBottom();
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
@@ -193,7 +193,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
             moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
             moveTo.Backwards((int)((19.25 * ticksPerInch) * 0.94), 0.25);
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesLow();
             sleep(2000);
             // Moves the conveyor forward
             conveyor.setPosition(0);
@@ -202,7 +202,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesBottom();
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
