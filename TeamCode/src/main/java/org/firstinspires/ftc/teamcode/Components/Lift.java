@@ -56,7 +56,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1250, false),
     MID_SET_LINE(800, false),
-    LOW_SET_LINE(375, false),
+    LOW_SET_LINE(500, false),
     AT_ZERO(0, true);
 
     double position;
@@ -142,7 +142,8 @@ public class Lift extends RFDualMotor {
         LiftMovingStates.values()[i.ordinal()].state=false;
       }
     }
-    if (super.getCurrentPosition() < 200) LiftPositionStates.AT_ZERO.setStateTrue();
+    if (super.getCurrentPosition() < 350) LiftPositionStates.AT_ZERO.setStateTrue();
+    else LiftPositionStates.AT_ZERO.state=false;
 
     for (var i : LiftMovingStates.values()) {
       if (i.state

@@ -4,12 +4,15 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /** Harry Class to contain all Arm functions */
+@Config
 public class Arm extends RFServo {
-  static double DROP_POS = 0.2, HOVER_POS = 0.8, GRAB_POS = 0.9;
+  public static double DROP_POS = 0.2, HOVER_POS = 0.8, GRAB_POS = 0.7;
   private double lastTime = 0, FLIP_TIME = 0.6;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -19,6 +22,8 @@ public class Arm extends RFServo {
     super.setFlipTime(FLIP_TIME);
     lastTime = -100;
     super.setLastTime(-100);
+    ArmStates.GRAB.setStateTrue();
+    ArmTargetStates.GRAB.setStateTrue();
   }
 
   /** enum for arm servo states, built in function to update states */
@@ -91,12 +96,14 @@ public class Arm extends RFServo {
         if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
           if (p_state == ArmStates.DROP) {
             super.setPosition(DROP_POS);
+            ArmTargetStates.DROP.setStateTrue();
             Wrist.WristTargetStates.DROP.setStateTrue();
             Twrist.twristTargetStates.DROP.setStateTrue();
             LOGGER.log(RFLogger.Severity.INFO, "flipping to DROP");
             lastTime = time;
           } else {
             super.setPosition(HOVER_POS);
+            ArmTargetStates.HOVER.setStateTrue();
             LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
             Wrist.WristTargetStates.GRAB.setStateTrue();
             Twrist.twristTargetStates.GRAB.setStateTrue();
