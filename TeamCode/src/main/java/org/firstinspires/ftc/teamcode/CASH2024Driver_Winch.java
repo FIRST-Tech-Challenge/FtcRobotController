@@ -88,7 +88,7 @@ public class CASH2024Driver_Winch extends OpMode
 
         //This resets the angles to 0 degrees and will represent zero after robot is inicialized
         //This method can be used anytime you want to reset the angles to zero
-        robot.robotIMU.resetAngle();
+//        robot.robotIMU.resetAngle();
 
         telemetry.addData("Status", "Initialized");
         robot.setDesElevatorPosition_Teliop(robot.getElevatorPositition());
@@ -272,7 +272,7 @@ public class CASH2024Driver_Winch extends OpMode
 
 
 //            robot.raiseLowerWinch(winchCommand);
-            if (Math.abs(winchCommand) > .125) {
+            if (Math.abs(winchCommand) > .05) {
                 robot.raiseLowerWinch(winchCommand);
                 robot.setDesWinchPosition_Teliop(robot.getWinchPositition());
             } else {
