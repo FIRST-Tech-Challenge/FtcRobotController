@@ -187,7 +187,7 @@ public class actuatorUtils {
         elbow.setPosition(1);
     }
     public static void elbowBoard() {
-        elbow.setPosition(0.579);
+        elbow.setPosition(0.6);
     }
     public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == ArmLevel.LOW_POLE)

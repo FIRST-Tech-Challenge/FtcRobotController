@@ -165,32 +165,33 @@ public class RedRight extends LinearOpMode {
 
     private void LeftPath() throws InterruptedException {
         move.driveSeq(-30,-12,-180);
-        move.driveSeq(-30,-1,-180);
+        move.driveSeq(-30,-2.5,-180);
         utils.dumpOpen();
         sleep(1000);
         move.driveSeq(-30, -8, -180);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        move.driveSeq(-19, -30, 90);
-        move.driveToBoard(-19, -32, 90);
-        move.driveFromBoard(-52, -32, 90);
-        move.driveSeq(-52, -50, 90);
+        move.driveSeq(-21, -30, -90);
+        move.driveToBoard(-21, -39.5, -90);
+        move.driveFromBoard(-21, -38, -90);
+        move.driveSeq(-52, -38, -90);
+        move.driveSeq(-52, -50, -90);
     }
     private void MiddlePath() throws InterruptedException {
-        move.driveSeq(-14.5,-19.5,-180);
+        move.driveSeq(-16.5,-19.5,-180);
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        move.driveSeq(-14.5, -23.5, -180);
+        move.driveSeq(-16.5, -23.5, -180);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        move.driveSeq(-24.5, -30, 90);
-        move.driveToBoard(-24.5, -32, 90);
-        move.driveFromBoard(-52, -32, 90);
-        move.driveSeq(-52, -50, 90);
-
+        move.driveSeq(-27, -30, -90);
+        move.driveToBoard(-27, -39.5, -90);
+        move.driveFromBoard(-27, -38, -90);
+        move.driveSeq(-52, -38, -90);
+        move.driveSeq(-52, -50, -90);
     }
     private void RightPath() throws InterruptedException {
         move.driveSeq(-27,-24.5,180);
@@ -200,10 +201,11 @@ public class RedRight extends LinearOpMode {
         move.driveSeq(-27, -28.5, 180);
         sleep(1000);
         utils.dumpClose();
-        move.driveSeq(-40.0, -30, 90);
-        move.driveToBoard(-28.5, -32, 90);
-        move.driveFromBoard(-52, -33, 90);
-        move.driveSeq(-52, -50, 90);
+        move.driveSeq(-33, -30, -90);
+        move.driveToBoard(-33, -39.5, -90);
+        move.driveFromBoard(-33, -38, -90);
+        move.driveSeq(-52, -38, -90);
+        move.driveSeq(-52, -50, -90);
     }
 
     private void initOpenCV() {
