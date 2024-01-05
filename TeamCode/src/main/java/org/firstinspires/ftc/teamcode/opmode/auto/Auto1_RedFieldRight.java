@@ -187,7 +187,7 @@ public class Auto1_RedFieldRight extends AutoBase {
             intake.FlipUp();
             moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
             moveTo.Right((int)((3 * ticksPerInch) * 1.04), 0.5);
-            moveTo.Backwards((int)((20 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
             linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
             sleep(700);
             // Moves the conveyor forward

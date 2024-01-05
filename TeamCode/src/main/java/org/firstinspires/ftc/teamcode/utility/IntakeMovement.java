@@ -25,7 +25,7 @@ public class IntakeMovement {
     // The lower the int the higher the wrist goes
     static final int WRIST_UP_TICKS     =  0;     // Gge MUST be started at all times with the claw fully raised and over the conveyor.
     static final int WRIST_SAFETY_TICKS = 30;     // Gge needs to have a safety  position for the wrist to allow the linear slides to raise.
-    static final int WRIST_DOWN_TICKS   =  140;     // The number of ticks that achieve ground position for the wrist.
+    static final int WRIST_DOWN_TICKS   =  141;     // The number of ticks that achieve ground position for the wrist.
     double WRIST_POWER = 1.0; // Set the power of the wrist movement
 
     static final double SERVO_CLAW_DELAY = 0.9;
@@ -132,7 +132,7 @@ public class IntakeMovement {
      * the claw servos to touch it.
      */
     public void FlipDown() {
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(30, 0.1, 0.1, 4);
+        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(35, 0.1, 0.1, 4);
         moveWrist (WRIST_DOWN_TICKS, WRIST_POWER);
     }
 

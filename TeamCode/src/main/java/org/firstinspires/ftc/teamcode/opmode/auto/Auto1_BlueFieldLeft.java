@@ -96,11 +96,13 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
             moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+            // move forward 8 inches
+            moveTo.Forward((int)((8 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
             sleep (500);
+            // move forward 4 inches
+            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Open the claw
             intake.ClawOpen();
             // Move the claw up
@@ -156,7 +158,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Right 2 inches
             moveTo.Right((int)((2 * ticksPerInch) * 0.94), 0.5);
             // Backwards 36.5 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((35 * ticksPerInch) * 0.94), 0.25);
             // Move the linear slide to the low scoring position
             linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
             // Moves the conveyor forward

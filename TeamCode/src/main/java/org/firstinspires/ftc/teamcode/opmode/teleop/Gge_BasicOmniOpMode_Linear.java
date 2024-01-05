@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import static java.lang.Math.abs;
+
 import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -141,6 +143,9 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         double targetDirection = 0.0;
         // set a boolean to hold the state as to if the driver has locked onto a desired bearing.
         boolean directionLocked = false;
+        // set a timer to prevent restarting auto drive correction within several milliseconds of the previous initialization
+        double autoDriveDelay = 200;
+        double autoDriveTimeOk;
 
         // Adding in PIDF Config values learned from previous testing
         // These may need to be tuned anytime the motor weights or config changes.
@@ -191,8 +196,11 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         //drive speed limiter
         double powerFactor;
-        double basePowerFacter = 0.50;
-        double boostPowerFacter = 0.50;
+        double basePowerFacter = 0.60;
+        double boostPowerFacter = 0.40;
+
+        // Set a local variable to accumulate error over time (I gain).
+        double accumulatedError = 0;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -200,6 +208,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        autoDriveTimeOk = runtime.milliseconds();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -226,8 +235,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 //                conveyor.setPosition(0.5);
             } else if (gamepad1.b) {
                 intake.ClawOpen();
-            } else if (gamepad1.y) {
-                intake.FlipUp();
             } else if (gamepad1.x) {
                 intake.FlipDown();
             }
@@ -238,6 +245,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 linearslidemovement.Movelinearslide(mid_linearslide_ticks);
             } else if (gamepad1.dpad_right) {
                 linearslidemovement.Movelinearslide(bottom_linearslide_ticks);
+                while (leftLinearSlide.getCurrentPosition() > (bottom_linearslide_ticks + 5)){
+                    // pause to wait for the slide to lower before raising the wrist back up.
+                }
+                intake.FlipUp();
             } else if (gamepad1.dpad_up) {
                 linearslidemovement.Movelinearslide(top_linearslide_ticks);
             }
@@ -264,7 +275,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             } else if (leftLinearSlide.getCurrentPosition() > low_linearslide_ticks + 100) {
                 powerFactor = 0.50;
             }
-
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -272,31 +282,38 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             double lateral =  -gamepad1.left_stick_x;
             double yaw     = -gamepad1.right_stick_x;
 
-            // Set deadzone of the joysticks for very low values
-            if (Math.abs (axial) < 0.05) {
+            // Set dead zone of the joysticks for very low values
+            if (abs (axial) < 0.05) {
                 axial = 0;
             }
-            if (Math.abs (lateral) < 0.05) {
+            if (abs (lateral) < 0.05) {
                 lateral = 0;
             }
-            if (Math.abs (yaw) < 0.05) {
+            if (abs (yaw) < 0.05) {
                 yaw = 0;
             }
 
             // Compensate the stick values to ensure that the IMU considers when the robot pulls to one side or another.
-            if (yaw == 0.0 && gamepad1.back == false) {
-                // if the driver is not turning or resetting the Yaw, take the bearing desired
-                if (directionLocked == false){
-                    directionLocked = true;
-                    targetDirection = DirectionNow;
+            if (yaw == 0 && gamepad1.back == false && abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES)) < 10) {
+                if (autoDriveTimeOk < runtime.milliseconds()){
+                    // if the driver is not turning or resetting the Yaw, take the bearing desired
+                    if (directionLocked == false){
+                        directionLocked = true;
+                        targetDirection = DirectionNow;
+                    }
+                    // Whenever there is error in the direction, accumulate this over time (i gain).
+                    accumulatedError += 0.0002 * Movement.CalcTurnError (targetDirection, DirectionNow);
+                    // We already know that joystick yaw is 0, apply an automatic rotational angle to compensate for rotation.
+                    yaw = accumulatedError + 0.01 * Movement.CalcTurnError (targetDirection, DirectionNow);
                 }
-                // We already know that joystick yaw is 0, apply an automatic rotational angle to compensate for rotation.
-                yaw = 0.005 * Movement.CalcTurnError (targetDirection, DirectionNow);
             } else {
+                // Reset the autoDriveDelay
+                autoDriveTimeOk = runtime.milliseconds() + autoDriveDelay;
                 // if there is rotational input, continuously set the desired angle to the current angle.
                 directionLocked = false;
+                // Reset the accumulated motion error.
+                accumulatedError = 0;
             }
-
 
             // Reorient the stick inputs to field orientation
             // The current orientation is DirectionNow
@@ -312,9 +329,9 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
+            max = Math.max(max, abs(leftBackPower));
+            max = Math.max(max, abs(rightBackPower));
 
             if (max > 1.0) {
                 leftFrontPower  /= max;
@@ -322,23 +339,6 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Scale the Power down for the 12:1 ultraplanetary setup
             //double powerFactor = 0.25;
@@ -354,13 +354,13 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + JavaUtil.formatNumber(runtime.milliseconds(), 2));
             telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
+            telemetry.addData("Target Direction", JavaUtil.formatNumber(targetDirection, 2));
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Drive Power multiplier", powerFactor);
-
-            telemetry.addData("Left Back Ticks", leftBackDrive.getCurrentPosition());
+            telemetry.addData("Yaw Correction", JavaUtil.formatNumber(yaw, 2));
             telemetry.update();
         }
     }}
