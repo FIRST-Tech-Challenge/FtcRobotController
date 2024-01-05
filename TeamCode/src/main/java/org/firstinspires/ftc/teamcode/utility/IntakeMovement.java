@@ -25,7 +25,7 @@ public class IntakeMovement {
     // The lower the int the higher the wrist goes
     static final int WRIST_UP_TICKS     =  0;     // Gge MUST be started at all times with the claw fully raised and over the conveyor.
     static final int WRIST_SAFETY_TICKS = 30;     // Gge needs to have a safety  position for the wrist to allow the linear slides to raise.
-    static final int WRIST_DOWN_TICKS   =  141;     // The number of ticks that achieve ground position for the wrist.
+    public static final int WRIST_DOWN_TICKS   =  141;     // The number of ticks that achieve ground position for the wrist.
     double WRIST_POWER = 1.0; // Set the power of the wrist movement
 
     static final double SERVO_CLAW_DELAY = 0.9;
