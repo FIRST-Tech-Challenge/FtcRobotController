@@ -54,13 +54,6 @@ public class autonomousphase1 extends LinearOpMode {
         drive(-2000, 2000, 0.5);
     }
 
-    // Stop is already declared, eStop is not
-    private void eStop() {
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
-    }
     
     private void drive(int leftTarget, int rightTarget, double speed) {
 
