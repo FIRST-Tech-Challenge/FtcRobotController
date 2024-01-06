@@ -78,7 +78,7 @@ public class Wrist extends RFServo {
         WristTargetStates.DROP.setStateTrue();
       }
     }
-    p_state.setStateTrue();
+    p_state.state = true;
   }
   public void update() {
     for (var i : WristStates.values()) {

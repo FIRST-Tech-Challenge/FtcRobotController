@@ -304,6 +304,7 @@ public class BradBot extends BasicRobot {
       arm.flipTo(HOVER);
       lift.update();
       wrist.update();
+      twrist.update();
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
@@ -324,7 +325,10 @@ public class BradBot extends BasicRobot {
       }
     }
     if (left) {
-      if (Claw.clawStates.CLOSE.getState()){
+      if (HOVER.getState()&&!Arm.ArmTargetStates.GRAB.getState()){
+        arm.flipTo(GRAB);
+      }
+      if (Claw.clawStates.CLOSE.getState()) {
         claw.flipTo(Claw.clawTargetStates.GRAB);
       }
       else if(Claw.clawStates.GRAB.getState()){
@@ -335,11 +339,11 @@ public class BradBot extends BasicRobot {
       intake.reverseIntake();
     }
     if (up) {
+      lift.iterateUp();
+      intake.stopIntake();
       arm.flipTo(DROP);
       wrist.flipTo(Wrist.WristTargetStates.DROP);
       twrist.flipTo(Twrist.twristTargetStates.DROP);
-      lift.iterateUp();
-      intake.stopIntake();
     }
     if(intUp){
       intake.toggleIntakeHeight();

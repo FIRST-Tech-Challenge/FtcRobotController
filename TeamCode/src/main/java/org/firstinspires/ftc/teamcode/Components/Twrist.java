@@ -69,7 +69,7 @@ public class Twrist extends RFServo {
                 }
                 twristTargetStates.GRAB.setStateTrue();
             } else if(p_state == twristTargetStates.DROP){
-                if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != DROPPY){
+                if((Arm.ArmStates.DROP.state) && super.getPosition() != DROPPY){
                     super.setPosition(DROPPY);
                     LOGGER.log("twrist to DROP");
                     lastTime = time;
@@ -77,7 +77,7 @@ public class Twrist extends RFServo {
                 twristTargetStates.DROP.setStateTrue();
             }
         }
-        p_state.setStateTrue();
+        p_state.state=true;
     }
     public void update() {
         for (var i : twristStates.values()) {
