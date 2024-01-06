@@ -11,12 +11,50 @@ import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.TensorflowVision;
 
-@Autonomous(name="Red Interior Right", group="Linear Opmode")
-public class AutoRedInteriorBackdropRight extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.yise.Parameters;
+
+/**
+ * AutonomousConfig
+ * EndingPosition
+ * Color
+ */
+@Autonomous(name="Autonomous", group="Linear Opmode")
+public class Auto extends LinearOpMode {
     //Initialize timer
     private ElapsedTime runtime = new ElapsedTime();
     int Prop;
-    float propLocation = 2f;
+
+    public double startX = 0;
+
+    public double startY = 0;
+
+    public double startZ = 0;
+
+    public double propX = 0;
+
+    public double propY = 0;
+
+    public double propZ = 0;
+
+    public double multiplier = 1;
+
+
+
+
+    public void RedExterior() {
+
+    }
+    public void RedInterior() {
+
+    }
+    public void BlueExterior() {
+
+    }
+    public void BlueInterior() {
+
+    }
+
+
 
     @Override
     public void runOpMode() {
@@ -30,6 +68,8 @@ public class AutoRedInteriorBackdropRight extends LinearOpMode {
         LedLights leds = new LedLights(hardwareMap);
 
         double time = getRuntime();
+
+        Parameters parameter = new Parameters();
 
 
         //Sense cones
@@ -50,14 +90,63 @@ public class AutoRedInteriorBackdropRight extends LinearOpMode {
 
         leds.setLed(LedLights.ledStates.RED);
 
-            //Bot starting position
-        Pose2d startPose = new Pose2d(17, -61, Math.toRadians(-90));
-        drive.setPoseEstimate(startPose);
+        /**
+         *Bot starting position & variables
+         */
 
-        //Trajectory sequences contain driving instructions
+        if (Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
+            startX = -41.5;
+        } else if (Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
+            startX = 17.5;
+        }
 
-        TrajectorySequence traj1_1 = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(22, -33, Math.toRadians(0)))
+        if (Parameters.allianceColor == Parameters.Color.BLUE) {
+            startY = 62;
+            startZ = 90;
+            multiplier = 1;
+            leds.setLed(LedLights.ledStates.BLUE);
+        } else if (Parameters.allianceColor == Parameters.Color.RED) {
+            startY = -61;
+            startZ = -90;
+            multiplier = -1;
+            leds.setLed(LedLights.ledStates.RED);
+        }
+
+            Pose2d startPose = new Pose2d(startX, startY, Math.toRadians(startZ));
+            drive.setPoseEstimate(startPose);
+
+        if(vision.getPropPosition() == 2) {
+            if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
+                propY = 0;
+                propZ = 0;
+                propX = 0;
+            } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
+                propY = 0;
+                propZ = 0;
+                propX = 0;
+            } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
+                propY = 0;
+                propZ = 0;
+                propX = 0;
+            } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
+                propY = 0;
+                propZ = 0;
+                propX = 0;
+            }
+        } else if (vision.getPropPosition() == 1) {
+
+        } else if (vision.getPropPosition() == 0) {
+
+        }
+
+
+        /**
+         * Trajectory sequences that contain driving instructions
+         */
+
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(propX, propY, Math.toRadians(propZ)))
                 .back(9)
                 .back(-6)
                 .waitSeconds(2)
@@ -76,7 +165,7 @@ public class AutoRedInteriorBackdropRight extends LinearOpMode {
                 .build();
 
 
-        TrajectorySequence traj2_1 = drive.trajectorySequenceBuilder(traj1_1.end())
+        TrajectorySequence traj2_1 = drive.trajectorySequenceBuilder(traj1.end())
                 .lineToLinearHeading(new Pose2d(38, -45, Math.toRadians(180)))
                 .waitSeconds(2)
                 .build();
@@ -170,7 +259,7 @@ public class AutoRedInteriorBackdropRight extends LinearOpMode {
         //switch between parking
         if(vision.getPropPosition() == 2) {
             //drive.followTrajectorySequence(test);
-            drive.followTrajectorySequence(traj1_1);
+            drive.followTrajectorySequence(traj1);
             drive.followTrajectorySequence(traj2_1);
             drive.followTrajectorySequence(traj3_1);
             drive.followTrajectorySequence(traj4_1);
