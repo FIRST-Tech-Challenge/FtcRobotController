@@ -37,8 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-/**
- *
+/*
  * This OpMode executes a basic Tank Drive Teleop for a two wheeled robot using two REV SPARKminis.
  * To use this example, connect two REV SPARKminis into servo ports on the Expansion Hub. On the
  * robot configuration, use the drop down list under 'Servos' to select 'REV SPARKmini Controller'

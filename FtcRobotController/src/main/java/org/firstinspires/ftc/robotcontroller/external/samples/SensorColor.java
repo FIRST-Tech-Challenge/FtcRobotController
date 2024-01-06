@@ -32,7 +32,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,12 +39,11 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-/**
- * This is an example LinearOpMode that shows how to use a color sensor in a generic
- * way, regardless of which particular make or model of color sensor is used. The Op Mode
+/*
+ * This OpMode shows how to use a color sensor in a generic
+ * way, regardless of which particular make or model of color sensor is used. The OpMode
  * assumes that the color sensor is configured with a name of "sensor_color".
  *
  * There will be some variation in the values measured depending on the specific sensor you are using.
@@ -64,7 +62,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * and surface reflectivity. You should use a different sensor if you need precise distance measurements.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this Op Mode to the Driver Station OpMode list
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name = "Sensor: Color", group = "Sensor")
 @Disabled
@@ -78,13 +76,13 @@ public class SensorColor extends LinearOpMode {
    * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
   View relativeLayout;
 
-  /**
-   * The runOpMode() method is the root of this Op Mode, as it is in all LinearOpModes.
+  /*
+   * The runOpMode() method is the root of this OpMode, as it is in all LinearOpModes.
    * Our implementation here, though is a bit unusual: we've decided to put all the actual work
    * in the runSample() method rather than directly in runOpMode() itself. The reason we do that is
    * that in this sample we're changing the background color of the robot controller screen as the
-   * Op Mode runs, and we want to be able to *guarantee* that we restore it to something reasonable
-   * and palatable when the Op Mode ends. The simplest way to do that is to use a try...finally
+   * OpMode runs, and we want to be able to *guarantee* that we restore it to something reasonable
+   * and palatable when the OpMode ends. The simplest way to do that is to use a try...finally
    * block around the main, core logic, and an easy way to make that all clear was to separate
    * the former from the latter in separate methods.
    */

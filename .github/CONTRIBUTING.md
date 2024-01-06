@@ -18,7 +18,7 @@ If what you've read so far makes little sense, there are some very good git lear
 [Git Book](https://git-scm.com/book/en/v2)  
 [Interactive Git Tutorial](https://try.github.io)
 
-##### Guidlines for experienced GIT users.
+### Guidlines for experienced GIT users.
 
 If you are absolutely certain that you want to push the big green button above, read on.  Otherwise back _slowly away from keyboard_.
 
@@ -38,9 +38,9 @@ This section guides you through filing a bug report.  The better the report the 
 
 #### Before submitting a bug report
 
-- Check the [forums](http://ftcforum.usfirst.org/forum.php) to see if someone else has run into the problem and whether there is an official solution that doesn't require a new SDK.
+- Check the [forums](http://ftcforum.firstinspires.org/forum.php) to see if someone else has run into the problem and whether there is an official solution that doesn't require a new SDK.
 
-- Perform a search of current [issues](https://github.com/ftctechnh/ftc_app/issues) to see if the problem has already been reported.  If so, add a comment to the existing issue instead of creating a new one.
+- Perform a search of current [issues](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues) to see if the problem has already been reported.  If so, add a comment to the existing issue instead of creating a new one.
 
 #### How Do I Submit A (Good) Bug Report?
 
@@ -65,4 +65,4 @@ FIRST volunteers are awesome.  You all have great ideas and we want to hear them
 
 Enhancements should be broadly applicable to a large majority of teams, should not force teams to change their workflow, and should provide real value to the mission of FIRST as it relates to engaging youth in engineering activities.
 
-The best way to get momentum behind new features is to post a description of your idea in the forums.  Build community support for it.  The FTC Technology Team monitors the forums.  We'll hear you and if there's a large enough call for the feature it's very likely to get put on the list for a future release.
+The best way to get momentum behind new features is to post a description of your idea in the discussions section of this repository.  Build community support for it.  The FTC Technology Team monitors the discussions.  We'll hear you and if there's a large enough call for the feature it's very likely to get put on the list for a future release.

@@ -34,8 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * This OpMode Sample illustrates how to use an external "hardware" class to modularize all the robot's sensors and actuators.
+/*
+ * This OpMode illustrates how to use an external "hardware" class to modularize all the robot's sensors and actuators.
  * This approach is very efficient because the same hardware class can be used by all of your teleop and autonomous OpModes
  * without requiring many copy & paste operations.  Once you have defined and tested the hardware class with one OpMode,
  * it is instantly available to other OpModes.
@@ -53,15 +53,15 @@ import com.qualcomm.robotcore.util.Range;
  * must also be copied to the same location (maintaining its name).
  *
  * For comparison purposes, this sample and its accompanying hardware class duplicates the functionality of the
- * RobotTelopPOV_Linear opmode.  It assumes three motors (left_drive, right_drive and arm) and two servos (left_hand and right_hand)
+ * RobotTelopPOV_Linear OpMode.  It assumes three motors (left_drive, right_drive and arm) and two servos (left_hand and right_hand)
  *
  * View the RobotHardware.java class file for more details
  *
  *  Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- *  Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  *
- *  In OnBot Java, add a new OpMode, drawing from this Sample; select TeleOp.
- *  Also add another new file named RobotHardware.java, drawing from the Sample with that name; select Not an OpMode.
+ *  In OnBot Java, add a new OpMode, select this sample, and select TeleOp.
+ *  Also add another new file named RobotHardware.java, select the sample with that name, and select Not an OpMode.
  */
 
 @TeleOp(name="Concept: Robot Hardware Class", group="Robot")
