@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -19,13 +21,13 @@ public class BasicAutonomous extends OpMode
 		PLACE_PURPLE,
 		PLACE_YELLOW,
 		SCORE,
-		PARK
+		PARK,
+		Idle
 	}
 	State state = State.PLACE_PURPLE;
 
 	public enum YellowState{
 		DRIVE,
-		DETECT,
 		PLACE
 	}
 	YellowState yellowState = YellowState.DRIVE;
@@ -43,6 +45,12 @@ public class BasicAutonomous extends OpMode
 	String position;
 	SampleMecanumDrive drive;
 	TrajectorySequence purple_pixel;
+	TrajectorySequence yellow_pixel;
+	TrajectorySequence park;
+
+	Servo yellowArm = hardwareMap.get(Servo.class, "yellowArmThrow");
+
+	private ElapsedTime runtime = new ElapsedTime();
 
 	@Override
 	public void init()
@@ -54,6 +62,9 @@ public class BasicAutonomous extends OpMode
 			start_pos = new Pose2d(70./6., -61*color, Math.toRadians(-90*color));
 		} else if (start_dist == "far") {
 			start_pos = new Pose2d(-35, -61*color, Math.toRadians(-90*color));
+			center_line = -35;
+			left_line = -38;
+			right_line = -33;
 		}
 
 		drive = new SampleMecanumDrive(hardwareMap);
@@ -91,34 +102,54 @@ public class BasicAutonomous extends OpMode
 		} else if (color == -1) {
 			if (position == "right") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(70./6., 32.5))
+						.lineTo(new Vector2d(center_line, 32.5))
 						.turn(Math.toRadians(-90))
-						.lineTo(new Vector2d(9, 30))
-						.lineTo(new Vector2d(14, 30))
-						.lineTo(new Vector2d(70./6., 42))
+						.lineTo(new Vector2d(left_line, 30))
+						.lineTo(new Vector2d(right_line, 30))
+						.lineTo(new Vector2d(center_line, 42))
 						.turn(Math.toRadians(180))
 						.build();
 			} else if (position == "mid") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(70./6., 32.5))
-						.lineTo(new Vector2d(70./6., 42))
+						.lineTo(new Vector2d(center_line, 32.5))
+						.lineTo(new Vector2d(center_line, 42))
 						.turn(Math.toRadians(90))
 						.build();
 			} else if (position == "left") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(70./6., 32.5))
+						.lineTo(new Vector2d(center_line, 32.5))
 						.turn(Math.toRadians(90))
-						.lineTo(new Vector2d(14, 30))
-						.lineTo(new Vector2d(9, 30))
-						.lineTo(new Vector2d(70./6., 42))
+						.lineTo(new Vector2d(right_line, 30))
+						.lineTo(new Vector2d(left_line, 30))
+						.lineTo(new Vector2d(center_line, 42))
 						.build();
 			}
 		}
 
 
 		if (start_dist == "close") {
-
+			yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
+					.lineTo(new Vector2d(49, -38*color))
+					.build();
+		} else if (start_dist == "far") {
+			if (position == "mid") {
+				yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
+						.lineTo(new Vector2d(-35, -35))
+						.lineTo(new Vector2d(49, -35))
+						.build();
+			} else {
+				yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
+						.lineTo(new Vector2d(-35, -12))
+						.lineTo(new Vector2d(38, -12))
+						.lineTo(new Vector2d(49, -35))
+						.build();
+			}
 		}
+
+		// Set a place to park
+		park = drive.trajectorySequenceBuilder(yellow_pixel.end())
+				.waitSeconds(1.0)
+				.build();
 
 	}
 
@@ -135,6 +166,7 @@ public class BasicAutonomous extends OpMode
 			case PLACE_PURPLE:
 				if (!drive.isBusy()) {
 					state = State.PLACE_YELLOW;
+					drive.followTrajectorySequenceAsync(yellow_pixel);
 				}
 
 				break;
@@ -142,21 +174,30 @@ public class BasicAutonomous extends OpMode
 				switch(yellowState)
 				{
 					case DRIVE:
-						// drive to backboard
-						break;
-					case DETECT:
-						// detect which position it is
+						if (!drive.isBusy()) {
+							yellowState = YellowState.PLACE;
+							runtime.reset();
+						}
 						break;
 					case PLACE:
-						// place the pixel
+						yellowArm.setPosition(1);
+						if (runtime.time() > 0.5) {
+							yellowArm.setPosition(0);
+							state = State.SCORE;
+						}
 						break;
 				}
 				break;
 			case SCORE:
 				state = State.PARK;
+				drive.followTrajectorySequenceAsync(park);
 				break;
 			case PARK:
-				// goto park position
+				if (!drive.isBusy()) {
+					state = State.Idle;
+				}
+				break;
+			case Idle:
 				break;
 		}
 	}
