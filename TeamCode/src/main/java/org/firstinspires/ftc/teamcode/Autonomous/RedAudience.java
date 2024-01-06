@@ -19,7 +19,7 @@ public class RedAudience extends LinearOpMode {
         //initialize robot
 
         teamBot.init(hardwareMap);
-        posOfTag = teamBot.findTeamProp(502);
+        //posOfTag = teamBot.findTeamProp(502);
 
             waitForStart();
 
@@ -89,24 +89,18 @@ public class RedAudience extends LinearOpMode {
             sleep(500);
 
         }else{
-            teamBot.moveStraightWithEncoders(0.6,20);
-            sleep(500);
-            teamBot.strafing(RobotClass.Direction.LEFT, 0.5, 1000);
-            sleep(500);
-            teamBot.moveStraightWithEncoders(0.6,26);
-            sleep(500);
-            teamBot.strafing(RobotClass.Direction.RIGHT, 0.5, 1000);
-            sleep(500);
-            teamBot.gyroTurning(90);
-            sleep(500);
-            teamBot.moveStraightWithEncoders(0.8,220);
-            sleep(500);
-            //Open Purple and Yellow Pixel Claw Sides
-            //Shooting Purple and Yellow Pixels into Backstage
-            teamBot.moveStraightWithEncoders(0.6,10);
-            sleep(500);
-            teamBot.strafing(RobotClass.Direction.RIGHT, 0.4,500);
-            sleep(500);
+//            teamBot.moveStraightWithEncoders(0.4,130);
+//            teamBot.gyroTurning(-90);
+//            teamBot.moveStraightWithEncoders(0.5,215);
+//            teamBot.strafing(RobotClass.Direction.RIGHT,0.2,400);
+            teamBot.moveStraightWithEncoders(0.6,100);
+            //Shoot Purple Pixel
+            teamBot.strafing(RobotClass.Direction.RIGHT,0.6,1500);
+            teamBot.moveStraightWithEncoders(0.6,36);
+            teamBot.gyroTurning(-90);
+            teamBot.moveStraightWithEncoders(0.8,195);
+            //Shoot Yellow Pixel
+            teamBot.strafing(RobotClass.Direction.RIGHT,0.2,400);
 
         }
     }

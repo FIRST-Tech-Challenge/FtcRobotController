@@ -83,7 +83,9 @@ public class BlueBackstage extends LinearOpMode {
             sleep(500);
 
         }else{
-            teamBot.moveStraightWithEncoders(0.4,6);
+            teamBot.moveStraightWithEncoders(0.6,98);
+            //Intake shoot
+            teamBot.moveStraightWithEncoders(-0.4,92);
             teamBot.strafing(RobotClass.Direction.LEFT,0.5,3000);
         }
 
