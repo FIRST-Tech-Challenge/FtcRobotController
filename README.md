@@ -1,3 +1,7 @@
+## WHAT IS THIS FTC CENTERSTAGE REPOSITORY FOR?
+
+This repository contains the code for the Bearbotics FTC Coaches' Bot.  See the TeamCode folder for the Coaches' Bot specific code.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
