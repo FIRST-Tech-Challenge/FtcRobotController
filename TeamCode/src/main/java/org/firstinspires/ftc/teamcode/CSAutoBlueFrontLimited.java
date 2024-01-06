@@ -38,9 +38,12 @@ public class CSAutoBlueFrontLimited extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        drive(-3);
+        drive(-2);
         turn(90);
-        drive(85);
+        drive(70);
+        VELOCITY = 1000;
+        drive(15);
+        VELOCITY = 2000;
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
