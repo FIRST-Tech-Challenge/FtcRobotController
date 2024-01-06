@@ -55,8 +55,8 @@ public class Lift extends RFDualMotor {
   /** Stores different states of lift. */
   public enum LiftPositionStates {
     HIGH_SET_LINE(1250, false),
-    MID_SET_LINE(800, false),
-    LOW_SET_LINE(375, false),
+    MID_SET_LINE(900, false),
+    LOW_SET_LINE(700, false),
     AT_ZERO(0, true);
 
     double position;
@@ -137,12 +137,14 @@ public class Lift extends RFDualMotor {
         RFLogger.Severity.FINEST,
         "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
     for (var i : LiftPositionStates.values()) {
-      if (abs(super.getCurrentPosition() - i.position) < 20) {
+      if (abs(super.getCurrentPosition() - i.position) < 100) {
         i.setStateTrue();
         LiftMovingStates.values()[i.ordinal()].state=false;
       }
     }
-    if (super.getCurrentPosition() < 200) LiftPositionStates.AT_ZERO.setStateTrue();
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position)
+      LiftPositionStates.AT_ZERO.setStateTrue();
+    else LiftPositionStates.AT_ZERO.state = false;
 
     for (var i : LiftMovingStates.values()) {
       if (i.state
@@ -181,6 +183,7 @@ public class Lift extends RFDualMotor {
   }
 
   public void setPosition(LiftPositionStates p_state) {
+    LOGGER.log("lifting to: " + p_state.name());
     if (p_state.equals(LiftPositionStates.AT_ZERO)) {
       if ((Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.getState())
           && !Arm.ArmTargetStates.DROP.state) {
@@ -190,11 +193,11 @@ public class Lift extends RFDualMotor {
       }
       iterateHeight=3;
     } else {
-      super.setPosition(p_state.position, 0);
+      if (!Arm.ArmStates.GRAB.getState()) super.setPosition(p_state.position, 0);
     }
 
     if (!LiftMovingStates.values()[p_state.ordinal()].state) {
-      LiftMovingStates.values()[p_state.ordinal()].state = true;
+      LiftMovingStates.values()[p_state.ordinal()].setStateTrue();
     }
   }
 
