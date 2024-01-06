@@ -165,7 +165,7 @@ public class BasicAutonomous extends OpMode
 		{
 			case PLACE_PURPLE:
 				if (!drive.isBusy()) {
-					state = State.PLACE_YELLOW;
+					state = State.PARK;
 					drive.followTrajectorySequenceAsync(yellow_pixel);
 				}
 
@@ -175,7 +175,7 @@ public class BasicAutonomous extends OpMode
 				{
 					case DRIVE:
 						if (!drive.isBusy()) {
-							yellowState = YellowState.PLACE;
+							state = State.SCORE;
 							runtime.reset();
 						}
 						break;
