@@ -204,11 +204,6 @@ public class BradBot extends BasicRobot {
   }
 
   public boolean checkAlliance() {
-    op.telemetry.addData("ultra check", ultras.checkAlliance());
-    op.telemetry.addData("x pos", currentPose.getX());
-//    if (queuer.queue(true, !ultras.checkAlliance(), currentPose.getX() > 27, false)) {
-    queuer.queue(true, !ultras.checkAlliance(), currentPose.getX() > 27, false);
-    op.telemetry.addData("sensed", ultras.checkAlliance());
     if (currentPose.getX() > 27) {
       if (ultras.checkAlliance()) {
         roadrun.breakFollowing();

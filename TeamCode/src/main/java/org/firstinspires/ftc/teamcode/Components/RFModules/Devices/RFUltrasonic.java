@@ -26,6 +26,8 @@ public class RFUltrasonic {
     double lastCheckedDist = 0;
     double ULTRA_FACTOR = 90.48337;
     double ULTRA_ADJUSTMENT = 12.62465;
+    double NEW_ULTRA_FACTOR = 390;
+    double NEW_ULTRA_ADJUSTMENT = 1.75;
     double difference = 0;
     public boolean detected = false;
     double[] previousDistances = new double[10];
@@ -39,6 +41,12 @@ public class RFUltrasonic {
         ultrasonicAnalog = op.hardwareMap.get(AnalogInput.class, p_ultraAnalogName);
         ultrasonicLED = op.hardwareMap.get(LED.class, p_ultraLEDName);
         ultrasonicLED.enable(ultrasonicLED.isLightOn());
+        targetLine = new Line(1,0,0, new Vector2d(0,-10), new Vector2d(0,10));
+        leastSquaresFilter = new LineRegressionFilter(0, 5);
+    }
+
+    public RFUltrasonic(String p_ultraAnalogName){
+        ultrasonicAnalog = op.hardwareMap.get(AnalogInput.class, p_ultraAnalogName);
         targetLine = new Line(1,0,0, new Vector2d(0,-10), new Vector2d(0,10));
         leastSquaresFilter = new LineRegressionFilter(0, 5);
     }
@@ -99,7 +107,8 @@ public class RFUltrasonic {
 
     public double getDist() {
         lastCheckedDist = op.getRuntime();
-        return getVoltage()*ULTRA_FACTOR - ULTRA_ADJUSTMENT;
+//        return getVoltage()*ULTRA_FACTOR - ULTRA_ADJUSTMENT;
+        return getVoltage()*NEW_ULTRA_FACTOR - NEW_ULTRA_ADJUSTMENT;
     }
 
     public double getLinearRegressionDist() {
