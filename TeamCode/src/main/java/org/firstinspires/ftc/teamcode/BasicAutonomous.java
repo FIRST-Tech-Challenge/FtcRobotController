@@ -24,21 +24,21 @@ public class BasicAutonomous extends OpMode
 		PARK,
 		Idle
 	}
-	State state = State.PLACE_PURPLE;
+	State state;
 
 	public enum YellowState{
 		DRIVE,
 		PLACE
 	}
-	YellowState yellowState = YellowState.DRIVE;
+	YellowState yellowState;
 
 	public enum Score{
 		// TODO: do this later
 	}
 
-	double color = 1.; // 1. for red, -1. for blue
-	String start_dist = "close"; // close or far, depending on start pos
-	String end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
+	double color;
+	String start_dist;
+	String end_pos;
 
 	Pose2d start_pos;
 
@@ -48,16 +48,24 @@ public class BasicAutonomous extends OpMode
 	TrajectorySequence yellow_pixel;
 	TrajectorySequence park;
 
-	Servo yellowArm = hardwareMap.get(Servo.class, "yellowArmThrow");
+//	Servo yellowArm = hardwareMap.get(Servo.class, "yellowArmThrow");
 
 	private ElapsedTime runtime = new ElapsedTime();
 
 	@Override
 	public void init()
 	{
+		state = State.PLACE_PURPLE;
+		yellowState = YellowState.DRIVE;
+
+		color = 1.; // 1. for red, -1. for blue
+		start_dist = "close"; // close or far, depending on start pos
+		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
+
 		double center_line = 70./6.;
 		double left_line = 9.;
 		double right_line = 14.;
+
 		if (start_dist == "close") {
 			start_pos = new Pose2d(70./6., -61*color, Math.toRadians(-90*color));
 		} else if (start_dist == "far") {
@@ -86,7 +94,7 @@ public class BasicAutonomous extends OpMode
 						.build();
 			} else if (position == "mid") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, -32.5))
+						.lineTo(new Vector2d(center_line, -31))
 						.lineTo(new Vector2d(center_line, -42))
 						.turn(Math.toRadians(-90))
 						.build();
@@ -180,11 +188,11 @@ public class BasicAutonomous extends OpMode
 						}
 						break;
 					case PLACE:
-						yellowArm.setPosition(1);
-						if (runtime.time() > 0.5) {
-							yellowArm.setPosition(0);
-							state = State.SCORE;
-						}
+//						yellowArm.setPosition(1);
+//						if (runtime.time() > 0.5) {
+//							yellowArm.setPosition(0);
+//							state = State.SCORE;
+//						}
 						break;
 				}
 				break;
@@ -200,5 +208,7 @@ public class BasicAutonomous extends OpMode
 			case Idle:
 				break;
 		}
+
+		drive.update();
 	}
 }

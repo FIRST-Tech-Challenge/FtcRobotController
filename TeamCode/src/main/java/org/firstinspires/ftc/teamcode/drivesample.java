@@ -85,7 +85,7 @@ public class drivesample extends LinearOpMode
         ArmWrist.setPosition(0);
         PixelGrabberWrist1.setPosition(0.21);
         PixelGrabberWrist2.setPosition(0.21);
-        
+
         bucket.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
