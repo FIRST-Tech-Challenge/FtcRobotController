@@ -291,7 +291,7 @@ public abstract class CSMethods extends LinearOpMode {
             rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
 
 
-            while (!detectTag(idOfTag)){
+            while (opModeIsActive() && !detectTag(idOfTag)){
                 telemetry.addData("Currently","Strafing until tag " + idOfTag + " is detected");
                 telemetry.update();
             }
@@ -324,7 +324,7 @@ public abstract class CSMethods extends LinearOpMode {
         if (carWashMotor != null) {
             int t = (int) runtime.milliseconds() + 1000;
             carWashMotor.setPower(carWashPower);
-            while (true) {
+            while (opModeIsActive()) {
                 if (!(t > ((int) runtime.milliseconds()))) {
                     break;
                 }
