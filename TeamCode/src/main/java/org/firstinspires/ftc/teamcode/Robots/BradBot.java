@@ -68,7 +68,7 @@ public class BradBot extends BasicRobot {
     if (!isTeleop) {
       cv = new CVMaster();
     }
-    //    claw = new Claw();
+    claw = new Claw();
     //    magazine = new Magazine();
     hanger = new Hanger();
     intake = new Intake();
@@ -76,9 +76,8 @@ public class BradBot extends BasicRobot {
     lift = new Lift();
     preloader = new Preloader();
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
-    //    twrist = new Twrist();
+    twrist = new Twrist();
     //        ultras = new Ultrasonics();
-    ultras = new Ultrasonics();
     wrist = new Wrist();
     path = new Path();
   }
@@ -203,22 +202,6 @@ public class BradBot extends BasicRobot {
     }
   }
 
-  public boolean checkAlliance() {
-    if (currentPose.getX() > 27) {
-      if (ultras.checkAlliance()) {
-        roadrun.breakFollowing();
-        roadrun.setMotorPowers(0, 0, 0, 0);
-    }
-      return ultras.checkAlliance();
-    }
-    return false;
-  }
-
-
-  public boolean checkMovingCloser() {
-    return ultras.movingCloser();
-  }
-
   /**
    * follows inputted trajectory Logs that this function is called as well as initial and target
    * pose to general surface
@@ -315,9 +298,13 @@ public class BradBot extends BasicRobot {
         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
     ;
     if (isA) {
+      twrist.flipTo(Twrist.twristTargetStates.GRAB);
+      wrist.flipTo(Wrist.WristTargetStates.GRAB);
+      claw.flipTo(Claw.clawTargetStates.CLOSE);
       arm.flipTo(HOVER);
       lift.update();
       wrist.update();
+      twrist.update();
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
@@ -338,20 +325,25 @@ public class BradBot extends BasicRobot {
       }
     }
     if (left) {
-//      if ( Claw.clawStates.CLOSE.getState()|| Claw.clawStates.PINCH.getState()){
-//        claw.flipTo(Claw.clawTargetStates.DROP);
-//      }
-//      else if(Claw.clawStates.GRAB.getState()){
-//        claw.flipTo(Claw.clawTargetStates.CLOSE);
-//      }
+      if (HOVER.getState()&&!Arm.ArmTargetStates.GRAB.getState()){
+        arm.flipTo(GRAB);
+      }
+      if (Claw.clawStates.CLOSE.getState()) {
+        claw.flipTo(Claw.clawTargetStates.GRAB);
+      }
+      else if(Claw.clawStates.GRAB.getState()){
+        claw.flipTo(Claw.clawTargetStates.CLOSE);
+      }
     }
     if (leftBumper) {
       intake.reverseIntake();
     }
     if (up) {
-      arm.flipTo(DROP);
       lift.iterateUp();
       intake.stopIntake();
+      arm.flipTo(DROP);
+      wrist.flipTo(Wrist.WristTargetStates.DROP);
+      twrist.flipTo(Twrist.twristTargetStates.DROP);
     }
     if(intUp){
       intake.toggleIntakeHeight();
@@ -413,7 +405,8 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
-    ultras.update();
+    twrist.update();
+    claw.update();
   }
 
   public void stop() {
