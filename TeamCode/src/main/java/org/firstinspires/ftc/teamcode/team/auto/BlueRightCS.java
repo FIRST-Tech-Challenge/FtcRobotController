@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
 @Autonomous(name = "Blue Right CS", group = "RoarAuto")
+//right justified
 public class BlueRightCS extends LinearOpMode {
     CSBaseLIO drive;
 
@@ -23,15 +24,15 @@ public class BlueRightCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(28.5,43);
+    static final Vector2d TrajL0 = new Vector2d(23.7,4.8);
     static final Vector2d TrajL1 = new Vector2d(28.5, 45);
     static final Vector2d TrajL2 = new Vector2d(52,45);
 
-    static final Vector2d TrajC0 = new Vector2d(26,34);
+    static final Vector2d TrajC0 = new Vector2d(24.6,1.8);
     static final Vector2d TrajC1 = new Vector2d(20, 36);
     static final Vector2d TrajC2 = new Vector2d(52,36);
 
-    static final Vector2d TrajR0 = new Vector2d(24,36);
+    static final Vector2d TrajR0 = new Vector2d(17.8,-4);
     static final Vector2d TrajR1 = new Vector2d(22, 37);
     static final Vector2d TrajR2 = new Vector2d(52,32);
 
@@ -52,7 +53,7 @@ public class BlueRightCS extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(23, 63, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
 
     CSVP CSVP;
     int placement = 3;
@@ -139,12 +140,12 @@ public class BlueRightCS extends LinearOpMode {
             switch (currentState) {
 
                 case WAIT0:
-                    telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                telemetry.addLine("in the wait0 state");
+                    recog = CSVP.rightDetect();
                     detectCounter++;
                     if (recog != 0) {//edited
                         if (oldRecog != 0) {//edited
-                            if (CSVP.detect() == recog) {
+                            if (CSVP.rightDetect() == recog) {
                                 oldRecog = recog;
                                 detectCounter++;
                             }
@@ -161,11 +162,11 @@ public class BlueRightCS extends LinearOpMode {
                     }
                     break;
                 case FORWARD:
-                    if (placement == 2) {
+                    if (placement == 3) {
                         telemetry.addLine("Right");
                         drive.followTrajectorySequenceAsync(trajR0);
 
-                    } else if (placement == 1) {
+                    } else if (placement == 2) {
                         telemetry.addLine("Center");
                         drive.followTrajectorySequenceAsync(trajC0);
                     } else {

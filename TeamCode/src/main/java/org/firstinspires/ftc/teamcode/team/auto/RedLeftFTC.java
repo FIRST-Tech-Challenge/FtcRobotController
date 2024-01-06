@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 
 @Disabled
 @Autonomous(name = "Red Left Pixel", group = "Pixel")
+//left justified
 public class RedLeftFTC extends LinearOpMode {
     CSBaseLIO drive;
     private static double dt;
@@ -156,11 +157,11 @@ public class RedLeftFTC extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0){
                         if(oldRecog != 0) {
-                            if (CSVP.detect() == recog){
+                            if (CSVP.leftDetect() == recog){
                                 //confidence = recog.getConfidence();
                                 //label = recog.getLabel();
                                 oldRecog = recog;

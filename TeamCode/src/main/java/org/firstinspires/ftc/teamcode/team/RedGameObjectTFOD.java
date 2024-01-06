@@ -48,7 +48,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Disabled
+
 @TeleOp(name = "Red Object: TFOD", group = "Main")
 public class RedGameObjectTFOD extends LinearOpMode {
 
@@ -58,7 +58,7 @@ public class RedGameObjectTFOD extends LinearOpMode {
     // this is only used for Android Studio when using models in Assets.
     private static final String TFOD_MODEL_ASSET = "RedGameObject.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
-    // this is used when uploading models directly to the RC using the model upload interface.
+    // this is used when uploading models directly to the RC using the model upload  interface.
     //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {

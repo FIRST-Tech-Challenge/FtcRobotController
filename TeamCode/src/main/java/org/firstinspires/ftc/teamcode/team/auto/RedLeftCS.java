@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
 @Autonomous(name = "Red Left CS", group = "RoarAuto")
+//left justified
 public class RedLeftCS extends LinearOpMode {
     CSBaseLIO drive;
 
@@ -140,11 +141,11 @@ public class RedLeftCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0) {//edited
                         if (oldRecog != 0) {//edited
-                            if (CSVP.detect() == recog) {
+                            if (CSVP.leftDetect() == recog) {
                                 oldRecog = recog;
                                 detectCounter++;
                             }

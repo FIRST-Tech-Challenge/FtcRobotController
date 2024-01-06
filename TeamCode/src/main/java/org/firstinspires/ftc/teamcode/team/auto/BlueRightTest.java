@@ -15,23 +15,25 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
-@Autonomous(name = "Blue Right CS", group = "RoarAuto")
-public class BlueRightCSmv extends LinearOpMode {
+@Autonomous(name = "Blue Right TEST", group = "RoarAuto")
+//right justified
+
+public class BlueRightTest extends LinearOpMode {
     CSBaseLIO drive;
 
     private static double dt;
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(5.5,-20);;
+    static final Vector2d TrajL0 = new Vector2d(28.5,43);
     static final Vector2d TrajL1 = new Vector2d(28.5, 45);
     static final Vector2d TrajL2 = new Vector2d(52,45);
 
-    static final Vector2d TrajC0 = new Vector2d(-3,-29);
+    static final Vector2d TrajC0 = new Vector2d(26,34);
     static final Vector2d TrajC1 = new Vector2d(20, 36);
     static final Vector2d TrajC2 = new Vector2d(52,36);
 
-    static final Vector2d TrajR0 = new Vector2d(-1,-27);
+    static final Vector2d TrajR0 = new Vector2d(24,36);
     static final Vector2d TrajR1 = new Vector2d(22, 37);
     static final Vector2d TrajR2 = new Vector2d(52,32);
 
@@ -52,7 +54,7 @@ public class BlueRightCSmv extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(23, 63, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(270));
 
     CSVP CSVP;
     int placement = 3;
@@ -71,7 +73,7 @@ public class BlueRightCSmv extends LinearOpMode {
                 .lineTo(TrajL0)
                 .build();
 
-       /* TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
                 .lineTo(TrajL1)
                 .turn(Math.toRadians(-90))
                 .build();
@@ -79,13 +81,11 @@ public class BlueRightCSmv extends LinearOpMode {
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
                 .lineTo(TrajL2)
                 .build();
-*/
 
         TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajC0)
                 .build();
 
-        /*
         TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
                 .lineTo(TrajC1)
                 .turn(Math.toRadians(-90))
@@ -95,14 +95,11 @@ public class BlueRightCSmv extends LinearOpMode {
                 .lineTo(TrajC2)
                 .build();
 
-         */
-
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
                 .turn(Math.toRadians(-90))
                 .build();
 
-        /*
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
                 .lineTo(TrajR1)
                 .build();
@@ -110,7 +107,7 @@ public class BlueRightCSmv extends LinearOpMode {
         TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
                 .lineTo(TrajR2)
                 .build();
-*/
+
         drive.getExpansionHubs().update(getDt());
 
         drive.robot.getLiftSubsystem().update(getDt());
@@ -188,7 +185,7 @@ public class BlueRightCSmv extends LinearOpMode {
                     }
                     break;
 
-             /*  case MOVEBACK:
+                case MOVEBACK:
                     //give it 2 seconds to drop before moving back
                     if(waitTimer.milliseconds() >= 2000) {
                         //stop the intake first
@@ -242,7 +239,7 @@ public class BlueRightCSmv extends LinearOpMode {
 
                 case TOPARK:
                     break;
-*/
+
                 case IDLE:
                     PoseStorage.currentPose = drive.getPoseEstimate();
                     break;

@@ -60,6 +60,59 @@ public class CSVP {
         return location;
     }
 
+
+    public int leftDetect(){
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        // Step through the list of recognitions and display info for each one.
+        int location = 3; //preset to right
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            //double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            //new code added
+            double centerX = recognition.getImageWidth()/2;//center cam view value
+
+            if(recognition.getConfidence() >= 0.75d) {
+                if (x < centerX ) {
+                    location = 1; //left
+                }
+                if (x > centerX ) {
+                    location = 2; //center
+                }
+            }
+            //return location +", "+ recognition.getConfidence()+", "+recognition.getLabel();
+            return location;
+        }   // end for() loop
+        //return 0+"null , null;
+        return location;
+    }
+
+    public int rightDetect(){
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        // Step through the list of recognitions and display info for each one.
+        int location = 1; //preset to right
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            //double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            //new code added
+            double centerX = recognition.getImageWidth()/2;
+
+            if(recognition.getConfidence() >= 0.75d) {
+                if (x < 370 ) {
+                    location = 2; //left
+                }
+                if (x > 370 ) {
+                    location = 3; //center
+                }
+            }
+            //return location +", "+ recognition.getConfidence()+", "+recognition.getLabel();
+            return location;
+        }   // end for() loop
+        //return 0+"null , null;
+        return location;
+    }
+
     /**
      * Initialize the TensorFlow Object Detection engine.
      */

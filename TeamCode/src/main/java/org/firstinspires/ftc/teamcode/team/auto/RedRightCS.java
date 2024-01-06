@@ -16,21 +16,24 @@ import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
 @Autonomous(name = "Red Right  CS", group = "RoarAuto")
+//right justified
 public class RedRightCS extends LinearOpMode {
     CSBaseLIO drive;
 
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
+    //Traj0 is spikeLeft
     static final Vector2d TrajL0 = new Vector2d(28.5,-43);
     static final Vector2d TrajL1 = new Vector2d(28.5, -45);
     static final Vector2d TrajL2 = new Vector2d(52,-45);
 
+    // Traj1 is spikeCenter
     static final Vector2d TrajC0 = new Vector2d(20,-34);
     static final Vector2d TrajC1 = new Vector2d(20, -36);
     static final Vector2d TrajC2 = new Vector2d(52,-36);
 
+    //Traj2 is spikeRight
     static final Vector2d TrajR0 = new Vector2d(22,-36);
     static final Vector2d TrajR1 = new Vector2d(22, -37);
     static final Vector2d TrajR2 = new Vector2d(52,-32);
@@ -140,11 +143,11 @@ public class RedRightCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.rightDetect();
                     detectCounter++;
                     if (recog != 0) {//edited
                         if (oldRecog != 0) {//edited
-                            if (CSVP.detect() == recog) {
+                            if (CSVP.rightDetect() == recog) {
                                 oldRecog = recog;
                                 detectCounter++;
                             }
