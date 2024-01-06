@@ -85,7 +85,7 @@ public class drivesample extends LinearOpMode
         ArmWrist.setPosition(0);
         PixelGrabberWrist1.setPosition(0.21);
         PixelGrabberWrist2.setPosition(0.21);
-        PixelGrabber.setPosition(0);
+        
         bucket.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -128,9 +128,9 @@ public class drivesample extends LinearOpMode
             if(gamepad1.right_bumper)
             {
                 immasuckyourpenis.setPower(1);
-                ArmWrist.setPosition(0.4);
+                ArmWrist.setPosition(0.2);
                 PixelGrabberWrist1.setPosition(0.1);
-                PixelGrabberWrist2.setPosition(0.1);
+
 //                bucket.setPosition(0.5);
 
             }
