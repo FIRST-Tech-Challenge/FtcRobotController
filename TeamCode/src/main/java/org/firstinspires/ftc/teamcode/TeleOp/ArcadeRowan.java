@@ -27,6 +27,8 @@ public class ArcadeRowan extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //Waiting for Start button to be pressed
         waitForStart();
 
@@ -61,6 +63,18 @@ public class ArcadeRowan extends LinearOpMode {
                 backRight.setPower(-0.75);
             }
 
+            if (gamepad1.a) {
+                frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
             //setting power for turning
             /*frontLeft and backLeft are -turn while frontRight and backRight are positive b/c two
             of the motors need to be positive and two have to be negative in order to have the
@@ -70,6 +84,13 @@ public class ArcadeRowan extends LinearOpMode {
             backLeft.setPower(turn);
             frontRight.setPower(-turn);
             backRight.setPower(-turn);
+
+            telemetry.addData("Front Left", frontLeft.getCurrentPosition());
+            telemetry.addData("Front Right", frontRight.getCurrentPosition());
+            telemetry.addData("Back Left", backLeft.getCurrentPosition());
+            telemetry.addData("Back Right", backRight.getCurrentPosition());
+
+            telemetry.update();
         }
     }
 }

@@ -62,7 +62,7 @@ public class RobotClass {
         }
 
         //initializing camera
-        initCamera(hardwareMap);
+//        initCamera(hardwareMap);
     }
 
     //initalizing motors
@@ -73,12 +73,8 @@ public class RobotClass {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        //setting direction of motors
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         //setting zero power behavior to brake
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -126,6 +122,11 @@ public class RobotClass {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //stops all motors
@@ -166,8 +167,8 @@ public class RobotClass {
     //Moving using encoders
     public void moveStraightWithEncoders(double power, double cm) throws InterruptedException {
         //setting number of ticks per 10 cm to get number of ticks per cm
-        int ticksPer10cm = 64;
-        int ticksPerCm = ticksPer10cm / 10;
+        int ticksPer40cm = 1000;
+        int ticksPerCm = ticksPer40cm / 40;
         int target = (int) Math.round(cm * ticksPerCm);
 
         //resetting
@@ -196,6 +197,8 @@ public class RobotClass {
 
         //stopping all motors
         stopMotors();
+
+        resetEncoders();
     }
 
     //turning with gyro code
