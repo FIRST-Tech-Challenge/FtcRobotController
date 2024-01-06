@@ -129,12 +129,6 @@ public class drivesample extends LinearOpMode
                 PixelGrabberWrist2.setPosition(0.1);
 
             }
-            if (gamepad1.dpad_right)
-            {
-                ArmWrist.setPosition(0.2);
-                PixelGrabberWrist1.setPosition(0.1);
-                PixelGrabberWrist2.setPosition(0.1);
-            }
             if(gamepad1.left_bumper)
             {
                 IntakeRaiser.setPosition(0.4);
@@ -145,7 +139,13 @@ public class drivesample extends LinearOpMode
 //                PixelGrabberWrist1.setPosition(0.1);
 //                PixelGrabberWrist2.setPosition(0.1);
 
-                }
+            }
+            if (gamepad1.dpad_right)
+            {
+                ArmWrist.setPosition(0.2);
+                PixelGrabberWrist1.setPosition(0.1);
+                PixelGrabberWrist2.setPosition(0.1);
+            }
             if(gamepad1.x)
             {
                 wristServo(0.21, PixelGrabberWrist1, PixelGrabberWrist2);
