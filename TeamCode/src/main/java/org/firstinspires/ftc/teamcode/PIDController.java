@@ -9,6 +9,7 @@ public class PIDController {
     double KP, KI, KD;
     double lastTime, lastError;
     double TICKS_IN_THIRTY_INCHES = convertInchesToTicks(30);
+    //todo: make inches to ticks and error tolerance fields
 
     public PIDController (double KP, double KI, double KD) {
         this.KP = KP;
@@ -26,7 +27,7 @@ public class PIDController {
         double deltaError = currentError - lastError;
         double averageError = (currentError + lastError) / 2;
 
-        if (currentError < TICKS_IN_THIRTY_INCHES) {
+        if (Math.abs(currentError) < TICKS_IN_THIRTY_INCHES) {
             integral += averageError * deltaTime;
         } else {
             integral = 0;
@@ -55,6 +56,10 @@ public class PIDController {
         final double wheelCircIn = wheelDiaMm * PI / 25.4;
         final double IN_TO_TICK = 537 / wheelCircIn;
 
-        return inches * IN_TO_TICK + 90;
+        if (inches >= 0) {
+            return inches * IN_TO_TICK + 90;
+        } else {
+            return inches * IN_TO_TICK - 90;
+        }
     }
 }

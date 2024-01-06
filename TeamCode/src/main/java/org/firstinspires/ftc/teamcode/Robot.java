@@ -55,6 +55,8 @@ public class Robot {
     boolean isRedAlliance;
     boolean testingOnBert = false;
     PIDController straightController;
+    PIDController fLeftMecanumController;
+    PIDController bRightMecanumController;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
@@ -71,14 +73,18 @@ public class Robot {
             lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lsBack = hardwareMap.dcMotor.get("lsBack");
             lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             // get servos from hardware map
             tray = hardwareMap.servo.get("arm");
             clamp = hardwareMap.servo.get("holderClamp");
             hook = hardwareMap.servo.get("linearLocker");
-            //planeLauncher = hardwareMap.servo.get("planeLauncher");
             spikeServo = hardwareMap.servo.get("spikeServo");
             stackAttachment = hardwareMap.servo.get("stackAttachment");
+
+            // initialize controllers
             straightController = new PIDController(0.003, 0.0000005, 0.4);
+            fLeftMecanumController = new PIDController(0.5, 0, 0);
+            bRightMecanumController = new PIDController(0.5, 0, 0);
         }
     }
 
@@ -273,10 +279,10 @@ public class Robot {
     }
 
     public void setMotorPower(double fLeft, double fRight, double bLeft, double bRight) {
-        this.fRight.setPower(fRight);
-        this.bLeft.setPower(bLeft);
-        this.bRight.setPower(bRight);
         this.fLeft.setPower(fLeft);
+        this.bRight.setPower(bRight);
+        this.bLeft.setPower(bLeft);
+        this.fRight.setPower(fRight);
     }
 
     public double getCurrentHeading() {
@@ -287,6 +293,7 @@ public class Robot {
         return currentYaw;
     }
 
+    // todo: change to use pid controller class. do we need maxpower?
     public void setHeading(double targetAbsDegrees, double maxPower) {
     /*
         assert(targetAbsDegrees > 180);
@@ -296,7 +303,7 @@ public class Robot {
             setHeading(179.5, maxPower);
         } else {
             YawPitchRollAngles robotOrientation;
-            double KP = 0.06; //started 0.15
+            double KP = 0.06;
             double KD = 2_500_000;
             double ERROR_TOLERANCE = 0.5; //degrees
             double currentHeading = getCurrentHeading();
@@ -1512,6 +1519,9 @@ public class Robot {
         }
     }
 
+    // intake is at the front of the bot, and camera is at the back of the bot
+    // positive inches - go forward
+    // negative inches - go backward
     public void straightBlocking2(double inches) {
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
@@ -1522,13 +1532,70 @@ public class Robot {
         while (opMode.opModeIsActive() && counter < 3) {
             if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS) {
                 counter++;
+            } else { //todo: test this
+                counter = 0;
             }
 
             currentPos = fLeft.getCurrentPosition();
             power = straightController.calculatePID(currentPos, targetPos);
-            // make sure there is enough power - unless integral takes care of it
-            // make sure there isn't too much power
             setMotorPower(power, power, power, power);
+        }
+
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
+    }
+
+    // intake is at the front of the bot, and camera is at the back of the bot
+    // positive inches - right
+    // negative inches - left
+    public void mecanumBlocking2 (double inches) {
+        double currentPos = fLeft.getCurrentPosition();
+        final double IN_TO_TICK = 56.3; //todo: test
+        double targetPos = currentPos + (inches * IN_TO_TICK);
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        int counter = 0;
+
+        while (opMode.opModeIsActive() && counter < 3) {
+            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            currentPos = fLeft.getCurrentPosition();
+            power = fLeftMecanumController.calculatePID(currentPos, targetPos);
+            setMotorPower(power, -1 * power, -1 * power, power);
+        }
+
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
+    }
+
+    public void mecanumBlockingTwoMotors (double inches) {
+        double fLeftCurrentPos = fLeft.getCurrentPosition();
+        double bRightCurrentPos = bRight.getCurrentPosition();
+        final double IN_TO_TICK = 56.3; //todo: test
+        double fLeftTargetPos = fLeftCurrentPos + (inches * IN_TO_TICK);
+        double bRightTargetPos = bRightCurrentPos + (inches * IN_TO_TICK);
+        double leftPower;
+        double rightPower;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        int counter = 0;
+
+        while (opMode.opModeIsActive() && counter < 3) {
+            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS) &&
+                    (Math.abs(bRightMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            fLeftCurrentPos = fLeft.getCurrentPosition();
+            bRightCurrentPos = bRight.getCurrentPosition();
+            leftPower = fLeftMecanumController.calculatePID(fLeftCurrentPos, fLeftTargetPos);
+            rightPower = bRightMecanumController.calculatePID(bRightCurrentPos, bRightTargetPos);
+            setMotorPower(leftPower, -1 * rightPower, -1 * leftPower, rightPower);
         }
 
         setMotorPower(0, 0, 0, 0); // stop, to be safe
