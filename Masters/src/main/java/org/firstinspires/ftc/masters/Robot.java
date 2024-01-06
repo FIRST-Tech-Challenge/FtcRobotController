@@ -66,10 +66,10 @@ public class Robot {
         outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
         outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
 
-//        leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
