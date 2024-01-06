@@ -50,12 +50,25 @@ public class CompetitionCode extends OpMode {
 
 
         if (gamepad1.right_bumper) {
-            armPower = .5;
+            armPower = .25;
         }
 
         else {
             armPower = 0;
         }
+
+        if (gamepad1.left_bumper) {
+            armPower = -.25;
+        }
+
+        if (gamepad1.y) {
+            armPower = -.5;
+        }
+
+        else {
+            armPower = 0;
+        }
+
 
         Board.setIntakePower(intakePower);
         Board.setArmPower(armPower);
