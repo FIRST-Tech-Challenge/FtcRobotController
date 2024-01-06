@@ -21,7 +21,10 @@ public class TestingWade extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.straightBlocking2(96);
+            robot.mecanumBlocking2(-24); // left
+            this.sleep(5000);
+            robot.mecanumBlocking2(24); // right
+            break;
         }
     }
 }
