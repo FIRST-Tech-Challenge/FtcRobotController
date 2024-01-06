@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HardwarePushbot
@@ -40,6 +41,7 @@ public class HardwarePushbot
     public DcMotor  frontRight = null;
     public DcMotor  backLeft = null;
     public DcMotor  backRight = null;
+    public Servo arm1 = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -60,6 +62,7 @@ public class HardwarePushbot
         backLeft  = hwMap.get(DcMotor.class, "LB");
         frontRight = hwMap.get(DcMotor.class, "RF");
         backRight  = hwMap.get(DcMotor.class, "RB");
+        arm1 = hwMap.get(Servo.class, "Arm1");
 
         // Reversing left motors
         frontRight.setDirection(DcMotor.Direction.FORWARD);

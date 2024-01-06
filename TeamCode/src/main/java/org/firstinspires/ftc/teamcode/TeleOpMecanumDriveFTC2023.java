@@ -199,9 +199,9 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
             arm1.setPosition(0.4);
 
         }
-        if (gamepad2.right_stick_y > 0) {
+        if (gamepad2.right_stick_y > 0.1) {
             climberMotor.setPower(-1);
-        } else if (gamepad2.right_stick_y < 0) {
+        } else if (gamepad2.right_stick_y < -0.1) {
             climberMotor.setPower(1);
         } else {
             climberMotor.setPower(0);

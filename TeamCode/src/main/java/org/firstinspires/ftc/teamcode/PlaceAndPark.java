@@ -75,6 +75,7 @@ public class PlaceAndPark extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        sleep(6000);
         arm1.setPosition(0.6);
         claw.setPosition(0.2);
         sleep(2000);
