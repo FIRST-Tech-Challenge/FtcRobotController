@@ -25,9 +25,10 @@ public class drivesample extends LinearOpMode
     
     private void setArmPos(double degrees, Servo arm)
     {
+        double max = 360;
+        double min = 0;
 		degrees = (degrees + 360) % 360;
-        // TODO: some algorithm to get the 0-1 value for the servo
-        double pos = 0;
+        double pos = (180 - degrees)/max-min;
         arm.setPosition(pos);
     }
 
@@ -158,7 +159,9 @@ public class drivesample extends LinearOpMode
             {
                 PixelGrabber.setPosition(0);
             }
-            
+            if(gamepad1.y){
+                slideL.setPower(0.5);
+            }
             
 
         }
