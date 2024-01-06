@@ -45,6 +45,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -250,7 +251,6 @@ public abstract class RFVisionPortal
             this.cameraResolution = cameraResolution;
             return this;
         }
-
         /**
          * Send a {@link VisionProcessor} into this portal to allow it to process camera frames.
          * @param processor the processor to attach

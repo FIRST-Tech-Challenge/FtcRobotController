@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.RUN
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -43,7 +45,7 @@ import java.util.Objects;
 @Config
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+    public static double DISTANCE = 30; // in
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -73,7 +75,12 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        currentPose = new Pose2d(0, 0, 0);
+        drive.update();
+        robot.update();
+        currentPose = new Pose2d(0, 0, 0);
+        drive.update();
+        robot.update();
 
         mode = Mode.TUNING_MODE;
 
@@ -122,7 +129,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
                     // update telemetry
                     telemetry.addData("targetVelocity", motionState.getV());
-                    telemetry.addData("measuredVelocity", currentVelo);
+                    telemetry.addData("measuredVelocity", currentPOVVelocity.getX());
                     telemetry.addData("error", motionState.getV() - currentVelo);
                     break;
                 case DRIVER_MODE:
@@ -142,7 +149,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
                     );
                     break;
             }
-
+            robot.update();
             telemetry.update();
         }
     }

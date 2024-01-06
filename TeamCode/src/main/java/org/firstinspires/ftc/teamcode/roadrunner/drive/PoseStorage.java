@@ -17,6 +17,6 @@ public class PoseStorage {
     public static List<Double> lastWheelPositions = Collections.emptyList();
     public static void setPose(Pose2d pose){
         currentPose = pose;
-//        lastWheelPositions = Collections.emptyList();
+        lastWheelPositions = Collections.emptyList();
     }
 }

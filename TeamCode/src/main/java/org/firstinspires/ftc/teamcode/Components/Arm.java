@@ -9,29 +9,30 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /** Harry Class to contain all Arm functions */
 public class Arm extends RFServo {
-  static double LOWER_LIMIT = 0.35;
-  static double UPPER_LIMIT = 1.0;
+  static double DROP_POS = 0.2, HOVER_POS = 0.8, GRAB_POS = 0.9;
   private double lastTime = 0, FLIP_TIME = 0.6;
 
   /** constructs arm servo, logs to general with CONFIG severity */
   public Arm() {
     super("armServo", 1.0);
-    super.setPosition(LOWER_LIMIT);
+    super.setPosition(GRAB_POS);
     super.setFlipTime(FLIP_TIME);
     lastTime = -100;
     super.setLastTime(-100);
-    ArmTargetStates.UNFLIPPED.setStateTrue();
   }
 
   /** enum for arm servo states, built in function to update states */
   public enum ArmStates {
-    UNFLIPPED(true),
-    FLIPPED(false);
+    HOVER(false, HOVER_POS),
+    GRAB(true, GRAB_POS),
+    DROP(false, DROP_POS);
 
-    boolean state = false;
+    boolean state;
+    double pos;
 
-    ArmStates(boolean p_state) {
+    ArmStates(boolean p_state, double p_pos) {
       state = p_state;
+      pos = p_pos;
     }
 
     void setStateTrue() {
@@ -53,15 +54,16 @@ public class Arm extends RFServo {
   }
 
   public enum ArmTargetStates {
-    UNFLIPPED(true, LOWER_LIMIT),
-    FLIPPED(false, UPPER_LIMIT);
+    HOVER(false, HOVER_POS),
+    GRAB(true, GRAB_POS),
+    DROP(false, DROP_POS);
 
-    public boolean state = false;
-    double position;
+    boolean state;
+    double pos;
 
-    ArmTargetStates(boolean p_state, double p_position) {
+    ArmTargetStates(boolean p_state, double p_pos) {
       state = p_state;
-      p_position = position;
+      pos = p_pos;
     }
 
     void setStateTrue() {
@@ -78,152 +80,45 @@ public class Arm extends RFServo {
       }
     }
 
-    boolean getState() {
+    public boolean getState() {
       return this.state;
     }
   }
 
-  /**
-   * void, toggles arm between outtake position and intake position logs to general with highest
-   * verbosity
-   */
-//  public void flip() {
-//    if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
-//      if (!ArmTargetStates.UNFLIPPED.state) {
-//        super.setPosition(LOWER_LIMIT);
-//        LOGGER.log(RFLogger.Severity.INFO, "flipping up");
-//        ArmTargetStates.UNFLIPPED.setStateTrue();
-//        Lift.LiftMovingStates.LOW.setStateTrue();
-//        lastTime = time;
-//      } else if (!ArmTargetStates.FLIPPED.state) {
-//        super.setPosition(LOWER_LIMIT);
-//        LOGGER.log(RFLogger.Severity.INFO, "flipping down");
-//        ArmTargetStates.FLIPPED.setStateTrue();
-//        Lift.LiftMovingStates.LOW.setStateTrue();
-//        lastTime = time;
-//      }
-//    } else {
-//      if (ArmTargetStates.UNFLIPPED.getState()) {
-//        ArmTargetStates.FLIPPED.setStateTrue();
-//        Lift.LiftMovingStates.LOW.setStateTrue();
-//      } else {
-//        ArmTargetStates.UNFLIPPED.setStateTrue();
-//        Lift.LiftMovingStates.LOW.setStateTrue();
-//      }
-//      LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
-//    }
-//  }
-
-  public void flip() {
-    if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
-      if (!ArmTargetStates.UNFLIPPED.state) {
-        super.setPosition(LOWER_LIMIT);
-        LOGGER.log(RFLogger.Severity.INFO, "flipping up");
-        ArmTargetStates.UNFLIPPED.setStateTrue();
-        Lift.LiftMovingStates.LOW.setStateTrue();
-        lastTime = time;
-      } else if (!ArmTargetStates.FLIPPED.state) {
-        super.setPosition(LOWER_LIMIT);
-        LOGGER.log(RFLogger.Severity.INFO, "flipping down");
-        ArmTargetStates.FLIPPED.setStateTrue();
-        Lift.LiftMovingStates.LOW.setStateTrue();
-        lastTime = time;
-      }
-    }
-    else {
-      if (ArmTargetStates.UNFLIPPED.getState()) {
-        ArmTargetStates.FLIPPED.setStateTrue();
-        Lift.LiftMovingStates.LOW.setStateTrue();
-      } else {
-        ArmTargetStates.UNFLIPPED.setStateTrue();
-        Lift.LiftMovingStates.LOW.setStateTrue();
-      }
-      LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
-    }
-  }
-
-  public void flipTo(ArmStates p_state)  {
+  public void flipTo(ArmStates p_state) {
     if (!p_state.state && time - lastTime > FLIP_TIME) {
-      if (!(Lift.LiftMovingStates.AT_ZERO.state||Lift.LiftPositionStates.AT_ZERO.state)) {
-        if (p_state == ArmStates.UNFLIPPED && super.getPosition()!=LOWER_LIMIT) {
-          super.setPosition(LOWER_LIMIT);
-          if (Wrist.WristTargetStates.DROP.state || Wrist.WristTargetStates.INTAKE.state)
-            Wrist.WristTargetStates.INTAKE.setStateTrue();
-          LOGGER.log(RFLogger.Severity.INFO, "flipping down");
-          ArmTargetStates.UNFLIPPED.setStateTrue();
-          Lift.LiftMovingStates.LOW.setStateTrue();
-          lastTime = time;
+      if((p_state== ArmStates.DROP || p_state == ArmStates.HOVER) && super.getPosition() != p_state.pos){
+        if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
+          if (p_state == ArmStates.DROP) {
+            super.setPosition(DROP_POS);
+            Wrist.WristTargetStates.DROP.setStateTrue();
+            Twrist.twristTargetStates.DROP.setStateTrue();
+            LOGGER.log(RFLogger.Severity.INFO, "flipping to DROP");
+            lastTime = time;
+          } else {
+            super.setPosition(HOVER_POS);
+            LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
+            Wrist.WristTargetStates.GRAB.setStateTrue();
+            Twrist.twristTargetStates.GRAB.setStateTrue();
+            lastTime = time;
+          }
         }
-        else if (p_state == ArmStates.FLIPPED && super.getPosition()!=UPPER_LIMIT) {
-          super.setPosition(UPPER_LIMIT);
-          LOGGER.log(RFLogger.Severity.INFO, "flipping up");
-          ArmTargetStates.FLIPPED.setStateTrue();
-          Lift.LiftMovingStates.LOW.setStateTrue();
-          lastTime = time;
-        }
-        else {
-          ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-          LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
+        else{
+          Lift.LiftMovingStates.LOW.state=true;
         }
       }
-      else {
-        LOGGER.log("Lift at zero");
-      }
-    }
-    ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-  }
-  /*public void flipTo(ArmStates p_state) {
-    if (!p_state.state && time - lastTime > FLIP_TIME) {
-      if (!(Lift.LiftMovingStates.AT_ZERO.state||Lift.LiftPositionStates.AT_ZERO.state)
-          && !Wrist.WristStates.FLAT.state) {
-        if (p_state == ArmStates.UNFLIPPED && super.getPosition()!=LOWER_LIMIT) {
-          super.setPosition(LOWER_LIMIT);
-          if (Wrist.WristTargetStates.DROP.state || Wrist.WristTargetStates.FLAT.state)
-            Wrist.WristTargetStates.FLIP.setStateTrue();
-          LOGGER.log(RFLogger.Severity.INFO, "flipping down");
-          ArmTargetStates.UNFLIPPED.setStateTrue();
-          Lift.LiftMovingStates.LOW.setStateTrue();
-          lastTime = time;
-        } else if (p_state == ArmStates.FLIPPED && super.getPosition()!=UPPER_LIMIT) {
-          super.setPosition(UPPER_LIMIT);
-          if(Wrist.WristTargetStates.HOLD.state||Wrist.WristTargetStates.FLAT.state)Wrist.WristTargetStates.FLIP.setStateTrue();
-          LOGGER.log(RFLogger.Severity.INFO, "flipping up");
-          ArmTargetStates.FLIPPED.setStateTrue();
-          Lift.LiftMovingStates.LOW.setStateTrue();
+      if (p_state == ArmStates.GRAB && super.getPosition() != p_state.pos) {
+        if (ArmStates.HOVER.state && Magazine.MagazineStates.OPEN.getState()) {
+          super.setPosition(GRAB_POS);
+          LOGGER.log("flipping to GRAB");
           lastTime = time;
         } else {
-          ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-          LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
+          ArmTargetStates.HOVER.state=true;
+          Magazine.MagazineTargetStates.OPEN.setStateTrue();
         }
-      } else {
-        LOGGER.log("Lift at zero or wrist flat");
       }
     }
-    ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-  }*/
-
-  public void flipToAuto(ArmStates p_state) {
-    if (!Lift.LiftPositionStates.AT_ZERO.state) {
-      if (p_state == ArmStates.FLIPPED) {
-        super.setPosition(UPPER_LIMIT);
-        LOGGER.log(RFLogger.Severity.INFO, "flipping down");
-        ArmTargetStates.FLIPPED.setStateTrue();
-        lastTime = time;
-      } else {
-        super.setPosition(LOWER_LIMIT);
-        LOGGER.log(RFLogger.Severity.INFO, "flipping up");
-        ArmTargetStates.UNFLIPPED.setStateTrue();
-        lastTime = time;
-      }
-    }
-    ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-  }
-
-  public void flatten(){
-    super.superSetPosition(LOWER_LIMIT-0.03);
-  }
-  public void unflatten(){
-    super.superSetPosition(LOWER_LIMIT);
+    ArmTargetStates.values()[p_state.ordinal()].state=true;
   }
 
   /**
@@ -240,15 +135,11 @@ public class Arm extends RFServo {
    * functions
    */
   public void update() {
-    if (super.getPosition() == LOWER_LIMIT && time - super.getLastTime() > FLIP_TIME) {
-      ArmStates.UNFLIPPED.setStateTrue();
-    } else if (super.getPosition() == UPPER_LIMIT && time - super.getLastTime() > FLIP_TIME) {
-      ArmStates.FLIPPED.setStateTrue();
-    } else {
-      LOGGER.log("bruh" + (super.getPosition() == LOWER_LIMIT) + super.getPosition());
+    for (var i : ArmStates.values()) {
+      if (super.getPosition() == i.pos && time > lastTime + FLIP_TIME) i.setStateTrue(); ArmTargetStates.values()[i.ordinal()].state=false;
     }
     for (var i : ArmTargetStates.values()) {
-      if (i.state && super.getTarget() != i.position) {
+      if (i.state && super.getTarget() != i.pos) {
         flipTo(ArmStates.values()[i.ordinal()]);
       }
     }

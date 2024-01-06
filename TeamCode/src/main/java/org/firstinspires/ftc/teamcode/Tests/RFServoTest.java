@@ -38,6 +38,8 @@ public abstract class RFServoTest extends LinearOpMode {
         FLIP_TIME = p_FLIP_TIME;
         SERVO_LOWER_LIMIT = p_SERVO_LOWER_LIMIT;
         SERVO_UPPER_LIMIT = p_SERVO_UPPER_LIMIT;
+        testServo.setLastTime(-100);
+        lastTime=-100;
     }
 
     /**
