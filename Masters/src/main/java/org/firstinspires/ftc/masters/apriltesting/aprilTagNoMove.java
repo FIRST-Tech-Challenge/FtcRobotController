@@ -86,7 +86,7 @@ public class aprilTagNoMove extends LinearOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "frontCamera"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "backWebcam"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
