@@ -33,14 +33,14 @@ public abstract class CSMethods extends LinearOpMode {
      - This is gearing DOWN for less speed and more torque.
      - For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //*/
-    static final double     COUNTS_PER_MOTOR_REV    = (double) ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
+    static final double     COUNTS_PER_MOTOR_REV    = ((((1+(46.0/17))) * (1+(46.0/11))) * 28) ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
     static final double     VELOCITY                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
-    static final double     VEL_MODIFIER            = 1.12485939258;
+    //static final double     VEL_MODIFIER            = 1.12485939258;
     static final double     b                       = 1.1375;
     static final double     m                       = 0.889;
     static final double     DRIVE_SPEED             = 0.6;
@@ -135,8 +135,6 @@ public abstract class CSMethods extends LinearOpMode {
     }
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
-        int lbTarget = 0;
-        int rbTarget = 0;
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -306,7 +304,7 @@ public abstract class CSMethods extends LinearOpMode {
         }
     }
     public void drive(double inches) {
-        double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
             encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
@@ -319,9 +317,9 @@ public abstract class CSMethods extends LinearOpMode {
         return tiles * TILE_LENGTH;
     }
     public void ejectPixel() {
-        telemetry.addData("Car Wash", "Ejecting Pixel");
-        telemetry.update();
         if (carWashMotor != null) {
+            telemetry.addData("Car Wash", "Ejecting Pixel");
+            telemetry.update();
             int t = (int) runtime.milliseconds() + 1000;
             carWashMotor.setPower(carWashPower);
             while (opModeIsActive()) {
@@ -330,6 +328,9 @@ public abstract class CSMethods extends LinearOpMode {
                 }
             }
             carWashMotor.setPower(0);
+        } else {
+            telemetry.addData("Car Wash", "Not Connected");
+            telemetry.update();
         }
     }
     public void stopRobot() {
@@ -363,11 +364,12 @@ public abstract class CSMethods extends LinearOpMode {
         rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
+    /*
     public void dropCarWash() {
         drive(15);
         drive(-15);
         sleep(100);
-    }
+    }//*/
     public void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
