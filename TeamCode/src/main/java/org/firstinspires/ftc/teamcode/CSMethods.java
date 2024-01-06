@@ -37,7 +37,7 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
-    static double     VELOCITY                = 2000;
+    static       double     VELOCITY                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     //static final double     VEL_MODIFIER            = 1.12485939258;
@@ -79,8 +79,7 @@ public abstract class CSMethods extends LinearOpMode {
                         0
                 )*/
         ));
-        boolean imuinit = imu.initialize(imuparameters);
-        if (!imuinit){
+        if (!imu.initialize(imuparameters)){
             telemetry.addData("IMU","Initialization failed");
         }
         try {
@@ -98,7 +97,7 @@ public abstract class CSMethods extends LinearOpMode {
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
 
-        //initAT();
+        //initAtd();
 
         //initTfod();
 
@@ -426,7 +425,7 @@ public abstract class CSMethods extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
-    public void initAT(){
+    public void initAtd(){
         tagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
