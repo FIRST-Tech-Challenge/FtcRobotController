@@ -101,25 +101,19 @@ public class Robot {
         double distanceInTicks = distance * TICKS_PER_ROTATION;
 
         int frontLeftPosition = leftFrontMotor.getCurrentPosition();
-
-        int frontLeftTarget = frontLeftPosition + (int) distanceInTicks;
-
         int frontRightPosition = leftRearMotor.getCurrentPosition();
-
         int backLeftPosition = rightFrontMotor.getCurrentPosition();
-
-        int backLeftTarget = backLeftPosition + (int) distanceInTicks;
-
         int backRightPosition = rightRearMotor.getCurrentPosition();
 
+        int backLeftTarget = backLeftPosition + (int) distanceInTicks;
+        int frontLeftTarget = frontLeftPosition + (int) distanceInTicks;
         int backRightTarget = backRightPosition + (int) distanceInTicks;
-
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
-        leftFrontMotor.setTargetPosition((int) frontLeftTarget);
-        leftRearMotor.setTargetPosition((int) frontRightTarget);
-        rightFrontMotor.setTargetPosition((int) backLeftTarget);
-        rightRearMotor.setTargetPosition((int) backRightTarget);
+        leftFrontMotor.setTargetPosition(frontLeftTarget);
+        leftRearMotor.setTargetPosition(frontRightTarget);
+        rightFrontMotor.setTargetPosition(backLeftTarget);
+        rightRearMotor.setTargetPosition(backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -137,8 +131,6 @@ public class Robot {
         stopMotors();
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
     }
 
     public void back(double distance, double speed) {
