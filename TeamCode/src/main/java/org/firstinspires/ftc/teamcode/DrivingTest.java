@@ -1,18 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.*;
-
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
-import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
-import java.util.List;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
