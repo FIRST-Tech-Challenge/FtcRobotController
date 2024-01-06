@@ -144,8 +144,8 @@ public class CSFullTeleOp extends CSMethods {
 
             if (droneServo != null) {
                 if (gamepad2.left_bumper && gamepad2.right_bumper) {
-                    droneServo.setPosition(1);
-                    addActTelemetry("Set droneServo to 1");
+                    droneServo.setPosition(0);
+                    addActTelemetry("Set droneServo to 0");
                 }
             }
         }

@@ -4,7 +4,7 @@ import static java.lang.Math.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
@@ -370,7 +370,6 @@ public abstract class CSMethods extends LinearOpMode {
         sleep(100);
     }//*/
     public void initTfod() {
-
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
 
