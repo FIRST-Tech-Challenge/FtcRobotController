@@ -18,7 +18,7 @@ public class RedBackstage extends LinearOpMode {
         //initialize robot
 
         teamBot.init(hardwareMap);
-        posOfTag = teamBot.findTeamProp(502);
+        //posOfTag = teamBot.findTeamProp(502);
 
         waitForStart();
 
@@ -83,16 +83,8 @@ public class RedBackstage extends LinearOpMode {
             sleep(500);
 
         }else{
-            teamBot.moveStraightWithEncoders(0.6,5);
-            sleep(500);
-            teamBot.gyroTurning(90);
-            sleep(500);
-            teamBot.moveStraightWithEncoders(0.6,100);
-            sleep(500);
-            //Open Both Sides of Claw
-            //Shooting Purple and Yellow Pixels into Backstage
-            teamBot.moveStraightWithEncoders(0.5,10);
-            sleep(500);
+            teamBot.moveStraightWithEncoders(0.4,6);
+            teamBot.strafing(RobotClass.Direction.RIGHT,0.5,3000);
         }
 
     }

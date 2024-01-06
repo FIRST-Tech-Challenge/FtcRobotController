@@ -204,8 +204,8 @@ public class RobotClass {
     //turning with gyro code
     double angleMinThreshold = 0.5;
     double angleMaxThreshold = 10;
-    double minCorrectionPower = 0.15;
-    double maxCorrectionPower = 0.25;
+    double minCorrectionPower = 0.2;
+    double maxCorrectionPower = 2.0;
 
     public void gyroTurning(double targetAngleDegrees) throws InterruptedException {
         boolean run = true;
