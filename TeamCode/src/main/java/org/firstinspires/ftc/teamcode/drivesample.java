@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -73,15 +74,19 @@ public class drivesample extends LinearOpMode
         Servo PixelGrabberWrist1 = hardwareMap.get(Servo.class, "PixelGrabberWrist1");
         Servo PixelGrabberWrist2 = hardwareMap.get(Servo.class, "PixelGrabberWrist2");
         Servo PixelGrabber = hardwareMap.get(Servo.class, "PixelGrabber");
+        Servo bucket = hardwareMap.get(Servo.class, "bucket");
+        CRServo immasuckyourpenis = hardwareMap.get(CRServo.class, "sucker");
 
         PixelGrabberWrist2.setDirection(Servo.Direction.REVERSE);
         PixelGrabber.setDirection(Servo.Direction.REVERSE);
+        slideL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
         PixelGrabberWrist1.setPosition(0.21);
         PixelGrabberWrist2.setPosition(0.21);
         PixelGrabber.setPosition(0);
+        bucket.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -122,10 +127,11 @@ public class drivesample extends LinearOpMode
 
             if(gamepad1.right_bumper)
             {
-                intakeMotor.setPower(0.5);
-                ArmWrist.setPosition(0.1);
+                immasuckyourpenis.setPower(1);
+                ArmWrist.setPosition(0.4);
                 PixelGrabberWrist1.setPosition(0.1);
                 PixelGrabberWrist2.setPosition(0.1);
+//                bucket.setPosition(0.5);
 
             }
             if (gamepad1.dpad_right)
@@ -136,14 +142,8 @@ public class drivesample extends LinearOpMode
             }
             if(gamepad1.left_bumper)
             {
-                IntakeRaiser.setPosition(0.4);
-                intakeMotor.setPower(0);
-//                ArmWrist.setPosition(0.08);
-//                PixelGrabberWrist1.setPosition(0.15);
-//                PixelGrabberWrist2.setPosition(0.15);
-//                PixelGrabberWrist1.setPosition(0.1);
-//                PixelGrabberWrist2.setPosition(0.1);
-
+                IntakeRaiser.setPosition(0.37);
+                immasuckyourpenis.setPower(0);
                 }
             if(gamepad1.x)
             {
@@ -152,11 +152,18 @@ public class drivesample extends LinearOpMode
             }
             if(gamepad1.a)
             {
-                PixelGrabber.setPosition(0.3);
+//                PixelGrabber.setPosition(0.3);
+//                slideL.setPower(1);
             }
             if(gamepad1.b)
             {
-                PixelGrabber.setPosition(0);
+//                PixelGrabber.setPosition(0);
+//                slideL.setPower(-0.5);
+            }
+
+            if(gamepad1.y)
+            {
+//                slideL.setPower(0.5);
             }
             
             
