@@ -25,7 +25,7 @@ public class CAMShiftTest extends LinearOpMode {
     {
         // OpenCV webcam
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
         //OpenCV Pipeline
         CAMShiftPipelineWMI myPipeline;
         webcam.setPipeline(myPipeline = new CAMShiftPipelineWMI(telemetry,packet));
