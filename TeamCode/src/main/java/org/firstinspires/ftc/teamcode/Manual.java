@@ -35,6 +35,7 @@ public class Manual  extends LinearOpMode{
             manageArm();
             //manageGrabber();
 
+            /*
             //temp code
             if (robot.getDistanceFromObject() < 5){
                 //robot.driveRobot(0,1);
@@ -44,6 +45,7 @@ public class Manual  extends LinearOpMode{
             telemetry.addData("Right Color Sensor (red)", robot.getRightColorSensorData().red);
             telemetry.addData("Left Color Sensor (blue)", robot.getLeftColorSensorData().blue);
             telemetry.addData("Left Color Sensor (red)", robot.getLeftColorSensorData().red);
+            */
 
             // April Tag detection call
             //telemetryAprilTag();
@@ -58,6 +60,7 @@ public class Manual  extends LinearOpMode{
 
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
+            telemetry.update();
         }
     }
 
