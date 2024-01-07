@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double GRAB_POS = 0.05,
-      CLOSE_POS = 0.1,
-      FLIP_TIME = 0.1;
+  public static double GRAB_POS = 0.35,
+      CLOSE_POS = 0.56,
+      FLIP_TIME = 0.3;
   private double lastTime = 0;
 
   public Claw() {
@@ -24,7 +24,6 @@ public class Claw extends RFServo {
     super.setPosition(GRAB_POS);
     super.setFlipTime(FLIP_TIME);
     clawStates.GRAB.setStateTrue();
-    clawTargetStates.GRAB.setStateTrue();
   }
 
   public enum clawStates {
@@ -74,7 +73,7 @@ public class Claw extends RFServo {
   }
 
   public void flipTo(clawTargetStates p_state) {
-    if (!clawStates.values()[p_state.ordinal()].state&&time - lastTime > FLIP_TIME) {
+    if (time - lastTime > FLIP_TIME) {
       if (p_state == clawTargetStates.CLOSE) {
         if (super.getPosition() != CLOSE_POS) {
           super.setPosition(CLOSE_POS);
@@ -83,7 +82,7 @@ public class Claw extends RFServo {
         }
         clawTargetStates.CLOSE.setStateTrue();
       } else if (p_state == clawTargetStates.GRAB) {
-        if (super.getPosition() != GRAB_POS) {
+        if (super.getPosition() != GRAB_POS && !Arm.ArmTargetStates.GRAB.getState()) {
           super.setPosition(GRAB_POS);
           LOGGER.log("GRABBING claw");
           lastTime = time;

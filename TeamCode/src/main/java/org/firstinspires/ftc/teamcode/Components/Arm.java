@@ -12,18 +12,28 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.2, HOVER_POS = 0.8, GRAB_POS = 0.72;
+  public static double DROP_POS = 0.2, HOVER_POS = 0.88, GRAB_POS = 0.72;
   private double lastTime = 0, FLIP_TIME = 0.6;
 
   /** constructs arm servo, logs to general with CONFIG severity */
   public Arm() {
     super("armServo", 1.0);
-    super.setPosition(GRAB_POS);
-    super.setFlipTime(FLIP_TIME);
     lastTime = -100;
     super.setLastTime(-100);
-    ArmStates.GRAB.setStateTrue();
-    ArmTargetStates.GRAB.setStateTrue();
+    if (!isTeleop) {
+      super.setPosition(GRAB_POS);
+      super.setFlipTime(FLIP_TIME);
+      ArmStates.GRAB.setStateTrue();
+      ArmTargetStates.GRAB.setStateTrue();
+    }
+    else{
+      super.setPosition(HOVER_POS);
+      super.setFlipTime(FLIP_TIME);
+      ArmStates.HOVER.setStateTrue();
+      ArmTargetStates.HOVER.setStateTrue();
+    }
+    lastTime = -100;
+    super.setLastTime(-100);
   }
 
   /** enum for arm servo states, built in function to update states */
@@ -114,7 +124,7 @@ public class Arm extends RFServo {
               || ArmStates.GRAB.getState()) {
 
             super.setPosition(HOVER_POS);
-            ArmTargetStates.HOVER.setStateTrue();
+            ArmTargetStates.HOVER.state=true;
             LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
             Wrist.WristTargetStates.GRAB.setStateTrue();
             Twrist.twristTargetStates.GRAB.setStateTrue();
