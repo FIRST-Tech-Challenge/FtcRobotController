@@ -279,6 +279,11 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+        robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
+        sleep(2700);
+        robot.stopArm();
+        robot.moveElbowToPosition(0.3);
+        sleep(1000);
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
