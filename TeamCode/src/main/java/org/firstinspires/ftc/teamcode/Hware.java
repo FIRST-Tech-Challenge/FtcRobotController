@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class Hware {
     //Declare motors
@@ -25,6 +26,8 @@ public class Hware {
     public Servo leftWrist = null;
     public Servo rightWrist = null;
     public Servo planeServo = null;
+    ColorSensor leftSensor = null;
+    ColorSensor rightSensor = null;
 
     //Declare Additional variables
     public double ticks = 751.8;
@@ -91,6 +94,8 @@ public class Hware {
         leftWrist = hardwareMap.get(Servo.class, "leftWrist");
         rightWrist = hardwareMap.get(Servo.class, "rightWrist");
         planeServo = hardwareMap.get(Servo.class, "planeLauncher");
+        leftSensor = hardwareMap.get(ColorSensor.class,"leftSensor");
+        rightSensor = hardwareMap.get(ColorSensor.class, "rightSensor");
 
         intakeRight.setDirection(CRServo.Direction.REVERSE);
         intakeLeft.setDirection(CRServo.Direction.FORWARD);

@@ -17,31 +17,29 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class redRight extends LinearOpMode {
     //Declare motors
     Hware robot;
+
     public DcMotor rightFront = null;
     public DcMotor leftFront = null;
     public DcMotor rightBack = null;
     public DcMotor leftBack = null;
+    public DcMotor arm;
+    public DcMotor lift;
 
-    public DcMotor leftArm;
-    public DcMotor rightArm;
-    public DcMotor rightLift;
-    public DcMotor leftLift;
     //Declare servos
     public Servo rightClaw = null;
     public Servo leftClaw = null;
-    public CRServo v2intakeRight = null;
-    public CRServo v2intakeLeft = null;
+    public Servo launcher = null;
     public Servo wristLeft = null;
     public Servo wristRight = null;
-    public Servo planeServo = null;
-
-    //Declare Additional variables
-
     ColorSensor leftSensor = null;
     ColorSensor rightSensor = null;
+
+    //Declare Additional variables
     public double ticks = 751.8;
     public double liftNewTarget;
     public double armNewTarget;
+
+
 
 
     int x, y, z, y2, x2, z2;
@@ -125,14 +123,9 @@ public class redRight extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.FORWARD);
 
         //initialize slide motors
-        rightArm = hardwareMap.get(DcMotor.class, "rightArm");
-        rightLift = hardwareMap.get(DcMotor.class, "rightLift");
-        leftArm = hardwareMap.get(DcMotor.class, "leftArm");
-        leftLift = hardwareMap.get(DcMotor.class, "leftLift");
-        rightArm.setDirection(DcMotor.Direction.REVERSE);
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
-        leftArm.setDirection(DcMotor.Direction.FORWARD);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
         //Set motor modes
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -144,24 +137,20 @@ public class redRight extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rightArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Initialize Servos
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
-        v2intakeRight = hardwareMap.get(CRServo.class, "v2intakeRight");
-        v2intakeLeft = hardwareMap.get(CRServo.class, "v2intakeLeft");
+        launcher = hardwareMap.get(Servo.class, "planeLauncher");
         wristLeft = hardwareMap.get(Servo.class, "wristLeft");
         wristRight = hardwareMap.get(Servo.class, "wristRight");
-        planeServo = hardwareMap.get(Servo.class, "planeLauncher");
+        leftSensor = hardwareMap.get(ColorSensor.class,"leftSensor");
+        rightSensor = hardwareMap.get(ColorSensor.class, "rightSensor");
 
         //Set Zero Power Behavior
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
