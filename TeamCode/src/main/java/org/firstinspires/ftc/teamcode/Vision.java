@@ -60,57 +60,60 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 /**
  * This Vision library is a class with a set of methods to initialize and gather data from cameras 
- * that can provide information to other parts of the robot. 
- *
- * The code branches off of FIRST's ConceptAutoToAprilTagOmni.java.
- *
+ * that can provide information to other parts of the robot.
  **/
 
 public class Vision extends BlocksOpModeCompanion
 {
     static private boolean ableToRunVision = false;
 
-    // *** Vision processors ***
+    // *******************************************************************
+    // Vision processors
     static private VisionPortal visionPortal = null;        // The variable to store our instance of the vision portal. Manages the video source.
     static private boolean manualExposureSet = false;       // Reduces motion blur
     static private AprilTagProcessor aprilTag = null;       // The variable to store our instance of the AprilTag processor. Manages the AprilTag detection process.
     static private TfodProcessor.Builder tfodBuilder = null;                // The variable to store our instance of the TensorFlow Object Detection processor.
     static private TfodProcessor tfod = null;                // The variable to store our instance of the TensorFlow Object Detection processor.
 
-    // *** Tensorflow related variables such as object label to detect in CENTERSTAGE ***
+    // *******************************************************************
+    // Tensorflow related variables such as object label to detect in CENTERSTAGE
     static private String idTeamProp = "Bolt";
     static private int locationTeamProp  = 0;    // Values 0 = not found, 1 = left, 2 = center, 3 = right
 
-    // *** April Tag variables ***
+    // *******************************************************************
+    // April Tag variables
     static private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    static private double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    static private boolean targetFound     = false;    // Set to true when an AprilTag target is detected
     static private int desiredTagID = 0;
     static private double desiredTag_Range = 0;
     static private double desiredTag_Bearing = 0;
     static private double desiredTag_Yaw = 0;
-    static private double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
-    static private boolean targetFound     = false;    // Set to true when an AprilTag target is detected
 
-    // *** Camera variables ***
+    // *******************************************************************
+    // Camera variables
     static private String frontcamera_name, backcamera_name;  // Holds the names of the cameras as defined in the Hub's configuration file.    
     static private String currentCamera;                         // Holds the value of the current camera streaming.
     static private WebcamName frontcamera_HW, backcamera_HW;      // Holds the hardware handles of the cameras.       
     static private CameraName switchableCamera = null;           // Holds both cameras for the vision portal.
-    
 
+    // *******************************************************************
+    // Sensors and variables for getting Alliance
     static private int allianceID = 0;  // Used to store the Alliance we are on. 0=if not set, 1=Red, 2=Blue 
     static private int REDALLIANCE =1;
     static private int BLUEALLIANCE = 2;
                                         // Will determine in CENTERSTAGE season with a REV Color sensor on the bot reading a blue or red LEGO brick.
     static private NormalizedColorSensor sensorColorAllianceHW = null;
     static private String sensorColorAllianceNAME;
-    static private boolean ableToGetAlliance = false;  // Used to determine if Alliance detection color sensor is able to be used.
+    static private boolean capableOfGettingAlliance = false;  // Used to determine if Alliance detection color sensor is able to be used.
     
 
     @ExportToBlocks (
         heading = "Vision: Initialize",
         color = 255,
         comment = "Initialize vision libraries",
-        tooltip = "Wait to start until you see the START displayed.",
+        tooltip = "Wait to start until you see the START displayed. " +
+                  "If using a sensor for getting Alliance, call other initVision with three Strings.",
         parameterLabels = {"Front Camera Name",
                            "Back Camera Name"
         }
@@ -202,7 +205,7 @@ public class Vision extends BlocksOpModeCompanion
      * Initialize the AprilTag and Tensorflow processors within the Vision Portal.
      **/
     public static boolean initVision(String _frontcameraname, String _backcameraname, String _alliancesensorname) {
-        float gain = 2;
+        float defaultGain = 2.0;
         
         if (_alliancesensorname.length() > 0) {
             sensorColorAllianceNAME = new String (_alliancesensorname);
@@ -211,19 +214,23 @@ public class Vision extends BlocksOpModeCompanion
             sensorColorAllianceHW = hardwareMap.get(NormalizedColorSensor.class, sensorColorAllianceNAME);
         
             if (sensorColorAllianceHW != null) {
+
+                capableOfGettingAlliance = true;
+
                 // Set our color sensor gain.  This is dependent on where the sensor is, where the color item is located and the colors
-                sensorColorAllianceHW.setGain(gain);
+                sensorColorAllianceHW.setGain(defaultGain);
+
             } else {
-                ableToGetAlliance = false;    
+                capableOfGettingAlliance = false;    
             }
 
         } else {
-            ableToGetAlliance = false;
+            capableOfGettingAlliance = false;
         }
         
         ableToRunVision = initVision(_frontcameraname, _backcameraname);
 
-        return (ableToRunVision && ableToGetAlliance);
+        return (ableToRunVision && capableOfGettingAlliance);
          
     }  // end of initVision() with Alliance detection sensor
     
@@ -231,24 +238,23 @@ public class Vision extends BlocksOpModeCompanion
     @ExportToBlocks (
         heading = "Vision: Set Alliance",
         color = 255,
-        comment = "Checks via color sensor what alliance robot is on. Returns [0=Unable to detect, 1=Red Alliance, 2=Blue Alliance]",
+        comment = "Checks via color sensor what alliance robot is on." +
+                  "Returns [0=Unable to detect, 1=Red Alliance, 2=Blue Alliance]",
         tooltip = "Can call GetAlliance() after this is called."
     )
     /**
      * Indicates the Alliance detected. [0=Unable to detect, 1=Red Alliance, 2=Blue Alliance]
+     * NOTE: MUCH OF THIS WAS A DERIVATIVE WORK FROM FIRST'S SAMPLE CODE (SensorColor.java)
      **/
     public static int setAlliance() {
-        
-        // Will contain the colors we found from the sensor
-        NormalizedRGBA colorsFound = null;
-        
+
         // Array of HSV values. [Array elements: 0-hue, 1-saturation, 2-value. 
         // Reference: http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
         final float[] hsvValues = new float[3];    
         float hue = 0;
         
         // If we weren't able to initialize the alliance sensor. Then set to none/0 and return.
-        if (!ableToGetAlliance)  {
+        if (!capableOfGettingAlliance)  {
             allianceID = 0;
             return allianceID;
         }
@@ -257,9 +263,9 @@ public class Vision extends BlocksOpModeCompanion
         if (sensorColorAllianceHW instanceof SwitchableLight) {
             ((SwitchableLight)sensorColorAllianceHW).enableLight(true);            
         }
-        
-        // Get the normalized colors from the sensor
-        colorsFound  = sensorColorAllianceHW.getNormalizedColors();
+
+        // Will contain the colors we found from the sensor
+        NormalizedRGBA colorsFound  = sensorColorAllianceHW.getNormalizedColors();
 
         // Update the hsvValues array 
         Color.colorToHSV(colorsFound.toColor(), hsvValues);
@@ -279,13 +285,15 @@ public class Vision extends BlocksOpModeCompanion
         hue = hsvValues[0];
         
         // See web.archive reference above for why we are using these numbers.
+        // Let's check for the range of BLUE hue values.
         if (hue >= 200 && hue <= 300)
             allianceID = BLUEALLIANCE;
+        // Otherwise we will set to RED
         else
             allianceID = REDALLIANCE;
                 
         // If we were able to turn the light on, then let's turn it off.
-         if (sensorColorAllianceHW instanceof SwitchableLight) {
+        if (sensorColorAllianceHW instanceof SwitchableLight) {
             SwitchableLight light = (SwitchableLight)sensorColorAllianceHW;
             if (light != null) {
                 if (light.isLightOn()) {
