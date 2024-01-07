@@ -9,12 +9,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.TeleOp.Visionportal3;
 
 /* velocity + acceleration limit command in trajectory movements:
 SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
  */
 
-@Autonomous(name = "Novak Djokovic will reach a record extending 400 weeks at #1")
+@Autonomous(name = "AutoTest1")
 public class AutoTest1 extends LinearOpMode {
     @Override
     public void runOpMode() {
