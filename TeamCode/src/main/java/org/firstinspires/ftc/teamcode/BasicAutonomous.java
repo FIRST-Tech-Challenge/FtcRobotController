@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Vector;
@@ -49,9 +50,12 @@ public class BasicAutonomous extends OpMode
 	TrajectorySequence yellow_pixel;
 	TrajectorySequence park;
 
-//	Servo yellowArm = hardwareMap.get(Servo.class, "yellowArmThrow");
+	Servo yellowArm = hardwareMap.get(Servo.class, "bucket");
 
 	private ElapsedTime runtime = new ElapsedTime();
+
+	private CameraPipeline cameraPipeline;
+	private VisionPortal portal;
 
 	@Override
 	public void init()
@@ -79,13 +83,17 @@ public class BasicAutonomous extends OpMode
 		drive = new SampleMecanumDrive(hardwareMap);
 		drive.setPoseEstimate(start_pos);
 
+		cameraPipeline.setColor("red");
+
 		// Get the position of left, mid, or right
 		portal = new VisionPortal.Builder()
 				.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
 				.setCameraResolution(new Size(640, 480))
 				.setCamera(BuiltinCameraDirection.BACK)
+				.addProcessor(cameraPipeline)
 				.build();
-		position = "mid";
+
+		position = cameraPipeline.getPropPosition();
 
 		// defines the trajectory for placing purple pixel
 		if (color == 1) {
@@ -179,7 +187,7 @@ public class BasicAutonomous extends OpMode
 		{
 			case PLACE_PURPLE:
 				if (!drive.isBusy()) {
-					state = State.PARK;
+					state = State.PLACE_YELLOW;
 					drive.followTrajectorySequenceAsync(yellow_pixel);
 				}
 
@@ -189,16 +197,16 @@ public class BasicAutonomous extends OpMode
 				{
 					case DRIVE:
 						if (!drive.isBusy()) {
-							state = State.SCORE;
+							yellowState = YellowState.PLACE;
 							runtime.reset();
 						}
 						break;
 					case PLACE:
-//						yellowArm.setPosition(1);
-//						if (runtime.time() > 0.5) {
-//							yellowArm.setPosition(0);
-//							state = State.SCORE;
-//						}
+						yellowArm.setPosition(1);
+						if (runtime.time() > 1) {
+							yellowArm.setPosition(0);
+							state = State.SCORE;
+						}
 						break;
 				}
 				break;
