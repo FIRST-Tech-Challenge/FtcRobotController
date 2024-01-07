@@ -65,14 +65,14 @@ public class Auto2_RedFieldLeft extends AutoBase {
         state = 0;
         SpikePosition spikePos = getSpikePosition();
         switch (spikePos){
-            case RIGHT:
-                gamepieceLocation = GamePieceLocation.RIGHT;
+            case LEFT:
+                gamepieceLocation = GamePieceLocation.LEFT;
                 break;
             case CENTRE:
                 gamepieceLocation = GamePieceLocation.CENTER;
                 break;
             default:
-                gamepieceLocation = GamePieceLocation.LEFT;
+                gamepieceLocation = GamePieceLocation.RIGHT;
         }
         telemetry.addData("GamePiece Spike line",gamepieceLocation);
         telemetry.update();
@@ -80,8 +80,6 @@ public class Auto2_RedFieldLeft extends AutoBase {
 
     @Override
     public void loop(){
-
-        //moveTo.Forward(200);
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -92,18 +90,14 @@ public class Auto2_RedFieldLeft extends AutoBase {
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
             moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
-            sleep (500);
+            // move forward 12 inches
+            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Open the claw
             intake.ClawOpen();
             // End all autos with the wrist up
             intake.FlipUp();
-            // Add telemetry
-            telemetry.addData("run", state);
-            telemetry.update();
             state = 1;
 
         } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
@@ -113,14 +107,13 @@ public class Auto2_RedFieldLeft extends AutoBase {
             moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
-            sleep (500);
             // Move forward 4 inches
             moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
             // Open the claw
             intake.ClawOpen();
             // End all autos with the wrist up
             intake.FlipUp();
-            state = 2;
+            state = 1;
 
         } else if (gamepieceLocation==GamePieceLocation.RIGHT&& state == 0) {
             // Start by securing the loaded pixel
@@ -132,15 +125,13 @@ public class Auto2_RedFieldLeft extends AutoBase {
             sleep(700);
             // Move the claw down
             intake.FlipDown();
-            sleep(1500);
             // Move forward 6 inches
             moveTo.Forward((int)((5.5 * ticksPerInch) * 0.94), 0.4);
             // Open the claw
             intake.ClawOpen();
-            sleep(500);
             // // End all autos with the wrist up
             intake.FlipUp();
-            state = 3;
+            state = 1;
         }
 
         // Show the elapsed game time and wheel power.

@@ -15,7 +15,7 @@ public class LinearSlideMovement {
 
     public static final int mid_linearslide_ticks = 1000;
 
-    public static final int low_linearslide_ticks = 500;
+    public static final int low_linearslide_ticks = 400;
 
     public static final int bottom_linearslide_ticks = 0;
 

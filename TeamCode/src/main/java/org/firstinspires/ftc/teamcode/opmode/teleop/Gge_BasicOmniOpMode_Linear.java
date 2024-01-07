@@ -33,6 +33,7 @@ import static java.lang.Math.abs;
 
 import android.os.SystemClock;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -96,6 +97,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
     private DcMotor wrist = null;
 
+    private RevBlinkinLedDriver blinkinLED;
     Servo leftClaw;
     Servo rightClaw;
     Servo conveyor;
@@ -123,6 +125,8 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         rightClaw = hardwareMap.get(Servo.class, "right_claw");
 
         conveyor = hardwareMap.get(Servo.class, "conveyor");
+
+        blinkinLED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -218,6 +222,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 rightFrontDrive.setPower(0);
                 leftBackDrive.setPower(0);
                 rightBackDrive.setPower(0);
+                // If the wrist is down, pickup a piece.
                 if (wrist.getCurrentPosition() > (intake.WRIST_DOWN_TICKS - 10)) {
                     // Pickup automation
                     intake.GrabAndStowPixel();
@@ -226,6 +231,12 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                     // If the wrist is up, put it down
                     intake.FlipDown();
                 }
+            }
+
+            if (gamepad1.x) {
+                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
+            } else if (gamepad1.y) {
+                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
             }
 
             if(gamepad1.dpad_down){

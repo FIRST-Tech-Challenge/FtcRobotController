@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+
 import android.util.Size;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -45,6 +49,7 @@ public abstract class AutoBase extends OpMode {
     protected DcMotor rightFrontDrive = null;
     protected DcMotor rightBackDrive = null;
     protected IMU imu;
+    private RevBlinkinLedDriver blinkinLED;
     protected GamePieceLocation gamepieceLocation;
     Servo leftClaw;
     Servo rightClaw;
@@ -69,6 +74,18 @@ public abstract class AutoBase extends OpMode {
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
     private DcMotor wrist = null;
+
+    int alignStage = 0;
+    double currentX = -2;
+    double currentY = 15;
+
+    boolean tagDetected = false;
+    boolean aprilTagAligned = false;
+    double axial = 0;
+    double lateral = 0;
+    double yaw = 0;
+    double currentAngle = 0;
+
 
     // Motor is 28 ticks per revolution
     // Gear Ratio is 12:1
@@ -114,8 +131,7 @@ public abstract class AutoBase extends OpMode {
                 .build();
 
         // set apriltag resolution decimation factor
-        myAprilTagProcessor.setDecimation(1);
-
+        myAprilTagProcessor.setDecimation(2);
 
 
         // Build the vision portal
@@ -123,7 +139,7 @@ public abstract class AutoBase extends OpMode {
         myVisionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "gge_backup_cam"))
                 .addProcessor(myAprilTagProcessor)
-                .setCameraResolution(new Size(640,480))
+                .setCameraResolution(new Size(640, 480))
                 //.setCameraResolution(new Size(1280,720))
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
@@ -131,8 +147,8 @@ public abstract class AutoBase extends OpMode {
 
         // set camera exposure and gain
         // values used from example code
-        //SetAutoCameraExposure();
-        // setCameraExposure(2, 250);
+        // SetAutoCameraExposure();
+        //setCameraExposure(2, 250);
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -151,6 +167,9 @@ public abstract class AutoBase extends OpMode {
         conveyor = hardwareMap.get(Servo.class, "conveyor");
 
         imu = hardwareMap.get(IMU.class, "imu");
+        imu.resetYaw();
+
+        blinkinLED = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -201,14 +220,15 @@ public abstract class AutoBase extends OpMode {
         //double powerFactor = 0.25;
 
         // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Status", "Initialized");
 
-        telemetry.update();
+        // Temporarily disabled to allow seeing the april tag detections telemetry
+        // telemetry.addData("Status", "Initialized");
+        // telemetry.update();
 
         runtime.reset();
     }
 
-    /** Set the camera gain and exposure. */
+//    /** Set the camera gain and exposure. */
 //    public void setCameraExposure(int exposureMS, int gain) {
 //
 //        // wait until camera in streaming mode
@@ -219,24 +239,32 @@ public abstract class AutoBase extends OpMode {
 //        ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
 //        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
 //            exposureControl.setMode(ExposureControl.Mode.Manual);
-//            Thread.sleep(50);
-//
+//            //Thread.sleep(50);
 //        }
 //
 //        // set exposure and gain
 //        exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-//        sleep(20);
+//        //sleep(20);
 //        GainControl gainControl = myVisionPortal.getCameraControl(GainControl.class);
 //        gainControl.setGain(gain);
-//        sleep(20);
+//        //sleep(20);
 //    }
 
-    /** Sets the camera exposure to automatic */
+    /**
+     * Sets the camera exposure to automatic
+     */
     public void SetAutoCameraExposure() {
         ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
         exposureControl.setMode(ExposureControl.Mode.Auto);
     }
 
+    public void StopMotors() {
+        // Set Powers to 0 for safety and not knowing what they are set to.
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
 
     protected void displayTelemetry(double DirectionNow) {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -251,117 +279,155 @@ public abstract class AutoBase extends OpMode {
         telemetry.update();
     }
 
-    protected void setFieldPosition(FieldPosition fPos){
+    protected void setFieldPosition(FieldPosition fPos) {
         pipeline.setFieldPosition(fPos);
     }
 
-    protected SpikePosition getSpikePosition(){
+    protected SpikePosition getSpikePosition() {
         return pipeline.getSpikePos();
     }
 
-    protected double getLeftSpikeSaturation(){
+    protected double getLeftSpikeSaturation() {
         return pipeline.getLeftSpikeSaturation();
     }
 
-    protected double getCenterSpikeSaturation(){
+    protected double getCenterSpikeSaturation() {
         return pipeline.getCenterSpikeSaturation();
     }
 
-    protected double getRightSpikeSaturation(){
+    protected double getRightSpikeSaturation() {
         return pipeline.getRightSpikeSaturation();
     }
 
 
-    public void GoToAprilTag(int tagNumber) {
-        double turnDegrees = 0;
-        List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
-        for (int i = 0; i < tag.size(); i++) {
+    public boolean GoToAprilTag(int tagNumber) {
+        double targetX = 0;
+        // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
+        if (tagNumber == 1 || tagNumber == 4) {
+            targetX = 0.5;
+        } else if (tagNumber == 3 || tagNumber == 6) {
+            targetX = -0.5;
+        }
+        double targetY = 10;
+        double targetAngle = 0;
 
-
-            if (tag.get(i).id == tagNumber) {
-                telemetry.addData("tagid found: ", tag.get(i).id);
-                telemetry.addData("tagid x: ", tag.get(i).ftcPose.x);
-                telemetry.addData("tagid y: ", tag.get(i).ftcPose.y);
-                telemetry.addData("tagid yaw: ", tag.get(i).ftcPose.yaw);
-                telemetry.update();
-
-                //determines what direction to turn
-                if (tagNumber <= 3){
-                    turnDegrees = 90;
-                } else if (tagNumber > 3) {
-                    turnDegrees = -90;
-                }
-
-
-                //moves forward to ensure that the rigging is not in the way
-                while (tag.get(i).ftcPose.y>36){
-                    if (tag.get(i).ftcPose.y>36) {
-                        moveTo.Backwards(20, 25);
-                    }
-
-                }
-
-                //Rotate so Gege is square with the back drop
-                moveTo.Rotate(turnDegrees);
-
-                //move left or right to line up with backdrop
-                while (tag.get(i).ftcPose.x>0.5 && tag.get(i).ftcPose.x<0.5){
-                    if (tag.get(i).ftcPose.x>=0) {
-                        moveTo.Left(20, 25);
-                    } else if (tag.get(i).ftcPose.x<0) {
-                        moveTo.Right(20, 25);
-                    }
-                }
-
-                //moves forward to correct distance to place
-                while (tag.get(i).ftcPose.y>12.5 && tag.get(i).ftcPose.y<11.5){
-                    if (tag.get(i).ftcPose.y>12) {
-                        moveTo.Backwards(20, 25);
-                    } else if (tag.get(i).ftcPose.y<12) {
-                        moveTo.Forward(20, 25);
-                    }
-                }
-
-                /**
-                 * if (tagNumber <= 3){
-                 *     double turnDegrees = -90
-                 * }
-                 * else-if (tagNumber > 3){
-                 *     double turnDegrees = 90
-                 * }
-                 * */
-                /**
-                 * while (y>? && y<?)
-                 *  if Y is too far
-                 *      move ____ 20 ticks
-                 *
-                 *  else-if y is too close
-                 *      move ____ 20 ticks
-                 * */
-                /**
-                 * Rotate so Gege is square with the back drop
-                 * Rotate(turnDegrees)
-                 * */
-                /**
-                 * while (x>-0.5 && x<0.5)
-                 *  if x is positive
-                 *      move right 20 ticks
-                 *
-                 *  else-if x is negitive
-                 *      move left 20 ticks
-                 * */
-                /**
-                 * while (y>? && y<?)
-                 *  if Y is too far
-                 *      move ____ 20 ticks
-                 *
-                 *  else-if y is too close
-                 *      move ____ 20 ticks
-                 * */
-            }
-
-
+        // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
+        if (tagNumber <= 3) {
+            targetAngle = -90;
+        } else if (tagNumber > 3) {
+            targetAngle = 90;
         }
 
+        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        // Scan for April Tag detections and update current values if you find one.
+        List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
+        for (int i = 0; i < tag.size(); i++) {
+            if (tag.get(i).id == tagNumber) {
+                currentX = tag.get(i).ftcPose.x;
+                currentY = tag.get(i).ftcPose.y;
+                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                tagDetected = true;
+            }
+        }
+
+        // Update Telemetry with key data
+        telemetry.addData("tags found: ", tag.size());
+        telemetry.addData("AlignStage: ", alignStage);
+        telemetry.addData("Current X: ", currentX);
+        telemetry.addData("Target X: ", targetX);
+        telemetry.addData("Current Y: ", currentY);
+        telemetry.addData("Target Y: ", targetY);
+        telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        telemetry.addData("Target Angle: ", targetAngle);
+        telemetry.update();
+
+        // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
+        // the motion needed to get to the April Tag.
+        // axial from drive is gamepad1.left_stick_y;
+        // lateral from drive is -gamepad1.left_stick_x;
+        // yaw from drive is -gamepad1.right_stick_x;
+
+        // Stage 0 - Ensure that motor powers are zeroed and switch to RUN_USING_ENCODER mode.
+        if (alignStage == 0) {
+            // Motors will bee to be in RUN_USING_ENCODER for this vs. RUN_TO_POSITION mode
+            // Refactor this to the Movement class to make a method to switch motors to run
+            // on a defined power level.
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // Set default to BRAKE mode for control
+            leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            // Set Powers to 0 for safety and not knowing what they are set to.
+            StopMotors();
+            // Init variables for motion
+            axial = 0;
+            lateral = 0;
+            yaw = 0;
+            // increment alignStage
+            alignStage = 1;
+        }
+
+        // If no tag is detected, creep backwards.
+        if (!tagDetected){
+            axial = -0.15;
+            aprilTagAligned = false;
+        }
+
+        // Square up the robot to the backdrop (from targetAngle above)
+        // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
+        if (abs (targetAngle - currentAngle) > 2) {
+            yaw = -Movement.CalcTurnError(targetAngle, currentAngle) / 45;
+            if (yaw > 0.3){
+                yaw = 0.3;
+            } else if (yaw < -0.3){
+                yaw = -0.3;
+            }
+        } else {
+            yaw = 0;
+        }
+
+        // Slide laterally to correct for X or right motion
+        // If the x distance is > 1 inch off of targetX move left or right accordingly
+        // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
+        // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
+        if (targetX - currentX > 1) {
+            lateral = 0.2;
+        } else if (targetX - currentX < -1) {
+            lateral = -0.2;
+        }else {
+            lateral = 0;
+        }
+
+        // Back the robot up to the right distance to raise the lift
+        if (currentY > targetY) {
+            axial = -0.15;
+        } else {
+            axial = 0;
+        }
+
+        // Combine the axial, lateral and yaw factors to be powers
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
+
+        // Apply calculated values to drive motors
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+
+        // Test to see if we are at all three parts of our desired position and we are aligned.
+        if (abs (targetX - currentX) < 1 && currentY < targetY && abs (targetAngle - currentAngle) < 2){
+            aprilTagAligned = true;
+            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+        }
+        return aprilTagAligned;
     }
 }
+

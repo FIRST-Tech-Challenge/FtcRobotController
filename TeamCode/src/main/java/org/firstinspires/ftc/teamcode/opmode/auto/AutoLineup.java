@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static android.os.SystemClock.sleep;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -45,7 +47,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 //@Disabled
 public class AutoLineup extends AutoBase {
 
-    boolean firstRun;
+    int stageNum;
 
     /**
      * Runs once and initializes the autonomous program.
@@ -64,8 +66,8 @@ public class AutoLineup extends AutoBase {
      */
     @Override
     public void init_loop() {
-        firstRun = true;
         state = 0;
+        stageNum = 0;
         SpikePosition spikePos = getSpikePosition();
         switch (spikePos){
             case LEFT:
@@ -79,31 +81,21 @@ public class AutoLineup extends AutoBase {
         }
 
         //telemetry.addData("GamePiece Spike line",gamepieceLocation);
-        telemetry.update();
+        //telemetry.update();
     }
     // run until the end of the match (driver presses STOP)
 
     @Override
     public void loop(){
-
-        //moveTo.Forward(200);
-
-        //double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-
-        if (firstRun == true) {
-            firstRun = false;
+        // Since the Apriltag Yaw is being set to align, its not critical that we start with the IMU at 0 degrees here.
+        if (stageNum == 0) {
             moveTo.Rotate(90);
-
-            GoToAprilTag(1);
-
-
+            sleep (1500);
+            stageNum = 1;
+        } else if (stageNum == 1) {
+            if (GoToAprilTag(1) == true){
+                stageNum = 2;
+            };
         }
-
-
-
-
     }
-
-
 }

@@ -174,11 +174,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 1.15);
                 lbDrive.setPower(power * 1.15);
+                rbDrive.setPower(power * 1.15);
             } else {
-                lfDrive.setPower(power * 0.85);
                 lbDrive.setPower(power * 0.85);
+                rbDrive.setPower(power * 0.85);
             }
         }
     }
@@ -205,11 +205,11 @@ public class Movement {
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
             if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
-                lfDrive.setPower(power * 0.85);
                 lbDrive.setPower(power * 0.85);
+                rbDrive.setPower(power * 0.85);
             } else {
-                lfDrive.setPower(power * 1.15);
                 lbDrive.setPower(power * 1.15);
+                rbDrive.setPower(power * 1.15);
             }
         }
     }
@@ -252,7 +252,6 @@ public class Movement {
         turnError = degrees - currentDirection;
         //Closed loop turn.  Stay in the while loop until the desired bering is achieved.
         while (abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) < 10) {
-
         }
     }
 
