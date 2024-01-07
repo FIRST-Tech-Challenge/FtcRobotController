@@ -67,6 +67,7 @@ public abstract class Teleop extends LinearOpMode {
 
     boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
 
+    double    viperPower = 0.0;
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
@@ -228,7 +229,7 @@ public abstract class Teleop extends LinearOpMode {
             // Update telemetry data
             telemetry.addData("PixelBin", "Lower=%s Upper=%s", robot.pixel1Color.name(), robot.pixel2Color.name());
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
-            telemetry.addData("Viper", "%d cts (%.2f mA)", robot.viperMotorsPos, robot.viperMotorsPwr );
+            telemetry.addData("Viper", "%d cts (%.1f %.2f mA)", robot.viperMotorsPos, viperPower, robot.viperMotorsPwr );
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
                     frontLeft, robot.frontLeftMotorPos, frontRight, robot.frontRightMotorPos );
             telemetry.addData("Rear ", "%.2f (%d cts) %.2f (%d cts)",
@@ -440,29 +441,42 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void ProcessFingerControls() {
 
-        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
-        if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button (GRAB)
+        if( gamepad2_square_now && !gamepad2_square_last)
         {
-            // Make sure we're lifted before we allow the operator to command SCORE
-            if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
-                robot.pushServo.setPosition(robot.PUSH_SERVO_DROP);
-                robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
-                // Wait 1 sec so we don't "fling" the pixel against the backdrop
-                sleep(1000 );
-                robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
-                robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
-            }
-        }
-
-        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
-        else if( gamepad2_square_now && !gamepad2_square_last)
-        {
-            robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
+            // Wrist should already be in the vertical position, but just make sure
             robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            // Partially extend the wrist assembly to grab the pixels
+            robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
             sleep(1000);
+            // Rotate both fingers to grab the pixels
             robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
             robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
-        }
+        } // grab
+
+        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button (SCORE/DROP)
+        else if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        {
+            // Ensure we're lifted before allowing the operator to command SCORE
+            if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
+                // Rotate wrist to the scoring position
+                robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
+                // Fully extend the wrist assembly toward the backdrop
+                // (we should do these automatically once we're above the top of the bin??)
+                robot.pushServo.setPosition(robot.PUSH_SERVO_DROP);
+                // Wait 1 sec so we don't "fling" the pixel against the backdrop
+                sleep(1000 );
+                // Release both pixels (this needs work)
+                robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
+                robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
+                // Wait for servos to actually move/release
+                sleep( 500 );
+                // Pull back to the safe/stored position and rotate back vertical
+                robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
+                sleep( 250 );
+                robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            }
+        } // score/drop
 
     } // ProcessFingerControls
 
@@ -496,10 +510,12 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
-           robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
-           robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-           sleep(750);
-           robot.startViperSlideExtension( robot.VIPER_EXTEND_ZERO );
+            robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);  // double check
+            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
+            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
+            sleep(250);
+            robot.startViperSlideExtension( robot.VIPER_EXTEND_ZERO );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -507,14 +523,16 @@ public abstract class Teleop extends LinearOpMode {
             if( safeToManuallyRaise && (gamepad2_right_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
                 robot.checkViperSlideExtension();
-                robot.viperMotors.setPower( gamepad2_right_trigger );  // fixed power? (robot.VIPER_RAISE_POWER)
+                viperPower = gamepad2_right_trigger;
+                robot.viperMotors.setPower( viperPower );  // fixed power? (robot.VIPER_RAISE_POWER)
                 liftTweaked = true;
             }
             // Does user want to manually LOWER the lift?
             else if( safeToManuallyLower && (gamepad2_left_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
                 robot.checkViperSlideExtension();
-                robot.viperMotors.setPower( robot.VIPER_LOWER_POWER );
+                viperPower = robot.VIPER_LOWER_POWER;
+                robot.viperMotors.setPower( viperPower );
                 liftTweaked = true;
             }
             // No more input?  Time to stop lift movement!
@@ -522,7 +540,8 @@ public abstract class Teleop extends LinearOpMode {
                 // if the lift is near the bottom, truly go to zero power
                 // but if in a raised position, only drop to minimal holding power
                 boolean closeToZero = (Math.abs(robot.viperMotorsPos - robot.VIPER_EXTEND_ZERO) < 20);
-                robot.viperMotors.setPower( closeToZero? 0.0 : robot.VIPER_HOLD_POWER );
+                viperPower = closeToZero? 0.0 : robot.VIPER_HOLD_POWER;
+                robot.viperMotors.setPower( viperPower );
                 liftTweaked = false;
             }
         } // manual_lift_control

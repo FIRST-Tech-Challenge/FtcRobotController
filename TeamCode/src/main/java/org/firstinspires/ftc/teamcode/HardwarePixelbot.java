@@ -148,9 +148,9 @@ public class HardwarePixelbot
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
     public Servo  pushServo = null;
     public double PUSH_SERVO_INIT = 0.470;
-    public double PUSH_SERVO_SAFE = 0.470;   // Safe to raise/lower the lift
-    public double PUSH_SERVO_GRAB = 0.540;   // Retract linkage servo back behind the pixel bin
-    public double PUSH_SERVO_DROP = 0.890;   // Extend linkage servo and finger assembly toward the Backdrop
+    public double PUSH_SERVO_SAFE = 0.470;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
+    public double PUSH_SERVO_GRAB = 0.540;  // Partially extend to align fingers inside pixels
+    public double PUSH_SERVO_DROP = 0.890;  // Fully extend finger assembly toward the Backdrop
 
     public Servo  wristServo = null;
     public double WRIST_SERVO_INIT = 0.450;   // higher is counter-clockwise
