@@ -58,7 +58,7 @@ public class Robot {
         clawGrip.scaleRange(0.05, 0.35);
         //clawPitch.scaleRange(0.755, 0.950);
         clawPitch.scaleRange(0.755, 0.973);
-        clawYaw.scaleRange(0.125, 0.675);
+        clawYaw.scaleRange(0.0725, 1);
 
         // Touch Sensors
         liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
@@ -71,8 +71,14 @@ public class Robot {
         clawPitchOutTake = 0;
 
         clawYawIntake = 0.5;
-        clawYawLeft = 1;
-        clawYawRight = 0;
+        // Slanted is 60 degrees, allows us to drop pixels vertically for mosaics
+        clawYawLeftSlantedUp = 1;
+        clawYawLeftHorizontal = clawYawLeftSlantedUp-0.21;
+        clawYawLeftSlantedDown = clawYawLeftHorizontal-0.21;
+
+        clawYawRightSlantedUp = 0;
+        clawYawRightHorizontal = clawYawRightSlantedUp+0.21;
+        clawYawRightSlantedDown = clawYawRightHorizontal+0.21;
 
 
         stateMachine = new StateMachine();
@@ -193,11 +199,11 @@ public class Robot {
 
         holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
+                        .servoRunToPosition(clawGrip, clawOpen)
                         .startMotor(lift.liftMotor, -1)
                         .waitForTouchSensorPressed(liftTouchDown)
                         .stopMotor(lift.liftMotor)
                         .resetMotorEncoder(lift.liftMotor)
-                        .servoRunToPosition(clawGrip, clawOpen)
                         .startMotor(intakeMotor, 0.15));
 
         // rejecting pixels
@@ -260,7 +266,8 @@ public class Robot {
     public static TouchSensor liftTouchDown;
 
     public static double clawPitchGoDown, clawPitchIntake, clawPitchOutTake;
-    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake, clawYawLeft, clawYawRight;
+    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake,
+            clawYawLeftSlantedUp, clawYawLeftHorizontal, clawYawLeftSlantedDown, clawYawRightSlantedUp, clawYawRightHorizontal, clawYawRightSlantedDown;
     int liftOutTake;
 
     public static Button handlerA, handlerB, handlerX, handlerY, handlerLeftBumper,
@@ -293,9 +300,9 @@ public class Robot {
         updateButtons();
 
         // Manages Reject mode on Roomba as an override of its current power and state
-        if(handlerRightTrigger.Pressed()) {
+        if(handlerLeftTrigger.Pressed()) {
             intakeMotor.setOverridePower(-0.4);
-        } else if (handlerRightTrigger.Released()) {
+        } else if (handlerLeftTrigger.Released()) {
             intakeMotor.cancelOverridePower();
         }
         if(handlerX.On()) {
@@ -305,7 +312,9 @@ public class Robot {
         else{
             planeLauncher.setPower(0);
         }
-        skyHook.update(handlerDPad_Down);
+        if(!(stateMachine.getCurrentState() == outTakingPixels)){
+            skyHook.update(handlerDPad_Down);
+        }
 
 
         stateMachine.updateState();

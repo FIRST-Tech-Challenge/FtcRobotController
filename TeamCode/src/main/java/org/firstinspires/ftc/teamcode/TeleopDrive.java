@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.aprilTags.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
@@ -88,17 +90,42 @@ public class TeleopDrive extends LinearOpMode {
             robot.update();
 
             if(robot.currentState()== robot.outTakingPixels){
+
+                telemetry.addData("Requested position: ", Robot.clawYaw.getPosition());
+
                 if(Robot.handlerDPad_Left.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawLeft);
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightHorizontal);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftHorizontal);
+                    }
                 }
+
                 if(Robot.handlerDPad_Down.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawIntake);
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightSlantedUp);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftSlantedDown);
+                    }
                 }
-                if(Robot.handlerDPad_Right.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawRight);
+
+                if(Robot.handlerDPad_Up.Pressed()){
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightSlantedDown);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftSlantedUp);
+
+                    }
                 }
+
                 if(Robot.handlerRightBumper.Pressed()){
                     Robot.clawGrip.setPosition(Robot.clawOpen);
+                }
+                if(Robot.handlerLeftBumper.Pressed()){
+                    Robot.clawGrip.setPosition(Robot.clawClose);
                 }
             }
 
