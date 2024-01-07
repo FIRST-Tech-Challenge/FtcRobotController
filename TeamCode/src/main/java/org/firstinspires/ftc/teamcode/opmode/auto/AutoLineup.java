@@ -31,22 +31,23 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static android.os.SystemClock.sleep;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
-
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
-
-@Autonomous(name="RedFieldLeft", group="OpMode")
+@Autonomous(name="AutoLineup", group="OpMode")
 //@Disabled
-public class Auto2_RedFieldLeft extends AutoBase {
+public class AutoLineup extends AutoBase {
+
+    int stageNum;
 
     /**
      * Runs once and initializes the autonomous program.
@@ -60,9 +61,13 @@ public class Auto2_RedFieldLeft extends AutoBase {
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
     }
 
+    /**
+     * This loop is run continuously
+     */
     @Override
-    public void init_loop(){
+    public void init_loop() {
         state = 0;
+        stageNum = 0;
         SpikePosition spikePos = getSpikePosition();
         switch (spikePos){
             case LEFT:
@@ -74,66 +79,23 @@ public class Auto2_RedFieldLeft extends AutoBase {
             default:
                 gamepieceLocation = GamePieceLocation.RIGHT;
         }
-        telemetry.addData("GamePiece Spike line",gamepieceLocation);
-        telemetry.update();
+
+        //telemetry.addData("GamePiece Spike line",gamepieceLocation);
+        //telemetry.update();
     }
+    // run until the end of the match (driver presses STOP)
 
     @Override
     public void loop(){
-
-        double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-        if (gamepieceLocation == GamePieceLocation.LEFT && state == 0){
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 2 inches
-            moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // move sideways 9 inches
-            moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
-
-        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 18 inches
-            moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 4 inches
-            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
-
-        } else if (gamepieceLocation==GamePieceLocation.RIGHT&& state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // Move forward 25 inches
-            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
-            // Rotate 90 degrees
+        // Since the Apriltag Yaw is being set to align, its not critical that we start with the IMU at 0 degrees here.
+        if (stageNum == 0) {
             moveTo.Rotate(90);
-            sleep(700);
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 6 inches
-            moveTo.Forward((int)((5.5 * ticksPerInch) * 0.94), 0.4);
-            // Open the claw
-            intake.ClawOpen();
-            // // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
+            sleep (1500);
+            stageNum = 1;
+        } else if (stageNum == 1) {
+            if (GoToAprilTag(1) == true){
+                stageNum = 2;
+            };
         }
-
-        // Show the elapsed game time and wheel power.
-        displayTelemetry(DirectionNow);
-    }}
+    }
+}

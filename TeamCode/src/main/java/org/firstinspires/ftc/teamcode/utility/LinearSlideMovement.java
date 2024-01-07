@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class LinearSlideMovement {
 
@@ -9,6 +10,14 @@ public class LinearSlideMovement {
     private DcMotor leftLinearSlide;
 
     private DcMotor rightLinearSlide;
+
+    public static final int top_linearslide_ticks = 1750; // adjusted to proper field height at T1 from memory
+
+    public static final int mid_linearslide_ticks = 1000;
+
+    public static final int low_linearslide_ticks = 400;
+
+    public static final int bottom_linearslide_ticks = 0;
 
     /**
      * Pulls in information about the motors that is determined during initialization and the
@@ -30,6 +39,23 @@ public class LinearSlideMovement {
     private void initMovement(){
         leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void LinearSlidesTop(){
+        Movelinearslide (top_linearslide_ticks);
+    }
+
+    public void LinearSlidesMiddle(){
+        Movelinearslide (mid_linearslide_ticks);
+    }
+
+
+    public void LinearSlidesLow(){
+        Movelinearslide (low_linearslide_ticks);
+    }
+
+    public void LinearSlidesBottom(){
+        Movelinearslide (bottom_linearslide_ticks);
     }
 
     public void Movelinearslide(int ticks){

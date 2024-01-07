@@ -80,12 +80,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
         telemetry.addData("GamePiece Spike line",gamepieceLocation);
         telemetry.update();
     }
-    // run until the end of the match (driver presses STOP)
-
     @Override
     public void loop(){
-
-        //moveTo.Forward(200);
 
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -95,12 +91,14 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // move forward 2 inches
             moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // move sideways 9 inches
-            moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+            moveTo.Left((int)((9 * ticksPerInch)* 1.04), 0.4); // Calculated ticks by distance * 104% (from last year)
+            // move forward 8 inches
+            moveTo.Forward((int)((8 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Move the claw down
             intake.FlipDown();
             sleep (500);
+            // move forward 4 inches
+            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
             // Open the claw
             intake.ClawOpen();
             // Move the claw up
@@ -108,33 +106,6 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Rotate 90 degrees
             moveTo.Rotate(90);
             sleep(700);
-            // Backwards 18 inches
-            moveTo.Backwards((int)((18 * ticksPerInch) * 0.94), 0.25);
-            // Left 6 inches
-            moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
-            // Move backwards 10.5 inches
-            moveTo.Backwards((int)((12 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves right 18 inches
-            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Add telemetry
-            telemetry.addData("run", state);
-            telemetry.update();
-            // Finish all autos with the wrist up
-            intake.FlipUp();
             state = 1;
         } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
             // Start by securing the loaded pixel
@@ -153,12 +124,45 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Rotate 90 degrees
             moveTo.Rotate(90);
             sleep(700);
-            // Right 2 inches
-            moveTo.Right((int)((2 * ticksPerInch) * 0.94), 0.5);
-            // Backwards 36.5 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
+            state = 1;
+        } else if (gamepieceLocation==GamePieceLocation.RIGHT && state == 0) {
+            // Start by securing the loaded pixel
+            intake.ClawClosed();
+            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Rotate(90);
+            sleep(700);
+            intake.FlipDown();
+            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
+            intake.ClawOpen();
+            sleep(500);
+            intake.FlipUp();
+            state = 1;
+        }
+
+        // Use the GoToAprilTag to get to within 7 inches of the Backdrop
+        if (gamepieceLocation == GamePieceLocation.LEFT && state == 1){
+            // Align and drive to April Tag.  1 is BLUE side LEFT.
+            if (GoToAprilTag(1) == true){
+                  state = 2;
+            }
+        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
+            // Align and drive to April Tag.  2 is BLUE side CENTER.
+            if (GoToAprilTag(2) == true){
+                state = 2;
+            }
+        } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
+            // Align and drive to April Tag.  3 is BLUE side RIGHT.
+            if (GoToAprilTag(3) == true){
+                state = 2;
+            }
+        }
+
+        // Complete the auto by dropping the game piece and going to park
+        if (gamepieceLocation == GamePieceLocation.LEFT && state == 2){
+            //Move back 5 more inches after the April Tag positioning completes.
+            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
+            //Move the linear slide to the low scoring position
+            linearSlideMove.LinearSlidesLow();
             // Moves the conveyor forward
             conveyor.setPosition(0);
             // Runs the conveyor for 4 seconds
@@ -166,32 +170,46 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesBottom();
+            // Forward 6 inches
+            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
+            // Moves right 18 inches
+            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.4);
+            // Backward 6 inches
+            moveTo.Backwards((int)((10 * ticksPerInch) * 0.94), 0.25);
+            // Add telemetry
+            telemetry.addData("run", state);
+            telemetry.update();
+            // Finish all autos with the wrist up
+            intake.FlipUp();
+            state = 3;
+        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
+            //Move back 5 more inches after the April Tag positioning completes.
+            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
+            // Move the linear slide to the low scoring position
+            linearSlideMove.LinearSlidesLow();
+            // Moves the conveyor forward
+            conveyor.setPosition(0);
+            // Runs the conveyor for 4 seconds
+            sleep(4000);
+            // Stops the conveyor
+            conveyor.setPosition(0.5);
+            // Moves the linear slide to the bottom position
+            linearSlideMove.LinearSlidesBottom();
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
-            moveTo.Right((int)((26 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Right((int)((24 * ticksPerInch) * 1.04), 0.4);
             // Backward 6 inches
-            moveTo.Backwards((int)((6 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((10 * ticksPerInch) * 0.94), 0.25);
             // Finish all autos with the wrist up
             intake.FlipUp();
-            state = 2;
-        } else if (gamepieceLocation==GamePieceLocation.RIGHT&& state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.4);
-            moveTo.Rotate(90);
-            sleep(700);
-            intake.FlipDown();
-            sleep(1500);
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.4);
-            intake.ClawOpen();
-            sleep(500);
-            intake.FlipUp();
-            moveTo.Backwards((int)((19 * ticksPerInch) * 0.94), 0.25);
-            moveTo.Left((int)((3 * ticksPerInch) * 1.04), 0.5);
-            moveTo.Backwards((int)((19.25 * ticksPerInch) * 0.94), 0.25);
-            linearSlideMove.Movelinearslide(LOW_LINEAR_SLIDE_TICKS);
+            state = 3;
+        } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2){
+            // Move back 5 more inches after the April Tag positioning completes.
+            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
+            // Move the linear slide to the low scoring position
+            linearSlideMove.LinearSlidesLow();
             sleep(2000);
             // Moves the conveyor forward
             conveyor.setPosition(0);
@@ -200,23 +218,18 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Stops the conveyor
             conveyor.setPosition(0.5);
             // Moves the linear slide to the bottom position
-            linearSlideMove.Movelinearslide(BOTTOM_LINEAR_SLIDE_TICKS);
+            linearSlideMove.LinearSlidesBottom();
             // Forward 6 inches
             moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
             // Moves right 26 inches
-            moveTo.Right((int)((28 * ticksPerInch) * 1.04), 0.5);
+            moveTo.Right((int)((28 * ticksPerInch) * 1.04), 0.4);
             // Backward 6 inches
-            moveTo.Backwards((int)((7 * ticksPerInch) * 0.94), 0.25);
+            moveTo.Backwards((int)((10 * ticksPerInch) * 0.94), 0.25);
             // Finish all autos with the wrist up
             intake.FlipUp();
             state = 3;
         }
-
         // Show the elapsed game time and wheel power.
         displayTelemetry(DirectionNow);
-
-
     }
-
-
 }
