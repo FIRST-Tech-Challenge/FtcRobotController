@@ -143,7 +143,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 27,  27, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 29,  29, 10);  // S1: Forward 47 Inches with 5 Sec timeout
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
@@ -186,19 +186,19 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 10,  10, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0.1, TURN_SPEED);
-        sleep(2500);
+        sleep(1600);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 7,  7, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 6,  6, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //reverse
         telemetry.addData("Reverse", "");
@@ -242,7 +242,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 15,  15, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 17,  17, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //turn right
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
