@@ -31,7 +31,7 @@ public class TiltSubsystem extends SubsystemBase
     {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        tilt_motor =  hMap.get(DcMotorEx.class, "tilt_motor");
+        tilt_motor =  hMap.get(DcMotorEx.class, "tilt");
         ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
 
         tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

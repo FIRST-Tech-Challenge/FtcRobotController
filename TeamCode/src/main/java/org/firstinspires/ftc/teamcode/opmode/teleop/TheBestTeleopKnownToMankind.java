@@ -95,9 +95,9 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         //claw
         TriggerAnalogButton clawTrigger =
                 new TriggerAnalogButton(operator, GamepadKeys.Trigger.RIGHT_TRIGGER,0.9);
-        clawTrigger.whenPressed(
-                new ClawCloseCommand(clawSubsystem));
         clawTrigger.whenReleased(
+                new ClawCloseCommand(clawSubsystem));
+        clawTrigger.whenPressed(
                 new ClawOpenCommand(clawSubsystem));
 
         //deposit

@@ -11,8 +11,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ClawSubsystem extends SubsystemBase
 {
-    private static final double CLAW_OPEN = 0.7;
-    private static final double CLAW_CLOSED = 0;
+    private static final double CLAW_OPEN = 0.2;
+    private static final double CLAW1_OPEN = 0.6;
+    private static final double CLAW_CLOSED = 0.5;
+    private static final double CLAW1_CLOSED = 0.32;
 
     public static final double DETECTION_DISTANCE = 40;
 
@@ -22,19 +24,19 @@ public class ClawSubsystem extends SubsystemBase
     private static DistanceSensor rightDist;
 
     public ClawSubsystem(final HardwareMap hMap) {
-        clawLeft = hMap.get(Servo.class, "claw_left");
-        clawRight = hMap.get(Servo.class, "claw_right");
+        clawLeft = hMap.get(Servo.class, "claw1");
+        clawRight = hMap.get(Servo.class, "claw");
         leftDist = hMap.get(DistanceSensor.class, "leftDist");
         rightDist = hMap.get(DistanceSensor.class, "rightDist");
     }
 
     public void open() {
-        clawLeft.setPosition(CLAW_OPEN);
+        clawLeft.setPosition(CLAW1_OPEN);
         clawRight.setPosition(CLAW_OPEN);
     }
 
     public void close() {
-        clawLeft.setPosition(CLAW_CLOSED);
+        clawLeft.setPosition(CLAW1_CLOSED);
         clawRight.setPosition(CLAW_CLOSED);
     }
 
