@@ -173,7 +173,7 @@ public class RedRight extends LinearOpMode {
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-21, -30, -90);
-        move.driveToBoard(-21, -39.5, -90);
+        move.driveToBoard(-21, -40.5, -90);
         move.driveFromBoard(-21, -38, -90);
         move.driveSeq(-52, -38, -90);
         move.driveSeq(-52, -50, -90);

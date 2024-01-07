@@ -83,6 +83,7 @@ public class CompetitionTeleop2024 extends OpMode {
         gripper = hardwareMap.get(Servo.class, "gripper");
         elbow = hardwareMap.get(Servo.class, "elbow");
         plane = hardwareMap.get(Servo.class, "plane");
+        plane.setPosition(0.0);
         //elbow.setPosition(0.0);
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
@@ -237,18 +238,11 @@ public class CompetitionTeleop2024 extends OpMode {
         {
             changed = false;
         }
-        if (gamepad1.a && !changeda1) {
-            plane.setPosition(0.2);
-            changeda1 = true;
-        } else if (!gamepad1.a)
+        if (gamepad1.a) {
+            plane.setPosition(0.5);
+        } else
         {
-            changeda1 = false;
-        }
-        if (gamepad1.b && !changedb1) {
-            plane.setPosition(0.6);
-        } else if (!gamepad1.b)
-        {
-            changedb1 = false;
+            plane.setPosition(0.0);
         }
         double elbowPosition = elbow.getPosition();
         double elbowDelta = 0.005;

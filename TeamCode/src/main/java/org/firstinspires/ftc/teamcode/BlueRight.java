@@ -172,22 +172,23 @@ public class BlueRight extends LinearOpMode {
 
     private void LeftPath()throws InterruptedException {
         move.driveSeq(-40,-30,-180);
-        move.driveSeq(-29, -25, -180);
+        move.driveSeq(-30, -26, -180);
         utils.dumpOpen();
         sleep(1000);
-        move.driveSeq(-29, -30, -180);
+        move.driveSeq(-30, -31, -180);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-5, -30, -180);
-        move.driveSeq(-5, 40, -90);
-        move.driveSeq(-42, 40, -90);
-        move.driveToBoard(-42, 42, -90);
-        move.driveFromBoard(-7, 40, -90);
-        move.driveSeq(-7, 63, -90);
+        move.driveSeq(-5, 45, -90);
+        move.driveSeq(-39, 45, 90);
+        move.driveToBoard(-39, 54, 90);
+        move.driveFromBoard(-39, 52, 90);
+        move.driveSeq(-7, 52, 90);
+        move.driveSeq(-7, 63, 90);
     }
     private void MiddlePath()throws InterruptedException {
-        move.driveSeq(-16.5,-42,-180);
+        move.driveSeq(-16.5,-43,-180);
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
@@ -198,17 +199,18 @@ public class BlueRight extends LinearOpMode {
         move.driveSeq(-2, -42, -180);
         move.driveSeq(-2, -38, -90);
         move.driveSeq(-2, 40, -90);
-        move.driveSeq(-34.5, 40, -90);
-        move.driveToBoard(-34.5, 44, -90);
-        move.driveFromBoard(-9, 40, -90);
-        move.driveSeq(-9, 69, -90);
+        move.driveSeq(-33, 40, 90);
+        move.driveToBoard(-33, 52.5, 90);
+        move.driveFromBoard(-33, 50.5, 90);
+        move.driveSeq(-6, 50.5, 90);
+        move.driveSeq(-6, 69, 90);
     }
     private void RightPath()throws InterruptedException {
         move.driveSeq(-16,-29.5,0);
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        move.driveSeq(-16, -25, 0);
+        move.driveSeq(-17, -25, 0);
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
@@ -216,10 +218,11 @@ public class BlueRight extends LinearOpMode {
         move.driveSeq(-5, -27, 0);
         move.driveSeq(-5, -23, -90);
         move.driveSeq(-5, 40, -90);
-        move.driveSeq(-22, 40, -90);
-        move.driveToBoard(-22, 44, -90);
-        move.driveFromBoard(-2, 40,-90);
-        move.driveSeq(-2, 63, -90);
+        move.driveSeq(-22, 40, 90);
+        move.driveToBoard(-22, 53, 90);
+        move.driveFromBoard(-22, 51,90);
+        move.driveSeq(-2, 51, 90);
+        move.driveSeq(-2, 63, 90);
     }
 
     private void initOpenCV() {
