@@ -23,12 +23,11 @@ public class SaturationBaseline extends AutoBase{
 
     @Override
     public void init() {
-
-        // Change this if you want to calibrate for a different field position
-        setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
-
         // finally do the init in the AutoBase that will set up the camera and motors
         super.init();
+
+        // Change this if you want to calibrate for a different field position
+        setFieldPosition(FieldPosition.BLUE_FIELD_LEFT); //
     }
 
 
@@ -37,6 +36,7 @@ public class SaturationBaseline extends AutoBase{
         telemetry.addData("LSpikeSaturation",getLeftSpikeSaturation());
         telemetry.addData("RSpikeSaturation",getRightSpikeSaturation());
         telemetry.addData("CSpikeSaturation",getCenterSpikeSaturation());
+        telemetry.addData("GamePieceLocation",getSpikePosition());
 
         telemetry.update();
     }
