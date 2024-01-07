@@ -30,7 +30,7 @@ public class TeleopDrive extends LinearOpMode {
         aprilTagDetection = new AprilTagDetection();
         aprilTagDetection.Setup(hardwareMap, telemetry);
 
-        Robot.clawPitch.setPosition(Robot.clawPitchIntake);
+        Robot.clawPitch.setPosition(Robot.clawPitchGoDown); // clawPitchIntake
         Robot.clawYaw.setPosition(Robot.clawYawIntake);
         Robot.clawGrip.setPosition(Robot.clawOpen);
         sleep(1000);
@@ -73,6 +73,7 @@ public class TeleopDrive extends LinearOpMode {
             boolean emergencyBrakeOverride = gamepad1.right_bumper;
             boolean switchDriveMode = gamepad1.b;
             boolean alignToCardinalPoint = gamepad1.a;
+            boolean resetHeading = gamepad1.y;
 
 
             double distanceToWall = 0;
@@ -84,14 +85,14 @@ public class TeleopDrive extends LinearOpMode {
             }
 
 
-            driveMotors.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint);
+            driveMotors.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint, resetHeading);
             driveMotors.update();
 
             robot.update();
 
             if(robot.currentState()== robot.outTakingPixels){
 
-                telemetry.addData("Requested position: ", Robot.clawYaw.getPosition());
+                //telemetry.addData("Requested position: ", Robot.clawYaw.getPosition());
 
                 if(Robot.handlerDPad_Left.Pressed()){
                     if(Robot.handlerRightTrigger.On()){

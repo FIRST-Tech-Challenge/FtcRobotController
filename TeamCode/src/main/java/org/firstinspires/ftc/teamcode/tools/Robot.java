@@ -191,6 +191,7 @@ public class Robot {
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
                         .stopMotor(intakeMotor)
+                        .servoRunToPosition(clawPitch, clawPitchGoDown)
                         .resetTimer(timer)
                         .waitUntil(timer, 150)
                         .startMotor(lift.liftMotor, 1)
@@ -199,6 +200,7 @@ public class Robot {
 
         holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
+                        .servoRunToPosition(clawPitch, clawPitchIntake)
                         .servoRunToPosition(clawGrip, clawOpen)
                         .startMotor(lift.liftMotor, -1)
                         .waitForTouchSensorPressed(liftTouchDown)
