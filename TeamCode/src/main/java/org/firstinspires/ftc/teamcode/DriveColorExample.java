@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="FieldOrientation", group="Linear Opmode")
 @Disabled
-public class DriveColorExamaple extends LinearOpMode {
+public class DriveColorExample extends LinearOpMode {
 
     private IMU imu;
 
@@ -35,9 +37,10 @@ public class DriveColorExamaple extends LinearOpMode {
     public void runOpMode() {
 
         while (opModeIsActive()) {
-            telemetry.addData("Red", "",colortrue, getRedcolor());
+            telemetry.addData("Red", "", colortrue, getRedcolor());
             telemetry.update();
         }
-    }}
+    }
+}
 
 
