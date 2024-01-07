@@ -93,7 +93,7 @@ public class AutoLineup extends AutoBase {
             sleep (1500);
             stageNum = 1;
         } else if (stageNum == 1) {
-            if (GoToAprilTag(1) == true){
+            if (moveTo.GoToAprilTag(1) == true){
                 stageNum = 2;
             };
         }
