@@ -79,7 +79,7 @@ public abstract class RedPropPipeline implements VisionProcessor {
 
         if(averagedLeftBox > redThreshold){        //Must Tune Red Threshold
             outStr = "left";
-        }else if(averagedRightBox> redThreshold){
+        }else if(averagedRightBox > redThreshold){
             outStr = "center";
         }else{
             outStr = "right";

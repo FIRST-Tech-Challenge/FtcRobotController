@@ -11,6 +11,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Vector;
 
@@ -79,6 +80,11 @@ public class BasicAutonomous extends OpMode
 		drive.setPoseEstimate(start_pos);
 
 		// Get the position of left, mid, or right
+		portal = new VisionPortal.Builder()
+				.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+				.setCameraResolution(new Size(640, 480))
+				.setCamera(BuiltinCameraDirection.BACK)
+				.build();
 		position = "mid";
 
 		// defines the trajectory for placing purple pixel
