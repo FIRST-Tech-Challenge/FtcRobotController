@@ -143,18 +143,18 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 27,  27, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 29,  29, 10);  // S1: Forward 47 Inches with 5 Sec timeout
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -25, -25, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -3, -3, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, -TURN_SPEED);
+        robot.driveRobot(0, TURN_SPEED);
         sleep(3700);
 
         //go straight
@@ -162,7 +162,7 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    55, 55, 10);
+        encoderDrive(DRIVE_SPEED, 0,    -52, -52, 10);
         //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
@@ -242,19 +242,19 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 7,  7, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //turn right
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
-        sleep(2500);
+        sleep(1500);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 10,  10, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //reverse
         telemetry.addData("Reverse", "");
