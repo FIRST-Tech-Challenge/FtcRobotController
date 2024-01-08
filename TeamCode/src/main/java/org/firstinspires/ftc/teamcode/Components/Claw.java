@@ -2,28 +2,36 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double GRAB_POS = 0.35,
+  public static double GRAB_POS = 0.33,
       CLOSE_POS = 0.56,
-      FLIP_TIME = 0.3;
+      FLIP_TIME = 0.3, GRAB2=0.73, CLOSE2 = 0.46;
   private double lastTime = 0;
-
+  private Servo servo2;
   public Claw() {
     super("clawServo", 1.0);
+    servo2 = op.hardwareMap.get(Servo.class, "clawServo2");
     lastTime = -100;
     super.setLastTime(-100);
     super.setPosition(GRAB_POS);
+    servo2.setPosition(GRAB2);
     super.setFlipTime(FLIP_TIME);
     clawStates.GRAB.setStateTrue();
+    clawTargetStates.GRAB.setStateTrue();
+    clawTargetStates.GRAB.state=false;
+    lastTime = -100;
+    super.setLastTime(-100);
   }
 
   public enum clawStates {
@@ -79,11 +87,13 @@ public class Claw extends RFServo {
           super.setPosition(CLOSE_POS);
           LOGGER.log(RFLogger.Severity.INFO, "CLOSING claw");
           lastTime = time;
+          servo2.setPosition(CLOSE2);
         }
         clawTargetStates.CLOSE.setStateTrue();
       } else if (p_state == clawTargetStates.GRAB) {
         if (super.getPosition() != GRAB_POS && !Arm.ArmTargetStates.GRAB.getState()) {
           super.setPosition(GRAB_POS);
+          servo2.setPosition(GRAB2);
           LOGGER.log("GRABBING claw");
           lastTime = time;
         }
