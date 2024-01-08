@@ -29,10 +29,10 @@ public class TiltSubsystem extends SubsystemBase
 
     public TiltSubsystem(HardwareMap hMap)
     {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+       // telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         tilt_motor =  hMap.get(DcMotorEx.class, "tilt");
-        ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
+       // ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
 
         tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
@@ -52,8 +52,8 @@ public class TiltSubsystem extends SubsystemBase
     //always chases target position
     public void periodic() {
         double output = 0;
-        if(abs(tilt_motor.getCurrentPosition()-targetPosition)>TOLERANCE)
-            output = feedforward.calculate(targetPosition, 2,3);
-        tilt_motor.setVelocity(output);
+//        if(abs(tilt_motor.getCurrentPosition()-targetPosition)>TOLERANCE)
+//            output = feedforward.calculate(targetPosition, 2,3);
+//        tilt_motor.setVelocity(output);
     }
 }

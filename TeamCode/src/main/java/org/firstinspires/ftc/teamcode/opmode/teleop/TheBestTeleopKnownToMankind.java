@@ -37,6 +37,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
@@ -78,7 +79,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
 
         //driver
         TriggerAnalogButton driverTrigger =
-                new TriggerAnalogButton(operator, GamepadKeys.Trigger.LEFT_TRIGGER,0.9);
+                new TriggerAnalogButton(operator,GamepadKeys.Trigger.LEFT_TRIGGER,0.9);
 
         driveSubsystem.setDefaultCommand(
                 new DriveFieldCentric(

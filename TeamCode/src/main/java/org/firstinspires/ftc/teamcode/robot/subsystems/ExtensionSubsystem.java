@@ -37,7 +37,7 @@ public class ExtensionSubsystem extends SubsystemBase
         extension_bottom =  new Motor(hMap, "extension_motor_2");
         extension = new MotorGroup(extension_top, extension_bottom);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+      //  telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         extension.resetEncoder(); // RESET_ENCODERS
         extension.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
