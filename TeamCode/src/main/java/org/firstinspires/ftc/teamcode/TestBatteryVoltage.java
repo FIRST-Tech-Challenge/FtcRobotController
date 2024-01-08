@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +20,7 @@ public class TestBatteryVoltage extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime batteryTestTime = new ElapsedTime();
     public final FTCDashboardPackets dbp = new FTCDashboardPackets();
+    private double batteryVoltage = 0;
     private boolean shouldStop = false;
 
     private DcMotor light1, light2, light3, light4;
@@ -32,32 +35,21 @@ public class TestBatteryVoltage extends OpMode {
 
     @Override
     public void loop() {
-        double voltage = getBatteryVoltage();
+        batteryVoltage = getBatteryVoltage();
         dbp.createNewTelePacket();
         runLights();
 
         if ((runtime.seconds() < VoltageConstants.VOLTAGE_POLL_RATE) || shouldStop) {
-            dbp.put("Battery Voltage", String.format(Locale.ENGLISH,
-                    "%f s : Current Voltage: %.1f v",
-                    batteryTestTime.seconds(), voltage));
+            dbp.put("Battery Voltage", String.format(Locale.ENGLISH, "%f s",
+                    batteryTestTime.seconds()));
+            dbp.put("Current Voltage", String.format(Locale.ENGLISH,"%f v", batteryVoltage));
             dbp.send(true);
             return;
         }
 
         runtime.reset();
 
-        try {
-            FileWriter myWriter = new FileWriter("batteryVoltage.csv");
-            myWriter.append(String.format(Locale.ENGLISH,
-                    "%f : %f", batteryTestTime.seconds(), voltage));
-            myWriter.close();
-            dbp.put("File Writer", "Successfully wrote to the file.");
-        } catch (IOException e) {
-            dbp.put("File Writer", "An error occurred.");
-            e.printStackTrace();
-        }
-
-        if (voltage < VoltageConstants.CUT_OFF_VOLTAGE) {
+        if (batteryVoltage < VoltageConstants.CUT_OFF_VOLTAGE) {
             dbp.put("Battery Voltage",
                     String.format(Locale.ENGLISH,
                             "Battery Voltage reached the cutoff of %.1f v",
