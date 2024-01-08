@@ -148,13 +148,13 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -25, -25, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -3, -3, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
+        robot.driveRobot(0, -TURN_SPEED);
         sleep(3700);
 
         //go straight
@@ -162,7 +162,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    57, 57, 10);
+        encoderDrive(DRIVE_SPEED, 0,    -50, -50, 10);
         //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
@@ -191,7 +191,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0.1, TURN_SPEED);
-        sleep(1600);
+        sleep(1300);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -204,7 +204,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -10, -10, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -5, -5, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
@@ -218,8 +218,12 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    50, 50, 10);
-        //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,    40, 40, 10);
+        //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 I  nches with 4 Sec timeout
+
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0, -TURN_SPEED);
+        sleep(7000);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -254,7 +258,7 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 8,  8, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 7,  7, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //reverse
         telemetry.addData("Reverse", "");
@@ -266,15 +270,15 @@ public class AutoDetectBlueNearBackLeft extends LinearOpMode {
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
-        sleep(5500);
+        robot.driveRobot(0, -TURN_SPEED);
+        sleep(2700);
 
         //go straight
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    52, 52, 10);
+        encoderDrive(DRIVE_SPEED, 0,    -47, -47, 10);
         //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
