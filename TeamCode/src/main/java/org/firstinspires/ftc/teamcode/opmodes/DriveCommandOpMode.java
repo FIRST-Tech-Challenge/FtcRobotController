@@ -107,7 +107,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     }
 
     private void initializeDriveSuppliers() {
-        slowdownMultiplier = () -> 1d / (driverController.getButton(slowdownButton) ? 1d : 2d);
+        slowdownMultiplier = () -> 1d / (driverController.getButton(slowdownButton) ? 2d : 1d);
         rotation = () -> driverController.getRightX() * slowdownMultiplier.getAsDouble();
 
         forwardBack = () -> {
