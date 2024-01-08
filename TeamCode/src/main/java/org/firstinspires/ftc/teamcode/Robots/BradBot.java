@@ -330,8 +330,7 @@ public class BradBot extends BasicRobot {
       }
       if (Claw.clawStates.CLOSE.getState()) {
         claw.flipTo(Claw.clawTargetStates.GRAB);
-      }
-      else if(Claw.clawStates.GRAB.getState()){
+      } else {
         claw.flipTo(Claw.clawTargetStates.CLOSE);
       }
     }
