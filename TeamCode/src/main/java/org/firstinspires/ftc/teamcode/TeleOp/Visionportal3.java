@@ -55,7 +55,7 @@ public class Visionportal3 extends LinearOpMode {
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
-    private boolean goToLeftTag = false;
+    private boolean goToLeftTag = true;
     private boolean goToCenterTag = false;
     private boolean goToRightTag = false;
 
