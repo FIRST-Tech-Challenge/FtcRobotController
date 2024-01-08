@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
@@ -18,7 +19,10 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void moveWrist(double frontward, double backward) {
+        dbp.createNewTelePacket();
         double power = frontward-backward;
+
+        dbp.debug(String.format(Locale.ENGLISH, "Power: %f", power), true);
         power++;
         power/=2d;
         wrist.setPosition(power);

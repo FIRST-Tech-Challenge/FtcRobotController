@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.purepursuit.Waypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -19,6 +20,8 @@ public class PredefinedAutomation {
     private final ArmSubsystem armSubsystem;
     private final WristSubsystem wristSubsystem;
     private final FingerSubsystem fingerSubsystem;
+    private ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private final FTCDashboardPackets dbp = new FTCDashboardPackets("PredefAuto");
 
     public HashMap<commands, SequentialCommandGroup> automation;
 
@@ -34,27 +37,52 @@ public class PredefinedAutomation {
         armSubsystem = _armSubsystem;
         wristSubsystem = _wristSubsystem;
         fingerSubsystem = _fingerSubsystem;
+
+        dbp.createNewTelePacket();
+
         init();
     }
 
     public void init() {
+        automation = new HashMap<>();
         automation.put(commands.TESTING,
                 new SequentialCommandGroup(
                         new RunCommand(
-                                () -> driveSubsystem.moveRobot(0.5, 0, 0),
+                                () -> {
+                                    dbp.debug("Moving robot...", true);
+                                    driveSubsystem.moveRobot(0.5, 0, 0);
+                                },
                                 driveSubsystem
-                        ).withTimeout(1),
+                        ).withTimeout(2000).whenFinished(driveSubsystem::resetDriveMotors)
+                                .andThen(
+                                        new RunCommand(
+                                                () -> driveSubsystem.moveRobot(0, 0.5, 0),
+                                                driveSubsystem
+                                        ).withTimeout(2000).whenFinished(driveSubsystem::resetDriveMotors)
+                                ),
                         new RunCommand(
-                                () -> wristSubsystem.moveWrist(0.5, 0),
+                                () -> {
+                                    dbp.debug("Moving wrist...", true);
+                                    wristSubsystem.moveWrist(0, 0.5);
+                                },
                                 wristSubsystem
-                        ),
+                        ).withTimeout(1000).whenFinished(() ->
+                                wristSubsystem.moveWrist(0,0)),
                         new RunCommand(
                                 () -> fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.CLOSED),
                                 fingerSubsystem
-                        ).whenFinished(() -> fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.OPEN)),
+                        ).withTimeout(1000).whenFinished(() -> {
+                                    fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.OPEN);
+                                }
+                        ).withTimeout(1000),
                         new RunCommand(
-                                () -> armSubsystem.positionMoveArm(ArmSubsystem.ArmPositions.BOARD)
-                        )
+                                () -> armSubsystem.manualMoveArm(ArmSubsystem.Direction.FRONTWARD,
+                                        1)
+                        ).withTimeout(1000).whenFinished(armSubsystem::haltArm),
+                        new RunCommand(
+                                () -> armSubsystem.manualMoveArm(ArmSubsystem.Direction.BACKWARD,
+                                        1)
+                        ).withTimeout(1000).whenFinished(armSubsystem::haltArm)
                 )
         );
     }

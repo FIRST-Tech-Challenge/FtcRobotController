@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
+import java.util.Locale;
+
 public class ArmSubsystem extends SubsystemBase {
     private final DcMotor armMotor;
     private final int POSITION_MOVE_POWER = 1;
@@ -61,9 +63,14 @@ public class ArmSubsystem extends SubsystemBase {
      * @param position The position that the arm will move towards.
      */
     public void positionMoveArm(final int position) {
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(POSITION_MOVE_POWER);
         armMotor.setTargetPosition(position - ARM_ANGLE_OFFSET);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(2); //POSITION_MOVE_POWER);
+        while (armMotor.isBusy()) {
+            dbp.debug("Waiting for motor to move to position", true);
+            dbp.debug(String.format(Locale.ENGLISH,
+                    "Arm position: %d", armMotor.getCurrentPosition()));
+        }
     }
 
     /**
@@ -78,6 +85,10 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public void haltArm() {
         armMotor.setPower(0);
+    }
+
+    public void resetArm() {
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
