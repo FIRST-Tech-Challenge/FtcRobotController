@@ -1102,10 +1102,20 @@ public class Robot {
         double bRightPowerPrev = 0;
         boolean willOpenClamp = false;
 
+        double lsPowerSlow = 0.3;
+        double lsPowerFast = 1;
+        double lsStayUpAddPower = 0.1;
+
         double targetLinearSlideTicks = 0;
 
         boolean linearSlideFlag = false;
         while (opMode.opModeIsActive()) {
+
+            if(lsFront.getCurrentPosition() > 857) {
+                lsStayUpAddPower = 0.1;
+            } else if (lsFront.getCurrentPosition() < 856) {
+                lsStayUpAddPower = 0;
+            }
 
             // GAMEPAD 1: DRIVER CONTROLS
 
@@ -1247,26 +1257,26 @@ public class Robot {
             if (gamepad2.b) {
                 //if b is held linear slide is slow
                 if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(0.3);
-                    lsFront.setPower(0.3);
+                    lsBack.setPower(lsPowerSlow);
+                    lsFront.setPower(lsPowerSlow);
                 } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-0.3);
-                    lsFront.setPower(-0.3);
+                    lsBack.setPower(-lsPowerSlow);
+                    lsFront.setPower(-lsPowerSlow);
                 } else {
-                    lsBack.setPower(0);
-                    lsFront.setPower(0);
+                    lsBack.setPower(0 + lsStayUpAddPower);
+                    lsFront.setPower(0 + lsStayUpAddPower);
                 }
             } else {
                 //if b is not held linear slide is fast
                 if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(1);
-                    lsFront.setPower(1);
+                    lsBack.setPower(lsPowerFast);
+                    lsFront.setPower(lsPowerFast);
                 } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-1);
-                    lsFront.setPower(-1);
+                    lsBack.setPower(-lsPowerFast);
+                    lsFront.setPower(-lsPowerFast);
                 } else {
-                    lsBack.setPower(0);
-                    lsFront.setPower(0);
+                    lsBack.setPower(0 + lsStayUpAddPower);
+                    lsFront.setPower(0 + lsStayUpAddPower);
                 }
             }
 
