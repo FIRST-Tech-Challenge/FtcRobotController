@@ -57,6 +57,7 @@ public class Robot {
     PIDController straightController;
     PIDController fLeftMecanumController;
     PIDController bRightMecanumController;
+    PIDController setHeadingController;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
@@ -85,6 +86,7 @@ public class Robot {
             straightController = new PIDController(0.003, 0.0000005, 0.4);
             fLeftMecanumController = new PIDController(0.5, 0, 0);
             bRightMecanumController = new PIDController(0.5, 0, 0);
+            setHeadingController = new PIDController(0.5, 0, 0);
         }
     }
 
@@ -1548,7 +1550,7 @@ public class Robot {
     // intake is at the front of the bot, and camera is at the back of the bot
     // positive inches - right
     // negative inches - left
-    public void mecanumBlocking2 (double inches) {
+    public void mecanumBlocking2(double inches) {
         double currentPos = fLeft.getCurrentPosition();
         final double IN_TO_TICK = 56.3; //todo: test
         double targetPos = currentPos + (inches * IN_TO_TICK);
@@ -1572,7 +1574,7 @@ public class Robot {
         opMode.sleep(100);
     }
 
-    public void mecanumBlockingTwoMotors (double inches) {
+    public void mecanumBlockingTwoMotors(double inches) {
         double fLeftCurrentPos = fLeft.getCurrentPosition();
         double bRightCurrentPos = bRight.getCurrentPosition();
         final double IN_TO_TICK = 56.3; //todo: test
@@ -1601,4 +1603,66 @@ public class Robot {
         setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
+
+    public void mecanumBlockingFixHeading (double inches) {
+        YawPitchRollAngles robotOrientation;
+        final double IN_TO_TICK = 56.3; //todo: test
+        double ERROR_TOLERANCE = 0.5; //degrees
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        double initialHeading = getCurrentHeading();
+        double currentHeading = getCurrentHeading();
+        double error = initialHeading - currentHeading;
+        double angleCorrection;
+        double fLeftCurrentPos = fLeft.getCurrentPosition();
+        double bRightCurrentPos = bRight.getCurrentPosition();
+        double fLeftTargetPos = fLeftCurrentPos + (inches * IN_TO_TICK);
+        double bRightTargetPos = bRightCurrentPos + (inches * IN_TO_TICK);
+        double flPower;
+        double frPower;
+        double blPower;
+        double brPower;
+        double leftPower;
+        double rightPower;
+        double largestPower;
+        int counter = 0;
+
+        //while start
+        while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive() && counter < 5) {
+
+            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS) &&
+                    (Math.abs(bRightMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            //set current position
+            fLeftCurrentPos = fLeft.getCurrentPosition();
+            bRightCurrentPos = bRight.getCurrentPosition();
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+            currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+
+            leftPower = fLeftMecanumController.calculatePID(fLeftCurrentPos, fLeftTargetPos);
+            rightPower = bRightMecanumController.calculatePID(bRightCurrentPos, bRightTargetPos);
+
+            angleCorrection = setHeadingController.calculatePID(currentHeading, initialHeading);
+
+            flPower = leftPower + (-1 * angleCorrection);
+            frPower = (-1 * rightPower) + angleCorrection;
+            blPower = (-1 * leftPower) + (-1 * angleCorrection);
+            brPower = rightPower + angleCorrection;
+
+            largestPower = maxAbsValueDouble(flPower, frPower, blPower, brPower);
+            flPower /= largestPower;
+            frPower /= largestPower;
+            blPower /= largestPower;
+            brPower /= largestPower;
+
+            setMotorPower(flPower, frPower, blPower, brPower);
+        }
+        setMotorPower(0, 0, 0, 0);
+        opMode.sleep(100);
+        botHeading = initialHeading;
+    }
 }
+
