@@ -1253,32 +1253,41 @@ public class Robot {
                 intake.setPower(0);
             }
 
-            //b to use slow linear slide
-            if (gamepad2.b) {
-                //if b is held linear slide is slow
-                if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(lsPowerSlow);
-                    lsFront.setPower(lsPowerSlow);
-                } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-lsPowerSlow);
-                    lsFront.setPower(-lsPowerSlow);
+                //b to use slow linear slide
+                if (gamepad2.b) {
+                    //if b is held linear slide is slow
+                    if (-gamepad2.left_stick_y > 0) {
+                        if (lsFront.getCurrentPosition() < 3100) {
+                            lsBack.setPower(lsPowerSlow);
+                            lsFront.setPower(lsPowerSlow);
+                        }
+                    } else if (-gamepad2.left_stick_y < 0) {
+                        if (lsFront.getCurrentPosition() > 50) {
+                            lsBack.setPower(-lsPowerSlow);
+                            lsFront.setPower(-lsPowerSlow);
+                        }
+                    } else {
+                        lsBack.setPower(0 + lsStayUpAddPower);
+                        lsFront.setPower(0 + lsStayUpAddPower);
+                    }
                 } else {
-                    lsBack.setPower(0 + lsStayUpAddPower);
-                    lsFront.setPower(0 + lsStayUpAddPower);
+                    //if b is not held linear slide is fast
+                        if (-gamepad2.left_stick_y > 0) {
+                            if (lsFront.getCurrentPosition() < 3100) {
+                                lsBack.setPower(lsPowerFast);
+                                lsFront.setPower(lsPowerFast);
+                            }
+                        } else if (-gamepad2.left_stick_y < 0) {
+                            if (lsFront.getCurrentPosition() > 50) {
+                                lsBack.setPower(-lsPowerFast);
+                                lsFront.setPower(-lsPowerFast);
+                            }
+                        } else {
+                            lsBack.setPower(0 + lsStayUpAddPower);
+                            lsFront.setPower(0 + lsStayUpAddPower);
+                        }
                 }
-            } else {
-                //if b is not held linear slide is fast
-                if (-gamepad2.left_stick_y > 0) {
-                    lsBack.setPower(lsPowerFast);
-                    lsFront.setPower(lsPowerFast);
-                } else if (-gamepad2.left_stick_y < 0) {
-                    lsBack.setPower(-lsPowerFast);
-                    lsFront.setPower(-lsPowerFast);
-                } else {
-                    lsBack.setPower(0 + lsStayUpAddPower);
-                    lsFront.setPower(0 + lsStayUpAddPower);
-                }
-            }
+
 
 /*
             if (gamepad2.x) {
