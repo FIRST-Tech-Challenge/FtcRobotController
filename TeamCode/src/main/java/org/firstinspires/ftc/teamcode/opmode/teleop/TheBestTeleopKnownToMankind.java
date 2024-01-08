@@ -74,7 +74,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
         PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
         DriveSubsystem driveSubsystem = new DriveSubsystem(hardwareMap);
-        ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
+      //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
         //driver
         TriggerAnalogButton driverTrigger =
@@ -89,8 +89,8 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 () -> driverTrigger.get()));
 
         //manual extension by default unless another command using it runs
-        extensionSubsystem.setDefaultCommand(
-                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
+//        extensionSubsystem.setDefaultCommand(
+//                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
 
         //claw
         TriggerAnalogButton clawTrigger =
@@ -110,7 +110,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new SequentialCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
-                        new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                  //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
 
         //plane launcher
