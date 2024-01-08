@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@Autonomous(name = "redRight", group = "drive")
-public class redRight extends LinearOpMode {
+@Autonomous(name = "redRight25", group = "drive")
+public class redRight25Pts extends LinearOpMode {
     //Declare motors
     Hware robot;
 
@@ -179,43 +179,6 @@ public class redRight extends LinearOpMode {
                     robot.intakeLeft.setPower(0);
                 })
                 .waitSeconds(2)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //driving position
-                    robot.leftArm.setTargetPosition(0);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.05);
-
-                    robot.rightArm.setTargetPosition(0);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.05);
-
-                    robot.leftElbow.setPosition(0.625);
-                    robot.rightElbow.setPosition(0.375);
-                    robot.leftWrist.setPosition(0.52);
-                })
-                .lineToSplineHeading(new Pose2d(48, -34, Math.toRadians(180)))
-                .strafeRight(5)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //outtake position
-                    robot.leftArm.setTargetPosition(-578);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.1);
-
-                    robot.rightArm.setTargetPosition(-578);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.1);
-
-                    robot.leftLift.setTargetPosition(600);
-                    robot.leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftLift.setPower(0.3);
-
-                    robot.rightLift.setTargetPosition(600);
-                    robot.rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightLift.setPower(0.3);
-                })
-                .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { // outtake
-                    robot.intakeRight.setPower(-0.5);
-                    robot.intakeLeft.setPower(-0.5);
-                })
                 .build();
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose2)
@@ -229,43 +192,6 @@ public class redRight extends LinearOpMode {
                     robot.intakeLeft.setPower(0);
                 })
                 .waitSeconds(2)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //driving position
-                    robot.leftArm.setTargetPosition(0);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.05);
-
-                    robot.rightArm.setTargetPosition(0);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.05);
-
-                    robot.leftElbow.setPosition(0.625);
-                    robot.rightElbow.setPosition(0.375);
-                    robot.leftWrist.setPosition(0.52);
-                })
-                .lineToSplineHeading(new Pose2d(48, -34, Math.toRadians(180)))
-                .strafeLeft(7)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //outtake position
-                    robot.leftArm.setTargetPosition(-578);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.1);
-
-                    robot.rightArm.setTargetPosition(-578);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.1);
-
-                    robot.leftLift.setTargetPosition(600);
-                    robot.leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftLift.setPower(0.3);
-
-                    robot.rightLift.setTargetPosition(600);
-                    robot.rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightLift.setPower(0.3);
-                })
-                .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { // outtake
-                    robot.intakeRight.setPower(-0.5);
-                    robot.intakeLeft.setPower(-0.5);
-                })
                 .build();
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose2)
                 .lineToSplineHeading(new Pose2d(25,-25,Math.toRadians(180)))
@@ -278,42 +204,6 @@ public class redRight extends LinearOpMode {
                     robot.intakeLeft.setPower(0);
                 })
                 .waitSeconds(2)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //driving position
-                    robot.leftArm.setTargetPosition(0);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.05);
-
-                    robot.rightArm.setTargetPosition(0);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.05);
-
-                    robot.leftElbow.setPosition(0.625);
-                    robot.rightElbow.setPosition(0.375);
-                    robot.leftWrist.setPosition(0.52);
-                })
-                .lineToSplineHeading(new Pose2d(48, -34, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //outtake position
-                    robot.leftArm.setTargetPosition(-578);
-                    robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftArm.setPower(0.1);
-
-                    robot.rightArm.setTargetPosition(-578);
-                    robot.rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightArm.setPower(0.1);
-
-                    robot.leftLift.setTargetPosition(600);
-                    robot.leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftLift.setPower(0.3);
-
-                    robot.rightLift.setTargetPosition(600);
-                    robot.rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightLift.setPower(0.3);
-                })
-                .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { // outtake
-                    robot.intakeRight.setPower(-0.5);
-                    robot.intakeLeft.setPower(-0.5);
-                })
                 .build();
 
 
