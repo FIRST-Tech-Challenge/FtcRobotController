@@ -4,33 +4,21 @@ import com.qualcomm.hardware.lynx.LynxDcMotorController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Globals;
-import org.firstinspires.ftc.teamcode.TrackingWheelIntegrator;
 import org.firstinspires.ftc.teamcode.AutoCode.Control.AcceleratedGain;
-import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
-//import org.firstinspires.ftc.teamcode.trajectory.PowerPlaytrajectory.TimeKeeper;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMPointApproach;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMTrajectory;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.Globals;
+import org.firstinspires.ftc.teamcode.TrackingWheelIntegrator;
+import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
 
 
 @Autonomous(preselectTeleOp = "MecDrive")
-public class BlueBackStageAuto extends LinearOpMode {
+public class BackStagePARKAuto extends LinearOpMode {
 
     TrackingWheelIntegrator trackingWheelIntegrator = new TrackingWheelIntegrator();
 
@@ -66,6 +54,7 @@ public class BlueBackStageAuto extends LinearOpMode {
     private int LiftCounts;
     private float speedFactor;
 
+
     private static DcMotorEx LeftTW;
     private static DcMotorEx RightTW;
     private static DcMotorEx BackTW;
@@ -73,7 +62,7 @@ public class BlueBackStageAuto extends LinearOpMode {
 
 
 
-    //      INT STATEM
+//      INT STATEM
         StateMTrajectory FirstMovement;
 
 
@@ -118,7 +107,6 @@ public class BlueBackStageAuto extends LinearOpMode {
             RHook=(Servo)  hardwareMap.get(Servo.class, "RHook");
             LHook=(Servo)  hardwareMap.get(Servo.class, "LHook");
 
-
             LeftTW = hardwareMap.get(DcMotorEx.class, "LHang");
             RightTW = hardwareMap.get(DcMotorEx.class, "RHang");
             BackTW = hardwareMap.get(DcMotorEx.class, "intake");
@@ -139,7 +127,7 @@ public class BlueBackStageAuto extends LinearOpMode {
             telemetry.setMsTransmissionInterval(20);
 
             //Setting Start Location in Auto.
-            trackingWheelIntegrator.setFirstTrackingVal(98,0);
+            trackingWheelIntegrator.setFirstTrackingVal(0,0);
 
             clearEnc();
 
@@ -151,22 +139,26 @@ public class BlueBackStageAuto extends LinearOpMode {
     buildTrajectory(); //Command for State Mechine.
 
             while (opModeIsActive()) {
-                Globals.updateTracking();
 
-                    FirstMovement.followInteration();
+                int left = -LeftTW.getCurrentPosition();
+                int right = -RightTW.getCurrentPosition();
+                int aux = -BackTW.getCurrentPosition();
+                trackingWheelIntegrator.update(left, right, aux);
+
+                FirstMovement.followInteration();
 
             }
 
         }
 
     public static void clearEnc()        {
-        LeftTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            LeftTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            RightTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackTW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        LeftTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RightTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BackTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            LeftTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            RightTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            BackTW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -176,8 +168,20 @@ public class BlueBackStageAuto extends LinearOpMode {
         FirstMovement = new StateMTrajectory.Builder()
 
          .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(98,0)
-                        .setMaxPower(.4) // .4 - .6
+                        .setTargetPosition(0,-18)
+                        .setMaxPower(.4) // .4 - 6
+                        .setXyGain(.04)
+                        .setTargetHeading(0)
+                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
+                        .setMaxTurnPower(.4)
+                        .setMovementThresh(2)
+                        .setHeadingThreshold(2)
+                        .stopMotorsOnDone(true)
+                        .build())
+
+                .addMovement(new StateMPointApproach.Builder() //First movment.
+                        .setTargetPosition(0,-12)
+                        .setMaxPower(.4) // .4 - 6
                         .setXyGain(.04)
                         .setTargetHeading(0)
                         .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))

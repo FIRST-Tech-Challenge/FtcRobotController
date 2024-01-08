@@ -25,7 +25,7 @@ public class Waypoint implements MovementPerformer
     double speed;
 
     TrackingWheelIntegrator trackingWheelIntegrator;
-    CenterStageDriveBase skyStoneDriveBase;
+    CenterStageDriveBase    skyStoneDriveBase;
 
     TranslationThreshMethod translationThreshMethod;
 

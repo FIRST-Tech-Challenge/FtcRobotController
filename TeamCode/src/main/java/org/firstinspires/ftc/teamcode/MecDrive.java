@@ -19,7 +19,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM2;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftDownStateM;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMBase;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine;
 
@@ -34,18 +36,18 @@ public class MecDrive extends LinearOpMode {
 
 
     private DcMotorEx intake;
-    private DcMotorEx Lift;
+    public static DcMotorEx Lift;
     public static DcMotorEx RHang;
     public static DcMotorEx LHang;
     public static Servo RHook;
     public static Servo LHook;
     private Servo intakeLift;
     public static Servo airplane;
-    private Servo Door;
+    public static Servo Door;
     public static Servo RLock;
     public static Servo LLock;
-    private Servo Pivot;
-    private Servo SLift;
+    public static Servo Pivot;
+    public static Servo SLift;
     private Servo RCLaw;
     private Servo LCLaw;
 
@@ -66,7 +68,8 @@ public class MecDrive extends LinearOpMode {
     TrackingWheelIntegrator trackingWheelIntegrator;
 
     HangStateM HSM = new HangStateM();
-    HangStateM2 HSM2 = new HangStateM2();
+    LiftStateM LSM = new LiftStateM();
+    LiftDownStateM LDSM = new LiftDownStateM();
 
     float[] hsvValues = new float[3];
 
@@ -131,21 +134,28 @@ public class MecDrive extends LinearOpMode {
             HSM.reset();
         }
         if (RESETME) {
-            HSM2.reset();
+            LSM.reset();
+        }
+        if (RESETME) {
+            LDSM.reset();
         }
 
 
 
         while (opModeIsActive()) {
 
-            if (gamepad2.right_bumper) {
+            if (gamepad2.dpad_up) {
                 HSM.runIteration();
                 runGamepad();
             }
-           // if (gamepad2.left_trigger > .5) {
-             //   HSM2.runIteration();
-             //   runGamepad();
-         //   }
+            if (gamepad2.a) {
+                LSM.runIteration();
+                runGamepad();
+            }
+            if (gamepad2.b) {
+                LDSM.runIteration();
+                runGamepad();
+            }
             runGamepad();
         }
     }
@@ -183,47 +193,53 @@ public class MecDrive extends LinearOpMode {
             intake.setPower(0);
         }
 
-        if (gamepad2.right_stick_button) {
-            LLock.setPosition(.0);
-            RLock.setPosition(.1);
-        }
+//        if (gamepad2.right_stick_button) {
+//            LLock.setPosition(.0);
+//            RLock.setPosition(.1);
+//        }
         // hang lock locked = .1
         // hang lock freed = 0
 
-        if (gamepad2.a) {
-           Lift.setTargetPosition(-1400);
-           Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-           Lift.setPower(1);
-           Door.setPosition(.3);
+//        if (gamepad2.a) {
+//           Lift.setTargetPosition(-1400);
+//           Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//           Lift.setPower(1);
+//         //  Door.setPosition(.3);
+//        }
+//        if (gamepad2.b) {
+//            Lift.setTargetPosition(-10);
+//            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            Lift.setPower(1);
+//        }
+//        if (gamepad2.dpad_down) {
+//            SLift.setPosition(.81);
+//            Pivot.setPosition(.7);
+//          //  Door.setPosition(.45);
+//        }
+        if (gamepad2.x) {
+            Door.setPosition(.93);
         }
-        if (gamepad2.b) {
-            Lift.setTargetPosition(-10);
+        if (gamepad2.y) {
+            Door.setPosition(.95);
+        }
+        if (gamepad2.left_bumper) {
+            Door.setPosition(1);
+        }
+        if (gamepad2.left_trigger > .5) {
+            Lift.setTargetPosition(-867);
             Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             Lift.setPower(1);
         }
-        if (gamepad2.x) {
-            Door.setPosition(.23);
+        if (gamepad2.right_trigger > .5) {
+            Lift.setTargetPosition(-1400);
+            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            Lift.setPower(1);
         }
-        if (gamepad2.y) {
-            Door.setPosition(.4);
-        }
-        if (gamepad2.dpad_down) {
-            SLift.setPosition(.81);
-            Pivot.setPosition(.7);
-            Door.setPosition(.45);
-        }
-        if (gamepad2.dpad_up) {
-            SLift.setPosition(.15);
-            Pivot.setPosition(1);
-        }
-        if (gamepad2.dpad_right) {
-            SLift.setPosition(.5);
-        }
-        if (gamepad2.left_bumper) {
+        if (gamepad2.dpad_left) {
             RHook.setPosition(.75);
             LHook.setPosition(.25);
         }
-        if (gamepad2.left_trigger > .5) {
+        if (gamepad2.dpad_down) {
             RHook.setPosition(0);
             LHook.setPosition(1);
             LHang.setPower(1);
@@ -243,8 +259,9 @@ public class MecDrive extends LinearOpMode {
             intakeLift.setPosition(.5);
         }
         if (gamepad2.dpad_left) {
+            SLift.setPosition(.15);
             Pivot.setPosition(.8);
-            Door.setPosition(0);
+            Door.setPosition(1);
         }
       //  if (gamepad1.left_trigger > .5) {
         //   RCLaw.setPosition(1);
@@ -257,7 +274,7 @@ public class MecDrive extends LinearOpMode {
 
 
         // Door Open .45
-        // Door Closed .3
+        // Door Closed 1
         // Pivot down score .45
         // Pivot store .65
         // Pivot up score 1

@@ -26,9 +26,9 @@ public class TrackingWheelIntegrator
     private double dX, dY, heading;
     Vector trackingVector = new Vector(); //296.90372 //288.17579 //288.6475478 //288.9193056 worked //290.67
     Vector instantVector = new Vector(); //-166.7675; before spring change.
-    private double TICKS_PER_DEGREE = -168.39444444444444; //(-401.6311) 24 inch BASE. (-288.17579) Undershot 19 degrees off for 10 spins 13x15 BASE (-288.9193056) Under shoot) //290 perfect 13x15
+    private double TICKS_PER_DEGREE = -285.3; //(-401.6311) 24 inch BASE. (-288.17579) Undershot 19 degrees off for 10 spins 13x15 BASE (-288.9193056) Under shoot) //290 perfect 13x15
     private double TICKS_PER_INCH_NORMAL = -1710; //1713.75 //1730.85
-    private double TICKS_PER_INCH_STRAFE = 1712.84375; //1702.84
+    private double TICKS_PER_INCH_STRAFE = 1710; //1702.84
     double AUX_SPIN_SLIP = 0.101919839; // 0.101919839;  ? .. 0.09773066926 PowerPlay
 
     
