@@ -72,12 +72,12 @@ public class BasicAutonomous extends OpMode
 		double right_line = 14.;
 
 		if (start_dist == "close") {
-			start_pos = new Pose2d(70./6., -61*color, Math.toRadians(-90*color));
+			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
 		} else if (start_dist == "far") {
-			start_pos = new Pose2d(-35, -61*color, Math.toRadians(-90*color));
 			center_line = -35;
 			left_line = -38;
 			right_line = -33;
+			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
 		}
 
 		drive = new SampleMecanumDrive(hardwareMap);
@@ -133,7 +133,7 @@ public class BasicAutonomous extends OpMode
 						.build();
 			} else if (position == "mid") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, 32.5))
+						.lineTo(new Vector2d(center_line, 31))
 						.lineTo(new Vector2d(center_line, 42))
 						.turn(Math.toRadians(90))
 						.build();
