@@ -66,7 +66,7 @@ public class AutoRR extends LinearOpMode {
                     //Drop off pixel
                     robot.moveRobot(.5, -30.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.RIGHT, 10, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 14, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 9, 5);
                     //Drop pixel

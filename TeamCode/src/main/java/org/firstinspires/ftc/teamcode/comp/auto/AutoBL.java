@@ -67,7 +67,7 @@ public class AutoBL extends LinearOpMode {
                     //Drop off pixel
                     robot.moveRobot(.5, -30.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.LEFT, 12, .5, 10);
+                    robot.turnRobot(Direction.LEFT, 15, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 8, 5);
                     //Drop pixel
