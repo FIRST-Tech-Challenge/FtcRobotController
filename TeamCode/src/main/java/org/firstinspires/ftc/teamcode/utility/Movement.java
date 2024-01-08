@@ -86,6 +86,7 @@ public class Movement {
         map = hMap;
         imu = imu1;
         telemetry = telemetry1;
+        blinkinLED = map.get(RevBlinkinLedDriver.class, "blinkin");
 
         // Build the AprilTag processor
         // set parameters of AprilTagProcessor, then use Builder to build
@@ -132,7 +133,7 @@ public class Movement {
     /**
      * Resets all wheel motor encoder positions to 0
      */
-    private void initMovement(){
+    private void initMovement(boolean resetEncoders){
         motor_ticks = 0;
 
         moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -142,34 +143,21 @@ public class Movement {
         rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        //rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        //lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-
+        if (resetEncoders) {
+            lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+            //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+            rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+            //rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+            lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+            //lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+            rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+            //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+        }
         // Set default to BRAKE mode for control
         lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // Set Powers to 0 for safety and not knowing what they are set to.
-        StopMotors();
-
-
-        // Init variables for April motion
-        axial = 0;
-        lateral = 0;
-        yaw = 0;
-        // increment alignStage
-        alignStage = 1;
     }
 
     /**
@@ -177,7 +165,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Forward(int ticks, double power){
-        initMovement();
+        initMovement(true);
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -207,7 +195,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Backwards(int ticks, double power){
-        initMovement();
+        initMovement(true);
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -239,7 +227,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Left(int ticks, double power){
-        initMovement();
+        initMovement(true);
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -270,7 +258,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Right(int ticks, double power){
-        initMovement();
+        initMovement(true);
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -353,7 +341,19 @@ public class Movement {
 
     public boolean GoToAprilTag(int tagNumber) {
 
-        initMovement();
+        initMovement(false);
+
+        if (alignStage == 0) {
+            // Set Powers to 0 for safety and not knowing what they are set to.
+            StopMotors();
+
+            // Init variables for April motion
+            axial = 0;
+            lateral = 0;
+            yaw = 0;
+
+            alignStage = 1;
+        }
 
         double targetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
@@ -380,7 +380,7 @@ public class Movement {
             if (tag.get(i).id == tagNumber) {
                 currentX = tag.get(i).ftcPose.x;
                 currentY = tag.get(i).ftcPose.y;
-                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                //blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 tagDetected = true;
             }
         }
@@ -403,7 +403,7 @@ public class Movement {
         // yaw from drive is -gamepad1.right_stick_x;
 
 
-        // If no tag is detected, creep backwards.
+
         if (!tagDetected){
             axial = -0.15;
             aprilTagAligned = false;
@@ -456,7 +456,7 @@ public class Movement {
         // Test to see if we are at all three parts of our desired position and we are aligned.
         if (abs (targetX - currentX) < 1 && currentY < targetY && abs (targetAngle - currentAngle) < 2){
             aprilTagAligned = true;
-            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+            //blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
         }
         return aprilTagAligned;
     }
