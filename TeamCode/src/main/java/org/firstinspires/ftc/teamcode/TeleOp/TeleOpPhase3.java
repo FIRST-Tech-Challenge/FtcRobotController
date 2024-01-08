@@ -16,6 +16,10 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+// ADB PATH: C:\Users\HP\AppData\Local\Android\Sdk\platform-tools
+// Connect to robot wifi (23461-RC)
+// ADB CMD: adb connect 192.168.43.1:5555
+
 @TeleOp(group = "drive")
 public class TeleOpPhase3 extends LinearOpMode {
     // "Exponentially weighted moving average". This class can be used to create ramping for translations and heading.
@@ -61,6 +65,14 @@ public class TeleOpPhase3 extends LinearOpMode {
             }
         }
 
+        public void resetPower() {
+            int mPositionTolerance = 5;
+            boolean positionIsAcceptable = Math.abs(mLiftMotor.getCurrentPosition() - mLiftMotor.getTargetPosition()) <= mPositionTolerance;
+            if (positionIsAcceptable) {
+                mLiftMotor.setPower(0);
+            }
+        }
+
         public void setLiftStage(int x) {
             mLiftStage = x;
         }
@@ -75,15 +87,6 @@ public class TeleOpPhase3 extends LinearOpMode {
 
         public int getLiftTargetPosition() {
             return mLiftMotor.getTargetPosition();
-        }
-
-        public void setLiftPower() {
-            int mLiftError = Math.abs((int) mLiftMotor.getCurrentPosition() - (int) mLiftMotor.getTargetPosition());
-            mLiftMotor.setPower(sigmoid(mLiftError, 0.01, 250));
-        }
-
-        public void setLiftPower(double liftPower) {
-            mLiftMotor.setPower(liftPower);
         }
 
         public void goToLiftStage() {
@@ -102,6 +105,7 @@ public class TeleOpPhase3 extends LinearOpMode {
                     mLiftMotor.setTargetPosition(mLiftStage3);
             }
             mLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            mLiftMotor.setPower(1); // Set power sets the maximum power the motor can run at
         }
 
         public void setLiftPosition(String direction) {
@@ -265,6 +269,9 @@ public class TeleOpPhase3 extends LinearOpMode {
 //        ServoImplEx wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
 //        ServoImplEx fingerServo = hardwareMap.get(ServoImplEx.class, "fingerServo");
 
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         waitForStart();
 
@@ -277,20 +284,18 @@ public class TeleOpPhase3 extends LinearOpMode {
         headingPID.setInputBounds(0, 360);
 
         // PID controller for lift
-        double liftP = 1;
+        double liftP = 100;
         double liftI = 0;
         double liftD = 0;
 
         liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftP, liftI, liftD, 0));
         liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftP, liftI, liftD, 0));
+        liftMotor1.setTargetPositionTolerance(0);
+        liftMotor2.setTargetPositionTolerance(0);
 
         // Initializing some variables necessary for driving
         Pose2d headingToHold = new Pose2d();
         boolean isHolding = false;
-
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         while (!isStopRequested()) {
 
@@ -392,8 +397,8 @@ public class TeleOpPhase3 extends LinearOpMode {
 
             int liftStage0 = 0; // Setpoint for intaking pixles
             int liftStage1 = -20; // Setpoint for clearance
-            int liftStage2 = -30; // Setpoint at first set line
-            int liftStage3 = -50; // Setpoint for highest we can go
+            int liftStage2 = -40; // Setpoint at first set line
+            int liftStage3 = -60; // Setpoint for highest we can go
 
             int armStage = 0;
             double armStage0 = 0; // Setpoint for intake
@@ -428,6 +433,8 @@ public class TeleOpPhase3 extends LinearOpMode {
                 liftStage = 3;
                 armStage = 2;
                 wristStage = 2;
+            } else {
+                lift1.resetPower();
             }
 
             lift1.setLiftStage(liftStage);
@@ -475,9 +482,13 @@ public class TeleOpPhase3 extends LinearOpMode {
             telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("liftStage", lift1.getLiftStage());
             telemetry.addData("lift1Position", lift1.getLiftPosition());
-            telemetry.addData("lift21Position", lift2.getLiftPosition());
+            telemetry.addData("lift2Position", lift2.getLiftPosition());
             telemetry.addData("targetLift1Position", lift1.getLiftTargetPosition());
             telemetry.addData("targetLift2Position", lift2.getLiftTargetPosition());
+            telemetry.addData("targetLiftMotor1Position", liftMotor1.getTargetPosition());
+            telemetry.addData("targetLiftMotor2Position", liftMotor2.getTargetPosition());
+            telemetry.addData("liftMotor1Power", liftMotor1.getPower());
+            telemetry.addData("liftMotor2Power", liftMotor2.getPower());
             telemetry.addData("arm1Position", arm1.getArmPosition());
             telemetry.addData("arm2Position", arm2.getArmPosition());
 //            telemetry.addData("clawState", claw.getClawState());
