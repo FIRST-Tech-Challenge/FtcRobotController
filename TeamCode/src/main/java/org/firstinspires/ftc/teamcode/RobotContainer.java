@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.*;
+
+import android.media.Image;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,6 +19,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
      Chassis m_chassis;
      BTController m_controller;
      Gripper m_gripper;
+     plane m_plane;
 
 
     public RobotContainer(HardwareMap map,Telemetry telemetry,Gamepad gamepad1,Gamepad gamepad2){
@@ -24,6 +28,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller = new BTController(gamepad1);
         m_gripper = new Gripper(map,telemetry);
         m_chassis= new Chassis(map, telemetry);
+        m_plane = new plane(map, telemetry);
         m_gamepad1=gamepad1;
         m_gamepad2=gamepad2;
 
@@ -38,9 +43,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
         m_controller.assignCommand(m_gripper.closeGripper(),false,BUTTON_LEFT).whenInactive();
         m_controller.assignCommand(m_gripper.openGripper(),false,BUTTON_LEFT);
-        m_controller.assignCommand(m_gripper.openGripper(),false,BUTTON_LEFT);
-        m_controller.assignCommand(m_gripper.openGripper(),false,BUTTON_LEFT);
-        m_controller.assignCommand(m_gripper.openGripper(),false,BUTTON_LEFT);
+        m_controller.assignCommand(m_plane.shootPlane(),false,BUTTON_UP);
+
 
     }
     public Command AutonomousCommand(){
