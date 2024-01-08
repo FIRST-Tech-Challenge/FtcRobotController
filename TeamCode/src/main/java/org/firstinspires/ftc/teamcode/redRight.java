@@ -243,7 +243,7 @@ public class redRight extends LinearOpMode {
                     robot.leftWrist.setPosition(0.52);
                 })
                 .lineToSplineHeading(new Pose2d(48, -34, Math.toRadians(180)))
-                .strafeLeft(5)
+                .strafeLeft(7)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {  //outtake position
                     robot.leftArm.setTargetPosition(-578);
                     robot.leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
