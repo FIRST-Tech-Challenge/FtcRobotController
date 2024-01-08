@@ -89,9 +89,11 @@ public class camera_pixel_detection extends OpMode {
         if(gamepad1.left_bumper && !lastLeftBumber){
             Choose_H_S_V += 1;
         }lastLeftBumber=gamepad1.left_bumper;
+
         if(gamepad1.right_bumper && !lastRightBumper){
             Choose_H_S_V -= 1;
         }lastRightBumper=gamepad1.right_bumper;
+
         if(gamepad1.a && !lastA){
             upperWvals[2]++;
         }lastA=gamepad1.a;
