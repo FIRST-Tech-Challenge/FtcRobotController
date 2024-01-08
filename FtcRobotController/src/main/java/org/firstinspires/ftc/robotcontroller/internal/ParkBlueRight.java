@@ -46,9 +46,9 @@ public class ParkBlueRight extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-            if(runtime.time() < 2){
+            if(runtime.time() < 0.25){
                 drive(0, -1, 0);
-            }else if(runtime.time() < 6 && runtime.time() >= 2){
+            }else if(runtime.time() < 4.25 && runtime.time() >= 0.25){
                 drive(-1, 0, 0);
             }else{
                 drive(0, 0, 0);

@@ -39,8 +39,8 @@ public class ParkBlue extends LinearOpMode {
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(0.0f);
-        claw1.setPosition(0.5f);
+        claw0.setPosition(0.25f);
+        claw1.setPosition(0.75f);
 
         waitForStart();
         runtime.reset();

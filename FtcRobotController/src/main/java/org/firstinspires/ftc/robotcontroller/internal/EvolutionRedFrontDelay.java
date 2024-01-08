@@ -3,18 +3,20 @@
 package org.firstinspires.ftc.robotcontroller.internal;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Evolution Test", group="Evolution")
-@Disabled
-public class EvolutionTest extends LinearOpMode {
+@Autonomous(name="Evolution Red Front Delay", group="Evolution")
+//@Disabled
+public class EvolutionRedFrontDelay extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+    private boolean started = false;
+
     private DcMotorEx leftDriveFront = null;
     private DcMotorEx rightDriveFront = null;
     private DcMotorEx leftDriveBack = null;
@@ -28,6 +30,12 @@ public class EvolutionTest extends LinearOpMode {
     private Servo claw0 = null;
     private Servo claw1 = null;
     private double clawO = 1.0;
+
+    private Servo pixel = null;
+
+    private ColorSensor color = null;
+
+    private double pos = -1;
 
     double[][] input;
 
@@ -48,6 +56,10 @@ public class EvolutionTest extends LinearOpMode {
         claw0 = hardwareMap.get(Servo.class, "claw0");
         claw1 = hardwareMap.get(Servo.class, "claw1");
 
+        pixel = hardwareMap.get(Servo.class, "pixel");
+
+        color = hardwareMap.get(ColorSensor.class, "color");
+
         leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -61,30 +73,39 @@ public class EvolutionTest extends LinearOpMode {
         claw0.setPosition(1.0f);
         claw1.setPosition(0.0f);
 
-        network = new WolfNet(8, 6, 2, "Weights0", 0.5);
+        network = new WolfNet(12, 8, 2, "Weights0", 0.5);
         network.LoadWeights();
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
-            input = new double[][]{{runtime.time(), leftDriveFront.getVelocity(), rightDriveFront.getVelocity(), leftDriveBack.getVelocity(), rightDriveBack.getVelocity(), clawO, lift.getPower(), ziptie.getPower()}};
-            network.GetOutput(input);
+            if(started){
+                input = new double[][]{{1.0, 1.0, runtime.time(), leftDriveFront.getVelocity(), rightDriveFront.getVelocity(), leftDriveBack.getVelocity(), rightDriveBack.getVelocity(), clawO, lift.getPower(), ziptie.getPower(), color.red(), pos}};
+                network.GetOutput(input);
 
-            drive(network.output.layer[0][0], network.output.layer[0][1], network.output.layer[0][2]);
+                drive(network.output.layer[0][0], network.output.layer[0][1], network.output.layer[0][2]);
 
-            if(network.output.layer[0][3] >= 0){
-                claw0.setPosition(1.0f);
-                claw1.setPosition(0.0f);
-                clawO = 1;
-            }else{
-                claw0.setPosition(0.25f);
-                claw1.setPosition(0.75f);
-                clawO = -1;
+                if(network.output.layer[0][3] >= 0){
+                    claw0.setPosition(1.0f);
+                    claw1.setPosition(0.0f);
+                    clawO = 1;
+                }else{
+                    claw0.setPosition(0.25f);
+                    claw1.setPosition(0.75f);
+                    clawO = -1;
+                }
+
+                lift.setPower(network.output.layer[0][4]);
+                ziptie.setPower(network.output.layer[0][5]);
+
+                pixel.setPosition(network.output.layer[0][6]);
+
+                pos = network.output.layer[0][7];
+            }else if (runtime.time() >= 11000){
+                started = true;
+                runtime.reset();
             }
-
-            lift.setPower(network.output.layer[0][4]);
-            ziptie.setPower(network.output.layer[0][5]);
         }
     }
 

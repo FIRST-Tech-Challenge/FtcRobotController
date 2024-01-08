@@ -56,7 +56,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor lift = null;
     private Servo claw0 = null;
     private Servo claw1 = null;
-    private boolean clawO = true;
+    private boolean clawO = false;
     private int liftPos = 0;
 
     private DcMotor lift2 = null;
@@ -106,8 +106,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         lift2.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(1.0f);
-        claw1.setPosition(0.0f);
+        claw0.setPosition(0.25f);
+        claw1.setPosition(0.75f);
 
         waitForStart();
         runtime.reset();
@@ -128,17 +128,17 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 launchertime.reset();
             }
 
-            ziptie.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            ziptie.setPower((gamepad1.right_trigger - gamepad1.left_trigger) + (gamepad2.right_trigger - gamepad2.left_trigger));
 
-            if(gamepad1.left_bumper){
+            if(gamepad1.left_bumper || gamepad2.left_bumper){
                 lift.setPower(1.0f);
-            }else if(gamepad1.right_bumper){
+            }else if(gamepad1.right_bumper || gamepad2.right_bumper){
                 lift.setPower(-1.0f);
             }else{
                 lift.setPower(0.0f);
             }
 
-            if(gamepad1.x && xButtonDelay.time() > 0.2) {
+            if((gamepad1.x || gamepad2.x) && xButtonDelay.time() > 0.2) {
                 clawO = !clawO;
                 xButtonDelay.reset();
             }

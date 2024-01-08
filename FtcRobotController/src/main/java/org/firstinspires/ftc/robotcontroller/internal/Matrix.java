@@ -1,3 +1,5 @@
+/* Copyright © 2023 North Paulding High School Robotics Team 16757 */
+
 package org.firstinspires.ftc.robotcontroller.internal;
 
 public class Matrix {

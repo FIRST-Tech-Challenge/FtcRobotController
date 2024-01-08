@@ -2,17 +2,17 @@
 
 package org.firstinspires.ftc.robotcontroller.internal;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Evolution Training Test", group="Evolution")
-@Disabled
-public class EvolutionTrainingTest extends LinearOpMode {
+@TeleOp(name="Evolution Training Red Front", group="Evolution")
+//@Disabled
+public class EvolutionTrainingRedFront extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime launchertime = new ElapsedTime();
@@ -35,6 +35,13 @@ public class EvolutionTrainingTest extends LinearOpMode {
     private int liftPos = 0;
 
     private DcMotor lift2 = null;
+
+    private Servo pixel = null;
+
+    private ColorSensor color = null;
+    private double colorNum = 0.0;
+
+    private double pos = -1;
 
     WolfNet[] networks;
     WolfNet[] nextGen;
@@ -63,6 +70,10 @@ public class EvolutionTrainingTest extends LinearOpMode {
 
         lift2 = hardwareMap.get(DcMotor.class, "spider_man");
 
+        pixel = hardwareMap.get(Servo.class, "pixel");
+
+        color = hardwareMap.get(ColorSensor.class, "color");
+
         leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -90,18 +101,20 @@ public class EvolutionTrainingTest extends LinearOpMode {
         claw0.setPosition(0.25f);
         claw1.setPosition(0.75f);
 
+        pixel.setPosition(1.0);
+
         networks = new WolfNet[50];
         nextGen = new WolfNet[5];
 
-        in = new double[1][8];
-        out = new double[1][6];
+        in = new double[1][11];
+        out = new double[1][7];
 
         errors = new double[50];
 
         driving = true;
 
         for(int i = 0; i < 5; i++){
-            nextGen[i] = new WolfNet(8, 6, 2, "Weights" + i, 0.5);
+            nextGen[i] = new WolfNet(12, 8, 2, "Weights" + i, 0.5);
             nextGen[i].LoadWeights();
         }
         for(int i = 0; i < 50; i++){
@@ -176,10 +189,28 @@ public class EvolutionTrainingTest extends LinearOpMode {
                 lift2.setPower(0.0f);
             }
 
+            if(gamepad1.b){
+                pixel.setPosition(0.0);
+            }else{
+                pixel.setPosition(1.0);
+            }
+
+            if(color.red() > 0)
+                colorNum = 1.0;
+            else
+                colorNum = -1.0;
+
+            if(gamepad1.dpad_left)
+                pos = -1;
+            else if(gamepad1.dpad_up)
+                pos = 0;
+            else if(gamepad1.dpad_right)
+                pos = 1;
+
             updates += 1;
 
-            in = append(in, new double[]{runtime.time(), leftDriveFront.getVelocity(), rightDriveFront.getVelocity(), leftDriveBack.getVelocity(), rightDriveBack.getVelocity(), clawOpen, lift.getPower(), ziptie.getPower()});
-            out = append(out, new double[]{gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_stick_y, clawOpen, lift.getPower(), ziptie.getPower()});
+            in = append(in, new double[]{1.0, 1.0, runtime.time(), leftDriveFront.getVelocity(), rightDriveFront.getVelocity(), leftDriveBack.getVelocity(), rightDriveBack.getVelocity(), clawOpen, lift.getPower(), ziptie.getPower(), colorNum, pos});
+            out = append(out, new double[]{gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_stick_y, clawOpen, lift.getPower(), ziptie.getPower(), pixel.getPosition(), pos});
 
             if(gamepad1.start)
                 endGeneration();
@@ -216,7 +247,7 @@ public class EvolutionTrainingTest extends LinearOpMode {
     void endGeneration(){
         for(int i = 0; i < updates; i++){
             for(int j = 0; j < 50; j++){
-                double[][] input = {{in[i][0], in[i][1], in[i][2], in[i][3], in[i][4], in[i][5], in[i][6], in[i][7]}};
+                double[][] input = {{in[i][0], in[i][1], in[i][2], in[i][3], in[i][4], in[i][5], in[i][6], in[i][7], in[i][8], in[i][9]}};
                 double[][] correct = {{out[i][0], out[i][1], out[i][2], out[i][3], out[i][4], out[i][5]}};
                 networks[j].GetOutput(input);
                 double[][] errorI = Matrix.error(networks[j].output.layer, correct);

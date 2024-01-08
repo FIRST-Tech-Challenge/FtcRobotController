@@ -1,3 +1,5 @@
+/* Copyright © 2023 North Paulding High School Robotics Team 16757 */
+
 package org.firstinspires.ftc.robotcontroller.internal;
 
 import android.os.Environment;
@@ -12,7 +14,7 @@ public class WolfNet {
     double[][] input;
     public NueronLayer output;
     NueronLayer[] hidden_layers;
-    FileWriter weight_file;
+    String weight_file;
     Scanner weightS;
 
     public static double learningRate;
@@ -30,14 +32,9 @@ public class WolfNet {
             hidden_layers[i] = new NueronLayer(lastInLength, 2);
         }
         output = new NueronLayer(hidden_layers[hidden_layers.length - 1].layer[0].length, output_size);
+        weight_file = weightF;
         try{
-            new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weightF, false).close();
-            weight_file = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weightF, true);
-        }catch(IOException e){
-
-        }
-        try{
-            weightS = new Scanner(new File(Environment.getExternalStorageDirectory().getPath() + "/" + weightF));
+            weightS = new Scanner(new File(Environment.getExternalStorageDirectory().getPath() + "/" + weightF + ".txt"));
         }catch(IOException e){
 
         }
@@ -47,14 +44,9 @@ public class WolfNet {
         input = network.input;
         hidden_layers = network.hidden_layers;
         output = network.output;
+        weight_file = weightF;
         try{
-            new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weightF, false).close();
-            weight_file = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weightF, true);
-        }catch(IOException e){
-
-        }
-        try{
-            weightS = new Scanner(new File(Environment.getExternalStorageDirectory().getPath() + "/" + weightF));
+            weightS = new Scanner(new File(Environment.getExternalStorageDirectory().getPath() + "/" + weightF + ".txt"));
         }catch(IOException e){
 
         }
@@ -101,44 +93,51 @@ public class WolfNet {
     }
 
     void SaveWeights(){
-        for (int i = 0; i < hidden_layers.length; i++) {
-            for (int j = 0; j < hidden_layers[i].weights.length; j++) {
-                for (int k = 0; k < hidden_layers[i].weights[0].length; k++) {
+        FileWriter file_writer;
+        try{
+            new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weight_file + ".txt", false).close();
+            file_writer = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/" + weight_file + ".txt", true);
+            for (int i = 0; i < hidden_layers.length; i++) {
+                for (int j = 0; j < hidden_layers[i].weights.length; j++) {
+                    for (int k = 0; k < hidden_layers[i].weights[0].length; k++) {
+                        try{
+                            file_writer.write(Double.toString(hidden_layers[i].weights[j][k]) + "\n");
+                        }catch(IOException e){
+
+                        }
+                    }
+                }
+                for (int j = 0; j < hidden_layers[i].bias[0].length; j++){
                     try{
-                        weight_file.write(Double.toString(hidden_layers[i].weights[j][k]) + "\n");
+                        file_writer.write(Double.toString(hidden_layers[i].bias[0][j]) + "\n");
                     }catch(IOException e){
 
                     }
                 }
             }
-            for (int j = 0; j < hidden_layers[i].bias[0].length; j++){
+            for(int i = 0; i < output.weights.length; i++){
+                for(int j = 0; j < output.weights[0].length; j++){
+                    try{
+                        file_writer.write(Double.toString(output.weights[i][j]) + "\n");
+                    }catch(IOException e){
+
+                    }
+                }
+            }
+            for (int i = 0; i < output.bias[0].length; i++){
                 try{
-                    weight_file.write(Double.toString(hidden_layers[i].bias[0][j]) + "\n");
+                    file_writer.write(Double.toString(output.bias[0][i]) + "\n");
                 }catch(IOException e){
 
                 }
             }
-        }
-        for(int i = 0; i < output.weights.length; i++){
-            for(int j = 0; j < output.weights[0].length; j++){
-                try{
-                    weight_file.write(Double.toString(output.weights[i][j]) + "\n");
-                }catch(IOException e){
-
-                }
-            }
-        }
-        for (int i = 0; i < output.bias[0].length; i++){
             try{
-                weight_file.write(Double.toString(output.bias[0][i]) + "\n");
+                file_writer.close();
             }catch(IOException e){
 
             }
-        }
-        try{
-            weight_file.close();
         }catch(IOException e){
-            
+
         }
     }
 
@@ -152,11 +151,19 @@ public class WolfNet {
                 }
             }
         }
+        for(int i = 0; i < hidden_layers.length; i++){
+            for(int j = 0; j < hidden_layers[i].bias[0].length; j++){
+                hidden_layers[i].bias[0][j] = (random.nextDouble() * 2) - 1;
+            }
+        }
         for(int i = 0; i < output.weights.length; i++){
             for(int j = 0; j < output.weights[0].length; j++){
                 output.weights[i][j] = (random.nextDouble() * 2) - 1;
                 //output.weights[i][j] = random.nextDouble();
             }
+        }
+        for(int i = 0; i < output.bias[0].length; i++){
+            output.bias[0][i] = (random.nextDouble() * 2) - 1;
         }
     }
     void MutateWeights(){
