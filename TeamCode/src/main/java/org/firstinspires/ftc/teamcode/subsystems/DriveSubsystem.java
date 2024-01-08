@@ -11,12 +11,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
 public class DriveSubsystem extends SubsystemBase {
-    private final DcMotor lF, rF, lB, rB;
+    private final DcMotor lF, rF, lB, rB, eL, eB, eR;
+    private final double INCHES_PER_TICK = 0.0018912d;
     public final ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
@@ -24,18 +26,29 @@ public class DriveSubsystem extends SubsystemBase {
         this(driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_BACK),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_BACK));
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_BACK),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_LEFT),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_BACK),
+                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_RIGHT));
     }
 
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
-                          final DcMotor leftBack, final DcMotor rightBack) {
+                          final DcMotor leftBack, final DcMotor rightBack,
+                          final DcMotor encoderLeft, final DcMotor encoderBack,
+                          final DcMotor encoderRight) {
         dbp.createNewTelePacket();
         dbp.info(leftFront+", "+leftBack+", "+rightFront+", "+rightBack);
         dbp.send(false);
+
         lF = leftFront;
         rF = rightFront;
         lB = leftBack;
         rB = rightBack;
+
+        eL = encoderLeft;
+        eB = encoderBack;
+        eR = encoderRight;
+
         elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 
@@ -75,6 +88,44 @@ public class DriveSubsystem extends SubsystemBase {
         lB.setPower(leftBackPower);
         rB.setPower(rightBackPower);
         return true;
+    }
+
+    /**
+     * Moves the robot by a specified distance
+     * @param axial Forward/Backward Movement
+     * @param lateral Left/Right Movement
+     * @param yaw Rotation
+     * @param distance Distance to move (in inches)
+     */
+    public void moveRobotByDistance(double axial, double lateral, double yaw, double distance) {
+        moveRobot(axial, lateral, yaw);
+
+        if ((axial + lateral + yaw) == 0) return;
+        if (distance == 0) return;
+
+        // TODO: implement directionality
+        final int DIRECTION = (distance < 0) ? -1 : 1;
+
+        // Axial = y, Lateral = x, yaw = z
+        double[] startingPosition = new double[3];
+        startingPosition[0] = eL.getCurrentPosition() * INCHES_PER_TICK;
+        startingPosition[1] = eB.getCurrentPosition() * INCHES_PER_TICK;
+        startingPosition[2] = eR.getCurrentPosition() * INCHES_PER_TICK;
+
+        while (lF.isBusy()) {
+            double[] newPositions = new double[3];
+            newPositions[0] =
+                    ((eL.getCurrentPosition() * INCHES_PER_TICK) * DIRECTION) - startingPosition[0];
+            newPositions[1] =
+                    ((eB.getCurrentPosition() * INCHES_PER_TICK) * DIRECTION) - startingPosition[1];
+            newPositions[2] =
+                    ((eR.getCurrentPosition() * INCHES_PER_TICK) * DIRECTION) - startingPosition[2];
+
+            if ((newPositions[0] + newPositions[1] + newPositions[2]) >= distance) {
+                resetDriveMotors();
+                return;
+            }
+        }
     }
 
     public void resetDriveMotors() {
