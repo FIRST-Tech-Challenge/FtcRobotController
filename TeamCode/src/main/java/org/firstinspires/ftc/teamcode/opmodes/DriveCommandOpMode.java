@@ -77,11 +77,17 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
                             (armerController.getButton(GamepadKeys.Button.X) ? 1 : 0);
+                    if(quantity == 0) {
+                        return 0;
+                    }
                     return 1d/quantity;
                 },
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.B) ? 1 : 0) +
                             (armerController.getButton(GamepadKeys.Button.Y) ? 1 : 0);
+                    if(quantity == 0) {
+                        return 0;
+                    }
                     return 1d/quantity;
                 });
 
