@@ -13,12 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftDownStateM;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMBase;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM2;
 
 
 @TeleOp
@@ -51,17 +46,8 @@ public class MecDrive extends LinearOpMode {
     private       Servo LCLaw;
     private float Rservopos;
     private float Lservopos;
-    private       Servo Door;
-    public static Servo RLock;
-    public static Servo LLock;
-    private       Servo Pivot;
-    private       Servo SLift;
-    private       Servo RCLaw;
-    private       Servo LCLaw;
 
     // Local Variables
-    private float  Rservopos;
-    private float  Lservopos;
     private double leftStickX;
     private double leftStickY;
     private double rightStickX;
@@ -77,7 +63,7 @@ public class MecDrive extends LinearOpMode {
     // State Machine
     HangStateM HSM = new HangStateM();
     LiftStateM LSM = new LiftStateM();
-    LiftDownStateM LDSM = new LiftDownStateM();
+    LiftStateM LDSM = new LiftStateM();
 
     public void runOpMode() {
 
@@ -135,34 +121,13 @@ public class MecDrive extends LinearOpMode {
         waitForStart();
 
 
-        if (RESETME) {
-            HSM.reset();
-        }
-        if (RESETME) {
-            LSM.reset();
-        }
-        if (RESETME) {
-            LDSM.reset();
-        }
+        if (RESETME) { HSM.reset(); }
+        if (RESETME) { LSM.reset(); }
+        if (RESETME) { LDSM.reset(); }
 
 
 
-        while (opModeIsActive()) {
-
-            if (gamepad2.dpad_up) {
-                HSM.runIteration();
-                runGamepad();
-            }
-            if (gamepad2.a) {
-                LSM.runIteration();
-                runGamepad();
-            }
-            if (gamepad2.b) {
-                LDSM.runIteration();
-                runGamepad();
-            }
-            runGamepad();
-        }
+        while (opModeIsActive()) { if (gamepad2.dpad_up) { HSM.runIteration(); runGamepad(); } if (gamepad2.a) { LSM.runIteration(); runGamepad(); } if (gamepad2.b) { LDSM.runIteration(); runGamepad(); } runGamepad(); }
 
     }
 
@@ -176,122 +141,7 @@ public class MecDrive extends LinearOpMode {
         leftStickY = gamepad1.left_stick_y;
         rightStickX = gamepad1.right_stick_x;
 
-
-        if (gamepad1.a) {
-            intakeLift.setPosition(.5);
-            intake.setPower(1);
-        }
-
-        if (gamepad1.dpad_left) {
-            speedFactor = (float) .1;
-        }
-
-        if (gamepad1.dpad_right) {
-            speedFactor = (float) 1;
-        }
-
-        if (gamepad1.y) {
-            intakeLift.setPosition(.3);
-        }
-        // 0 = l0 r1 = neuteral
-        // .5 = half way for ap
-        // 1 = l1 r0 = all the way
-
-        if (gamepad1.b) {
-            intake.setPower(0);
-        }
-
-//        if (gamepad2.right_stick_button) {
-//            LLock.setPosition(.0);
-//            RLock.setPosition(.1);
-//        }
-        // hang lock locked = .1
-        // hang lock freed = 0
-
-//        if (gamepad2.a) {
-//           Lift.setTargetPosition(-1400);
-//           Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//           Lift.setPower(1);
-//         //  Door.setPosition(.3);
-//        }
-//        if (gamepad2.b) {
-//            Lift.setTargetPosition(-10);
-//            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            Lift.setPower(1);
-//        }
-//        if (gamepad2.dpad_down) {
-//            SLift.setPosition(.81);
-//            Pivot.setPosition(.7);
-//          //  Door.setPosition(.45);
-//        }
-        if (gamepad2.x) {
-            Door.setPosition(.93);
-        }
-        if (gamepad2.y) {
-            Door.setPosition(.95);
-        }
-        if (gamepad2.left_bumper) {
-            Door.setPosition(1);
-        }
-        if (gamepad2.left_trigger > .5) {
-            Lift.setTargetPosition(-867);
-            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            Lift.setPower(1);
-        }
-        if (gamepad2.right_trigger > .5) {
-            Lift.setTargetPosition(-1400);
-            Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            Lift.setPower(1);
-        }
-        if (gamepad2.dpad_left) {
-            RHook.setPosition(.75);
-            LHook.setPosition(.25);
-        }
-        if (gamepad2.dpad_down) {
-            RHook.setPosition(0);
-            LHook.setPosition(1);
-            LHang.setPower(1);
-            RHang.setPower(1);
-        }
-        else {
-            LHang.setPower(0);
-            RHang.setPower(0);
-        }
-        if (gamepad1.left_bumper) {
-            RHook.setPosition(1);
-            LHook.setPosition(0);
-        }
-        if (gamepad1.right_bumper) {
-            RHook.setPosition(.5);
-            LHook.setPosition(.5);
-            intakeLift.setPosition(.5);
-        }
-        if (gamepad2.dpad_left) {
-            SLift.setPosition(.15);
-            Pivot.setPosition(.8);
-            Door.setPosition(1);
-        }
-      //  if (gamepad1.left_trigger > .5) {
-        //   RCLaw.setPosition(1);
-          // LCLaw.setPosition(0);
-       // }
-       // if (gamepad1.right_trigger > .5) {
-         //   RCLaw.setPosition(.65);
-          //  LCLaw.setPosition(.35);
-       // }
-
-
-        // Door Open .45
-        // Door Closed 1
-        // Pivot down score .45
-        // Pivot store .65
-        // Pivot up score 1
-        // SLift Placing posistion .15
-        // SLift Store Posistion .75
-
-        LiftCounts = Lift.getCurrentPosition();
-
-        telemetry.addData("lift counts:", LiftCounts);
+        telemetry.addData("lift counts:", Lift.getCurrentPosition());
 
         // Gamepad Mappings
         if (gamepad1.a)                     { intakeLift.setPosition(.5); intake.setPower(1); }
