@@ -168,7 +168,8 @@ public class redAndBlue25pts extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(12,-34,Math.toRadians(180)))
                 .build();
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose2)
-                //.strafeLeft(11)
+                .strafeLeft(11)
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
@@ -177,11 +178,14 @@ public class redAndBlue25pts extends LinearOpMode {
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
+
+                 */
                 .waitSeconds(2)
                 .build();
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose2)
                 .back(25)
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
@@ -190,10 +194,13 @@ public class redAndBlue25pts extends LinearOpMode {
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
+
+                 */
                 .waitSeconds(2)
                 .build();
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose2)
                 .lineToSplineHeading(new Pose2d(25,-25,Math.toRadians(180)))
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
@@ -202,6 +209,8 @@ public class redAndBlue25pts extends LinearOpMode {
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
+
+                 */
                 .waitSeconds(2)
                 .build();
 
@@ -214,27 +223,18 @@ public class redAndBlue25pts extends LinearOpMode {
         //telemetry.update();
 
         while (opModeIsActive()) {
-            int x = leftSensor.red(); //left
-            int y = leftSensor.blue();
-            int z = leftSensor.green();
-            int x2 = rightSensor.red(); //right
-            int y2 = rightSensor.blue();
-            int z2 = rightSensor.green();
-            telemetry.addData("", x);
-            telemetry.addData("", y);
-            telemetry.addData("", z);
-            telemetry.addData("", x2);
-            telemetry.addData("", y2);
-            telemetry.addData("", z2);
-            telemetry.update();
+
             drive.followTrajectorySequence(forward);
-            if (x > 25 && x > y && x > z) { //left
-                drive.followTrajectorySequence(left);
-            } else if (x2 > 25 && x2 > y2 && x2 > z2) { //right
+            if (true) { //left
+                drive.followTrajectorySequence(forward);
+            }
+            /*else if (x2 > 25 && x2 > y2 && x2 > z2) { //right
                 drive.followTrajectorySequence(right);
             } else { // center
                 drive.followTrajectorySequence(center);
             }
+
+             */
         }
     };
 }
