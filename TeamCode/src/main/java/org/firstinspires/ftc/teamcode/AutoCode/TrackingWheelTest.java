@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.teamcode.Globals;
-import org.firstinspires.ftc.teamcode.AutoCode.Control.TrackingWheelIntegrator;
+import org.firstinspires.ftc.teamcode.TrackingWheelIntegrator;
 
 import java.util.Base64;
 

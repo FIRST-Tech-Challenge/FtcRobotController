@@ -25,9 +25,9 @@ public class TrackingWheelIntegrator
     private double dX, dY, heading;
     Vector trackingVector = new Vector();
     Vector instantVector = new Vector();
-    private double TICKS_PER_DEGREE = -138.8888; //-401.6311
-    private double TICKS_PER_INCH_NORMAL = 1730.85; //1713.75
-    private double TICKS_PER_INCH_STRAFE = 1733.25; //1702.84
+    private double TICKS_PER_DEGREE = -285.3; //-401.6311
+    private double TICKS_PER_INCH_NORMAL = -1710; //1713.75
+    private double TICKS_PER_INCH_STRAFE = 1710; //1702.84
     double AUX_SPIN_SLIP = 0.101919839;
 
     boolean init = false;
@@ -97,7 +97,7 @@ public class TrackingWheelIntegrator
         oldX = x;
         oldY = y;
 
-        x = trackingVector.getX();
+        x = -trackingVector.getX();
         y = trackingVector.getY();
 
         if(lastUpdateTime != 0)

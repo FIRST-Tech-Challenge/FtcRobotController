@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.AutoCode.Auto;
 
-import com.qualcomm.hardware.lynx.LynxDcMotorController;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,14 +11,20 @@ import org.firstinspires.ftc.teamcode.AutoCode.Control.AcceleratedGain;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMPointApproach;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMTrajectory;
 import org.firstinspires.ftc.teamcode.Globals;
+//import org.firstinspires.ftc.teamcode.AutoCode.Control.TrackingWheelIntegrator;
 import org.firstinspires.ftc.teamcode.TrackingWheelIntegrator;
 import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
+
+import static org.firstinspires.ftc.teamcode.Globals.X;
+import static org.firstinspires.ftc.teamcode.Globals.Y;
+import static org.firstinspires.ftc.teamcode.Globals.trackingWheelIntegrator;
+import static org.firstinspires.ftc.teamcode.Globals.wheelH;
 
 
 @Autonomous(preselectTeleOp = "MecDrive")
 public class BackStagePARKAuto extends LinearOpMode {
 
-    TrackingWheelIntegrator trackingWheelIntegrator = new TrackingWheelIntegrator();
+//    TrackingWheelIntegrator trackingWheelIntegrator = new TrackingWheelIntegrator();
 
     CenterStageDriveBase centerStageDriveBase;
 
@@ -58,7 +62,9 @@ public class BackStagePARKAuto extends LinearOpMode {
     private static DcMotorEx LeftTW;
     private static DcMotorEx RightTW;
     private static DcMotorEx BackTW;
-
+//    public static double Y;
+//    public static double X;
+//    public static double wheelH;
 
 
 
@@ -120,7 +126,7 @@ public class BackStagePARKAuto extends LinearOpMode {
             Globals.robot=centerStageDriveBase;
             Globals.driveBase=centerStageDriveBase;
             Globals.opMode = this;
-            Globals.trackingWheelIntegrator = trackingWheelIntegrator;
+            trackingWheelIntegrator = trackingWheelIntegrator;
 
             telemetry.setMsTransmissionInterval(20);
 
@@ -145,6 +151,16 @@ public class BackStagePARKAuto extends LinearOpMode {
                 int aux = -BackTW.getCurrentPosition();
                 trackingWheelIntegrator.update(left, right, aux);
 
+                Y = trackingWheelIntegrator.getY();
+                X = trackingWheelIntegrator.getX();
+                wheelH = trackingWheelIntegrator.getHeading();
+
+                telemetry.addData("X", X);
+                //opMode.telemetry.addData("FrontInch", inch);
+                telemetry.addData("Y", Y);
+                telemetry.addData("wheelH", wheelH);
+                telemetry.update();
+
                 FirstMovement.followInteration();
 
             }
@@ -168,24 +184,24 @@ public class BackStagePARKAuto extends LinearOpMode {
         FirstMovement = new StateMTrajectory.Builder()
 
          .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(0,-18)
-                        .setMaxPower(.4) // .4 - 6
+                        .setTargetPosition(-4,-40)
+                        .setMaxPower(.2) // .4 - 6
                         .setXyGain(.04)
                         .setTargetHeading(0)
                         .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.4)
+                        .setMaxTurnPower(.2)
                         .setMovementThresh(2)
                         .setHeadingThreshold(2)
                         .stopMotorsOnDone(true)
                         .build())
 
                 .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(0,-12)
+                        .setTargetPosition(-4,-35)
                         .setMaxPower(.4) // .4 - 6
                         .setXyGain(.04)
                         .setTargetHeading(0)
                         .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.4)
+                        .setMaxTurnPower(.2)
                         .setMovementThresh(2)
                         .setHeadingThreshold(2)
                         .stopMotorsOnDone(true)
