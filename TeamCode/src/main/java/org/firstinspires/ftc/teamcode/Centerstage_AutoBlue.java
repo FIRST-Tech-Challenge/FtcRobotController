@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -58,14 +59,23 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "centerstage_bluemayhem.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "Blue Mayhem",
     };
 
+    // Open and close booleans (just to make code easier to read)
+    boolean open = true;
+    boolean close = false;
+
+    ElapsedTime trapdoorToggle;
+
+    // Variable
+    int desiredTag = 0;
+
     /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
+     * //The variable to store our instance of the TensorFlow Object Detection processor.
      */
     private TfodProcessor tfod;
     boolean seen = false;
@@ -100,25 +110,35 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                         // center
                         telemetry.addData("position","Center");
                         gobbler.driveTrain.centerPos();
+                        desiredTag = 2;
                         seen = true;
-                        
+
                 }
                 else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
                         // left
                         telemetry.addData("position","Left");
                         gobbler.driveTrain.leftPos();
+                        desiredTag = 1;
                         seen = true;
+
                 }
 
             }
              if (!seen) {
                  telemetry.addData("position","Left");
                  gobbler.driveTrain.rightPos();
+                 desiredTag = 3;
              }
                 telemetryTfod();
+                // Place first pixel
+                gobbler.driveTrain.Wait(0.5);
+                gobbler.outtake.trapdoor(open, trapdoorToggle);
+                gobbler.driveTrain.Wait(0.5);
+                gobbler.outtake.trapdoor(close, trapdoorToggle);
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
+                gobbler.driveTrain.Wait(3.0);
 
                 // Save CPU resources; can resume streaming when needed.
 //                if (gamepad1.dpad_down) {
