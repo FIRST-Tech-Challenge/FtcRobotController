@@ -71,6 +71,7 @@ public class Globals {
     public static boolean TRANSFERGoing;
     public static boolean FIRSTMOVEMENT;
     public static boolean LiftIsDown;
+    public static boolean SpikeIsFinished;
     public double DSStartPos = 20;
     public static boolean TurretTurn;
     public static double TurretTARGET;
@@ -118,28 +119,28 @@ public class Globals {
     public static void updateTracking()
     {
 
-        FrightDistance = FrightDetector.getDistance(DistanceUnit.MM);
-        //FrontDistance = FrontDS.getDistance(DistanceUnit.INCH);
-        LynxModule.BulkData bulkData = odoModule.getBulkData();
-
-        //cmToInch = Globals.FrontSonar.getDistanceSync();
-        //inch = cmToInch/2.54;
-        int left = bulkData.getMotorCurrentPosition(2);
-
-        //left = (int) (left * 1.02462166);
-        int right = bulkData.getMotorCurrentPosition(1);
-        int aux = bulkData.getMotorCurrentPosition(3);
-        int LiftEC = bulkData.getMotorCurrentPosition(0);
-        double POTPOS = bulkData.getAnalogInputVoltage(1);
-
-        LiftPos = LiftEC;
-
-        currentVoltage = potentiometer.getVoltage();
-
-        LiftTarget = Lift.getTargetPosition();
-        LiftPower = 0.1 + (LiftTarget - LiftPos)/LiftTarget;
-        trackingWheelIntegrator.update(left, right, aux);
-
+//        FrightDistance = FrightDetector.getDistance(DistanceUnit.MM);
+//        //FrontDistance = FrontDS.getDistance(DistanceUnit.INCH);
+//        LynxModule.BulkData bulkData = odoModule.getBulkData();
+//
+//        //cmToInch = Globals.FrontSonar.getDistanceSync();
+//        //inch = cmToInch/2.54;
+//        int left = bulkData.getMotorCurrentPosition(2);
+//
+//        //left = (int) (left * 1.02462166);
+//        int right = bulkData.getMotorCurrentPosition(1);
+//        int aux = bulkData.getMotorCurrentPosition(3);
+//        int LiftEC = bulkData.getMotorCurrentPosition(0);
+//        double POTPOS = bulkData.getAnalogInputVoltage(1);
+//
+//        LiftPos = LiftEC;
+//
+//        currentVoltage = potentiometer.getVoltage();
+//
+//        LiftTarget = Lift.getTargetPosition();
+//        LiftPower = 0.1 + (LiftTarget - LiftPos)/LiftTarget;
+//        trackingWheelIntegrator.update(left, right, aux);
+//
         Y = trackingWheelIntegrator.getY();
         X = trackingWheelIntegrator.getX();
         wheelH = trackingWheelIntegrator.getHeading();
@@ -148,16 +149,6 @@ public class Globals {
         //opMode.telemetry.addData("FrontInch", inch);
         opMode.telemetry.addData("Y", Y);
         opMode.telemetry.addData("wheelH", wheelH);
-        opMode.telemetry.addData("MineralDetection", FrightDistance );
-        //opMode.telemetry.addData("Front Distance", FrontDistance );
-        opMode.telemetry.addData("LiftEC", LiftEC);
-        opMode.telemetry.addData("LiftPower", LiftPower);
-        opMode.telemetry.addData("LiftPower", LiftTarget);
-        opMode.telemetry.addData("Level", LiftLevel);
-        opMode.telemetry.addData("Potentiometer voltage", currentVoltage);
-        opMode.telemetry.addData("Turret Turn Power; ", turnPower);
-        //opMode.telemetry.addData("TSE Power; ", TSEPOWER);
-        //opMode.telemetry.addData("LiftLimit", LiftLimit.isPressed());
         opMode.telemetry.update();
 
     }

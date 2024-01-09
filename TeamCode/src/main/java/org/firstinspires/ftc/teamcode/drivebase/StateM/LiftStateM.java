@@ -1,28 +1,29 @@
 package org.firstinspires.ftc.teamcode.drivebase.StateM;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.MecDrive;
 
-import static org.firstinspires.ftc.teamcode.MecDrive.RHang;
 import static org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine.ReturnState.PROCEED;
 
-public class HangStateM2 extends StateMachine<HangStateM2.State> implements StateMMovmentPerformer {
+public class LiftStateM extends StateMachine<LiftStateM.State> implements StateMMovmentPerformer {
 
     public double angle;
 
 
     public enum State {
         START,
-        PULLUP,
-        STOPAMOVING,
-        LOCKYOURARMS,
+        PIVOTWITHTHATDOOR,
+        RAISETHATLIFT,
+        POSISTIONS,
         IDLE,
 
 
     }
-    // PULL UP happens after the driver has lowered the bars with the hang and has gotten the hooks off
-    // PULL UP = tightening the moters
-    // STOP A MOVING = stop moving moters
-    // LOCK YOUR ARMS = imiedietly after "STOP A MOVING" lower locks
+  // PIVOT WITH THAT DOOR = pivet up and close the door
+  // RAISE THAT LIFT = raise the lift
+  // POSISTIONS = set it to placing position
+
 
 
     public State getStAte()
@@ -45,7 +46,7 @@ public class HangStateM2 extends StateMachine<HangStateM2.State> implements Stat
     public String getName() {
         return "AutoTransfer";
     }
-    public HangStateM2() {
+    public LiftStateM() {
         state = State.START;
 
     }
@@ -55,33 +56,35 @@ public class HangStateM2 extends StateMachine<HangStateM2.State> implements Stat
 
             case START: {
 
-                if (getElapsedStateTime() > 1000) {
-                    switchState(State.PULLUP);
+                if (getElapsedStateTime() > 500) {
+                    switchState(State.PIVOTWITHTHATDOOR);
                 }
                 break;
             }
-            case PULLUP: {
-                MecDrive.LHang.setPower(1);
-                MecDrive.RHang.setPower(1);
+            case PIVOTWITHTHATDOOR: {
+                MecDrive.SLift.setPosition(.15);
+                MecDrive.Pivot.setPosition(.8);
+                MecDrive.Door.setPosition(1);
 
-                if(getElapsedStateTime() > 3000) {
-                    switchState(State.STOPAMOVING);
+                if(getElapsedStateTime() >500) {
+                    switchState(State.RAISETHATLIFT);
                 }
                 break;
             }
-            case STOPAMOVING: {
-                MecDrive.LHang.setPower(0);
-                MecDrive.RHang.setPower(0);
+            case RAISETHATLIFT: {
+                MecDrive.Lift.setTargetPosition(-1400);
+                MecDrive.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                MecDrive.Lift.setPower(1);
 
-                if(getElapsedStateTime() > 100) {
+                if(getElapsedStateTime() > 200) {
 
-                    switchState(State.LOCKYOURARMS);
+                    switchState(State.POSISTIONS);
                 }
                 break;
             }
-            case LOCKYOURARMS: {
-                MecDrive.LLock.setPosition(.25);
-                MecDrive.RLock.setPosition(.75);
+            case POSISTIONS: {
+                MecDrive.SLift.setPosition(.3);
+                MecDrive.Pivot.setPosition(1);
 
                 if(getElapsedStateTime() > 200) {
 
