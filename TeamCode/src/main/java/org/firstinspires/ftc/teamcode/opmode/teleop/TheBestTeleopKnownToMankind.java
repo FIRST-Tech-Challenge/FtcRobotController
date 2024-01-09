@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Robot;
@@ -70,8 +72,10 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx operator = new GamepadEx(gamepad2);
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap);
-        TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap);
+        TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
         PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
         DriveSubsystem driveSubsystem = new DriveSubsystem(hardwareMap);
@@ -127,6 +131,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
     public void run()
     {
         super.run();
+        telemetry.update();
     }
 }
 
