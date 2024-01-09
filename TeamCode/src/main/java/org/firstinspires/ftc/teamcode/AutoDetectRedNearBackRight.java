@@ -260,30 +260,25 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -12, -12, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -11, -11, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, -TURN_SPEED);
-        sleep(4700);
+        robot.driveRobot(0, TURN_SPEED);
+        sleep(5400);
 
         //go straight
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    55, 55, 10);
+        encoderDrive(DRIVE_SPEED, 0,    -55, -55, 10);
         //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
-        sleep(2700);
-        robot.stopArm();
-        robot.moveElbowToPosition(0.3);
-        sleep(1000);
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
