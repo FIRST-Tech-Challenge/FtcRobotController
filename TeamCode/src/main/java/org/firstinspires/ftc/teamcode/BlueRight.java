@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class BlueRight extends LinearOpMode {
 
     public AutoMethods bot = new AutoMethods();
+    Xolodilnik xol = new Xolodilnik();
 
     //ОСНОВНАЯ ПРОГРАММА
     @Override

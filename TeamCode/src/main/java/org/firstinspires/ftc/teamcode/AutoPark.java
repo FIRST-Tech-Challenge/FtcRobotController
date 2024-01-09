@@ -12,7 +12,7 @@ public class AutoPark extends LinearOpMode {
     //ОСНОВНАЯ ПРОГРАММА
     @Override
     public void runOpMode() throws InterruptedException {
-
+        bot.init();
         bot.initC(this);      //Инициализация
         bot.initIMU(this);
         bot.camStart(this);   //Запуск камеры

@@ -22,6 +22,7 @@ public class Pipeline extends OpenCvPipeline {
         this.webcam = webcam;
         this.telemetry = telemetry;
     }
+
     boolean viewportPaused;
 
     public void onViewportTapped(){

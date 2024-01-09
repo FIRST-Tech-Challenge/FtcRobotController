@@ -2,20 +2,20 @@ package org.firstinspires.ftc.teamcode.Camera.Childrens.PipeLines;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Camera.Parents.Pipeline;
+import org.firstinspires.ftc.teamcode.Xolodilnik;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 
 public class PipelineBluELeft extends Pipeline {
-
     public PipelineBluELeft(OpenCvCamera webcam, Telemetry telemetry){
         super(webcam, telemetry);
             this.webcam = webcam;
             this.telemetry = telemetry;
         }
-
         @Override
         public Mat processFrame(Mat input) {
 
@@ -39,7 +39,6 @@ public class PipelineBluELeft extends Pipeline {
             leftCrop.release();
             midleCrop.release();
 
-
             //Процент нужного цвета в рамке
             telemetry.addData("Blue percentage in left", Math.round(valueleft * 100) + "%");
             telemetry.addData("Blue percentage in middle", Math.round(valuemiddle * 100) + "%");
@@ -47,7 +46,8 @@ public class PipelineBluELeft extends Pipeline {
             Imgproc.rectangle(YCbCr, leftRect, rectColor, 2);
             Imgproc.rectangle(YCbCr, midleRect, rectColor, 2);
 
-            if(Math.round(valueleft * 100) > 10 && Math.round(valueleft * 100)> Math.round(valuemiddle * 100)){
+            
+            if(Math.round(valueleft * 100) > 10 && Math.round(valueleft * 100) > Math.round(valuemiddle * 100)){
                 telemetry.addLine("Position: left");
             }else if(Math.round(valuemiddle * 100) > 10 && Math.round(valuemiddle * 100) > Math.round(valueleft * 100) ){
                 telemetry.addLine("Position: middle");

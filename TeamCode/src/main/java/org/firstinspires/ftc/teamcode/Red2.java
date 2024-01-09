@@ -7,13 +7,13 @@ public class Red2 extends LinearOpMode {
     public AutoMethods bot = new AutoMethods();
 
 
-
-
+Xolodilnik apple = new Xolodilnik();
+int b = 0;
 
     //ОСНОВНАЯ ПРОГРАММА
     @Override
-    public void runOpMode() throws InterruptedException {
 
+    public void runOpMode() throws InterruptedException {
 
         bot.initC(this);      //Инициализация
         bot.camStart(this);   //Запуск камеры

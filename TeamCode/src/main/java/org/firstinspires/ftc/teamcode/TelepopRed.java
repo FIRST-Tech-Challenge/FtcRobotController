@@ -154,7 +154,7 @@ public class TelepopRed extends LinearOpMode implements Inter{
                         turn = -gamepad1.right_stick_x;
 
 
-                        //Мощность моторов тележки
+                        //Мощность моторов
                         zm1 = Range.clip((-gamepad1.left_stick_x + gamepad1.left_stick_y - turn ) * a, -1, 1);
                         if (zm1 > -0.05 && zm1 < 0.05) {
                             zm1 = 0;
@@ -212,6 +212,7 @@ public class TelepopRed extends LinearOpMode implements Inter{
 
                         moment_diff_serv = runtime.milliseconds() - last_moment_serv;
                         moment_diff_switch = runtime.milliseconds() - last_moment_switch;
+
                         //Ручной захват
                         if(touch.getState() == false){
                             zs5 = CLOSE;

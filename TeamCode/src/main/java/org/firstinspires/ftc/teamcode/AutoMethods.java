@@ -36,6 +36,8 @@ import java.util.ArrayList;
 @Disabled
 @Autonomous
 public class AutoMethods extends LinearOpMode implements Inter{
+    int a = 1;
+    double d = 1.6564;
 
     public OpenCvCamera webcam;
     public boolean camError = false;
@@ -82,7 +84,7 @@ public class AutoMethods extends LinearOpMode implements Inter{
     //Инициализируем железо
     public void initC(OpMode op) {
         this.op = op;
-        m1 = op.hardwareMap.get(DcMotor.class, "m1");
+        m1 = op.hardwareMap.get(DcMotor.class, "leftRear");
         m2 = op.hardwareMap.get(DcMotor.class, "m2");
         m3 = op.hardwareMap.get(DcMotor.class, "m3");
         m4 = op.hardwareMap.get(DcMotor.class, "m4");
