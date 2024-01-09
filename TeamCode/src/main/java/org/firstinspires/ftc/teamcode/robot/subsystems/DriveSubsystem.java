@@ -27,7 +27,7 @@ public class DriveSubsystem extends SubsystemBase
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        imu.resetYaw();
+
 
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");

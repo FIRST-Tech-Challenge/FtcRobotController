@@ -43,10 +43,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ftcLib_DLC.TriggerAnalogButton;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawCloseCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawOpenCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.drivetrain.DriveFieldCentric;
+import org.firstinspires.ftc.teamcode.robot.commands.drivetrain.ResetIMU;
 import org.firstinspires.ftc.teamcode.robot.commands.extension.ExtensionGoToPosition;
 import org.firstinspires.ftc.teamcode.robot.commands.extension.ExtensionJoystick;
 import org.firstinspires.ftc.teamcode.robot.commands.plane_launcher.LaunchPlane;
@@ -66,6 +68,7 @@ import java.util.function.DoubleSupplier;
 
 public class TheBestTeleopKnownToMankind extends CommandOpMode
 {
+    DriveSubsystem driveSubsystem;
     @Override
     public void initialize()
     {
@@ -78,7 +81,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
         PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
-        DriveSubsystem driveSubsystem = new DriveSubsystem(hardwareMap);
+      driveSubsystem = new DriveSubsystem(hardwareMap);
       //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
         //driver
@@ -104,6 +107,8 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 new ClawCloseCommand(clawSubsystem));
         clawTrigger.whenPressed(
                 new ClawOpenCommand(clawSubsystem));
+        //reset heading
+        driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new ResetIMU(driveSubsystem));
 
         //deposit
         operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
@@ -125,11 +130,13 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
 
         // should be able to get interrupted by ExtensionGoToPosition
         //CommandScheduler.getInstance().schedule(true,extendoManualCommand);
+
     }
 
     @Override
     public void run()
     {
+        telemetry.addData("heading", driveSubsystem.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         super.run();
         telemetry.update();
     }
