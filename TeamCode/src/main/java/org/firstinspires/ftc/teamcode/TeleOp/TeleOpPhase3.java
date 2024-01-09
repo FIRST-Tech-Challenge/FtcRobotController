@@ -284,12 +284,12 @@ public class TeleOpPhase3 extends LinearOpMode {
         headingPID.setInputBounds(0, 360);
 
         // PID controller for lift
-        double liftP = 100;
-        double liftI = 0;
-        double liftD = 0;
+        double liftkP = 100;
+        double liftkI = 0;
+        double liftkD = 0;
 
-        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftP, liftI, liftD, 0));
-        liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftP, liftI, liftD, 0));
+        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+        liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
         liftMotor1.setTargetPositionTolerance(0);
         liftMotor2.setTargetPositionTolerance(0);
 
