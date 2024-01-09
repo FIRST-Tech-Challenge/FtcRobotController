@@ -169,11 +169,11 @@ public class redAndBlue25pts extends LinearOpMode {
                 .build();
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose2)
                 //.strafeLeft(11)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
@@ -182,11 +182,11 @@ public class redAndBlue25pts extends LinearOpMode {
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose2)
                 .back(25)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
@@ -194,11 +194,11 @@ public class redAndBlue25pts extends LinearOpMode {
                 .build();
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose2)
                 .lineToSplineHeading(new Pose2d(25,-25,Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
                     robot.intakeRight.setPower(0);
                     robot.intakeLeft.setPower(0);
                 })
