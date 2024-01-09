@@ -136,7 +136,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
     @Override
     public void run()
     {
-        telemetry.addData("heading", driveSubsystem.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        telemetry.addData("heading", driveSubsystem.heading);
         super.run();
         telemetry.update();
     }

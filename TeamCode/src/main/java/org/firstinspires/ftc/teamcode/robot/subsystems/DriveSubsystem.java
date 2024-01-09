@@ -17,7 +17,7 @@ public class DriveSubsystem extends SubsystemBase
     public final DcMotor leftFront;
     public final DcMotor leftRear;
     public final IMU imu;
-
+    public double heading=0;
     public DriveSubsystem(HardwareMap hardwareMap)
     {
         imu = hardwareMap.get(IMU.class, "imu");
@@ -56,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase
     }
 
     public void runFeildCentric(double y,double x,double rx, double topSpeed) {
-        double heading= imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        heading= imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         run(y,x,rx, heading, topSpeed);
     }
 
