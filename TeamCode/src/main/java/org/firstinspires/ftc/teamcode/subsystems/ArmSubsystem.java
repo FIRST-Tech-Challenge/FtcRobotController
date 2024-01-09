@@ -74,6 +74,12 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Converts angle units into position units usable by {@link DcMotor#setTargetPosition(int)}
+     * @param angle The angle to convert.
+     * @param angleUnit The unit of the angle.
+     * @return The angle converted into position units.
+     */
     public int positionFromAngle(double angle, AngleUnit angleUnit) {
         double ticksPerRevolution = armMotor.getMotorType().getTicksPerRev();
         double scale = angleUnit.toDegrees(angle)/360;

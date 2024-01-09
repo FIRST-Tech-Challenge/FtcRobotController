@@ -18,6 +18,10 @@ public class MoveWristCommand extends CommandBase {
         addRequirements(subsystem);
     }
 
+    public MoveWristCommand(WristSubsystem subsystem, DoubleSupplier directionSupplier) {
+        this(subsystem, directionSupplier, () -> 0);
+    }
+
     @Override
     public void execute() {
         subsystem.moveWrist(frontward.getAsDouble(), backward.getAsDouble());
