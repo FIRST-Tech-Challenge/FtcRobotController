@@ -11,12 +11,10 @@ import org.firstinspires.ftc.teamcode.AutoCode.Control.AcceleratedGain;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMMovmentPerformer;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMPointApproach;
 import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.Base.StateMTrajectory;
-import org.firstinspires.ftc.teamcode.AutoCode.Trajectory.SpikeFinish;
 import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.TrackingWheelIntegrator;
 import org.firstinspires.ftc.teamcode.drivebase.CenterStageDriveBase;
 
-import static org.firstinspires.ftc.teamcode.Globals.SpikeIsFinished;
 import static org.firstinspires.ftc.teamcode.Globals.X;
 import static org.firstinspires.ftc.teamcode.Globals.Y;
 import static org.firstinspires.ftc.teamcode.Globals.trackingWheelIntegrator;
@@ -74,9 +72,7 @@ public class BackStagePRIMARYAuto extends LinearOpMode {
         StateMTrajectory CenterSpike;
         StateMTrajectory LeftSpike;
         StateMTrajectory RightSpike;
-        StateMTrajectory CenterPlace;
-        StateMTrajectory LeftPlace;
-        StateMTrajectory RightPlace;
+
 //        StateMTrajectory FirstMovement;
 //        StateMTrajectory FirstMovement;
 //
@@ -171,14 +167,6 @@ public class BackStagePRIMARYAuto extends LinearOpMode {
                 telemetry.addData("wheelH", wheelH);
                 telemetry.update();
 
-                if (!SpikeIsFinished) {
-                    CenterSpike.followInteration();
-                }
-                if (SpikeIsFinished) {
-                    CenterPlace.followInteration();
-                }
-
-
             }
 
         }
@@ -224,7 +212,30 @@ public class BackStagePRIMARYAuto extends LinearOpMode {
                         .setHeadingThreshold(2)
                         .stopMotorsOnDone(true)
                         .build())
-                .addMovement((StateMMovmentPerformer) new SpikeFinish())
+
+                .addMovement(new StateMPointApproach.Builder()
+                        .setTargetPosition(92,-24)
+                        .setMaxPower(.35) // .4 - 6
+                        .setXyGain(.04)
+                        .setTargetHeading(-90)
+                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
+                        .setMaxTurnPower(.2)
+                        .setMovementThresh(1)
+                        .setHeadingThreshold(2)
+                        .stopMotorsOnDone(true)
+                        .build())
+
+                .addMovement(new StateMPointApproach.Builder() //First movment.
+                        .setTargetPosition(131,-24)
+                        .setMaxPower(.4) // .4 - 6
+                        .setXyGain(.04)
+                        .setTargetHeading(0)
+                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
+                        .setMaxTurnPower(.2)
+                        .setMovementThresh(2)
+                        .setHeadingThreshold(2)
+                        .stopMotorsOnDone(true)
+                        .build())
                 .build();
 
         LeftSpike = new StateMTrajectory.Builder()
@@ -280,87 +291,5 @@ public class BackStagePRIMARYAuto extends LinearOpMode {
                         .stopMotorsOnDone(true)
                         .build())
                 .build();
-
-        CenterPlace = new StateMTrajectory.Builder()
-
-                .addMovement(new StateMPointApproach.Builder()
-                        .setTargetPosition(92,-24)
-                        .setMaxPower(.35) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(-90)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(1)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-
-                .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(131,-24)
-                        .setMaxPower(.4) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(0)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(2)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-                .build();
-
-        LeftPlace = new StateMTrajectory.Builder()
-
-                .addMovement(new StateMPointApproach.Builder()
-                        .setTargetPosition(92,-30)
-                        .setMaxPower(.35) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(0)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(1)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-
-                .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(92,-24)
-                        .setMaxPower(.4) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(0)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(2)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-                .build();
-
-        RightPlace = new StateMTrajectory.Builder()
-
-                .addMovement(new StateMPointApproach.Builder()
-                        .setTargetPosition(92,-30)
-                        .setMaxPower(.35) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(0)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(1)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-
-                .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(92,-24)
-                        .setMaxPower(.4) // .4 - 6
-                        .setXyGain(.04)
-                        .setTargetHeading(0)
-                        .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
-                        .setMaxTurnPower(.2)
-                        .setMovementThresh(2)
-                        .setHeadingThreshold(2)
-                        .stopMotorsOnDone(true)
-                        .build())
-                .build();
-
     }
 }

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftStateM;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMBase;
 import org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine;
-import org.firstinspires.ftc.teamcode.drivebase.StateM.HangStateM2;
+import org.firstinspires.ftc.teamcode.drivebase.StateM.LiftDownStateM;
 
 
 @TeleOp
@@ -32,7 +32,7 @@ public class MecDrive extends LinearOpMode {
     
     // Other Motors
     private       DcMotorEx intake;
-    private       DcMotorEx Lift;
+    public static DcMotorEx Lift;
 
     public static DcMotorEx RHang;
     public static DcMotorEx LHang;
@@ -47,21 +47,14 @@ public class MecDrive extends LinearOpMode {
     public static Servo LLock;
     public static Servo Pivot;
     public static Servo SLift;
-    private       Servo RCLaw;
-    private       Servo LCLaw;
+//    private       Servo RCLaw;
+//    private       Servo LCLaw;
     private float Rservopos;
     private float Lservopos;
-    private       Servo Door;
-    public static Servo RLock;
-    public static Servo LLock;
-    private       Servo Pivot;
-    private       Servo SLift;
-    private       Servo RCLaw;
-    private       Servo LCLaw;
+    //    private       Servo RCLaw;
+//    private       Servo LCLaw;
 
     // Local Variables
-    private float  Rservopos;
-    private float  Lservopos;
     private double leftStickX;
     private double leftStickY;
     private double rightStickX;
@@ -101,9 +94,9 @@ public class MecDrive extends LinearOpMode {
         LLock =         (Servo)         hardwareMap.get(Servo.class, "LLock");
         Pivot =         (Servo)         hardwareMap.get(Servo.class, "Pivot");
         SLift =         (Servo)         hardwareMap.get(Servo.class, "SLift");
-        RCLaw =         (Servo)         hardwareMap.get(Servo.class, "RCLaw");
-        LCLaw =         (Servo)         hardwareMap.get(Servo.class, "LCLaw");
-        RHook =         (Servo)         hardwareMap.get(Servo.class, "RHook");
+//        RCLaw =         (Servo)         hardwareMap.get(Servo.class, "RCLaw");
+//        LCLaw =         (Servo)         hardwareMap.get(Servo.class, "LCLaw");
+        RHook =         (Servo)         hardwareMap.get(Servo.class,  "RHook");
         LHook =         (Servo)         hardwareMap.get(Servo.class, "LHook");
 
         // Sysinit, don't touch
@@ -135,19 +128,16 @@ public class MecDrive extends LinearOpMode {
         waitForStart();
 
 
-        if (RESETME) {
-            HSM.reset();
-        }
-        if (RESETME) {
-            LSM.reset();
-        }
-        if (RESETME) {
-            LDSM.reset();
-        }
-
 
 
         while (opModeIsActive()) {
+
+            if (RESETME) {
+                HSM.reset();
+                LSM.reset();
+                LDSM.reset();
+                RESETME = false;
+            }
 
             if (gamepad2.dpad_up) {
                 HSM.runIteration();
@@ -180,6 +170,7 @@ public class MecDrive extends LinearOpMode {
         if (gamepad1.a) {
             intakeLift.setPosition(.5);
             intake.setPower(1);
+            Door.setPosition(.85);
         }
 
         if (gamepad1.dpad_left) {
@@ -225,7 +216,7 @@ public class MecDrive extends LinearOpMode {
 //          //  Door.setPosition(.45);
 //        }
         if (gamepad2.x) {
-            Door.setPosition(.93);
+            Door.setPosition(.94);
         }
         if (gamepad2.y) {
             Door.setPosition(.95);
@@ -289,29 +280,29 @@ public class MecDrive extends LinearOpMode {
         // SLift Placing posistion .15
         // SLift Store Posistion .75
 
-        LiftCounts = Lift.getCurrentPosition();
+//        LiftCounts = Lift.getCurrentPosition();
+//
+//        telemetry.addData("lift counts:", LiftCounts);
 
-        telemetry.addData("lift counts:", LiftCounts);
-
-        // Gamepad Mappings
-        if (gamepad1.a)                     { intakeLift.setPosition(.5); intake.setPower(1); }
-        if (gamepad1.dpad_left)             { speedFactor = (float) .1; }
-        if (gamepad1.dpad_right)            { speedFactor = (float) 1; }
-        if (gamepad1.y)                     { intakeLift.setPosition(.3); }
-        if (gamepad1.b)                     { intake.setPower(0); }
-        if (gamepad2.right_stick_button)    { LLock.setPosition(.0); RLock.setPosition(.1); }
-        if (gamepad2.a)                     { Lift.setTargetPosition(-1400); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); Door.setPosition(.3); }
-        if (gamepad2.b)                     { Lift.setTargetPosition(-10); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); }
-        if (gamepad2.x)                     { Door.setPosition(.23); }
-        if (gamepad2.y)                     { Door.setPosition(.4); }
-        if (gamepad2.dpad_down)             { SLift.setPosition(.81); Pivot.setPosition(.7); Door.setPosition(.45); }
-        if (gamepad2.dpad_up)               { SLift.setPosition(.15); Pivot.setPosition(1); }
-        if (gamepad2.dpad_right)            { SLift.setPosition(.5); }
-        if (gamepad2.left_bumper)           { RHook.setPosition(.75); LHook.setPosition(.25); }
-        if (gamepad2.left_trigger > .5)     { RHook.setPosition(0); LHook.setPosition(1); LHang.setPower(1); RHang.setPower(1); } else { LHang.setPower(0); RHang.setPower(0); }
-        if (gamepad2.dpad_left)             { Pivot.setPosition(.8); Door.setPosition(0); }
-        if (gamepad1.left_trigger > .5)     { RCLaw.setPosition(1); LCLaw.setPosition(0); }
-        if (gamepad1.right_trigger > .5)    { RCLaw.setPosition(.65); LCLaw.setPosition(.35); }
+//        // Gamepad Mappings
+//        if (gamepad1.a)                     { intakeLift.setPosition(.5); intake.setPower(1); }
+//        if (gamepad1.dpad_left)             { speedFactor = (float) .1; }
+//        if (gamepad1.dpad_right)            { speedFactor = (float) 1; }
+//        if (gamepad1.y)                     { intakeLift.setPosition(.3); }
+//        if (gamepad1.b)                     { intake.setPower(0); }
+//        if (gamepad2.right_stick_button)    { LLock.setPosition(.0); RLock.setPosition(.1); }
+//        if (gamepad2.a)                     { Lift.setTargetPosition(-1400); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); Door.setPosition(.3); }
+//        if (gamepad2.b)                     { Lift.setTargetPosition(-10); Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION); Lift.setPower(1); }
+//        if (gamepad2.x)                     { Door.setPosition(.23); }
+//        if (gamepad2.y)                     { Door.setPosition(.4); }
+//        if (gamepad2.dpad_down)             { SLift.setPosition(.81); Pivot.setPosition(.7); Door.setPosition(.45); }
+//        if (gamepad2.dpad_up)               { SLift.setPosition(.15); Pivot.setPosition(1); }
+//        if (gamepad2.dpad_right)            { SLift.setPosition(.5); }
+//        if (gamepad2.left_bumper)           { RHook.setPosition(.75); LHook.setPosition(.25); }
+//        if (gamepad2.left_trigger > .5)     { RHook.setPosition(0); LHook.setPosition(1); LHang.setPower(1); RHang.setPower(1); } else { LHang.setPower(0); RHang.setPower(0); }
+//        if (gamepad2.dpad_left)             { Pivot.setPosition(.8); Door.setPosition(0); }
+//        if (gamepad1.left_trigger > .5)     { RCLaw.setPosition(1); LCLaw.setPosition(0); }
+//        if (gamepad1.right_trigger > .5)    { RCLaw.setPosition(.65); LCLaw.setPosition(.35); }
 
         // Telemetry
         telemetry.addData("lift counts:", Lift.getCurrentPosition());
