@@ -50,16 +50,18 @@ public class PredefinedAutomation {
                         new RunCommand(
                                 () -> {
                                     dbp.debug("Moving robot...", true);
-                                    driveSubsystem.moveRobot(0.5, 0, 0);
+                                    driveSubsystem.moveRobotByDistance(0.5, 0, 0, 12);
                                 },
                                 driveSubsystem
-                        ).withTimeout(2000).whenFinished(driveSubsystem::resetDriveMotors)
+                        ).withTimeout(2000).whenFinished(driveSubsystem::resetDriveMotors),
+                                /*
                                 .andThen(
                                         new RunCommand(
                                                 () -> driveSubsystem.moveRobot(0, 0.5, 0),
                                                 driveSubsystem
                                         ).withTimeout(2000).whenFinished(driveSubsystem::resetDriveMotors)
                                 ),
+                                 */
                         new RunCommand(
                                 () -> {
                                     dbp.debug("Moving wrist...", true);

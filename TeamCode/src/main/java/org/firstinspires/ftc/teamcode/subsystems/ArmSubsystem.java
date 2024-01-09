@@ -13,6 +13,8 @@ import java.util.Locale;
 public class ArmSubsystem extends SubsystemBase {
     private final DcMotor armMotor;
     private final int POSITION_MOVE_POWER = 1;
+    private int armPosition = 0;
+    private int targetPosition = 0;
     private final int ARM_ANGLE_OFFSET = 0;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("ArmSubsystem");
@@ -59,13 +61,41 @@ public class ArmSubsystem extends SubsystemBase {
         armMotor.setPower(power);
     }
 
-    /**
-     * @param position The position that the arm will move towards.
-     */
-    public void positionMoveArm(final int position) {
-        armMotor.setTargetPosition(position - ARM_ANGLE_OFFSET);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(2); //POSITION_MOVE_POWER);
+    public void positionMoveArm() {
+        armPosition = armMotor.getCurrentPosition();
+
+        if (targetPosition < -360) return;
+
+        if (armPosition >= targetPosition) {
+            armMotor.setPower(0);
+            targetPosition = -999;
+        }
+
+        final int DIRECTION = (armPosition < targetPosition) ? 1 : -1;
+
+        armMotor.setPower(2 * DIRECTION); //POSITION_MOVE_POWER);
+
+        if (armMotor.isBusy()) {
+            dbp.debug("Waiting for motor to move to position", true);
+            dbp.debug(String.format(Locale.ENGLISH,
+                    "Arm position: %d", armMotor.getCurrentPosition()));
+        }
+    }
+
+    public void positionMoveArm(final int _position) {
+        armPosition = armMotor.getCurrentPosition();
+
+        targetPosition = _position;
+
+        if (targetPosition < -360) return;
+
+        if (armPosition >= targetPosition) {
+            targetPosition = -999;
+        }
+
+        final int DIRECTION = (armPosition < targetPosition) ? 1 : -1;
+
+        armMotor.setPower(2 * DIRECTION); //POSITION_MOVE_POWER);
 
         if (armMotor.isBusy()) {
             dbp.debug("Waiting for motor to move to position", true);
