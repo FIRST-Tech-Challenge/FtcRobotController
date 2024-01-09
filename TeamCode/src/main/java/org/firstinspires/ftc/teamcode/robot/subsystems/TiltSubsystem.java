@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -26,6 +27,9 @@ public class TiltSubsystem extends SubsystemBase
 
     private static double TOLERANCE = 10;
 
+    private static double VERTICAL_ENCODER_VALUE = 300;
+    // vertical position of tilt when encoders are reset in the starting position
+
     private PIDController pid = new PIDController(KP, KI, kD);
 
     private DcMotorEx tilt_motor;
@@ -36,6 +40,7 @@ public class TiltSubsystem extends SubsystemBase
 
         tilt_motor =  hMap.get(DcMotorEx.class, "tilt");
 
+        tilt_motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
@@ -55,13 +60,15 @@ public class TiltSubsystem extends SubsystemBase
     public void periodic() {
         double output = 0;
         int currentPos = tilt_motor.getCurrentPosition();
-        if(abs(currentPos-targetPosition)>TOLERANCE)
+        if(!atTargetPosition())
         {
             double pid = this.pid.calculate(currentPos, targetPosition);
-            double ff_result = KF * Math.cos(Math.toRadians(currentPos/TICKS_IN_DEGREE));
-            output = pid + ff_result;
+            double ff = KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE));
+            output = pid + ff;
         }
         tilt_motor.setVelocity(output);
+        telemetry.addData("ff: ", KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE)));
+        telemetry.addData("pid: ", pid.calculate(currentPos, targetPosition));
         callTelemetry();
     }
 

@@ -56,7 +56,7 @@ public class ExtensionSubsystem extends SubsystemBase
     public void goToPosition(int targetPosition)
     {
         pidf.setSetPoint(targetPosition);
-        if(!pidf.atSetPoint())extension.set(pidf.calculate(extension.getCurrentPosition(), targetPosition));
+        if(!atTargetPosition())extension.set(pidf.calculate(extension.getCurrentPosition(), targetPosition));
         else extension.set(0);
     }
 
