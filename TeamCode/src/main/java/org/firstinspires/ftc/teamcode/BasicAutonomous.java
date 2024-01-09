@@ -91,6 +91,7 @@ public class BasicAutonomous extends OpMode
 				.setCameraResolution(new Size(640, 480))
 				.setCamera(BuiltinCameraDirection.BACK)
 				.addProcessor(cameraPipeline)
+				.enableLiveView(true)
 				.build();
 
 		position = cameraPipeline.getPropPosition();
