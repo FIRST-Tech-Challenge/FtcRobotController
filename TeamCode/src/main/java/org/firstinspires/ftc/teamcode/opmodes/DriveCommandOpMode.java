@@ -83,12 +83,12 @@ public class DriveCommandOpMode extends CommandOpMode {
                     return 1d/quantity;*/
                     boolean pressed = armerController.getButton(GamepadKeys.Button.A)
                             || armerController.getButton(GamepadKeys.Button.X);
-                    return pressed ? 0 : .75d;
+                    return pressed ? 0 : 1;
                 },
                 () -> {
                     boolean pressed = armerController.getButton(GamepadKeys.Button.B)
                             || armerController.getButton(GamepadKeys.Button.Y);
-                    return pressed ? 0 : .75d;
+                    return pressed ? 0 : 1;
                 });
 
         // DONE: autonomous macro for arm positioning
