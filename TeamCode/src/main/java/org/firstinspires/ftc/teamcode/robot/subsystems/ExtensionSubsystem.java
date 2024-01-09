@@ -13,9 +13,13 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @Config
 public class ExtensionSubsystem extends SubsystemBase
 {
+    Telemetry telemetry;
+
     public static final int UNEXTENDED_POSITION = 0;
     public static final int BACKBOARD_POSITION_INCREMENT = 20;
 
@@ -29,7 +33,7 @@ public class ExtensionSubsystem extends SubsystemBase
     private static Motor extension_bottom;
     private static MotorGroup extension;
 
-    public ExtensionSubsystem(HardwareMap hMap)
+    public ExtensionSubsystem(HardwareMap hMap, Telemetry telemetry)
     {
         pidf = new PIDFController(kP, kI, kD, kF);
         pidf.setTolerance(TOLERANCE);
@@ -37,7 +41,7 @@ public class ExtensionSubsystem extends SubsystemBase
         extension_bottom =  new Motor(hMap, "extension_motor_2");
         extension = new MotorGroup(extension_top, extension_bottom);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        this.telemetry = telemetry;
 
         extension.resetEncoder(); // RESET_ENCODERS
         extension.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -69,5 +73,16 @@ public class ExtensionSubsystem extends SubsystemBase
     public void manualControl(double joystick)
     {
         if(extension.getCurrentPosition()>UNEXTENDED_POSITION)extension.set(joystick);
+    }
+
+    public void periodic()
+    {
+       callTelemetry();
+    }
+
+    public void callTelemetry()
+    {
+        telemetry.addData("Extension Position", extension.getCurrentPosition());
+        telemetry.addData("Extension Target Position", pidf.getSetPoint());
     }
 }

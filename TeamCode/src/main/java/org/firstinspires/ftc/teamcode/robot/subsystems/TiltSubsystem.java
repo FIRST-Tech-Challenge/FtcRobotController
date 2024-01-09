@@ -8,31 +8,33 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @Config
 public class TiltSubsystem extends SubsystemBase
 {
+    Telemetry telemetry;
     private static int targetPosition = 0;
 
-    private static double kS = 0.0, kCos = 0.0, kV = 0.0, kA = 0.0;
-    private static double velocity = 2;
-    private static double acceleration = 3;
+    private static double KP = 0.0, KI = 0.0, kD = 0.0, KF = 0.0;
+    private static double TICKS_IN_DEGREE = 700/180.0;
 
     private static double TOLERANCE = 10;
 
-    private ArmFeedforward feedforward;
+    private PIDController pid = new PIDController(KP, KI, kD);
 
     private DcMotorEx tilt_motor;
 
-    public TiltSubsystem(HardwareMap hMap)
+    public TiltSubsystem(HardwareMap hMap, Telemetry telemetry)
     {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        this.telemetry = telemetry;
 
         tilt_motor =  hMap.get(DcMotorEx.class, "tilt");
-        ArmFeedforward feedforward = new ArmFeedforward(kS, kCos, kV, kA);
 
         tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
@@ -52,8 +54,20 @@ public class TiltSubsystem extends SubsystemBase
     //always chases target position
     public void periodic() {
         double output = 0;
-        if(abs(tilt_motor.getCurrentPosition()-targetPosition)>TOLERANCE)
-            output = feedforward.calculate(targetPosition, 2,3);
+        int currentPos = tilt_motor.getCurrentPosition();
+        if(abs(currentPos-targetPosition)>TOLERANCE)
+        {
+            double pid = this.pid.calculate(currentPos, targetPosition);
+            double ff_result = KF * Math.cos(Math.toRadians(currentPos/TICKS_IN_DEGREE));
+            output = pid + ff_result;
+        }
         tilt_motor.setVelocity(output);
+        callTelemetry();
+    }
+
+    public void callTelemetry()
+    {
+        telemetry.addData("Tilt Position: ", tilt_motor.getCurrentPosition());
+        telemetry.addData("Tilt Target: ", targetPosition);
     }
 }

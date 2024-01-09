@@ -12,6 +12,7 @@ public class TriggerAnalogButton extends Button {
 
     private double threshold;
     private GamepadEx gamepad;
+    private GamepadKeys.Trigger trigger;
     /**
      * @param gamepad
      * @param trigger The enum responsible for what trigger to fetch
@@ -20,9 +21,11 @@ public class TriggerAnalogButton extends Button {
     public TriggerAnalogButton (GamepadEx gamepad, GamepadKeys.Trigger trigger, double threshold)
     {
         this.threshold = threshold;
+        this.trigger=trigger;
+        this.gamepad=gamepad;
     }
 
     public boolean get() {
-        return (gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>threshold);
+        return (gamepad.getTrigger(trigger)>threshold);
     }
 }
