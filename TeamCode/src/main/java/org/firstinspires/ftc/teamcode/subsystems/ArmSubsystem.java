@@ -66,7 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
         armMotor.setTargetPosition(position - ARM_ANGLE_OFFSET);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(2); //POSITION_MOVE_POWER);
-        while (armMotor.isBusy()) {
+
+        if (armMotor.isBusy()) {
             dbp.debug("Waiting for motor to move to position", true);
             dbp.debug(String.format(Locale.ENGLISH,
                     "Arm position: %d", armMotor.getCurrentPosition()));
