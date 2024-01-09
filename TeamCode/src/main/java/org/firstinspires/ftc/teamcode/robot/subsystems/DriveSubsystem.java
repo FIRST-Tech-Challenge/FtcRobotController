@@ -38,8 +38,8 @@ public class DriveSubsystem extends SubsystemBase
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,12 +62,12 @@ public class DriveSubsystem extends SubsystemBase
 
     private void run(double y,double x,double rx, double botHeading, double topSpeed)
     {
-        y = -y; // Remember, this is reversed!
-        x = -x * 1.1; // Counteract imperfect strafing
+
+        x = x * 1.1; // Counteract imperfect strafing
 
         y=y*y*y;
         x=x*x*x;
-        rx=-rx*rx*rx;
+        rx=rx*rx*rx;
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
