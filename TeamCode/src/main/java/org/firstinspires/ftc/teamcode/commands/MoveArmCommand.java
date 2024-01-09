@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
-import static org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem.ArmPositions.*;
+import static org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem.ArmPosition.*;
 
 public class MoveArmCommand extends CommandBase {
 
