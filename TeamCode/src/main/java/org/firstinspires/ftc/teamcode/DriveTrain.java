@@ -3,10 +3,18 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DriveTrain {
 
@@ -22,7 +30,17 @@ public class DriveTrain {
     private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
     private ElapsedTime runtime = new ElapsedTime();
 
-    boolean directionToggle = false;
+    private boolean directionToggle = false;
+    private DistanceSensor BackWDRight;
+    private DistanceSensor BackWDLeft;
+    private double BackWDValueRight;
+    private double BackWDValueLeft;
+
+    private double RampDownStart = 16;
+    private double RampDownEnd = 8;
+    private double RampDownSpeed = 0.2;
+    private double slope = (1 - RampDownSpeed) / (RampDownStart - RampDownEnd);
+    private double intercept = 1 - slope * RampDownStart ;
 
     // All subsystems should have a hardware function that labels all of the hardware required of it.
     public DriveTrain(HardwareMap hwMap) {
@@ -38,18 +56,48 @@ public class DriveTrain {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        BackWDRight = hwMap.get(DistanceSensor.class, "sensor_distance_BackWDRight");
+        BackWDLeft = hwMap.get(DistanceSensor.class, "sensor_distance_BackWDLeft");
+
     }
+
 
     // This function needs an axial, lateral, and yaw input. It uses this input to drive the drive train motors.
     // The last two variables are for direction switching.
     public void drive(double axial, double lateral, double yaw, boolean directionButton, ElapsedTime time) {
 
+        BackWDValueRight = BackWDRight.getDistance(DistanceUnit.INCH);
+        BackWDValueLeft = BackWDLeft.getDistance(DistanceUnit.INCH);
+
+//        double speedBackDWRight = BackWDRight.getDistance(DistanceUnit.INCH) * 0.05 - 0.6;
+//        double speedBackDWLeft = BackWDLeft.getDistance(DistanceUnit.INCH) * 0.05 - 0.6;
+
+        double effectiveDistance = BackWDValueLeft < BackWDValueRight ? BackWDValueLeft : BackWDValueRight;
+        double DistenceEquationValue = slope * effectiveDistance + intercept;
+
+
+        double sensitivity = 0.5;
         double leftFrontPower = 0;
         double rightFrontPower = 0;
         double leftBackPower = 0;
         double rightBackPower = 0;
 
         double max;
+
+        if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
+            yaw *= DistenceEquationValue;
+            if (axial < 0) {
+                axial *= DistenceEquationValue;
+
+            }
+        }
+        if (effectiveDistance < RampDownEnd){
+            yaw *= RampDownSpeed;
+            if ( axial < 0) {
+                axial *= RampDownSpeed;
+            }
+        }
 
         // This code calculates the power to give to each motor.
         if (Math.abs(axial) > 0.05 || Math.abs(lateral) > 0.05 || Math.abs(yaw) > 0.05) {
@@ -65,12 +113,16 @@ public class DriveTrain {
         max = Math.max(max, Math.abs(rightBackPower));
 
         if (max > 1.0) {
-            leftFrontPower /= max;
+            leftFrontPower /= max; // leftFrontPower = leftFrontPower / max;
             rightFrontPower /= max;
             leftBackPower /= max;
             rightBackPower /= max;
         }
 
+        leftFrontPower *= sensitivity;
+        leftBackPower *= sensitivity;
+        rightFrontPower *= sensitivity;
+        rightBackPower *= sensitivity;
         // The next few lines make the direction boolean switch when the button is pressed.
         // It includes a timer to avoid mistakes.
         if (time.time() > .25 && !directionToggle && directionButton) {
@@ -82,20 +134,25 @@ public class DriveTrain {
             time.reset();
         }
 
+        //  a, b
+        // a < b ? a : b;
         // The next eleven lines gives the calculated power to each motor.
+
+
+
         if (directionToggle) {
-            leftFrontDrive.setPower(leftFrontPower/2);
-            rightFrontDrive.setPower(rightFrontPower/2);
-            leftBackDrive.setPower(leftBackPower/2);
-            rightBackDrive.setPower(rightBackPower/2);
-        } else {
-            leftFrontDrive.setPower(-leftFrontPower/2);
-            rightFrontDrive.setPower(-rightFrontPower/2);
-            leftBackDrive.setPower(-leftBackPower/2);
-            rightBackDrive.setPower(-rightBackPower/2);
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
         }
 
-
+        else {
+            leftFrontDrive.setPower(-leftFrontPower);
+            rightFrontDrive.setPower(-rightFrontPower);
+            leftBackDrive.setPower(-leftBackPower);
+            rightBackDrive.setPower(-rightBackPower);
+        }
     }
 
     public void moveForward(int howMuch, double speed) {
@@ -430,6 +487,15 @@ public class DriveTrain {
 
         }
     }
+    public double getBackWDValueRight(){
+        return BackWDValueRight;
+    }
+    public double getBackWDValueLeft(){
+        return BackWDValueLeft;
+    }
+    public boolean getDriveDirection() {
+        return directionToggle;
+    }
 
     public void rightPos() {
         moveForward(24, 0.5);
@@ -452,7 +518,7 @@ public class DriveTrain {
         Wait(.5);
     }
 
-   public void Wait(double seconds) {
+    public void Wait(double seconds) {
         runtime.reset();
         while (runtime.time() < seconds) {
             // this statement is supposed to be empty.
