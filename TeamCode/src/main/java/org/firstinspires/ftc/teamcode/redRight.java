@@ -221,7 +221,7 @@ public class redRight extends LinearOpMode {
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose2)
                 .back(25)
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
+                .UNSTABLE_addTemporalMarkerOffset(0.9, () -> { //outtake
                     robot.intakeRight.setPower(1);
                     robot.intakeLeft.setPower(1);
                 })
