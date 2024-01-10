@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,14 +21,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class TiltSubsystem extends SubsystemBase
 {
     Telemetry telemetry;
-    private double targetAngle = 0;
+    private double targetAngle = -90;
     //target angle from vertical with positive angles being towards the front of the robot (deposit) and negative towards the back (intake)
 
-    private static double KP = 0.0, KI = 0.0, kD = 0.0;
-    private static double KF = -0.2;
+    private static double KP = 0.010, KI = 0.0, kD = 0.003;
+    private static double KF = 0.3;
     private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
     private static double TOLERANCE = 0;
-    private static double VERTICAL_ENCODER_VALUE = -555;
+    private static int VERTICAL_ENCODER_VALUE = 675;
     // vertical position of tilt when encoders are reset in the starting position
 
     private PIDController pid = new PIDController(KP, KI, kD);
@@ -43,11 +44,13 @@ public class TiltSubsystem extends SubsystemBase
 
         tilt_motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        tilt_motor.setDirection(DcMotorSimple.Direction.REVERSE);
         tilt_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void init(){tilt_motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        tilt_motor.setDirection(DcMotorSimple.Direction.REVERSE);
     tilt_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);}
     public void setTargetAngle(double targetAngle)
     {
@@ -63,9 +66,13 @@ public class TiltSubsystem extends SubsystemBase
     {
            return (int) (angle * TICKS_IN_DEGREE + VERTICAL_ENCODER_VALUE);
     }
-    private double toAngle(int encoderValue)
+    private double toAngle(int encoderValue) // angle where vertical is 0
     {
         return (encoderValue - VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE;
+    }
+    private double toAngleFeedforward(int encoderValue) // angle where 0 is the lift starting position
+    {
+        return (encoderValue/TICKS_IN_DEGREE);
     }
     @Override
     //always chases target position
@@ -73,14 +80,14 @@ public class TiltSubsystem extends SubsystemBase
         double output = 0;
         int currentPos = tilt_motor.getCurrentPosition();
         // current position relative to the arm starting position
-        double currentAngle = toAngle(currentPos);
+        double currentAngle = toAngleFeedforward(currentPos);
         // current angle relative to the vertical
 
         int targetPosition = toEncoder(targetAngle);
         // target position relative to the arm starting position
         if(!atTargetPosition())
         {
-            double pid = this.pid.calculate(currentPos, targetPosition);
+            double pid = this.pid.calculate(currentPos, targetPosition)*0.5;
             //double ff = KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE) * ExtensionSubsystem.ARM_LENGTH+ExtensionSubsystem.UNEXTENDED_POSITION+ExtensionSubsystem.getCurrentPosition());
             double ff = KF * Math.cos(Math.toRadians(currentAngle));
             output = pid + ff;
@@ -89,6 +96,7 @@ public class TiltSubsystem extends SubsystemBase
             telemetry.addData("pid: ", pid);
             telemetry.addData("Arm Angle: ", currentAngle);
             telemetry.addData("- output: ", output);
+            telemetry.addData("radians", Math.toRadians(currentAngle));
         }
         tilt_motor.setPower(output);
         callTelemetry();
