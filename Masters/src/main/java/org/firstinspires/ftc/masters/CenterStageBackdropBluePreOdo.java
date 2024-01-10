@@ -14,7 +14,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
-@Config
 @Autonomous(name = "Center Stage Backdrop Blue Pre Odo", group = "competition")
 public class CenterStageBackdropBluePreOdo extends LinearOpMode {
 
@@ -72,7 +71,7 @@ public class CenterStageBackdropBluePreOdo extends LinearOpMode {
 
         }
 
-        robot.forward(24.5674, .65);
+//        robot.forward(24.5674, .65);
 
     }
 }

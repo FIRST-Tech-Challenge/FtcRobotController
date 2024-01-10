@@ -126,8 +126,16 @@ public class Robot {
 
         while (this.opMode.opModeIsActive() &&
                 (leftFrontMotor.isBusy() && leftRearMotor.isBusy() && rightFrontMotor.isBusy() && rightRearMotor.isBusy())) {
-
             // Display it for the driver.
+            telemetry.addData("frontLeftPosition", frontLeftPosition);
+            telemetry.addData("frontLeftTarget", frontLeftTarget);
+            telemetry.addData("frontRightPosition", frontRightPosition);
+            telemetry.addData("frontRightTarget", frontRightTarget);
+            telemetry.addData("backLeftPosition", backLeftPosition);
+            telemetry.addData("backLeftTarget", backLeftTarget);
+            telemetry.addData("backRightPosition", backRightPosition);
+            telemetry.addData("backRightTarget", backRightTarget);
+            telemetry.update();
 
         }
         stopMotors();
