@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.TiltSubsystem;
 public class TiltGoToPosition extends CommandBase
 {
     public static final int TELEOP_INTAKE = -70; // floor intake
-    public static final int TELEOP_DEPOSIT = 30; // 30 degree deposit
+    public static final int TELEOP_DEPOSIT = 23; // 30 degree deposit
     public static final int AUTO_DEPOSIT = 0; // kooky-deposit angle
     public static final int AUTO_STACK_INTAKE1 = 0; // top two pixels off stacks
     public static final int AUTO_STACK_INTAKE2 = 0; // 3rd and 4th pixels off stacks
@@ -22,7 +22,7 @@ public class TiltGoToPosition extends CommandBase
     {
         tiltSubsystem = subsystem;
         this.targetAngle = targetAngle;
-        addRequirements(tiltSubsystem);
+       // addRequirements(tiltSubsystem);
     }
 
     @Override
