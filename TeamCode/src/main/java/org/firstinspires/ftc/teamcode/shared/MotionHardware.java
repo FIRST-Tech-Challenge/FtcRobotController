@@ -497,6 +497,7 @@ public class MotionHardware {
     public void moveArm(double speed, double distance, double timeoutS) {
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int newArmTarget = armMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
 

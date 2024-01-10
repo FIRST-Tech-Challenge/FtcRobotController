@@ -19,7 +19,7 @@ import java.util.List;
 
 public class VisionHardware {
 
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
     private LinearOpMode myOpMode = null;
 
     private ALLIANCE_POS alliancePos = null;
