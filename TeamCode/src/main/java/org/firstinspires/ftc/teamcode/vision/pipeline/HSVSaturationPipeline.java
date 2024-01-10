@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision.pipeline;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -8,7 +10,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class HSVSaturationPipeline extends OpenCvPipeline {
+public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProcessor {
     public Scalar nonSelectedColor = new Scalar(0, 255, 0); // Green
     public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
 
@@ -166,4 +168,13 @@ public class HSVSaturationPipeline extends OpenCvPipeline {
         }
     }
 
+    @Override
+    public void init(int width, int height, CameraCalibration calibration) {
+
+    }
+
+    @Override
+    public Object processFrame(Mat frame, long captureTimeNanos) {
+        return(processFrame( frame ));
+    }
 }
