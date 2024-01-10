@@ -70,9 +70,6 @@ public class DriveTrain {
         BackWDValueRight = BackWDRight.getDistance(DistanceUnit.INCH);
         BackWDValueLeft = BackWDLeft.getDistance(DistanceUnit.INCH);
 
-//        double speedBackDWRight = BackWDRight.getDistance(DistanceUnit.INCH) * 0.05 - 0.6;
-//        double speedBackDWLeft = BackWDLeft.getDistance(DistanceUnit.INCH) * 0.05 - 0.6;
-
         double effectiveDistance = BackWDValueLeft < BackWDValueRight ? BackWDValueLeft : BackWDValueRight;
         double DistenceEquationValue = slope * effectiveDistance + intercept;
 
@@ -134,12 +131,7 @@ public class DriveTrain {
             time.reset();
         }
 
-        //  a, b
-        // a < b ? a : b;
         // The next eleven lines gives the calculated power to each motor.
-
-
-
         if (directionToggle) {
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
