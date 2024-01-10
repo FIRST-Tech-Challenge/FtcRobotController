@@ -160,6 +160,9 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
                 // Look to see if we have size info on this tag.
                 if (detection.metadata != null) {
                     //  Check to see if we want to track towards this tag.
+
+                    // **DESIRED TAG IS DETERMINED BY FIRST PIXEL CODE**
+
                     if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                         // Yes, we want to use this tag.
                         targetFound = true;
