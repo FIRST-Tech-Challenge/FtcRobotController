@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,12 +22,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Blue Pre Odo", group = "competition")
+@Autonomous(name = "Center Stage Backdrop Blue Pre Odo April", group = "competition")
 public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
 
     Robot robot;
 
     private OpenCvCamera frontWebcam;
+
+    NanoClock clock = NanoClock.system();
 
     OpenCvCamera camera;
 
@@ -114,65 +117,67 @@ public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
         dashboard.sendTelemetryPacket(packet);
 
         waitForStart();
-
-        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
-
-        // If there's been a new frame...
-        if(detections != null)
-        {
-            telemetry.addData("FPS", camera.getFps());
-            telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
-            telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
-
-            // If we don't see any tags
-            if(detections.size() == 0)
-            {
-                numFramesWithoutDetection++;
-
-                // If we haven't seen a tag for a few frames, lower the decimation
-                // so we can hopefully pick one up if we're e.g. far back
-                if(numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION)
-                {
-                    aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
-                }
-            }
-            // We do see tags!
-            else
-            {
-                numFramesWithoutDetection = 0;
-
-                // If the target is within 1 meter, turn on high decimation to
-                // increase the frame rate
-                if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
-                {
-                    aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
-                }
-
-                for(AprilTagDetection detection : detections)
-                {
-                    Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-
-                    telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-                    telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-                    telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-                    telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-                    telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
-                    telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
-                    telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
-                }
-            }
-
+        camera.stopStreaming();
+        double startTime = clock.seconds();
+        while (clock.seconds() < startTime + 10 && opModeIsActive()) {
+            telemetry.addData("cv detection", myPipeline.position);
             telemetry.update();
         }
+        frontWebcam.stopStreaming();
 
-        long startTime = new Date().getTime();
-        long time = 0;
+        camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
 
-        while (time < 50 && opModeIsActive()) {
+        startTime = clock.seconds();
+        while (clock.seconds() < startTime + 5 && opModeIsActive()) {
+            ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
+            // If there's been a new frame...
+            if(detections != null)
+            {
+                telemetry.addData("FPS", camera.getFps());
+                telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
+                telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
+
+                // If we don't see any tags
+                if(detections.size() == 0)
+                {
+                    numFramesWithoutDetection++;
+
+                    // If we haven't seen a tag for a few frames, lower the decimation
+                    // so we can hopefully pick one up if we're e.g. far back
+                    if(numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION)
+                    {
+                        aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
+                    }
+                }
+                // We do see tags!
+                else
+                {
+                    numFramesWithoutDetection = 0;
+
+                    // If the target is within 1 meter, turn on high decimation to
+                    // increase the frame rate
+                    if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
+                    {
+                        aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
+                    }
+
+                    for(AprilTagDetection detection : detections)
+                    {
+                        Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+
+                        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
+                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
+                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
+                    }
+                }
+
+                telemetry.update();
+            }
         }
-
-        //robot.forward(24.5674, .65);
-
     }
 }
