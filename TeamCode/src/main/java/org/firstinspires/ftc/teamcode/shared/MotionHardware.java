@@ -84,10 +84,10 @@ public class MotionHardware {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         //armMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        //frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -112,7 +112,7 @@ public class MotionHardware {
 
         moveArm(.5, 5, 5);
 
-        wrist.setPosition(WRIST_LOAD_PIXEL);
+        //wrist.setPosition(WRIST_LOAD_PIXEL);
 
         leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value as needed
@@ -123,7 +123,7 @@ public class MotionHardware {
         leftGripper.setPosition(LEFT_GRIPPER_CLOSE); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_CLOSE); // Adjust the position value as needed
         sleep(1000);
-        wrist.setPosition(WRIST_DROP_PIXEL);
+        //wrist.setPosition(WRIST_DROP_PIXEL);
 
 
 
@@ -502,9 +502,7 @@ public class MotionHardware {
 
         armMotor.setTargetPosition(newArmTarget);
 
-
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
         runtime.reset();
         armMotor.setPower(Math.abs(speed));
@@ -515,6 +513,47 @@ public class MotionHardware {
 
             // Display it for the driver.
             myOpMode.telemetry.addData("Running to",  " %7d", newArmTarget);
+            myOpMode.telemetry.addData("Currently at",  " at %7d",
+                    armMotor.getCurrentPosition());
+            myOpMode.telemetry.update();
+        }
+
+        armMotor.setPower(0);
+
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(1000);
+    }
+
+    /**
+     * Moves arm provided distance using motor encoders.  Reverse movement is achieved
+     * by passing in a negative distance value.  Motion will stop if:
+     * - The motors reach their target
+     * - Timeout has been exceeded
+     * - opMode is cancelled/stopped
+     *
+     * @param  speed    speed of the motor
+     * @param  position specific encoder position
+     * @param  timeoutS failsafe time to stop motion if motors are still busy
+     */
+    public void moveArm(double speed, int position, double timeoutS) {
+
+        //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //int newArmTarget = armMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+
+        armMotor.setTargetPosition(position);
+
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        runtime.reset();
+        armMotor.setPower(Math.abs(speed));
+
+        while (myOpMode.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                (armMotor.isBusy())) {
+
+            // Display it for the driver.
+            myOpMode.telemetry.addData("Running to",  " %7d", position);
             myOpMode.telemetry.addData("Currently at",  " at %7d",
                     armMotor.getCurrentPosition());
             myOpMode.telemetry.update();
