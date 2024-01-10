@@ -30,21 +30,23 @@ public class babysFirstAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-//        CenterStageComputerVisionPipelines CV = new CenterStageComputerVisionPipelines(hardwareMap, telemetry);
-//        CenterStageComputerVisionPipelines.pos propPos = null;
+        CenterStageComputerVisionPipelines CV = new CenterStageComputerVisionPipelines(hardwareMap, telemetry);
+        CenterStageComputerVisionPipelines.pos propPos = null;
 
         robot = new Robot(hardwareMap, telemetry, this);
 
+        initAprilTag();
+
         waitForStart();
 
-//        long startTime = new Date().getTime();
-//        long time = 0;
-//
-//        while (time < 50 && opModeIsActive()) {
-//            time = new Date().getTime() - startTime;
-//            propPos = CV.propFind.position;
-//            telemetry.addData("Position", propPos);
-//        }
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time < 50 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            propPos = CV.propFind.position;
+            telemetry.addData("Position", propPos);
+        }
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
@@ -58,7 +60,13 @@ public class babysFirstAuto extends LinearOpMode {
             }
         }
 
-//        robot.init();
+        if (myTag != null) {
+            telemetry.addData("MyTag X", myTag.ftcPose.x);
+            telemetry.addData("MyTag Y", myTag.ftcPose.y);
+            telemetry.addData("MyTag Z", myTag.ftcPose.z);
+        }
+
+        robot.init();
 
     }
 
