@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -48,7 +49,13 @@ public class Movement {
     // Used to manage the video source.
     private VisionPortal myVisionPortal;
 
+    private VisionProcessor HSVProcessor;
+    private VisionProcessor AprilTagProcessor;
+
     private HardwareMap map;
+
+    WebcamName frontCam;
+    WebcamName rearCam;
 
     int alignStage = 0;
     double currentX = -2;
@@ -78,7 +85,9 @@ public class Movement {
      * @param  rightBackDrive  the back right wheels motor
      */
     public Movement(DcMotor leftFrontDrive, DcMotor rightFrontDrive,
-                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, HardwareMap hMap, Telemetry telemetry1){
+                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, HardwareMap hMap,
+                    Telemetry telemetry1, VisionPortal vp, WebcamName fCam, WebcamName rCam,
+                    VisionProcessor hsvProc, VisionProcessor aprilProc){
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
@@ -86,35 +95,14 @@ public class Movement {
         map = hMap;
         imu = imu1;
         telemetry = telemetry1;
+        myVisionPortal = vp;
+        frontCam = fCam;
+        rearCam = rCam;
+        HSVProcessor = hsvProc;
+        AprilTagProcessor = aprilProc;
         blinkinLED = map.get(RevBlinkinLedDriver.class, "blinkin");
 
-        // Build the AprilTag processor
-        // set parameters of AprilTagProcessor, then use Builder to build
-        myAprilTagProcessor = new AprilTagProcessor.Builder()
-                //.setTagLibrary(myAprilTagLibrary)
-                //.setNumThreads(tbd)
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .build();
 
-        // set apriltag resolution decimation factor
-        myAprilTagProcessor.setDecimation(2);
-
-
-        // Build the vision portal
-        // set parameters,then use vision builder.
-        myVisionPortal = new VisionPortal.Builder()
-                .setCamera(map.get(WebcamName.class, "gge_backup_cam"))
-                .addProcessor(myAprilTagProcessor)
-                .setCameraResolution(new Size(640, 480))
-                //.setCameraResolution(new Size(1280,720))
-                .enableLiveView(false)
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .build();
     }
 
 
@@ -343,6 +331,9 @@ public class Movement {
 
         initMovement(false);
 
+        // switching to the rear camera and use april tag processor
+        selectVisionProcessor(VisionProcessorMode.REAR_CAMERA_APRIL_TAG);
+
         if (alignStage == 0) {
             // Set Powers to 0 for safety and not knowing what they are set to.
             StopMotors();
@@ -468,5 +459,20 @@ public class Movement {
         rfDrive.setPower(0);
         lbDrive.setPower(0);
         rbDrive.setPower(0);
+    }
+
+    public void selectVisionProcessor(VisionProcessorMode vpMode){
+        switch(vpMode){
+            case FRONT_CAMERA_HSV:
+                myVisionPortal.setActiveCamera(frontCam);
+                myVisionPortal.setProcessorEnabled(AprilTagProcessor,true);
+                myVisionPortal.setProcessorEnabled(HSVProcessor,false);
+                break;
+            case REAR_CAMERA_APRIL_TAG:
+                myVisionPortal.setActiveCamera(rearCam);
+                myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
+                myVisionPortal.setProcessorEnabled(HSVProcessor,true);
+                break;
+        }
     }
 }

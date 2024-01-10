@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
@@ -220,7 +221,12 @@ public abstract class AutoBase extends OpMode {
         wrist.setDirection(DcMotor.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
-        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, hardwareMap, telemetry);
+        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive,
+                            imu, hardwareMap, telemetry,myVisionPortal,frontCam,rearCam,HSVProcessor,myAprilTagProcessor);
+
+        // set the proper camera and processor
+        moveTo.selectVisionProcessor(VisionProcessorMode.FRONT_CAMERA_HSV);
+
         linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         state = 0;
