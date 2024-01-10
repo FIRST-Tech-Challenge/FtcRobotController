@@ -11,8 +11,8 @@ public class ResetIMU extends CommandBase
         drive = subsystem;
         addRequirements(subsystem);
     }
-
-    public void execute() {
+@Override
+    public void initialize() {
         drive.resetIMU();
     }
 

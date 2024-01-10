@@ -33,6 +33,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -55,6 +57,7 @@ import org.firstinspires.ftc.teamcode.robot.commands.plane_launcher.LaunchPlane;
 import org.firstinspires.ftc.teamcode.robot.commands.tilt.TiltGoToPosition;
 import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristDeposit;
 import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristIntake;
+import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristStow;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ExtensionSubsystem;
@@ -68,10 +71,12 @@ import java.util.function.DoubleSupplier;
 
 public class TheBestTeleopKnownToMankind extends CommandOpMode
 {
+
     DriveSubsystem driveSubsystem;
     @Override
     public void initialize()
     {
+
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx operator = new GamepadEx(gamepad2);
 
@@ -82,6 +87,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
         PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
       driveSubsystem = new DriveSubsystem(hardwareMap);
+      tiltSubsystem.init();
       //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
         //driver
@@ -103,25 +109,31 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         //claw
         TriggerAnalogButton clawTrigger =
                 new TriggerAnalogButton(operator, GamepadKeys.Trigger.RIGHT_TRIGGER,0.9);
-        clawTrigger.whenReleased(
-                new ClawCloseCommand(clawSubsystem));
         clawTrigger.whenPressed(
+                new ClawCloseCommand(clawSubsystem));
+        clawTrigger.whenReleased(
                 new ClawOpenCommand(clawSubsystem));
         //reset heading
-        driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new ResetIMU(driveSubsystem));
+        driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
         //deposit
         operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
 
         //intake
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                   //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
+        //stow
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new SequentialCommandGroup(
+                        new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
+                        //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                        new WristStow(wristSubsystem)));
 
         //plane launcher
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
