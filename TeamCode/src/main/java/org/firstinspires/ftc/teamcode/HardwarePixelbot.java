@@ -10,6 +10,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -78,6 +79,14 @@ public class HardwarePixelbot
     // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
 //  protected double COUNTS_PER_INCH2      = 1738.4;  // REV ENCODERS = 8192 counts-per-rev / (1.5" omni wheel * PI)
     protected double COUNTS_PER_INCH2      = 336.878; // goBilda Odometry Pod = 2000 counts-per-rev / (1.8897" omni wheel * PI)
+
+    // Thinnear lift motor for hanging (one motor drives both left/right "Thinnear" linear-actuators)
+    protected DcMotorEx   thinnearMotor     = null;
+//  public double         thinnearMotorAmps = 0.0;     // current power draw (Amps)
+    public DigitalChannel thinnearTopSensor;           // REV magnetic limit switch (placed at top)
+    public boolean        thinnearTopLimit = false;
+    public DigitalChannel thinnearBottomSensor;        // REV magnetic limit switch (placed at bottom)
+    public boolean        thinnearBottomLimit = false;
 
     // Pixel collector/transporter motor
     protected DcMotorEx collectorMotor     = null;
@@ -252,13 +261,24 @@ public class HardwarePixelbot
         viperMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperMotors.setPower( 0.0 );
 
+//      thinnearMotor = hwMap.get(DcMotorEx.class,"ThinnearMotor");     // Control Hub port 3
+//      thinnearMotor.setDirection(DcMotor.Direction.FORWARD);
+//      thinnearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//      thinnearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//      thinnearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//      thinnearMotor.setPower( 0.0 );
+
+//      thinnearTopSensor    = hwMap.get( DigitalChannel.class, "MagneticTop" );     // ?? Hub Digital port ??
+//      thinnearBottomSensor = hwMap.get( DigitalChannel.class, "MagneticBottom" );  // ?? Hub Digital port ??
+
         rightOdometer  = hwMap.get(DcMotorEx.class,"OdomRight");   // Control Hub port 3
         rightOdometer.setDirection(DcMotor.Direction.FORWARD);
         rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightOdometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightOdometer.setPower( 0.0 );
 
-        // "OdomLeft" = overloaded onto CollectorMotor on Expansion Hub port 2
+        // "OdomRight" = overloaded onto thinnearMotor on Control Hub port 3
+        // "OdomLeft"  = overloaded onto CollectorMotor on Expansion Hub port 2
 
         strafeOdometer = hwMap.get(DcMotorEx.class,"OdomStrafe");  // Expansion Hub port 3
         strafeOdometer.setDirection(DcMotor.Direction.FORWARD);
@@ -362,40 +382,34 @@ public class HardwarePixelbot
         // For MANUAL mode, we must clear the BulkCache once per control cycle
         expansionHub.clearBulkCache();
         controlHub.clearBulkCache();
-        // Get a fresh set of values for this cycle
-        //   getCurrentPosition() / getTargetPosition() / getTargetPositionTolerance()
-        //   getPower() / getVelocity() / getCurrent()
-        //===== CONTROL HUB VALUES =====
-        frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
-        frontLeftMotorVel  = frontLeftMotor.getVelocity();
-        frontRightMotorPos = frontRightMotor.getCurrentPosition();
-        frontRightMotorVel = frontRightMotor.getVelocity();
-        rearRightMotorPos  = rearRightMotor.getCurrentPosition();
-        rearRightMotorVel  = rearRightMotor.getVelocity();
-        rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
-        rearLeftMotorVel   = rearLeftMotor.getVelocity();
-        //===== EXPANSION HUB VALUES =====
-        viperMotorsPos     = viperMotors.getCurrentPosition();
-        viperMotorsVel     = viperMotors.getVelocity();
-        viperMotorsPwr     = viperMotors.getPower();
-        // Parse right odometry encoder
-        rightOdometerPrev  = rightOdometerCount;
-        rightOdometerCount = -rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
-        // Parse left odometry encoder
-        leftOdometerPrev   = leftOdometerCount;
-        leftOdometerCount  = -collectorMotor.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
-        // Parse rear odometry encoder
+        // Copy the bulkdata readings for this cycle into our local variables
+        frontLeftMotorPos   = frontLeftMotor.getCurrentPosition();
+        frontLeftMotorVel   = frontLeftMotor.getVelocity();
+        frontRightMotorPos  = frontRightMotor.getCurrentPosition();
+        frontRightMotorVel  = frontRightMotor.getVelocity();
+        rearRightMotorPos   = rearRightMotor.getCurrentPosition();
+        rearRightMotorVel   = rearRightMotor.getVelocity();
+        rearLeftMotorPos    = rearLeftMotor.getCurrentPosition();
+        rearLeftMotorVel    = rearLeftMotor.getVelocity();
+        viperMotorsPos      = viperMotors.getCurrentPosition();
+        viperMotorsVel      = viperMotors.getVelocity();
+        viperMotorsPwr      = viperMotors.getPower();
+        rightOdometerPrev   = rightOdometerCount;
+        rightOdometerCount  = -rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
+//      rightOdometerCount  = -thinnearMotor.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
+        leftOdometerPrev    = leftOdometerCount;
+        leftOdometerCount   = -collectorMotor.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
         strafeOdometerPrev  = strafeOdometerCount;
         strafeOdometerCount = -strafeOdometer.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
-
-        // NOTE: motor mA data is NOT part of the bulk-read, so increase cycle time!
+//      thinnearTopLimit    = thinnearTopSensor.getState();
+//      thinnearBottomLimit = thinnearBottomSensor.getState();
+        // NOTE: motor mA data is NOT part of the bulk-read, so increases cycle time!
 //      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
 //      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
 //      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
         viperMotorsAmps     = viperMotors.getCurrent(MILLIAMPS);
-//      liftMotorAmps       = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
-
+//      thinnearMotorAmps   = thinnearMotor.getCurrent(MILLIAMPS);
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/
@@ -484,6 +498,8 @@ public class HardwarePixelbot
     } // restrictDeltaPower
 
     /*--------------------------------------------------------------------------------------------*/
+    /* Uses color/distance sensors to determine if we have 0, 1, or 2 pixels, plus their color    */
+    /*--------------------------------------------------------------------------------------------*/
     public int pixelBinUpdateStatus() {
         final double MAX_DIST_OCCUPIED = 60.0; // minimum distance sensor can report is 54.52mm
         int binPixelCount = 0;
@@ -528,6 +544,8 @@ public class HardwarePixelbot
         return binPixelCount;
     } // pixelBinUpdateStatus
 
+    /*--------------------------------------------------------------------------------------------*/
+    /* Analyzes Hue & Saturation to decide if we have a YELLOW, GREEN, PURPLE, or WHITE pixel.    */
     /*--------------------------------------------------------------------------------------------*/
     private PixelColorsEnum pixelHueSatToColor( double hue, double sat ) {
         PixelColorsEnum pixelColor;

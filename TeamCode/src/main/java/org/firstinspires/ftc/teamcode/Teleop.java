@@ -93,6 +93,8 @@ public abstract class Teleop extends LinearOpMode {
     int     aprilTagSmall  = 9;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
     int     aprilTagLarge  = 10;   // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
 
+    boolean thinnearTweaked = false;  // Reminder to zero power when input stops
+
     boolean liftTweaked  = false;  // Reminder to zero power when input stops
     long pixelBinUpdateCounter = 0;
     int  previousPixelBinCount = 0;
@@ -173,6 +175,7 @@ public abstract class Teleop extends LinearOpMode {
             ProcessFingerControls();
             ProcessLiftControls();
            //ProcessLiftStateMachine();
+            ProcessHangControls();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -197,7 +200,6 @@ public abstract class Teleop extends LinearOpMode {
 //            telemetry.addData("circle","Robot-centric (fwd/back modes)");
 //            telemetry.addData("square","Driver-centric (set joystick!)");
 //            telemetry.addData("d-pad","Fine control (30%)");
-//            telemetry.addData(" "," ");
 
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
@@ -230,6 +232,9 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("PixelBin", "Lower=%s Upper=%s", robot.pixel1Color.name(), robot.pixel2Color.name());
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
             telemetry.addData("Viper", "%d cts (%.1f %.2f mA)", robot.viperMotorsPos, viperPower, robot.viperMotorsPwr );
+            telemetry.addData("Thinnear", "Top: %s Bottom: %s",
+                                 ((robot.thinnearTopLimit)?    "off":"ON"),
+                                 ((robot.thinnearBottomLimit)? "off":"ON") );
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
                     frontLeft, robot.frontLeftMotorPos, frontRight, robot.frontRightMotorPos );
             telemetry.addData("Rear ", "%.2f (%d cts) %.2f (%d cts)",
@@ -555,8 +560,45 @@ public abstract class Teleop extends LinearOpMode {
 
         }
 
-
     } // ProcessLiftStateMachine
+
+    /*---------------------------------------------------------------------------------*/
+    void ProcessHangControls() {
+
+        // gamepad1 TRIANGLE raises/deploys hanging mechanism
+        if( gamepad1_triangle_now ) {
+           boolean safeToDeployMore = robot.thinnearTopLimit;
+           if( safeToDeployMore ) {
+//            robot.thinnearMotor.setPower( 0.20 );   // test with 20% before using 100%
+              thinnearTweaked = true;
+           } else { // notify driver that full deployment has been achieved
+//            robot.thinnearMotor.setPower( 0.0 );
+              gamepad1.runRumbleEffect( rumblePixelBinSingle );
+           }
+        } // triangle
+
+        // gamepad1 CROSS retracts hanging mechanism (to raise robot, or store mechanism)
+        else if( gamepad1_cross_now ) {
+           boolean safeToRetractMore = robot.thinnearBottomLimit;
+           if( safeToRetractMore ) {
+//            robot.thinnearMotor.setPower( -0.20 );   // test with 20% before using 100%
+              thinnearTweaked = true;
+           } else { // notify driver that full retraction has been achieved
+//            robot.thinnearMotor.setPower( 0.0 );
+              gamepad1.runRumbleEffect( rumblePixelBinSingle );
+           }
+        } // cross
+
+        // When we release TRIANGLE or CROSS, ensure motor is off
+        // NOTE: it gets forced OFF above if we hold the button all the way to the 
+        // upper/lower limit.  But if we release before reaching the limit then this
+        // logic turns OFF the motor and resets the "tweaked" flag
+        else if( thinnearTweaked ) {
+//         robot.thinnearMotor.setPower( 0.0 );
+           thinnearTweaked = false;
+        } // thinnearDeploying
+        
+    } // ProcessHangControls
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
