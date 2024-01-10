@@ -2,11 +2,21 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.opencv.core.*;
+//import org.firstinspires.ftc.teamcode.Hardware.Hware;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,13 +27,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "RED OpenCV Testing")
+@TeleOp(name = "redRightOpenCV25")
 
-public class redOpenCV extends LinearOpMode {
-
+public class redRightOpenCV25pts extends LinearOpMode {
+    Hware robot;
     double cX = 0;
     double cY = 0;
     double width = 0;
+    double distance;
 
     private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
     private static final int CAMERA_WIDTH = 1280; // width  of wanted camera resolution(Old: 640)
@@ -31,38 +42,107 @@ public class redOpenCV extends LinearOpMode {
 
     // Calculate the distance using the formula
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
-    public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+    public static final double focalLength = 1606.8;  // Replace with the focal length of the camera in pixels
 
 
     @Override
     public void runOpMode() {
+        robot = new Hware(hardwareMap);
 
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
 
+        telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+        telemetry.addData("Distance in Inch", (getDistance(width)));
+        telemetry.update();
+
 
         waitForStart();
+        distance = getDistance(width) - 10;
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Pose2d startPose2 = new Pose2d(12, -36, 270);
+        Pose2d startPose1 = new Pose2d(12, -60, 270);
+
+        //drive.setPoseEstimate(startPose);
+        TrajectorySequence forward = drive.trajectorySequenceBuilder(startPose1)
+                .lineToSplineHeading(new Pose2d(12,-34,Math.toRadians(180)))
+                .build();
+        TrajectorySequence left = drive.trajectorySequenceBuilder(startPose2)
+                .lineToSplineHeading(new Pose2d(12,-34,Math.toRadians(180)))
+
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
+                    robot.intakeRight.setPower(1);
+                    robot.intakeLeft.setPower(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
+                    robot.intakeRight.setPower(0);
+                    robot.intakeLeft.setPower(0);
+                })
+
+
+                .waitSeconds(2)
+                .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(startPose2)
+                .lineToSplineHeading(new Pose2d(12,-34,Math.toRadians(180)))
+
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
+                    robot.intakeRight.setPower(1);
+                    robot.intakeLeft.setPower(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
+                    robot.intakeRight.setPower(0);
+                    robot.intakeLeft.setPower(0);
+                })
+
+
+                .waitSeconds(2)
+                .build();
+        TrajectorySequence center = drive.trajectorySequenceBuilder(startPose2)
+                .lineToSplineHeading(new Pose2d(12,-34,Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(25,-25,Math.toRadians(180)))
+
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //outtake
+                    robot.intakeRight.setPower(1);
+                    robot.intakeLeft.setPower(1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> { //outtake
+                    robot.intakeRight.setPower(0);
+                    robot.intakeLeft.setPower(0);
+                })
+
+
+                .waitSeconds(2)
+                .build();
 
         while (opModeIsActive()) {
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.update();
-            if(cX < 100)
-            {
+
+
+            if(cX < 320) {
                 telemetry.addData("Direction: ", "left");
+                drive.followTrajectorySequence(forward);
+                drive.followTrajectorySequence(left);
+
             }
-            else if (cX > 330)
-            {
-                telemetry.addData("Direction: ", "right");
-            }
-            else if(cX>100 && cX<330)
-            {
+            else if ((cX > 320) && (cX < 960)) {
                 telemetry.addData("Direction: ", "center");
+                drive.followTrajectorySequence(forward);
+                drive.followTrajectorySequence(center);
+            }
+            else {
+                telemetry.addData("Direction: ", "right");
+                drive.followTrajectorySequence(forward);
+                drive.followTrajectorySequence(right);
             }
 
-            // The OpenCV pipeline automatically processes frames and handles detection
+            sleep(30000);// The OpenCV pipeline automatically processes frames and handles detection
         }
 
         // Release resources
@@ -168,5 +248,5 @@ public class redOpenCV extends LinearOpMode {
         return distance;
     }
 
-
 }
+
