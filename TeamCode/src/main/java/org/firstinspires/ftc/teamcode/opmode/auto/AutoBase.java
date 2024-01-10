@@ -157,7 +157,9 @@ public abstract class AutoBase extends OpMode {
 
 
         // To start, we will be using the front camera
-        myVisionPortal.setActiveCamera(frontCam);
+        if(rearCam == myVisionPortal.getActiveCamera()) {
+            myVisionPortal.setActiveCamera(frontCam);
+        }
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
