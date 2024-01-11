@@ -50,10 +50,10 @@ class CenterstageSuperPipeline implements VisionProcessor {
     // LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
     protected Point sub1PointALeft = new Point( 375, 410); //Point1 is left spike mark, Point2 is center, Point3 is Right
     protected Point sub1PointBLeft = new Point( 425, 460); // 50x50 pixel window (SMALL to avoid seeing stuff we don't want to)
-    protected Point sub2PointALeft = new Point( 765, 405);
-    protected Point sub2PointBLeft = new Point( 815, 455);
-    protected Point sub3PointALeft = new Point(1180, 415);
-    protected Point sub3PointBLeft = new Point(1230, 465);
+    protected Point sub2PointALeft = new Point( 775, 410);
+    protected Point sub2PointBLeft = new Point( 825, 460);
+    protected Point sub3PointALeft = new Point(1180, 420);
+    protected Point sub3PointBLeft = new Point(1230, 470);
     // RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
     protected Point sub1PointARight = new Point( 90, 415);
     protected Point sub1PointBRight = new Point(140, 465);

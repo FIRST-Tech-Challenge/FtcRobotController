@@ -453,7 +453,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
             // Partially extend the wrist assembly to grab the pixels
             robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
-            sleep(1000);
+            sleep(500);
             // Rotate both fingers to grab the pixels
             robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
             robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
@@ -470,15 +470,15 @@ public abstract class Teleop extends LinearOpMode {
                 // (we should do these automatically once we're above the top of the bin??)
                 robot.pushServo.setPosition(robot.PUSH_SERVO_DROP);
                 // Wait 1 sec so we don't "fling" the pixel against the backdrop
-                sleep(1000 );
+                sleep(500 );
                 // Release both pixels (this needs work)
                 robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
                 robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
                 // Wait for servos to actually move/release
-                sleep( 500 );
+                sleep( 350 );
                 // Pull back to the safe/stored position and rotate back vertical
                 robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
-                sleep( 250 );
+                sleep( 150 );
                 robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
             }
         } // score/drop
@@ -569,10 +569,10 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad1_triangle_now ) {
            boolean safeToDeployMore = robot.thinnearTopLimit;
            if( safeToDeployMore ) {
-//            robot.thinnearMotor.setPower( 0.20 );   // test with 20% before using 100%
+              robot.thinnearMotor.setPower( -1.00 );   // test with 20% before using 100%
               thinnearTweaked = true;
            } else { // notify driver that full deployment has been achieved
-//            robot.thinnearMotor.setPower( 0.0 );
+              robot.thinnearMotor.setPower( 0.0 );
               gamepad1.runRumbleEffect( rumblePixelBinSingle );
            }
         } // triangle
@@ -581,10 +581,10 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad1_cross_now ) {
            boolean safeToRetractMore = robot.thinnearBottomLimit;
            if( safeToRetractMore ) {
-//            robot.thinnearMotor.setPower( -0.20 );   // test with 20% before using 100%
+              robot.thinnearMotor.setPower( +1.00 );   // test with 20% before using 100%
               thinnearTweaked = true;
            } else { // notify driver that full retraction has been achieved
-//            robot.thinnearMotor.setPower( 0.0 );
+              robot.thinnearMotor.setPower( 0.0 );
               gamepad1.runRumbleEffect( rumblePixelBinSingle );
            }
         } // cross
@@ -594,7 +594,7 @@ public abstract class Teleop extends LinearOpMode {
         // upper/lower limit.  But if we release before reaching the limit then this
         // logic turns OFF the motor and resets the "tweaked" flag
         else if( thinnearTweaked ) {
-//         robot.thinnearMotor.setPower( 0.0 );
+           robot.thinnearMotor.setPower( 0.0 );
            thinnearTweaked = false;
         } // thinnearDeploying
         

@@ -261,21 +261,21 @@ public class HardwarePixelbot
         viperMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperMotors.setPower( 0.0 );
 
-//      thinnearMotor = hwMap.get(DcMotorEx.class,"ThinnearMotor");     // Control Hub port 3
-//      thinnearMotor.setDirection(DcMotor.Direction.FORWARD);
-//      thinnearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//      thinnearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//      thinnearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//      thinnearMotor.setPower( 0.0 );
+        thinnearMotor = hwMap.get(DcMotorEx.class,"ThinnearMotor");     // Control Hub port 3
+        thinnearMotor.setDirection(DcMotor.Direction.FORWARD);
+        thinnearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        thinnearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        thinnearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        thinnearMotor.setPower( 0.0 );
 
-//      thinnearTopSensor    = hwMap.get( DigitalChannel.class, "MagneticTop" );     // ?? Hub Digital port ??
-//      thinnearBottomSensor = hwMap.get( DigitalChannel.class, "MagneticBottom" );  // ?? Hub Digital port ??
+        thinnearTopSensor    = hwMap.get( DigitalChannel.class, "MagneticTop" );     // Expansion Hub Digital port 0-1
+        thinnearBottomSensor = hwMap.get( DigitalChannel.class, "MagneticBottom" );  // Control Hub Digital port 0-1
 
-        rightOdometer  = hwMap.get(DcMotorEx.class,"OdomRight");   // Control Hub port 3
-        rightOdometer.setDirection(DcMotor.Direction.FORWARD);
-        rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightOdometer.setPower( 0.0 );
+//      rightOdometer  = hwMap.get(DcMotorEx.class,"OdomRight");   // Control Hub port 3
+//      rightOdometer.setDirection(DcMotor.Direction.FORWARD);
+//      rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//      rightOdometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//      rightOdometer.setPower( 0.0 );
 
         // "OdomRight" = overloaded onto thinnearMotor on Control Hub port 3
         // "OdomLeft"  = overloaded onto CollectorMotor on Expansion Hub port 2
@@ -395,14 +395,14 @@ public class HardwarePixelbot
         viperMotorsVel      = viperMotors.getVelocity();
         viperMotorsPwr      = viperMotors.getPower();
         rightOdometerPrev   = rightOdometerCount;
-        rightOdometerCount  = -rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
-//      rightOdometerCount  = -thinnearMotor.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
+//      rightOdometerCount  = -rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
+        rightOdometerCount  = -thinnearMotor.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
         leftOdometerPrev    = leftOdometerCount;
         leftOdometerCount   = -collectorMotor.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
         strafeOdometerPrev  = strafeOdometerCount;
         strafeOdometerCount = -strafeOdometer.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
-//      thinnearTopLimit    = thinnearTopSensor.getState();
-//      thinnearBottomLimit = thinnearBottomSensor.getState();
+        thinnearTopLimit    = thinnearTopSensor.getState();
+        thinnearBottomLimit = thinnearBottomSensor.getState();
         // NOTE: motor mA data is NOT part of the bulk-read, so increases cycle time!
 //      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
