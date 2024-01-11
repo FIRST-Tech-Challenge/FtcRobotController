@@ -10,23 +10,26 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
 
 @Autonomous
 public class Auto extends CommandOpMode {
+    public static TrajectorySequence parkRight;
 
     private SampleMecanumDrive drive;
-    private Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+    private Pose2d startPose = new Pose2d(12, -64, Math.toRadians(0));
+
 
     @Override
     public void initialize() {
+        drive = new SampleMecanumDrive(hardwareMap);
         schedule(new BulkCacheCommand(hardwareMap));
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence trajectory = new TrajectorySequenceBuilder(startPose, null, null, 0, 0)
-                .forward(12)
+        parkRight = drive.trajectorySequenceBuilder(startPose)
+                .forward(48)
                 .build();
 
         while(opModeInInit()){
             telemetry.update();
         }
 
-        schedule(new TrajectorySequenceCommand(drive, trajectory));
+        schedule(new TrajectorySequenceCommand(drive, parkRight));
     }
 }
