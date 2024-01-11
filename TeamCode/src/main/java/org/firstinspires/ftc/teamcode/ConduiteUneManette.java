@@ -39,19 +39,19 @@ public class ConduiteUneManette extends LinearOpMode {
         double varYpos = 0;
         double varXpos = 0;
 
-        double coudeZero = 0.17;
+        double coudeZero = 0.75;
         double coudeX = coudeZero;
         int brasA = 0;
         double triggergauche = 0;
         double triggerdroit = 0;
         double varRY = 0;
         double maPosCoude = 0;
-
+        int posbraszero = 0;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        posbraszero = bras1.getCurrentPosition();
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -131,8 +131,8 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (triggergauche > 0) {
                 coudeX += 0.002;
-                if (coudeX > 1) {
-                    coudeX = 1;
+                if (coudeX > 0.75) {
+                    coudeX = 0.75;
                 }
             } else if (triggerdroit > 0) {
 
@@ -167,8 +167,14 @@ public class ConduiteUneManette extends LinearOpMode {
             }
 
             if (this.gamepad1.y) {
-                maPosBras = brasA;
-                maPosCoude = coude.getPosition();
+                if (posbraszero < 0) {
+                    posbraszero -= 2;
+                } else {
+                    posbraszero += 2;
+                }
+                bras1.setTargetPosition(posbraszero);
+                bras2.setTargetPosition(posbraszero);
+                coudeX = 0.384;
             }
 
             bras1.setPower(tgtBras);
@@ -192,7 +198,6 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Var Y", varRY);
             telemetry.addData("Coude", coudeX);
             telemetry.addData("Bras", brasA);
-            telemetry.addData("PosBrasProg", maPosBras);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
