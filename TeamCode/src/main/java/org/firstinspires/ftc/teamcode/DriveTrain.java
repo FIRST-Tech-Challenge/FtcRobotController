@@ -3,19 +3,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+/** @noinspection ALL*/
 public class DriveTrain {
 
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
@@ -27,7 +22,7 @@ public class DriveTrain {
     static final double WHEEL_DIAMETER_INCHES = 3.78;     // For figuring circumference
     static final double clicksPerInch = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
+    private final double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
     private ElapsedTime runtime = new ElapsedTime();
 
     private boolean directionToggle = false;
@@ -70,11 +65,15 @@ public class DriveTrain {
         BackWDValueRight = BackWDRight.getDistance(DistanceUnit.INCH);
         BackWDValueLeft = BackWDLeft.getDistance(DistanceUnit.INCH);
 
+        // The next two lines calculate the needed variables for the distance sensor.
+        // If BackWDValueLeft is less than BackWDValueRight, then return BackWDValueLeft.
+        // If BackWDValueLeft is greater thank BackWDValueRight, then return BackWDValueRight.
         double effectiveDistance = BackWDValueLeft < BackWDValueRight ? BackWDValueLeft : BackWDValueRight;
-        double DistenceEquationValue = slope * effectiveDistance + intercept;
+        double DistanceEquationValue = slope * effectiveDistance + intercept;
 
-
+        // Adjustable variable for sensitivity. The default is 0.5. (half power)
         double sensitivity = 0.5;
+
         double leftFrontPower = 0;
         double rightFrontPower = 0;
         double leftBackPower = 0;
@@ -82,11 +81,11 @@ public class DriveTrain {
 
         double max;
 
+        // Ramps down speed as mailbox approaches backstage.
         if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
-            yaw *= DistenceEquationValue;
+            yaw *= DistanceEquationValue;
             if (axial < 0) {
-                axial *= DistenceEquationValue;
-
+                axial *= DistanceEquationValue;
             }
         }
         if (effectiveDistance < RampDownEnd){
@@ -116,10 +115,12 @@ public class DriveTrain {
             rightBackPower /= max;
         }
 
+        // Calculates power using sensitivity variable.
         leftFrontPower *= sensitivity;
         leftBackPower *= sensitivity;
         rightFrontPower *= sensitivity;
         rightBackPower *= sensitivity;
+
         // The next few lines make the direction boolean switch when the button is pressed.
         // It includes a timer to avoid mistakes.
         if (time.time() > .25 && !directionToggle && directionButton) {
