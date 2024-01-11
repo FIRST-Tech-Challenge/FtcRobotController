@@ -9,4 +9,6 @@ public class Util {
         return Math.sin(angle * Math.PI / 180);
     }
 
+    public static double aCosInDegrees(double ratio) {
+        return Math.acos(ratio) / Math.PI * 180;
 }
