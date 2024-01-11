@@ -41,39 +41,80 @@ public class AutoTest1 extends LinearOpMode {
 
         drive.setPoseEstimate(blueStart1);
 
-        DcMotorEx intakeMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakeMotor");
-        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
-        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        DcMotorEx liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
+        DcMotorEx liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
         ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+
+        //            int liftStage0 = 0; // Setpoint for intaking pixles
+        //            int liftStage1 = -20; // Setpoint for clearance
+        //            int liftStage2 = -40; // Setpoint at first set line
+        //            int liftStage3 = -60; // Setpoint for highest we can go
+
 
 
         // move robot to pixel stash (will change values later)
         TrajectorySequence test = drive.trajectorySequenceBuilder(blueStart1)
                 // detect y-axis custom object from starting location
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
-                .lineToConstantHeading(blue1RightMark)
+                .lineToConstantHeading(blue1RightMark) // place white pixel on mark
                 .waitSeconds(0.25)
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+
                 .lineToLinearHeading(new Pose2d(-35,57, Math.toRadians(0))) // start moving towards backboard for yellow pixel
-                .lineToConstantHeading(new Vector2d(10, 57))
-                .splineToConstantHeading(new Vector2d(52, 36), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
-                    armServo1.setPosition();
-                    armServo2.setPosition();
+                    armServo1.setPosition(0.1);
+                    armServo2.setPosition(0.1);
+                })
+                .lineToConstantHeading(new Vector2d(10, 57))
+                .splineToConstantHeading(new Vector2d(54, 36), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(50, 36), () -> {
+                    liftMotor1.setPower(1.0); // lift before arm for enough clearance
+                    liftMotor2.setPower(1.0);
 
-
+                    armServo1.setPosition(1.0);
+                    armServo2.setPosition(1.0);
                 })
                 .waitSeconds(0.75) // drop yellow pixel
+                .UNSTABLE_addTemporalMarkerOffset(-0.2, () -> {
+                    armServo1.setPosition(0.1); // arm before lift for enough clearance on the way back down
+                    armServo2.setPosition(0.1);
+
+                    liftMotor1.setPower(0.0);
+                    liftMotor2.setPower(0.0);
+                })
 
                 .splineToConstantHeading(new Vector2d(10, 57), Math.toRadians(0)) // go back for two white pixels
+
                 .lineToConstantHeading(new Vector2d(-35, 57))
-                .splineToConstantHeading(new Vector2d(-65, 36), Math.toRadians(0))
-                .waitSeconds(0.75) // intake two white pixels
+                .splineToConstantHeading(new Vector2d(-68, 36), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+                    intakeMotor.setPower(1);
+                })
+                .waitSeconds(0.4) // intake two white pixels
+                .UNSTABLE_addTemporalMarkerOffset(-0.2, () -> {
+                    intakeMotor.setPower(0);
+                })
                 .splineToConstantHeading(new Vector2d(-35, 57), Math.toRadians(0))
                 .lineToConstantHeading(new Vector2d(10, 57))
-                .splineToConstantHeading(new Vector2d(52, 36), Math.toRadians(0))
-                .waitSeconds(0.75) // drop two white pixels on back board
+                .splineToConstantHeading(new Vector2d(54, 36), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(50, 36), () -> {
+                    liftMotor1.setPower(1.0);
+                    liftMotor2.setPower(1.0);
+
+                    armServo1.setPosition(1.0);
+                    armServo2.setPosition(1.0);
+
+                })
+                .waitSeconds(0.75) // drop two white pixels on backboard
+                .UNSTABLE_addTemporalMarkerOffset(-0.2, () -> {
+                    armServo1.setPosition(0.1);
+                    armServo2.setPosition(0.1);
+
+                    liftMotor1.setPower(0.0);
+                    liftMotor2.setPower(0.0);
+                })
                 .lineTo(new Vector2d(56, 15)) // park in a spot that the other team probably won't park
                 .build();
 
