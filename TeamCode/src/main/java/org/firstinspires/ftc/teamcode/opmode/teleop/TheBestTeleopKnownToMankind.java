@@ -117,23 +117,23 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
         //overrides
-        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->tiltSubsystem.moreTilt()));
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->tiltSubsystem.lessTilt()));
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->tiltSubsystem.moreTilt()));
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(()->tiltSubsystem.lessTilt()));
 
         //deposit
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
 
         //intake
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                   //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
         //stow
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new SequentialCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                         //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
