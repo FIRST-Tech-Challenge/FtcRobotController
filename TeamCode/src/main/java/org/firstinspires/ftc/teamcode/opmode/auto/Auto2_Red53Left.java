@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
 /**
@@ -42,7 +43,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
 
-@Autonomous(name="Red53Left", group="OpMode")
+@Autonomous(name="Red53Left", group="OpMode",preselectTeleOp = "GGE Drive T2")
 //@Disabled
 public class Auto2_Red53Left extends AutoBase {
 
@@ -53,201 +54,201 @@ public class Auto2_Red53Left extends AutoBase {
      * is likely a problem.
      */
     @Override
-    public void init() {
-        super.init();
+    public void runOpMode() {
+        super.runOpMode();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
-    }
+        setFieldPosition(FieldPosition.RED_FIELD_LEFT);
 
-    /**
-     * This loop is run continuously
-     */
-    @Override
-    public void init_loop(){
-        state = 0;
-        SpikePosition spikePos = getSpikePosition();
-        switch (spikePos){
-            case LEFT:
-                gamepieceLocation = GamePieceLocation.LEFT;
-                break;
-            case CENTRE:
-                gamepieceLocation = GamePieceLocation.CENTER;
-                break;
-            default:
-                gamepieceLocation = GamePieceLocation.RIGHT;
-        }
-        telemetry.addData("GamePiece Spike line",gamepieceLocation);
-        telemetry.update();
-    }
 
-    @Override
-    public void loop(){
-
-        double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-        if (gamepieceLocation == GamePieceLocation.LEFT && state == 0){
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 2 inches
-            moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // move sideways 11 inches *** this one parameter differs from the Blue53Left due to a slight twist on long strafe Left.
-            moveTo.Left((int)((11 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            // move left 9 inches
-            moveTo.Right((int)((12 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // move forward 18 inches
-            moveTo.Forward((int)((32 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Rotate 90 degrees
-            moveTo.Rotate(-90);
-            sleep(700);
-            // Move backward 48 inches
-            moveTo.Backwards((int)((48 * ticksPerInch) * 0.94), 0.30);
-            // move sideways 24 inches
-            moveTo.Left((int)((18 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            state = 1;
-        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 18 inches
-            moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 4 inches
-            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            // Rotate 90 degrees
-            moveTo.Rotate(-90);
-            sleep(700);
-            // Move backward 25 inches
-            moveTo.Backwards((int)((36 * ticksPerInch) * 0.94), 0.20);
-            state = 1;
-        } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // Move forward 25 inches
-            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
-            // Rotate -90 degrees
-            moveTo.Rotate(90);
-            sleep(700);
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 4 inches
-            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.4);
-            // Open the claw
-            intake.ClawOpen();
-            sleep(500);
-            // End all autos with the wrist up
-            intake.FlipUp();
-            // Rotate 90 degrees
-            moveTo.Rotate(-90);
-            sleep(700);
-            // Move forward 24 inches
-            moveTo.Forward((int)((14 * ticksPerInch) * 0.94), 0.4);
-            // Rotate 90 degrees
-            moveTo.Rotate(-90);
-            sleep(700);
-            // Move backward 48 inches
-            moveTo.Backwards((int)((48 * ticksPerInch) * 0.94), 0.25);
-            // move sideways 24 inches
-            moveTo.Left((int)((30 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            state = 1;
-        }
-        // Use the GoToAprilTag to get to within 7 inches of the Backdrop
-        if (gamepieceLocation == GamePieceLocation.LEFT && state == 1){
-            // Align and drive to April Tag.  4 is RED side LEFT.
-            if (GoToAprilTag(4) == true){
-                state = 2;
+        /**
+         * This loop is run continuously
+         */
+        while (opModeInInit()) {
+            state = 0;
+            SpikePosition spikePos = getSpikePosition();
+            switch (spikePos) {
+                case LEFT:
+                    gamepieceLocation = GamePieceLocation.LEFT;
+                    break;
+                case CENTRE:
+                    gamepieceLocation = GamePieceLocation.CENTER;
+                    break;
+                default:
+                    gamepieceLocation = GamePieceLocation.RIGHT;
             }
-        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
-            // Align and drive to April Tag.  5 is RED side CENTER.
-            if (GoToAprilTag(5) == true){
-                state = 2;
-            }
-        } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
-            // Align and drive to April Tag.  6 is RED side RIGHT.
-            if (GoToAprilTag(6) == true){
-                state = 2;
-            }
+            telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.update();
         }
 
-        // Complete the auto by dropping the game piece and going to park
-        if (gamepieceLocation == GamePieceLocation.LEFT && state == 2){
-            //Move back 5 more inches after the April Tag positioning completes.
-            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.LinearSlidesLow();
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.LinearSlidesBottom();
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves left 26 inches
-            moveTo.Right((int)((18 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((8 * ticksPerInch) * 0.94), 0.25);
-            // Finish all autos with the wrist up
-            intake.FlipUp();
-            state = 3;
-        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
-            //Move back 5 more inches after the April Tag positioning completes.
-            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.LinearSlidesLow();
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.LinearSlidesBottom();
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves left 26 inches
-            moveTo.Right((int)((22 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((8 * ticksPerInch) * 0.94), 0.25);
-            // Finish all autos with the wrist up
-            intake.FlipUp();
-            state = 3;
-        } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2){
-            //Move back 5 more inches after the April Tag positioning completes.
-            moveTo.Backwards((int)((5 * ticksPerInch) * 0.94), 0.25);
-            // Move the linear slide to the low scoring position
-            linearSlideMove.LinearSlidesLow();
-            // Moves the conveyor forward
-            conveyor.setPosition(0);
-            // Runs the conveyor for 4 seconds
-            sleep(4000);
-            // Stops the conveyor
-            conveyor.setPosition(0.5);
-            // Moves the linear slide to the bottom position
-            linearSlideMove.LinearSlidesBottom();
-            // Forward 6 inches
-            moveTo.Forward((int)((6 * ticksPerInch) * 0.94), 0.25);
-            // Moves left 26 inches
-            moveTo.Right((int)((28 * ticksPerInch) * 1.04), 0.5);
-            // Backward 6 inches
-            moveTo.Backwards((int)((8 * ticksPerInch) * 0.94), 0.25);
-            // Finish all autos with the wrist up
-            intake.FlipUp();
-            state = 3;
+        while (opModeIsActive()) {
+
+            double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            if (gamepieceLocation == GamePieceLocation.LEFT && state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // move forward 2 inches
+                moveTo.Forward((int) ((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // move sideways 11 inches *** this one parameter differs from the Blue53Left due to a slight twist on long strafe Left.
+                moveTo.Left((int) ((11 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // Move the claw down
+                intake.FlipDown();
+                // move forward 12 inches
+                moveTo.Forward((int) ((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // Open the claw
+                intake.ClawOpen();
+                // End all autos with the wrist up
+                intake.FlipUp();
+                // move left 9 inches
+                moveTo.Right((int) ((12 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // move forward 18 inches
+                moveTo.Forward((int) ((32 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // Rotate 90 degrees
+                moveTo.Rotate(-90);
+                sleep(700);
+                // Move backward 48 inches
+                moveTo.Backwards((int) ((48 * ticksPerInch) * 0.94), 0.30);
+                // move sideways 24 inches
+                moveTo.Left((int) ((18 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                state = 1;
+            } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // move forward 18 inches
+                moveTo.Forward((int) ((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // Move the claw down
+                intake.FlipDown();
+                // Move forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
+                // Open the claw
+                intake.ClawOpen();
+                // End all autos with the wrist up
+                intake.FlipUp();
+                // Rotate 90 degrees
+                moveTo.Rotate(-90);
+                sleep(700);
+                // Move backward 25 inches
+                moveTo.Backwards((int) ((36 * ticksPerInch) * 0.94), 0.20);
+                state = 1;
+            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // Move forward 25 inches
+                moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.25);
+                // Rotate -90 degrees
+                moveTo.Rotate(90);
+                sleep(700);
+                // Move the claw down
+                intake.FlipDown();
+                // Move forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.4);
+                // Open the claw
+                intake.ClawOpen();
+                sleep(500);
+                // End all autos with the wrist up
+                intake.FlipUp();
+                // Rotate 90 degrees
+                moveTo.Rotate(-90);
+                sleep(700);
+                // Move forward 24 inches
+                moveTo.Forward((int) ((14 * ticksPerInch) * 0.94), 0.4);
+                // Rotate 90 degrees
+                moveTo.Rotate(-90);
+                sleep(700);
+                // Move backward 48 inches
+                moveTo.Backwards((int) ((48 * ticksPerInch) * 0.94), 0.25);
+                // move sideways 24 inches
+                moveTo.Left((int) ((30 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                state = 1;
+            }
+            // Use the GoToAprilTag to get to within 7 inches of the Backdrop
+            if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
+                // Align and drive to April Tag.  4 is RED side LEFT.
+                if (GoToAprilTag(4) == true) {
+                    state = 2;
+                }
+            } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
+                // Align and drive to April Tag.  5 is RED side CENTER.
+                if (GoToAprilTag(5) == true) {
+                    state = 2;
+                }
+            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
+                // Align and drive to April Tag.  6 is RED side RIGHT.
+                if (GoToAprilTag(6) == true) {
+                    state = 2;
+                }
+            }
+
+            // Complete the auto by dropping the game piece and going to park
+            if (gamepieceLocation == GamePieceLocation.LEFT && state == 2) {
+                //Move back 5 more inches after the April Tag positioning completes.
+                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                // Move the linear slide to the low scoring position
+                linearSlideMove.LinearSlidesLow();
+                // Moves the conveyor forward
+                conveyor.setPosition(0);
+                // Runs the conveyor for 4 seconds
+                sleep(4000);
+                // Stops the conveyor
+                conveyor.setPosition(0.5);
+                // Moves the linear slide to the bottom position
+                linearSlideMove.LinearSlidesBottom();
+                // Forward 6 inches
+                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 26 inches
+                moveTo.Right((int) ((18 * ticksPerInch) * 1.04), 0.5);
+                // Backward 6 inches
+                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Finish all autos with the wrist up
+                intake.FlipUp();
+                state = 3;
+            } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
+                //Move back 5 more inches after the April Tag positioning completes.
+                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                // Move the linear slide to the low scoring position
+                linearSlideMove.LinearSlidesLow();
+                // Moves the conveyor forward
+                conveyor.setPosition(0);
+                // Runs the conveyor for 4 seconds
+                sleep(4000);
+                // Stops the conveyor
+                conveyor.setPosition(0.5);
+                // Moves the linear slide to the bottom position
+                linearSlideMove.LinearSlidesBottom();
+                // Forward 6 inches
+                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 26 inches
+                moveTo.Right((int) ((22 * ticksPerInch) * 1.04), 0.5);
+                // Backward 6 inches
+                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Finish all autos with the wrist up
+                intake.FlipUp();
+                state = 3;
+            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
+                //Move back 5 more inches after the April Tag positioning completes.
+                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                // Move the linear slide to the low scoring position
+                linearSlideMove.LinearSlidesLow();
+                // Moves the conveyor forward
+                conveyor.setPosition(0);
+                // Runs the conveyor for 4 seconds
+                sleep(4000);
+                // Stops the conveyor
+                conveyor.setPosition(0.5);
+                // Moves the linear slide to the bottom position
+                linearSlideMove.LinearSlidesBottom();
+                // Forward 6 inches
+                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 26 inches
+                moveTo.Right((int) ((28 * ticksPerInch) * 1.04), 0.5);
+                // Backward 6 inches
+                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Finish all autos with the wrist up
+                intake.FlipUp();
+                state = 3;
+            }
+            // Show the elapsed game time and wheel power.
+            displayTelemetry(DirectionNow);
         }
-        // Show the elapsed game time and wheel power.
-        displayTelemetry(DirectionNow);
     }
 }
