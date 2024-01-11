@@ -1,41 +1,43 @@
-package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import static org.opencv.core.Core.inRange;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.opencv.core.Scalar;
 
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.Arrays;
 import java.util.List;
 
 @TeleOp(name="cameraTest", group="Linear Opmode")
 public class camera_pixel_detection extends OpMode {
+    boolean lastA = false, lastB = false, lastY = false, lastX = false ,lastLeftBumber = false, lastRightBumper = false;
     int cameraMonitorViewId;
+    public static double Choose_H_S_V = 0; // first arm weight KG
     WebcamName webcamName;
     OpenCvCamera camera;
-    boolean lastA = false, lastB = false, lastY = false, lastX = false;
     double[] lowerPvals = new double[]{0, 0, 0};
     double[] upperPvals = new double[]{60, 255, 255};
-    Scalar lowerP = new Scalar(290, 40, 50); //48 65 60
-    Scalar upperP = new Scalar(320, 100, 65); //65 100 100
-    Scalar lowerG = new Scalar(32,104,18);
+    Scalar lowerW = new Scalar(0, 0, 200);
+    Scalar upperW = new Scalar(360, 25, 240);
+    double[] lowerWvals = new double[]{0, 0, 200};
+    double[] upperWvals = new double[]{360, 25, 240};
+//    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
+//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
 
-    Scalar upperG = new Scalar(123,171,111);
-    Scalar lowerO = new Scalar(15, 75, 45);
-    Scalar upperO = new Scalar(35, 100, 56);
 
 
     @Override
@@ -80,26 +82,35 @@ public class camera_pixel_detection extends OpMode {
 
     @Override
     public void init_loop() {
-        if (gamepad1.a && !lastA) {
-            lowerPvals[0]++;
-        }
-        lastA = gamepad1.a;
-        if (gamepad1.b && !lastB) {
-            lowerPvals[0]--;
-        }
-        lastB = gamepad1.b;
-        lowerP.set(lowerPvals);
-        if (gamepad1.x && !lastX) {
-            upperPvals[0]++;
-        }
-        lastX = gamepad1.x;
-        if (gamepad1.y && !lastY) {
-            upperPvals[0]--;
-        }
-        lastY = gamepad1.y;
-        upperP.set(upperPvals);
-        telemetry.addData("upperY: ", upperP.val[0]);
-        telemetry.addData("lowerY: ", lowerP.val[0]);
+        telemetry.addData("lowerW: ", lowerW);
+        telemetry.addData("upperW: ", upperW);
+        telemetry.addData("H_S_V_number ", Choose_H_S_V);
+        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_bumper=Choose H or S or V");
+        if(gamepad1.left_bumper && !lastLeftBumber){
+            Choose_H_S_V += 1;
+        }lastLeftBumber=gamepad1.left_bumper;
+
+        if(gamepad1.right_bumper && !lastRightBumper){
+            Choose_H_S_V -= 1;
+        }lastRightBumper=gamepad1.right_bumper;
+
+        if(gamepad1.a && !lastA){
+            upperWvals[2]++;
+        }lastA=gamepad1.a;
+
+        if(gamepad1.b && !lastB){
+            upperWvals[2]--;
+        }lastB=gamepad1.b;
+
+        if(gamepad1.x && !lastX){
+            upperWvals[2] += 10;
+        }lastX=gamepad1.x;
+
+        if(gamepad1.y && !lastY){
+            upperWvals[2] -= 10;
+        }lastY=gamepad1.y;
+
+        upperW.set(upperWvals);
     }
 
     @Override
@@ -119,34 +130,10 @@ public class camera_pixel_detection extends OpMode {
         Mat binaryAfterO = new Mat(640, 480, CvType.CV_8UC1);
 
         List contours;
-
-        public Mat processFrameP(Mat input) {
-            try {
-
-                Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-//                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-                inRange(hsv, lowerP, upperP, binaryP);
-//                Imgproc.erode(binaryP,binaryAfterP,kernel);
-            } catch (Exception e) {
-                telemetry.addData("process frame error:", e.getMessage());
-                telemetry.update();
-            }
-
-            return binaryP;
-        }
-
-        public Mat processframeO(Mat input) {
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-            //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-            inRange(hsv, lowerO, upperO, binaryO);
-//                            Imgproc.erode(binaryO,binaryAfterO,kernel);
-            return binaryO;
-        }
-
         public Mat processframeG(Mat input) {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-            inRange(hsv, lowerG, upperG, binaryG);
+            inRange(hsv, lowerW, upperW, binaryG);
             //                Imgproc.erode(binaryG,binaryAfterG,kernel);
             return binaryG;
         }
