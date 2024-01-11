@@ -87,7 +87,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
         PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
       driveSubsystem = new DriveSubsystem(hardwareMap);
-      tiltSubsystem.init();
+     // tiltSubsystem.init();
       //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
         //driver
@@ -117,8 +117,8 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
         //overrides
-        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->tiltSubsystem.VERTICAL_ENCODER_VALUE+=5));
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->tiltSubsystem.VERTICAL_ENCODER_VALUE-=5));
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->tiltSubsystem.moreTilt()));
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->tiltSubsystem.lessTilt()));
 
         //deposit
         operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
