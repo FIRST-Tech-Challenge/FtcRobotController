@@ -80,7 +80,7 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="GGE Drive T1", group="Linear OpMode")
+@TeleOp(name="GGE Drive T2", group="Linear OpMode")
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 

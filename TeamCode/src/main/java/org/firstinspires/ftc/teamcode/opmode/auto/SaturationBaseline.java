@@ -19,31 +19,28 @@ import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
  * This would also allow us to verify the spike line boxes
  */
 @Autonomous(name="Saturation Baseline", group="OpMode")
-public class SaturationBaseline extends AutoBase{
+public class SaturationBaseline extends AutoBase {
 
     @Override
-    public void init() {
+    public void runOpMode() {
+        // finally do the init in the AutoBase that will set up the camera and motors
+        super.runOpMode();
 
         // Change this if you want to calibrate for a different field position
         setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
 
-        // finally do the init in the AutoBase that will set up the camera and motors
-        super.init();
-    }
 
+        while (opModeInInit()) {
+            telemetry.addData("LSpikeSaturation", getLeftSpikeSaturation());
+            telemetry.addData("RSpikeSaturation", getRightSpikeSaturation());
+            telemetry.addData("CSpikeSaturation", getCenterSpikeSaturation());
 
-    @Override
-    public void init_loop() {
-        telemetry.addData("LSpikeSaturation",getLeftSpikeSaturation());
-        telemetry.addData("RSpikeSaturation",getRightSpikeSaturation());
-        telemetry.addData("CSpikeSaturation",getCenterSpikeSaturation());
+            telemetry.update();
+        }
 
-        telemetry.update();
-    }
+        while (opModeIsActive()) {
 
-    @Override
-    public void loop(){
-
-        // TODO: Here is an idea,  we could map buttons to the different field positions and print the results like in the init_loop
+            // TODO: Here is an idea,  we could map buttons to the different field positions and print the results like in the init_loop
+        }
     }
 }

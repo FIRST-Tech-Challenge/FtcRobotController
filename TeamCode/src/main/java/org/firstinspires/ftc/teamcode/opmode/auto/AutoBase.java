@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import android.util.Size;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -38,7 +39,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AutoBase extends OpMode {
+public abstract class AutoBase extends LinearOpMode {
 
     // <<<<<<end of configurable parameters >>>>>>>>>>>
     static final int STREAM_WIDTH = 1280; // modify for your camera
@@ -93,7 +94,7 @@ public abstract class AutoBase extends OpMode {
     double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
     @Override
-    public void init() {
+    public void runOpMode() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = null;

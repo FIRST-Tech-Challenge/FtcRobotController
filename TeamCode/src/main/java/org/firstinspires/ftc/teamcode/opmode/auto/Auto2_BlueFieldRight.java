@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
 
-@Autonomous(name="BlueFieldRight", group="OpMode")
+@Autonomous(name="BlueFieldRight", group="OpMode",preselectTeleOp = "GGE Drive T2")
 //@Disabled
 public class Auto2_BlueFieldRight extends AutoBase {
 
@@ -56,89 +56,90 @@ public class Auto2_BlueFieldRight extends AutoBase {
      * is likely a problem.
      */
     @Override
-    public void init() {
-        super.init();
+    public void runOpMode() {
+        super.runOpMode();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.BLUE_FIELD_RIGHT);
-    }
 
-    /**
-     * This loop is run continuously
-     */
-    @Override
-    public void init_loop(){
-        state = 0;
-        SpikePosition spikePos = getSpikePosition();
-        switch (spikePos){
-            case RIGHT:
-                gamepieceLocation = GamePieceLocation.RIGHT;
-                break;
-            case CENTRE:
-                gamepieceLocation = GamePieceLocation.CENTER;
-                break;
-            default:
-                gamepieceLocation = GamePieceLocation.LEFT;
-        }
-        telemetry.addData("GamePiece Spike line",gamepieceLocation);
-        telemetry.update();
-    }
 
-    @Override
-    public void loop(){
+        /**
+         * This loop is run continuously
+         */
 
-        double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-        if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0){
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 2 inches
-            moveTo.Forward((int)((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // move sideways 9 inches
-            moveTo.Right((int)((9 * ticksPerInch)* 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
-            // move forward 12 inches
-            moveTo.Forward((int)((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            sleep (500);
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
-        } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // move forward 18 inches
-            moveTo.Forward((int)((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 4 inches
-            moveTo.Forward((int)((4 * ticksPerInch) * 0.94), 0.25);
-            // Open the claw
-            intake.ClawOpen();
-            // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
-        } else if (state == 0) {
-            // Start by securing the loaded pixel
-            intake.ClawClosed();
-            // Move forward 25 inches
-            moveTo.Forward((int)((25 * ticksPerInch) * 0.94), 0.25);
-            // Rotate 90 degrees
-            moveTo.Rotate(-95);
-            sleep(700);
-            // Move the claw down
-            intake.FlipDown();
-            // Move forward 6 inches
-            moveTo.Forward((int)((5.5 * ticksPerInch) * 0.94), 0.4);
-            // Open the claw
-            intake.ClawOpen();
-            sleep(500);
-            // End all autos with the wrist up
-            intake.FlipUp();
-            state = 1;
+        while (opModeInInit()) {
+            state = 0;
+            SpikePosition spikePos = getSpikePosition();
+            switch (spikePos) {
+                case RIGHT:
+                    gamepieceLocation = GamePieceLocation.RIGHT;
+                    break;
+                case CENTRE:
+                    gamepieceLocation = GamePieceLocation.CENTER;
+                    break;
+                default:
+                    gamepieceLocation = GamePieceLocation.LEFT;
+            }
+            telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.update();
         }
 
-        // Show the elapsed game time and wheel power.
-        displayTelemetry(DirectionNow);
-    }}
+        while (opModeIsActive()) {
+
+            double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // move forward 2 inches
+                moveTo.Forward((int) ((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // move sideways 9 inches
+                moveTo.Right((int) ((9 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // move forward 12 inches
+                moveTo.Forward((int) ((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // Move the claw down
+                intake.FlipDown();
+                sleep(500);
+                // Open the claw
+                intake.ClawOpen();
+                // End all autos with the wrist up
+                intake.FlipUp();
+                state = 1;
+            } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // move forward 18 inches
+                moveTo.Forward((int) ((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                // Move the claw down
+                intake.FlipDown();
+                // Move forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
+                // Open the claw
+                intake.ClawOpen();
+                // End all autos with the wrist up
+                intake.FlipUp();
+                state = 1;
+            } else if (state == 0) {
+                // Start by securing the loaded pixel
+                intake.ClawClosed();
+                // Move forward 25 inches
+                moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.25);
+                // Rotate 90 degrees
+                moveTo.Rotate(-95);
+                sleep(700);
+                // Move the claw down
+                intake.FlipDown();
+                // Move forward 6 inches
+                moveTo.Forward((int) ((5.5 * ticksPerInch) * 0.94), 0.4);
+                // Open the claw
+                intake.ClawOpen();
+                sleep(500);
+                // End all autos with the wrist up
+                intake.FlipUp();
+                state = 1;
+            }
+
+            // Show the elapsed game time and wheel power.
+            displayTelemetry(DirectionNow);
+        }
+    }
+}
