@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.utils;
 
 public class Util {
     public static double cosInDegrees(double angle) {
@@ -9,4 +9,6 @@ public class Util {
         return Math.sin(angle * Math.PI / 180);
     }
 
+    public static double aCosInDegrees(double ratio) {
+        return Math.acos(ratio) / Math.PI * 180;
 }
