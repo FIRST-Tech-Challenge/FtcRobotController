@@ -24,20 +24,18 @@ import java.util.List;
 
 @TeleOp(name="cameraTest", group="Linear Opmode")
 public class camera_pixel_detection extends OpMode {
-    boolean lastA = false, lastB = false, lastY = false, lastX = false ,lastLeftBumber = false, lastRightBumper = false;
+    boolean lastA = false, lastB = false, lastY = false, lastX = false ,lastleft_trigger = false, lastright_trigger, lastleft_bumper = false, lastright_bumper = false;
     int cameraMonitorViewId;
-    public static double Choose_H_S_V = 0; // first arm weight KG
+    public static int choose_H_S_V = 0;
+    public static int choose_upper_or_lower = 0;
     WebcamName webcamName;
     OpenCvCamera camera;
-    double[] lowerPvals = new double[]{0, 0, 0};
-    double[] upperPvals = new double[]{60, 255, 255};
+//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
+//    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
     Scalar lowerW = new Scalar(0, 0, 200);
     Scalar upperW = new Scalar(360, 25, 240);
     double[] lowerWvals = new double[]{0, 0, 200};
     double[] upperWvals = new double[]{360, 25, 240};
-//    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
-//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
-
 
 
     @Override
@@ -84,33 +82,61 @@ public class camera_pixel_detection extends OpMode {
     public void init_loop() {
         telemetry.addData("lowerW: ", lowerW);
         telemetry.addData("upperW: ", upperW);
-        telemetry.addData("H_S_V_number ", Choose_H_S_V);
-        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_bumper=Choose H or S or V");
-        if(gamepad1.left_bumper && !lastLeftBumber){
-            Choose_H_S_V += 1;
-        }lastLeftBumber=gamepad1.left_bumper;
+        telemetry.addData("H_S_V_number ", choose_H_S_V);
+        telemetry.addData("lower = 0, upper = 1 ", choose_upper_or_lower);
+        telemetry.addLine("a = +1 \n b = -1 \n x = +10 \n y = -10 \n" +
+                " triggers=Choose H or S or V (H=0 S=1 V=2) \n bumpers = upper/lower ") ;
+        if(gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 0){
+            choose_upper_or_lower -= 1;
+        }lastleft_bumper=gamepad1.left_bumper;
 
-        if(gamepad1.right_bumper && !lastRightBumper){
-            Choose_H_S_V -= 1;
-        }lastRightBumper=gamepad1.right_bumper;
+        if(gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 1){
+            choose_upper_or_lower += 1;
+        }lastright_bumper=gamepad1.right_bumper;
+
+        if(gamepad1.left_trigger > 0.1 && !lastleft_trigger && choose_H_S_V > 0){
+            choose_H_S_V -= 1;
+        }lastleft_trigger=gamepad1.left_trigger > 0.1;
+
+        if(gamepad1.right_trigger>0.1 && !lastright_trigger && choose_H_S_V < 2){
+            choose_H_S_V += 1;
+        }lastright_trigger=gamepad1.right_trigger > 0.1;
+
 
         if(gamepad1.a && !lastA){
-            upperWvals[2]++;
-        }lastA=gamepad1.a;
+            if(choose_upper_or_lower == 1){
+            upperWvals[choose_H_S_V]++;}
+
+            if(choose_upper_or_lower == 0){
+                lowerWvals[choose_H_S_V]++;}
+            }
+        lastA=gamepad1.a;
 
         if(gamepad1.b && !lastB){
-            upperWvals[2]--;
+            if(choose_upper_or_lower == 1){
+            upperWvals[choose_H_S_V]--;}
+
+            if(choose_upper_or_lower == 0){
+                lowerWvals[choose_H_S_V]--;}
         }lastB=gamepad1.b;
 
         if(gamepad1.x && !lastX){
-            upperWvals[2] += 10;
+            if(choose_upper_or_lower == 1){
+            upperWvals[choose_H_S_V] += 10;}
+
+            if(choose_upper_or_lower == 0){
+            lowerWvals[choose_H_S_V] += 10;}
         }lastX=gamepad1.x;
 
         if(gamepad1.y && !lastY){
-            upperWvals[2] -= 10;
-        }lastY=gamepad1.y;
+            if(choose_upper_or_lower == 1){
+            upperWvals[choose_H_S_V] -= 10;}
 
+            if(choose_upper_or_lower == 0){
+            lowerWvals[choose_H_S_V] -= 10;}
+        }lastY=gamepad1.y;
         upperW.set(upperWvals);
+        lowerW.set(lowerWvals);
     }
 
     @Override

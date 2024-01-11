@@ -41,7 +41,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller.assignCommand(m_chassis.drive(m_controller.left_x, ()-> m_gamepad1.left_trigger+ m_gamepad1.right_trigger, ()-> m_gamepad1.left_stick_y),
                 true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER);
 
-        m_controller.assignCommand(m_gripper.closeGripper(),false,BUTTON_LEFT).whenInactive();
+        m_controller.assignCommand(m_gripper.closeGripper(),false,BUTTON_LEFT);
         m_controller.assignCommand(m_gripper.openGripper(),false,BUTTON_LEFT);
         m_controller.assignCommand(m_plane.shootPlane(),false,BUTTON_UP);
 
