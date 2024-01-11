@@ -18,6 +18,15 @@ public class Constants  {
     public static final double motorMaxVolt = 12;
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
+    final public static double cameraAngle = 0;
+    public static class  Climb{
+        public static final double climb_max_speed = 0;// todo: this is not calibrated
+        public static final double climb_max_accel = 0;// todo: this is not calibrated
+        public static final double kp = 0;// todo: this is not calibrated
+        public static final double ki = 0;// todo: this is not calibrated
+        public static final double kd = 0;// todo: this is not calibrated
+        public static final double kf = 0;// todo: this is not calibrated
+        public static final int max_ticks = 0;// todo: this is not calibrated
 
     public enum ArmStates {
         base(Arm.armBasePosition,false,ArmPlacingStates.base), // this doesn't need any boolean has a command on his own
@@ -33,14 +42,5 @@ public class Constants  {
         }
     }
 
-
-
-
-
-
-
-
-
-
-    final public static double cameraAngle = 0;
+    }
 }
