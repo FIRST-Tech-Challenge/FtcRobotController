@@ -11,4 +11,4 @@ public class Util {
 
     public static double aCosInDegrees(double ratio) {
         return Math.acos(ratio) / Math.PI * 180;
-}
+}}
