@@ -116,20 +116,24 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         //reset heading
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
+        //overrides
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->tiltSubsystem.VERTICAL_ENCODER_VALUE+=5));
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->tiltSubsystem.VERTICAL_ENCODER_VALUE-=5));
+
         //deposit
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
 
         //intake
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                   //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
         //stow
-        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                 new SequentialCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                         //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),

@@ -28,7 +28,7 @@ public class TiltSubsystem extends SubsystemBase
     private static double KF = 0.3;
     private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
     private static double TOLERANCE = 0;
-    private static int VERTICAL_ENCODER_VALUE = 675;
+    public static int VERTICAL_ENCODER_VALUE = 675;
     // vertical position of tilt when encoders are reset in the starting position
 
     private PIDController pid = new PIDController(KP, KI, kD);
