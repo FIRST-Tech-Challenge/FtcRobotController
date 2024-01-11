@@ -31,6 +31,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public DcMotor  backRight = null;
 
     public DcMotor  climberMotor = null;
+    public DcMotor  climber2 = null;
     public Servo  claw = null;
     public Servo arm1 = null;
     public Servo arm2 = null;
@@ -56,6 +57,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
         climberMotor  = hardwareMap.get(DcMotor.class, "Climber");
+        climber2  = hardwareMap.get(DcMotor.class, "climber2");
         claw = hardwareMap.get(Servo.class, "Claw");
         arm1  = hardwareMap.get(Servo.class, "Arm1");
         arm2  = hardwareMap.get(Servo.class, "Arm2");
@@ -74,6 +76,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         climberMotor.setDirection(DcMotor.Direction.FORWARD);
+        climber2.setDirection(DcMotor.Direction.FORWARD);
         arm1.setDirection(Servo.Direction.REVERSE);
         arm1.scaleRange(0,1);
         arm2.setDirection(Servo.Direction.FORWARD);
@@ -82,6 +85,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         climberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        climber2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -186,25 +190,33 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         if (gamepad2.x) {
             arm1.setPosition(0.75);
         }
-        if (gamepad2.right_bumper) {
+        if (gamepad2.right_stick_x > 0.1) {
             arm1.setPosition(0.6);
         }
-        if (gamepad2.right_trigger > 0) {
-            arm2.setPosition(0.2);
-        }
-        if (gamepad2.left_trigger > 0) {
-            arm2.setPosition(1);
-        }
-        if (gamepad2.y) {
-            arm1.setPosition(0.4);
+//        if (gamepad2.right_trigger > 0) {
+//            arm2.setPosition(0.2);
+//        }
+//        if (gamepad2.left_trigger > 0) {
+//            arm2.setPosition(1);
+//        }
+          if (gamepad2.y) {
+              arm1.setPosition(0.4);
 
         }
-        if (gamepad2.right_stick_y > 0.1) {
+        if (gamepad2.right_trigger > 0.1) {
             climberMotor.setPower(-1);
-        } else if (gamepad2.right_stick_y < -0.1) {
+        } else if (gamepad2.right_bumper) {
             climberMotor.setPower(1);
         } else {
             climberMotor.setPower(0);
+        }
+
+        if (gamepad2.left_trigger > 0.1) {
+            climber2.setPower(-1);
+        } else if (gamepad2.left_bumper) {
+            climber2.setPower(1);
+        } else {
+            climber2.setPower(0);
         }
         // "0" position is at the closed poesition
         // furthest right is to the side of robot
