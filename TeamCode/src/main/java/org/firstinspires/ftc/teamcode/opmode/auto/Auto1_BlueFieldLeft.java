@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
 /**
@@ -58,6 +59,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
     public void init() {
         super.init();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
+        setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
     }
 
     /**

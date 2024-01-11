@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
 /**
@@ -56,6 +57,7 @@ public class Auto2_Red53Left extends AutoBase {
     public void init() {
         super.init();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
+        setFieldPosition(FieldPosition.RED_FIELD_LEFT);
     }
 
     /**
