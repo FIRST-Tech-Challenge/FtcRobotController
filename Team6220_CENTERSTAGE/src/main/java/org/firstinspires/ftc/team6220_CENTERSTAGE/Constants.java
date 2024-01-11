@@ -4,6 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
+/*
+This class contains various constants that are used throughout our code, sorted into general catagories.
+ */
 @Config
 public class Constants {
   
@@ -16,8 +19,32 @@ public class Constants {
     public static final double TELEOP_MIN_HEADING_ACCURACY = 5.0; // degrees off from target
     public static final double SLOWMODE_MULTIPLIER = 0.3;
     public static final double INTAKE_POWER_MULTIPLIER = 0.8;
+    public static final double DRONE_SERVO_PRIMED_POS = 1;
+    public static final double DRONE_SERVO_LAUNCHING_POS = 0.3;
 
-  
+    public static final double DUMPER_INITIALIZATION_POS = 0.6;
+
+    public static final double[] PIXEL_LATCH_POSITIONS = {
+            0.5, // closed
+            1, // open
+    };
+
+    public static final double SLIDE_RETURN_POWER_MULTIPLIER = 1.2;
+    public static final double SLIDE_RETURN_POWER_OFFSET = -0.05;
+    public static final double SLIDE_RETURN_UP_MUL = 0.66;
+    public static final double AUTO_SLIDES_MAX_SPEED = 0.8;
+    public static final double AUTO_SLIDES_PRESET_TOLERANCE = 0.1;
+    public static final double SLIDE_P_GAIN = 0.3; // Multiplier modifier constant for slide power, used in preset moveSlides method.
+
+    public static final double[] INTAKE_POSITIONS = { // Preset positions that the intake can travel to through use of Dpad Controls.
+        0.33,
+        0.34,
+        0.36,
+        0.39,
+        0.41,
+        0.81,
+    };
+
   
     /* Constants used in AutoFramework */
 
