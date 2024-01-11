@@ -16,7 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
-public abstract class CSMethods extends LinearOpMode {
+public abstract class CSBase extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
     public TfodProcessor tfod;
     public final ElapsedTime runtime = new ElapsedTime();

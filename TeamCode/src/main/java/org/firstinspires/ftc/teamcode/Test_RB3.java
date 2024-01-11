@@ -29,7 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  */
 
 @Disabled
-public class RBTest3 extends CSMethods {
+public class Test_RB3 extends CSBase {
     @Override
     public void runOpMode() {
         setup(true);

@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
@@ -31,21 +28,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-//@Autonomous(name = "Blue Back", group = "CenterStage", preselectTeleOp = "Full")
 @Disabled
-public class CSAutoBlueBackFull extends CSMethods {
-
+public class Test_RB4 extends CSBase {
     @Override
     public void runOpMode() {
-        setup(false);
+        setup(true);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
-        drive(tiles(-1));
-        drive(tiles(-1.15));
-        turn(90);
+        drive(tiles(-2.1));
+        turn(-90);
         drive(tiles(1.7));
         ejectPixel();
 
@@ -53,5 +47,4 @@ public class CSAutoBlueBackFull extends CSMethods {
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
 }

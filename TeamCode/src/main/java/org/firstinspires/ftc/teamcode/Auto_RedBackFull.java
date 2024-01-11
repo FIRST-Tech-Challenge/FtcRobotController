@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
@@ -31,28 +28,28 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-//@Autonomous(name = "Blue Front", group = "CenterStage", preselectTeleOp = "Full")
+//@Autonomous(name = "Red Back", group = "CenterStage", preselectTeleOp = "Full")
 @Disabled
-public class CSAutoBlueFrontFull extends CSMethods {
+public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
-        setup(false);
+        boolean isRed = true;
+        setup(isRed);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
-        drive(-20);
-        drive(23);
-        drive(-3);
-        turn(90);
-        drive(90);
+        drive(tiles(-1));
+        drive(tiles(-1.15));
+        turn(-90);
+        drive(tiles(1.7));
         ejectPixel();
+
+        //*/
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display final telemetry message.
     }
-
-
 }

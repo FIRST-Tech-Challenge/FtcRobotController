@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Disabled
-public class TeamPropDetectionTest2 extends CSMethods {
+public class Test_TeamPropDetection2 extends CSBase {
 
     public void runOpMode() {
         setup(false);

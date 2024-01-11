@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Disabled
-public class StrafingTest20 extends CSMethods {
+public class Test_Strafing10 extends CSBase {
     public void runOpMode() {
         setup(true);
-        strafe(20);
+        strafe(10);
     }
 }

@@ -29,7 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
  */
 
 @Disabled
-public class DrivingTest extends CSMethods {
+public class Test_Driving extends CSBase {
     public void runOpMode() {
         setup(true);
 

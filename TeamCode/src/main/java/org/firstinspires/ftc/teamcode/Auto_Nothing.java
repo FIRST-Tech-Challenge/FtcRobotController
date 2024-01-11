@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Nothing", group = "CenterStage", preselectTeleOp = "Full")
-public class NothingAuto extends LinearOpMode {
+public class Auto_Nothing extends LinearOpMode {
 
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");

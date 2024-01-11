@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "One Gamepad", group = "CenterStage")
-public class CSOneGamepadTeleOp extends CSMethods {
+public class TeleOp_OneGamepad extends CSBase {
 
     // Declare OpMode members for each of the 4 motors.
     boolean wasY = false;

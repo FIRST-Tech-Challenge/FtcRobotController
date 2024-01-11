@@ -29,7 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  */
 
 @Disabled
-public class RBTest2 extends CSMethods {
+public class Test_RB1 extends CSBase {
     @Override
     public void runOpMode() {
         setup(true);
@@ -38,7 +38,7 @@ public class RBTest2 extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        turn(-90);
+        drive(tiles(-2.1));
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

@@ -28,18 +28,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Blue Back Final", group = "CenterStage", preselectTeleOp = "Full")
-public class CSAutoBlueBackLimited extends CSMethods {
+@Autonomous(name = "Red Back Final", group = "CenterStage", preselectTeleOp = "Full")
+public class Auto_RedBackLimited extends CSBase {
     @Override
     public void runOpMode() {
-        setup(false);
+        setup(true);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
         drive(tiles(-2.1));
-        turn(90);
+        turn(-90);
         VELOCITY = 1000;
         drive(tiles(1.7));
         VELOCITY = 2000;

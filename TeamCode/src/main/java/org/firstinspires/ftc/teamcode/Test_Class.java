@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 //@Autonomous(name = "Class Test", group = "Tests")
 @Disabled
-public class ClassTest extends CSMethods {
+public class Test_Class extends CSBase {
     public void runOpMode() {
         setup(true);
         if (carWashMotor == null) {

@@ -2,10 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+
+//@Autonomous(name = "April Tag Detection", group = "Tests")
 @Disabled
-public class StrafingTest10 extends CSMethods {
+public class Test_AprilTag extends CSBase {
     public void runOpMode() {
+
         setup(true);
-        strafe(10);
+
+        strafeUntilTagDetection(0);
+        drive(-10);
+
     }
 }

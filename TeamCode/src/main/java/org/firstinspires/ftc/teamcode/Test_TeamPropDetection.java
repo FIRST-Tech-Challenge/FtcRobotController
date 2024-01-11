@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Disabled
-public class TeamPropDetectionTest extends CSMethods {
+public class Test_TeamPropDetection extends CSBase {
     public void runOpMode() {
 
         TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
