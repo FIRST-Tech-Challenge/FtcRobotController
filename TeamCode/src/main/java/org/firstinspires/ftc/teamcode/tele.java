@@ -22,6 +22,9 @@ public class tele extends OpMode {
     double backLeftPower;
     double backRightPower;
 
+    int deploymentState = 0;
+    double oldTime = 0;
+
     int pixlePickerColorTime = 5000;
 
     Gamepad.LedEffect gamepadLaunchSequenceLed = new Gamepad.LedEffect.Builder()
@@ -92,7 +95,7 @@ public class tele extends OpMode {
         if (gamepad1.right_trigger > .5) {
             speedLimit = 50;
         } else {
-            speedLimit = 90;
+            speedLimit = 100;
         }
 
         double speedLimitValue = speedLimit / 100;
@@ -121,38 +124,85 @@ public class tele extends OpMode {
         }
 
         robot.winch.setPower(-gamepad2.right_stick_y);
+        robot.lift.setPower(-gamepad2.left_stick_y);
 
         if (gamepad2.dpad_up) {
-            robot.hook.setPosition(1.0);
         } else if (gamepad2.dpad_down) {
-            robot.hook.setPosition(0);
         }
 
         if (gamepad2.y) {
-            robot.droneAngle.setPosition(.33);
         } else if (gamepad2.a) {
-            robot.droneAngle.setPosition(.17);
+
         }
 
         if (gamepad2.x && gamepad2.b) {
-            robot.droneHolder.setPosition(0);
-            robot.launcherRelease.setPosition(0.85);
+
         } else {
-            robot.droneHolder.setPosition(0.065);
-            robot.launcherRelease.setPosition(0.6);
+
         }
 
-        if (gamepad2.right_bumper) {
-            robot.arm.setPosition(.456);
-        } else if (gamepad2.left_bumper) {
-            robot.arm.setPosition(0.1);
+        /** Stripper State **/
+
+        switch (deploymentState) {
+            case 0:
+                deploymentState++;
+                break;
+            case 1:
+                robot.stripper.setPosition(robot.stripperOpen);
+                if (getRuntime() > oldTime + .2) {
+                    if (gamepad2.right_bumper) {
+                        deploymentState++;
+                        oldTime = getRuntime();
+                    } else if (gamepad2.left_bumper) {
+                        deploymentState = 1;
+                        oldTime = getRuntime();
+                    }
+                }
+                break;
+            case 2:
+                robot.stripper.setPosition(robot.stripperFirstRelease);
+                if (getRuntime() > oldTime + .2) {
+                    if (gamepad2.right_bumper) {
+                        deploymentState++;
+                        oldTime = getRuntime();
+                    } else if (gamepad2.left_bumper) {
+                        deploymentState = 1;
+                        oldTime = getRuntime();
+                    }
+                }
+                break;
+            case 3:
+                robot.stripper.setPosition(robot.stripperSecondRelease);
+                if (getRuntime() > oldTime + .2) {
+                    if (gamepad2.right_bumper) {
+                        deploymentState++;
+                        oldTime = getRuntime();
+                    } else if (gamepad2.left_bumper) {
+                        deploymentState = 1;
+                        oldTime = getRuntime();
+                    }
+                }
+                break;
+            case 4:
+                deploymentState = 0;
+                break;
         }
 
-        if (gamepad2.right_trigger > 0.5) {
-            robot.gripper.setPosition(0.55);
-        } else if (gamepad2.left_trigger > 0.5) {
-            robot.gripper.setPosition(1);
+
+        /** Intake/Transfer **/
+
+        switch (escapmentFingerPosition) {
+            case 0:
+                break;
+            case 1:
+                robot.escapementFinger.setPosition(-.1);
         }
+
+
+        robot.intake.setPower(gamepad2.right_trigger);
+        robot.transfer.setPower(gamepad2.right_trigger);
+        robot.intake.setPower(-gamepad2.left_trigger);
+        robot.transfer.setPower(-gamepad2.left_trigger);
 
         if (gamepad1.x) {
             gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);
@@ -180,8 +230,9 @@ public class tele extends OpMode {
             gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
             gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
         }
-        telemetry.addData("Right",robot.rightDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Left",robot.leftDistance.getDistance(DistanceUnit.CM));
+        telemetry.addData("Stripper State", deploymentState);
+        telemetry.addData("BB1", robot.firstPixelDetector.isPressed());
+        telemetry.addData("BB2", robot.firstPixelDetector.isPressed());
         telemetry.update();
 
     }

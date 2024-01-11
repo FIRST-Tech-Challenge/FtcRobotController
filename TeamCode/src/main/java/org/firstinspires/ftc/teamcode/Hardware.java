@@ -1,22 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvWebcam;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 public class Hardware {
@@ -26,22 +16,30 @@ public class Hardware {
     public DcMotor rightBackDrive = null;
 
     public DcMotor winch = null;
+    public DcMotor intake = null;
+    public DcMotor transfer = null;
+    public DcMotor lift = null;
 
     public Servo hook = null;
-    public Servo gripper = null;
-    public Servo arm = null;
+    public Servo stripper = null;
+    public Servo escapementFinger = null;
     public Servo launcherRelease = null;
     public Servo droneAngle = null;
-    public Servo droneHolder = null;
 
-    public Rev2mDistanceSensor rightDistance = null;
-    public Rev2mDistanceSensor leftDistance = null;
+    public VCNL4000 rightDistance = null;
+    public VCNL4000 leftDistance = null;
+    public TouchSensor firstPixelDetector = null;
+    public TouchSensor secondPixelDetector = null;
 
     HardwareMap hwMap = null;
 
     public Hardware() {
 
     }
+
+    public double stripperFirstRelease = 0.40;
+    public double stripperSecondRelease = 0.1;
+    public double stripperOpen = 0.85;
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -54,23 +52,29 @@ public class Hardware {
         leftBackDrive = hwMap.get(DcMotor.class, "bl");
 
         winch = hwMap.get(DcMotor.class, "winch");
+        intake = hwMap.get(DcMotor.class, "intake");
+        transfer = hwMap.get(DcMotor.class, "transfer");
+        lift = hwMap.get(DcMotor.class, "lift");
 
         hook = hwMap.get(Servo.class, "hook");
-        gripper = hwMap.get(Servo.class, "grip");
-        arm = hwMap.get(Servo.class, "arm");
+        stripper = hwMap.get(Servo.class, "stripper");
+        escapementFinger = hwMap.get(Servo.class, "finger");
         launcherRelease = hwMap.get(Servo.class, "release");
         droneAngle = hwMap.get(Servo.class, "angle");
-        droneHolder = hwMap.get(Servo.class, "clip");
 
-        rightDistance = hwMap.get(Rev2mDistanceSensor.class, "rdist");
-        leftDistance = hwMap.get(Rev2mDistanceSensor.class, "ldist");
-
+        firstPixelDetector = hwMap.get(TouchSensor.class, "bb1");
+        secondPixelDetector = hwMap.get(TouchSensor.class, "bb2");
 
 
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        winch.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -82,8 +86,5 @@ public class Hardware {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 }
-

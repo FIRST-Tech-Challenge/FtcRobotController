@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.DevicePropertie
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @I2cDeviceType
-@DeviceProperties(name = "IR Proximity Sensor", xmlTag = "VCNL4000")
+@DeviceProperties(name = "VCNL4000 Proximity Sensor", xmlTag = "VCNL4000")
 public class VCNL4000 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     @Override
     public Manufacturer getManufacturer()
@@ -31,19 +31,23 @@ public class VCNL4000 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     public VCNL4000(I2cDeviceSynch deviceClient, boolean deviceClientIsOwned)
     {
         super(deviceClient, deviceClientIsOwned);
+
+        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
+
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();
     }
     public enum Register
     {
-        COMMAND(0x01),
-        PRODUCT_ID_REVISION(0x02),
-        T_L(0x03),
-        T_LIMIT_CRITICAL(0x04),
-        TEMPERATURE(0x05),
-        MANUFACTURER_ID(0x06),
-        DEVICE_ID_REVISION(0x07),
-        RESOLUTION(0x08);
+        PRODUCT_ID_REVISION(81),
+        NO_FUNCTION(82),
+        P_LED_CURRENT_SET(83),
+        AMBIENT_LIGHT_PARAMETER(84),
+        AMBIENT_LIGHT_RESULT_HIGH(85),
+        AMBIENT_LIGHT_RESULT_LOW(86),
+        PROXIMITY_MEASUREMENT_HIGH(87),
+        PROXIMITY_MEASUREMENT_LOW(88),
+        PROXIMITY_MEASUREMENT_SIGNAL_FREQUENCY(89);
 
         public int bVal;
 
@@ -51,5 +55,27 @@ public class VCNL4000 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         {
             this.bVal = bVal;
         }
+    }
+    protected void setOptimalReadWindow()
+    {
+        // Sensor registers are read repeatedly and stored in a register. This method specifies the
+        // registers and repeat read mode
+        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(
+                Register.PRODUCT_ID_REVISION.bVal,
+                Register.PROXIMITY_MEASUREMENT_SIGNAL_FREQUENCY.bVal - Register.PRODUCT_ID_REVISION.bVal + 1,
+                I2cDeviceSynch.ReadMode.REPEAT);
+        this.deviceClient.setReadWindow(readWindow);
+    }
+
+    public VCNL4000(I2cDeviceSynch deviceClient, boolean deviceClientIsOwned)
+    {
+        super(deviceClient, deviceClientIsOwned);
+
+        this.setOptimalReadWindow();
+        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
+
+        super.registerArmingStateCallback(false); // Deals with USB cables getting unplugged
+        // Sensor starts off disengaged so we can change things like I2C address. Need to engage
+        this.deviceClient.engage();
     }
 }
