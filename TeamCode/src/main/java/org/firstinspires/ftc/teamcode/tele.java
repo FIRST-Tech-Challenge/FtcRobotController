@@ -23,7 +23,12 @@ public class tele extends OpMode {
     double backRightPower;
 
     int deploymentState = 0;
+    int escapmentFingerPosition = 0;
+    int launcherAngle = 0;
     double oldTime = 0;
+    double escapementTime = 0;
+    double angleTime = 0;
+
 
     int pixlePickerColorTime = 5000;
 
@@ -123,8 +128,7 @@ public class tele extends OpMode {
             robot.rightBackDrive.setPower(0);
         }
 
-        robot.winch.setPower(-gamepad2.right_stick_y);
-        robot.lift.setPower(-gamepad2.left_stick_y);
+        robot.lift.setPower(-gamepad2.right_stick_y);
 
         if (gamepad2.dpad_up) {
         } else if (gamepad2.dpad_down) {
@@ -150,7 +154,7 @@ public class tele extends OpMode {
             case 1:
                 robot.stripper.setPosition(robot.stripperOpen);
                 if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.right_bumper) {
+                    if (gamepad2.left_trigger > .5) {
                         deploymentState++;
                         oldTime = getRuntime();
                     } else if (gamepad2.left_bumper) {
@@ -162,7 +166,7 @@ public class tele extends OpMode {
             case 2:
                 robot.stripper.setPosition(robot.stripperFirstRelease);
                 if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.right_bumper) {
+                    if (gamepad2.left_trigger >.5) {
                         deploymentState++;
                         oldTime = getRuntime();
                     } else if (gamepad2.left_bumper) {
@@ -174,7 +178,7 @@ public class tele extends OpMode {
             case 3:
                 robot.stripper.setPosition(robot.stripperSecondRelease);
                 if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.right_bumper) {
+                    if (gamepad2.left_trigger >.5) {
                         deploymentState++;
                         oldTime = getRuntime();
                     } else if (gamepad2.left_bumper) {
@@ -188,21 +192,101 @@ public class tele extends OpMode {
                 break;
         }
 
+        /** Winch **/
+
+        robot.winch.setPower(-gamepad2.left_stick_y);
+
+        if (gamepad2.dpad_up) {
+            robot.hook.setPosition(robot.hookDown);
+        }
+
+        /** Drone Launcher **/
+
+        switch (launcherAngle) {
+            case 0:
+                angleTime = getRuntime();
+                launcherAngle++;
+                break;
+            case 1:
+                robot.droneAngle.setPosition(-.1);
+                if (getRuntime() > angleTime + 1) {
+                    robot.droneAngle.setPosition(0);
+                    launcherAngle++;
+                }
+                break;
+            case 2:
+                if (gamepad2.y) {
+                    angleTime = getRuntime();
+                    launcherAngle++;
+                }
+                break;
+            case 3:
+                robot.droneAngle.setPosition(.1);
+                if (getRuntime() > angleTime + 1) {
+                    robot.droneAngle.setPosition(0);
+                    launcherAngle++;
+                }
+                break;
+            case 4:
+                if (gamepad2.y) {
+                    launcherAngle++;
+                }
+                break;
+            case 5:
+                launcherAngle = 0;
+                break;
+        }
+
+        if (gamepad2.x && gamepad2.b) {
+            robot.launcherRelease.setPosition(robot.launchOpen);
+        } else {
+            robot.launcherRelease.setPosition(robot.launchClosed);
+        }
 
         /** Intake/Transfer **/
 
         switch (escapmentFingerPosition) {
             case 0:
+                escapementTime = getRuntime();
+                escapmentFingerPosition++;
                 break;
             case 1:
                 robot.escapementFinger.setPosition(-.1);
+                if (getRuntime() > escapementTime + .5) {
+                    robot.escapementFinger.setPosition(0);
+                    escapmentFingerPosition++;
+                }
+                break;
+            case 2:
+                if (gamepad2.dpad_down) {
+                    escapementTime = getRuntime();
+                    escapmentFingerPosition++;
+                }
+                break;
+            case 3:
+                robot.escapementFinger.setPosition(.1);
+                if (getRuntime() > escapementTime + .5) {
+                    robot.escapementFinger.setPosition(0);
+                    escapmentFingerPosition++;
+                }
+                break;
+            case 4:
+                if (gamepad2.dpad_down) {
+                    escapmentFingerPosition++;
+                }
+                break;
+            case 5:
+                escapmentFingerPosition = 0;
+                break;
         }
 
 
         robot.intake.setPower(gamepad2.right_trigger);
         robot.transfer.setPower(gamepad2.right_trigger);
-        robot.intake.setPower(-gamepad2.left_trigger);
-        robot.transfer.setPower(-gamepad2.left_trigger);
+       if (gamepad2.right_bumper) {
+           robot.transfer.setPower(-1);
+           robot.intake.setPower(-1);
+       }
 
         if (gamepad1.x) {
             gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);

@@ -32,7 +32,7 @@ public class VCNL4000 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     {
         super(deviceClient, deviceClientIsOwned);
 
-        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
+       // this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
 
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();
@@ -67,15 +67,15 @@ public class VCNL4000 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         this.deviceClient.setReadWindow(readWindow);
     }
 
-    public VCNL4000(I2cDeviceSynch deviceClient, boolean deviceClientIsOwned)
-    {
-        super(deviceClient, deviceClientIsOwned);
-
-        this.setOptimalReadWindow();
-        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
-
-        super.registerArmingStateCallback(false); // Deals with USB cables getting unplugged
-        // Sensor starts off disengaged so we can change things like I2C address. Need to engage
-        this.deviceClient.engage();
-    }
+//    public VCNL4000(I2cDeviceSynch deviceClient, boolean deviceClientIsOwned)
+//    {
+//        super(deviceClient, deviceClientIsOwned);
+//
+//        this.setOptimalReadWindow();
+//        //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
+//
+//        super.registerArmingStateCallback(false); // Deals with USB cables getting unplugged
+//        // Sensor starts off disengaged so we can change things like I2C address. Need to engage
+//        this.deviceClient.engage();
+//    }
 }

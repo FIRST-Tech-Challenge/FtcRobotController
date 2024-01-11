@@ -37,9 +37,12 @@ public class Hardware {
 
     }
 
-    public double stripperFirstRelease = 0.40;
+    public double stripperFirstRelease = 0.3;
     public double stripperSecondRelease = 0.1;
     public double stripperOpen = 0.85;
+    public double hookDown = 0;
+    public double launchClosed = 0.5;
+    public double launchOpen = 0;
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
