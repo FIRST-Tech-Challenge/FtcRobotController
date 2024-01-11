@@ -5,7 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -38,16 +41,29 @@ public class AutoTest1 extends LinearOpMode {
 
         drive.setPoseEstimate(blueStart1);
 
+        DcMotorEx intakeMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakeMotor");
+        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
+        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
+        ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
+        ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+
 
         // move robot to pixel stash (will change values later)
         TrajectorySequence test = drive.trajectorySequenceBuilder(blueStart1)
                 // detect y-axis custom object from starting location
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineToConstantHeading(blue1RightMark)
+                .waitSeconds(0.25)
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineToLinearHeading(new Pose2d(-35,57, Math.toRadians(0))) // start moving towards backboard for yellow pixel
                 .lineToConstantHeading(new Vector2d(10, 57))
                 .splineToConstantHeading(new Vector2d(52, 36), Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    armServo1.setPosition();
+                    armServo2.setPosition();
+
+
+                })
                 .waitSeconds(0.75) // drop yellow pixel
 
                 .splineToConstantHeading(new Vector2d(10, 57), Math.toRadians(0)) // go back for two white pixels
