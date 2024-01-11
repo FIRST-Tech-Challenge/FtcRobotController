@@ -134,7 +134,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                         new WristIntake(wristSubsystem)));
         //stow
         operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
                         //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristStow(wristSubsystem)));

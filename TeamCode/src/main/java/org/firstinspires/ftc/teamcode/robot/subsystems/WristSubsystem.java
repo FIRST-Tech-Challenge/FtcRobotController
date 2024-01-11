@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class WristSubsystem extends SubsystemBase
 {
-    private static final double WRIST_DEPOSIT = 0.65;
-    private static final double WRIST1_DEPOSIT = 0.35;
-    private static final double WRIST_INTAKE = 0;
-    private static final double WRIST1_INTAKE = 1;
+    private static final double WRIST_DEPOSIT = 0.7;
+    private static final double WRIST1_DEPOSIT = 0.3;
+    private static final double WRIST_INTAKE = 0.03;
+    private static final double WRIST1_INTAKE = 0.97;
     private static final double WRIST_STOW = 0.65;
     private static final double WRIST1_STOW = 0.35;
 

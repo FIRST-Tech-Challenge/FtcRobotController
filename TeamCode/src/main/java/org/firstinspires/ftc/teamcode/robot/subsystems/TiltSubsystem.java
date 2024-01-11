@@ -24,7 +24,7 @@ public class TiltSubsystem extends SubsystemBase
     private double targetAngle = -90;
     //target angle from vertical with positive angles being towards the front of the robot (deposit) and negative towards the back (intake)
 
-    private static double KP = 0.001, KI = 0.0, kD = 0.0008;
+    private static double KP = 0.004, KI = 0.0, kD = 0.0008;
     private static double KF = 0.3;
     private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
     private static double TOLERANCE = 0;
