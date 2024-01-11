@@ -146,7 +146,7 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (this.gamepad1.x) {
                 if (brasA > maPosBras) {
-                    if (Math.abs(brasA-maPosBras)<30)
+                    if ((Math.abs(brasA)-Math.abs(maPosBras))<30)
                     {
                         tgtBras = -0.2;
                     } else {
@@ -154,9 +154,9 @@ public class ConduiteUneManette extends LinearOpMode {
                     }
 
                 } else if (brasA < maPosBras) {
-                    if (Math.abs(brasA-maPosBras)>30)
+                    if ((Math.abs(brasA)-Math.abs(maPosBras))<30)
                     {
-                        tgtBras = 0.2;
+                        tgtBras = 0.05;
                     } else {
                         tgtBras = 0.5;
                     }
@@ -167,14 +167,8 @@ public class ConduiteUneManette extends LinearOpMode {
             }
 
             if (this.gamepad1.y) {
-                if (posbraszero < 0) {
-                    posbraszero -= 2;
-                } else {
-                    posbraszero += 2;
-                }
-                bras1.setTargetPosition(posbraszero);
-                bras2.setTargetPosition(posbraszero);
-                coudeX = 0.384;
+                maPosBras = brasA;
+                maPosCoude = coude.getPosition();
             }
 
             bras1.setPower(tgtBras);
@@ -184,12 +178,20 @@ public class ConduiteUneManette extends LinearOpMode {
             if (mainG.getPosition() > 0.50) {
                 while (this.gamepad1.a) {
                     mainG.setPosition(0);
-                    mainD.setPosition(0.65);
                 }}
             if (mainG.getPosition() < 0.20){
                 while (this.gamepad1.a) {
                     mainG.setPosition(0.65);
+                }
+            }
+
+            if (mainD.getPosition() > 0.50) {
+                while (this.gamepad1.b) {
                     mainD.setPosition(0);
+                }}
+            if (mainD.getPosition() < 0.20){
+                while (this.gamepad1.b) {
+                    mainD.setPosition(0.65);
                 }
             }
 
@@ -198,6 +200,7 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Var Y", varRY);
             telemetry.addData("Coude", coudeX);
             telemetry.addData("Bras", brasA);
+            telemetry.addData("Postion du bras eng", maPosBras);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
