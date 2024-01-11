@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
  */
 
-@Autonomous(name = "AutoTest1")
+@Autonomous(name = "AutoTest1 on January 11")
 public class AutoTest1 extends LinearOpMode {
 
 
