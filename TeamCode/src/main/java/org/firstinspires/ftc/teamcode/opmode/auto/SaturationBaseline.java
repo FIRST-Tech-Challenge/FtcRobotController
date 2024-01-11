@@ -30,14 +30,15 @@ public class SaturationBaseline extends AutoBase {
         setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
 
 
+
         while (opModeInInit()) {
             telemetry.addData("LSpikeSaturation", getLeftSpikeSaturation());
             telemetry.addData("RSpikeSaturation", getRightSpikeSaturation());
             telemetry.addData("CSpikeSaturation", getCenterSpikeSaturation());
 
+
             telemetry.update();
         }
-
         while (opModeIsActive()) {
 
             // TODO: Here is an idea,  we could map buttons to the different field positions and print the results like in the init_loop
