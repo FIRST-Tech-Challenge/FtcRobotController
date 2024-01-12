@@ -8,6 +8,7 @@ import android.graphics.Color;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -154,25 +155,45 @@ public class HardwarePixelbot
     public double pixel1Distance; // lower
     public double pixel2Distance; // upper
 
+    public DigitalChannel pixel1Led1 = null;
+    public DigitalChannel pixel1Led2 = null;
+    public DigitalChannel pixel2Led1 = null;
+    public DigitalChannel pixel2Led2 = null;
+
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
+    public AnalogInput pushServoPos = null;
     public Servo  pushServo = null;
     public double PUSH_SERVO_INIT = 0.470;
+    final public static double PUSH_SERVO_INIT_ANGLE = 180.0;
     public double PUSH_SERVO_SAFE = 0.470;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
+    final public static double PUSH_SERVO_SAFE_ANGLE = 180.0;
     public double PUSH_SERVO_GRAB = 0.540;  // Partially extend to align fingers inside pixels
+    final public static double PUSH_SERVO_GRAB_ANGLE = 200.0;
     public double PUSH_SERVO_DROP = 0.890;  // Fully extend finger assembly toward the Backdrop
+    final public static double PUSH_SERVO_DROP_ANGLE = 270.0;
 
+    public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
     public double WRIST_SERVO_INIT = 0.450;   // higher is counter-clockwise
+    final public static double WRIST_SERVO_INIT_ANGLE = 180.0; // no idea yet, will have to figure it out!
     public double WRIST_SERVO_GRAB = 0.450;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 180.0;
     public double WRIST_SERVO_DROP = 0.810;
+    final public static double WRIST_SERVO_DROP_ANGLE = 270.0;
 
+    public AnalogInput fingerServo1Pos = null;
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
     public double FINGER1_SERVO_DROP = 0.500;
+    final public static double FINGER1_SERVO_DROP_ANGLE = 180.0;
     public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.242; // 0.742
+    final public static double FINGER1_SERVO_GRAB_ANGLE = FINGER1_SERVO_DROP_ANGLE + 30.0;
 
+    public AnalogInput fingerServo2Pos = null;
 	public Servo  fingerServo2 = null;  // BOTTOM (bin) or LEFT (backdrop)
     public double FINGER2_SERVO_DROP = 0.480;
+    final public static double FINGER2_SERVO_DROP_ANGLE = 180.0;
     public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.262;  // 0.742
+    final public static double FINGER2_SERVO_GRAB_ANGLE = FINGER2_SERVO_DROP_ANGLE + 30.0;
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
@@ -189,6 +210,8 @@ public class HardwarePixelbot
 
     //Ultrasonic sensors
     private MaxSonarI2CXL sonarRangeF = null;
+
+    private AnalogInput backdropRange = null;
 
     /* local OpMode members. */
     protected HardwareMap hwMap = null;
@@ -297,16 +320,29 @@ public class HardwarePixelbot
 
         /*--------------------------------------------------------------------------------------------*/
         pushServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
+        pushServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port ???
         pushServo.setPosition(PUSH_SERVO_INIT);
 
         wristServo = hwMap.servo.get("WristServo");           // servo port 1 (Expansion Hub)
+        wristServoPos = hwMap.analogInput.get("WristServoPos");
         wristServo.setPosition(WRIST_SERVO_INIT);
 
         fingerServo1 = hwMap.servo.get("Finger1Servo");       // servo port 2 (Expansion Hub)
+        fingerServo1Pos = hwMap.analogInput.get("Finger1ServoPos");
         fingerServo1.setPosition(FINGER1_SERVO_DROP);
 
         fingerServo2 = hwMap.servo.get("Finger2Servo");       // servo port 3 (Expansion Hub)
+        fingerServo2Pos = hwMap.analogInput.get("Finger2ServoPos");
         fingerServo2.setPosition(FINGER2_SERVO_DROP);
+
+        // IR Backdrop Range Sensor
+        backdropRange = hwMap.analogInput.get("BackdropRange");
+
+        // Pixel indicators
+        pixel1Led1 = hwMap.digitalChannel.get("Pixel1Led1");
+        pixel1Led2 = hwMap.digitalChannel.get("Pixel1Led2");
+        pixel2Led1 = hwMap.digitalChannel.get("Pixel2Led1");
+        pixel2Led2 = hwMap.digitalChannel.get("Pixel2Led2");
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -674,6 +710,71 @@ public class HardwarePixelbot
         return cm;
     } // fastSonarRange
 
+    public double getWristServoAngle() {
+        return (wristServoPos.getVoltage() / 3.3) * 360.0;
+    }
+
+    public double getPushServoAngle() {
+        return (pushServoPos.getVoltage() / 3.3) * 360.0;
+    }
+
+    public double getFingerServo1Angle() {
+        return (fingerServo1Pos.getVoltage() / 3.3) * 360.0;
+    }
+
+    public double getFingerServo2Angle() {
+        return (fingerServo2Pos.getVoltage() / 3.3) * 360.0;
+    }
+
+    public void setPixel1LedColor(PixelColorsEnum setColor) {
+        switch(setColor) {
+            case EMPTY:
+                pixel1Led1.setState(false);
+                pixel1Led2.setState(false);
+                break;
+            case GREEN:
+                pixel1Led1.setState(true);
+                pixel1Led2.setState(false);
+                break;
+            case PURPLE:
+                pixel1Led1.setState(true);
+                pixel1Led2.setState(true);
+                break;
+            case YELLOW:
+                pixel1Led1.setState(false);
+                pixel1Led2.setState(true);
+                break;
+            case WHITE:
+                pixel1Led1.setState(false);
+                pixel1Led2.setState(false);
+                break;
+        }
+    }
+
+    public void setPixel2LedColor(PixelColorsEnum setColor) {
+        switch(setColor) {
+            case EMPTY:
+                pixel2Led1.setState(false);
+                pixel2Led2.setState(false);
+                break;
+            case GREEN:
+                pixel2Led1.setState(true);
+                pixel2Led2.setState(false);
+                break;
+            case PURPLE:
+                pixel2Led1.setState(true);
+                pixel2Led2.setState(true);
+                break;
+            case YELLOW:
+                pixel2Led1.setState(false);
+                pixel2Led2.setState(true);
+                break;
+            case WHITE:
+                pixel2Led1.setState(false);
+                pixel2Led2.setState(false);
+                break;
+        }
+    }
     /*--------------------------------------------------------------------------------------------*/
 
     /***
