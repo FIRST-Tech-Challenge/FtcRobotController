@@ -111,6 +111,7 @@ public class TeleopSkunkworks extends LinearOpMode {
             telemetry.addData("Wrist Servo Position", robot.getWristServoAngle());
             telemetry.addData("Finger Servo1 Position", robot.getFingerServo1Angle());
             telemetry.addData("Finger Servo2 Position", robot.getFingerServo2Angle());
+            telemetry.addData("Backdrop Range", "%.1f CM", robot.getBackdropRange());
             telemetry.addData("Status LEDs","Pixel1 LEDs %s %s", robot.pixel1Led1.getState(), robot.pixel1Led2.getState());
             telemetry.addData("Status LEDs","Pixel2 LEDs %s %s", robot.pixel2Led1.getState(), robot.pixel2Led2.getState());
 

@@ -726,6 +726,9 @@ public class HardwarePixelbot
         return (fingerServo2Pos.getVoltage() / 3.3) * 360.0;
     }
 
+    // Returns distance in CM, might have to tweak 80.0 CM as max range to get accurate readings.
+    public double getBackdropRange() { return (backdropRange.getVoltage() / 3.3) * 80.0; }
+
     public void setPixel1LedColor(PixelColorsEnum setColor) {
         switch(setColor) {
             case EMPTY:
