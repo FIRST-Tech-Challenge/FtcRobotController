@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.driver;
 import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
+@Disabled
 @TeleOp(name = "2DriverTeleopDS", group = "TeleOp Driver")
 public class Driver extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -36,6 +38,8 @@ public class Driver extends LinearOpMode {
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
     static final double WRIST_INTAKE_POS = 0.22;
+    static final double DRONE_LAUNCH = 0.8;
+    static final double DRONE_SECURE = 0.3;
     private Servo leftGripper;
     private Servo rightGripper;
     private Servo wristServo;
@@ -70,8 +74,8 @@ public class Driver extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wristServo = hardwareMap.servo.get("wristServo");
-        launcherServo = hardwareMap.get(Servo.class, "launcherServo");
-        DroneCoverServo = hardwareMap.get(Servo.class, "DroneCoverServo");
+        launcherServo = hardwareMap.get(Servo.class, "planeServo");
+        //DroneCoverServo = hardwareMap.get(Servo.class, "DroneCoverServo");
         leftGripper = hardwareMap.get(Servo.class, "leftGripper");
         rightGripper = hardwareMap.get(Servo.class, "rightGripper");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
@@ -183,6 +187,8 @@ public class Driver extends LinearOpMode {
                         // move to 90 degrees.
                         launcherServo.setPosition(1);
                     }*/
+                    //TODO Move to single drone launcher logic
+                    /*
                     if (gamepad1.dpad_left) {
                         // move to 0 degrees.
                         DroneCoverServo.setPosition(0.3);
@@ -190,13 +196,16 @@ public class Driver extends LinearOpMode {
                         // move to 90 degrees.
                         DroneCoverServo.setPosition(.7);
                     }
+                    */
 
+                    // Launch Drone
+                    //TODO Validate the servo positions for launch
                     if (gamepad1.left_bumper) {
-                        // move to 0 degrees.
-                        launcherServo.setPosition(0.3);
-                    } else if (gamepad1.right_bumper|| gamepad1.left_bumper) {
-                        // move to 90 degrees.
-                        launcherServo.setPosition(1);
+                        // Launch Drone
+                        launcherServo.setPosition(DRONE_LAUNCH);
+                    } else if (gamepad1.right_bumper) {
+                        // Secure Drone
+                        launcherServo.setPosition(DRONE_SECURE);
                     }
 
                     try {

@@ -29,6 +29,7 @@ public class MotionHardware {
     private Servo rightGripper = null;
     private Servo wrist = null;
     private DcMotor armMotor = null;
+    private Servo dropper = null;
 
     // Variables
 
@@ -41,12 +42,15 @@ public class MotionHardware {
     public static double wristRight = 0;
     public static double wristLeft = 1;
 
-    public static double LEFT_GRIPPER_OPEN = 0.8;
-    public static double RIGHT_GRIPPER_OPEN = 0.2;
-    public static double LEFT_GRIPPER_CLOSE = 1;
-    public static double RIGHT_GRIPPER_CLOSE = 0;
-    public static double WRIST_LOAD_PIXEL = 0.6;
-    public static double WRIST_DROP_PIXEL = 0.3;
+
+    public static double LEFT_GRIPPER_OPEN = 0.0;
+    public static double RIGHT_GRIPPER_OPEN = 0.3;
+    public static double LEFT_GRIPPER_CLOSE = 0.35;
+    public static double RIGHT_GRIPPER_CLOSE = 0.25;
+    public static double WRIST_LOAD_PIXEL = -1;
+    public static double WRIST_DROP_PIXEL = 1;
+    public static double DROPPER_LOAD_PIXEL = 0.48;
+    public static double DROPPER_DROP_PIXEL = -1.0;
 
     public enum Direction {
         RIGHT,
@@ -109,21 +113,28 @@ public class MotionHardware {
         rightGripper = myOpMode.hardwareMap.get(Servo.class, "rightGripper");
         armMotor = myOpMode.hardwareMap.get(DcMotor.class, "armMotor");
         wrist = myOpMode.hardwareMap.servo.get("wristServo");
+        dropper = myOpMode.hardwareMap.servo.get("dropperServo");
 
         moveArm(.5, 5, 5);
 
         //wrist.setPosition(WRIST_LOAD_PIXEL);
 
+
         leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value as needed
+        //dropper.setPosition(DROPPER_LOAD_PIXEL);
         runtime.reset();
 
+        wrist.setPosition(WRIST_LOAD_PIXEL);
         sleep(3000);
 
         leftGripper.setPosition(LEFT_GRIPPER_CLOSE); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_CLOSE); // Adjust the position value as needed
         sleep(1000);
         //wrist.setPosition(WRIST_DROP_PIXEL);
+
+
+        //dropper.setPosition(DROPPER_DROP_PIXEL);
 
 
 
@@ -477,6 +488,10 @@ public class MotionHardware {
     }
 
     public void dropPixel() {
+        wrist.setPosition(WRIST_DROP_PIXEL);
+
+        sleep(700);
+
         rightGripper.setPosition(RIGHT_GRIPPER_OPEN);
         leftGripper.setPosition(LEFT_GRIPPER_OPEN);
 
