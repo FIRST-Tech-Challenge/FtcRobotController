@@ -284,7 +284,7 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
 
-    /** Strafes left or right (input 2) for a specified number of inches.
+    /** Strafes left or right for a specified number of inches.
      * @param inches Amount of inches to strafe.
      * @param direction Direction to strafe in.**/
     public void strafe(double inches, dir direction /*double duration*/) {
@@ -379,7 +379,7 @@ public abstract class CSBase extends LinearOpMode {
         stopRobot();
     }
 
-    /** Converts amount of tiles on the game board to an amount of inches.
+    /** Converts an amount of tiles on the game board to an amount of inches.
      * @param tiles The value of tiles to be converted. **/
     public double tiles(double tiles) {
         return tiles * TILE_LENGTH;
