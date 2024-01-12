@@ -83,8 +83,9 @@ public class Auto2_RedFieldLeft extends AutoBase {
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
+                sleep(250);
                 // move forward 2 inches
                 moveTo.Forward((int) ((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
                 // move sideways 9 inches
@@ -93,41 +94,46 @@ public class Auto2_RedFieldLeft extends AutoBase {
                 intake.FlipDown();
                 // move forward 12 inches
                 moveTo.Forward((int) ((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-                // Open the claw
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
+                sleep(250);
                 // End all autos with the wrist up
                 intake.FlipUp();
                 state = 1;
 
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
+                sleep(250);
                 // move forward 18 inches
                 moveTo.Forward((int) ((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
                 // Move the claw down
                 intake.FlipDown();
                 // Move forward 4 inches
                 moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Open the claw
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
+                sleep(250);
                 // End all autos with the wrist up
                 intake.FlipUp();
                 state = 1;
 
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
+                sleep(250);
                 // Move forward 25 inches
-                moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.4);
+                moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.25);
                 // Rotate 90 degrees
                 moveTo.Rotate(90);
                 sleep(700);
                 // Move the claw down
                 intake.FlipDown();
                 // Move forward 6 inches
-                moveTo.Forward((int) ((5.5 * ticksPerInch) * 0.94), 0.4);
-                // Open the claw
+                moveTo.Forward((int) ((5.5 * ticksPerInch) * 0.94), 0.25);
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
+                sleep(250);
                 // // End all autos with the wrist up
                 intake.FlipUp();
                 state = 1;

@@ -59,10 +59,6 @@ public class Auto2_Red53Left extends AutoBase {
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.RED_FIELD_LEFT);
 
-
-        /**
-         * This loop is run continuously
-         */
         while (opModeInInit()) {
             state = 0;
             SpikePosition spikePos = getSpikePosition();
@@ -85,54 +81,59 @@ public class Auto2_Red53Left extends AutoBase {
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
+                sleep(250);
                 // move forward 2 inches
                 moveTo.Forward((int) ((2 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-                // move sideways 11 inches *** this one parameter differs from the Blue53Left due to a slight twist on long strafe Left.
-                moveTo.Left((int) ((11 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // move sideways 10 inches ** this is 9 on the Blue side 53 point auto.  Difference due to slightly off center robot.
+                moveTo.Left((int) ((10 * ticksPerInch) * 1.04), 0.4); // Calculated ticks by distance * 104% (from last year)
                 // Move the claw down
                 intake.FlipDown();
                 // move forward 12 inches
                 moveTo.Forward((int) ((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-                // Open the claw
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
+                sleep(250);
                 // End all autos with the wrist up
                 intake.FlipUp();
-                // move left 9 inches
-                moveTo.Right((int) ((12 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // move left 11 inches
+                moveTo.Right((int) ((11 * ticksPerInch) * 1.04), 0.4); // Calculated ticks by distance * 104% (from last year)
                 // move forward 18 inches
                 moveTo.Forward((int) ((32 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
                 // Rotate 90 degrees
                 moveTo.Rotate(-90);
                 sleep(700);
-                // Move backward 48 inches
-                moveTo.Backwards((int) ((48 * ticksPerInch) * 0.94), 0.30);
+                // Move backward 62 inches
+                moveTo.Backwards((int) ((62 * ticksPerInch) * 0.94), 0.35);
                 // move sideways 24 inches
-                moveTo.Left((int) ((18 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                moveTo.Left((int) ((18 * ticksPerInch) * 1.04), 0.4); // Calculated ticks by distance * 104% (from last year)
                 state = 1;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
-                // move forward 18 inches
-                moveTo.Forward((int) ((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
+                sleep(250);
+                // move forward 12 inches
+                moveTo.Forward((int) ((12 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
                 // Move the claw down
                 intake.FlipDown();
-                // Move forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Open the claw
+                // Move forward 10 inches
+                moveTo.Forward((int) ((10 * ticksPerInch) * 0.94), 0.25);
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
+                sleep(250);
                 // End all autos with the wrist up
                 intake.FlipUp();
                 // Rotate 90 degrees
                 moveTo.Rotate(-90);
                 sleep(700);
                 // Move backward 25 inches
-                moveTo.Backwards((int) ((36 * ticksPerInch) * 0.94), 0.20);
+                moveTo.Backwards((int) ((36 * ticksPerInch) * 0.94), 0.25);
                 state = 1;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
-                // Start by securing the loaded pixel
+                // Start by securing the loaded pixel - always pause after servo claw motions.
                 intake.ClawClosed();
+                sleep(250);
                 // Move forward 25 inches
                 moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.25);
                 // Rotate -90 degrees
@@ -142,9 +143,9 @@ public class Auto2_Red53Left extends AutoBase {
                 intake.FlipDown();
                 // Move forward 4 inches
                 moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.4);
-                // Open the claw
+                // Open the claw - always pause after servo claw motions.
                 intake.ClawOpen();
-                sleep(500);
+                sleep(250);
                 // End all autos with the wrist up
                 intake.FlipUp();
                 // Rotate 90 degrees
@@ -155,10 +156,10 @@ public class Auto2_Red53Left extends AutoBase {
                 // Rotate 90 degrees
                 moveTo.Rotate(-90);
                 sleep(700);
-                // Move backward 48 inches
-                moveTo.Backwards((int) ((48 * ticksPerInch) * 0.94), 0.25);
-                // move sideways 24 inches
-                moveTo.Left((int) ((30 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
+                // Move backward 62 inches
+                moveTo.Backwards((int) ((62 * ticksPerInch) * 0.94), 0.35);
+                // move sideways 26 inches
+                moveTo.Left((int) ((26 * ticksPerInch) * 1.04), 0.5); // Calculated ticks by distance * 104% (from last year)
                 state = 1;
             }
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
@@ -193,14 +194,16 @@ public class Auto2_Red53Left extends AutoBase {
                 conveyor.setPosition(0.5);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
-                // Forward 6 inches
-                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
-                // Moves left 26 inches
-                moveTo.Right((int) ((18 * ticksPerInch) * 1.04), 0.5);
-                // Backward 6 inches
-                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Pause to ensure the lift rest on the bottom
+                sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 20 inches
+                moveTo.Right((int) ((15 * ticksPerInch) * 1.04), 0.5);
+                // Backward 6 inches
+                moveTo.Backwards((int) ((6 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
@@ -215,14 +218,16 @@ public class Auto2_Red53Left extends AutoBase {
                 conveyor.setPosition(0.5);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
-                // Forward 6 inches
-                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
-                // Moves left 26 inches
-                moveTo.Right((int) ((22 * ticksPerInch) * 1.04), 0.5);
-                // Backward 6 inches
-                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Pause to ensure the lift rest on the bottom
+                sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 26 inches
+                moveTo.Right((int) ((20 * ticksPerInch) * 1.04), 0.4);
+                // Move back 6 inches
+                moveTo.Backwards((int) ((6 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
@@ -237,14 +242,16 @@ public class Auto2_Red53Left extends AutoBase {
                 conveyor.setPosition(0.5);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
-                // Forward 6 inches
-                moveTo.Forward((int) ((6 * ticksPerInch) * 0.94), 0.25);
-                // Moves left 26 inches
-                moveTo.Right((int) ((28 * ticksPerInch) * 1.04), 0.5);
-                // Backward 6 inches
-                moveTo.Backwards((int) ((8 * ticksPerInch) * 0.94), 0.25);
+                // Pause to ensure the lift rest on the bottom
+                sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
+                // Moves left 30 inches
+                moveTo.Right((int) ((26 * ticksPerInch) * 1.04), 0.4);
+                // Backward 6 inches
+                moveTo.Backwards((int) ((6 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             }
             // Show the elapsed game time and wheel power.

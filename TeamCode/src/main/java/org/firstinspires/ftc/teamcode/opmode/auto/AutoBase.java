@@ -91,7 +91,7 @@ public abstract class AutoBase extends LinearOpMode {
     // Motor is 28 ticks per revolution
     // Gear Ratio is 12:1
     // Wheel diameter is 100mm
-    double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
+    final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
     @Override
     public void runOpMode() {
@@ -183,15 +183,15 @@ public abstract class AutoBase extends LinearOpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
         // For Lift, PIDF values set to reduce jitter on high lift
-        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
-        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
+        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 8);
+        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 8);
         // For Wrist, PIDF values set to reduce jitter
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(8, 0, 0, 1);
+        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -323,12 +323,16 @@ public abstract class AutoBase extends LinearOpMode {
 
         // Scan for April Tag detections and update current values if you find one.
         List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
-        for (int i = 0; i < tag.size(); i++) {
-            if (tag.get(i).id == tagNumber) {
-                currentX = tag.get(i).ftcPose.x;
-                currentY = tag.get(i).ftcPose.y;
-                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                tagDetected = true;
+        if (tag != null) {
+            for (int i = 0; i < tag.size(); i++) {
+                if (tag.get(i) != null) {
+                    if (tag.get(i).id == tagNumber) {
+                        currentX = tag.get(i).ftcPose.x;
+                        currentY = tag.get(i).ftcPose.y;
+                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                        tagDetected = true;
+                    }
+                }
             }
         }
 
@@ -375,7 +379,7 @@ public abstract class AutoBase extends LinearOpMode {
 
         // If no tag is detected, creep backwards.
         if (!tagDetected){
-            axial = -0.15;
+            axial = -0.10;
             aprilTagAligned = false;
         }
 
