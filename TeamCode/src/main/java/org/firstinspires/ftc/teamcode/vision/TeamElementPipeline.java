@@ -45,7 +45,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
         {
             LEFT,
             CENTER,
-            RIGHT
+            RIGHT,
+            UNKNOWN
         }
 
         /*
