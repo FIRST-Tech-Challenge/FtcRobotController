@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class ArcadeRowan extends LinearOpMode {
@@ -17,6 +18,9 @@ public class ArcadeRowan extends LinearOpMode {
     DcMotor intake;
     DcMotor lift;
 
+    Servo claw;
+    Servo clawRotator;
+
     public void runOpMode(){
         //Assigning configuration name to variable (for frontLeft, backLeft, frontRight, backRight)
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -27,11 +31,15 @@ public class ArcadeRowan extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         lift = hardwareMap.get(DcMotor.class, "lift");
 
+        claw = hardwareMap.get(Servo.class, "claw");
+        clawRotator = hardwareMap.get(Servo.class, "clawRotator");
+
         //resetting encoder values for lift
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Waiting for Start button to be pressed
         waitForStart();
@@ -71,25 +79,26 @@ public class ArcadeRowan extends LinearOpMode {
 
             //setting power for intake
             if(gamepad2.a) {
-                intake.setPower(1);
+                intake.setPower(0.5);
             } else if (gamepad2.b) {
-                intake.setPower(-1);
+                intake.setPower(-0.5);
             } else {
                 intake.setPower(0);
             }
 
             //setting power for lift
-            lift.setPower(-1 * gamepad2.right_stick_y);
             telemetry.addData("lift position", lift.getCurrentPosition());
             telemetry.update();
 
-            if (lift.getCurrentPosition() <= 0) {
+//            lift.setPower(gamepad2.left_stick_y);
+
+            if (lift.getCurrentPosition() < 0) {
                 if (gamepad2.right_stick_y < 0) {
                     lift.setPower(0);
                 } else {
-                    lift.setPower(-1 * gamepad2.right_stick_y);
+                    lift.setPower(gamepad2.right_stick_y);
                 }
-            } else if (gamepad2.right_stick_y >= 1000) {
+            } else if (gamepad2.right_stick_y >= -6000) {
                 if (gamepad2.right_stick_y > 0) {
                     lift.setPower(0);
                 } else {
@@ -99,6 +108,18 @@ public class ArcadeRowan extends LinearOpMode {
                 lift.setPower(-1 * gamepad2.right_stick_y);
             }
 
+            // Manipulation of the claw
+            if (gamepad2.x) {
+                claw.setPosition(0);
+            } else if (gamepad2.y) {
+                claw.setPosition(1);
+            }
+
+//            if (lift.getCurrentPosition() < 100) {
+//                clawRotator.setPosition(0);
+//            } else {
+//                clawRotator.setPosition(0.15);
+//            }
         }
     }
 }
