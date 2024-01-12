@@ -67,7 +67,7 @@ public abstract class CSBase extends LinearOpMode {
         } else if (teamColor == color.blue){
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
         }
-        else {
+        else if (useCam){
             telemetry.addData("", "Team color not specified, will not use team prop detection!");
             useCam = false;
         }
@@ -143,6 +143,17 @@ public abstract class CSBase extends LinearOpMode {
     }
     public void setup(color teamColor){
         setup(teamColor, true);
+    }
+
+    /** Note: This is kept for the purpose of not breaking any previous test programs,
+     * but please ensure that future implementations use color values instead. **/
+    public void setup(boolean isRed){
+        if (isRed) {
+            setup(color.red, true);
+        }
+        else {
+            setup(color.blue, true);
+        }
     }
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
         int lfTarget = 0;
