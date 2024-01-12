@@ -20,7 +20,7 @@ public class ClawAutoCommand extends CommandBase
 
     @Override
     public void initialize() {
-        clawSubsystem.open();
+        clawSubsystem.openBoth();
     }
 
 //    @Override

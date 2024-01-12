@@ -27,7 +27,7 @@ public class TiltSubsystem extends SubsystemBase
     private static double KP = 0.004, KI = 0.0, kD = 0.0008;
     private static double KF = 0.3;
     private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
-    private static double TOLERANCE = 0;
+    private static double TOLERANCE = 20;
     private static int VERTICAL_ENCODER_VALUE = 675;
     // vertical position of tilt when encoders are reset in the starting position
 
@@ -87,7 +87,8 @@ public class TiltSubsystem extends SubsystemBase
 
         int targetPosition = toEncoder(targetAngle);
         // target position relative to the arm starting position
-        if(!atTargetPosition())
+        //if(!atTargetPosition())
+        if(true)
         {
             double pid = this.pid.calculate(currentPos, targetPosition)*0.5;
             //double ff = KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE) * ExtensionSubsystem.ARM_LENGTH+ExtensionSubsystem.UNEXTENDED_POSITION+ExtensionSubsystem.getCurrentPosition());

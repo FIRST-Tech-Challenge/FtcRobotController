@@ -27,6 +27,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -46,8 +47,9 @@ public class Vision
     private static TeamElementPipeline pipeline;
     private static TeamElementPipeline.MarkerPosistion snapshotAnalysis
             =  TeamElementPipeline.MarkerPosistion.UNKNOWN; // default
+    private static Telemetry telemetry;
 
-    static public void startStreaming(HardwareMap hw)
+    static public void startStreaming(HardwareMap hw, Telemetry _telemetry)
     {
         /**
          * NOTE: Many comments have been omitted from this sample for the
@@ -55,6 +57,8 @@ public class Vision
          * you should take a look at {@link InternalCamera1Example} or its
          * webcam counterpart, {@link WebcamExample} first.
          */
+
+        telemetry=_telemetry;
 
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hw.appContext.getPackageName());
@@ -83,7 +87,7 @@ public class Vision
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!timer.done() || snapshotAnalysis == TeamElementPipeline.MarkerPosistion.UNKNOWN)
+        while (!timer.done() && snapshotAnalysis == TeamElementPipeline.MarkerPosistion.UNKNOWN)
         {
             snapshotAnalysis = pipeline.getAnalysis();
             telemetry.addData("Realtime analysis", snapshotAnalysis);

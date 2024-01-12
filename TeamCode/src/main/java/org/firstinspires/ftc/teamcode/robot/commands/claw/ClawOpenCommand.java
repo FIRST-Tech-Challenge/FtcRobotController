@@ -9,16 +9,33 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.ClawSubsystem;
  */
 public class ClawOpenCommand extends CommandBase
 {
+    public enum Side {
+        BOTH,
+        LEFT,
+        RIGHT
+    }
     private final ClawSubsystem clawSubsystem;
-    public ClawOpenCommand(ClawSubsystem subsystem)
+    private final Side type;
+    public ClawOpenCommand(ClawSubsystem subsystem, Side type)
     {
+        this.type = type;
         clawSubsystem = subsystem;
         addRequirements(clawSubsystem);
     }
 
     @Override
     public void initialize() {
-        clawSubsystem.open();
+        switch (type) {
+            case BOTH:
+                clawSubsystem.openBoth();
+                break;
+            case LEFT:
+                clawSubsystem.openLeft();
+                break;
+            case RIGHT:
+                clawSubsystem.openRight();
+                break;
+        }
     }
 
     @Override

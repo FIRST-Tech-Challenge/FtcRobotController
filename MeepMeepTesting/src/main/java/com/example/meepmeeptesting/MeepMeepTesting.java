@@ -19,68 +19,54 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(TILE/2, -2.5*TILE, Math.toRadians(90)))
                                 .lineToConstantHeading(new Vector2d(TILE/2, -1.5*TILE))
                                 //.lineToConstantHeading(new Vector2d(TILE/2, -1.5*TILE))
+                                .turn(Math.toRadians(170))
                                 .addTemporalMarker(1, () -> {
 
                                 })
-                                .turn(Math.toRadians(90))
-                                .lineToConstantHeading(new Vector2d(-2*TILE, -1.5*TILE))
+                                .turn(Math.toRadians(-170+90))
+                                .lineToConstantHeading(new Vector2d(2*TILE, -1.5*TILE))
                                 .addTemporalMarker(1, () -> {
 
                                 })
-                                //.lineToLinearHeading(new Vector2d(-2*TILE, -1.5*TILE))
-                                .turn(Math.toRadians(90))
-                                .forward(TILE)
-                                .turn(Math.toRadians(90))
-                                .lineToConstantHeading(new Vector2d(TILE*2, -2.5*TILE))
-                                .lineToConstantHeading(new Vector2d(TILE*2, -1.5*TILE))
-                                .addTemporalMarker(1, () -> {
-
-                                })
+                                .lineToConstantHeading(new Vector2d(2*TILE, -3*TILE))
                                 .build()
                 );*/
 
-        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep) // path for red side right pixel
+        /*RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep) // path for red side right pixel
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 14)
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(TILE/2, -2.5*TILE, Math.toRadians(90)))
+                                .lineToConstantHeading(new Vector2d(TILE/2, -1*TILE))
+                                .turn(Math.toRadians(45))
+                                .addTemporalMarker(1, () -> {
+
+                                })
+                                .turn(Math.toRadians(45))
+                                .lineToConstantHeading(new Vector2d(TILE/2, -2*TILE))
+
+                                .lineToConstantHeading(new Vector2d(2*TILE, -1.75*TILE))
+                                .addTemporalMarker(1, () -> {
+
+                                })
+                                .lineToConstantHeading(new Vector2d(2*TILE, -2.5*TILE))
+                                .build()
+                );*/
+
+        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep) // path for red side left pixel
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 14)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(TILE/2, -2.5*TILE, Math.toRadians(90)))
                                 .lineToConstantHeading(new Vector2d(TILE/2, -1.8*TILE))
-                                .turn(Math.toRadians(-45))
-                                .lineToLinearHeading(new Pose2d(TILE/2, -1.5*TILE, Math.toRadians(90)))
+                                .turn(Math.toRadians(-140))
+                                .lineToLinearHeading(new Pose2d(TILE*2, -1.8*TILE, Math.toRadians(-180)))
                                 .addTemporalMarker(1, () -> {
 
                                 })
-                                .turn(Math.toRadians(90))
-                                .lineToConstantHeading(new Vector2d(-2*TILE, -1.5*TILE))
-                                .addTemporalMarker(1, () -> {
-
-                                })
-                                //.lineToLinearHeading(new Vector2d(-2*TILE, -1.5*TILE))
-                                .turn(Math.toRadians(90))
-                                .forward(TILE)
-                                .turn(Math.toRadians(90))
                                 .lineToConstantHeading(new Vector2d(TILE*2, -2.5*TILE))
-                                .lineToConstantHeading(new Vector2d(TILE*2, -1.2*TILE))
-                                .addTemporalMarker(1, () -> {
-
-                                })
                                 .build()
                 );
-
-        /*RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep) // path for red side left pixel
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 14)
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(TILE/2, -2.5*TILE, Math.toRadians(90)))
-                                .lineToConstantHeading(new Vector2d(TILE/2, -1.8*TILE))
-                                .turn(Math.toRadians(45))
-                                .lineToLinearHeading(new Pose2d(TILE/2, -1.5*TILE, Math.toRadians(90)))
-                                .addTemporalMarker(1, () -> {
-
-                                })
-                                .lineToConstantHeading(new Vector2d(TILE*2, -2.5*TILE))
-                                .build()
-                );*/
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
                 .setDarkMode(true)

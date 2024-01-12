@@ -1,24 +1,31 @@
 package org.firstinspires.ftc.teamcode.robot.commands.wrist;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.WristSubsystem;
 
-public class WristIntake extends CommandBase {
+import java.util.concurrent.TimeUnit;
+
+public class WristIntake extends CommandBase
+{
     private final WristSubsystem wristSubsystem;
+    Timing.Timer timer;
     public WristIntake(WristSubsystem subsystem)
     {
+        this.timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
         wristSubsystem = subsystem;
         addRequirements(wristSubsystem);
     }
 
     @Override
     public void initialize() {
+        timer.start();
         wristSubsystem.setWristIntake();
     }
 
     @Override
     public boolean isFinished() {
-        return true;
+        return timer.done();
     }
 }

@@ -34,6 +34,7 @@ public class TiltGoToPosition extends CommandBase
     @Override
     public boolean isFinished()
     {
-        return tiltSubsystem.atTargetPosition();
+        return true;
+        //tiltSubsystem.atTargetPosition();
     }
 }
