@@ -23,6 +23,7 @@ public abstract class CSBase extends LinearOpMode {
     // All non-primitve datatypes initialze to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
+    public WebcamName camera;
     public TouchSensor touchSensor;
     public IMU imu;
     /*
@@ -51,7 +52,6 @@ public abstract class CSBase extends LinearOpMode {
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET;
     public AprilTagProcessor tagProcessor;
-    public VisionPortal tagVisionPortal;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
@@ -96,10 +96,10 @@ public abstract class CSBase extends LinearOpMode {
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
-
-        //initAtd();
-
-        //initTfod();
+        try {
+            camera = hardwareMap.get(WebcamName.class,"Webcam 1");
+            initProcessors();
+        }catch (Exception e){except(e);}
 
         if (lf != null) {
             lf.setDirection(DcMotorEx.Direction.REVERSE);
@@ -369,7 +369,7 @@ public abstract class CSBase extends LinearOpMode {
         drive(-15);
         sleep(100);
     }//*/
-    public void initTfod() {
+    public void initProcessors() {
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
 
@@ -388,13 +388,18 @@ public abstract class CSBase extends LinearOpMode {
                 //.setModelAspectRatio(16.0 / 9.0)
 
                 .build();
-
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(camera);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -414,6 +419,7 @@ public abstract class CSBase extends LinearOpMode {
 
         // Set and enable the processor.
         builder.addProcessor(tfod);
+        builder.addProcessor(tagProcessor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -424,20 +430,7 @@ public abstract class CSBase extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
-    public void initAtd(){
-        tagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .build();
-        tagVisionPortal = new VisionPortal.Builder()
-                .addProcessor(tagProcessor)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .enableLiveView(true)
-                //.setCameraResolution(new Size(640, 480)) // not working for some reason
-                .build();
-    }
+
 
     public boolean detectTag(int id){
         int i;
