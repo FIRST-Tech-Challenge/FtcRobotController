@@ -29,6 +29,10 @@ public class tele extends OpMode {
     double escapementTime = 0;
     double angleTime = 0;
 
+    double transferRPM;
+    double oldTransferPosition;
+    double oldTransferTime;
+
 
     int pixlePickerColorTime = 5000;
 
@@ -85,6 +89,9 @@ public class tele extends OpMode {
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        robot.transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry.addData("Robot:", "Ready");
         telemetry.update();
@@ -252,6 +259,10 @@ public class tele extends OpMode {
 
         /** Intake/Transfer **/
 
+        transferRPM = (Math.abs(robot.transfer.getCurrentPosition() - oldTransferPosition)/751.8) / ((getRuntime() - oldTransferPosition)*60);
+        oldTransferTime = getRuntime();
+        oldTransferPosition = robot.transfer.getCurrentPosition();
+
         switch (escapmentFingerPosition) {
             case 0:
                 escapementTime = getRuntime();
@@ -323,7 +334,7 @@ public class tele extends OpMode {
         }
         telemetry.addData("Stripper State", deploymentState);
         telemetry.addData("BB1", robot.firstPixelDetector.isPressed());
-        telemetry.addData("BB2", robot.firstPixelDetector.isPressed());
+        telemetry.addData("transfer RPM", transferRPM);
 
         telemetry.addData("Winch Switch", robot.winchDownSwitch.getVoltage());
         telemetry.addData("Lift Switch", robot.liftDownSwitch.getVoltage());
