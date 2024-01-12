@@ -61,7 +61,7 @@ public class DriveTrain extends OpMode
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
     private DcMotor intakeMotor = null;
-    private Servo clawServo = null;
+    private Servo liftServo1 = null;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
     private double Kg = 0.07;
@@ -85,6 +85,8 @@ public class DriveTrain extends OpMode
         liftMotor1 = hardwareMap.get(DcMotor.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        liftServo1 = hardwareMap.servo.get("lift1");
+
 //        clawServo = hardwareMap.servo.get("claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -156,7 +158,7 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(0.5);
         }
         else {
             intakeMotor.setPower(0);
@@ -239,19 +241,21 @@ public class DriveTrain extends OpMode
                 liftMotor1.setPower(-0.5);
                 liftMotor2.setPower(-0.5);
             }
-
-
         } else if (gamepad2.right_stick_y < -0.8) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
-        } else if (gamepad2.left_bumper && gamepad2.a) {
-            liftMotor1.setPower(-.4);
-            liftMotor2.setPower(-.4);
-        }
-        else {
+        } else {
             liftMotor1.setPower(0);
             liftMotor2.setPower(0);
         }
+
+        if (gamepad2.left_bumper) {
+            liftServo1.setPosition(0.1);
+        }
+        else if (gamepad2.right_bumper) {
+            liftServo1.setPosition(-0.1);
+        }
+
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
