@@ -68,6 +68,8 @@ public class Hardware {
         firstPixelDetector = hwMap.get(TouchSensor.class, "bb1");
         secondPixelDetector = hwMap.get(TouchSensor.class, "bb2");
 
+        rightDistance = hwMap.get(VCNL4000.class, "rdist");
+
 
         leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
