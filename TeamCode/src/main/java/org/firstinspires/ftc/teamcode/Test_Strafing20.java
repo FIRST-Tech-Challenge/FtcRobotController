@@ -6,6 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class Test_Strafing20 extends CSBase {
     public void runOpMode() {
         setup(true);
-        strafe(20);
+        strafe(20, dir.left);
     }
 }
