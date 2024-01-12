@@ -92,7 +92,7 @@ public abstract class AutoBase extends LinearOpMode {
         // Let's have at list 33% chance to pick it right if nothing works
         TeamPropDetection.propLocation propLoc = TeamPropDetection.propLocation.CENTER;
 
-        Robot.clawGrip.setPosition(Robot.clawClose);
+        Robot.clawGrip.setPosition(Robot.clawCloseOnePixel);
         Robot.clawPitch.setPosition(Robot.clawPitchIntake);
         Robot.clawYaw.setPosition(Robot.clawYawIntake);
 
