@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.lang.Math;
+
 @TeleOp
 public class ArcadeRowan extends LinearOpMode {
 
@@ -45,12 +47,19 @@ public class ArcadeRowan extends LinearOpMode {
         waitForStart();
 
         //Looping while the opmode is running
+        boolean liftPowerUp = false;
+        boolean liftPowerDown = false;
+        double throttle = 0;
+        double turn = 0;
+        boolean strafeR = false;
+        boolean strafeL = false;
         while (opModeIsActive()){
             //defining driving variables (throttle = moving)
-            double throttle = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
-            boolean strafeR = gamepad1.right_bumper;
-            boolean strafeL = gamepad1.left_bumper;
+            throttle = -gamepad1.left_stick_y;
+            turn = gamepad1.right_stick_x;
+            strafeR = gamepad1.right_bumper;
+            strafeL = gamepad1.left_bumper;
+
 
             //setting power for forward-backward movement
             frontLeft.setPower(throttle);
@@ -60,22 +69,22 @@ public class ArcadeRowan extends LinearOpMode {
 
             //setting up strafing
             if(strafeR) {
-                frontLeft.setPower(0.75);
-                backLeft.setPower(-0.75);
-                frontRight.setPower(-0.75);
-                backRight.setPower(0.75);
-            } else if (strafeL) {
                 frontLeft.setPower(-0.75);
                 backLeft.setPower(0.75);
                 frontRight.setPower(0.75);
                 backRight.setPower(-0.75);
+            } else if (strafeL) {
+                frontLeft.setPower(0.75);
+                backLeft.setPower(-0.75);
+                frontRight.setPower(-0.75);
+                backRight.setPower(0.75);
             }
 
             //setting power for turning
-            frontLeft.setPower(turn);
-            backLeft.setPower(turn);
-            frontRight.setPower(-turn);
-            backRight.setPower(-turn);
+            frontLeft.setPower(-turn);
+            backLeft.setPower(-turn);
+            frontRight.setPower(turn);
+            backRight.setPower(turn);
 
             //setting power for intake
             if(gamepad2.a) {
@@ -90,31 +99,38 @@ public class ArcadeRowan extends LinearOpMode {
             telemetry.addData("lift position", lift.getCurrentPosition());
             telemetry.update();
 
-//            lift.setPower(gamepad2.left_stick_y);
-
-            if (lift.getCurrentPosition() < 0) {
-                if (gamepad2.right_stick_y < 0) {
-                    lift.setPower(0);
-                } else {
-                    lift.setPower(gamepad2.right_stick_y);
-                }
-            } else if (gamepad2.right_stick_y >= -6000) {
-                if (gamepad2.right_stick_y > 0) {
-                    lift.setPower(0);
-                } else {
-                    lift.setPower(-1 * gamepad2.right_stick_y);
-                }
+            if (gamepad2.left_stick_y > 0) {
+                liftPowerUp = true;
+            } else if (gamepad2.left_stick_y < 0) {
+                liftPowerDown = true;
             } else {
-                lift.setPower(-1 * gamepad2.right_stick_y);
+                liftPowerUp = false;
+                liftPowerDown = false;
+            }
+            if (liftPowerUp) {
+                if (lift.getCurrentPosition() > 0){
+                    lift.setPower(0);
+                } else {
+                    lift.setPower(gamepad2.left_stick_y);
+                }
+            }else if (liftPowerDown) {
+                if (lift.getCurrentPosition() < -6000){
+                    lift.setPower(0);
+                } else {
+                    lift.setPower(-1 * gamepad2.left_stick_y);
+                }
+            }else {
+                lift.setPower(0);
             }
 
             // Manipulation of the claw
-            if (gamepad2.x) {
+            if (gamepad2.left_bumper) {
                 claw.setPosition(0);
-            } else if (gamepad2.y) {
+            } else if (gamepad2.right_bumper) {
                 claw.setPosition(1);
             }
 
+            clawRotator.setPosition(Math.abs(gamepad2.right_stick_y));
 //            if (lift.getCurrentPosition() < 100) {
 //                clawRotator.setPosition(0);
 //            } else {
