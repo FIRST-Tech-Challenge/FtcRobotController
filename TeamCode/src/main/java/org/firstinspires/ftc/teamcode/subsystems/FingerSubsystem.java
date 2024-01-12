@@ -35,6 +35,10 @@ public class FingerSubsystem extends SubsystemBase {
         power++;
         power/=2d;
         finger.setPosition(power);
+
+        dbp.createNewTelePacket();
+        dbp.info("Finger Power: "+power+", "+finger.getPosition()+", "+forward+", "+backward);
+        dbp.send(false);
     }
 
     public void locomoteFinger(FingerPositions position) {

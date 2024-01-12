@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
 @TeleOp(name = "RealestDriverOpMode")
@@ -75,26 +77,21 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getLeftX());
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
-                    /*double quantity = armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
-                            (armerController.getButton(GamepadKeys.Button.X) ? 1 : 0));
+                    double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
+                            (armerController.getButton(GamepadKeys.Button.X) ? 1 : 0);
                     if(quantity == 0) {
                         return 0;
                     }
-                    return 1d/quantity;*/
-                    boolean pressed = armerController.getButton(GamepadKeys.Button.A)
-                            || armerController.getButton(GamepadKeys.Button.X);
-                    return pressed ? 0 : 1;
+                    return quantity/2.5d;
                 },
                 () -> {
-                    boolean pressed = armerController.getButton(GamepadKeys.Button.B)
-                            || armerController.getButton(GamepadKeys.Button.Y);
-                    return pressed ? 0 : 1;
+                    double quantity = (armerController.getButton(GamepadKeys.Button.B) ? 1 : 0) +
+                            (armerController.getButton(GamepadKeys.Button.Y) ? 1 : 0);
+                    if(quantity == 0) {
+                        return 0;
+                    }
+                    return quantity/2.5d;
                 });
-
-        // DONE: autonomous macro for arm positioning
-        // (aka bumpers automatically move the arm to the pickup position or to the board position)
-
-        // Register subsystems
 
         register(driveSubsystem);
         register(armSubsystem);
