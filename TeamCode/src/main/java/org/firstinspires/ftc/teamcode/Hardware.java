@@ -25,7 +25,7 @@ public class Hardware {
     public Servo stripper = null;
     public Servo escapementFinger = null;
     public Servo launcherRelease = null;
-    public CRServo droneAngle = null;
+    public Servo droneAngle = null;
 
     public VCNL4000 rightDistance = null;
     public VCNL4000 leftDistance = null;
@@ -67,7 +67,7 @@ public class Hardware {
         stripper = hwMap.get(Servo.class, "stripper");
         escapementFinger = hwMap.get(Servo.class, "finger");
         launcherRelease = hwMap.get(Servo.class, "release");
-        droneAngle = hwMap.get(CRServo.class, "angle");
+        droneAngle = hwMap.get(Servo.class, "angle");
 
         firstPixelDetector = hwMap.get(TouchSensor.class, "bb1");
         secondPixelDetector = hwMap.get(TouchSensor.class, "bb2");

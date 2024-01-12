@@ -131,14 +131,16 @@ public class tele extends OpMode {
 
 
         if (robot.liftDownSwitch.getVoltage() < .5) {
-            if (-gamepad2.left_stick_y < 0) {
+            if (-gamepad2.right_stick_y < 0) {
                 robot.lift.setPower(0);
                 robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             } else {
-                robot.lift.setPower(-gamepad2.left_stick_y);
+                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.lift.setPower(-gamepad2.right_stick_y);
             }
         } else {
-            robot.lift.setPower(-gamepad2.left_stick_y);
+            robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift.setPower(-gamepad2.right_stick_y);
         }
 
         if (gamepad2.dpad_up) {
@@ -204,7 +206,7 @@ public class tele extends OpMode {
         }
 
         /** Winch **/
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_down) {
             robot.hook.setPosition(robot.hookDown);
         }
 
@@ -213,9 +215,11 @@ public class tele extends OpMode {
                 robot.winch.setPower(0);
                 robot.winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             } else {
+                robot.winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.winch.setPower(-gamepad2.left_stick_y);
             }
         } else {
+            robot.winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.winch.setPower(-gamepad2.left_stick_y);
         }
 
@@ -223,36 +227,20 @@ public class tele extends OpMode {
 
         switch (launcherAngle) {
             case 0:
-                angleTime = getRuntime();
+                robot.droneAngle.setPosition(0);
                 launcherAngle++;
                 break;
             case 1:
-                robot.droneAngle.setPower(-.8);
-                if (getRuntime() > angleTime + 1) {
-                    robot.droneAngle.setPower(0);
+                if (gamepad2.y) {
+                    robot.droneAngle.setPosition(1);
                     launcherAngle++;
                 }
                 break;
             case 2:
                 if (gamepad2.y) {
-                    angleTime = getRuntime();
-                    launcherAngle++;
+                    robot.droneAngle.setPosition(0);
+                    launcherAngle = 1;
                 }
-                break;
-            case 3:
-                robot.droneAngle.setPower(.8);
-                if (getRuntime() > angleTime + 1) {
-                    robot.droneAngle.setPower(0);
-                    launcherAngle++;
-                }
-                break;
-            case 4:
-                if (gamepad2.y) {
-                    launcherAngle++;
-                }
-                break;
-            case 5:
-                launcherAngle = 0;
                 break;
         }
 
