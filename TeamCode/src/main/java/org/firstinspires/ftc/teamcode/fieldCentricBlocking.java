@@ -39,7 +39,6 @@ public class fieldCentricBlocking extends LinearOpMode {
             boolean switchDriveMode = gamepad1.b;
 
             driveMotors.driveCommands(horizontal, vertical, turn, goFast, switchDriveMode);
-            driveMotors.update();
         }
     }
 }

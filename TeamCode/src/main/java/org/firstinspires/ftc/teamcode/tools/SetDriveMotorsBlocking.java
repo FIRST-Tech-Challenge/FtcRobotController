@@ -35,7 +35,7 @@ public class SetDriveMotorsBlocking extends OpMode {
     private final Gamepad gamepad1;
     private final IMU imu;
     public double powerValues[] = new double[4];
-    private SampleMecanumDrive drive;
+
 
     protected enum DriveMode{
         FIELD_CENTRIC,
@@ -171,10 +171,6 @@ public class SetDriveMotorsBlocking extends OpMode {
                 poseEstimate.getY() > 36 &&
                 ((poseEstimate.getX() > -57 && poseEstimate.getX() < -15) ||
                         (poseEstimate.getX() < 57 && poseEstimate.getX() > 15));
-    }
-
-    public void update() {
-            drive.update();
     }
 
 
