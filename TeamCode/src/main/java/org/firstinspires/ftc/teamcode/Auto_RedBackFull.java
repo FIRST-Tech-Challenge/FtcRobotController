@@ -33,8 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
-        boolean isRed = true;
-        setup(isRed);
+        setup(color.red);
 
         // ---------------------
         // ------Main Code------

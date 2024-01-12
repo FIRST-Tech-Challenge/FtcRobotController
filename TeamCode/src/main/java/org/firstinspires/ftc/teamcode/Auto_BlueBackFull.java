@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
@@ -37,7 +34,7 @@ public class Auto_BlueBackFull extends CSBase {
 
     @Override
     public void runOpMode() {
-        setup(false);
+        setup(color.blue);
 
         // ---------------------
         // ------Main Code------

@@ -58,11 +58,17 @@ public abstract class CSBase extends LinearOpMode {
             "prop",
     };
     IMU.Parameters imuparameters;
-    public void setup(boolean isRed, boolean useCam) {
-        if (isRed) {
+    public enum color {
+        red, blue, none
+    }
+    public void setup(color teamColor, boolean useCam) {
+        if (teamColor == color.red) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
-        } else {
+        } else if (teamColor == color.blue){
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
+        }
+        else {
+            telemetry.addData("Team Color", "Not specified");
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -134,8 +140,8 @@ public abstract class CSBase extends LinearOpMode {
         waitForStart();
         runtime.reset();
     }
-    public void setup(boolean isRed){
-        setup(isRed, true);
+    public void setup(color teamColor){
+        setup(teamColor, true);
     }
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
         int lfTarget = 0;
@@ -484,7 +490,6 @@ public abstract class CSBase extends LinearOpMode {
 
     public void except(Exception e) {
         telemetry.addData("Exception", e);
-        telemetry.update();
     }
 
 }
