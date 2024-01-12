@@ -58,7 +58,7 @@ public abstract class CSBase extends LinearOpMode {
             "prop",
     };
     IMU.Parameters imuparameters;
-    public void setup(boolean isRed) {
+    public void setup(boolean isRed, boolean useCam) {
         if (isRed) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
         } else {
@@ -96,10 +96,12 @@ public abstract class CSBase extends LinearOpMode {
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
-        try {
-            camera = hardwareMap.get(WebcamName.class,"Webcam 1");
-            initProcessors();
-        }catch (Exception e){except(e);}
+        if (useCam) {
+            try {
+                camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+                initProcessors();
+            } catch (Exception e) {except(e);}
+        }
 
         if (lf != null) {
             lf.setDirection(DcMotorEx.Direction.REVERSE);
@@ -132,7 +134,9 @@ public abstract class CSBase extends LinearOpMode {
         waitForStart();
         runtime.reset();
     }
-
+    public void setup(boolean isRed){
+        setup(isRed, true);
+    }
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
         int lfTarget = 0;
         int rfTarget = 0;
