@@ -18,7 +18,8 @@ public class teleOp extends OpMode {
     Telemetry telemetry;
     Gamepad gamepad1;
     Gamepad gamepad2;
-    RobotContainer robot =new RobotContainer(hardwareMap, telemetry, gamepad1, gamepad2);
+    //find a boolean supplier array of buttons
+    RobotContainer robot = new RobotContainer(hardwareMap, telemetry, gamepad1, gamepad2, );
     AnalogInput input;
     @Override
     public void init() {

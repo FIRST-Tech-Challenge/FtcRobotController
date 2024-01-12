@@ -22,7 +22,7 @@ public class BTController{
     public final DoubleSupplier left_y1;
     public final DoubleSupplier left_y2;
 
-    public BTController(Gamepad gamepad, BooleanSupplier[] m_buttonsSuppliers, DoubleSupplier left_x1, DoubleSupplier left_x2, DoubleSupplier left_y1, DoubleSupplier left_y2)
+    public BTController(Gamepad gamepad1, Gamepad gamepad2, BooleanSupplier[] m_buttonsSuppliers, DoubleSupplier left_x1, DoubleSupplier left_x2, DoubleSupplier left_y1, DoubleSupplier left_y2)
     {
         this.m_buttonsSuppliers = m_buttonsSuppliers;
         this.left_x1 = left_x1;
@@ -32,7 +32,8 @@ public class BTController{
         this.gamepad1=gamepad1;
         this.gamepad2=gamepad2;
 
-        left_x=()->gamepad.left_stick_x;
+        left_x1=()->gamepad1.left_stick_x;
+        left_x2=()->gamepad2.left_stick_x;
         this.m_buttonsSuppliers[LEFT_X1.ordinal()] = (() -> Math.abs(gamepad1.left_stick_x) > threshold);
         this.m_buttonsSuppliers[LEFT_Y1.ordinal()] = (() -> Math.abs(gamepad1.left_stick_y) > threshold);
         this.m_buttonsSuppliers[RIGHT_X1.ordinal()] = (() -> Math.abs(gamepad1.right_stick_x) > threshold);
