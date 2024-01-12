@@ -68,7 +68,8 @@ public abstract class CSBase extends LinearOpMode {
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
         }
         else {
-            telemetry.addData("Team Color", "Not specified");
+            telemetry.addData("", "Team color not specified, will not use team prop detection!");
+            useCam = false;
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
