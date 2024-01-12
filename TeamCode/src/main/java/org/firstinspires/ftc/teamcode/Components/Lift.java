@@ -137,12 +137,12 @@ public class Lift extends RFDualMotor {
         RFLogger.Severity.FINEST,
         "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
     for (var i : LiftPositionStates.values()) {
-      if (abs(super.getCurrentPosition() - i.position) < 100) {
+      if (abs(super.getCurrentPosition() - i.position) < 50) {
         i.setStateTrue();
         LiftMovingStates.values()[i.ordinal()].state=false;
       }
     }
-    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position)
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-50)
       LiftPositionStates.AT_ZERO.setStateTrue();
     else LiftPositionStates.AT_ZERO.state = false;
 

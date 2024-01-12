@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.1, HOVER_POS = 0.88, GRAB_POS = 0.72;
+  public static double DROP_POS = 0.1, HOVER_POS = 0.83, GRAB_POS = 0.72;
   private double lastTime = 0, FLIP_TIME = 0.9;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -105,7 +105,7 @@ public class Arm extends RFServo {
       if ((p_state == ArmStates.DROP || p_state == ArmStates.HOVER)
           && super.getPosition() != p_state.pos) {
         if (p_state == ArmStates.DROP) {
-          ArmTargetStates.DROP.setStateTrue();
+          ArmTargetStates.DROP.state = true;
           if (ArmStates.GRAB.getState()) {
             flipTo(ArmStates.HOVER);
             return;
@@ -162,7 +162,11 @@ public class Arm extends RFServo {
    */
   public void update() {
     for (var i : ArmStates.values()) {
-      if (super.getPosition() == i.pos && time > lastTime + FLIP_TIME) i.setStateTrue(); ArmTargetStates.values()[i.ordinal()].state=false;
+      if (super.getPosition() == i.pos && time > lastTime + FLIP_TIME){
+        i.setStateTrue();
+        ArmTargetStates.values()[i.ordinal()].state=false;
+        LOGGER.log("Assigned false to state: " + ArmTargetStates.values()[i.ordinal()].name());
+      }
     }
     for (var i : ArmTargetStates.values()) {
       if (i.state && super.getTarget() != i.pos) {

@@ -69,7 +69,7 @@ public class BradBot extends BasicRobot {
       cv = new CVMaster();
     }
     claw = new Claw();
-    //    magazine = new Magazine();
+    magazine = new Magazine();
     hanger = new Hanger();
     intake = new Intake();
     launcher = new Launcher();
@@ -300,7 +300,6 @@ public class BradBot extends BasicRobot {
     if (isA) {
       twrist.flipTo(Twrist.twristTargetStates.GRAB);
       wrist.flipTo(Wrist.WristTargetStates.GRAB);
-      claw.flipTo(Claw.clawTargetStates.CLOSE);
       arm.flipTo(HOVER);
       lift.update();
       wrist.update();
@@ -406,6 +405,7 @@ public class BradBot extends BasicRobot {
     wrist.update();
     twrist.update();
     claw.update();
+    magazine.updateColor();
   }
 
   public void stop() {

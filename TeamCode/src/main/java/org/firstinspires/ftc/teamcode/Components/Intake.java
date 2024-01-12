@@ -37,7 +37,7 @@ public class Intake extends RFMotor {
   private boolean full = false;
   private double pixelCount = 0;
   public static double HALF_TICKS_PER_REV = 383.6 / 2;
-  public static double ONE=0.45, TWO=0.57, THREE = 0.6, FOUR = 0.66, FIVE =0.7;
+  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.66, FIVE =0.7;
   int height = 1;
 
   /** initializes all the hardware, logs that hardware has been initialized */
@@ -108,7 +108,7 @@ public class Intake extends RFMotor {
       height = 1;
     }
     if(height==1)
-    intakeServo.setPosition(ONE);
+      intakeServo.setPosition(ONE);
     if(height==2)
       intakeServo.setPosition(TWO);if(height==3)
       intakeServo.setPosition(THREE);if(height==4)
@@ -184,6 +184,9 @@ public class Intake extends RFMotor {
       if(i.state&&i==IntakeStates.INTAKING&&getPower()!=INTAKE_POWER)intake();
     }
     if (IntakeStates.STOPPED.state) {
+      stopIntake();
+    }
+    if(Magazine.pixels==2){
       stopIntake();
     }
     double pos = super.getCurrentPosition();

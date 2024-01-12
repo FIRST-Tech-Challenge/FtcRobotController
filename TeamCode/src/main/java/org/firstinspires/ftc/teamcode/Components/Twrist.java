@@ -62,7 +62,7 @@ public class Twrist extends RFServo {
     public void flipTo(twristTargetStates p_state){
         if (!twristStates.values()[p_state.ordinal()].state&& abs(time - lastTime) > FLIP_TIME) {
             if (p_state == twristTargetStates.GRAB){
-                if((Arm.ArmTargetStates.HOVER.state || Arm.ArmTargetStates.GRAB.state) && super.getPosition() != GRABBY){
+                if((Arm.ArmStates.HOVER.state || Arm.ArmStates.GRAB.state) && super.getPosition() != GRABBY){
                     super.setPosition(GRABBY);
                     LOGGER.log("twrist to GRAB");
                     lastTime = time;

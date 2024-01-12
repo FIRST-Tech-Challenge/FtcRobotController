@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLEDStrip;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 @Config
-public class Magazine extends RFServo {
+public class Magazine {
     public static double CLOSE = 0.13, OPEN = 0.28, FLIP_TIME = 0.1;
     double lastTime = 0, target = 0;
     private RFLEDStrip blinkin;
@@ -22,24 +22,10 @@ public class Magazine extends RFServo {
     public static int pixels = 0;
 
     public Magazine() {
-        super("magServo", 1.0);
         colorSensor = new RFColorSensor("colorSensor");
         colorSensor2 = new RFColorSensor("colorSensor2");
-        blinkin = new RFLEDStrip("blinkin");
-        blinkin.shotwhite();
-        closed = false;
-        super.setFlipTime(FLIP_TIME);
-        if(isTeleop) {
-            super.setPosition(OPEN);
-            MagazineStates.OPEN.setStateTrue();
-        }
-        else {
-            super.setPosition(CLOSE);
-            MagazineTargetStates.CLOSE.setStateTrue();
-            MagazineStates.CLOSE.setStateTrue();
-        }
-        super.setLastTime(-100);
-        lastTime = -100;
+//        blinkin = new RFLEDStrip("blinkin");
+//        blinkin.shotwhite();
     }
 
     public enum ColorStates {
@@ -125,78 +111,6 @@ public class Magazine extends RFServo {
         }
     }
 
-    public enum MagazineStates {
-        OPEN(1, true),
-        CLOSE(0, false);
-        double position;
-        boolean state;
-
-        MagazineStates(double p_position, boolean p_state) {
-            position = p_position;
-            state = p_state;
-        }
-
-        public void setStateTrue() {
-            if (!this.state) {
-                for (int i = 0; i < Magazine.MagazineStates.values().length; i++) {
-                    if (Magazine.MagazineStates.values()[i].state) {
-                        LOGGER.log(Magazine.MagazineStates.values()[i].name() + " position set to: false");
-                    }
-                    Magazine.MagazineStates.values()[i].state = false;
-                }
-                this.state = true;
-                LOGGER.log(this.name() + " position set to : true");
-            }
-        }
-        public boolean getState(){
-            return this.state;
-        }
-    }
-
-    public enum MagazineTargetStates {
-        OPEN(1, true),
-        CLOSE(0, false);
-        double position;
-        public boolean state;
-
-        MagazineTargetStates(double p_position, boolean p_state) {
-            position = p_position;
-            state = p_state;
-        }
-
-        public void setStateTrue() {
-            if (!this.state) {
-                for (int i = 0; i < Magazine.MagazineTargetStates.values().length; i++) {
-                    if (Magazine.MagazineTargetStates.values()[i].state) {
-                        LOGGER.log(Magazine.MagazineTargetStates.values()[i].name() + " target set to: false");
-                    }
-                    Magazine.MagazineTargetStates.values()[i].state = false;
-                }
-                this.state = true;
-                LOGGER.log(this.name() + " target set to : true");
-            }
-        }
-    }
-
-    public void clampTo(MagazineTargetStates p_state){
-        if(target != p_state.position){
-      if (p_state == MagazineTargetStates.OPEN && !Intake.IntakeStates.INTAKING.getState()) {
-                LOGGER.log("clamping to : " + p_state.name() + ", " + p_state.position);
-                super.setPosition(p_state.position);
-                target = super.getTarget();
-                MagazineTargetStates.OPEN.setStateTrue();
-                lastTime=time;
-      } else if (p_state == MagazineTargetStates.CLOSE && !Arm.ArmTargetStates.GRAB.state) {
-                LOGGER.log("clamping to : " + p_state.name() + ", " + p_state.position);
-                super.setPosition(p_state.position);
-                MagazineTargetStates.CLOSE.setStateTrue();
-                target = super.getTarget();
-                lastTime = time;
-            }
-            p_state.setStateTrue();
-        }
-    }
-
     public void updateColor(){
         String color = colorSensor.getColor();
         for(int i = 0; i< Magazine.ColorStates.values().length; i++){
@@ -216,6 +130,9 @@ public class Magazine extends RFServo {
                 Magazine.ColorStates.values()[i].state = false;
             }
         }
+        pixels=0;
+        if(colorSensor.getDist()<1) pixels++;
+        if(colorSensor2.getDist()<1) pixels++;
     }
     public void updateBlinkin(){
         pixels=0;
@@ -269,15 +186,5 @@ public class Magazine extends RFServo {
     public void update() {
         updateColor();
         updateBlinkin();
-        for (var i : Magazine.MagazineStates.values()) {
-            if (i.position == super.getTarget() && time - super.getLastTime()> FLIP_TIME) {
-                i.setStateTrue();
-            }
-        }
-        for (var i : Magazine.MagazineTargetStates.values()) {
-            if (i.state && super.getTarget() != i.position) {
-                clampTo(i);
-            }
-        }
     }
 }
