@@ -164,36 +164,36 @@ public class HardwarePixelbot
     public AnalogInput pushServoPos = null;
     public Servo  pushServo = null;
     public double PUSH_SERVO_INIT = 0.470;
-    final public static double PUSH_SERVO_INIT_ANGLE = 180.0;
+    final public static double PUSH_SERVO_INIT_ANGLE = 188.5;
     public double PUSH_SERVO_SAFE = 0.470;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
-    final public static double PUSH_SERVO_SAFE_ANGLE = 180.0;
+    final public static double PUSH_SERVO_SAFE_ANGLE = 188.5;
     public double PUSH_SERVO_GRAB = 0.540;  // Partially extend to align fingers inside pixels
-    final public static double PUSH_SERVO_GRAB_ANGLE = 200.0;
+    final public static double PUSH_SERVO_GRAB_ANGLE = 166.0;
     public double PUSH_SERVO_DROP = 0.890;  // Fully extend finger assembly toward the Backdrop
-    final public static double PUSH_SERVO_DROP_ANGLE = 270.0;
+    final public static double PUSH_SERVO_DROP_ANGLE = 56.1;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
     public double WRIST_SERVO_INIT = 0.450;   // higher is counter-clockwise
-    final public static double WRIST_SERVO_INIT_ANGLE = 180.0; // no idea yet, will have to figure it out!
+    final public static double WRIST_SERVO_INIT_ANGLE = 188.0; // no idea yet, will have to figure it out!
     public double WRIST_SERVO_GRAB = 0.450;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 180.0;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 188.0;
     public double WRIST_SERVO_DROP = 0.810;
-    final public static double WRIST_SERVO_DROP_ANGLE = 270.0;
+    final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
 
     public AnalogInput fingerServo1Pos = null;
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
     public double FINGER1_SERVO_DROP = 0.500;
-    final public static double FINGER1_SERVO_DROP_ANGLE = 180.0;
+    final public static double FINGER1_SERVO_DROP_ANGLE = 179.5;
     public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.242; // 0.742
-    final public static double FINGER1_SERVO_GRAB_ANGLE = FINGER1_SERVO_DROP_ANGLE + 30.0;
+    final public static double FINGER1_SERVO_GRAB_ANGLE = 102.1;
 
     public AnalogInput fingerServo2Pos = null;
 	public Servo  fingerServo2 = null;  // BOTTOM (bin) or LEFT (backdrop)
     public double FINGER2_SERVO_DROP = 0.480;
-    final public static double FINGER2_SERVO_DROP_ANGLE = 180.0;
+    final public static double FINGER2_SERVO_DROP_ANGLE = 185.1;
     public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.262;  // 0.742
-    final public static double FINGER2_SERVO_GRAB_ANGLE = FINGER2_SERVO_DROP_ANGLE + 30.0;
+    final public static double FINGER2_SERVO_GRAB_ANGLE = 102.1;
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
@@ -292,7 +292,10 @@ public class HardwarePixelbot
         thinnearMotor.setPower( 0.0 );
 
         thinnearTopSensor    = hwMap.get( DigitalChannel.class, "MagneticTop" );     // Expansion Hub Digital port 0-1
+        thinnearTopSensor.setMode(DigitalChannel.Mode.INPUT);
+
         thinnearBottomSensor = hwMap.get( DigitalChannel.class, "MagneticBottom" );  // Control Hub Digital port 0-1
+        thinnearBottomSensor.setMode(DigitalChannel.Mode.INPUT);
 
 //      rightOdometer  = hwMap.get(DcMotorEx.class,"OdomRight");   // Control Hub port 3
 //      rightOdometer.setDirection(DcMotor.Direction.FORWARD);
@@ -319,30 +322,34 @@ public class HardwarePixelbot
         pixe2DistanceSensor = (DistanceSensor) pixel2ColorSensor;
 
         /*--------------------------------------------------------------------------------------------*/
-        pushServo = hwMap.servo.get("ElbowServo");           // servo port 0 (Expansion Hub)
-        pushServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port ???
+        pushServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
+        pushServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
         pushServo.setPosition(PUSH_SERVO_INIT);
 
-        wristServo = hwMap.servo.get("WristServo");           // servo port 1 (Expansion Hub)
-        wristServoPos = hwMap.analogInput.get("WristServoPos");
+        wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
+        wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
         wristServo.setPosition(WRIST_SERVO_INIT);
 
-        fingerServo1 = hwMap.servo.get("Finger1Servo");       // servo port 2 (Expansion Hub)
-        fingerServo1Pos = hwMap.analogInput.get("Finger1ServoPos");
+        fingerServo1 = hwMap.servo.get("Finger1Servo");             // servo port 2 (Expansion Hub)
+        fingerServo1Pos = hwMap.analogInput.get("Finger1ServoPos"); // Analog port 3 (Expansion Hub)
         fingerServo1.setPosition(FINGER1_SERVO_DROP);
 
-        fingerServo2 = hwMap.servo.get("Finger2Servo");       // servo port 3 (Expansion Hub)
-        fingerServo2Pos = hwMap.analogInput.get("Finger2ServoPos");
+        fingerServo2 = hwMap.servo.get("Finger2Servo");             // servo port 3 (Expansion Hub)
+        fingerServo2Pos = hwMap.analogInput.get("Finger2ServoPos"); // Analog port 2 (Expansion Hub)
         fingerServo2.setPosition(FINGER2_SERVO_DROP);
 
         // IR Backdrop Range Sensor
-        backdropRange = hwMap.analogInput.get("BackdropRange");
+        backdropRange = hwMap.analogInput.get("BackdropRange"); // Analog port 1 (Control Hub)
 
         // Pixel indicators
-        pixel1Led1 = hwMap.digitalChannel.get("Pixel1Led1");
-        pixel1Led2 = hwMap.digitalChannel.get("Pixel1Led2");
-        pixel2Led1 = hwMap.digitalChannel.get("Pixel2Led1");
-        pixel2Led2 = hwMap.digitalChannel.get("Pixel2Led2");
+        pixel1Led1 = hwMap.digitalChannel.get("Pixel1Led1"); // Digital port 4 (Control Hub)
+        pixel1Led1.setMode(DigitalChannel.Mode.OUTPUT);
+        pixel1Led2 = hwMap.digitalChannel.get("Pixel1Led2"); // Digital port 5 (Control Hub)
+        pixel1Led2.setMode(DigitalChannel.Mode.OUTPUT);
+        pixel2Led1 = hwMap.digitalChannel.get("Pixel2Led1"); // Digital port 6 (Control Hub)
+        pixel2Led1.setMode(DigitalChannel.Mode.OUTPUT);
+        pixel2Led2 = hwMap.digitalChannel.get("Pixel2Led2"); // Digital port 7 (Control Hub)
+        pixel2Led2.setMode(DigitalChannel.Mode.OUTPUT);
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -660,6 +667,20 @@ public class HardwarePixelbot
         }
     } // checkViperSlideExtension
 
+    /*--------------------------------------------------------------------------------------------*/
+    /* NOTE ABOUT RANGE SENSORS:                                                                  */
+    /* The REV 2m Range Sensor (5cm-200cm) is really only 1.2m (47.2") maximum in DEFAULT mode.   */
+    /* Depending on the reflectivity of the surface encountered, it can be even shorter.  For     */
+    /* example, the black metal paint on the field wall is highly absorptive, so we only get      */
+    /* reliable range readings out to 30cm/12" or so.  In contrast, the Maxbotics ultrasonic      */
+    /* range sensors have a minimum range of 20cm/8". A combined Autonomous solution that requires*/
+    /* both short (< 8") and long (> 12-47") requires both REV Time-of-Flight (tof) range sensors */
+    /* and Maxbotics Ultrasonic range sensors. Also note that if you mount either ToF/Ultrasonic  */
+    /* sensor too low on the robot you'll get invalid distance readings due to reflections off the*/
+    /* field tiles due to "fanout" of both laser/ultrasonic signals the further you get from the  */
+    /* robot.                                                                                     */
+    /*--------------------------------------------------------------------------------------------*/
+
     public int singleSonarRangeF() {
         //Query the current range sensor reading and wait for a response
         return sonarRangeF.getDistanceSync();
@@ -727,7 +748,7 @@ public class HardwarePixelbot
     }
 
     // Returns distance in CM, might have to tweak 80.0 CM as max range to get accurate readings.
-    public double getBackdropRange() { return (backdropRange.getVoltage() / 3.3) * 80.0; }
+    public double getBackdropRange() { return ( (3.3 - backdropRange.getVoltage()) / 3.3) * 30.0; }
 
     public void setPixel1LedColor(PixelColorsEnum setColor) {
         switch(setColor) {

@@ -148,4 +148,4 @@ public class TeleopSkunkworks extends LinearOpMode {
         gamepad1_r_trigger_last  = gamepad1_r_trigger_now;   gamepad1_r_trigger_now  = (gamepad1.right_trigger >= 0.5);
     } // captureGamepad1Buttons
 
-} // TeleopServoTest
+} // TeleopSkunkworks
