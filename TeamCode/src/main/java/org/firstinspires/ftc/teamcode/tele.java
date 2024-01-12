@@ -128,7 +128,18 @@ public class tele extends OpMode {
             robot.rightBackDrive.setPower(0);
         }
 
-        robot.lift.setPower(-gamepad2.right_stick_y);
+
+
+        if (robot.liftDownSwitch.getVoltage() < .5) {
+            if (-gamepad2.left_stick_y < 0) {
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else {
+                robot.lift.setPower(-gamepad2.left_stick_y);
+            }
+        } else {
+            robot.lift.setPower(-gamepad2.left_stick_y);
+        }
 
         if (gamepad2.dpad_up) {
         } else if (gamepad2.dpad_down) {
@@ -193,11 +204,19 @@ public class tele extends OpMode {
         }
 
         /** Winch **/
-
-        robot.winch.setPower(-gamepad2.left_stick_y);
-
         if (gamepad2.dpad_up) {
             robot.hook.setPosition(robot.hookDown);
+        }
+
+        if (robot.winchDownSwitch.getVoltage() < .5) {
+            if (-gamepad2.left_stick_y < 0) {
+                robot.winch.setPower(0);
+                robot.winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else {
+                robot.winch.setPower(-gamepad2.left_stick_y);
+            }
+        } else {
+            robot.winch.setPower(-gamepad2.left_stick_y);
         }
 
         /** Drone Launcher **/
@@ -208,9 +227,9 @@ public class tele extends OpMode {
                 launcherAngle++;
                 break;
             case 1:
-                robot.droneAngle.setPosition(-.1);
+                robot.droneAngle.setPower(-.8);
                 if (getRuntime() > angleTime + 1) {
-                    robot.droneAngle.setPosition(0);
+                    robot.droneAngle.setPower(0);
                     launcherAngle++;
                 }
                 break;
@@ -221,9 +240,9 @@ public class tele extends OpMode {
                 }
                 break;
             case 3:
-                robot.droneAngle.setPosition(.1);
+                robot.droneAngle.setPower(.8);
                 if (getRuntime() > angleTime + 1) {
-                    robot.droneAngle.setPosition(0);
+                    robot.droneAngle.setPower(0);
                     launcherAngle++;
                 }
                 break;
@@ -317,6 +336,9 @@ public class tele extends OpMode {
         telemetry.addData("Stripper State", deploymentState);
         telemetry.addData("BB1", robot.firstPixelDetector.isPressed());
         telemetry.addData("BB2", robot.firstPixelDetector.isPressed());
+
+        telemetry.addData("Winch Switch", robot.winchDownSwitch.getVoltage());
+        telemetry.addData("Lift Switch", robot.liftDownSwitch.getVoltage());
         telemetry.update();
 
     }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -24,12 +25,15 @@ public class Hardware {
     public Servo stripper = null;
     public Servo escapementFinger = null;
     public Servo launcherRelease = null;
-    public Servo droneAngle = null;
+    public CRServo droneAngle = null;
 
     public VCNL4000 rightDistance = null;
     public VCNL4000 leftDistance = null;
     public TouchSensor firstPixelDetector = null;
     public TouchSensor secondPixelDetector = null;
+
+    public AnalogInput liftDownSwitch = null;
+    public AnalogInput winchDownSwitch = null;
 
     HardwareMap hwMap = null;
 
@@ -63,10 +67,13 @@ public class Hardware {
         stripper = hwMap.get(Servo.class, "stripper");
         escapementFinger = hwMap.get(Servo.class, "finger");
         launcherRelease = hwMap.get(Servo.class, "release");
-        droneAngle = hwMap.get(Servo.class, "angle");
+        droneAngle = hwMap.get(CRServo.class, "angle");
 
         firstPixelDetector = hwMap.get(TouchSensor.class, "bb1");
         secondPixelDetector = hwMap.get(TouchSensor.class, "bb2");
+
+        liftDownSwitch = hwMap.get(AnalogInput.class, "liftSwitch");
+        winchDownSwitch = hwMap.get(AnalogInput.class, "winchSwitch");
 
         rightDistance = hwMap.get(VCNL4000.class, "rdist");
 
