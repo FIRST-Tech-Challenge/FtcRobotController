@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.tools;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.google.ar.core.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -94,9 +95,14 @@ public class SetDriveMotors extends OpMode {
         horizontalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_X, 0.5);
         verticalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_Y, 0.4);
     }
-    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode, boolean alignToCardinalPoint) {
+    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode, boolean alignToCardinalPoint, boolean resetHeading) {
+
         // Read pose
         Pose2d poseEstimate = drive.getPoseEstimate();
+
+        if (resetHeading){
+            drive.setPoseEstimate(new Pose2d(poseEstimate.getY(), Math.toRadians(270)));
+        }
 
         //deadzones
         if (goFast && !isAutoBrake(distanceToWallMeters, poseEstimate)) {
@@ -113,9 +119,9 @@ public class SetDriveMotors extends OpMode {
         }
 
         if(driveMode == DriveMode.ROBOT_CENTRIC){
-            Global.telemetry.addData("getX: ", poseEstimate.getX());
+            /*Global.telemetry.addData("getX: ", poseEstimate.getX());
             Global.telemetry.addData("getY: ", poseEstimate.getY());
-            Global.telemetry.addData("Distance to wall: ", distanceToWallMeters);
+            Global.telemetry.addData("Distance to wall: ", distanceToWallMeters);*/
 
             //Driver assistance: takes over if too close to wall
             if (isAutoBrake(distanceToWallMeters, poseEstimate)){

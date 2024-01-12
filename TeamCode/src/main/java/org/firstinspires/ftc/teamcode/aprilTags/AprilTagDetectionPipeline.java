@@ -120,7 +120,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         for (org.openftc.apriltag.AprilTagDetection aprilTag : detections) {
             tagIDs.append(aprilTag.id).append(" ");
         }
-        Global.telemetry.addData("Tags: ", tagIDs.toString());
+        //Global.telemetry.addData("Tags: ", tagIDs.toString());
 
         return input;
     }
