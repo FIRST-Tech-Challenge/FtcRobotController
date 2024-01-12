@@ -33,15 +33,20 @@ public class AutoRR extends LinearOpMode {
         // - Reverse: -44.75
         while(opModeIsActive()) {
             PropPosition propPosition = vision.detectProp();
+            
 
             switch(propPosition) {
                 case MIDDLE:
                     //Drop off pixel
+                    robot.moveRobot(.5, -3, 10);
+                    robot.moveArm(.5, -10, 5);
+                    robot.moveRobot(.5, -36, 10);
                     robot.moveRobot(.5, -38, 10);
                     //Pretend to drop pixel
                     robot.dropPixel();
                     sleep(1000);
                     //Backup and clear pixel
+                    robot.moveRobot(.5, -3.75, 5);
                     robot.moveRobot(.5, -5, 5);
                     //Turn to parking location
                     robot.turnRobot(Direction.LEFT, 16, .5, 10);
@@ -66,7 +71,7 @@ public class AutoRR extends LinearOpMode {
                     //Drop off pixel
                     robot.moveRobot(.5, -30.75, 10);
                     //Turn left
-                    robot.turnRobot(Direction.RIGHT, 10, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 14, .5, 10);
                     //Move to line
                     robot.moveRobot(.5, 9, 5);
                     //Drop pixel

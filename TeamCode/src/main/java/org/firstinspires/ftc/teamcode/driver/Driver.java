@@ -27,7 +27,7 @@ public class Driver extends LinearOpMode {
     static final int ARM_DROP_POS_LOW = -4530;
     static final int ARM_DROP_POS_HIGH = -3550;
     static final int ARM_DRIVE_POS = -800;
-    static final int ARM_INTAKE_POS = 0;
+    static final int ARM_INTAKE_POS = 25;
     static final double LEFT_GRIPPER_OPEN = 0.90;
     //was 1.5
     static final double LEFT_GRIPPER_CLOSE = 2;
