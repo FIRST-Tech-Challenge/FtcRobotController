@@ -155,6 +155,17 @@ public class drivesample extends LinearOpMode
             {
                 slideL.setPower(1);
             }
+
+            if(gamepad1.dpad_up)
+            {
+                bucket.setPosition(0.25);
+            }
+
+            if(gamepad1.dpad_down)
+            {
+                bucket.setPosition(0);
+            }
+
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
