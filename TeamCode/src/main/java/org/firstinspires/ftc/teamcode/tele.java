@@ -204,12 +204,21 @@ public class tele extends OpMode {
                         deploymentState = 1;
                         oldTime = getRuntime();
                     }
-                }
                 break;
             case 4:
                 deploymentState = 0;
                 break;
         }
+
+        if (robot.lift.getCurrentPosition() < 650) {
+            deploymentState = 1;
+        }
+
+        /*
+        if (robot.lift.getCurrentPosition() < 650 && !gamepad2.right_stick_button) {
+            robot.lift.setPower(0);
+        }
+        */
 
         /** Winch **/
         if (gamepad2.dpad_down) {
