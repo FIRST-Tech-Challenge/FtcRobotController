@@ -143,16 +143,17 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 27,  27, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 29,  29, 10);  // S1: Forward 47 Inches with 5 Sec timeout
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -25, -25, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -3, -3, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
-        //turn left
+
+       /* //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
         sleep(3700);
@@ -170,7 +171,7 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
-        sleep(100);  // pause to display final telemetry message.
+        sleep(100);  // pause to display final telemetry message.*/
     }
 
     public void travelLeft(){
@@ -191,24 +192,25 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0.1, TURN_SPEED);
-        sleep(2300);
+        sleep(1300);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 8,  8, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 6,  6, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -12, -12, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -5, -5, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
-        //turn left
+
+       /* //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
         sleep(7000);
@@ -226,7 +228,7 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
-        sleep(100);  // pause to display final telemetry message.
+        sleep(100);  // pause to display final telemetry message.*/
     }
 
     public void travelRight(){
@@ -242,29 +244,29 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         // Step through each leg of the path,
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 17,  17, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //turn right
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
-        sleep(2500);
+        sleep(2000);
 
         //forward
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go forward", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0, 12,  12, 10);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0, 7,  7, 10);  // S1: Forward 47 Inches with 5 Sec timeout
 
         //reverse
         telemetry.addData("Reverse", "");
         telemetry.update();
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 0,   -12, -12, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 0,   -15, -15, 10);  // S2: Turn Right 12 Inches with 4 Sec timeout
         telemetry.addData("Turning left", "");
         telemetry.update();
 
-        //turn left
+       /* //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.driveRobot(0, -TURN_SPEED);
         sleep(4700);
@@ -282,7 +284,7 @@ public class AutoDetectRedFarBackRight extends LinearOpMode {
         robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
         telemetry.addData("Grabber", "released");
         telemetry.update();
-        sleep(100);  // pause to display final telemetry message.
+        sleep(100);  // pause to display final telemetry message.*/
     }
     /*
      *  Method to perform a relative move, based on encoder counts.
