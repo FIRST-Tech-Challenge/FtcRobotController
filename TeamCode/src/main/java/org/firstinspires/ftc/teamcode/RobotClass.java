@@ -258,14 +258,14 @@ public class RobotClass {
     }
     public void strafing(Direction direction, double power, int timeInMs) throws InterruptedException {
         if (direction == Direction.LEFT) {
-            frontLeft.setPower(-power);
+            frontLeft.setPower(power);
             frontRight.setPower(power);
-            backLeft.setPower(power);
+            backLeft.setPower(-power);
             backRight.setPower(-power);
         } else if (direction == Direction.RIGHT) {
-            frontLeft.setPower(power);
+            frontLeft.setPower(-power);
             frontRight.setPower(-power);
-            backLeft.setPower(-power);
+            backLeft.setPower(power);
             backRight.setPower(power);
         } else {
             myOpMode.telemetry.addData("Error", "Invalid direction");

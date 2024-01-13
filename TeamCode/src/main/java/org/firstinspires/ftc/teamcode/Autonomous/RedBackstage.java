@@ -83,9 +83,8 @@ public class RedBackstage extends LinearOpMode {
             sleep(500);
 
         }else{
-            teamBot.moveStraightWithEncoders(0.6,98);
+            teamBot.moveStraightWithEncoders(0.25,-98);
             //Intake shoot
-            teamBot.moveStraightWithEncoders(-0.6,92);
             teamBot.strafing(RobotClass.Direction.RIGHT,0.5,3000);
         }
 
