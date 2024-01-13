@@ -68,6 +68,7 @@ public class drivesample extends LinearOpMode
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
         DcMotor slideL = hardwareMap.dcMotor.get("slideL");
+        DcMotor slideR = hardwareMap.dcMotor.get("slideR");
 
         Servo IntakeRaiser = hardwareMap.get(Servo.class, "IntakeRaiser");
         Servo ArmWrist = hardwareMap.get(Servo.class, "ArmWrist");
@@ -78,13 +79,9 @@ public class drivesample extends LinearOpMode
         CRServo immasuckyourpenis = hardwareMap.get(CRServo.class, "sucker");
 
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
+        PixelGrabber.setDirection(Servo.Direction.REVERSE);
 
-        IntakeRaiser.setPosition(0);
-        ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.3);
-        PixelGrabberWrist2.setPosition(0);
-        PixelGrabber.setPosition(0);
-        bucket.setPosition(0);
+
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -93,6 +90,12 @@ public class drivesample extends LinearOpMode
         imu.initialize(parameters);
 
         waitForStart();
+        IntakeRaiser.setPosition(0);
+        ArmWrist.setPosition(0);
+        PixelGrabberWrist1.setPosition(0.3);
+        PixelGrabberWrist2.setPosition(0);
+        PixelGrabber.setPosition(0);
+        bucket.setPosition(0);
 
         if (isStopRequested()) return;
 

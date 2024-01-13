@@ -11,7 +11,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public abstract class CameraPipeline implements VisionProcessor {
+public class CameraPipeline implements VisionProcessor {
     public static double minimumValue = 100;
     public static double maximumValue = 255;
     public static double minimumBlueHue = 100;
@@ -25,16 +25,16 @@ public abstract class CameraPipeline implements VisionProcessor {
 
     String color;
 
-    String outStr;
+    String outStr = "right";
 
-    static final Rect LEFT_RECTANGLE = new Rect(
-            new Point(0, 0),
-            new Point(0, 0)
+    static final Rect MID_RECTANGLE = new Rect(
+            new Point(220, 230),
+            new Point(340, 170)
     );
 
     static final Rect RIGHT_RECTANGLE = new Rect(
-            new Point(0, 0),
-            new Point(0, 0)
+            new Point(500, 200),
+            new Point(640, 140)
     );
 
     @Override
@@ -44,7 +44,7 @@ public abstract class CameraPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        Imgproc.cvtColor(frame, mat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(frame, mat , Imgproc.COLOR_RGB2HSV);
 
         Scalar minimumBlue = new Scalar(minimumBlueHue, minimumValue, minimumValue);
         Scalar maximumBlue = new Scalar(maximumBlueHue, maximumValue, maximumValue);
@@ -65,18 +65,18 @@ public abstract class CameraPipeline implements VisionProcessor {
             mat2.release();
         }
 
-        double leftBox = Core.sumElems(mat.submat(LEFT_RECTANGLE)).val[0];
+        double leftBox = Core.sumElems(mat.submat(MID_RECTANGLE)).val[0];
         double rightBox = Core.sumElems(mat.submat(RIGHT_RECTANGLE)).val[0];
 
-        double averagedLeftBox = leftBox / LEFT_RECTANGLE.area() / 255;
+        double averagedMidBox = leftBox / MID_RECTANGLE.area() / 255;
         double averagedRightBox = rightBox / RIGHT_RECTANGLE.area() / 255; //Makes value [0,1]
 
-        if(averagedLeftBox > 0.5){        //Must Tune Red Threshold
-            outStr = "left";
-        }else if(averagedRightBox > 0.5){
+        if(averagedMidBox > 0.3){
+            outStr = "mid";
+        }else if(averagedRightBox > 0.3){
             outStr = "right";
         }else{
-            outStr = "mid";
+            outStr = "left";
         }
 
 //        mat.copyTo(frame);

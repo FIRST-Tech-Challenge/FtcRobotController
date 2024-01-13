@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -59,9 +61,13 @@ public class BasicAutonomous extends OpMode
 	private CameraPipeline cameraPipeline;
 	private VisionPortal portal;
 
-	@Override
-	public void init()
-	{
+	double center_line;
+	double left_line;
+	double right_line;
+
+	public void init() {
+		cameraPipeline = new CameraPipeline();
+
 		yellowArm = hardwareMap.get(Servo.class, "bucket");
 		runtime = new ElapsedTime();
 
@@ -69,9 +75,7 @@ public class BasicAutonomous extends OpMode
 		yellowState = YellowState.DRIVE;
 
 		drive = new SampleMecanumDrive(hardwareMap);
-		drive.setPoseEstimate(start_pos);
 
-		cameraPipeline.setColor("red");
 		color = 1.; // 1. for red, -1. for blue
 		start_dist = "close"; // close or far, depending on start pos
 		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
@@ -89,18 +93,29 @@ public class BasicAutonomous extends OpMode
 			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
 		}
 
+		drive.setPoseEstimate(start_pos);
 		// Get the position of left, mid, or right
 		portal = new VisionPortal.Builder()
-				.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+				.setCamera(hardwareMap.get(WebcamName.class, "Goof"))
 				.setCameraResolution(new Size(640, 480))
 				.setCamera(BuiltinCameraDirection.BACK)
 				.addProcessor(cameraPipeline)
 				.enableLiveView(true)
 				.build();
 
-		position = cameraPipeline.getPropPosition();
+		cameraPipeline.setColor("blue");
 
-		// defines the trajectory for placing purple pixel
+	}
+
+	@Override
+	public void init_loop()
+	{
+		runtime.reset();
+		while (runtime.time() < 1.5) {}
+
+		position = cameraPipeline.getPropPosition();
+		telemetry.addData("Position: ", position);
+		telemetry.update();
 		if (color == 1) {
 			if (position == "left") {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
