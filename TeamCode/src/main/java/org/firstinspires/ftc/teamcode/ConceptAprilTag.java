@@ -52,7 +52,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
  */
 @TeleOp(name = "Concept: AprilTag", group = "Concept")
 @Disabled
-public class ConceptAprilTag extends LinearOpMode {
+public class
+ConceptAprilTag extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 

@@ -136,7 +136,6 @@ public class tele extends OpMode {
         }
 
 
-
         if (robot.liftDownSwitch.getVoltage() < .5) {
             if (-gamepad2.right_stick_y < 0) {
                 robot.lift.setPower(0);
@@ -186,7 +185,7 @@ public class tele extends OpMode {
             case 2:
                 robot.stripper.setPosition(robot.stripperFirstRelease);
                 if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.left_trigger >.5) {
+                    if (gamepad2.left_trigger > .5) {
                         deploymentState++;
                         oldTime = getRuntime();
                     } else if (gamepad2.left_bumper) {
@@ -198,7 +197,7 @@ public class tele extends OpMode {
             case 3:
                 robot.stripper.setPosition(robot.stripperSecondRelease);
                 if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.left_trigger >.5) {
+                    if (gamepad2.left_trigger > .5) {
                         deploymentState++;
                         oldTime = getRuntime();
                     } else if (gamepad2.left_bumper) {
@@ -259,7 +258,7 @@ public class tele extends OpMode {
 
         /** Intake/Transfer **/
 
-        transferRPM = (Math.abs(robot.transfer.getCurrentPosition() - oldTransferPosition)/751.8) / ((getRuntime() - oldTransferPosition)*60);
+        transferRPM = (Math.abs(robot.transfer.getCurrentPosition() - oldTransferPosition) / 751.8) / ((getRuntime() - oldTransferPosition) * 60);
         oldTransferTime = getRuntime();
         oldTransferPosition = robot.transfer.getCurrentPosition();
 
@@ -299,12 +298,17 @@ public class tele extends OpMode {
         }
 
 
-        robot.intake.setPower(gamepad2.right_trigger);
-        robot.transfer.setPower(gamepad2.right_trigger);
-       if (gamepad2.right_bumper) {
-           robot.transfer.setPower(-1);
-           robot.intake.setPower(-1);
-       }
+
+        if (gamepad2.right_trigger > .5) {
+            robot.transfer.setPower(.57);
+            robot.intake.setPower(gamepad2.right_trigger);
+        } else if (gamepad2.right_bumper) {
+            robot.transfer.setPower(-1);
+            robot.intake.setPower(-1);
+        } else {
+            robot.transfer.setPower(0);
+            robot.intake.setPower(0);
+        }
 
         if (gamepad1.x) {
             gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);
