@@ -81,9 +81,9 @@ public class BasicAutonomous extends OpMode
 		start_dist = "close"; // close or far, depending on start pos
 		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
 
-		double center_line = 70./6.;
-		double left_line = 8.;
-		double right_line = 15.5;
+		center_line = 70./6.;
+		left_line = 8.;
+		right_line = 15.5;
 
 		if (start_dist == "close") {
 			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
@@ -219,6 +219,7 @@ public class BasicAutonomous extends OpMode
 
 				drive.followTrajectorySequenceAsync(purple_pixel);
 				state = State.PLACE_PURPLE;
+				break;
 
 			case PLACE_PURPLE:
 				if (!drive.isBusy()) {
