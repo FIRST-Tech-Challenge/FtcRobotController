@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,7 +16,9 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 // ADB PATH: C:\Users\HP\AppData\Local\Android\Sdk\platform-tools
 // Connect to robot wifi (23461-RC)
@@ -273,23 +277,28 @@ public class TeleOpPhase3 extends LinearOpMode {
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // Initialize camera??? Our stuff randomly goes into NaN
+        VisionPortal visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1")) // change name depending on mech team wants to name it
+                .build();
+
         waitForStart();
 
         // Ramping for x and y translation
-        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.3); // Raising alpha will make the ramp more drastic but more potentially create slip
-        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.3); // Decreasing alpha will reduce slip
+        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.5); // Raising alpha will make the ramp more drastic but more potentially create slip
+        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.5); // Decreasing alpha will reduce slip
 
         // PID controller for heading
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0, 0, 0), 0, 0); // Heading is kinda messed up rn, so I'm temporarily disabling it
         headingPID.setInputBounds(0, 360);
 
         // PID controller for lift
-        double liftkP = 100;
+        double liftkP = 40;
         double liftkI = 0;
         double liftkD = 0;
 
         liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
-        liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+        liftMotor2.setPIDFCoefficients (DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
         liftMotor1.setTargetPositionTolerance(0);
         liftMotor2.setTargetPositionTolerance(0);
 
@@ -300,7 +309,7 @@ public class TeleOpPhase3 extends LinearOpMode {
         while (!isStopRequested()) {
 
             // Drive spaghetti code
-            double turnCommand = -gamepad1.right_stick_x;
+            double turnCommand = gamepad1.right_stick_x;
 
             // This if statement essentially toggles holdHeading if a button is pressed and no joystick motion is detected
             if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && Math.abs(turnCommand) <= 0.03 ) {
@@ -340,8 +349,8 @@ public class TeleOpPhase3 extends LinearOpMode {
             }
 
             // TODO WHY???????????????????????????? (ignore??!??!!?)
-            double powX = statsX.update(-gamepad1.left_stick_y);
-            double powY = statsY.update(-gamepad1.left_stick_x);
+            double powX = statsX.update(gamepad1.left_stick_y);
+            double powY = statsY.update(gamepad1.left_stick_x);
 
             Pose2d poseEstimate = drive.getPoseEstimate();
 
@@ -395,14 +404,14 @@ public class TeleOpPhase3 extends LinearOpMode {
             int liftStage = 0;
             int liftSpeed = -90;
 
-            int liftStage0 = 0; // Setpoint for intaking pixles
+            int liftStage0 = 5; // Setpoint for intaking pixles
             int liftStage1 = -20; // Setpoint for clearance
             int liftStage2 = -40; // Setpoint at first set line
             int liftStage3 = -60; // Setpoint for highest we can go
 
             int armStage = 0;
             double armStage0 = 0; // Setpoint for intake
-            double armStage1 = 0.1; // Setpoint for clearance
+            double armStage1 = 0; // Setpoint for clearance
             double armStage2 = 1; // Setpoint for scoring
 
             Lift lift1 = new Lift(liftMotor1, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
@@ -473,8 +482,8 @@ public class TeleOpPhase3 extends LinearOpMode {
                 arm1.goToArmStage();
                 arm2.goToArmStage();
             } else if (gamepad2.b) { // Fine tuning
-                arm1.setArmPosition(armServo1.getPosition() + 0.3);
-                arm2.setArmPosition(armServo2.getPosition() + 0.3);
+                arm1.setArmPosition(armServo1.getPosition() + 0.1);
+                arm2.setArmPosition(armServo2.getPosition() + 0.1);
             }
 
             telemetry.addData("x", poseEstimate.getX());
