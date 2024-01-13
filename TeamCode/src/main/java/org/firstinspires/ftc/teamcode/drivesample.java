@@ -96,10 +96,8 @@ public class drivesample extends LinearOpMode
         waitForStart();
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.3);
-        PixelGrabberWrist2.setPosition(0);
+        PixelGrabberWrist1.setPosition(0.35);
         PixelGrabber.setPosition(0);
-        bucket.setPosition(0);
 
         if (isStopRequested()) return;
 
