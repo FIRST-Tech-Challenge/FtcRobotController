@@ -55,11 +55,11 @@ public class TFODAuto extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()){
             switch (currentState){
                 case DETECT:
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0){
                         if(oldRecog != 0) {
-                            if (CSVP.detect() == recog){
+                            if (CSVP.leftDetect() == recog){
                                 oldRecog = recog;
                             }
                         }

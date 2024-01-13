@@ -24,19 +24,20 @@ public class BlueLeftCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(26.5,43);
-    static final Vector2d TrajL1 = new Vector2d(28.5, 45);
-    static final Vector2d TrajL2 = new Vector2d(52,45);
+    static final Vector2d TrajL0 = new Vector2d(24.4,-1.9);
+    static final Vector2d TrajL1 = new Vector2d(10, 0);
+    static final Vector2d TrajL2 = new Vector2d(10,37);
 
-    static final Vector2d TrajC0 = new Vector2d(18,34);
-    static final Vector2d TrajC1 = new Vector2d(20, 36);
-    static final Vector2d TrajC2 = new Vector2d(52,36);
+    static final Vector2d TrajC0 = new Vector2d(25.5,-1.9);
+    static final Vector2d TrajC1 = new Vector2d(10, 0);
+    static final Vector2d TrajC2 = new Vector2d(10,37);
 
-    static final Vector2d TrajR0 = new Vector2d(20,36);
-    static final Vector2d TrajR1 = new Vector2d(22, 37);
-    static final Vector2d TrajR2 = new Vector2d(52,32);
+    static final Vector2d TrajR0 = new Vector2d(23.3, -3.1);
+    static final Vector2d TrajR1 = new Vector2d(10,0);
+    static final Vector2d TrajR2 = new Vector2d(10, 37);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
         IDLE,
@@ -53,10 +54,10 @@ public class BlueLeftCS extends LinearOpMode {
 
     State currentState = State.IDLE;
     //Old x,y = 23,63
-    Pose2d startPose = new Pose2d(23, 63, Math.toRadians(270));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
 
     CSVP CSVP;
-    int placement = 3;
+    int placement = 0;
     private static final double MID = 18d;
 
     public void runOpMode() throws InterruptedException {
@@ -70,11 +71,12 @@ public class BlueLeftCS extends LinearOpMode {
 
         TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajL0)
+                .turn(Math.toRadians(48))
                 .build();
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+                .turn(Math.toRadians(-48))
                 .lineTo(TrajL1)
-                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
@@ -96,10 +98,11 @@ public class BlueLeftCS extends LinearOpMode {
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-60))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+                .turn(Math.toRadians(60))
                 .lineTo(TrajR1)
                 .build();
 
@@ -123,9 +126,7 @@ public class BlueLeftCS extends LinearOpMode {
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
         telemetry.update();
 
-        int detectCounter = 0;
-        int oldRecog = 0;
-        int recog;
+        int recog=0;
 
         telemetry.update();
         waitForStart();
@@ -141,26 +142,18 @@ public class BlueLeftCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.leftDetect();
-                    detectCounter++;
-                    if (recog != 0) {//edited
-                        if (oldRecog != 0) {//edited
-                            if (CSVP.leftDetect() == recog) {
-                                oldRecog = recog;
-                                detectCounter++;
-                            }
-                        } else {
-                            oldRecog = recog;
-                        }
-                    } else {
-                        telemetry.addLine("NO DETECTION");
+                    if (detectTimer.milliseconds() > 200) {
+                        recog = CSVP.leftDetect(); //numerical value
+                        detectTimer.reset();
                     }
-                    if (waitTimer.milliseconds() > 3000 && detectCounter > 3) {
-                        currentState = State.FORWARD;
+
+                    if (waitTimer.milliseconds() > 4000) {
+                        currentState = BlueLeftCS.State.FORWARD;
                         CSVP.closeVP();
                         placement = recog;
                     }
                     break;
+
                 case FORWARD:
                     if (placement == 1) {
                         telemetry.addLine("Left");

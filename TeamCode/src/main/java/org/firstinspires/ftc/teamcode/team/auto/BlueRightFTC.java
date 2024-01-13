@@ -126,7 +126,7 @@ public class BlueRightFTC extends LinearOpMode {
 
         CSVP = new CSVP();
         CSVP.initTfod(hardwareMap, "Blue");
-        CSVP.detect();
+        CSVP.leftDetect();
         double t2 = waitTimer.milliseconds();
 
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
@@ -155,11 +155,11 @@ public class BlueRightFTC extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0){
                         if(oldRecog != 0) {
-                            if (CSVP.detect() == recog){
+                            if (CSVP.leftDetect() == recog){
                                 //confidence = recog.getConfidence();
                                 //label = recog.getLabel();
                                 oldRecog = recog;

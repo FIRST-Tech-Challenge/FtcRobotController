@@ -180,20 +180,20 @@ public class BlueObjectTFOD extends LinearOpMode {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
-        int location = 1; //preset to right
+        int location = 3; //preset to right
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
             //new code added
-            double centerX = recognition.getImageWidth()/2;
+            double centerx = recognition.getImageWidth()/2;
 
             if(recognition.getConfidence() >= 0.75d) {
-                if (x < 370 ) {
-                    location = 2; //left
+                if (x < centerx ) {
+                    location = 1; //left
                 }
-                if (x > 370 ) {
-                    location = 3; //center
+                if (x > centerx ) {
+                    location = 2; //center
                 }
             }
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);

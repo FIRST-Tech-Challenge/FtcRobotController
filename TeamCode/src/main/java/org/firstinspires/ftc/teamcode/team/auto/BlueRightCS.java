@@ -24,19 +24,20 @@ public class BlueRightCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(23.7,4.8);
-    static final Vector2d TrajL1 = new Vector2d(28.5, 45);
+    static final Vector2d TrajL0 = new Vector2d(23.3, -.4);
+    static final Vector2d TrajL1 = new Vector2d(23.5, -4);
     static final Vector2d TrajL2 = new Vector2d(52,45);
 
-    static final Vector2d TrajC0 = new Vector2d(24.6,1.8);
+    static final Vector2d TrajC0 = new Vector2d(27,.8);
     static final Vector2d TrajC1 = new Vector2d(20, 36);
     static final Vector2d TrajC2 = new Vector2d(52,36);
 
-    static final Vector2d TrajR0 = new Vector2d(17.8,-4);
+    static final Vector2d TrajR0 = new Vector2d(20.2,-5);
     static final Vector2d TrajR1 = new Vector2d(22, 37);
     static final Vector2d TrajR2 = new Vector2d(52,32);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
         IDLE,
@@ -70,14 +71,16 @@ public class BlueRightCS extends LinearOpMode {
 
         TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajL0)
+                .turn(Math.toRadians(50))
                 .build();
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+                .turn(Math.toRadians(-50))
                 .lineTo(TrajL1)
-                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+                .turn(Math.toRadians(90))
                 .lineTo(TrajL2)
                 .build();
 
@@ -96,7 +99,7 @@ public class BlueRightCS extends LinearOpMode {
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-48))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
@@ -123,12 +126,11 @@ public class BlueRightCS extends LinearOpMode {
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
         telemetry.update();
 
-        int detectCounter = 0;
-        int oldRecog = 0;
-        int recog;
+        int recog=0;
 
         telemetry.update();
         waitForStart();
+        waitTimer.reset();
 
         if (isStopRequested()) return;
         currentState = State.WAIT0;
@@ -140,38 +142,46 @@ public class BlueRightCS extends LinearOpMode {
             switch (currentState) {
 
                 case WAIT0:
-                telemetry.addLine("in the wait0 state");
-                    recog = CSVP.rightDetect();
-                    detectCounter++;
-                    if (recog != 0) {//edited
-                        if (oldRecog != 0) {//edited
-                            if (CSVP.rightDetect() == recog) {
-                                oldRecog = recog;
-                                detectCounter++;
-                            }
-                        } else {
-                            oldRecog = recog;
-                        }
-                    } else {
-                        telemetry.addLine("NO DETECTION");
+                    telemetry.addLine("in the wait0 state");
+                    if (detectTimer.milliseconds() > 200) {
+                        recog = CSVP.leftDetect(); //numerical value
+                        detectTimer.reset();
                     }
-                    if (waitTimer.milliseconds() > 3000 && detectCounter > 3) {
-                        currentState = State.FORWARD;
+
+//                    recog = CSVP.leftDetect(); //numerical value
+//                   // detectCounter++;
+//                    while (detectCounter <= 4) {
+//                        if (recog != 0) {
+//                            if (oldRecog != 0) {
+//                                if (CSVP.leftDetect() == recog) {
+//                                    oldRecog = recog;
+//                                    detectCounter++;
+//                                }
+//                            } else {
+//                                oldRecog = recog;
+//                            }
+//                        } else {
+//                            telemetry.addLine("NO DETECTION");
+//                        }
+//                    }
+                    if (waitTimer.milliseconds() > 4000) {
+                        currentState =  BlueRightCS.State.FORWARD;
                         CSVP.closeVP();
                         placement = recog;
                     }
                     break;
+
                 case FORWARD:
-                    if (placement == 3) {
-                        telemetry.addLine("Right");
-                        drive.followTrajectorySequenceAsync(trajR0);
+                    if (placement == 1) {
+                        telemetry.addLine("Left");
+                        drive.followTrajectorySequenceAsync(trajL0);
 
                     } else if (placement == 2) {
                         telemetry.addLine("Center");
                         drive.followTrajectorySequenceAsync(trajC0);
                     } else {
-                        telemetry.addLine("Left");
-                        drive.followTrajectorySequenceAsync(trajL0);
+                        telemetry.addLine("Right");
+                        drive.followTrajectorySequenceAsync(trajR0);
                     }
                     currentState = State.DROP;
                     break;
@@ -237,6 +247,7 @@ public class BlueRightCS extends LinearOpMode {
                     break;
 
                 case TOPARK:
+                    //add code to park
                     break;
 
                 case IDLE:

@@ -75,6 +75,8 @@ public class RedGameObjectTFOD extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
+    private int counter=0;
+
     @Override
     public void runOpMode() {
 
@@ -102,7 +104,7 @@ public class RedGameObjectTFOD extends LinearOpMode {
                 }
 
                 // Share the CPU.
-                sleep(20);
+                sleep(100);
             }
         }
 
@@ -118,23 +120,13 @@ public class RedGameObjectTFOD extends LinearOpMode {
 
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
-            // With the following lines commented out, the default TfodProcessor Builder
-            // will load the default model for the season. To define a custom model to load, 
-            // choose one of the following:
-            //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-            //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-            .setModelAssetName(TFOD_MODEL_ASSET)
-            //.setModelFileName(TFOD_MODEL_FILE)
-
-            // The following default settings are available to un-comment and edit as needed to 
-            // set parameters for custom models.
-            .setModelLabels(LABELS)
-            //.setIsModelTensorFlow2(true)
-            //.setIsModelQuantized(true)
-            //.setModelInputSize(300)
-            //.setModelAspectRatio(16.0 / 9.0)
-
-            .build();
+                .setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelLabels(LABELS)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
+                .build();
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -181,25 +173,24 @@ public class RedGameObjectTFOD extends LinearOpMode {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
+        telemetry.addData("Counter", counter);
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-
             int location = 3;
-            double centerX = recognition.getImageWidth();
+            double centerX = recognition.getImageWidth()/2;
             if (x < centerX) {
                 location = 1;//left
             }
             if (x > centerX) {
                 location = 2;//center
             }
-
-            telemetry.addData(""," ");
+            counter++;
+            telemetry.addData("position", location);
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetry.addData("- Position", "%.0f", x);
+            telemetry.addData("- Size, counter", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
 
     }   // end method telemetryTfod()

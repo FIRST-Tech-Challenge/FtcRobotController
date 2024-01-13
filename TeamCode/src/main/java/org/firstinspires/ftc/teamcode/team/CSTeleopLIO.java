@@ -144,13 +144,16 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         if (getEnhancedGamepad2().isDpadDownJustPressed()) {
             double lastSetPoint = drive.robot.getLiftSubsystem().getDesiredSetpoint();
             telemetry.addData("Lift State: ", lastSetPoint);
-            if (lastSetPoint == LOW) {
-                drive.robot.getLiftSubsystem().retract();
-                liftdown = true;
-            } else if ((lastSetPoint == HIGH || lastSetPoint == MID)) {
-                drive.robot.getLiftSubsystem().retract();
-                liftdown = true;
-            }
+            drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
+            drive.robot.getLiftSubsystem().retract();
+            liftdown = true;
+//            if (lastSetPoint == LOW) {
+//                drive.robot.getLiftSubsystem().retract();
+//                liftdown = true;
+//            } else if ((lastSetPoint == HIGH || lastSetPoint == MID)) {
+//                drive.robot.getLiftSubsystem().retract();
+//                liftdown = true;
+//            }
         }
         //Brins the lift down to the LOW pose when b is pessed
         if (getEnhancedGamepad2().isDpadRightJustPressed()) {  //&&arm mid

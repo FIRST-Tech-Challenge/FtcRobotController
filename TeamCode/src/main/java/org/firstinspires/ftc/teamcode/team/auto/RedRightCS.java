@@ -23,21 +23,18 @@ public class RedRightCS extends LinearOpMode {
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    //Traj0 is spikeLeft
-    static final Vector2d TrajL0 = new Vector2d(28.5,-43);
-    static final Vector2d TrajL1 = new Vector2d(28.5, -45);
-    static final Vector2d TrajL2 = new Vector2d(52,-45);
+    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
+    static final Vector2d TrajL0 = new Vector2d(23.3, -.3);
+    static final Vector2d TrajL1 = new Vector2d(10, 0);
+    static final Vector2d TrajL2 = new Vector2d(10,-37);
 
-    // Traj1 is spikeCenter
-    static final Vector2d TrajC0 = new Vector2d(20,-34);
-    static final Vector2d TrajC1 = new Vector2d(20, -36);
-    static final Vector2d TrajC2 = new Vector2d(52,-36);
+    static final Vector2d TrajC0 = new Vector2d(25.3,-1.0);
+    static final Vector2d TrajC1 = new Vector2d(10, 0);
+    static final Vector2d TrajC2 = new Vector2d(10,-37);
 
-    //Traj2 is spikeRight
-    static final Vector2d TrajR0 = new Vector2d(22,-36);
-    static final Vector2d TrajR1 = new Vector2d(22, -37);
-    static final Vector2d TrajR2 = new Vector2d(52,-32);
-
+    static final Vector2d TrajR0 = new Vector2d(24.4,-2.1);
+    static final Vector2d TrajR1 = new Vector2d(10,0);
+    static final Vector2d TrajR2 = new Vector2d(10, -37);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
@@ -55,7 +52,7 @@ public class RedRightCS extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(23, -63, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
 
     CSVP CSVP;
     int placement = 3;
@@ -72,11 +69,12 @@ public class RedRightCS extends LinearOpMode {
 
         TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajL0)
+                .turn(Math.toRadians(45))
                 .build();
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
                 .lineTo(TrajL1)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-45))
                 .build();
 
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
@@ -89,7 +87,7 @@ public class RedRightCS extends LinearOpMode {
 
         TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
                 .lineTo(TrajC1)
-                .turn(Math.toRadians(90))
+//                .turn(Math.toRadians(90))
                 .build();
 
         TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
@@ -98,10 +96,11 @@ public class RedRightCS extends LinearOpMode {
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-59))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+                .turn(Math.toRadians(59))
                 .lineTo(TrajR1)
                 .build();
 
@@ -118,15 +117,14 @@ public class RedRightCS extends LinearOpMode {
         double t1 = waitTimer.milliseconds();
 
         CSVP = new CSVP();
-        CSVP.initTfod(hardwareMap, "Blue");
+        CSVP.initTfod(hardwareMap, "Red");
 
         double t2 = waitTimer.milliseconds();
 
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
         telemetry.update();
 
-        int detectCounter = 0;
-        int oldRecog = 0;
+
         int recog;
 
         telemetry.update();
@@ -143,26 +141,15 @@ public class RedRightCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.rightDetect();
-                    detectCounter++;
-                    if (recog != 0) {//edited
-                        if (oldRecog != 0) {//edited
-                            if (CSVP.rightDetect() == recog) {
-                                oldRecog = recog;
-                                detectCounter++;
-                            }
-                        } else {
-                            oldRecog = recog;
-                        }
-                    } else {
-                        telemetry.addLine("NO DETECTION");
-                    }
-                    if (waitTimer.milliseconds() > 3000 && detectCounter > 3) {
-                        currentState = State.FORWARD;
+                    recog = CSVP.leftDetect(); //numerical value
+
+                    if (waitTimer.milliseconds() > 4000) {
+                        currentState = RedRightCS.State.FORWARD;
                         CSVP.closeVP();
                         placement = recog;
                     }
                     break;
+
                 case FORWARD:
                     if (placement == 1) {
                         telemetry.addLine("Left");
@@ -192,12 +179,16 @@ public class RedRightCS extends LinearOpMode {
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
                         if (placement == 1) {
                             drive.followTrajectorySequenceAsync(trajL1);
+                            drive.followTrajectorySequenceAsync(trajL2);
                         } else if (placement == 2) {
                             drive.followTrajectorySequenceAsync(trajC1);
+                            drive.followTrajectorySequenceAsync(trajC2);
                         } else {
                             drive.followTrajectorySequenceAsync(trajR1);
+                            drive.followTrajectorySequenceAsync(trajR2);
+
                         }
-                        currentState = State.TOSTAGE;
+                        currentState = State.IDLE;
                         waitTimer.reset();
                     }
                     break;

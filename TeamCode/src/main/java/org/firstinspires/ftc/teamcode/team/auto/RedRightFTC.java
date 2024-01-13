@@ -172,11 +172,11 @@ public class RedRightFTC extends LinearOpMode {
             switch (currentState) {
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0){
                         if(oldRecog != 0) {
-                            if (CSVP.detect() == recog){
+                            if (CSVP.leftDetect() == recog){
                                 //confidence = recog.getConfidence();
                                 //label = recog.getLabel();
                                 oldRecog = recog;

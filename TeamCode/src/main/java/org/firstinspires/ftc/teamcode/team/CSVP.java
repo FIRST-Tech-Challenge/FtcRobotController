@@ -34,7 +34,7 @@ public class CSVP {
 
     }
 
-    public int detect(){
+    /*public int detect(){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         // Step through the list of recognitions and display info for each one.
         int location = 3; //preset to right
@@ -58,7 +58,7 @@ public class CSVP {
         }   // end for() loop
         //return 0+"null , null;
         return location;
-    }
+    }*/
 
 
     public int leftDetect(){
@@ -72,7 +72,7 @@ public class CSVP {
             //new code added
             double centerX = recognition.getImageWidth()/2;//center cam view value
 
-            if(recognition.getConfidence() >= 0.75d) {
+            if(recognition.getConfidence() >= 0.7d) {
                 if (x < centerX ) {
                     location = 1; //left
                 }
@@ -87,10 +87,10 @@ public class CSVP {
         return location;
     }
 
-    public int rightDetect(){
+    /*public int rightDetect(){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         // Step through the list of recognitions and display info for each one.
-        int location = 1; //preset to right
+        int location = 1; //preset to left
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             //double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
@@ -98,12 +98,12 @@ public class CSVP {
             //new code added
             double centerX = recognition.getImageWidth()/2;
 
-            if(recognition.getConfidence() >= 0.75d) {
+            if(recognition.getConfidence() >= 0.70d) {
                 if (x < 370 ) {
-                    location = 2; //left
+                    location = 3; //right
                 }
                 if (x > 370 ) {
-                    location = 3; //center
+                    location = 2; //center
                 }
             }
             //return location +", "+ recognition.getConfidence()+", "+recognition.getLabel();
@@ -111,7 +111,7 @@ public class CSVP {
         }   // end for() loop
         //return 0+"null , null;
         return location;
-    }
+    }*/
 
     /**
      * Initialize the TensorFlow Object Detection engine.
@@ -170,7 +170,7 @@ public class CSVP {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.70f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
@@ -217,7 +217,7 @@ public class CSVP {
         visionPortal = builder.build();
 
         // Set confidence threshold fo TFOD recognitions, at any time.6
-        tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.70f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
@@ -225,6 +225,7 @@ public class CSVP {
     }   // end method initTfod()
 
     public void closeVP(){
+        tfod.shutdown();
         visionPortal.close();
     }
 }

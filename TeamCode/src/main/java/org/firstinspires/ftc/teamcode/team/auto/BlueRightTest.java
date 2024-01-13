@@ -142,11 +142,11 @@ public class BlueRightTest extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.detect();
+                    recog = CSVP.leftDetect();
                     detectCounter++;
                     if (recog != 0) {//edited
                         if (oldRecog != 0) {//edited
-                            if (CSVP.detect() == recog) {
+                            if (CSVP.leftDetect() == recog) {
                                 oldRecog = recog;
                                 detectCounter++;
                             }

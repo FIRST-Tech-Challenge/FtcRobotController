@@ -59,11 +59,11 @@ public class TestBlueTFOD extends LinearOpMode {
             while (opModeIsActive()) {
                 telemetry.addLine("in the OpMode state");
 
-                recog = CSVP.detect();
+                recog = CSVP.leftDetect();
                 detectCounter++;
                 if (recog != 0) {//edited
                     if(oldRecog != 0) {//edited
-                        if (CSVP.detect() == recog){
+                        if (CSVP.leftDetect() == recog){
                             oldRecog = recog;
                             detectCounter++;
                         }
