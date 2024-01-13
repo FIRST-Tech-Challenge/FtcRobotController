@@ -66,7 +66,7 @@ public class drivesample extends LinearOpMode
 
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
+//        DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
         DcMotor slideL = hardwareMap.dcMotor.get("slideL");
 
         Servo IntakeRaiser = hardwareMap.get(Servo.class, "IntakeRaiser");
@@ -82,9 +82,9 @@ public class drivesample extends LinearOpMode
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         IntakeRaiser.setPosition(0);
-        ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.21);
-        PixelGrabberWrist2.setPosition(0.21);
+        ArmWrist.setPosition(0.1);
+        PixelGrabberWrist1.setPosition(0.32);
+        PixelGrabber.setPosition(0);
 
         bucket.setPosition(0);
 
@@ -100,6 +100,39 @@ public class drivesample extends LinearOpMode
 
         while (opModeIsActive())
         {
+
+        //SECOND PLAYER
+            if(gamepad2.right_bumper)
+            {
+
+            }
+            if (gamepad2.dpad_right)
+            {
+
+            }
+            if(gamepad2.left_bumper)
+            {
+
+            }
+
+            //ONE PLAYER STUFF
+            if(gamepad1.x)
+            {
+                slideL.setPower(0.1);
+            }
+            if(gamepad1.a)
+            {
+                slideL.setPower(-1);
+            }
+            if(gamepad1.b)
+            {
+                slideL.setPower(0);
+            }
+
+            if(gamepad1.y)
+            {
+                slideL.setPower(1);
+            }
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
@@ -124,47 +157,6 @@ public class drivesample extends LinearOpMode
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-
-            if(gamepad1.right_bumper)
-            {
-                immasuckyourpenis.setPower(1);
-                ArmWrist.setPosition(0.2);
-                PixelGrabberWrist1.setPosition(0.1);
-
-//                bucket.setPosition(0.5);
-
-            }
-            if (gamepad1.dpad_right)
-            {
-                ArmWrist.setPosition(0.2);
-                PixelGrabberWrist1.setPosition(0.1);
-                PixelGrabberWrist2.setPosition(0.1);
-            }
-            if(gamepad1.left_bumper)
-            {
-                IntakeRaiser.setPosition(0.37);
-                immasuckyourpenis.setPower(0);
-                }
-            if(gamepad1.x)
-            {
-                wristServo(0.21, PixelGrabberWrist1, PixelGrabberWrist2);
-                ArmWrist.setPosition(0.1);
-            }
-            if(gamepad1.a)
-            {
-//                PixelGrabber.setPosition(0.3);
-//                slideL.setPower(1);
-            }
-            if(gamepad1.b)
-            {
-//                PixelGrabber.setPosition(0);
-//                slideL.setPower(-0.5);
-            }
-
-            if(gamepad1.y)
-            {
-//                slideL.setPower(0.5);
-            }
             
             
 
