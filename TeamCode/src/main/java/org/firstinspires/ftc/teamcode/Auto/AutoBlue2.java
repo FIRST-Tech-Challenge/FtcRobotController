@@ -5,7 +5,6 @@ import android.util.Size;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -20,9 +19,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="AutoPhase2")
-@Disabled
-public class AutoPhase2 extends LinearOpMode {
+@Autonomous(name="Auto Blue2")
+public class AutoBlue2 extends LinearOpMode {
 
     Apriltag aprilTagProcessor = new Apriltag("blueTeam");
     final double DISTANCE_FROM_TAG = 6.0;
@@ -33,14 +31,11 @@ public class AutoPhase2 extends LinearOpMode {
     private VisionPortal visionPortal;
 
 
-    Pose2d blueStart1 = new Pose2d(-38, 62, Math.toRadians(-90));
     Pose2d blueStart2 = new Pose2d(10, 62, Math.toRadians(-90));
-    Pose2d redStart1 = new Pose2d(-34, -62, Math.toRadians(90));
-    Pose2d redStart2 = new Pose2d(12, -62, Math.toRadians(90));
 
-    Vector2d blue1LeftMark = new Vector2d(-48, 34);
-    Vector2d blue1CenterMark = new Vector2d(-35, 27);
-    Vector2d blue1RightMark = new Vector2d(-25, 34);
+    Vector2d blue2LeftMark = new Vector2d(1, 34);
+    Vector2d blue2CenterMark = new Vector2d(12, 27);
+    Vector2d blue2RightMark = new Vector2d(22, 34);
 
     Vector2d desiredMark;
 
@@ -99,7 +94,7 @@ public class AutoPhase2 extends LinearOpMode {
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(blueStart1);
+        drive.setPoseEstimate(blueStart2);
 
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         DcMotorEx liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
@@ -108,13 +103,13 @@ public class AutoPhase2 extends LinearOpMode {
         ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
 
         if (tfodProcessor.getDirection() == "left") {
-            desiredMark = blue1LeftMark;
+            desiredMark = blue2LeftMark;
             increase_in_y_units = 4.5;
         } else if (tfodProcessor.getDirection() == "center") {
-            desiredMark = blue1CenterMark;
+            desiredMark = blue2CenterMark;
             increase_in_y_units = 0.0;
         } else if (tfodProcessor.getDirection() == "right") {
-            desiredMark = blue1RightMark;
+            desiredMark = blue2RightMark;
             increase_in_y_units = -4.5;
         }
 
@@ -124,19 +119,18 @@ public class AutoPhase2 extends LinearOpMode {
         // ^ this is one of the most mathematically questionable code I have ever written, but alas (the robot will still function fine in theory, but the math is not the best)
 
 
-        TrajectorySequence test = drive.trajectorySequenceBuilder(blueStart1)
+        TrajectorySequence test = drive.trajectorySequenceBuilder(blueStart2)
                 // detect y-axis custom object from starting location
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH)) // so it doesn't just go too fast
                 .lineToConstantHeading(desiredMark) // place white pixel on mark
                 .waitSeconds(0.25)
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
 
-                .lineToLinearHeading(new Pose2d(-35,57, Math.toRadians(0))) // start moving towards backboard for yellow pixel
+                .lineToLinearHeading(new Pose2d(35,57, Math.toRadians(0))) // start moving towards backboard for yellow pixel
                 .addDisplacementMarker(() -> {
                     armServo1.setPosition(0.1);
                     armServo2.setPosition(0.1);
                 })
-                .lineToConstantHeading(new Vector2d(10, 57))
 
 
                 .splineToConstantHeading(aprilTagLocation, Math.toRadians(0)) // arrive at backboard for yellow pixel

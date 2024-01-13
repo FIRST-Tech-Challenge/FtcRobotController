@@ -5,7 +5,6 @@ import android.util.Size;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -20,9 +19,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="AutoPhase2")
-@Disabled
-public class AutoPhase2 extends LinearOpMode {
+@Autonomous(name="Auto Blue1")
+public class AutoBlue1 extends LinearOpMode {
 
     Apriltag aprilTagProcessor = new Apriltag("blueTeam");
     final double DISTANCE_FROM_TAG = 6.0;
@@ -38,9 +36,9 @@ public class AutoPhase2 extends LinearOpMode {
     Pose2d redStart1 = new Pose2d(-34, -62, Math.toRadians(90));
     Pose2d redStart2 = new Pose2d(12, -62, Math.toRadians(90));
 
-    Vector2d blue1LeftMark = new Vector2d(-48, 34);
+    Vector2d blue1RightMark = new Vector2d(-48, 34);
     Vector2d blue1CenterMark = new Vector2d(-35, 27);
-    Vector2d blue1RightMark = new Vector2d(-25, 34);
+    Vector2d blue1LeftMark = new Vector2d(-25, 34);
 
     Vector2d desiredMark;
 
