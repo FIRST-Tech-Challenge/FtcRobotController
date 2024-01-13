@@ -78,7 +78,7 @@ public class BasicAutonomous extends OpMode
 		drive = new SampleMecanumDrive(hardwareMap);
 
 		color = -1.; // 1. for red, -1. for blue
-		start_dist = "close"; // close or far, depending on start pos
+		start_dist = "far"; // close or far, depending on start pos
 		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
 
 		double center_line = 70./6.;
