@@ -96,10 +96,8 @@ public class drivesample extends LinearOpMode
         waitForStart();
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.3);
-        PixelGrabberWrist2.setPosition(0);
+        PixelGrabberWrist1.setPosition(0.35);
         PixelGrabber.setPosition(0);
-        bucket.setPosition(0);
 
         if (isStopRequested()) return;
 
@@ -109,14 +107,33 @@ public class drivesample extends LinearOpMode
         //SECOND PLAYER
             if(gamepad2.right_bumper)
             {
-
+                IntakeRaiser.setPosition(0.6);
+                ArmWrist.setPosition(0.2);
+                PixelGrabberWrist1.setPosition(0.2);
+                immasuckyourpenis.setPower(1);
             }
             if (gamepad2.dpad_right)
             {
-
+                PixelGrabber.setPosition(0.5);
+            }
+            if(gamepad2.dpad_left)
+            {
+                PixelGrabber.setPosition(0);
             }
             if(gamepad2.left_bumper)
             {
+                IntakeRaiser.setPosition(0.58);
+                ArmWrist.setPosition(0.05);
+                PixelGrabberWrist1.setPosition(0.4);
+                immasuckyourpenis.setPower(0);
+            }
+            if (gamepad2.y){
+                ArmWrist.setPosition(1);
+                PixelGrabberWrist1.setPosition(0.9);
+            }
+            if (gamepad2.a){
+                ArmWrist.setPosition(0.1);
+                PixelGrabberWrist1.setPosition(0.4);
 
             }
 
@@ -132,9 +149,6 @@ public class drivesample extends LinearOpMode
             if(gamepad1.b)
             {
                 slideL.setPower(0);
-
-
-
             }
 
             if(gamepad1.y)
