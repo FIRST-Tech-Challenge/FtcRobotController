@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.ftcLib_DLC.AutoUtil;
 import org.firstinspires.ftc.teamcode.opmode.auto.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawCloseCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawOpenCommand;
@@ -24,19 +25,20 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.vision.TeamElementPipeline;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 
-@Autonomous(group="auto", name="Auto_RED_Backboard_side")
-public class AutoRedRight extends LinearOpMode
+@Autonomous(group="auto", name="Auto_BLUE_Backboard_side")
+public class AutoBlueLeft extends LinearOpMode
 {
     private static final double TILE = 24.0;
     @Override
     public void runOpMode() throws InterruptedException {
+        AutoUtil util= new AutoUtil();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap);
         TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);
         WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
 
-        Pose2d startPose = new Pose2d(TILE/2, -2.5*TILE, Math.toRadians(90));
+        Pose2d startPose =  new Pose2d(TILE-18, 2.5*TILE, Math.toRadians(-90));
 
         drive.setPoseEstimate(startPose);
 
@@ -56,7 +58,7 @@ public class AutoRedRight extends LinearOpMode
                 new ClawOpenCommand(clawSubsystem, ClawOpenCommand.Side.RIGHT));
 
         TrajectorySequence Center = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(TILE/2, -1.55*TILE))
+                .lineToConstantHeading(new Vector2d(TILE/2, 1.53*TILE))
                 //.lineToConstantHeading(new Vector2d(TILE/2, -1.5*TILE))
                 .turn(Math.toRadians(170))
                 .addTemporalMarker(1.9, () -> {
@@ -83,14 +85,14 @@ public class AutoRedRight extends LinearOpMode
                     CommandScheduler.getInstance().run();
                 })
                 .waitSeconds(5)
-                .turn(Math.toRadians(-170+90))
-                .lineToConstantHeading(new Vector2d(2*TILE, -1.4*TILE))
+                .turn(Math.toRadians(170-90))
+                .lineToConstantHeading(new Vector2d(2*TILE, 1.4*TILE))
                 .addDisplacementMarker(()->{
                     CommandScheduler.getInstance().schedule(new WristIntake(wristSubsystem));
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, -1.5*TILE))
+                .lineToConstantHeading(new Vector2d(2*TILE, 1.5*TILE))
 
                 /*.addTemporalMarker(5, () -> {
                     CommandScheduler.getInstance().schedule(deposit);
@@ -101,10 +103,10 @@ public class AutoRedRight extends LinearOpMode
                 /////////////////
 
 
-        TrajectorySequence Left = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(TILE/2, -1.3*TILE))
-                .turn(Math.toRadians(-90))
-                .lineToConstantHeading(new Vector2d(TILE*0.44, -1.29*TILE))
+        TrajectorySequence Right = drive.trajectorySequenceBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(TILE/2, 1.3*TILE))
+                .turn(Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(TILE*0.44, 1.29*TILE))
                 .addTemporalMarker(2.2+1, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
@@ -129,21 +131,21 @@ public class AutoRedRight extends LinearOpMode
                     CommandScheduler.getInstance().run();
                 })
                 .waitSeconds(6)
-                .turn(Math.toRadians(-180))
-                .lineToConstantHeading(new Vector2d(TILE*1.7, -1.8*TILE))
-                .lineToConstantHeading(new Vector2d(2*TILE, -1.74*TILE))
+                .turn(Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(TILE*1.7, 1.8*TILE))
+                .lineToConstantHeading(new Vector2d(2*TILE, 1.74*TILE))
                 .addDisplacementMarker(()->{
                     CommandScheduler.getInstance().schedule(new WristIntake(wristSubsystem));
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, -2.3*TILE))
+                .lineToConstantHeading(new Vector2d(2*TILE, 2.3*TILE))
                 .build();
 
-        TrajectorySequence Right = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(TILE/2, -1.3*TILE))
-                .turn(Math.toRadians(-90))
-                .lineToConstantHeading(new Vector2d(TILE*1.4, -1.3*TILE))
+        TrajectorySequence Left = drive.trajectorySequenceBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(TILE/2, 1.3*TILE))
+                .turn(Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(TILE*1.43, 1.3*TILE))
                 .addTemporalMarker(2.2+1, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
@@ -168,15 +170,15 @@ public class AutoRedRight extends LinearOpMode
                     CommandScheduler.getInstance().run();
                 })
                 .waitSeconds(6)
-                .turn(Math.toRadians(-180))
-                .lineToConstantHeading(new Vector2d(TILE*1.7, -1.8*TILE))
-                .lineToConstantHeading(new Vector2d(2*TILE, -1.74*TILE))
+                .turn(Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(TILE*1.7, 1.8*TILE))
+                .lineToConstantHeading(new Vector2d(2*TILE, 1.74*TILE))
                 .addDisplacementMarker(()->{
                     CommandScheduler.getInstance().schedule(new WristIntake(wristSubsystem));
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, -2.3*TILE))
+                .lineToConstantHeading(new Vector2d(2*TILE, 2.3*TILE))
                 .build();
 
         TeamElementPipeline.MarkerPosistion markerPosistion;
@@ -193,16 +195,15 @@ public class AutoRedRight extends LinearOpMode
 
 
 
-
         /*telemetry.addData("DONE 2",0);
         telemetry.update();*/
         while(!isStopRequested()) {
-            drive.update();
             CommandScheduler.getInstance().run();
+            drive.update();
             switch (markerPosistion) {
                 case CENTER:
                 case UNKNOWN:
-                    drive.followTrajectorySequence((Center));
+                    drive.followTrajectorySequence(Center);
                     break;
                 case RIGHT:
                     drive.followTrajectorySequence(Right);

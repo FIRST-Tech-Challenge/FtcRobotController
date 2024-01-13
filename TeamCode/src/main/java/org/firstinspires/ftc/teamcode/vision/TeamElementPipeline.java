@@ -58,11 +58,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(255,108);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(61,98);
 
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final int REGION_WIDTH = 30;
+        static final int REGION_HEIGHT = 30;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
@@ -85,14 +85,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
         Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH+80,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT+10);
         Point region2_pointA = new Point(
                 REGION2_TOPLEFT_ANCHOR_POINT.x,
                 REGION2_TOPLEFT_ANCHOR_POINT.y);
         Point region2_pointB = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                320,
+                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT+50);
 
         /*
          * Working variables
@@ -100,8 +100,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
         Mat region1_Cb, region2_Cb, region3_Cb;
         Mat HSV = new Mat();
         Mat Cb = new Mat();
-        int avg1, avg2, avg3;
-        public static int threshold=1000;
+        public int avg1, avg2, avg3;
+        public static int threshold=110;
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile MarkerPosistion position = MarkerPosistion.LEFT;
 
@@ -198,7 +198,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
                             region1_pointB, // Second point which defines the rectangle
                             GREEN, // The color the rectangle is drawn in
                             -1); // Negative thickness means solid fill
-                }
+                }else {position = MarkerPosistion.LEFT;}
             }
             else if(max == avg2) // Was it from region 2?
             {
@@ -215,10 +215,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
                             region2_pointB, // Second point which defines the rectangle
                             GREEN, // The color the rectangle is drawn in
                             -1); // Negative thickness means solid fill
-                }
-            }else if (max>threshold){
-            position = MarkerPosistion.LEFT;
-        }
+                }else {position = MarkerPosistion.LEFT;}
+            }
+
+
 
             /*
              * Render the 'input' buffer to the viewport. But note this is not
@@ -227,6 +227,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
              */
             return input;
         }
+        public double avgzone1(){return avg1;}
+        public double avgzone2(){return avg2;}
 
         /*
          * Call this from the OpMode thread to obtain the latest analysis

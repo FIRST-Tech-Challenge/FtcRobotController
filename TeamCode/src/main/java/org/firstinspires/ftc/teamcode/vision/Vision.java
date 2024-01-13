@@ -43,8 +43,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Vision
 {
-    private static OpenCvWebcam webcam;
-    private static TeamElementPipeline pipeline;
+    public static OpenCvWebcam webcam;
+   public static TeamElementPipeline pipeline;
     private static TeamElementPipeline.MarkerPosistion snapshotAnalysis
             =  TeamElementPipeline.MarkerPosistion.UNKNOWN; // default
     private static Telemetry telemetry;
@@ -80,25 +80,23 @@ public class Vision
         });
     }
 
-    public static TeamElementPipeline.MarkerPosistion determineMarkerPosistion(int timeOut)
+    public static TeamElementPipeline.MarkerPosistion determineMarkerPosistion()
     {
-        Timing.Timer timer = new Timing.Timer(timeOut, TimeUnit.MILLISECONDS);
+
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!timer.done() && snapshotAnalysis == TeamElementPipeline.MarkerPosistion.UNKNOWN)
-        {
+
             snapshotAnalysis = pipeline.getAnalysis();
             telemetry.addData("Realtime analysis", snapshotAnalysis);
+            telemetry.addData("zone 1", pipeline.avgzone1());
+            telemetry.addData("zone 2", pipeline.avgzone2());
             telemetry.update();
 
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
-        }
 
-        telemetry.addData("Final Snapshot analysis", snapshotAnalysis);
-        telemetry.update();
+
+
 
         return snapshotAnalysis;
     }

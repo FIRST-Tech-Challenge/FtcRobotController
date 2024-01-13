@@ -12,9 +12,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ClawSubsystem extends SubsystemBase
 {
     private static final double CLAW_OPEN = 0.5;
-    private static final double CLAW_CLOSED = 0.2;
+    private static final double CLAW_CLOSED = 0.2-0.1;
     private static final double CLAW1_OPEN = 0.32;
-    private static final double CLAW1_CLOSED = 0.6-0.05;
+    private static final double CLAW1_CLOSED = 0.6;
 
     public static final double DETECTION_DISTANCE = 40;
 
