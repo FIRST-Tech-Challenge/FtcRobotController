@@ -62,6 +62,8 @@ public class DriveTrain extends OpMode
     private DcMotor liftMotor2 = null;
     private DcMotor intakeMotor = null;
     private Servo liftServo1 = null;
+    private Servo door = null;
+    private Servo pixelHolder = null;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
     private double Kg = 0.07;
@@ -86,6 +88,8 @@ public class DriveTrain extends OpMode
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         liftServo1 = hardwareMap.servo.get("lift1");
+        door = hardwareMap.servo.get("door");
+        pixelHolder = hardwareMap.servo.get("pixel-holder");
 
 //        clawServo = hardwareMap.servo.get("claw");
 
@@ -158,7 +162,7 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(0.5);
+            intakeMotor.setPower(0.6);
         }
         else {
             intakeMotor.setPower(0);
@@ -248,6 +252,20 @@ public class DriveTrain extends OpMode
         }
         else if (gamepad2.a) {
             liftServo1.setPosition(1);
+        }
+
+        if (gamepad2.left_bumper) {
+            door.setPosition(0.7);
+        }
+        else if (gamepad2.right_bumper) {
+            door.setPosition(0);
+        }
+
+        if (gamepad2.b) {
+            pixelHolder.setPosition(1);
+        }
+        else if (gamepad2.x) {
+            pixelHolder.setPosition(0);
         }
 
 
