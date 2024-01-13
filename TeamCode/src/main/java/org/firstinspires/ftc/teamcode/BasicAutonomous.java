@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 
+import java.util.Objects;
 import java.util.Vector;
 
 @Autonomous
@@ -42,13 +43,11 @@ public class BasicAutonomous extends OpMode
 		// TODO: do this later
 	}
 
-	double color;
 	String start_dist;
 	String end_pos;
-
 	Pose2d start_pos;
-
 	String position;
+
 	SampleMecanumDrive drive;
 	TrajectorySequence purple_pixel;
 	TrajectorySequence yellow_pixel;
@@ -62,6 +61,7 @@ public class BasicAutonomous extends OpMode
 	private CameraPipeline cameraPipeline;
 	private VisionPortal portal;
 
+	double color;
 	double center_line;
 	double left_line;
 	double right_line;
@@ -81,18 +81,16 @@ public class BasicAutonomous extends OpMode
 		start_dist = "far"; // close or far, depending on start pos
 		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
 
-		double center_line = 70./6.;
-		double left_line = 8.;
-		double right_line = 15.5;
+		center_line = 70./6.;
+		left_line = 8.;
+		right_line = 15.5;
 
-		if (start_dist == "close") {
-			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
-		} else if (start_dist == "far") {
+		if (start_dist == "far") {
 			center_line = -35;
 			left_line = -39;
 			right_line = -31;
-			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
 		}
+		start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
 
 		drive.setPoseEstimate(start_pos);
 		// Get the position of left, mid, or right
@@ -119,8 +117,8 @@ public class BasicAutonomous extends OpMode
 				position = cameraPipeline.getPropPosition();
 				telemetry.addData("Position: ", position);
 				telemetry.update();
-				if (color == 1) {
-					if (position == "left") {
+				if (color == 1.) {
+					if (Objects.equals(position, "left")) {
 						purple_pixel = drive.trajectorySequenceBuilder(start_pos)
 								.lineTo(new Vector2d(center_line, -32.5))
 								.turn(Math.toRadians(90))
@@ -129,7 +127,7 @@ public class BasicAutonomous extends OpMode
 								.lineTo(new Vector2d(center_line, -42))
 								.turn(Math.toRadians(180))
 								.build();
-					} else if (position == "mid") {
+					} else if (Objects.equals(position, "mid")) {
 						purple_pixel = drive.trajectorySequenceBuilder(start_pos)
 								.lineTo(new Vector2d(center_line, -31))
 								.lineTo(new Vector2d(center_line, -42))
@@ -145,7 +143,7 @@ public class BasicAutonomous extends OpMode
 								.build();
 					}
 				} else {
-					if (position == "right") {
+					if (Objects.equals(position, "right")) {
 						purple_pixel = drive.trajectorySequenceBuilder(start_pos)
 								.lineTo(new Vector2d(center_line, 32.5))
 								.turn(Math.toRadians(-90))
@@ -154,7 +152,7 @@ public class BasicAutonomous extends OpMode
 								.lineTo(new Vector2d(center_line, 42))
 								.turn(Math.toRadians(180))
 								.build();
-					} else if (position == "mid") {
+					} else if (Objects.equals(position, "mid")) {
 						purple_pixel = drive.trajectorySequenceBuilder(start_pos)
 								.lineTo(new Vector2d(center_line, 31))
 								.lineTo(new Vector2d(center_line, 42))
@@ -172,68 +170,69 @@ public class BasicAutonomous extends OpMode
 				}
 
 
-				if (start_dist == "close") {
+				if (Objects.equals(start_dist, "close")) {
 					yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
 							.lineTo(new Vector2d(50, -41*color))
 							.build();
 				} else {
-					if (position == "mid") {
+					if (Objects.equals(position, "mid")) {
 						yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
 								.lineTo(new Vector2d(-53, -42*color))
 								.lineTo(new Vector2d(-53, -12*color))
-								.lineTo(new Vector2d(38, -12))
-								.lineTo(new Vector2d(50, -35))
+								.lineTo(new Vector2d(38, -12*color))
+								.lineTo(new Vector2d(50, -35*color))
 								.build();
 					} else {
 						yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
-								.lineTo(new Vector2d(-35, -12))
-								.lineTo(new Vector2d(38, -12))
-								.lineTo(new Vector2d(50, -35))
+								.lineTo(new Vector2d(-35, -12*color))
+								.lineTo(new Vector2d(38, -12*color))
+								.lineTo(new Vector2d(50, -35*color))
 								.build();
 					}
 				}
 
-				if (position == "left") {
+				if (Objects.equals(position, "left")) {
 					yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
-							.lineTo(new Vector2d(50, -36))
+							.lineTo(new Vector2d(50, -36*color))
 							.build();
-				} else if (position == "mid") {
+				} else if (Objects.equals(position, "mid")) {
 					yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
-							.lineTo(new Vector2d(50, -42))
+							.lineTo(new Vector2d(50, -42*color))
 							.build();
 				} else {
 					yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
-							.lineTo(new Vector2d(50, -49))
+							.lineTo(new Vector2d(50, -49*color))
 							.build();
 				}
 
-				if (end_pos == "close") {
+				if (Objects.equals(end_pos, "close")) {
 					park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
-							.lineTo(new Vector2d(50, -42))
+							.lineTo(new Vector2d(50, -42*color))
 							.build();
-				} else {
+				}
+				else {
 					park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
-							.lineTo(new Vector2d(50, -42))
+							.lineTo(new Vector2d(50, -42*color))
 							.build();
 				}
 
-				drive.followTrajectorySequenceAsync(purple_pixel);
 				state = State.PLACE_PURPLE;
+				drive.followTrajectorySequenceAsync(purple_pixel);
+				break;
 
 			case PLACE_PURPLE:
 				if (!drive.isBusy()) {
 					state = State.PLACE_YELLOW;
 					drive.followTrajectorySequenceAsync(yellow_pixel);
 				}
-
 				break;
 			case PLACE_YELLOW:
 				switch(yellowState)
 				{
 					case DRIVE:
 						if (!drive.isBusy()) {
-							drive.followTrajectorySequenceAsync(yellow_pixel_place);
 							yellowState = YellowState.POSITION;
+							drive.followTrajectorySequenceAsync(yellow_pixel_place);
 						}
 						break;
 					case POSITION:
@@ -241,11 +240,12 @@ public class BasicAutonomous extends OpMode
 							yellowState = YellowState.PLACE;
 							runtime.reset();
 						}
+						break;
 					case PLACE:
 						yellowArm.setPosition(1);
 						if (runtime.time() > 1) {
-							yellowArm.setPosition(0);
 							state = State.SCORE;
+							yellowArm.setPosition(0);
 						}
 						break;
 				}
