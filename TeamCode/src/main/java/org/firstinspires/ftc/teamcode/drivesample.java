@@ -77,15 +77,13 @@ public class drivesample extends LinearOpMode
         Servo bucket = hardwareMap.get(Servo.class, "bucket");
         CRServo immasuckyourpenis = hardwareMap.get(CRServo.class, "sucker");
 
-        PixelGrabberWrist2.setDirection(Servo.Direction.REVERSE);
-        PixelGrabber.setDirection(Servo.Direction.REVERSE);
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         IntakeRaiser.setPosition(0);
         ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.21);
-        PixelGrabberWrist2.setPosition(0.21);
-
+        PixelGrabberWrist1.setPosition(0.3);
+        PixelGrabberWrist2.setPosition(0);
+        PixelGrabber.setPosition(0);
         bucket.setPosition(0);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");

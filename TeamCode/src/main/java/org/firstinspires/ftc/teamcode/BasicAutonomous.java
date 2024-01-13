@@ -30,6 +30,7 @@ public class BasicAutonomous extends OpMode
 
 	public enum YellowState{
 		DRIVE,
+		POSITION,
 		PLACE
 	}
 	YellowState yellowState;
@@ -48,11 +49,12 @@ public class BasicAutonomous extends OpMode
 	SampleMecanumDrive drive;
 	TrajectorySequence purple_pixel;
 	TrajectorySequence yellow_pixel;
+	TrajectorySequence yellow_pixel_place;
 	TrajectorySequence park;
 
-	Servo yellowArm = hardwareMap.get(Servo.class, "bucket");
+	Servo yellowArm;
 
-	private ElapsedTime runtime = new ElapsedTime();
+	private ElapsedTime runtime;
 
 	private CameraPipeline cameraPipeline;
 	private VisionPortal portal;
@@ -60,30 +62,32 @@ public class BasicAutonomous extends OpMode
 	@Override
 	public void init()
 	{
+		yellowArm = hardwareMap.get(Servo.class, "bucket");
+		runtime = new ElapsedTime();
+
 		state = State.PLACE_PURPLE;
 		yellowState = YellowState.DRIVE;
-
-		color = 1.; // 1. for red, -1. for blue
-		start_dist = "close"; // close or far, depending on start pos
-		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
-
-		double center_line = 70./6.;
-		double left_line = 9.;
-		double right_line = 14.;
-
-		if (start_dist == "close") {
-			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
-		} else if (start_dist == "far") {
-			center_line = -35;
-			left_line = -38;
-			right_line = -33;
-			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
-		}
 
 		drive = new SampleMecanumDrive(hardwareMap);
 		drive.setPoseEstimate(start_pos);
 
 		cameraPipeline.setColor("red");
+		color = 1.; // 1. for red, -1. for blue
+		start_dist = "close"; // close or far, depending on start pos
+		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
+
+		double center_line = 70./6.;
+		double left_line = 8.;
+		double right_line = 15.5;
+
+		if (start_dist == "close") {
+			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
+		} else if (start_dist == "far") {
+			center_line = -35;
+			left_line = -39;
+			right_line = -31;
+			start_pos = new Pose2d(center_line, -61*color, Math.toRadians(-90*color));
+		}
 
 		// Get the position of left, mid, or right
 		portal = new VisionPortal.Builder()
@@ -152,27 +156,48 @@ public class BasicAutonomous extends OpMode
 
 		if (start_dist == "close") {
 			yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
-					.lineTo(new Vector2d(49, -38*color))
+					.lineTo(new Vector2d(50, -41*color))
 					.build();
 		} else if (start_dist == "far") {
 			if (position == "mid") {
 				yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
-						.lineTo(new Vector2d(-35, -35))
-						.lineTo(new Vector2d(49, -35))
+						.lineTo(new Vector2d(-53, -42*color))
+						.lineTo(new Vector2d(-53, -12*color))
+						.lineTo(new Vector2d(38, -12))
+						.lineTo(new Vector2d(50, -35))
 						.build();
 			} else {
 				yellow_pixel = drive.trajectorySequenceBuilder(purple_pixel.end())
 						.lineTo(new Vector2d(-35, -12))
 						.lineTo(new Vector2d(38, -12))
-						.lineTo(new Vector2d(49, -35))
+						.lineTo(new Vector2d(50, -35))
 						.build();
 			}
 		}
 
-		// Set a place to park
-		park = drive.trajectorySequenceBuilder(yellow_pixel.end())
-				.waitSeconds(1.0)
-				.build();
+		if (position == "left") {
+			yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
+					.lineTo(new Vector2d(50, -36))
+					.build();
+		} else if (position == "mid") {
+			yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
+					.lineTo(new Vector2d(50, -42))
+					.build();
+		} else if (position == "right") {
+			yellow_pixel_place = drive.trajectorySequenceBuilder(yellow_pixel.end())
+					.lineTo(new Vector2d(50, -49))
+					.build();
+		}
+
+		if (end_pos == "close") {
+			park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
+					.waitSeconds(1.0)
+					.build();
+		} else if (end_pos == "far") {
+			park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
+					.waitSeconds(1.0)
+					.build();
+		}
 
 	}
 
@@ -198,10 +223,15 @@ public class BasicAutonomous extends OpMode
 				{
 					case DRIVE:
 						if (!drive.isBusy()) {
+							drive.followTrajectorySequenceAsync(yellow_pixel_place);
+							yellowState = YellowState.POSITION;
+						}
+						break;
+					case POSITION:
+						if (!drive.isBusy()) {
 							yellowState = YellowState.PLACE;
 							runtime.reset();
 						}
-						break;
 					case PLACE:
 						yellowArm.setPosition(1);
 						if (runtime.time() > 1) {
