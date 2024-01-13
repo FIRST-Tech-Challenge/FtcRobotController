@@ -158,7 +158,7 @@ public class drivesample extends LinearOpMode
 
             if(gamepad1.dpad_up)
             {
-                bucket.setPosition(0.5);
+                bucket.setPosition(0.25);
             }
 
             if(gamepad1.dpad_down)
