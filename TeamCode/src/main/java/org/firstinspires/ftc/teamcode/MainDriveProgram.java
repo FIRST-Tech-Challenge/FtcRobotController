@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.yise.DriveColorExample;
 import org.firstinspires.ftc.teamcode.yise.IntakeSystem;
 import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
@@ -32,13 +33,15 @@ public class MainDriveProgram extends LinearOpMode {
         // create instance of intake system class
         IntakeSystem intakeSystem = new IntakeSystem(hardwareMap);
 
-        LedLights leds = new LedLights(hardwareMap);
+        //LedLights leds = new LedLights(hardwareMap);
+
+        DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leds.setLed(LedLights.ledStates.BLUE);
+        //leds.setLed(LedLights.ledStates.BLUE);
 
 
         waitForStart();
@@ -51,21 +54,15 @@ public class MainDriveProgram extends LinearOpMode {
 
             if (!inEndGame && getRuntime() > 90) {
                 inEndGame = true;
-                leds.setLed(LedLights.ledStates.ENDGAME);
+                //leds.setLed(LedLights.ledStates.ENDGAME);
             }
 
             /**
              * Driving
              */
 
-            if (gamepad1.dpad_up) {
-                rrDrive.pixelDropBlueFar();
-            } else if (gamepad1.dpad_down) {
-                rrDrive.pixelDropBlueNear();
-            } else {
-                rrDrive.updateMotorsFromStick(gamepad1);
-                rrDrive.update();
-            }
+            rrDrive.updateMotorsFromStick(gamepad1);
+            rrDrive.update();
 
 
 
@@ -127,7 +124,7 @@ public class MainDriveProgram extends LinearOpMode {
 
             if (gamepad1.y && canToggleSlowMode) {
                 canToggleSlowMode = false;
-
+                telemetry.addLine("Toggled");
                 //Toggle between slow and normal speeds
                 switch (rrDrive.currentSpeed) {
                     case SLOW:
@@ -150,9 +147,18 @@ public class MainDriveProgram extends LinearOpMode {
 
             telemetry.addLine();
 
-            telemetry.addData("Horizontal input", gamepad1.left_stick_x);
-            telemetry.addData("Vertical input: ", gamepad1.left_stick_y);
-            telemetry.addData("Turn input: ", gamepad1.right_stick_x);
+            /*telemetry.addData("Red color front: ", colorSensors.getRedColor()[0]);
+            telemetry.addData("Blue color front: ", colorSensors.getBlueColor()[0]);
+            telemetry.addData("Green color front: ", colorSensors.getGreenColor()[0]);
+            telemetry.addData("Red color back: ", colorSensors.getRedColor()[1]);
+            telemetry.addData("Blue color back: ", colorSensors.getBlueColor()[1]);
+            telemetry.addData("Green color back: ", colorSensors.getGreenColor()[1]);*/
+
+            telemetry.addData("Back pixel color: ", colorSensors.getBackPixelColor());
+            telemetry.addData("Front pixel color: ", colorSensors.getFrontPixelColor());
+            telemetry.addData("Ratio back: ", (colorSensors.getRedColor()[1] + colorSensors.getGreenColor()[1])/colorSensors.getBlueColor()[1]);
+            telemetry.addData("Ratio front: ", (colorSensors.getRedColor()[0] + colorSensors.getGreenColor()[0])/colorSensors.getBlueColor()[0]);
+
 
 
             telemetry.update();

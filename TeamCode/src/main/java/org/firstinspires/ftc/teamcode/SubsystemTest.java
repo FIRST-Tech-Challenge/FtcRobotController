@@ -80,12 +80,9 @@ public class SubsystemTest extends LinearOpMode {
                 leds.setLed(LedLights.ledStates.DARK);
             }
 
-            if (gamepad1.dpad_left) {
-                rrDrive.pixelDropRedFar();
-            } else {
-                rrDrive.updateMotorsFromStick(gamepad1);
-                rrDrive.update();
-            }
+
+            rrDrive.updateMotorsFromStick(gamepad1);
+            rrDrive.update();
 
             telemetry.addData("Time", time);
             telemetry.addData("Tim", getRuntime());
