@@ -33,7 +33,7 @@ public class CameraPipeline implements VisionProcessor {
     );
 
     static final Rect RIGHT_RECTANGLE = new Rect(
-            new Point(500, 200),
+            new Point(490, 200),
             new Point(640, 140)
     );
 
@@ -71,9 +71,9 @@ public class CameraPipeline implements VisionProcessor {
         double averagedMidBox = leftBox / MID_RECTANGLE.area() / 255;
         double averagedRightBox = rightBox / RIGHT_RECTANGLE.area() / 255; //Makes value [0,1]
 
-        if(averagedMidBox > 0.3){
+        if(averagedMidBox > 0.2){
             outStr = "mid";
-        }else if(averagedRightBox > 0.3){
+        }else if(averagedRightBox > 0.2){
             outStr = "right";
         }else{
             outStr = "left";
