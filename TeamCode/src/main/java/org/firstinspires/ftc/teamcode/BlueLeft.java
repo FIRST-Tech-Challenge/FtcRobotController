@@ -161,10 +161,10 @@ public class BlueLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-35.5, 38, 90);
-        move.driveToBoard(-35.5, 44.25, 90);
-        move.driveFromBoard(-35.5, 42.25, 90);
-        move.driveSeq(-53, 42.25, 90);
-        move.driveSeq(-53, 50, 90);
+        move.driveToBoard(-35.5, 45.25, 90);
+        move.driveFromBoard(-35.5, 43.25, 90);
+        move.driveSeq(-54, 43.25, 90);
+        move.driveSeq(-54, 50, 90);
     }
     private void MiddlePath() throws InterruptedException{
         move.driveSeq(-17,25,0);
@@ -174,11 +174,11 @@ public class BlueLeft extends LinearOpMode {
         move.driveSeq(-17, 35, 0);
         sleep(1000);
         utils.dumpClose();
-        move.driveSeq(-30, 38, 90);
-        move.driveToBoard(-30, 44.75, 90);
-        move.driveFromBoard(-30, 42.75, 90);
-        move.driveSeq(-58, 42.75, 90);
-        move.driveSeq(-58, 50, 90);
+        move.driveSeq(-29, 38, 90);
+        move.driveToBoard(-29, 45.75, 90);
+        move.driveFromBoard(-29, 43.75, 90);
+        move.driveSeq(-54, 43.75, 90);
+        move.driveSeq(-54, 50, 90);
     }
     private void RightPath()throws InterruptedException {
         move.driveSeq(-29,8.5,0);
@@ -188,11 +188,11 @@ public class BlueLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        move.driveSeq(-24, 38, 90);
-        move.driveToBoard(-24, 44.75, 90);
-        move.driveFromBoard(-24, 42.75, 90);
-        move.driveSeq(-58, 42.75, 90);
-        move.driveSeq(-58, 50, 90);
+        move.driveSeq(-23, 38, 90);
+        move.driveToBoard(-23, 45.75, 90);
+        move.driveFromBoard(-23, 43.75, 90);
+        move.driveSeq(-54, 43.75, 90);
+        move.driveSeq(-54, 50, 90);
     }
 
     private void initOpenCV() {

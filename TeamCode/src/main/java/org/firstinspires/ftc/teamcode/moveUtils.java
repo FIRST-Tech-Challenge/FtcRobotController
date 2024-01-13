@@ -77,7 +77,7 @@ public class moveUtils {
         utils.armBoard();
         sleep(1000);
         moveUtils.driveSeq(x, y, heading);
-        sleep(1000);
+        sleep(500);
         utils.gripperOpen();
         sleep(1000);
     }
