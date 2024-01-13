@@ -197,15 +197,11 @@ public class tele extends OpMode {
                 break;
             case 3:
                 robot.stripper.setPosition(robot.stripperSecondRelease);
-                if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.left_trigger >.5) {
-                        deploymentState++;
-                        oldTime = getRuntime();
-                    } else if (gamepad2.left_bumper) {
+                if (getRuntime() > oldTime + .6) {
+                        robot.stripper.setPosition(robot.stripperOpen);
                         deploymentState = 1;
                         oldTime = getRuntime();
                     }
-                }
                 break;
             case 4:
                 deploymentState = 0;
