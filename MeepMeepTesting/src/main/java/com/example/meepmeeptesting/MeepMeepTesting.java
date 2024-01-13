@@ -11,10 +11,14 @@ public class MeepMeepTesting {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
 
+        double center_line;
+        double left_line;
+        double right_line;
+
         double color = 1.; // 1. for red, -1. for blue
-        double center_line = -38;
-        double left_line = -39;
-        double right_line = -31;
+        center_line = 14.5;
+        left_line = 8.;
+        right_line = 15.5;
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width

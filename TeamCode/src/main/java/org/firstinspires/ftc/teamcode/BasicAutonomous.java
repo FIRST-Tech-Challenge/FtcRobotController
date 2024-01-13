@@ -80,7 +80,7 @@ public class BasicAutonomous extends OpMode
 		start_dist = "close"; // close or far, depending on start pos
 		end_pos = "middle"; // either edge or middle, have to talk with alliance to get this value
 
-		center_line = 70./6.;
+		center_line = 14.5;
 		left_line = 8.;
 		right_line = 15.5;
 
