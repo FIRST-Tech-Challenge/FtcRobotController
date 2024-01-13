@@ -47,6 +47,10 @@ public class Hardware {
     public double hookDown = 0;
     public double launchClosed = 0.5;
     public double launchOpen = 0;
+    public double winchAngleIntakeSide = 0.81;
+    public double winchAngleDeliverySide = 0.65;
+    public double droneAngleDown = 0;
+    public double droneAngleUp = 1;
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {

@@ -93,6 +93,10 @@ public class tele extends OpMode {
         robot.transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        robot.hook.setPosition(robot.hookDown);
+        robot.droneAngle.setPosition(robot.droneAngleDown);
+        robot.launcherRelease.setPosition(robot.launchClosed);
+
         telemetry.addData("Robot:", "Ready");
         telemetry.update();
 
@@ -149,22 +153,8 @@ public class tele extends OpMode {
             robot.lift.setPower(-gamepad2.right_stick_y);
         }
 
-        if (gamepad2.dpad_up) {
-        } else if (gamepad2.dpad_down) {
-        }
-
-        if (gamepad2.y) {
-        } else if (gamepad2.a) {
-
-        }
-
-        if (gamepad2.x && gamepad2.b) {
-
-        } else {
-
-        }
-
         /** Stripper State **/
+
 
         switch (deploymentState) {
             case 0:
@@ -196,19 +186,12 @@ public class tele extends OpMode {
                 break;
             case 3:
                 robot.stripper.setPosition(robot.stripperSecondRelease);
-                if (getRuntime() > oldTime + .2) {
-                    if (gamepad2.left_trigger > .5) {
-                        deploymentState++;
-                        oldTime = getRuntime();
-                    } else if (gamepad2.left_bumper) {
-                        deploymentState = 1;
-                        oldTime = getRuntime();
-                    }
-                break;
-            case 4:
-                deploymentState = 0;
+                if (getRuntime() > oldTime + .75) {
+                    deploymentState = 1;
+                }
                 break;
         }
+
 
         if (robot.lift.getCurrentPosition() < 650) {
             deploymentState = 1;
@@ -221,8 +204,17 @@ public class tele extends OpMode {
         */
 
         /** Winch **/
+
         if (gamepad2.dpad_down) {
             robot.hook.setPosition(robot.hookDown);
+        }
+
+        if (gamepad2.dpad_left) {
+            robot.hook.setPosition(robot.winchAngleIntakeSide);
+        }
+
+        if (gamepad2.dpad_right) {
+            robot.hook.setPosition(robot.winchAngleDeliverySide);
         }
 
         if (robot.winchDownSwitch.getVoltage() < .5) {
@@ -239,23 +231,21 @@ public class tele extends OpMode {
         }
 
         /** Drone Launcher **/
+        if (gamepad2.y) {
+            launcherAngle++;
+        }
 
         switch (launcherAngle) {
             case 0:
-                robot.droneAngle.setPosition(0);
                 launcherAngle++;
                 break;
             case 1:
-                if (gamepad2.y) {
-                    robot.droneAngle.setPosition(1);
+                    robot.droneAngle.setPosition(robot.droneAngleUp);
                     launcherAngle++;
-                }
                 break;
             case 2:
-                if (gamepad2.y) {
                     robot.droneAngle.setPosition(0);
                     launcherAngle = 1;
-                }
                 break;
         }
 
@@ -308,8 +298,8 @@ public class tele extends OpMode {
 
 
 
-        if (gamepad2.right_trigger > .5) {
-            robot.transfer.setPower(.57);
+        if (gamepad2.right_trigger > .5 && (!robot.firstPixelDetector.isPressed() || !robot.secondPixelDetector.isPressed())) {
+            robot.transfer.setPower(.62);
             robot.intake.setPower(gamepad2.right_trigger);
         } else if (gamepad2.right_bumper) {
             robot.transfer.setPower(-1);
