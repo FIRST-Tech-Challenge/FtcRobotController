@@ -216,10 +216,8 @@ public class BasicAutonomous extends OpMode
 							.build();
 				}
 
-				runtime.reset();
-				while(runtime.time() < 1) {}
-				drive.followTrajectorySequenceAsync(purple_pixel);
 				state = State.PLACE_PURPLE;
+				drive.followTrajectorySequenceAsync(purple_pixel);
 				break;
 
 			case PLACE_PURPLE:
@@ -227,15 +225,14 @@ public class BasicAutonomous extends OpMode
 					state = State.PLACE_YELLOW;
 					drive.followTrajectorySequenceAsync(yellow_pixel);
 				}
-
 				break;
 			case PLACE_YELLOW:
 				switch(yellowState)
 				{
 					case DRIVE:
 						if (!drive.isBusy()) {
-							drive.followTrajectorySequenceAsync(yellow_pixel_place);
 							yellowState = YellowState.POSITION;
+							drive.followTrajectorySequenceAsync(yellow_pixel_place);
 						}
 						break;
 					case POSITION:
@@ -243,11 +240,12 @@ public class BasicAutonomous extends OpMode
 							yellowState = YellowState.PLACE;
 							runtime.reset();
 						}
+						break;
 					case PLACE:
 						yellowArm.setPosition(1);
 						if (runtime.time() > 1) {
-							yellowArm.setPosition(0);
 							state = State.SCORE;
+							yellowArm.setPosition(0);
 						}
 						break;
 				}
