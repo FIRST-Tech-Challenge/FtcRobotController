@@ -134,6 +134,7 @@ public class drivesample extends LinearOpMode
                 slideL.setPower(0);
 
 
+
             }
 
             if(gamepad1.y)
