@@ -155,10 +155,10 @@ public class HardwarePixelbot
     public double pixel1Distance; // lower
     public double pixel2Distance; // upper
 
-    public DigitalChannel pixel1Led1 = null;
-    public DigitalChannel pixel1Led2 = null;
-    public DigitalChannel pixel2Led1 = null;
-    public DigitalChannel pixel2Led2 = null;
+    public DigitalChannel lPixelRed = null;
+    public DigitalChannel lPixelGreen = null;
+    public DigitalChannel rPixelRed = null;
+    public DigitalChannel rPixelGreen = null;
 
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
     public AnalogInput pushServoPos = null;
@@ -342,14 +342,18 @@ public class HardwarePixelbot
         backdropRange = hwMap.analogInput.get("BackdropRange"); // Analog port 1 (Control Hub)
 
         // Pixel indicators
-        pixel1Led1 = hwMap.digitalChannel.get("Pixel1Led1"); // Digital port 4 (Control Hub)
-        pixel1Led1.setMode(DigitalChannel.Mode.OUTPUT);
-        pixel1Led2 = hwMap.digitalChannel.get("Pixel1Led2"); // Digital port 5 (Control Hub)
-        pixel1Led2.setMode(DigitalChannel.Mode.OUTPUT);
-        pixel2Led1 = hwMap.digitalChannel.get("Pixel2Led1"); // Digital port 6 (Control Hub)
-        pixel2Led1.setMode(DigitalChannel.Mode.OUTPUT);
-        pixel2Led2 = hwMap.digitalChannel.get("Pixel2Led2"); // Digital port 7 (Control Hub)
-        pixel2Led2.setMode(DigitalChannel.Mode.OUTPUT);
+        lPixelRed = hwMap.digitalChannel.get("lPixelRed"); // Digital port 4 (Control Hub)
+        lPixelRed.setMode(DigitalChannel.Mode.OUTPUT);
+        lPixelRed.setState(true);
+        lPixelGreen = hwMap.digitalChannel.get("lPixelGreen"); // Digital port 5 (Control Hub)
+        lPixelGreen.setMode(DigitalChannel.Mode.OUTPUT);
+        lPixelGreen.setState(true);
+        rPixelRed = hwMap.digitalChannel.get("rPixelRed"); // Digital port 6 (Control Hub)
+        rPixelRed.setMode(DigitalChannel.Mode.OUTPUT);
+        rPixelRed.setState(true);
+        rPixelGreen = hwMap.digitalChannel.get("rPixelGreen"); // Digital port 7 (Control Hub)
+        rPixelGreen.setMode(DigitalChannel.Mode.OUTPUT);
+        rPixelGreen.setState(true);
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -750,55 +754,29 @@ public class HardwarePixelbot
     // Returns distance in CM, might have to tweak 80.0 CM as max range to get accurate readings.
     public double getBackdropRange() { return ( (3.3 - backdropRange.getVoltage()) / 3.3) * 30.0; }
 
-    public void setPixel1LedColor(PixelColorsEnum setColor) {
-        switch(setColor) {
-            case EMPTY:
-                pixel1Led1.setState(false);
-                pixel1Led2.setState(false);
+    public void setDetectedPixels(int numPixels) {
+        switch(numPixels) {
+            case 1:
+                lPixelRed.setState(false);
+                rPixelRed.setState(false);
+                lPixelGreen.setState(true);
+                rPixelGreen.setState(true);
                 break;
-            case GREEN:
-                pixel1Led1.setState(true);
-                pixel1Led2.setState(false);
+            case 2:
+                lPixelRed.setState(true);
+                rPixelRed.setState(true);
+                lPixelGreen.setState(false);
+                rPixelGreen.setState(false);
                 break;
-            case PURPLE:
-                pixel1Led1.setState(true);
-                pixel1Led2.setState(true);
-                break;
-            case YELLOW:
-                pixel1Led1.setState(false);
-                pixel1Led2.setState(true);
-                break;
-            case WHITE:
-                pixel1Led1.setState(false);
-                pixel1Led2.setState(false);
+            default:
+                lPixelRed.setState(true);
+                rPixelRed.setState(true);
+                lPixelGreen.setState(true);
+                rPixelGreen.setState(true);
                 break;
         }
     }
 
-    public void setPixel2LedColor(PixelColorsEnum setColor) {
-        switch(setColor) {
-            case EMPTY:
-                pixel2Led1.setState(false);
-                pixel2Led2.setState(false);
-                break;
-            case GREEN:
-                pixel2Led1.setState(true);
-                pixel2Led2.setState(false);
-                break;
-            case PURPLE:
-                pixel2Led1.setState(true);
-                pixel2Led2.setState(true);
-                break;
-            case YELLOW:
-                pixel2Led1.setState(false);
-                pixel2Led2.setState(true);
-                break;
-            case WHITE:
-                pixel2Led1.setState(false);
-                pixel2Led2.setState(false);
-                break;
-        }
-    }
     /*--------------------------------------------------------------------------------------------*/
 
     /***

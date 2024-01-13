@@ -88,23 +88,18 @@ public class TeleopSkunkworks extends LinearOpMode {
             //================ CROSS SWITCHES WHICH SERVO WE'RE CONTROLLING ================
             if( gamepad1_cross_now && !gamepad1_cross_last)
             {
-                robot.setPixel1LedColor(HardwarePixelbot.PixelColorsEnum.YELLOW);
-                robot.setPixel2LedColor(HardwarePixelbot.PixelColorsEnum.YELLOW);
+                robot.setDetectedPixels(1);
             } // cross
             if( gamepad1_circle_now && !gamepad1_circle_last)
             {
-                robot.setPixel1LedColor(HardwarePixelbot.PixelColorsEnum.PURPLE);
-                robot.setPixel2LedColor(HardwarePixelbot.PixelColorsEnum.PURPLE);
+                robot.setDetectedPixels(2);
             } // circle
             if( gamepad1_triangle_now && !gamepad1_triangle_last)
             {
-                robot.setPixel1LedColor(HardwarePixelbot.PixelColorsEnum.GREEN);
-                robot.setPixel2LedColor(HardwarePixelbot.PixelColorsEnum.GREEN);
+                robot.setDetectedPixels(0);
             } // triangle
             if( gamepad1_square_now && !gamepad1_square_last)
             {
-                robot.setPixel1LedColor(HardwarePixelbot.PixelColorsEnum.EMPTY);
-                robot.setPixel2LedColor(HardwarePixelbot.PixelColorsEnum.EMPTY);
             } // square
 
             telemetry.addData("Push Servo Position", robot.getPushServoAngle());
@@ -112,8 +107,8 @@ public class TeleopSkunkworks extends LinearOpMode {
             telemetry.addData("Finger Servo1 Position", robot.getFingerServo1Angle());
             telemetry.addData("Finger Servo2 Position", robot.getFingerServo2Angle());
             telemetry.addData("Backdrop Range", "%.1f CM", robot.getBackdropRange());
-            telemetry.addData("Status LEDs","Pixel1 LEDs %s %s", robot.pixel1Led1.getState(), robot.pixel1Led2.getState());
-            telemetry.addData("Status LEDs","Pixel2 LEDs %s %s", robot.pixel2Led1.getState(), robot.pixel2Led2.getState());
+            telemetry.addData("Status LEDs","Left LEDs %s %s", robot.lPixelRed.getState(), robot.lPixelGreen.getState());
+            telemetry.addData("Status LEDs","Pixel2 LEDs %s %s", robot.rPixelRed.getState(), robot.rPixelGreen.getState());
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;

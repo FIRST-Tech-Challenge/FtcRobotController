@@ -235,6 +235,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Thinnear", "Top: %s Bottom: %s",
                                  ((robot.thinnearTopLimit)?    "off":"ON"),
                                  ((robot.thinnearBottomLimit)? "off":"ON") );
+            telemetry.addData("Backdrop Range", "%.1f CM", robot.getBackdropRange());
             telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
                     frontLeft, robot.frontLeftMotorPos, frontRight, robot.frontRightMotorPos );
             telemetry.addData("Rear ", "%.2f (%d cts) %.2f (%d cts)",
@@ -435,9 +436,19 @@ public abstract class Teleop extends LinearOpMode {
                 // TODO: test whether we need a waitCount (more than one cycle of detection before buzzing operator)
                 // The three options are 0 (empty), 1 (single), and 2 (double)
                 // (going from 1 or 2 down to 0 doesn't result in a gamepad rumble notification)
-                if( currentPixelBinCount == 1 ) gamepad2.runRumbleEffect(rumblePixelBinSingle);
-                if( currentPixelBinCount == 2 ) gamepad2.runRumbleEffect(rumblePixelBinDouble);
-                // Store this, and wait for another change in pixel count
+                if( currentPixelBinCount == 1 ){
+                    gamepad2.runRumbleEffect(rumblePixelBinSingle);
+                    robot.setDetectedPixels(1);
+                }
+                else if( currentPixelBinCount == 2 ){
+                    gamepad2.runRumbleEffect(rumblePixelBinDouble);
+                    robot.setDetectedPixels(2);
+                } else{
+                    robot.setDetectedPixels(0);
+                }
+
+
+                    // Store this, and wait for another change in pixel count
                 previousPixelBinCount = currentPixelBinCount;
             } // count changed
         } // time to do an update cycle
