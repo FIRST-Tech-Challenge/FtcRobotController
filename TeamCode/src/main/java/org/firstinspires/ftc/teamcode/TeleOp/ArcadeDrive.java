@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import java.lang.Math;
 
 @TeleOp
-public class ArcadeRowan extends LinearOpMode {
+public class ArcadeDrive extends LinearOpMode {
 
     //Initializing motor variables
     DcMotor frontLeft;
