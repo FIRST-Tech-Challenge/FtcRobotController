@@ -77,8 +77,8 @@ public class BasicAutonomous extends OpMode
 		drive = new SampleMecanumDrive(hardwareMap);
 
 		color = -1.; // 1. for red, -1. for blue
-		start_dist = "far"; // close or far, depending on start pos
-		end_pos = "edge"; // either edge or middle, have to talk with alliance to get this value
+		start_dist = "close"; // close or far, depending on start pos
+		end_pos = "middle"; // either edge or middle, have to talk with alliance to get this value
 
 		center_line = 70./6.;
 		left_line = 8.;
@@ -114,9 +114,7 @@ public class BasicAutonomous extends OpMode
 		if (color == 1.) {
 			if (Objects.equals(position, "left")) {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, -32.5))
-						.turn(Math.toRadians(90))
-						.lineTo(new Vector2d(left_line, -30))
+						.lineToLinearHeading(new Pose2d(left_line, -30, Math.toRadians(0)))
 						.lineTo(new Vector2d(right_line, -30))
 						.lineTo(new Vector2d(center_line, -42))
 						.turn(Math.toRadians(180))
@@ -129,9 +127,7 @@ public class BasicAutonomous extends OpMode
 						.build();
 			} else {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, -32.5))
-						.turn(Math.toRadians(-90))
-						.lineTo(new Vector2d(right_line, -30))
+						.lineToLinearHeading(new Pose2d(right_line, -30*color, Math.toRadians(180)))
 						.lineTo(new Vector2d(left_line, -30))
 						.lineTo(new Vector2d(center_line, -42))
 						.build();
@@ -139,9 +135,7 @@ public class BasicAutonomous extends OpMode
 		} else {
 			if (Objects.equals(position, "right")) {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, 32.5))
-						.turn(Math.toRadians(-90))
-						.lineTo(new Vector2d(left_line, 30))
+						.lineToLinearHeading(new Pose2d(left_line, 30, Math.toRadians(0)))
 						.lineTo(new Vector2d(right_line, 30))
 						.lineTo(new Vector2d(center_line, 42))
 						.turn(Math.toRadians(180))
@@ -154,9 +148,7 @@ public class BasicAutonomous extends OpMode
 						.build();
 			} else {
 				purple_pixel = drive.trajectorySequenceBuilder(start_pos)
-						.lineTo(new Vector2d(center_line, 32.5))
-						.turn(Math.toRadians(90))
-						.lineTo(new Vector2d(right_line, 30))
+						.lineToLinearHeading(new Pose2d(right_line, 30, Math.toRadians(180)))
 						.lineTo(new Vector2d(left_line, 30))
 						.lineTo(new Vector2d(center_line, 42))
 						.build();
@@ -203,12 +195,12 @@ public class BasicAutonomous extends OpMode
 
 		if (Objects.equals(end_pos, "close")) {
 			park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
-					.lineTo(new Vector2d(50, -42*color))
+					.lineTo(new Vector2d(50, -10*color))
 					.build();
 		}
 		else {
 			park = drive.trajectorySequenceBuilder(yellow_pixel_place.end())
-					.lineTo(new Vector2d(50, -42*color))
+					.lineTo(new Vector2d(50, -60*color))
 					.build();
 		}
 		drive.followTrajectorySequenceAsync(purple_pixel);
@@ -236,15 +228,15 @@ public class BasicAutonomous extends OpMode
 						break;
 					case POSITION:
 						if (!drive.isBusy()) {
-							yellowState = YellowState.PLACE;
 							runtime.reset();
+							yellowState = YellowState.PLACE;
 						}
 						break;
 					case PLACE:
 						yellowArm.setPosition(1);
 						if (runtime.time() > 1) {
+							yellowArm.setPosition(0.5);
 							state = State.SCORE;
-							yellowArm.setPosition(0);
 						}
 						break;
 				}
