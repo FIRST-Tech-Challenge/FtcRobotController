@@ -233,9 +233,9 @@ public class BasicAutonomous extends OpMode
 						}
 						break;
 					case PLACE:
-						yellowArm.setPosition(1);
+						yellowArm.setPosition(0.4);
 						if (runtime.time() > 1) {
-							yellowArm.setPosition(0.5);
+							yellowArm.setPosition(0);
 							state = State.SCORE;
 						}
 						break;
