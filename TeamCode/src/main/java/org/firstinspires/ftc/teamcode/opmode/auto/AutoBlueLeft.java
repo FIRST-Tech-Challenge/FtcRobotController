@@ -61,7 +61,7 @@ public class AutoBlueLeft extends LinearOpMode
                 .lineToConstantHeading(new Vector2d(TILE/2, 1.53*TILE))
                 //.lineToConstantHeading(new Vector2d(TILE/2, -1.5*TILE))
                 .turn(Math.toRadians(170))
-                .addTemporalMarker(1.9, () -> {
+                .addTemporalMarker(1.3, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
                     CommandScheduler.getInstance().schedule(place_pixel_and_stow);
@@ -92,7 +92,7 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, 1.5*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 1.5*TILE))
 
                 /*.addTemporalMarker(5, () -> {
                     CommandScheduler.getInstance().schedule(deposit);
@@ -107,7 +107,7 @@ public class AutoBlueLeft extends LinearOpMode
                 .lineToConstantHeading(new Vector2d(TILE/2, 1.3*TILE))
                 .turn(Math.toRadians(90))
                 .lineToConstantHeading(new Vector2d((TILE*0.44)+1, 1.29*TILE))
-                .addTemporalMarker(2.2+1, () -> {
+                .addTemporalMarker(1.3, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
                     CommandScheduler.getInstance().schedule(place_pixel_and_stow);
@@ -139,7 +139,7 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, 2.3*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.3*TILE))
                 .build();
 
         TrajectorySequence Left = drive.trajectorySequenceBuilder(startPose)
@@ -169,7 +169,10 @@ public class AutoBlueLeft extends LinearOpMode
                 .addTemporalMarker(7+1, () -> {
                     CommandScheduler.getInstance().run();
                 })
-                .waitSeconds(6)
+                .waitSeconds(1)
+                .back(1)
+                .forward(1)
+                .waitSeconds(3)
                 .turn(Math.toRadians(180))
                 .lineToConstantHeading(new Vector2d(TILE*1.7, 1.8*TILE))
                 .lineToConstantHeading(new Vector2d(2*TILE, 1.74*TILE))
@@ -178,19 +181,20 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(2*TILE, 2.3*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.3*TILE))
                 .build();
 
         TeamElementPipeline.MarkerPosistion markerPosistion;
         Vision.startStreaming(hardwareMap, telemetry);
         markerPosistion = TeamElementPipeline.MarkerPosistion.CENTER;
+        CommandScheduler.getInstance().schedule(initiate);
+        CommandScheduler.getInstance().run();
         while(opModeInInit()) {
             markerPosistion = Vision.determineMarkerPosistion();
         }
         ////////////////////////////////////////////
 
-        CommandScheduler.getInstance().schedule(initiate);
-        CommandScheduler.getInstance().run();
+
         waitForStart();
         Vision.webcam.stopStreaming();
         switch (markerPosistion) {
