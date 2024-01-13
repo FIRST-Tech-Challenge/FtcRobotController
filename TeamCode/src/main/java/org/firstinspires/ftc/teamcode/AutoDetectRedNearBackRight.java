@@ -266,16 +266,20 @@ public class AutoDetectRedNearBackRight extends LinearOpMode {
 
         //turn left
         robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.driveRobot(0, TURN_SPEED);
-        sleep(5400);
+        robot.driveRobot(0, -TURN_SPEED);
+        sleep(3500);
 
         //go straight
         robot.setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("go to back stage", "");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 0,    -55, -55, 10);
+        encoderDrive(DRIVE_SPEED, 0,    55, 55, 10);
         //encoderDrive(DRIVE_SPEED, 24, 24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+        robot.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.driveRobot(0, TURN_SPEED);
+        sleep(7000);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
