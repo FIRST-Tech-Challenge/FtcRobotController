@@ -70,7 +70,7 @@ public class BlueAudience extends LinearOpMode {
 //            teamBot.gyroTurning(90);
 //            teamBot.moveStraightWithEncoders(0.5,215);
 //            teamBot.strafing(RobotClass.Direction.LEFT,0.2,400);
-            teamBot.moveStraightWithEncoders(0.6,-122);
+            teamBot.moveStraightWithEncoders(0.6,-125);
             //Shoot Purple Pixel
             teamBot.gyroTurning(90);
             teamBot.moveStraightWithEncoders(0.6, -244);
