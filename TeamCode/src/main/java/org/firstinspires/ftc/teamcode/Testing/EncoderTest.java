@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RobotClass;
 
 @TeleOp
+@Disabled
 public class EncoderTest extends LinearOpMode {
 
     RobotClass robot = new RobotClass(this);
