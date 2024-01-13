@@ -154,6 +154,7 @@ public class MainDriveProgram extends LinearOpMode {
             telemetry.addData("Vertical input: ", gamepad1.left_stick_y);
             telemetry.addData("Turn input: ", gamepad1.right_stick_x);
 
+            telemetry.addData("Power: ", arm.hand.getPower());
 
             telemetry.update();
         }
