@@ -66,7 +66,7 @@ public class RobotHardware {
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double GRABBER_SPEED   =  0.10 ;
-    public static final double ELBOW_SPEED     =  0.05 ;  // sets rate to move servo
+    public static final double ELBOW_SPEED     =  0.03 ;  // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
 

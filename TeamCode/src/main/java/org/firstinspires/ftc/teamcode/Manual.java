@@ -87,6 +87,7 @@ public class Manual  extends LinearOpMode{
             turn = turn / 2;
         }
 
+
         // Combine drive and turn for blended motion. Use RobotHardware class
         robot.driveRobot(drive, turn);
 
