@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.alex;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gyroscope;
 @TeleOp
 @Disabled
 
-public class MaxwellProgram extends LinearOpMode {
+public class sixwheelDrive extends LinearOpMode {
 
     private Gyroscope imu;
     private DcMotor frontleft;
@@ -28,17 +28,21 @@ public class MaxwellProgram extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-         waitForStart();
-         double rightStickInput;
-         double leftStickInput;
+        waitForStart();
 
-         while (opModeIsActive()){
-             rightStickInput=gamepad1.right_stick_y;
-             leftStickInput=gamepad1.left_stick_y;
-             frontleft.setPower(leftStickInput);
-             backLeft.setPower(leftStickInput*-1);
-             frontRight.setPower(rightStickInput);
-             backRight.setPower(rightStickInput*-1);
-         }
+        double rightStickInput;
+        double leftStickInput;
+
+        while (opModeIsActive()){
+
+            rightStickInput=gamepad1.right_stick_y;
+            leftStickInput=gamepad1.left_stick_y;
+            frontleft.setPower(gamepad1.left_stick_y);
+            backLeft.setPower(gamepad1.left_stick_y);
+            frontRight.setPower(-1*gamepad1.right_stick_y);
+            backRight.setPower(-1*gamepad1.right_stick_y);
+
+        }
+
     }
 }

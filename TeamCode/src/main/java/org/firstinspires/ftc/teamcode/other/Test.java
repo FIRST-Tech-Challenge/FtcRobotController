@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Robot Centric Drive (Scorpion)")
+@TeleOp(name = "test (Scorpion)")
 @Disabled
 public class Test extends LinearOpMode {
 

@@ -86,17 +86,17 @@ public class Mecanum extends LinearOpMode {
 
                 if (gamepad1.left_trigger > 0.5) {
 
-                    if (Ly > 0.2 || Ly < -0.2 || Lx > .02 || Lx < -.02) {
+                    if (Ly > 0.2 || Ly < -0.2 || Rx > .02 || Rx < -.02) {
                         // Waiting for Left Joystick to Move & Scaling the Motor Value
-                        frontLeftMotor.setPower((-Ly+Lx)*0.4);
-                        frontRightMotor.setPower((Ly+Lx)*0.4);
-                        backLeftMotor.setPower((-Ly+Lx)*0.4);
-                        backRightMotor.setPower((Ly+Lx)*0.4);
-                    } else if (Rx > 0.2 || Rx < -0.2) {
-                        frontLeftMotor.setPower((Rx)*0.4);
-                        frontRightMotor.setPower((Rx)*0.4);
-                        backLeftMotor.setPower((-Rx)*0.4);
-                        backRightMotor.setPower((-Rx)*0.4);
+                        frontLeftMotor.setPower((-Ly+Rx)*0.4);
+                        frontRightMotor.setPower((Ly+Rx)*0.4);
+                        backLeftMotor.setPower((-Ly+Rx)*0.4);
+                        backRightMotor.setPower((Ly+Rx)*0.4);
+                    } else if (Lx > 0.2 || Lx < -0.2) {
+                        frontLeftMotor.setPower((Lx)*0.4);
+                        frontRightMotor.setPower((Lx)*0.4);
+                        backLeftMotor.setPower((-Lx)*0.4);
+                        backRightMotor.setPower((-Lx)*0.4);
                     } else {
                         frontLeftMotor.setPower(0);
                         frontRightMotor.setPower(0);
@@ -104,16 +104,16 @@ public class Mecanum extends LinearOpMode {
                         backRightMotor.setPower(0);
                     }
                 } else {// Trigger isn't pressed
-                    if (Ly > 0.2 || Ly < -0.2 || Lx > 0.2 || Lx < -0.2) {
-                        frontLeftMotor.setPower(-Ly+Lx);
-                        frontRightMotor.setPower(Ly+Lx);
-                        backLeftMotor.setPower(-Ly+Lx);
-                        backRightMotor.setPower(Ly+Lx);
-                    } else if (Rx > 0.2 || Rx < -0.2) {
-                        frontLeftMotor.setPower(Rx);
-                        frontRightMotor.setPower(Rx);
-                        backLeftMotor.setPower(-Rx);
-                        backRightMotor.setPower(-Rx);
+                    if (Ly > 0.2 || Ly < -0.2 || Rx > 0.2 || Rx < -0.2) {
+                        frontLeftMotor.setPower(-Ly+Rx);
+                        frontRightMotor.setPower(Ly+Rx);
+                        backLeftMotor.setPower(-Ly+Rx);
+                        backRightMotor.setPower(Ly+Rx);
+                    } else if (Lx > 0.2 || Lx < -0.2) {
+                        frontLeftMotor.setPower(Lx);
+                        frontRightMotor.setPower(Lx);
+                        backLeftMotor.setPower(-Lx);
+                        backRightMotor.setPower(-Lx);
                     } else {
                         frontLeftMotor.setPower(0);
                         frontRightMotor.setPower(0);

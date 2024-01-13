@@ -54,6 +54,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Place Line Pixel")
+@Disabled
 public class PlaceLinePixel extends LinearOpMode {
 
     public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -243,11 +244,11 @@ public class PlaceLinePixel extends LinearOpMode {
 
             frontLeftMotor.setPower(.3);
             backLeftMotor.setPower(.3);
-            TimeUnit.MILLISECONDS.sleep(500);
+            TimeUnit.MILLISECONDS.sleep(700);
 
             frontLeftMotor.setPower(0);
             backRightMotor.setPower(-.3);
-            TimeUnit.MILLISECONDS.sleep(1700);
+            TimeUnit.MILLISECONDS.sleep(1800);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(200);
@@ -263,7 +264,7 @@ public class PlaceLinePixel extends LinearOpMode {
             TimeUnit.MILLISECONDS.sleep(100);
 
             RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(600);
+            TimeUnit.MILLISECONDS.sleep(800);
 
             RobotStop();
         } catch (InterruptedException e) {
@@ -273,41 +274,14 @@ public class PlaceLinePixel extends LinearOpMode {
 
     public void PixelLocation2() {
         try {
-            RobotStrafeRight();
-            TimeUnit.MILLISECONDS.sleep(950);
+           RobotMoveFarward();
+           TimeUnit.MILLISECONDS.sleep(2500);
 
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
+           RobotStop();
+           TimeUnit.MILLISECONDS.sleep(100);
 
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(2000);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(200);
-
-            RobotStrafeLeft();
-            TimeUnit.MILLISECONDS.sleep(500);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(200);
-
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(500);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotStrafeLeft();
-            TimeUnit.MILLISECONDS.sleep(300);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(900);
-
-
-
+           RobotMoveBackward();
+           TimeUnit.MILLISECONDS.sleep(2000);
         } catch (InterruptedException e) {
             //Nothing
         }
@@ -334,13 +308,13 @@ public class PlaceLinePixel extends LinearOpMode {
 
             frontRightMotor.setPower(0);
             backRightMotor.setPower(0);
-            TimeUnit.MILLISECONDS.sleep(1100);
+            TimeUnit.MILLISECONDS.sleep(1200);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
 
             RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(750);
+            TimeUnit.MILLISECONDS.sleep(650);
 
             RobotStop();
         } catch (InterruptedException e) {
@@ -349,25 +323,56 @@ public class PlaceLinePixel extends LinearOpMode {
     }
 
     public void RedLocation1() {
-        //Movement Code
-    }
-
-    public void RedLocation2() {
         try {
             RobotTurnRight();
-            TimeUnit.MILLISECONDS.sleep(1450);
+            TimeUnit.MILLISECONDS.sleep(1550);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
 
             RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(2000);
+            TimeUnit.MILLISECONDS.sleep(2100);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
 
             RobotStrafeLeft();
-            TimeUnit.MILLISECONDS.sleep(2800);
+            TimeUnit.MILLISECONDS.sleep(3000);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void RedLocation2() {
+        try {
+            RobotTurnRight();
+            TimeUnit.MILLISECONDS.sleep(1550);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            armBrace.setPower(-1);
+            armBrace.setPower(-1);
+            TimeUnit.MILLISECONDS.sleep(200);
+            armBrace.setPower(0);
+            armRotate.setPower(0);
+
+            frontLeftMotor.setPower(1);
+            frontRightMotor.setPower(-1);
+            backLeftMotor.setPower(1);
+            backRightMotor.setPower(-1);
+            TimeUnit.MILLISECONDS.sleep(3000);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            armUp();
+
+            RobotStrafeLeft();
+            TimeUnit.MILLISECONDS.sleep(3000);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
@@ -393,7 +398,7 @@ public class PlaceLinePixel extends LinearOpMode {
             TimeUnit.MILLISECONDS.sleep(100);
 
             RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(1300);
+            TimeUnit.MILLISECONDS.sleep(1500);
 
             RobotStop();
 
@@ -432,7 +437,7 @@ public class PlaceLinePixel extends LinearOpMode {
     public void BoardPixel2() {
         try {
             RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(1200);
+            TimeUnit.MILLISECONDS.sleep(1300);
 
             RobotStop();
 
@@ -471,7 +476,7 @@ public class PlaceLinePixel extends LinearOpMode {
     public void BoardPixel3() {
         try {
             RobotStrafeRight();
-            TimeUnit.MILLISECONDS.sleep(1000);
+            TimeUnit.MILLISECONDS.sleep(900);
 
             RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);

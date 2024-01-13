@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
 @Autonomous(name = "AutoTest", group = "Tests")
+@Disabled
 
 public class AutoTest extends PlaceLinePixel{
 
@@ -74,5 +75,7 @@ public class AutoTest extends PlaceLinePixel{
         } catch (InterruptedException e) {
             //Nothing
         }
+
+
     }
 }
