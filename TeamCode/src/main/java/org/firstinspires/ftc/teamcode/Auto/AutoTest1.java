@@ -76,7 +76,7 @@ public class AutoTest1 extends LinearOpMode {
                     armServo1.setPosition(1.0);
                     armServo2.setPosition(1.0);
                 })
-                .waitSeconds(0.75) // drop yellow pixel
+                .waitSeconds(0.5) // drop yellow pixel
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, () -> {
                     armServo1.setPosition(0.1); // arm before lift for enough clearance on the way back down
                     armServo2.setPosition(0.1);
@@ -107,7 +107,7 @@ public class AutoTest1 extends LinearOpMode {
                     armServo2.setPosition(1.0);
 
                 })
-                .waitSeconds(0.75) // drop two white pixels on backboard
+                .waitSeconds(0.5) // drop two white pixels on backboard
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, () -> {
                     armServo1.setPosition(0.1);
                     armServo2.setPosition(0.1);
