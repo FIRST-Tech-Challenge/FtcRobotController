@@ -285,15 +285,15 @@ public class TeleOpPhase3 extends LinearOpMode {
         waitForStart();
 
         // Ramping for x and y translation
-        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.1); // Raising alpha will make the ramp more drastic but more potentially create slip
-        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.1); // Decreasing alpha will reduce slip
+        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.5); // Raising alpha will make the ramp more drastic but more potentially create slip
+        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.5); // Decreasing alpha will reduce slip
 
         // PID controller for heading
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0, 0, 0), 0, 0); // Heading is kinda messed up rn, so I'm temporarily disabling it
         headingPID.setInputBounds(0, 360);
 
         // PID controller for lift
-        double liftkP = 10;
+        double liftkP = 40;
         double liftkI = 0;
         double liftkD = 0;
 
@@ -404,14 +404,14 @@ public class TeleOpPhase3 extends LinearOpMode {
             int liftStage = 0;
             int liftSpeed = -90;
 
-            int liftStage0 = 10; // Setpoint for intaking pixles
+            int liftStage0 = 5; // Setpoint for intaking pixles
             int liftStage1 = -20; // Setpoint for clearance
             int liftStage2 = -40; // Setpoint at first set line
             int liftStage3 = -60; // Setpoint for highest we can go
 
             int armStage = 0;
             double armStage0 = 0; // Setpoint for intake
-            double armStage1 = 0.1; // Setpoint for clearance
+            double armStage1 = 0; // Setpoint for clearance
             double armStage2 = 1; // Setpoint for scoring
 
             Lift lift1 = new Lift(liftMotor1, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
