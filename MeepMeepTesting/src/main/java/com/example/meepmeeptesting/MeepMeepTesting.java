@@ -11,7 +11,7 @@ public class MeepMeepTesting {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
 
-        double color = 1.; // 1. for red, -1. for blue
+        double color = -1.; // 1. for red, -1. for blue
         double center_line = -35;
         double left_line = -39;
         double right_line = -31;
@@ -22,15 +22,11 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(center_line, -61*color, Math.toRadians(-90*color))
                                 )
-                                .lineTo(new Vector2d(center_line, -31))
-                                .lineTo(new Vector2d(center_line, -42))
-                                .turn(Math.toRadians(-90))
-
-                                .lineTo(new Vector2d(-35, -12))
-                                .lineTo(new Vector2d(38, -12))
-                                .lineTo(new Vector2d(50, -35))
-
-                                .lineTo(new Vector2d(50, -59))
+                                .lineTo(new Vector2d(center_line, 32.5))
+                                .turn(Math.toRadians(90))
+                                .lineTo(new Vector2d(right_line, 30))
+                                .lineTo(new Vector2d(left_line, 30))
+                                .lineTo(new Vector2d(center_line, 42))
                                 .build()
                 );
 
