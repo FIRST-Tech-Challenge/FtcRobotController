@@ -106,7 +106,7 @@ public class AutoBlueLeft extends LinearOpMode
         TrajectorySequence Right = drive.trajectorySequenceBuilder(startPose)
                 .lineToConstantHeading(new Vector2d(TILE/2, 1.3*TILE))
                 .turn(Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(TILE*0.44, 1.29*TILE))
+                .lineToConstantHeading(new Vector2d((TILE*0.44)+1, 1.29*TILE))
                 .addTemporalMarker(2.2+1, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
@@ -145,7 +145,7 @@ public class AutoBlueLeft extends LinearOpMode
         TrajectorySequence Left = drive.trajectorySequenceBuilder(startPose)
                 .lineToConstantHeading(new Vector2d(TILE/2, 1.3*TILE))
                 .turn(Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(TILE*1.43, 1.3*TILE))
+                .lineToConstantHeading(new Vector2d((TILE*1.43)-0.3, 1.3*TILE))
                 .addTemporalMarker(2.2+1, () -> {
                     telemetry.addData("RUNNING BEFORE", 0);
                     telemetry.update();
@@ -190,28 +190,28 @@ public class AutoBlueLeft extends LinearOpMode
         ////////////////////////////////////////////
 
         CommandScheduler.getInstance().schedule(initiate);
+        CommandScheduler.getInstance().run();
         waitForStart();
         Vision.webcam.stopStreaming();
-
-
-
+        switch (markerPosistion) {
+            case CENTER:
+            case UNKNOWN:
+                drive.followTrajectorySequenceAsync((Center));
+                break;
+            case RIGHT:
+                drive.followTrajectorySequenceAsync(Right);
+                break;
+            case LEFT:
+                drive.followTrajectorySequenceAsync(Left);
+                break;
+        }
         /*telemetry.addData("DONE 2",0);
         telemetry.update();*/
         while(!isStopRequested()) {
-            CommandScheduler.getInstance().run();
             drive.update();
-            switch (markerPosistion) {
-                case CENTER:
-                case UNKNOWN:
-                    drive.followTrajectorySequence(Center);
-                    break;
-                case RIGHT:
-                    drive.followTrajectorySequence(Right);
-                    break;
-                case LEFT:
-                    drive.followTrajectorySequence(Left);
-                    break;
-            }
+            CommandScheduler.getInstance().run();
+
+
         }
     }
 

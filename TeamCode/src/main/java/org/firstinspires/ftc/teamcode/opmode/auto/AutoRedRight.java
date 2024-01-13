@@ -182,35 +182,37 @@ public class AutoRedRight extends LinearOpMode
         TeamElementPipeline.MarkerPosistion markerPosistion;
         Vision.startStreaming(hardwareMap, telemetry);
         markerPosistion = TeamElementPipeline.MarkerPosistion.CENTER;
+        CommandScheduler.getInstance().schedule(initiate);
+        CommandScheduler.getInstance().run();
         while(opModeInInit()) {
             markerPosistion = Vision.determineMarkerPosistion();
         }
         ////////////////////////////////////////////
 
-        CommandScheduler.getInstance().schedule(initiate);
+
         waitForStart();
         Vision.webcam.stopStreaming();
 
 
 
-
+        switch (markerPosistion) {
+            case CENTER:
+            case UNKNOWN:
+                drive.followTrajectorySequenceAsync((Center));
+                break;
+            case RIGHT:
+                drive.followTrajectorySequenceAsync(Right);
+                break;
+            case LEFT:
+                drive.followTrajectorySequenceAsync(Left);
+                break;
+        }
         /*telemetry.addData("DONE 2",0);
         telemetry.update();*/
         while(!isStopRequested()) {
             drive.update();
             CommandScheduler.getInstance().run();
-            switch (markerPosistion) {
-                case CENTER:
-                case UNKNOWN:
-                    drive.followTrajectorySequence((Center));
-                    break;
-                case RIGHT:
-                    drive.followTrajectorySequence(Right);
-                    break;
-                case LEFT:
-                    drive.followTrajectorySequence(Left);
-                    break;
-            }
+
         }
     }
 

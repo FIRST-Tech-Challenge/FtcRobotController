@@ -59,7 +59,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
          * The core values which define the location and size of the sample regions
          */
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(255,108);
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(61,98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(61,88);
 
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 30;
@@ -101,7 +101,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
         Mat HSV = new Mat();
         Mat Cb = new Mat();
         public int avg1, avg2, avg3;
-        public static int threshold=110;
+        public static int threshold=50;
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile MarkerPosistion position = MarkerPosistion.LEFT;
 

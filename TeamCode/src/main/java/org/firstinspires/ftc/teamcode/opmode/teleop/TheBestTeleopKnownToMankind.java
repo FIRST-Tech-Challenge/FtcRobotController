@@ -110,9 +110,9 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         TriggerAnalogButton clawTrigger =
                 new TriggerAnalogButton(operator, GamepadKeys.Trigger.RIGHT_TRIGGER,0.9);
         clawTrigger.whenPressed(
-                new ClawCloseCommand(clawSubsystem));
-        clawTrigger.whenReleased(
                 new ClawOpenCommand(clawSubsystem, ClawOpenCommand.Side.BOTH));
+        clawTrigger.whenReleased(
+                new ClawCloseCommand(clawSubsystem));
         //reset heading
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
@@ -121,7 +121,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(()->tiltSubsystem.lessTilt()));
 
         //deposit
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
