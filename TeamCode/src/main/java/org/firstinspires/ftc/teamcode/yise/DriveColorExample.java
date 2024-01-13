@@ -90,7 +90,7 @@ public class DriveColorExample {
 
         //>2 is yellow
         if (getGreenColor()[0] > 500) {
-            if (colorRatio >= 2) {
+            if (colorRatio >= 2.25) {
                 return Colors.YELLOW;
             }
             //>1 is green
