@@ -88,54 +88,48 @@ public class ArcadeRowan extends LinearOpMode {
 
             //setting power for intake
             if(gamepad2.a) {
-                intake.setPower(0.5);
+                intake.setPower(0.6);
             } else if (gamepad2.b) {
-                intake.setPower(-0.5);
+                intake.setPower(-0.6);
             } else {
                 intake.setPower(0);
             }
+
+            intake.setPower(gamepad2.right_trigger * -1);
 
             //setting power for lift
             telemetry.addData("lift position", lift.getCurrentPosition());
             telemetry.update();
 
-            if (gamepad2.left_stick_y > 0) {
-                liftPowerUp = true;
-            } else if (gamepad2.left_stick_y < 0) {
-                liftPowerDown = true;
-            } else {
-                liftPowerUp = false;
-                liftPowerDown = false;
-            }
-            if (liftPowerUp) {
-                if (lift.getCurrentPosition() > 0){
-                    lift.setPower(0);
-                } else {
-                    lift.setPower(gamepad2.left_stick_y);
-                }
-            }else if (liftPowerDown) {
-                if (lift.getCurrentPosition() < -6000){
-                    lift.setPower(0);
-                } else {
+            telemetry.addData("stick", gamepad2.left_stick_y);
+
+            if (gamepad2.left_stick_y < 0) {
+                if (lift.getCurrentPosition() > -3500) {
                     lift.setPower(-1 * gamepad2.left_stick_y);
+                }else {
+                    lift.setPower(0);
                 }
-            }else {
+            } else if (gamepad2.left_stick_y > 0) {
+                if (lift.getCurrentPosition() < 0) {
+                    lift.setPower(-1 * gamepad2.left_stick_y);
+                } else {
+                    lift.setPower(0);
+                }
+            } else {
                 lift.setPower(0);
             }
 
             // Manipulation of the claw
-            if (gamepad2.left_bumper) {
-                claw.setPosition(0);
-            } else if (gamepad2.right_bumper) {
-                claw.setPosition(1);
-            }
 
-            clawRotator.setPosition(Math.abs(gamepad2.right_stick_y));
-//            if (lift.getCurrentPosition() < 100) {
-//                clawRotator.setPosition(0);
-//            } else {
-//                clawRotator.setPosition(0.15);
-//            }
+            claw.setPosition(gamepad2.right_stick_y * 0.4);
+
+//            clawRotator.setPosition(gamepad2.right_stick_y + 0.5);
+            telemetry.addData("clawRotator", claw.getPosition());
+            if (lift.getCurrentPosition() < -1750) {
+                clawRotator.setPosition(0.35);
+            } else {
+                clawRotator.setPosition(0.27);
+            }
         }
     }
 }
