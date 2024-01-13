@@ -153,6 +153,13 @@ public class tele extends OpMode {
                 robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.lift.setPower(-gamepad2.right_stick_y);
             }
+        } else if (robot.lift.getCurrentPosition() < 400 && !gamepad2.right_stick_button) {
+            if (-gamepad2.right_stick_y < 0) {
+                robot.lift.setPower(0);
+            } else {
+                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.lift.setPower(-gamepad2.right_stick_y);
+            }
         } else {
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.setPower(-gamepad2.right_stick_y);
@@ -160,7 +167,6 @@ public class tele extends OpMode {
 
 
 
-        
         /** Stripper State **/
 
 
