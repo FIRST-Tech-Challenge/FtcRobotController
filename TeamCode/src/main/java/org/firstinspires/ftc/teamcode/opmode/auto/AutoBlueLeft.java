@@ -92,7 +92,7 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(1.2*TILE, 1.5*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.5*TILE))
 
                 /*.addTemporalMarker(5, () -> {
                     CommandScheduler.getInstance().schedule(deposit);
@@ -139,7 +139,7 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.3*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.5*TILE))
                 .build();
 
         TrajectorySequence Left = drive.trajectorySequenceBuilder(startPose)
@@ -181,7 +181,7 @@ public class AutoBlueLeft extends LinearOpMode
                     CommandScheduler.getInstance().run();
                     sleep(160);
                     requestOpModeStop();})
-                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.3*TILE))
+                .lineToConstantHeading(new Vector2d(1.2*TILE, 2.5*TILE))
                 .build();
 
         TeamElementPipeline.MarkerPosistion markerPosistion;

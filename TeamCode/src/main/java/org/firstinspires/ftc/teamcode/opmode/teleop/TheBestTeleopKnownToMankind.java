@@ -92,7 +92,7 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
 
         //driver
         TriggerAnalogButton driverTrigger =
-                new TriggerAnalogButton(operator,GamepadKeys.Trigger.LEFT_TRIGGER,0.9);
+                new TriggerAnalogButton(driver,GamepadKeys.Trigger.LEFT_TRIGGER,0.7);
 
         driveSubsystem.setDefaultCommand(
                 new DriveFieldCentric(
