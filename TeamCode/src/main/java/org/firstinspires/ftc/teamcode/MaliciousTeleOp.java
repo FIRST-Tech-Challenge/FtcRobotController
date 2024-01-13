@@ -35,10 +35,10 @@ public class MaliciousTeleOp extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
-        out.setPosition(0.1);
+        out.setPosition(0);
         arm.setPosition(0);
-        bla.setPosition(0.5);
-        wrist.setPosition(0.2);
+        bla.setPosition(0);
+        wrist.setPosition(0);
 
         waitForStart();
 

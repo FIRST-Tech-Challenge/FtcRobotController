@@ -11,15 +11,22 @@ public class MeepMeepTesting {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
 
+        double color = -1.; // 1. for red, -1. for blue
+        double center_line = -35;
+        double left_line = -39;
+        double right_line = -31;
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 12.78)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-35, -42, Math.toRadians(180))
+                        drive.trajectorySequenceBuilder(new Pose2d(center_line, -61*color, Math.toRadians(-90*color))
                                 )
-                                .lineTo(new Vector2d(-35, -12))
-                                .lineTo(new Vector2d(38, -12))
-                                .lineTo(new Vector2d(49, -35))
+                                .lineTo(new Vector2d(center_line, 32.5))
+                                .turn(Math.toRadians(90))
+                                .lineTo(new Vector2d(right_line, 30))
+                                .lineTo(new Vector2d(left_line, 30))
+                                .lineTo(new Vector2d(center_line, 42))
                                 .build()
                 );
 
