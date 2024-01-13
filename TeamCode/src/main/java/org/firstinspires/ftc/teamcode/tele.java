@@ -108,7 +108,7 @@ public class tele extends OpMode {
 
     public void loop() {
 
-        if (gamepad1.right_trigger > .5) {
+        if (gamepad1.right_trigger  > .5) {
             speedLimit = 50;
         } else {
             speedLimit = 100;
@@ -116,8 +116,13 @@ public class tele extends OpMode {
 
         double speedLimitValue = speedLimit / 100;
 
-        y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        if (gamepad1.left_trigger > .5) {
+            y = gamepad1.left_stick_y;
+            x = -gamepad1.left_stick_x * 1.1;
+        } else {
+            y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        }
         rx = gamepad1.right_stick_x;
 
         denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -153,6 +158,9 @@ public class tele extends OpMode {
             robot.lift.setPower(-gamepad2.right_stick_y);
         }
 
+
+
+        
         /** Stripper State **/
 
 
@@ -197,11 +205,7 @@ public class tele extends OpMode {
             deploymentState = 1;
         }
 
-        /*
-        if (robot.lift.getCurrentPosition() < 650 && !gamepad2.right_stick_button) {
-            robot.lift.setPower(0);
-        }
-        */
+
 
         /** Winch **/
 
@@ -295,7 +299,6 @@ public class tele extends OpMode {
                 escapmentFingerPosition = 0;
                 break;
         }
-
 
 
         if (gamepad2.right_trigger > .5 && (!robot.firstPixelDetector.isPressed() || !robot.secondPixelDetector.isPressed())) {
