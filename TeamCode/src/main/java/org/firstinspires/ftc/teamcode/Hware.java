@@ -28,6 +28,9 @@ public class Hware {
     public Servo planeServo = null;
     ColorSensor leftSensor = null;
     ColorSensor rightSensor = null;
+    public DcMotor verticalLeft = null;
+    public DcMotor verticalRight = null;
+    public DcMotor horizontal = null;
 
     //Declare Additional variables
     public double ticks = 751.8;
@@ -48,6 +51,9 @@ public class Hware {
         rightFront = hardwareMap.get(DcMotor.class, "RF");
         leftBack = hardwareMap.get(DcMotor.class, "LB");
         rightBack = hardwareMap.get(DcMotor.class, "RB");
+        verticalRight = hardwareMap.get(DcMotor.class, "VR");
+        verticalLeft =hardwareMap.get(DcMotor.class, "VL");
+        horizontal = hardwareMap.get(DcMotor.class, "H");
 
         //Set motor directions
         rightBack.setDirection(DcMotor.Direction.REVERSE);
