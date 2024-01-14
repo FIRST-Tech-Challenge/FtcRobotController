@@ -380,6 +380,9 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
 
+    /** Changes the velocity.
+     * @param velocity New velocity value.
+     */
     public void setSpeed(double velocity) {
         VELOCITY = velocity;
     }
@@ -560,9 +563,10 @@ public abstract class CSBase extends LinearOpMode {
     /** Uses predefined boundaries to return the spike mark that the team prop is on.
      * @return The spike mark that the team prop is on. **/
     public spike findPos() {
+        sleep(2000);
         double x = detectProp();
         if (x == -1){
-            return spike.none;
+            return spike.left;
         }
         if (x > boundaries[0] && x < boundaries[1]){
             return spike.middle;
@@ -579,6 +583,12 @@ public abstract class CSBase extends LinearOpMode {
      * @param e The exception. **/
     public void except(Exception e) {
         telemetry.addData("Exception", e);
+    }
+
+    /** Sleep a specified number of seconds.
+     * @param seconds The amount of seconds to sleep. **/
+    public final void s(double seconds) {
+        sleep((long) seconds * 1000);
     }
 
 }
