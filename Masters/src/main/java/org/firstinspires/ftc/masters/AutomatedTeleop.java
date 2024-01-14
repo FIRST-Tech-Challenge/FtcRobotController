@@ -11,16 +11,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
+
 import java.util.List;
 
 @Config
-@TeleOp(name="Center Stage TEST", group = "competition")
-public class CenterStageTest extends LinearOpMode {
+@TeleOp(name = "Center Stage automated teleop", group = "competition")
+public class AutomatedTeleop extends LinearOpMode {
 
     static int target = 0;
-    static int backSlidePos = 0;
+    static OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
 
-    //TODO: fix this: value is for a 435 motor we are currently using 312 and this is for a full rotation not 180 degree
     private final double ticks_in_degrees = 384.5 / 180;
 
     PIDController controller;
@@ -28,9 +29,9 @@ public class CenterStageTest extends LinearOpMode {
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
 
-    double y = 0;
-    double x = 0;
-    double rx = 0;
+//    double y = 0;
+//    double x = 0;
+//    double rx = 0;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -40,8 +41,8 @@ public class CenterStageTest extends LinearOpMode {
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
 
-    DcMotor intakeSlideRight = null;
-    DcMotor intakeSlideLeft = null;
+    DcMotor gpSlideRight = null;
+    DcMotor gpSlideLeft = null;
     DcMotor backSlides = null;
     DcMotor hangingMotor = null;
 
@@ -63,8 +64,8 @@ public class CenterStageTest extends LinearOpMode {
     boolean hookPressed = false;
     boolean presetPushed = false;
     double claw2transfer_time = -1;
-    double claw2transfer_delay=.5;
-    double x_last_pressed=-1;
+    double claw2transfer_delay = .5;
+    double x_last_pressed = -1;
 
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
@@ -73,11 +74,6 @@ public class CenterStageTest extends LinearOpMode {
 
     int v4bPresetTarget = 0;
 
-    private enum DriveMode {
-        NORMAL,
-        PIXEL_SCORE,
-        END_GAME
-    }
 
     private enum Retract {
         back,
@@ -87,8 +83,12 @@ public class CenterStageTest extends LinearOpMode {
 
     private boolean isRetracting = false;
 
-    private DriveMode driveMode = DriveMode.NORMAL;
+    private CSCons.DriveMode driveMode = CSCons.DriveMode.NORMAL;
+    private CSCons.OuttakeState outtakeState = CSCons.OuttakeState.MoveToTransfer;
+    private CSCons.IntakeState intakeState = CSCons.IntakeState.Transition;
+
     private Retract retract = Retract.back;
+
     @Override
     public void runOpMode() {
         /*
@@ -136,8 +136,8 @@ RB - Hang up
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
-        intakeSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
-        intakeSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
+        gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
+        gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
         backSlides = hardwareMap.dcMotor.get("backSlides");
 
         planeLaunch = hardwareMap.servo.get("planeLaunch");
@@ -192,6 +192,9 @@ RB - Hang up
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
+        target = backSlidePos.getTarget();
+
+
         waitForStart();
 
         runtime.reset();
@@ -200,29 +203,23 @@ RB - Hang up
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
 
-            int SlidePos = backSlides.getCurrentPosition();
-            double pid = controller.calculate(SlidePos, target);
-            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+            switch (driveMode) {
 
-            double liftPower = pid + ff;
+                case NORMAL:
+                case END_GAME:
 
-            backSlides.setPower(liftPower);
-
-            if (backSlidePos == 0) {
-                target = 30;
-            } else if (backSlidePos == 1) {
-                target = 1800;
-            } else if (backSlidePos == 2) {
-                target = 3600;
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    break;
+                case PIXEL_SCORE:
+                    drive(gamepad1.left_stick_x, 0, 0);
+                    break;
             }
 
-            telemetry.addData("left y", gamepad1.left_stick_y);
-            telemetry.addData("left x", gamepad1.left_stick_x);
-            telemetry.addData("right x", gamepad1.right_stick_x);
+           backSlidesMove();
 
-            y = -gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+
+
+
 
             if (gamepad2.b && clawClosed == true) {
                 clawClosed = false;
@@ -238,8 +235,8 @@ RB - Hang up
             }
 
             if (gamepad2.dpad_up) {
-                    clawAngle.setPosition(CSCons.clawAngleTransfer);
-                    clawArm.setPosition(CSCons.clawArmTransfer+CSCons.skewampus);
+                clawAngle.setPosition(CSCons.clawAngleTransfer);
+                clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
             }
 
             if (gamepad2.dpad_right) {
@@ -247,15 +244,15 @@ RB - Hang up
                 clawArm.setPosition(CSCons.clawArmTransfer);
             }
 
-            if (gamepad2.dpad_left){
+            if (gamepad2.dpad_left) {
                 clawAngle.setPosition(CSCons.clawAngleTransition);
                 clawArm.setPosition(CSCons.clawArmTransition);
             }
 
-            if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1]-.1 && runtime.time() > x_last_pressed + .4) {
+            if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1] - .1 && runtime.time() > x_last_pressed + .4) {
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
                 x_last_pressed = runtime.time();
-            } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0]-.1 && runtime.time() > x_last_pressed + .4) {
+            } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0] - .1 && runtime.time() > x_last_pressed + .4) {
                 outtakeHook.setPosition(CSCons.outtakeHook[1]);
                 x_last_pressed = runtime.time();
             }
@@ -266,7 +263,7 @@ RB - Hang up
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeRotationTarget = CSCons.outtakeAngleFolder;
             }
-            if (gamepad2.left_stick_y < -0.2 && backSlidePos != 0) {
+            if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeGoingToTransfer = true;
@@ -282,57 +279,80 @@ RB - Hang up
 
 
             if (gamepad2.left_trigger > 0.5) {
-                backSlidePos = 1;
+                backSlidePos = OuttakePosition.LOW;
+                target = backSlidePos.getTarget();
             }
             if (gamepad2.right_trigger > 0.5) {
-                backSlidePos = 2;
+                backSlidePos = OuttakePosition.HIGH;
+                target = backSlidePos.getTarget();
             }
 
-
-
-            if (gamepad2.right_bumper){
-                backSlidePos = 0;
+            if (gamepad2.right_bumper) {
+                backSlidePos = OuttakePosition.BOTTOM;
+                target = backSlidePos.getTarget();
             }
 
-            if (gamepad1.a){
+            if (gamepad1.a) {
                 clawServo.setPosition(CSCons.claw[2]);
             }
 
-                    if (Math.abs(y) < 0.2) {
-                        y = 0;
-                    }
-                    if (Math.abs(x) < 0.2) {
-                        x = 0;
-                    }
 
-                    double leftFrontPower = y + x + rx;
-                    double leftRearPower = y - x + rx;
-                    double rightFrontPower = y - x - rx;
-                    double rightRearPower = y + x - rx;
 
-                    if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+            telemetry.addData("left y", gamepad1.left_stick_y);
+            telemetry.addData("left x", gamepad1.left_stick_x);
+            telemetry.addData("right x", gamepad1.right_stick_x);
+            telemetry.addData("Arm", clawArm.getPosition());
+            telemetry.addData("backSlides", target); // 1725, 2400,
+            telemetry.addData("time", runtime.time());
 
-                        double max;
-                        max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-                        max = Math.max(max, Math.abs(rightFrontPower));
-                        max = Math.max(max, Math.abs(rightRearPower));
-
-                        leftFrontPower /= max;
-                        leftRearPower /= max;
-                        rightFrontPower /= max;
-                        rightRearPower /= max;
-                    }
-
-                    leftFrontMotor.setPower(leftFrontPower);
-                    leftRearMotor.setPower(leftRearPower);
-                    rightFrontMotor.setPower(rightFrontPower);
-                    rightRearMotor.setPower(rightRearPower);
-
-                    telemetry.addData("Arm", clawArm.getPosition());
-                    telemetry.addData("backSlides",backSlidesTargetPos); // 1725, 2400,
-                    telemetry.addData("time",runtime.time());
-
-                    telemetry.update();
-            }
+            telemetry.update();
         }
+
+
     }
+
+    protected void drive(double x, double y, double rx) {
+
+        if (Math.abs(y) < 0.2) {
+            y = 0;
+        }
+        if (Math.abs(x) < 0.2) {
+            x = 0;
+        }
+
+        double leftFrontPower = y + x + rx;
+        double leftRearPower = y - x + rx;
+        double rightFrontPower = y - x - rx;
+        double rightRearPower = y + x - rx;
+
+        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+
+            double max;
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+            max = Math.max(max, Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(rightRearPower));
+
+            leftFrontPower /= max;
+            leftRearPower /= max;
+            rightFrontPower /= max;
+            rightRearPower /= max;
+        }
+
+        leftFrontMotor.setPower(leftFrontPower);
+        leftRearMotor.setPower(leftRearPower);
+        rightFrontMotor.setPower(rightFrontPower);
+        rightRearMotor.setPower(rightRearPower);
+    }
+
+    protected void backSlidesMove(){
+
+        int slidePos = backSlides.getCurrentPosition();
+        double pid = controller.calculate(slidePos, target);
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+
+        double liftPower = pid + ff;
+
+        backSlides.setPower(liftPower);
+    }
+
+}

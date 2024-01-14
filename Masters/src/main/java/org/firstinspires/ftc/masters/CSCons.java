@@ -37,6 +37,37 @@ public class CSCons {
     public static double outakeHookOpen = 0.309;
     public static double outakeHookClosed = 0.78;
 
+    public enum OuttakePosition{
+        BOTTOM (30),
+        LOW(500),
+        MID(1000),
+        HIGH(2600);
+
+        private int target;
+
+        private OuttakePosition(int target){
+            this.target = target;
+        }
+
+        public int getTarget(){
+            return  target;
+        }
+    }
+
+    public enum IntakeState {
+        Transition, Transfer, Intake
+    }
+
+    public enum OuttakeState{
+        MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp
+    }
+
+    public enum DriveMode {
+        NORMAL,
+        PIXEL_SCORE,
+        END_GAME
+    }
+
 /**
  *
  *  ╚ ╔ ╩ ╦ ╠ ═ ╬ ╣ ║ ╗ ╝
