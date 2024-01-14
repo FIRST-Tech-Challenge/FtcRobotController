@@ -525,9 +525,9 @@ public abstract class CSBase extends LinearOpMode {
         return false;
     }
 
-    /** Detects the team prop and returns its X value relative to the camera.
+    /** Detects the team prop and returns its X coordinate relative to the camera.
      * (-1 if none is detected)
-     * @return (double) The X value of the team prop. **/
+     * @return (double) The X coordinate of the team prop. **/
     public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
@@ -567,8 +567,8 @@ public abstract class CSBase extends LinearOpMode {
         return pos;
     }
 
-    /** Sends an error message to Driver Station telemetry.
-     * @param e The error message. **/
+    /** Sends an exception message to Driver Station telemetry.
+     * @param e The exception. **/
     public void except(Exception e) {
         telemetry.addData("Exception", e);
     }
