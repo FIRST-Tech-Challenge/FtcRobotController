@@ -18,24 +18,22 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
         s(2);
-        drive(-3);
+        drive(-16);
         if (pos == spike.left) {
-            turn(-10);
-            drive(-20);
-            drive(20);
-            turn(10);
-            drive(3);
+            turn(-30);
+            drive(-9);
+            drive(9);
+            turn(30);
         } else if (pos == spike.middle) {
-            drive(-20);
-            drive(23);
+            drive(-10);
+            drive(10);
         } else {
-            turn(10);
-            drive(-20);
-            drive(20);
-            turn(-10);
-            drive(3);
+            turn(30);
+            drive(-9);
+            drive(9);
+            turn(-30);
         }
-        turn(90);
+        turn(-90);
         drive(tiles(1));
         turn(-90);
         drive(tiles(1));
