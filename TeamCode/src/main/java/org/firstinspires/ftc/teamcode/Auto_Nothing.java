@@ -15,7 +15,11 @@ public class Auto_Nothing extends LinearOpMode {
         telemetry.addData("Status", "Doing nothing");
         telemetry.update();
 
-        while (opModeIsActive()){}
+        resetRuntime();
+        while (opModeIsActive()){
+            telemetry.addData("Status", "Doing nothing for " + getRuntime() + " s");
+            telemetry.update();
+        }
     }
 
 }

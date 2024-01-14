@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
