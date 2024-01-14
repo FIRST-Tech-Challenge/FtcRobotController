@@ -43,13 +43,13 @@ public class Auto_BlueBackFull extends CSBase {
 
         findPos();
         drive(-3);
-        if (pos == 1) {
+        if (pos == spike.left) {
             turn(-10);
             drive(-20);
             drive(20);
             turn(10);
             drive(3);
-        } else if (pos == 2) {
+        } else if (pos == spike.middle) {
             drive(-20);
             drive(23);
         } else {
