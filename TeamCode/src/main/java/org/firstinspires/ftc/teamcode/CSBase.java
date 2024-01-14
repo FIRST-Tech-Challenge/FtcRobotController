@@ -167,8 +167,7 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Initializes all hardware devices on the robot.
-     * Notes: This is kept for the purpose of not breaking any previous programs,
-     * but please ensure that future implementations use color values instead.
+     * Note:
      * When called without useCam manually set, useCam defaults to true.
      * @param isRed Is the team prop red? **/
     public void setup(boolean isRed){
