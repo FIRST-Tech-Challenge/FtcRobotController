@@ -2,11 +2,16 @@ package org.firstinspires.ftc.teamcode.Toros;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -18,14 +23,28 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.opencv.core.Mat;
+
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import java.util.List;
 import java.util.Queue;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 @Autonomous(name = "Autonomus")
 
 
 public class Autonomus extends LinearOpMode {
+    public static double p = 0.03, i = 0.0022, d = 0.001;
+    public static double f = -0.05;
+    public static int target = -100;
+    private final double ticks_in_degrees = 1440 / 180;
+    private PIDController controller;
+
+    private DcMotorEx Arm1;
+
+    private Servo servo;
     Color cone = Color.None;
 
     int spike = 0;
@@ -51,11 +70,24 @@ public class Autonomus extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Arm1 = hardwareMap.get(DcMotorEx.class, "Arm1");
         initvision();
+        controller = new PIDController(p, i, d); // <- Hey PID you should know what that is
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         waitForStart();
         if (opModeIsActive()) {
+            resetRuntime();
             while (opModeIsActive()) {
                 telem();
+                if (getRuntime() < 3) {
+                    servoPos = 0;
+                } else if (getRuntime() > 4 && getRuntime() < 7) {
+                    servoPos = 90;
+                } else if (getRuntime() > 10) {
+                    servoPos = 180;
+                }
+
+
                 telemetry.update();
             }
         }
@@ -96,11 +128,16 @@ public class Autonomus extends LinearOpMode {
     }
 
     private void telem() throws InterruptedException {
-
+        servo = hardwareMap.get(Servo.class, "Servo");
+        servo.setPosition(servoPos);
+        telemetry.addData("spike", spike);
+        telemetry.addData("Servo Pos", servoPos);
+        telemetry.addData("Color", cone);
+        telemetry.addData("Time", getRuntime());
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         telemetry.addData("# AprilTags Detected", currentDetections.size());
-
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
@@ -131,57 +168,83 @@ public class Autonomus extends LinearOpMode {
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
 
-
-            String label = null;
-            telemetry.addData("Color",cone );
-
-            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-            telemetry.addData("Servo", servoPos);
-            telemetry.addData("Spike",spike);
-
-            while(recognition.getLabel() == null){
-                servoPos += 90;
-                spike +=1;
-                if(recognition.getLabel() != null) {
-                    label = recognition.getLabel();
-                    break;
-                }else {
-                    sleep(2000);
-                }
-            }
-
-            if(label == "RedCone"){
+            if (recognition.getLabel() == "BluCone") {
                 cone = Color.BLUE;
-            }
-            else{
+            } else if (recognition.getLabel() == "RedCone") {
                 cone = Color.RED;
             }
 
+            if (currentRecognitions.size() == 1 && servoPos == 0 && getRuntime() < 3) {
+                spike = 1;
+            }
+            if (currentRecognitions.size() == 1 && servoPos == 90 && getRuntime() > 5 && getRuntime() < 7) {
+                spike = 2;
+            }
+            if (currentRecognitions.size() == 1 && servoPos == 180 && getRuntime() > 10) {
+                spike = 3;
+            }
             switch (cone) {
                 case RED:
+                    if (spike == 1) {
 
+                    } else if (spike == 2) {
 
-                case BLUE:
-                    if(spike == 1){
-                        drive.trajectoryBuilder(new Pose2d(-32,62,Math.toRadians(270)))
-                                .lineTo(new Vector2d(-36, 62))
-                                .lineToLinearHeading(new Pose2d(-37,33))
-                                .forward(13)
-                                .back(15)
-                                .splineToLinearHeading(new Pose2d(38,36,Math.toRadians(180)),Math.toRadians(50))
-                                .back(10)
-                                .build();
+                    } else {
 
                     }
+                case BLUE:
+                    if (spike == 1) {
+                        Trajectory tra1 = drive.trajectoryBuilder(new Pose2d(12, 62, Math.toRadians(270)))
+                                .forward(27)
+                                .build();
+                        Trajectory tra2 = drive.trajectoryBuilder(tra1.end())
+                                .forward(2)
+                                .back(5)
+                                .build();
+                        Trajectory tra3 = drive.trajectoryBuilder(tra2.end())
+                                .lineTo(new Vector2d(23,54))
+                                .splineToLinearHeading(new Pose2d(41,35,Math.toRadians(180)),Math.toRadians(270))
+                                .back(7)
+                                .build();
+                        TrajectorySequence tra4 = drive.trajectorySequenceBuilder(tra3.end())
+                                .strafeRight(24)
+                                .back(10)
+                                .build();
+                        drive.followTrajectory(tra1);
+                        drive.turn(Math.toRadians(90));
+                        drive.followTrajectory(tra2);
+                        drive.followTrajectory(tra3);
+                        arm(1250);
+                        drive.followTrajectorySequence(tra4);
 
 
-                }
-                // end for() loop
+                    } else if (spike == 2) {
 
+                    } else {
 
+                    }
             }
 
         }
 
+    }
+
+    private double arm(int target) {
+        double powerA = 0;
+        int armPos = Arm1.getCurrentPosition();
+
+        //Now the fun begins
+        controller.setPID(p, i, d); // sets the terms
+        double pid = controller.calculate(armPos, target); /// Remember that very funny equation for PID. Well I told the computer to do my math homework
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f; // Creates a number to get an angle related to the target and ticks and muliplies by our f term
+        powerA = pid + ff; // Gives the power to the motor
+
+        return powerA;
+    }
 }
+
+
+
+
+
 

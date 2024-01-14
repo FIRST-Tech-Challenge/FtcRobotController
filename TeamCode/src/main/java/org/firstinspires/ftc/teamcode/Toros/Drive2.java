@@ -174,15 +174,6 @@ public class Drive2 extends LinearOpMode {
                     powerA = gamepad2.left_stick_y / 0.5;
                     target = armPos;
                 }
-                // Airplane launcher
-                if(gamepad2.dpad_left){
-                    Railgun.setPower(1);
-                    sleep(500);
-                } else if (gamepad2.dpad_right) {
-                    Railgun.setPower(0);
-
-                }
-
 
                 // Arm power
                 Arm1.setPower(powerA);
@@ -198,9 +189,19 @@ public class Drive2 extends LinearOpMode {
                     target =-3250;
                 }
 
+                // Airplane launcher
+                if(gamepad2.dpad_left){
+                    Railgun.setPower(1);
+                    sleep(500);
+                } else if (gamepad2.dpad_right) {
+                    Railgun.setPower(0);
+
+                }
+
 
                 telemetry.addData("Speed", speed);
                 initTelemetry();
+                telemetry.update();
 
             }
         }
@@ -236,7 +237,6 @@ public class Drive2 extends LinearOpMode {
 
 
     private void initTelemetry() {
-
         telemetry.addData("claw angle", Claw1.getPosition() * 180);
         telemetry.addData("claw open or closed", Claw3.getPosition());
         //

@@ -20,18 +20,17 @@ public class MeepMeepTesting {
                 if(num ==1) {
                     RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                             // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                            .setConstraints(55, 55, Math.toRadians(29.3), Math.toRadians(29.3), 13.9)
+                            .setConstraints(47.25, 47.25, Math.toRadians(22.36), Math.toRadians(22.36), 13.9)
                             // Option: Set theme. Default = ColorSchemeRedDark()
                             .setColorScheme(new ColorSchemeRedDark())
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(new Pose2d(-32, 62, Math.toRadians(270)))
-                                            .lineTo(new Vector2d(-36, 62))
-                                            .lineToLinearHeading(new Pose2d(-37,33))
-                                            .forward(13)
-                                            .back(15)
-                                            .lineto(new Vector2d(-34,0))
-                                            .splineToLinearHeading(new Pose2d(38,36,Math.toRadians(180)),Math.toRadians(50))
-                                            .back(10)
+                                    drive.trajectorySequenceBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
+                                            .strafeLeft(16)
+                                            .forward(60)
+                                            .turn(Math.toRadians(-90))
+                                            .forward(108)
+                                            .strafeRight(12)
+                                            .back(2)
                                             .build()
 
                             );
@@ -46,12 +45,12 @@ public class MeepMeepTesting {
         if(num ==2) {
             RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                     // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                    .setConstraints(55, 55, Math.toRadians(29.3), Math.toRadians(29.3), 13.9)
+                    .setConstraints(47.25, 47.25, Math.toRadians(22.36), Math.toRadians(22.36), 13.9)
                     // Option: Set theme. Default = ColorSchemeRedDark()
                     .setColorScheme(new ColorSchemeRedDark())
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36, -62, Math.toRadians(90)))
-
+                                    .forward(12)
                                     .build()
 
                     );
