@@ -13,24 +13,36 @@ import org.firstinspires.ftc.teamcode.util.VoltageConstants;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.Locale;
 
 @Autonomous(name = "Test Battery Voltage")
 public class TestBatteryVoltage extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime batteryTestTime = new ElapsedTime();
+    private ElapsedTime recordingTime = new ElapsedTime();
+
     public final FTCDashboardPackets dbp = new FTCDashboardPackets();
     private double batteryVoltage = 0;
+    private double startingBatteryVoltage = 0;
     private boolean shouldStop = false;
 
     private DcMotor light1, light2, light3, light4;
     private boolean lightsOn = false;
+    private HashMap<Double, Double> storedVoltage;
 
     public void init() {
         light1 = hardwareMap.get(DcMotor.class, "light1");
         light2 = hardwareMap.get(DcMotor.class, "light2");
         light3 = hardwareMap.get(DcMotor.class, "light3");
         light4 = hardwareMap.get(DcMotor.class, "light4");
+        startingBatteryVoltage = getBatteryVoltage();
+
+        if (startingBatteryVoltage < VoltageConstants.getMinimumStartingVoltage()) {
+            telemetry.speak("WARNING: Testing the battery with less " +
+                    "than the minimum recommended starting voltage...");
+        }
     }
 
     @Override
@@ -39,24 +51,34 @@ public class TestBatteryVoltage extends OpMode {
         dbp.createNewTelePacket();
         runLights();
 
-        if ((runtime.seconds() < VoltageConstants.VOLTAGE_POLL_RATE) || shouldStop) {
+        if (minimumBatteryVoltageReached()) {
+            dbp.put("Battery Voltage",
+                    String.format(Locale.ENGLISH,
+                            "Battery Voltage reached the cutoff of %.1f v",
+                            VoltageConstants.getCutOffVoltage()));
+            dbp.info(String.format(Locale.ENGLISH, "Completed testing in %f seconds",
+                    batteryTestTime.seconds()), true);
+            dbp.info(String.format(Locale.ENGLISH, "Average Rate of Change: %f",
+                    getAverageRateOfChange()), true);
+            stopLights();
+            shouldStop = true;
+        }
+
+        if ((runtime.seconds() < VoltageConstants.getVoltagePollRate()) || shouldStop) {
             dbp.put("Battery Voltage", String.format(Locale.ENGLISH, "%f s",
                     batteryTestTime.seconds()));
             dbp.put("Current Voltage", String.format(Locale.ENGLISH,"%f v", batteryVoltage));
-            dbp.send(true);
+            dbp.send(false);
+
+            if (recordingTime.seconds() >= VoltageConstants.getVoltageRecordRate()) {
+                storedVoltage.put(runtime.seconds(), getBatteryVoltage());
+                recordingTime.reset();
+            }
             return;
         }
 
         runtime.reset();
 
-        if (batteryVoltage < VoltageConstants.CUT_OFF_VOLTAGE) {
-            dbp.put("Battery Voltage",
-                    String.format(Locale.ENGLISH,
-                            "Battery Voltage reached the cutoff of %.1f v",
-                            VoltageConstants.CUT_OFF_VOLTAGE));
-            stopLights();
-            shouldStop = true;
-        }
         dbp.send(false);
     }
 
@@ -89,6 +111,49 @@ public class TestBatteryVoltage extends OpMode {
             }
         }
         return result;
+    }
+
+    boolean minimumBatteryVoltageReached() {
+        final Double[] STORED_VOLTAGE_VALUES = storedVoltage.values().toArray(new Double[0]);
+        final int STORED_VOLTAGE_VALUES_LENGTH = STORED_VOLTAGE_VALUES.length - 1;
+        final double LAST_STORED_VOLTAGE = STORED_VOLTAGE_VALUES[STORED_VOLTAGE_VALUES_LENGTH];
+
+        if (batteryTestTime.seconds() < VoltageConstants.getGracePeriodBeforeCutoff())
+            return false;
+
+        final double VOLTAGE_LEEWAY = VoltageConstants.getEndVoltageLeeway();
+        return (batteryVoltage < VoltageConstants.getCutOffVoltage())
+                || (LAST_STORED_VOLTAGE > (startingBatteryVoltage - VOLTAGE_LEEWAY)
+                || (LAST_STORED_VOLTAGE > 12.0d));
+    }
+
+    double getAverageRateOfChange() {
+        final Double[] STORED_VOLTAGE_VALUES = storedVoltage.values().toArray(new Double[0]);
+        final int STORED_VOLTAGE_VALUES_LENGTH = STORED_VOLTAGE_VALUES.length;
+
+        final Double[] STORED_TIME_VALUES = storedVoltage.keySet().toArray(new Double[0]);
+
+        double summedAverages = 0;
+        int iterations = 0;
+
+        for (int i = 0; i < STORED_VOLTAGE_VALUES_LENGTH; i++) {
+            double voltageLeft = STORED_VOLTAGE_VALUES[i];
+            double voltageRight;
+            double timeLeft = STORED_TIME_VALUES[i];
+            double timeRight;
+
+            try {
+                voltageRight = STORED_VOLTAGE_VALUES[i + 1];
+                timeRight = STORED_TIME_VALUES[i + 1];
+            } catch (IndexOutOfBoundsException e) {
+                continue;
+            }
+
+            summedAverages += ((timeRight - timeLeft) / (voltageRight - voltageLeft));
+            iterations += 1;
+        }
+
+        return summedAverages / (double) iterations;
     }
 
     @Override

@@ -187,6 +187,17 @@ public class FTCDashboardPackets {
      * Takes in a message and puts it into the current packet.
      * @param message The message to be put into the packet
      * @param sendPacket A boolean of whether or not to send the packet after the message is put in
+     */
+    public void info(String message, boolean sendPacket) {
+        info(message);
+        if (sendPacket)
+            send(false);
+    }
+
+    /**
+     * Takes in a message and puts it into the current packet.
+     * @param message The message to be put into the packet
+     * @param sendPacket A boolean of whether or not to send the packet after the message is put in
      * @param reinitializePacket A boolean of whether or not to reinitialize the packet after it is sent
      */
     public void info(String message, boolean sendPacket, boolean reinitializePacket) {
