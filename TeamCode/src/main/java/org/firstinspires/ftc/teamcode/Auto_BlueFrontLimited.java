@@ -29,10 +29,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  */
 
 @Autonomous(name = "Blue Front Final", group = "CenterStage", preselectTeleOp = "Full")
-public class CSAutoBlueFrontLimited extends CSMethods {
+public class Auto_BlueFrontLimited extends CSBase {
     @Override
     public void runOpMode() {
-        setup(false);
+        setup(color.blue);
 
         // ---------------------
         // ------Main Code------

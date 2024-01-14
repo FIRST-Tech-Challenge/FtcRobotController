@@ -28,44 +28,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-//@Autonomous(name = "Red Back", group = "CenterStage", preselectTeleOp = "Full")
 @Disabled
-public class CSAutoRedBackFull extends CSMethods {
+public class Test_RB4 extends CSBase {
     @Override
     public void runOpMode() {
-        boolean isRed = true;
-        setup(isRed);
+        setup(true);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
-
-        findPos();
-        drive(-3);
-        if (pos == 1) {
-            turn(-10);
-            drive(-20);
-            drive(20);
-            turn(10);
-            drive(3);
-        } else if (pos == 2) {
-            drive(-20);
-            drive(23);
-        } else {
-            turn(10);
-            drive(-20);
-            drive(20);
-            turn(-10);
-            drive(3);
-        }
-        drive(tiles(-1));
-        drive(tiles(-1.15));
+        drive(tiles(-2.1));
         turn(-90);
         drive(tiles(1.7));
         ejectPixel();
-
-        //*/
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

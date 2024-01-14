@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "One Gamepad", group = "CenterStage")
-public class CSOneGamepadTeleOp extends CSMethods {
+public class TeleOp_OneGamepad extends CSBase {
 
     // Declare OpMode members for each of the 4 motors.
     boolean wasY = false;
@@ -22,7 +22,7 @@ public class CSOneGamepadTeleOp extends CSMethods {
 
     @Override
     public void runOpMode() {
-        setup(true);
+        setup(color.none, false);
         double carWashPower = 1.0;
         double[] backBounds = {0.3, 0.6};
         if (trayTiltingServo != null) {

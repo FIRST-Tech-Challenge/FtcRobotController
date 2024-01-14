@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -28,21 +28,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Blue Back Final", group = "CenterStage", preselectTeleOp = "Full")
-public class CSAutoBlueBackLimited extends CSMethods {
+@Disabled
+public class Test_RB3 extends CSBase {
     @Override
     public void runOpMode() {
-        setup(false);
+        setup(true);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
-        drive(tiles(-2.1));
-        turn(90);
-        setSpeed(1000);
-        drive(tiles(1.7));
-        setSpeed(2000);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

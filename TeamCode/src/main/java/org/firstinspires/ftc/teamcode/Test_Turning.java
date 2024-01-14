@@ -9,11 +9,9 @@ import static java.lang.Math.toRadians;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -53,7 +51,7 @@ import java.util.List;
  */
 
 @Disabled
-public class TurningTest extends LinearOpMode {
+public class Test_Turning extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 

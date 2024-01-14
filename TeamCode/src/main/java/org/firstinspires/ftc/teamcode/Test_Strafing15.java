@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Disabled
-public class StrafingTest15 extends CSMethods {
+public class Test_Strafing15 extends CSBase {
     public void runOpMode() {
         setup(true);
-        strafe(15);
+        strafe(15, dir.left);
     }
 }

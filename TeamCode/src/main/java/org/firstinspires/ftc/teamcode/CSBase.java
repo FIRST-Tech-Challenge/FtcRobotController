@@ -4,7 +4,7 @@ import static java.lang.Math.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.*;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
@@ -12,17 +12,18 @@ import com.qualcomm.robotcore.util.*;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.*;
 import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
-public abstract class CSMethods extends LinearOpMode {
+public abstract class CSBase extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
     public TfodProcessor tfod;
     public final ElapsedTime runtime = new ElapsedTime();
     // All non-primitve datatypes initialze to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
+    public WebcamName camera;
     public TouchSensor touchSensor;
     public IMU imu;
     /*
@@ -47,7 +48,7 @@ public abstract class CSMethods extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
     static final double[]   boundaries              = {0, 350};
     double                  carWashPower            = 1.0;
-    double pos; // Team prop position
+    spike pos; // Team prop position
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET;
     public AprilTagProcessor tagProcessor;
@@ -58,11 +59,34 @@ public abstract class CSMethods extends LinearOpMode {
             "prop",
     };
     IMU.Parameters imuparameters;
-    public void setup(boolean isRed) {
-        if (isRed) {
+
+    /** Color options for the team prop. Options: red, blue, none **/
+    public enum color {
+        red, blue, none
+    }
+
+    /** Strafing directions. Options: left, right **/
+    public enum dir {
+        left,right
+    }
+
+    /** Spike mark positions for the team prop. Options: left, middle, right **/
+    public enum spike {
+        left,middle,right
+    }
+
+    /** Initializes all hardware devices on the robot.
+     * @param teamColor The color of the team prop.
+     * @param useCam Should the camera be initialized? **/
+    public void setup(color teamColor, boolean useCam) {
+        if (teamColor == color.red) {
             TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
-        } else {
+        } else if (teamColor == color.blue){
             TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
+        }
+        else if (useCam){
+            telemetry.addData("", "Team color not specified, will not use team prop detection!");
+            useCam = false;
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -96,10 +120,12 @@ public abstract class CSMethods extends LinearOpMode {
         try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
-
-        //initAtd();
-
-        //initTfod();
+        if (useCam) {
+            try {
+                camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+                initProcessors();
+            } catch (Exception e) {except(e);}
+        }
 
         if (lf != null) {
             lf.setDirection(DcMotorEx.Direction.REVERSE);
@@ -133,6 +159,32 @@ public abstract class CSMethods extends LinearOpMode {
         runtime.reset();
     }
 
+    /** Initializes all hardware devices on the robot.
+     * Note: When called without useCam manually set, useCam defaults to true.
+     * @param teamColor The color of the team prop. **/
+    public void setup(color teamColor){
+        setup(teamColor, true);
+    }
+
+    /** Initializes all hardware devices on the robot.
+     * Notes: This is kept for the purpose of not breaking any previous programs,
+     * but please ensure that future implementations use color values instead.
+     * When called without useCam manually set, useCam defaults to true.
+     * @param isRed Is the team prop red? **/
+    public void setup(boolean isRed){
+        if (isRed) {
+            setup(color.red, true);
+        }
+        else {
+            setup(color.blue, true);
+        }
+    }
+
+    /** Drives using encoder velocity.
+     * @param speed (unused)
+     * @param leftInches Amount of inches to drive.
+     * @param rightInches (unused)
+     * @param timeoutS (unused) **/
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
         int lfTarget = 0;
         int rfTarget = 0;
@@ -189,6 +241,11 @@ public abstract class CSMethods extends LinearOpMode {
             //sleep(250);   // optional pause after each move.
         }
     }
+
+    /** Turns the robot a specified number of degrees. Positive values turn right,
+     * negative values turn left.
+     * @param degrees The amount of degrees to turn.
+     */
     public void turn(double degrees) {
         sleep(100);
         imu.resetYaw();
@@ -227,7 +284,11 @@ public abstract class CSMethods extends LinearOpMode {
             stopRobot();
         }
     }
-    public void strafe(double inches /*double duration*/) {
+
+    /** Strafes left or right for a specified number of inches.
+     * @param inches Amount of inches to strafe.
+     * @param direction Direction to strafe in.**/
+    public void strafe(double inches, dir direction /*double duration*/) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -267,7 +328,11 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
-    public void strafeUntilTagDetection(int idOfTag) {
+
+    /** Strafes left or right until an april tag with the ID specified is detected.
+     * @param direction Direction to strafe in.
+     * @param idOfTag ID of April Tag to detect. **/
+    public void strafeUntilTagDetection(dir direction, int idOfTag) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -307,6 +372,9 @@ public abstract class CSMethods extends LinearOpMode {
         VELOCITY = velocity;
     }
 
+
+    /** Drives the specified number of inches. Negative values will drive backwards.
+     * @param inches Amount of inches to drive. **/
     public void drive(double inches) {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
@@ -317,9 +385,13 @@ public abstract class CSMethods extends LinearOpMode {
         stopRobot();
     }
 
+    /** Converts an amount of tiles on the game board to an amount of inches.
+     * @param tiles The value of tiles to be converted. **/
     public double tiles(double tiles) {
         return tiles * TILE_LENGTH;
     }
+
+    /** Makes the car wash outtake for 1 second. **/
     public void ejectPixel() {
         if (carWashMotor != null) {
             telemetry.addData("Car Wash", "Ejecting Pixel");
@@ -337,6 +409,8 @@ public abstract class CSMethods extends LinearOpMode {
             telemetry.update();
         }
     }
+
+    /** Stops all drive train motors on the robot. **/
     public void stopRobot() {
         // Set target position to avoid an error
         lb.setTargetPosition(lb.getCurrentPosition());
@@ -374,8 +448,8 @@ public abstract class CSMethods extends LinearOpMode {
         drive(-15);
         sleep(100);
     }//*/
-    public void initTfod() {
-
+    /** Initializes the TFOD and April Tag processors. **/
+    public void initProcessors() {
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
 
@@ -394,13 +468,18 @@ public abstract class CSMethods extends LinearOpMode {
                 //.setModelAspectRatio(16.0 / 9.0)
 
                 .build();
-
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(camera);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -420,6 +499,7 @@ public abstract class CSMethods extends LinearOpMode {
 
         // Set and enable the processor.
         builder.addProcessor(tfod);
+        builder.addProcessor(tagProcessor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -430,21 +510,11 @@ public abstract class CSMethods extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
-    public void initAtd(){
-        tagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .build();
-        tagVisionPortal = new VisionPortal.Builder()
-                .addProcessor(tagProcessor)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .enableLiveView(true)
-                //.setCameraResolution(new Size(640, 480)) // not working for some reason
-                .build();
-    }
 
+
+    /** Returns whether a tag with the specified ID is currently detected.
+     * @param id ID of tag to detect.
+     * @return (boolean) Was the tag detected? **/
     public boolean detectTag(int id){
         int i;
         for (i = 0; i < tagProcessor.getDetections().size(); i++)
@@ -455,6 +525,10 @@ public abstract class CSMethods extends LinearOpMode {
         }
         return false;
     }
+
+    /** Detects the team prop and returns its X value relative to the camera.
+     * (-1 if none is detected)
+     * @return (double) The X value of the team prop. **/
     public double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
@@ -477,23 +551,27 @@ public abstract class CSMethods extends LinearOpMode {
         return x;
     }   // end method detectProp()
 
-    public void findPos() {
+    /** Uses predefined boundaries to return the spike mark that the team prop is on.
+     * @return The spike mark that the team prop is on. **/
+    public spike findPos() {
         double x = detectProp();
         if (x > boundaries[0] && x < boundaries[1]){
-            pos = 2; // Middle
+            pos = spike.middle;
         }
         else if (x > boundaries[1]){
-            pos = 3; // Right
+            pos = spike.right;
         } else {
-            pos = 1; // Left
+            pos = spike.left;
         }
         telemetry.addData("Position", pos);
         telemetry.update();
+        return pos;
     }
 
+    /** Sends an error message to Driver Station telemetry.
+     * @param e The error message. **/
     public void except(Exception e) {
         telemetry.addData("Exception", e);
-        telemetry.update();
     }
 
 }
