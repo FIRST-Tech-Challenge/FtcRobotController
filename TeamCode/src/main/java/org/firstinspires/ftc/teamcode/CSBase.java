@@ -44,15 +44,15 @@ public abstract class CSBase extends LinearOpMode {
     //static final double     VEL_MODIFIER            = 1.12485939258;
     static final double     b                       = 1.1375;
     static final double     m                       = 0.889;
-    static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double[]   boundaries              = {0, 350};
+    static final boolean    TURN_TYPE               = false;
+    public final double[]   boundaries              = {0, 350};
     double                  carWashPower            = 1.0;
     spike pos; // Team prop position
+    public double x;
     public VisionPortal visionPortal;
     public static String TFOD_MODEL_ASSET;
     public AprilTagProcessor tagProcessor;
-    public VisionPortal tagVisionPortal;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
@@ -72,7 +72,7 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Spike mark positions for the team prop. Options: left, middle, right **/
     public enum spike {
-        left,middle,right
+        left,middle,right,none
     }
 
     /** Initializes all hardware devices on the robot.
@@ -180,11 +180,8 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Drives using encoder velocity.
-     * @param speed (unused)
-     * @param leftInches Amount of inches to drive.
-     * @param rightInches (unused)
-     * @param timeoutS (unused) **/
-    public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
+     * @param inches Amount of inches to drive. **/
+    public void encoderDrive(double inches) {
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -204,12 +201,12 @@ public abstract class CSBase extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            lb.setVelocity(VELOCITY * signum(leftInches));
-            rb.setVelocity(VELOCITY * signum(leftInches));
-            lf.setVelocity(VELOCITY * signum(leftInches));
-            rf.setVelocity(VELOCITY * signum(leftInches));
+            lb.setVelocity(VELOCITY * signum(inches));
+            rb.setVelocity(VELOCITY * signum(inches));
+            lf.setVelocity(VELOCITY * signum(inches));
+            rf.setVelocity(VELOCITY * signum(inches));
 
-            double inches = signum(leftInches) * (abs(leftInches) + b) / m;
+            inches = signum(inches) * (abs(inches) + b) / m;
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
@@ -249,8 +246,8 @@ public abstract class CSBase extends LinearOpMode {
         sleep(100);
         imu.resetYaw();
         double tolerance = 1;
-        if (false) { // Boolean determines the method the robot takes to turn x degrees
-            encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, abs(degrees) / 36);
+        if (TURN_TYPE) { // Boolean determines the method the robot takes to turn x degrees
+            encoderDrive(degrees / 7.5);
             stopRobot();
         } else {
             degrees *= -1;
@@ -300,12 +297,20 @@ public abstract class CSBase extends LinearOpMode {
             lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+            double d;
+
+            if (direction == dir.right) {
+                d = -1;
+            } else {
+                d = 1;
+            }
+
 
             runtime.reset();
-            lb.setVelocity(VELOCITY);
-            rb.setVelocity(-VELOCITY);
-            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER);
-            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
+            lb.setVelocity(VELOCITY * d);
+            rb.setVelocity(-VELOCITY * d);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
 
             inches = (abs(inches) + 1.0125) / 0.7155;
 
@@ -345,12 +350,20 @@ public abstract class CSBase extends LinearOpMode {
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
-            runtime.reset();
-            lb.setVelocity(VELOCITY);
-            rb.setVelocity(-VELOCITY);
-            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER);
-            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER);
+            double d;
 
+            if (direction == dir.right) {
+                d = -1;
+            } else {
+                d = 1;
+            }
+
+
+            runtime.reset();
+            lb.setVelocity(VELOCITY * d);
+            rb.setVelocity(-VELOCITY * d);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
 
             while (opModeIsActive() && !detectTag(idOfTag)){
                 telemetry.addData("Currently","Strafing until tag " + idOfTag + " is detected");
@@ -378,7 +391,7 @@ public abstract class CSBase extends LinearOpMode {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
+            encoderDrive(inches / checks);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
@@ -441,13 +454,7 @@ public abstract class CSBase extends LinearOpMode {
         rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
-    /*
-    public void dropCarWash() {
-        drive(15);
-        drive(-15);
-        sleep(100);
-    }//*/
-    /** Initializes the TFOD and April Tag processors. **/
+   /** Initializes the TFOD and April Tag processors. **/
     public void initProcessors() {
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
@@ -534,8 +541,8 @@ public abstract class CSBase extends LinearOpMode {
             sleep(100);
             currentRecognitions = tfod.getRecognitions();
         }
-        double x = -1;
-        double y = -1;
+        x = -1;
+        double y;
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             x = (recognition.getLeft() + recognition.getRight()) / 2 ;
@@ -554,17 +561,18 @@ public abstract class CSBase extends LinearOpMode {
      * @return The spike mark that the team prop is on. **/
     public spike findPos() {
         double x = detectProp();
+        if (x == -1){
+            return spike.none;
+        }
         if (x > boundaries[0] && x < boundaries[1]){
-            pos = spike.middle;
+            return spike.middle;
         }
-        else if (x > boundaries[1]){
-            pos = spike.right;
-        } else {
-            pos = spike.left;
+        else if (x >= boundaries[1]){
+            return spike.right;
+        } else if (x <= boundaries[0]){
+            return spike.left;
         }
-        telemetry.addData("Position", pos);
-        telemetry.update();
-        return pos;
+        return spike.none;
     }
 
     /** Sends an error message to Driver Station telemetry.
