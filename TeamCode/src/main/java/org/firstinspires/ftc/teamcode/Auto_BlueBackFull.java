@@ -59,10 +59,11 @@ public class Auto_BlueBackFull extends CSBase {
             turn(-10);
             drive(3);
         }
-        drive(tiles(-1));
-        drive(tiles(-1.15));
+        drive(tiles(-2.1));
         turn(90);
+        setSpeed(1000);
         drive(tiles(1.7));
+        setSpeed(2000);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

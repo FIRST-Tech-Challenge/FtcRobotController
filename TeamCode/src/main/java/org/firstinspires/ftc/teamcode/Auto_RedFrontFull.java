@@ -57,9 +57,13 @@ public class Auto_RedFrontFull extends CSBase {
             turn(-10);
             drive(3);
         }
-        drive(-3);
+        drive(-2);
         turn(-90);
-        drive(90);
+        sleep(3);
+        drive(70);
+        setSpeed(1000);
+        drive(15);
+        setSpeed(2000);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

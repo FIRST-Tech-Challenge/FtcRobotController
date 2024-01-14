@@ -40,6 +40,7 @@ public class Auto_BlueFrontLimited extends CSBase {
 
         drive(-2);
         turn(90);
+        sleep(3);
         drive(70);
         setSpeed(1000);
         drive(15);
