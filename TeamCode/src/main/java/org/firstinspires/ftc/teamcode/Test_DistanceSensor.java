@@ -16,13 +16,11 @@ public class Test_DistanceSensor extends LinearOpMode {
 
         distanceSensor = hardwareMap.get(DistanceSensor.class, "sensor_distance");
 
-
         waitForStart();
 
 
         while (opModeIsActive()) {
-            telemetry.addData("Distance (cm)",
-                    String.format("%.02f", distanceSensor.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Distance (cm)", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
     }
