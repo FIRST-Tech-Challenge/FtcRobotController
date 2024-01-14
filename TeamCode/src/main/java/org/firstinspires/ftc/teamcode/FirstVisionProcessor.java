@@ -13,6 +13,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+//import org.opencv.videoio.VideoCapture;
 
 public class  FirstVisionProcessor implements VisionProcessor {
 
@@ -56,6 +57,12 @@ public class  FirstVisionProcessor implements VisionProcessor {
         }
         return Selected.RIGHT;
 
+       /* //Initiating the VideoCamera class (camera: : 0)
+        VideoCapture Capture = new VideoCapture(0);*/
+
+
+
+
     }
 
     protected double getAvgSaturation(Mat input, Rect rect, String colorToCheck) {
@@ -68,9 +75,9 @@ public class  FirstVisionProcessor implements VisionProcessor {
         telemetry.update();
 */
         if (colorToCheck == "blue")
-            colorPosition = 0;
-        else if(colorToCheck == "red")
             colorPosition = 1;
+        else if(colorToCheck == "red")
+            colorPosition = 0;
 
         return color.val[colorPosition];
     }
