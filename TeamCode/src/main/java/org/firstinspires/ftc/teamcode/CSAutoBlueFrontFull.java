@@ -42,9 +42,25 @@ public class CSAutoBlueFrontFull extends CSMethods {
         // ------Main Code------
         // ---------------------
 
-        drive(-20);
-        drive(23);
+
+        findPos();
         drive(-3);
+        if (pos == 1) {
+            turn(-10);
+            drive(-20);
+            drive(20);
+            turn(10);
+            drive(3);
+        } else if (pos == 2) {
+            drive(-20);
+            drive(23);
+        } else {
+            turn(10);
+            drive(-20);
+            drive(20);
+            turn(-10);
+            drive(3);
+        }        drive(-3);
         turn(90);
         drive(90);
         ejectPixel();

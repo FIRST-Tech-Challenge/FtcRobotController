@@ -43,6 +43,25 @@ public class CSAutoBlueBackFull extends CSMethods {
         // ------Main Code------
         // ---------------------
 
+
+        findPos();
+        drive(-3);
+        if (pos == 1) {
+            turn(-10);
+            drive(-20);
+            drive(20);
+            turn(10);
+            drive(3);
+        } else if (pos == 2) {
+            drive(-20);
+            drive(23);
+        } else {
+            turn(10);
+            drive(-20);
+            drive(20);
+            turn(-10);
+            drive(3);
+        }
         drive(tiles(-1));
         drive(tiles(-1.15));
         turn(90);

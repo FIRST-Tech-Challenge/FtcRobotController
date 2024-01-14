@@ -40,9 +40,9 @@ public class CSAutoRedBackLimited extends CSMethods {
 
         drive(tiles(-2.1));
         turn(-90);
-        VELOCITY = 1000;
+        setSpeed(1000);
         drive(tiles(1.7));
-        VELOCITY = 2000;
+        setSpeed(2000);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

@@ -302,6 +302,11 @@ public abstract class CSMethods extends LinearOpMode {
 
         }
     }
+
+    public void setSpeed(double velocity) {
+        VELOCITY = velocity;
+    }
+
     public void drive(double inches) {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
