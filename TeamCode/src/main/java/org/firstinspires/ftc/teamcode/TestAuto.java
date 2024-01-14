@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
@@ -62,37 +63,72 @@ public class TestAuto extends LinearOpMode {
 
     private void turnRight(double power, double targetAngle) {
         while(currentAngle > -targetAngle) {
-            currentAngle = imu.getAngularOrientation().firstAngle;
-            //System.out.println(currentAngle);
+            currentAngle = getIntegratedHeading();
 
+            System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
             setPower(0,0, power);
         }
 
         setPower(0, 0, 0);
+        sleep(100); // Resting
     }
 
     private void turnLeft(double power, double targetAngle) {
         while(currentAngle < -targetAngle) {
-            currentAngle = imu.getAngularOrientation().firstAngle;
+            currentAngle = getIntegratedHeading();
+
+            System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
             setPower(0,0, -power);
-            System.out.println(currentAngle);
         }
 
         setPower(0, 0, 0);
     }
 
     private void turn(double power, double targetAngle) {
-        while(!approximatelyEqual(currentAngle, targetAngle, 2)) {
-            currentAngle = imu.getAngularOrientation().firstAngle;
-            setPower(0,0, -power);
-            System.out.println(currentAngle);
-        }
+        boolean shouldTurnClockwise = getShortestDirection(currentAngle, targetAngle);
 
-        setPower(0, 0, 0);
+        if (shouldTurnClockwise) { // Turn clockwise
+            turnLeft(power, targetAngle);
+        } else { // Turn counterclockwise
+            turnRight(power, targetAngle);
+        }
     }
 
-    public static boolean approximatelyEqual(double num1, double num2, double tolerance) {
-        return Math.abs(num1 - num2) <= tolerance;
+    // Check if the target angle is reached
+    // private boolean isAngleReached(double targetAngle, boolean clockwise) {
+    //     if (clockwise) {
+    //         return currentAngle >= targetAngle;
+    //     } else {
+    //         return currentAngle <= targetAngle;
+    //     }
+    // }
+
+    // Return true if shortest direction is clockwise, and false if shortest direction is counterclockwise
+    public boolean getShortestDirection(double currentAngle, double targetAngle) {
+        double angleDifference = (targetAngle - currentAngle + 360) % 360;
+        System.out.println(angleDifference);
+
+        if (angleDifference > 180) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private double getIntegratedHeading() {
+        double currentHeading = imu.getAngularOrientation().firstAngle;
+        double deltaHeading = currentHeading - previousHeading;
+
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if (deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        integratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return integratedHeading;
     }
 
     @Override
@@ -136,9 +172,18 @@ public class TestAuto extends LinearOpMode {
             currentAngle = imu.getAngularOrientation().firstAngle;
 
             //setPowerWithTime(0.5, 0, 0, 1);
-            turn(0.2, 90);
 
+            //turn(0.5, 100);
+            //turn(0.5, 90);
+            //System.out.println("shimshon");
 
+            //turn(0.5, 100);
+            //turn(0.5, -90);
+
+            turnRight(0.5, 90);
+            turnRight(0.5, 270);
+
+            break;
             //System.out.println(currentAngle);
             //setPowerWithTime(0.5, 0, 0, 1);
         }
