@@ -344,16 +344,16 @@ public class HardwarePixelbot
         // Pixel indicators
         lPixelRed = hwMap.digitalChannel.get("lPixelRed"); // Digital port 4 (Control Hub)
         lPixelRed.setMode(DigitalChannel.Mode.OUTPUT);
-        lPixelRed.setState(true);
+        lPixelRed.setState(true); // off
         lPixelGreen = hwMap.digitalChannel.get("lPixelGreen"); // Digital port 5 (Control Hub)
         lPixelGreen.setMode(DigitalChannel.Mode.OUTPUT);
-        lPixelGreen.setState(true);
+        lPixelGreen.setState(true); // off
         rPixelRed = hwMap.digitalChannel.get("rPixelRed"); // Digital port 6 (Control Hub)
         rPixelRed.setMode(DigitalChannel.Mode.OUTPUT);
-        rPixelRed.setState(true);
+        rPixelRed.setState(true); // off
         rPixelGreen = hwMap.digitalChannel.get("rPixelGreen"); // Digital port 7 (Control Hub)
         rPixelGreen.setMode(DigitalChannel.Mode.OUTPUT);
-        rPixelGreen.setState(true);
+        rPixelGreen.setState(true); // off
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -641,32 +641,37 @@ public class HardwarePixelbot
 
     /*--------------------------------------------------------------------------------------------*/
     /* viperSlideExtension()                                                                      */
+    /* NOTE: Comments online say the firmware that executes the motor RUN_TO_POSITION logic want  */
+    /* the setup commands in this order: setTargetPosition(), setMode(), setPower().              */
     public void startViperSlideExtension(int targetEncoderCount )
     {
         // Range-check the target
         if( targetEncoderCount < VIPER_EXTEND_ZERO ) targetEncoderCount = VIPER_EXTEND_ZERO;
         if( targetEncoderCount > VIPER_EXTEND_FULL ) targetEncoderCount = VIPER_EXTEND_FULL;
-        // Are we raising or lowering the lift?
-        boolean directionUpward = (targetEncoderCount > viperMotorsPos)? true : false;
-        // Set the power used to get there
-        double motorPower = (directionUpward)? VIPER_RAISE_POWER : VIPER_LOWER_POWER;
-        viperMotors.setPower( motorPower );
         // Configure target encoder count
         viperMotors.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
         viperMotors.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Are we raising or lowering the lift?
+        boolean directionUpward = (targetEncoderCount > viperMotorsPos)? true : false;
+        // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
+        // power setting, no matter which way the motor must rotate to achieve that target.
+        double motorPower = (directionUpward)? VIPER_RAISE_POWER : -VIPER_LOWER_POWER;
+        viperMotors.setPower( motorPower );
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
         viperMotorAutoMove = true;
     } // viperSlideExtension
 
     public void checkViperSlideExtension()
     {
-        // Have we commanded an automatic lift movement that we need to terminate?
+        // Have we commanded an AUTOMATIC lift movement that we need to terminate so we
+        // can return to MANUAL control?  (NOTE: we don't care here whether the AUTOMATIC
+        // movement has finished yet; MANUAL control immediately overrides that action.
         if( viperMotorAutoMove ) {
            // turn off the auto-movement power, but don't go to ZERO POWER or
            // the weight of the lift will immediately drop it back down.
-           viperMotors.setPower( VIPER_HOLD_POWER );
            viperMotors.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
+           viperMotors.setPower( VIPER_HOLD_POWER );
            viperMotorAutoMove = false;
         }
     } // checkViperSlideExtension

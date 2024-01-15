@@ -182,7 +182,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 storageDir += "//blue_right//";
             }
         }
-		// If we save more than one file per Autonomous run, use both DATE & TIME
+        // If we save more than one file per Autonomous run, use both DATE & TIME
 //      storageDir += timeString;
 
         // Create the directory structure to store the autonomous image used to start auto.
@@ -191,29 +191,49 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /*---------------------------------------------------------------------------------*/
-    // DEPRICATED!  The ultrasonic range sensors return values in whole numbers of centimeters
-    // so there's no need to use double-precision variables.
-    void distanceFromFront(double desiredDistance, double distanceTolerance) {
-        // Value in inches?
-        int atRange = 0;
-        double range = robot.singleSonarRangeF();
-        double rangeErr = range - desiredDistance;
-        while (opModeIsActive() && (atRange < 7)) {
-            performEveryLoop();
-            range = robot.singleSonarRangeF();
-            rangeErr = range - desiredDistance;
-            telemetry.addData("Sonar Range (F)", "Set: %.1f  Range: %.1f Err: %.1f", desiredDistance, range, rangeErr);
-            telemetry.update();
-            if(abs(rangeErr) <= distanceTolerance){
-                robot.stopMotion();
-                atRange++;
-            } else {
-                atRange = 0;
-                robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
-            }
-        }
-        robot.stopMotion();
-    } // distanceFromFront
+    void autoGrabPixelsInBin() {
+       // Wrist should already be in the vertical position, but just make sure
+       robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+       // Partially extend the wrist assembly to grab the pixels
+       robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
+       sleep(500);
+       // Rotate both fingers to grab the pixels
+       robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
+       robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
+    } // autoGrabPixelsInBin
+
+    /*---------------------------------------------------------------------------------*/
+    void autoReleaseBothPixels() {
+       // Release both pixels
+       robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
+       robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
+       // Wait for servos to actually move/release
+       sleep( 350 );
+       // BEGIN to pull back (so that pixels can drop)
+       robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
+       // Allow time for pixels to be clear/dropping before starting any rotational movement
+       sleep( 150 );
+       // Finish the backward movment to the safe/stored position, and ensure wrist is vertical
+       robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+       // Ensure both movements are complete before doing anything else (like lowering the lift)
+       sleep( 500 );
+    } // autoReleaseBothPixels
+
+    /*---------------------------------------------------------------------------------*/
+    void autoRaiseViperSlide( int targetEncoderCount ) {   // Ex: robot.VIPER_EXTEND_LOW
+        // Initiate the automatic movement to the desired lift height
+        robot.startViperSlideExtension( targetEncoderCount );
+/*
+        TODO: add a timer and 
+           runtime.reset();
+           while (opModeIsActive() && (runtime.seconds() < timeoutS) && (motor.isBusy())) {
+           }
+        // Stop all motion;
+        motor.setPower(0);
+        // Turn off RUN_TO_POSITION
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+*/
+    } // autoRaiseViperSlide
 
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters
