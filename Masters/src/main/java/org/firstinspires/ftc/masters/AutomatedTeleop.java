@@ -184,6 +184,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
         intakeSlides.setTargetPosition(0);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intakeSlides.setPower(.5);
 
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -317,7 +318,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
             switch (outtakeState){
                 case ReadyToTransfer:
-                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){
+                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){ // if press x and hook is closed, open hook
                         if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
                             outtakeElapsedTime = new ElapsedTime();
                             hookPosition = HookPosition.OPEN;
@@ -326,7 +327,7 @@ public class AutomatedTeleop extends LinearOpMode {
                             outtakeHook.setPosition(CSCons.closeHook);
                         }
                     }
-                    if (gamepad2.x && hookPosition == HookPosition.OPEN){
+                    if (gamepad2.x && hookPosition == HookPosition.OPEN){ // closes hook with x
                         if(outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300){
                             outtakeElapsedTime = closeHook();
                         } else {
