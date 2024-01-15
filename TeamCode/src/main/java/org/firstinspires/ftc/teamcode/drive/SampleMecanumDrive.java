@@ -79,6 +79,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
+    public static final String FRONT_LEFT_DRIVE = "fl_drv";
+    public static final String FRONT_RIGHT_DRIVE = "fr_drv";
+    public static final String BACK_LEFT_DRIVE = "bl_drv";
+    public static final String BACK_RIGHT_DRIVE = "br_drv";
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -93,10 +98,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, FRONT_LEFT_DRIVE);
+        leftRear = hardwareMap.get(DcMotorEx.class, BACK_LEFT_DRIVE);
+        rightRear = hardwareMap.get(DcMotorEx.class, BACK_RIGHT_DRIVE);
+        rightFront = hardwareMap.get(DcMotorEx.class, FRONT_RIGHT_DRIVE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
