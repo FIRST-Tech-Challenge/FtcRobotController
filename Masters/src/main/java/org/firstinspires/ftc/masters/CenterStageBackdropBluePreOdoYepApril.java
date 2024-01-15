@@ -25,7 +25,7 @@ import java.util.Date;
 @Autonomous(name = "Center Stage Backdrop Blue Pre Odo April", group = "competition")
 public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
 
-    Robot robot;
+    //Robot robot;
 
     private OpenCvCamera frontWebcam;
 
@@ -64,7 +64,7 @@ public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new Robot(hardwareMap, telemetry, this);
+        //robot = new Robot(hardwareMap, telemetry, this);
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
