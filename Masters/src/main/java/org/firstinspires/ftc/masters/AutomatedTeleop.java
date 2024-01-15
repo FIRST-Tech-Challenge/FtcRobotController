@@ -2,7 +2,6 @@ package org.firstinspires.ftc.masters;
 
 
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
-import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -80,7 +79,7 @@ public class AutomatedTeleop extends LinearOpMode {
     double outtakeRotationTarget;
 
     int v4bPresetTarget = 0;
-    private double claw_last_closed;
+    private double claw_last_opened;
 
     private enum Retract {
         back,
@@ -242,10 +241,11 @@ public class AutomatedTeleop extends LinearOpMode {
                         if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
                             clawPosition = ClawPosition.CLOSED;
                             clawServo.setPosition(CSCons.clawClosed);
-                            claw_last_closed = runtime.time();
+
                         } else if (clawPosition == ClawPosition.CLOSED) {
                             clawPosition = ClawPosition.OPEN;
                             clawServo.setPosition(clawOpen);
+                            claw_last_opened = runtime.time();
                         }
                     }
 
@@ -422,77 +422,77 @@ public class AutomatedTeleop extends LinearOpMode {
 
 
 
-            if (outtakeState == OuttakeState.ReadyToDrop || outtakeState == OuttakeState.ReadyToTransfer) {
-                if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.openHook);
-                    x_last_pressed = runtime.time();
-                } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.closeHook);
-                    x_last_pressed = runtime.time();
-                }
-            }
-
-            //outtake
-
-            if (gamepad2.left_stick_y > 0.2) { // move to backdrop
-                outtakeHook.setPosition(CSCons.closeHook);
-                outtakeState = OuttakeState.ClosingHook;
-                outtakeElapsedTime = new ElapsedTime();
-            }
-
-            //does the slide need to go up before the flip?
-            if (outtakeState == OuttakeState.ClosingHook && outtakeElapsedTime != null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.closingHook) {
-
-                hookPosition = HookPosition.CLOSED;
-                backSlidePos = OuttakePosition.LOW;
-                if (backSlides.getCurrentPosition() > 150) {
-                    outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-                    outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
-                    outtakeState = OuttakeState.MoveToDrop;
-                }
-            }
-
-            if (outtakeState == OuttakeState.MoveToDrop && backSlides.getCurrentPosition() > OuttakePosition.LOW.getTarget() - 100) {
-                outtakeState = OuttakeState.ReadyToDrop;
-            }
-
-
-            if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
-                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-                outtakeGoingToTransfer = true;
-                outtakeHook.setPosition(CSCons.openHook);
-            }
-
-            if (gamepad2.left_bumper) {
-                angleRotationAdjustment += .005;
-            }
-
-            outtakeRotation.setPosition(outtakeRotationTarget);
-
-
-            if (gamepad2.left_trigger > 0.5) {
-
-                if (outtakeState != OuttakeState.ReadyToDrop) {
-
-                }
-
-                backSlidePos = OuttakePosition.LOW;
-                target = backSlidePos.getTarget();
-            }
-            if (gamepad2.right_trigger > 0.5) {
-                backSlidePos = OuttakePosition.HIGH;
-                target = backSlidePos.getTarget();
-            }
-
-            if (gamepad2.right_bumper) {
-
-                backSlidePos = OuttakePosition.BOTTOM;
-                target = backSlidePos.getTarget();
-            }
-
-            if (gamepad1.a) {
-                clawServo.setPosition(clawTransfer);
-            }
+//            if (outtakeState == OuttakeState.ReadyToDrop || outtakeState == OuttakeState.ReadyToTransfer) {
+//                if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
+//                    outtakeHook.setPosition(CSCons.openHook);
+//                    x_last_pressed = runtime.time();
+//                } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
+//                    outtakeHook.setPosition(CSCons.closeHook);
+//                    x_last_pressed = runtime.time();
+//                }
+//            }
+//
+//            //outtake
+//
+//            if (gamepad2.left_stick_y > 0.2) { // move to backdrop
+//                outtakeHook.setPosition(CSCons.closeHook);
+//                outtakeState = OuttakeState.ClosingHook;
+//                outtakeElapsedTime = new ElapsedTime();
+//            }
+//
+//            //does the slide need to go up before the flip?
+//            if (outtakeState == OuttakeState.ClosingHook && outtakeElapsedTime != null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.closingHook) {
+//
+//                hookPosition = HookPosition.CLOSED;
+//                backSlidePos = OuttakePosition.LOW;
+//                if (backSlides.getCurrentPosition() > 150) {
+//                    outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+//                    outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+//                    outtakeState = OuttakeState.MoveToDrop;
+//                }
+//            }
+//
+//            if (outtakeState == OuttakeState.MoveToDrop && backSlides.getCurrentPosition() > OuttakePosition.LOW.getTarget() - 100) {
+//                outtakeState = OuttakeState.ReadyToDrop;
+//            }
+//
+//
+//            if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
+//                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+//                outtakeGoingToTransfer = true;
+//                outtakeHook.setPosition(CSCons.openHook);
+//            }
+//
+//            if (gamepad2.left_bumper) {
+//                angleRotationAdjustment += .005;
+//            }
+//
+//            outtakeRotation.setPosition(outtakeRotationTarget);
+//
+//
+//            if (gamepad2.left_trigger > 0.5) {
+//
+//                if (outtakeState != OuttakeState.ReadyToDrop) {
+//
+//                }
+//
+//                backSlidePos = OuttakePosition.LOW;
+//                target = backSlidePos.getTarget();
+//            }
+//            if (gamepad2.right_trigger > 0.5) {
+//                backSlidePos = OuttakePosition.HIGH;
+//                target = backSlidePos.getTarget();
+//            }
+//
+//            if (gamepad2.right_bumper) {
+//
+//                backSlidePos = OuttakePosition.BOTTOM;
+//                target = backSlidePos.getTarget();
+//            }
+//
+//            if (gamepad1.a) {
+//                clawServo.setPosition(clawTransfer);
+//            }
 
 
             telemetry.addData("left y", gamepad1.left_stick_y);
@@ -570,7 +570,7 @@ public class AutomatedTeleop extends LinearOpMode {
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time() > claw_last_closed + .500){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time() > claw_last_opened + .500){
             return true;
         } else {
             return false;
