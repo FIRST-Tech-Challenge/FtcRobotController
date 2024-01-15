@@ -59,10 +59,14 @@ public class TestAuto extends LinearOpMode {
         }
 
         setPower(0, 0, 0);
+        sleep(100); // Resting
     }
 
     private void turnRight(double power, double targetAngle) {
-        while(currentAngle > -targetAngle) {
+
+
+
+        while(currentAngle < targetAngle) {
             currentAngle = getIntegratedHeading();
 
             System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
@@ -74,7 +78,7 @@ public class TestAuto extends LinearOpMode {
     }
 
     private void turnLeft(double power, double targetAngle) {
-        while(currentAngle < -targetAngle) {
+        while(currentAngle > targetAngle) {
             currentAngle = getIntegratedHeading();
 
             System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
@@ -82,6 +86,7 @@ public class TestAuto extends LinearOpMode {
         }
 
         setPower(0, 0, 0);
+        sleep(100); // Resting
     }
 
     private void turn(double power, double targetAngle) {
@@ -93,15 +98,6 @@ public class TestAuto extends LinearOpMode {
             turnRight(power, targetAngle);
         }
     }
-
-    // Check if the target angle is reached
-    // private boolean isAngleReached(double targetAngle, boolean clockwise) {
-    //     if (clockwise) {
-    //         return currentAngle >= targetAngle;
-    //     } else {
-    //         return currentAngle <= targetAngle;
-    //     }
-    // }
 
     // Return true if shortest direction is clockwise, and false if shortest direction is counterclockwise
     public boolean getShortestDirection(double currentAngle, double targetAngle) {
@@ -115,6 +111,7 @@ public class TestAuto extends LinearOpMode {
         }
     }
 
+    // transform the angles from (180,-179) to (inf, -inf)
     private double getIntegratedHeading() {
         double currentHeading = imu.getAngularOrientation().firstAngle;
         double deltaHeading = currentHeading - previousHeading;
@@ -128,7 +125,23 @@ public class TestAuto extends LinearOpMode {
         integratedHeading += deltaHeading;
         previousHeading = currentHeading;
 
-        return integratedHeading;
+        return -integratedHeading;
+    }
+    
+    private void unitTestTurn() {
+        turnLeft(0.5, -90);
+        turnRight(0.5, -110);
+
+        turnRight(0.5, 100);
+        turnLeft(0.5, 75);
+
+        turnLeft(0.5, -90);
+        turnLeft(0.5, -180);
+
+        turnLeft(0.5, -279);
+        turnRight(0.5, 73);
+
+
     }
 
     @Override
@@ -169,19 +182,9 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            currentAngle = imu.getAngularOrientation().firstAngle;
+            currentAngle = getIntegratedHeading();
 
-            //setPowerWithTime(0.5, 0, 0, 1);
-
-            //turn(0.5, 100);
-            //turn(0.5, 90);
-            //System.out.println("shimshon");
-
-            //turn(0.5, 100);
-            //turn(0.5, -90);
-
-            turnRight(0.5, 90);
-            turnRight(0.5, 270);
+            unitTestTurn();
 
             break;
             //System.out.println(currentAngle);
