@@ -170,6 +170,7 @@ public class MainDriveProgram extends LinearOpMode {
             telemetry.addData("Ratio front: ", (colorSensors.getRedColor()[0] + colorSensors.getGreenColor()[0])/colorSensors.getBlueColor()[0]);*/
 
 
+            telemetry.addData("Power: ", arm.hand.getPower());
 
             telemetry.update();
         }

@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.qualcomm.robotcore.hardware.Servo;
+
 @TeleOp(name="Romeo strafe drive", group="Linear OpMode")
 public class RomeoStrafeDrive extends LinearOpMode {
 
@@ -14,6 +16,8 @@ public class RomeoStrafeDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+
+    private Servo plane = null;
 
     private double slowSpeed = 0.4;
     private double fullSpeed = 1;
@@ -30,6 +34,7 @@ public class RomeoStrafeDrive extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        plane = hardwareMap.get(Servo.class, "plane");
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -54,6 +59,12 @@ public class RomeoStrafeDrive extends LinearOpMode {
             double rightFrontPower = forward - strafe - turn;
             double leftBackPower   = forward - strafe + turn;
             double rightBackPower  = forward + strafe - turn;
+
+            if (gamepad1.left_trigger > .75) {
+                plane.setPosition(Servo.MIN_POSITION);
+            } else if (gamepad1.right_trigger > .75) {
+                plane.setPosition(Servo.MAX_POSITION);
+            }
 
             if (gamepad1.y && canChangeSpeeds) {
                 canChangeSpeeds = false;

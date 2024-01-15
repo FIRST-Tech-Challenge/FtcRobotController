@@ -12,7 +12,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
 
-        RoadRunnerBotEntity blueExteriorMiddle = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity blueExterior = new DefaultBotBuilder(meepMeep)
                 // We set this bot to be blue
                 .setColorScheme(new ColorSchemeBlueDark())
                 .setDimensions(14.125, 16)
@@ -67,10 +67,7 @@ public class MeepMeepTesting {
                                 .splineTo(new Vector2d(-50, 12), Math.toRadians(-90))
                                 .forward(5)
                                 .back(50)
-                                .splineTo(new Vector2d(48, 42), Math.toRadians(0))
-                                .forward(1)
-                                .splineTo(new Vector2d(-5, 12), Math.toRadians(180))
-                                .forward(50)
+                                .splineTo(new Vector2d(48, 36), Math.toRadians(0))
                                 .build()
                 );
 
@@ -131,12 +128,10 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
 
                 // Add both of our declared bot entities
-                //.addEntity(blueInterior)
-                .addEntity(blueExteriorMiddle)
-                .addEntity(blueExteriorRight)
-                .addEntity(blueExteriorLeft)
-                //.addEntity(redExterior)
-                //.addEntity(redInterior)
+                .addEntity(blueInterior)
+                .addEntity(blueExterior)
+                .addEntity(redExterior)
+                .addEntity(redInterior)
                 .start();
     }
 }
