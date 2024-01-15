@@ -26,7 +26,7 @@ public class VoltageConstants {
     /**
      * The amount of leeway given to compare the starting
      */
-    private static double endVoltageLeeway = 0.5;
+    private static double endVoltageLeeway = 0.1;
 
     /**
      * The time (in seconds) before the battery cutoff will be considered

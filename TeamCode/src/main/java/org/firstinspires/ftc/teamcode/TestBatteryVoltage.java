@@ -30,7 +30,7 @@ public class TestBatteryVoltage extends OpMode {
 
     private DcMotor light1, light2, light3, light4;
     private boolean lightsOn = false;
-    private HashMap<Double, Double> storedVoltage;
+    private HashMap<Double, Double> storedVoltage = new HashMap<>();
 
     public void init() {
         light1 = hardwareMap.get(DcMotor.class, "light1");
@@ -116,6 +116,11 @@ public class TestBatteryVoltage extends OpMode {
     boolean minimumBatteryVoltageReached() {
         final Double[] STORED_VOLTAGE_VALUES = storedVoltage.values().toArray(new Double[0]);
         final int STORED_VOLTAGE_VALUES_LENGTH = STORED_VOLTAGE_VALUES.length - 1;
+        try {
+            double test = STORED_VOLTAGE_VALUES[STORED_VOLTAGE_VALUES_LENGTH];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
+        }
         final double LAST_STORED_VOLTAGE = STORED_VOLTAGE_VALUES[STORED_VOLTAGE_VALUES_LENGTH];
 
         if (batteryTestTime.seconds() < VoltageConstants.getGracePeriodBeforeCutoff())
@@ -123,8 +128,7 @@ public class TestBatteryVoltage extends OpMode {
 
         final double VOLTAGE_LEEWAY = VoltageConstants.getEndVoltageLeeway();
         return (batteryVoltage < VoltageConstants.getCutOffVoltage())
-                || (LAST_STORED_VOLTAGE > (startingBatteryVoltage - VOLTAGE_LEEWAY)
-                || (LAST_STORED_VOLTAGE > 12.0d));
+                || (LAST_STORED_VOLTAGE > (startingBatteryVoltage - VOLTAGE_LEEWAY));
     }
 
     double getAverageRateOfChange() {
