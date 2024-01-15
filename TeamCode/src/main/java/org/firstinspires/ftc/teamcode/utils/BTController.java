@@ -69,9 +69,6 @@ public class BTController{
         this.m_buttonsSuppliers[BUTTON_UP2.ordinal()]=()->gamepad2.y;
         this.m_buttonsSuppliers[BUTTON_DOWN2.ordinal()]=()->gamepad2.a;
 
-
-
-
     }
 
     public Trigger getTrigger(double threshold, Buttons... axes) {

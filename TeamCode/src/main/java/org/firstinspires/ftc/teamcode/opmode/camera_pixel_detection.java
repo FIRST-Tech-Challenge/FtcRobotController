@@ -29,10 +29,16 @@ public class camera_pixel_detection extends OpMode {
     OpenCvCamera camera;
     double[] lowerPvals = new double[]{0, 0, 0};
     double[] upperPvals = new double[]{60, 255, 255};
-    Scalar lowerW = new Scalar(0, 0, 200);
-    Scalar upperW = new Scalar(360, 25, 240);
-    double[] lowerWvals = new double[]{0, 0, 200};
-    double[] upperWvals = new double[]{360, 25, 240};
+    Scalar lowerP = new Scalar(250, 50, 76);
+    Scalar upperP = new Scalar(300, 180, 180);
+
+//    Scalar lowerW = new Scalar(0, 0, 200); the real lowerW
+//    Scalar upperw = new Scalar(360, 25, 240); the real upperW
+//    double[] lowerWvals = new double[]{0, 0, 200}; the real upperWvals
+//    double[] upperWvals = new double[]{360, 25, 240}; the real upperWvals
+
+//    double[] lowerGvals = new double[]{0, 0, 200}; the real lowerGvals
+//    double[] upperGvals = new double[]{360, 25, 240}; the real upperGvals
 //    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
 //    Scalar upperG = new Scalar(150, 250, 250); the real upperG
 
@@ -80,11 +86,11 @@ public class camera_pixel_detection extends OpMode {
 
     @Override
     public void init_loop() {
-        telemetry.addData("lowerW: ", lowerW);
-        telemetry.addData("upperW: ", upperW);
+        telemetry.addData("lowerP: ", lowerP);
+        telemetry.addData("upperP: ", upperP);
         telemetry.addData("HSV number ", choose_H_S_V);
         telemetry.addData("lower or upper ", l_or_u);
-        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_trigger > 0.1=Choose H or S or V");
+        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_trigger > 0.1=Choose H or S or V \n lower = 1   upper = 2");
         if(gamepad1.left_bumper && !lastLeftBumper && l_or_u > 1) {
             l_or_u -= 1;
         }lastLeftBumper = gamepad1.left_bumper;
@@ -105,25 +111,34 @@ public class camera_pixel_detection extends OpMode {
 
         if(gamepad1.a && !lastA){
             if(l_or_u == 2){
-                upperWvals[choose_H_S_V]++;}
+                upperPvals[choose_H_S_V]++;}
             if(l_or_u == 1){
-                lowerWvals[choose_H_S_V]++;}
+                lowerPvals[choose_H_S_V]++;}
         }lastA=gamepad1.a;
 
         if(gamepad1.b && !lastB){
-            upperWvals[choose_H_S_V]--;
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V]--;}
+            if(l_or_u == 1){
+            lowerPvals[choose_H_S_V]--;}
         }lastB=gamepad1.b;
 
         if(gamepad1.x && !lastX){
-            upperWvals[choose_H_S_V] += 10;
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V] += 10;}
+            if(l_or_u == 1){
+            lowerPvals[choose_H_S_V] += 10;}
         }lastX=gamepad1.x;
 
         if(gamepad1.y && !lastY){
-            upperWvals[choose_H_S_V] -= 10;
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V] -= 10;}
+            if(l_or_u == 1){
+            upperPvals[choose_H_S_V] -= 10;}
         }lastY=gamepad1.y;
 
-        lowerW.set(lowerWvals);
-        upperW.set(upperWvals);
+        lowerP.set(lowerPvals);
+        upperP.set(upperPvals);
     }
 
     @Override
@@ -146,7 +161,7 @@ public class camera_pixel_detection extends OpMode {
         public Mat processframeG(Mat input) {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-            inRange(hsv, lowerW, upperW, binaryG);
+            inRange(hsv, lowerP, upperP, binaryG);
             //                Imgproc.erode(binaryG,binaryAfterG,kernel);
             return binaryG;
         }
