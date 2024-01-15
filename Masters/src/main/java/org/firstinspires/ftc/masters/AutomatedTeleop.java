@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons.*;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 import java.util.List;
@@ -209,6 +211,8 @@ public class AutomatedTeleop extends LinearOpMode {
         angleRotationAdjustment = 0;
 
         ElapsedTime intakeElapsedTime = null, outtakeElapsedTime = null;
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         waitForStart();
@@ -496,6 +500,16 @@ public class AutomatedTeleop extends LinearOpMode {
             telemetry.addData("Arm", clawArm.getPosition());
             telemetry.addData("backSlides", target); // 1725, 2400,
             telemetry.addData("time", runtime.time());
+            telemetry.addData("Sensed Red", colorSensor.red());
+            telemetry.addData("Sensed Blue", colorSensor.blue());
+            telemetry.addData("Sensed Green", colorSensor.green());
+            telemetry.addData("Distance CM", colorSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("Light Detected", colorSensor.getLightDetected());
+            telemetry.addData("Raw Light Detected", colorSensor.getRawLightDetected());
+            telemetry.addData("Max Raw Light Detected", colorSensor.getRawLightDetectedMax());
+            telemetry.addData("Raw Optics", colorSensor.rawOptical());
+            telemetry.addData("Status", colorSensor.status());
+            telemetry.update();
 
             telemetry.update();
         }

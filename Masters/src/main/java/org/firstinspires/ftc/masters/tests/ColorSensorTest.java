@@ -36,7 +36,7 @@ public class ColorSensorTest extends LinearOpMode {
             telemetry.addData("Status", colorSensor.status());
             telemetry.update();
 
-            if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold){
+            if (colorSensor.getDistance(DistanceUnit.CM) > 3.5 && colorSensor.getDistance(DistanceUnit.CM) < 3.5){
                 clawServo.setPosition(0.82);
             } else {
                 clawServo.setPosition(0.4);
