@@ -1,16 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.*;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.BUMPER_LEFT1;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.BUMPER_RIGHT1;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.BUTTON_RIGHT1;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_TRIGGER1;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_TRIGGER2;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_X2;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_Y2;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.RIGHT_TRIGGER2;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.firstinspires.ftc.teamcode.utils.BTCommand;
+import org.firstinspires.ftc.teamcode.subsystems.Chassis;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper;
+import org.firstinspires.ftc.teamcode.subsystems.climb;
+import org.firstinspires.ftc.teamcode.subsystems.plane;
 import org.firstinspires.ftc.teamcode.utils.BTController;
-import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
 import java.util.function.BooleanSupplier;
 
@@ -40,6 +48,11 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
         bindCommands();
     }
+
+    public RobotContainer(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
+
+    }
+
     //bind commands to trigger
     public void bindCommands(){
 

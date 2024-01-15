@@ -27,18 +27,19 @@ public class camera_pixel_detection extends OpMode {
     public static int choose_H_S_V = 0; // first arm weight KG
     WebcamName webcamName;
     OpenCvCamera camera;
-    double[] lowerPvals = new double[]{0, 0, 0};
-    double[] upperPvals = new double[]{60, 255, 255};
-    Scalar lowerP = new Scalar(250, 50, 76);
-    Scalar upperP = new Scalar(300, 180, 180);
+    double[] lowerPvals = new double[]{120, 50, 85};
+    double[] upperPvals = new double[]{150, 90, 155};
+
+    Scalar lowerP = new Scalar(120, 50, 85); // todo: make it more accurate
+    Scalar upperP = new Scalar(150, 90, 155); // todo: make it more accurate
 
 //    Scalar lowerW = new Scalar(0, 0, 200); the real lowerW
 //    Scalar upperw = new Scalar(360, 25, 240); the real upperW
 //    double[] lowerWvals = new double[]{0, 0, 200}; the real upperWvals
 //    double[] upperWvals = new double[]{360, 25, 240}; the real upperWvals
 
-//    double[] lowerGvals = new double[]{0, 0, 200}; the real lowerGvals
-//    double[] upperGvals = new double[]{360, 25, 240}; the real upperGvals
+//    double[] lowerGvals = new double[]{50, 75, 80}; the real lowerGvals
+//    double[] upperGvals = new double[]{150, 250, 250}; the real upperGvals
 //    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
 //    Scalar upperG = new Scalar(150, 250, 250); the real upperG
 
@@ -103,9 +104,9 @@ public class camera_pixel_detection extends OpMode {
             choose_H_S_V -= 1;
         }lastLeftTrigger =gamepad1.left_trigger > 0.1;
 
-        if(gamepad1.right_trigger > 0.1 && !lastRightTrigger){
+        if(gamepad1.right_trigger > 0.1 && !lastRightTrigger && choose_H_S_V < 2){
             choose_H_S_V += 1;
-        }lastRightTrigger=gamepad1.right_trigger > 0.1 && choose_H_S_V < 2;
+        }lastRightTrigger=gamepad1.right_trigger > 0.1;
 
 
 
@@ -134,7 +135,7 @@ public class camera_pixel_detection extends OpMode {
             if(l_or_u == 2){
             upperPvals[choose_H_S_V] -= 10;}
             if(l_or_u == 1){
-            upperPvals[choose_H_S_V] -= 10;}
+            lowerPvals[choose_H_S_V] -= 10;}
         }lastY=gamepad1.y;
 
         lowerP.set(lowerPvals);
