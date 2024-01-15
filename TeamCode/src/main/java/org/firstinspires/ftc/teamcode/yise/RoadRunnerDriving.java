@@ -39,9 +39,9 @@ public class RoadRunnerDriving {
 
     public void updateMotorsFromStick(Gamepad gamepad) {
         drive.setWeightedDrivePower(new Pose2d(
-                gamepad.left_stick_y * speedMultiplier,
-                gamepad.left_stick_x * speedMultiplier,
-                gamepad.right_stick_x * speedMultiplier
+                -gamepad.left_stick_y * speedMultiplier,
+                -gamepad.left_stick_x * speedMultiplier,
+                -gamepad.right_stick_x * speedMultiplier
         ));
     }
 

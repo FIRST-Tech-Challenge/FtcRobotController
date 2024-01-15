@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.yise.DriveColorExample;
 import org.firstinspires.ftc.teamcode.yise.IntakeSystem;
 import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
+import org.firstinspires.ftc.teamcode.yise.Parameters;
 import org.firstinspires.ftc.teamcode.yise.RoadRunnerDriving;
 
 @TeleOp(name="Competition drive", group="Linear Opmode")
@@ -19,7 +20,7 @@ public class MainDriveProgram extends LinearOpMode {
 
     boolean canToggleSlowMode = true;
     boolean canToggleHandPosition = true;
-    boolean driverControl = true;
+    boolean reverseIntake = false;
 
     boolean inEndGame = false;
 
@@ -69,9 +70,19 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Intake
              */
-            if (gamepad2.right_trigger > 0.5 || gamepad1.right_trigger > 0.5){
-                intakeSystem.runIntakeSystem(1);
-            } else if (gamepad2.left_trigger > 0.5 || gamepad1.left_trigger > 0.5){
+            if ((colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) && (colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE)) {
+                reverseIntake = true;
+            } else {
+                reverseIntake = false;
+            }
+
+            if ((gamepad2.right_trigger > 0.5 || gamepad1.right_trigger > 0.5)) {
+                if (reverseIntake) {
+                    intakeSystem.runIntakeSystem(-1);
+                } else {
+                    intakeSystem.runIntakeSystem(1);
+                }
+            } else if ((gamepad2.left_trigger > 0.5 || gamepad1.left_trigger > 0.5)) {
                 intakeSystem.runIntakeSystem(-0.5);
             } else {
                 intakeSystem.runIntakeSystem(0);
@@ -83,13 +94,13 @@ public class MainDriveProgram extends LinearOpMode {
              * Arm slides
              */
             if (gamepad2.dpad_up){
-                arm.extendAndDrop(LiftArm.Distance.FULL);
+                arm.extend(LiftArm.Distance.FULL);
                 arm.holdArm();
             } else if (gamepad2.dpad_right){
-                arm.extendAndDrop(LiftArm.Distance.HALF);
+                arm.extend(LiftArm.Distance.HALF);
                 arm.holdArm();
             } else if (gamepad2.dpad_left) {
-                arm.extendAndDrop(LiftArm.Distance.AUTO);
+                arm.extend(LiftArm.Distance.AUTO);
                 arm.holdArm();
             } else if (gamepad2.dpad_down) {
                 arm.retract();
@@ -140,10 +151,9 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Telemetry data
              */
-            telemetry.addData("Trapdoor: ", arm.trapdoor.getPosition());
-            telemetry.addData("Hand: ", arm.getHandPosition());
-            telemetry.addData("Intake: ", arm.intakePower);
-            telemetry.addData("Slides (R, L): ", arm.getSlidePosition() + ", " + arm.getSlidePosition());
+            telemetry.addData("Slide: ", arm.getSlidePosition());
+            telemetry.addData("Arm pos: ", arm.getHandPosition());
+            telemetry.addData("Hand power: ", arm.hand.getPower());
 
             telemetry.addLine();
 
@@ -154,10 +164,10 @@ public class MainDriveProgram extends LinearOpMode {
             telemetry.addData("Blue color back: ", colorSensors.getBlueColor()[1]);
             telemetry.addData("Green color back: ", colorSensors.getGreenColor()[1]);*/
 
-            telemetry.addData("Back pixel color: ", colorSensors.getBackPixelColor());
-            telemetry.addData("Front pixel color: ", colorSensors.getFrontPixelColor());
-            telemetry.addData("Ratio back: ", (colorSensors.getRedColor()[1] + colorSensors.getGreenColor()[1])/colorSensors.getBlueColor()[1]);
-            telemetry.addData("Ratio front: ", (colorSensors.getRedColor()[0] + colorSensors.getGreenColor()[0])/colorSensors.getBlueColor()[0]);
+            /*telemetry.addData("Back pixel color: ", colorSensors.getBackPixelColor());
+            telemetry.addData("Front pixel color: ", colorSensors.getFrontPixelColor());*/
+            /*telemetry.addData("Ratio back: ", (colorSensors.getRedColor()[1] + colorSensors.getGreenColor()[1])/colorSensors.getBlueColor()[1]);
+            telemetry.addData("Ratio front: ", (colorSensors.getRedColor()[0] + colorSensors.getGreenColor()[0])/colorSensors.getBlueColor()[0]);*/
 
 
 

@@ -119,10 +119,10 @@ public class SubsystemTest extends LinearOpMode {
              */
             if (gamepad1.dpad_up){
                 //rrDrive.pixelDropRedFar();
-                arm.extendAndDrop(LiftArm.Distance.FULL);
+                arm.extend(LiftArm.Distance.FULL);
             } else if (gamepad1.dpad_right){
                 //rrDrive.pixelDropRedNear();
-                arm.extendAndDrop(LiftArm.Distance.HALF);
+                arm.extend(LiftArm.Distance.HALF);
             } else if (gamepad1.dpad_down) {
                 arm.retract();
             }
