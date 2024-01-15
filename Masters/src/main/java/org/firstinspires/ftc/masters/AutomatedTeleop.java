@@ -89,7 +89,7 @@ public class AutomatedTeleop extends LinearOpMode {
     private boolean isRetracting = false;
 
     private DriveMode driveMode = DriveMode.NORMAL;
-    private OuttakeState outtakeState = OuttakeState.MoveToTransfer;
+    private OuttakeState outtakeState = OuttakeState.ReadyToTransfer;
     private IntakeState intakeState = IntakeState.Transition;
 
     private Retract retract = Retract.back;
@@ -156,7 +156,7 @@ public class AutomatedTeleop extends LinearOpMode {
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
+        outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchSensor = hardwareMap.touchSensor.get("touch");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 

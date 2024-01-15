@@ -12,11 +12,11 @@ public class CSCons {
     public static double clawOpen = 0.4;
     public static double clawClosed = 0.82;
     public static double clawTransfer = 0.72;
-    public static double clawAngleGroundToThree = .87;
+    public static double clawAngleGroundToThree = .92;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .2;
     public static double clawAngleTransfer = .02;
-    public static double clawArmGround = .75;
+    public static double clawArmGround = .79;
     public static double clawArm2 = .795;
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
@@ -26,7 +26,7 @@ public class CSCons {
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=.05;
-    public static double outtakeAngleTransfer=67;
+    public static double outtakeAngleTransfer=.67;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop = .54;
     public static double outtakeMovementTransfer = .064;
