@@ -307,8 +307,8 @@ RB - Hang up
                     if (gamepad1.x){
                         outtakeHook.setPosition(CSCons.openHook);
                         sleep(100);
-                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
-                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+                        outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
+                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
                         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
                     }
                     break;

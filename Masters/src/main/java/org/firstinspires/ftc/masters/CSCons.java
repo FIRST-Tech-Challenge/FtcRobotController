@@ -28,7 +28,7 @@ public class CSCons {
     public static double outtakeAngleTransfer=67;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop = .54;
-    public static double outtakeMovementBackTransfer = .064;
+    public static double outtakeMovementTransfer = .064;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.8;
     public static double closeHook = 1;

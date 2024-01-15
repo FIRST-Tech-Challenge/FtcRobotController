@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -79,7 +80,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     DcMotor backSlides = null;
     DcMotor hangingMotor = null;
 
-    Servo planeLaunch;
     Servo planeRaise;
     Servo clawServo;
     Servo clawArm;
@@ -87,8 +87,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     Servo cameraTurning;
     Servo outtakeHook;
     Servo outtakeRotation;
-    Servo outtakeMovementRight;
-    Servo outtakeMovementLeft;
+    Servo outtakeMovement;
+
+    TouchSensor touchSensor;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -148,7 +149,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
         backSlides = hardwareMap.dcMotor.get("backSlides");
 
-        planeLaunch = hardwareMap.servo.get("planeLaunch");
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
@@ -156,8 +156,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
-        outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
+        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
+        touchSensor = hardwareMap.touchSensor.get("touch");
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -217,6 +217,22 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void intakeToTransfer() {
         clawAngle.setPosition(CSCons.clawAngleTransfer);
         clawArm.setPosition(clawArmTransfer);
+    }
+
+    public void outtakeToBackdrop() {
+        outtakeHook.setPosition(CSCons.closeHook);
+        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
+    }
+
+    public void outtakeToTransfer() {
+        outtakeHook.setPosition(CSCons.openHook);
+        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+    }
+
+    public void dropPixel() {
+        outtakeHook.setPosition(CSCons.openHook);
     }
 
 //    public void closeAutoClaw(){

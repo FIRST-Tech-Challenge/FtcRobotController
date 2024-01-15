@@ -92,8 +92,8 @@ public class Robot {
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawTransfer);
 
-        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
     }

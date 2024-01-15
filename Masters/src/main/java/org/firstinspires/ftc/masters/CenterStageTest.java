@@ -184,8 +184,8 @@ RB - Hang up
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawTransfer);
 
-        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
 
@@ -267,8 +267,8 @@ RB - Hang up
                 outtakeRotationTarget = CSCons.outtakeAngleFolder;
             }
             if (gamepad2.left_stick_y < -0.2 && backSlidePos != 0) {
-                outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-                outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+                outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
+                outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
                 outtakeGoingToTransfer = true;
                 outtakeRotationTarget = CSCons.outtakeAngleTransfer;
                 outtakeHook.setPosition(CSCons.openHook);
