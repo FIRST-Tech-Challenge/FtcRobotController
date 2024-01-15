@@ -101,13 +101,11 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                     if (!drive.isBusy()) {
                         currentState = State.PURPLE_DEPOSIT;
                     } else {
-                        //claw arm down
-                        //claw arm angle
+                        drive.intakeToGround();
                     }
                     break;
                 case PURPLE_DEPOSIT:
-                    //deposit purple pixel
-                    //open claw
+                    drive.openClaw();
                     currentState = State.BACKUP_FROM_SPIKES;
                     drive.followTrajectoryAsync(backUpFromSpikes);
                     break;
@@ -116,26 +114,26 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                         drive.followTrajectory(yellowDepositPath);
                         currentState = State.YELLOW_DEPOSIT_PATH;
                     } else {
-                        //claw arm up
-                        //outtake to deposit
+                        drive.intakeToTransfer();
                     }
                     break;
                 case YELLOW_DEPOSIT_PATH:
                     if (!drive.isBusy()) {
                         currentState = State.YELLOW_DEPOSIT_PATH;
                     } else {
-                        //claw arm up
-                        //outtake to deposit
+                        drive.intakeToTransfer();
+                        drive.outtakeToBackdrop();
                     }
                 case YELLOW_DEPOSIT:
                     //april tag alignment
                     //if april tag is aligned drop and
+                    drive.dropPixel();
                     currentState = State.PARK;
                     drive.followTrajectoryAsync(park);
                     break;
                 case PARK:
                     if (!drive.isBusy()) {
-                        //bring outtake to transfer
+                        drive.outtakeToTransfer();
                     }
             }
         }

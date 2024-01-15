@@ -193,7 +193,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawOpen);
 
-        outtakeMovement.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
         hookPosition = HookPosition.OPEN;
@@ -448,7 +448,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
 
             if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
-                outtakeMovement.setPosition(CSCons.outtakeMovementBackTransfer);
+                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
                 outtakeGoingToTransfer = true;
                 outtakeHook.setPosition(CSCons.openHook);
             }
