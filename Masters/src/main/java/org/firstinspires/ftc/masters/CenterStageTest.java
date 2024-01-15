@@ -252,10 +252,10 @@ RB - Hang up
                 clawArm.setPosition(CSCons.clawArmTransition);
             }
 
-            if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1]-.1 && runtime.time() > x_last_pressed + .4) {
+            if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
                 x_last_pressed = runtime.time();
-            } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] +.1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0]-.1 && runtime.time() > x_last_pressed + .4) {
+            } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
                 outtakeHook.setPosition(CSCons.outtakeHook[1]);
                 x_last_pressed = runtime.time();
             }
