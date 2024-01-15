@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters;
 
 
-import static org.firstinspires.ftc.masters.CSCons.backSlidesPos;
 import static org.firstinspires.ftc.masters.CSCons.claw;
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
 
@@ -51,7 +50,7 @@ public class AutomatedTeleop extends LinearOpMode {
     DcMotor rightRearMotor = null;
 
     DcMotor gpSlideRight = null;
-    DcMotor gpSlideLeft = null;
+    DcMotor intakeSlides = null;
     DcMotor backSlides = null;
     DcMotor hangingMotor = null;
 
@@ -63,7 +62,7 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo cameraTurning;
     Servo outtakeHook;
     Servo outtakeRotation;
-    Servo outtakeMovementRight;
+    Servo backSlideServo;
     Servo outtakeMovementLeft;
 
     TouchSensor touchSensor;
@@ -150,11 +149,9 @@ public class AutomatedTeleop extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
-        gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
-        gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
+        intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
 
-        planeLaunch = hardwareMap.servo.get("planeLaunch");
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
@@ -162,8 +159,7 @@ public class AutomatedTeleop extends LinearOpMode {
         cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
-        outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
+        backSlideServo = hardwareMap.servo.get("backSlideServo");
         touchSensor = hardwareMap.touchSensor.get("touch");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
@@ -201,7 +197,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawServo.setPosition(CSCons.clawOpen);
 
         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        backSlideServo.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
         hookPosition = HookPosition.OPEN;
@@ -402,7 +398,7 @@ public class AutomatedTeleop extends LinearOpMode {
                 case MoveToDrop:
                     if (backSlides.getCurrentPosition()>100){
                         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
-                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                        backSlideServo.setPosition(CSCons.outtakeMovementBackDrop);
                         outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
                     }
                     if (backSlides.getCurrentPosition()>backSlidePos.getTarget()-100){
@@ -448,7 +444,7 @@ public class AutomatedTeleop extends LinearOpMode {
                 backSlidePos = OuttakePosition.LOW;
                 if (backSlides.getCurrentPosition() > 150) {
                     outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
-                    outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                    backSlideServo.setPosition(CSCons.outtakeMovementBackDrop);
                     outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
                     outtakeState = OuttakeState.MoveToDrop;
                 }
@@ -461,7 +457,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
             if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-                outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+                backSlideServo.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeGoingToTransfer = true;
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
             }

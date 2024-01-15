@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 @TeleOp(name="ServerPosTest", group = "GRRRRR")
 public class ServoPosTest extends LinearOpMode {
-    Servo planeLaunch;
     Servo planeRaise;
     Servo clawServo;
     Servo clawArm;
@@ -16,16 +15,14 @@ public class ServoPosTest extends LinearOpMode {
     Servo cameraTurning;
     Servo outtakeHook;
     Servo outtakeRotation;
-    Servo outtakeMovementRight;
-    Servo outtakeMovementLeft;
+    Servo backSlideServo;
 
-    double[] servoPos = {.5,.5,.5,.5,.5,.5,.5,.5,.5,.5};
+    double[] servoPos = {.5,.5,.5,.5,.5,.5,.5,.5,};
     int target = 0;
 
     @Override
     public void runOpMode() {
 
-        planeLaunch = hardwareMap.servo.get("planeLaunch");
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
@@ -33,8 +30,7 @@ public class ServoPosTest extends LinearOpMode {
         cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
-        outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
+        backSlideServo = hardwareMap.servo.get("backSlideServo");
 
         waitForStart();
 
@@ -71,18 +67,15 @@ public class ServoPosTest extends LinearOpMode {
                 sleep(300);
             }
 
-            planeLaunch.setPosition(servoPos[0]);
-            planeRaise.setPosition(servoPos[1]);
-            clawServo.setPosition(servoPos[2]);
-            clawArm.setPosition(servoPos[3]);
-            clawAngle.setPosition(servoPos[4]);
-            cameraTurning.setPosition(servoPos[5]);
-            outtakeHook.setPosition(servoPos[6]);
-            outtakeRotation.setPosition(servoPos[7]);
-            outtakeMovementRight.setPosition(servoPos[8]);
-            outtakeMovementLeft.setPosition(servoPos[9]);
+            planeRaise.setPosition(servoPos[0]);
+            clawServo.setPosition(servoPos[1]);
+            clawArm.setPosition(servoPos[2]);
+            clawAngle.setPosition(servoPos[3]);
+            cameraTurning.setPosition(servoPos[4]);
+            outtakeHook.setPosition(servoPos[5]);
+            outtakeRotation.setPosition(servoPos[6]);
+            backSlideServo.setPosition(servoPos[7]);
 
-            telemetry.addData("planeLaunch",servoPos[0]);
             telemetry.addData("planeRaise",servoPos[1]);
             telemetry.addData("clawServo",servoPos[2]);
             telemetry.addData("clawArm",servoPos[3]);
@@ -90,8 +83,7 @@ public class ServoPosTest extends LinearOpMode {
             telemetry.addData("cameraTurning",servoPos[5]);
             telemetry.addData("outtakeHook",servoPos[6]);
             telemetry.addData("outtakeRotation",servoPos[7]);
-            telemetry.addData("outtakeMovementRight",servoPos[8]);
-            telemetry.addData("outtakeMovementLeft",servoPos[9]);
+            telemetry.addData("backSlideServo",servoPos[8]);
 
             telemetry.addData("Currently Editing: ", target);
 
