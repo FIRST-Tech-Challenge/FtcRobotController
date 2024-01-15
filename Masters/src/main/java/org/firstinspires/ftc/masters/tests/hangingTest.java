@@ -10,7 +10,7 @@ public class hangingTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor lift = hardwareMap.dcMotor.get("lift");
+        DcMotor lift = hardwareMap.dcMotor.get("hangingMotor");
 
         waitForStart();
 
@@ -19,9 +19,9 @@ public class hangingTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             if(gamepad1.dpad_up){
-                lift.setPower(1);
+                lift.setPower(.5);
             } else if (gamepad1.dpad_down) {
-                lift.setPower(-1);
+                lift.setPower(-.5);
             } else {
                 lift.setPower(0);
             }
