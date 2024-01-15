@@ -90,12 +90,12 @@ public class Robot {
     public void init(){
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.claw[2]);
+        clawServo.setPosition(CSCons.clawTransfer);
 
         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+        outtakeHook.setPosition(CSCons.openHook);
     }
 
     public void forward(double distance, double speed) {
@@ -230,13 +230,13 @@ public class Robot {
     }
 
     public void clawOpen() {
-        clawServo.setPosition(CSCons.claw[0]);
+        clawServo.setPosition(CSCons.clawOpen);
     }
     public void clawClosed() {
-        clawServo.setPosition(CSCons.claw[1]);
+        clawServo.setPosition(CSCons.clawClosed);
     }
     public void clawTransfer() {
-        clawServo.setPosition(CSCons.claw[1]);
+        clawServo.setPosition(CSCons.clawClosed);
     }
 
     public void turnLeft(double angle, double speed) {

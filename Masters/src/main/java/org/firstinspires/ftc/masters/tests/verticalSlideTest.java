@@ -25,7 +25,7 @@ public class verticalSlideTest extends LinearOpMode {
         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+        outtakeHook.setPosition(CSCons.openHook);
 
         waitForStart();
 

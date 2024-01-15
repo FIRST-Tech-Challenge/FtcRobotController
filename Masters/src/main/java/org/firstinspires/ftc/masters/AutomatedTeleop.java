@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.masters;
 
 
-import static org.firstinspires.ftc.masters.CSCons.claw;
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
+import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = "Center Stage automated teleop", group = "competition")
+@TeleOp(name = "Center Stage Automated TeleOp", group = "competition")
 public class AutomatedTeleop extends LinearOpMode {
 
     static int target = 0;
@@ -49,12 +49,10 @@ public class AutomatedTeleop extends LinearOpMode {
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
 
-    DcMotor gpSlideRight = null;
     DcMotor intakeSlides = null;
     DcMotor backSlides = null;
     DcMotor hangingMotor = null;
 
-    Servo planeLaunch;
     Servo planeRaise;
     Servo clawServo;
     Servo clawArm;
@@ -62,8 +60,7 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo cameraTurning;
     Servo outtakeHook;
     Servo outtakeRotation;
-    Servo backSlideServo;
-    Servo outtakeMovementLeft;
+    Servo outtakeMovement;
 
     TouchSensor touchSensor;
 
@@ -116,32 +113,32 @@ public class AutomatedTeleop extends LinearOpMode {
     Four bar position 1-5 auto stack pixels
     Slides position 1-11 placement on backboard
     Normal mode - pixel grabbing mode - entered with left stick down
-    D-pad controls extendo
-    D-pad up - extendo fully extended with four bar in position 4
-    D-pad right - extendo out 2/3? with four bar in position 1
-    D-pad down - extendo out 1/3? with four bar in position 1
-    D-pad left - extendo fully in and four bar in position 1
+    TODO: D-pad controls extendo
+    TODO: D-pad up - extendo fully extended with four bar in position 4
+    TODO: D-pad right - extendo out 2/3? with four bar in position 1
+    TODO: D-pad down - extendo out 1/3? with four bar in position 1
+    TODO: D-pad left - extendo fully in and four bar in position 1
     Buttons
-    A - claw opens and closes
-    B - transfers and moves to slide pos 1
-    X - auto aligns and switches to pixel scoring mode
-    Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
-    LB - four bar down (presets)
-    RB - four bar up (presets)
-    LT - slides down (presets)
-    RT - slides up (presets)
+    TODO: A - claw opens and closes
+    TODO: B - transfers and moves to slide pos 1
+    TODO: X - auto aligns and switches to pixel scoring mode
+    TODO: Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
+    TODO: LB - four bar down (presets)
+    TODO: RB - four bar up (presets)
+    TODO: LT - slides down (presets)
+    TODO: RT - slides up (presets)
 
     Pixel scoring mode - entered with x while in normal
     Only moves right and left no forward/ backwards
-    LT - slides down (presets)
-    RT - slides up (presets)
-    Y - press once drop one pixel, hold for drop both pixels
+    TODO: LT - slides down (presets)
+    TODO: RT - slides up (presets)
+    TODO: Y - press once drop one pixel, hold for drop both pixels
 
     Endgame mode - entered with right stick down
     Normal driving
-    X - Auto aligns on April tag for shooter, raise shooter, shoot
-    LB - Hang down
-    RB - Hang up
+    TODO: X - Auto aligns on April tag for shooter, raise shooter, shoot
+    TODO: LB - Hang down
+    TODO: RB - Hang up
         */
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
@@ -159,7 +156,7 @@ public class AutomatedTeleop extends LinearOpMode {
         cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        backSlideServo = hardwareMap.servo.get("backSlideServo");
+        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
         touchSensor = hardwareMap.touchSensor.get("touch");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
@@ -196,8 +193,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawOpen);
 
-        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-        backSlideServo.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovement.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
         hookPosition = HookPosition.OPEN;
@@ -220,10 +216,8 @@ public class AutomatedTeleop extends LinearOpMode {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
 
             switch (driveMode) {
-
                 case NORMAL:
                 case END_GAME:
-
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
                     break;
                 case PIXEL_SCORE:
@@ -254,7 +248,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     if (gamepad2.dpad_up) {
                         intakeState = IntakeState.Transfer;
                         clawAngle.setPosition(CSCons.clawAngleTransfer);
-                        clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+                        clawArm.setPosition(CSCons.clawArmTransfer);
                     }
 
                     if (gamepad2.dpad_left) {
@@ -397,8 +391,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     break;
                 case MoveToDrop:
                     if (backSlides.getCurrentPosition()>100){
-                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
-                        backSlideServo.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
                         outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
                     }
                     if (backSlides.getCurrentPosition()>backSlidePos.getTarget()-100){
@@ -421,10 +414,10 @@ public class AutomatedTeleop extends LinearOpMode {
 
             if (outtakeState == OuttakeState.ReadyToDrop || outtakeState == OuttakeState.ReadyToTransfer) {
                 if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                    outtakeHook.setPosition(CSCons.openHook);
                     x_last_pressed = runtime.time();
                 } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.outtakeHook[1]);
+                    outtakeHook.setPosition(CSCons.closeHook);
                     x_last_pressed = runtime.time();
                 }
             }
@@ -443,8 +436,7 @@ public class AutomatedTeleop extends LinearOpMode {
                 hookPosition = HookPosition.CLOSED;
                 backSlidePos = OuttakePosition.LOW;
                 if (backSlides.getCurrentPosition() > 150) {
-                    outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
-                    backSlideServo.setPosition(CSCons.outtakeMovementBackDrop);
+                    outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
                     outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
                     outtakeState = OuttakeState.MoveToDrop;
                 }
@@ -456,10 +448,9 @@ public class AutomatedTeleop extends LinearOpMode {
 
 
             if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
-                outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-                backSlideServo.setPosition(CSCons.outtakeMovementBackTransfer);
+                outtakeMovement.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeGoingToTransfer = true;
-                outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                outtakeHook.setPosition(CSCons.openHook);
             }
 
             if (gamepad2.left_bumper) {
@@ -490,7 +481,7 @@ public class AutomatedTeleop extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                clawServo.setPosition(claw[2]);
+                clawServo.setPosition(clawTransfer);
             }
 
 

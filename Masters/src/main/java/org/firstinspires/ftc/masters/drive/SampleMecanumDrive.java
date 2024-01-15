@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.masters.drive;
 
-import static org.firstinspires.ftc.masters.CSCons.claw;
+import static org.firstinspires.ftc.masters.CSCons.clawArmTransfer;
+import static org.firstinspires.ftc.masters.CSCons.clawClosed;
+import static org.firstinspires.ftc.masters.CSCons.clawOpen;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -39,6 +41,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -199,11 +202,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void openClaw(){
-        clawServo.setPosition(claw[0]);
+        clawServo.setPosition(clawOpen);
     }
 
     public void closeClaw(){
-        clawServo.setPosition(claw[1]);
+        clawServo.setPosition(clawClosed);
+    }
+
+    public void intakeToGround() {
+        clawAngle.setPosition(CSCons.clawAngleTransfer);
+        clawArm.setPosition(CSCons.clawArmTransfer);
+    }
+
+    public void intakeToTransfer() {
+        clawAngle.setPosition(CSCons.clawAngleTransfer);
+        clawArm.setPosition(clawArmTransfer);
     }
 
 //    public void closeAutoClaw(){

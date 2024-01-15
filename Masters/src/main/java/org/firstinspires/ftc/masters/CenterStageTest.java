@@ -182,12 +182,12 @@ RB - Hang up
 
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.claw[2]);
+        clawServo.setPosition(CSCons.clawTransfer);
 
         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+        outtakeHook.setPosition(CSCons.openHook);
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
@@ -226,10 +226,10 @@ RB - Hang up
 
             if (gamepad2.b && clawClosed == true) {
                 clawClosed = false;
-                clawServo.setPosition(CSCons.claw[0]);
+                clawServo.setPosition(CSCons.clawOpen);
             } else if (gamepad2.a && clawClosed == false) {
                 clawClosed = true;
-                clawServo.setPosition(CSCons.claw[1]);
+                clawServo.setPosition(CSCons.clawClosed);
             }
 
             if (gamepad2.dpad_down) {
@@ -253,15 +253,15 @@ RB - Hang up
             }
 
             if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                outtakeHook.setPosition(CSCons.openHook);
                 x_last_pressed = runtime.time();
             } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
-                outtakeHook.setPosition(CSCons.outtakeHook[1]);
+                outtakeHook.setPosition(CSCons.closeHook);
                 x_last_pressed = runtime.time();
             }
 
             if (gamepad2.left_stick_y > 0.2) {
-                outtakeHook.setPosition(CSCons.outtakeHook[1]);
+                outtakeHook.setPosition(CSCons.closeHook);
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
                 outtakeRotationTarget = CSCons.outtakeAngleFolder;
@@ -271,7 +271,7 @@ RB - Hang up
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeGoingToTransfer = true;
                 outtakeRotationTarget = CSCons.outtakeAngleTransfer;
-                outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                outtakeHook.setPosition(CSCons.openHook);
             }
 
             if (gamepad2.left_bumper) {
@@ -295,7 +295,7 @@ RB - Hang up
             }
 
             if (gamepad1.a){
-                clawServo.setPosition(CSCons.claw[2]);
+                clawServo.setPosition(CSCons.clawTransfer);
             }
 
                     if (Math.abs(y) < 0.2) {
