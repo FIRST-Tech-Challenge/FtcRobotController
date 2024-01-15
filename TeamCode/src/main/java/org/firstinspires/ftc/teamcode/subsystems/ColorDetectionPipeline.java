@@ -16,15 +16,15 @@ import java.util.ArrayList;
 
 @Config
 public class ColorDetectionPipeline extends OpenCvPipeline {
-    public static double ALIGN_R_L_X_OFFSET = 0;
-    public static double ALIGN_R_L_Y_OFFSET = 0;
-    public static double ALIGN_R_R_X_OFFSET = 0;
-    public static double ALIGN_R_R_Y_OFFSET = 0;
+    public static double ALIGN_R_L_X_OFFSET = 90;
+    public static double ALIGN_R_L_Y_OFFSET = 20;
+    public static double ALIGN_R_R_X_OFFSET = 55;
+    public static double ALIGN_R_R_Y_OFFSET = -10;
 
-    public static double ALIGN_L_L_X_OFFSET = 0;
-    public static double ALIGN_L_L_Y_OFFSET = 0;
-    public static double ALIGN_L_R_X_OFFSET = 0;
-    public static double ALIGN_L_R_Y_OFFSET = 0;
+    public static double ALIGN_L_L_X_OFFSET = 50;
+    public static double ALIGN_L_L_Y_OFFSET = 25;
+    public static double ALIGN_L_R_X_OFFSET = 90;
+    public static double ALIGN_L_R_Y_OFFSET = -5;
 
     static final int STREAM_WIDTH = 640; // resolution of camera   1280
     static final int STREAM_HEIGHT = 480; // resolution of camera  720
@@ -46,8 +46,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     public static int WidthRectA = 50; //180
     public static int HeightRectA = 50; //100
 
-    public static int WidthRectB = 100; //180
-    public static int HeightRectB = 100; //100
+    public static int WidthRectB = 50; //180
+    public static int HeightRectB = 50; //100
 
     static final Point RectATopLeftAnchor = new Point((STREAM_WIDTH / 2), (STREAM_HEIGHT / 2));
 

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import android.util.Log;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotDistanceSensor;
 import org.firstinspires.ftc.teamcode.subsystems.SmartGamepad;
 
 @TeleOp
-public class AATele extends LinearOpMode {
+public class dumpTest_tele extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         CrabRobot robot = new CrabRobot(this);
@@ -21,6 +19,8 @@ public class AATele extends LinearOpMode {
         SmartGamepad smartGamepad1 = robot.smartGamepad1;
         SmartGamepad smartGamepad2 = robot.smartGamepad2;
         RobotDistanceSensor distanceSensor = robot.ds;
+        double dumperPos = 0;
+        int slideHt = 0;
 
         NanoClock clock = NanoClock.system();
         double prevTime = clock.seconds();
@@ -78,77 +78,38 @@ public class AATele extends LinearOpMode {
 
             // Outtake automated
             if(smartGamepad2.a_pressed()){
-                robot.intake.setPower(0);
-                robot.intake.toBasePos();
-                robot.outtake.prepOuttake();
-            }
-
-            if (smartGamepad2.right_bumper) {
-                robot.outtake.dropPixelPos();
-            }
-
-            if (smartGamepad2.x_pressed()) {
-                robot.outtake.toIntakePos();
-            }
-
-            // Drone launcher
-            if(smartGamepad2.left_bumper){
-                robot.droneLauncher.release();
-            }
-
-                //UG OUTTAKE, single steps
-            if(smartGamepad2.left_trigger>0) { robot.outtake.moveDumper(-0.5);}
-            if(smartGamepad2.right_trigger>0) {robot.outtake.moveDumper( 0.5);}
-
-            if (smartGamepad2.dpad_right) {
-                robot.outtake.moveArm(0.5);
-            }
-            if (smartGamepad2.dpad_left) {
-                robot.outtake.moveArm(-0.5);
+                telemetry.addData("DumperPos ",dumperPos);
+                robot.outtake.setDumpServoPos(dumperPos);
+                dumperPos += 0.01;
             }
 
             if(smartGamepad2.b_pressed()){
-                robot.outtake.toDumpPos();
+                telemetry.addData("DumperPos ",dumperPos);
+                robot.outtake.setDumpServoPos(dumperPos);
+                dumperPos -= 0.01;
+            }
+            //Slide
+            if(smartGamepad2.dpad_up_pressed()){
+                telemetry.addData("Slide Height ", slideHt);
+                robot.outtake.lift.goToHtInches(slideHt);
+                slideHt += 1;
+            }
+            if(smartGamepad2.dpad_down_pressed()){
+                telemetry.addData("Slide Height ", slideHt);
+                robot.outtake.lift.goToHtInches(slideHt);
+                slideHt -= 1;
+            }
+            //Arms
+            if(smartGamepad2.right_bumper){
+                robot.outtake.armToBackdropPos();
+            }
+            if(smartGamepad2.left_bumper){
+                robot.outtake.armToTravelPosAuto();
             }
 
-            if (smartGamepad2.y_pressed()) {
-                robot.outtake.armToTravelPos();
-                robot.outtake.dumperToTravelPos();
-            }
 
-            if(smartGamepad2.right_stick_button){
-                    robot.outtake.prepHang();
-            }
-            /*if(smartGamepad2.leftJoystickButton()){
-                robot.outtake.lift.resetEncoder();;
-            }
-
-
-             */
-            if (smartGamepad2.dpad_up) {
-                robot.outtake.lift.adjustLift(1, false);
-                //telemetry.addLine("dpad up pressed");
-                //Log.v("PIDLift: gamepad", "dpad up");
-            }
-            else if (smartGamepad2.dpad_down) { 
-                robot.outtake.lift.adjustLift(-1, false);
-                //telemetry.addLine("dpad down pressed");
-                //Log.v("PIDLift: gamepad", "dpad down");
-            } else if (robot.outtake.lift.isLevelReached()){
-                robot.outtake.lift.stopMotor();
-            }
-
-            //telemetry.addData("intake pos", intakePosition);
-            //telemetry.addData("intake motor power", robot.intake.getPower());
-
-            //telemetry.addData("right servo position: ", robot.outtake.get_RightServoPos());
-            //telemetry.addData("left servo position: ", robot.outtake.get_LeftServoPos());
-            //telemetry.addData("dumper servo position: ", robot.outtake.getDumperPos());
-            //telemetry.addData("slide pos", robot.outtake.getLiftPos());
-            //telemetry.addData("slide power", robot.outtake.getLiftPower());
-            //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
-            //telemetry.addData("DistR: ",distanceSensor.distanceRight());
-            //telemetry.addData("DistL: ",distanceSensor.distanceLeft());
+            telemetry.addData("DistR: ",distanceSensor.distanceRight());
+            telemetry.addData("DistL: ",distanceSensor.distanceLeft());
             double currentTime = clock.seconds();
             //telemetry.addData("Update time: ", currentTime - prevTime);
             prevTime = currentTime;

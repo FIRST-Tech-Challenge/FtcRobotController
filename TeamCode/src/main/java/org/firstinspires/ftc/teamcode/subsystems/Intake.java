@@ -17,13 +17,13 @@ public class Intake implements Subsystem {
     private Servo intakeServoR;
     private double baseposl = 0.217;
     private double baseposr = 0.76715;
-    private double baseposl_yield = 0.36;
-    private double baseposr_yield = 0.615;
-    private double intakeposL = 0.814 - 0.01; //0.804
-    private double intakeposR = 0.1403 + 0.01; //0.1503
+    private double baseposl_yield = 0.36 + 0.4;
+    private double baseposr_yield = 0.615 - 0.4;
+    private double outtakeposL = 0.814 - 0.01; //0.804
+    private double outtakeposR = 0.1403 + 0.01; //0.1503
     //placeholder outtake position, may change depending on outtake
-    private double outtakeposL = 0.129 - 0.015;
-    private double outtakeposR = 0.8595 + 0.015;
+    private double intakeposL = 0.129+0.037;
+    private double intakeposR = 0.8595-0.037;
     private double lowerlimitL = 0.814;
     private double lowerlimitR = 0.13;
     private double upperlimitL = 0.09;
