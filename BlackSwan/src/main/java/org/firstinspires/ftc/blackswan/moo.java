@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.blackswan;
 
-import com.acmerobotics.roadrunner.control.PIDFController;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +9,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "moo")
 public class moo extends LinearOpMode {
+
+    private PIDController controller;
+
+    public static double p = 0.012, i = 0, d = 0.0001;
+    public static double f = 0.1;
+
+    public static int target = 0;
+
+    private final double ticks_in_degree = 1425 / 180.0;
+
+    public static int armQuickPosition = 0;
+
     public void runOpMode() throws InterruptedException {
 
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -26,21 +37,50 @@ public class moo extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         slideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        clawUp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        clawUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        clawUp.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         clawUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         double servoPosition = 0.5;
 
+        controller = new PIDController(p, i, d);
+        controller.setPID(p, i, d);
+
+        turnClaw.setPosition(0.45);
+
         waitForStart();
 
         while (opModeIsActive()) {
+
+            int armEncoder = clawUp.getCurrentPosition();
+            double pid = controller.calculate(armEncoder, target);
+            double ff = Math.cos(Math.toRadians(target / (1425 / 180.0))) * f;
+
+            double liftPower = pid + ff;
+
+            clawUp.setPower(liftPower);
+
+            if (armQuickPosition == 0) {
+                target = 0;
+            } else if (armQuickPosition == 1) {
+                target = 300;
+            }
+
+            if(gamepad2.dpad_up){
+                armQuickPosition = 0;
+            } else if(gamepad2.dpad_down){
+                armQuickPosition = 1;
+            }
+
             telemetry.addData("right stick", gamepad1.left_stick_y);
 
 //            forward -backward
@@ -156,12 +196,11 @@ public class moo extends LinearOpMode {
             }
 
 
-
-                         if (gamepad2.x) {
-                turnClaw.setPosition(0.45);
+            if (gamepad2.x) {
+                turnClaw.setPosition(0.3);
             }
             if (gamepad2.y) {
-                turnClaw.setPosition(0.3);
+                turnClaw.setPosition(0.1);
             }
             if (gamepad2.a) {
                 closeClaw.setPosition(0.7);
@@ -169,23 +208,23 @@ public class moo extends LinearOpMode {
             if (gamepad2.b) {
                 closeClaw.setPosition(0.45);
             }
-            if (gamepad2.right_stick_y > 0.7) {
-                clawUp.setPower(0.5);
-            } else {
-                clawUp.setPower(0);
-            }
-            if (gamepad2.right_stick_y < -0.7) {
-                clawUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                clawUp.setPower(-0.5);
-            } else if (gamepad2.right_stick_y > 0.7) {
-                clawUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                clawUp.setPower(0.5);
-            } else {
-                int pos= clawUp.getCurrentPosition();
-                clawUp.setTargetPosition(pos);
-                clawUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                 clawUp.setPower(0.5);
-            }
+//            if (gamepad2.right_stick_y > 0.7) {
+//                clawUp.setPower(0.5);
+//            } else {
+//                clawUp.setPower(0);
+//            }
+//            if (gamepad2.right_stick_y < -0.7) {
+//                clawUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                clawUp.setPower(-0.5);
+//            } else if (gamepad2.right_stick_y > 0.7) {
+//                clawUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                clawUp.setPower(0.5);
+//            } else {
+//                int pos= clawUp.getCurrentPosition();
+//                clawUp.setTargetPosition(pos);
+//                clawUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                 clawUp.setPower(0.5);
+//            }
             telemetry.update();
 
         }
