@@ -75,6 +75,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     public DcMotorEx liftMotor1;
     public DcMotorEx liftMotor2;
+    public Servo liftServo1;
+    public Servo doorServo;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -118,7 +120,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        clawServo = hardwareMap.servo.get("claw");
+        liftServo1 = hardwareMap.servo.get("lift1");
+        doorServo = hardwareMap.servo.get("door");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);

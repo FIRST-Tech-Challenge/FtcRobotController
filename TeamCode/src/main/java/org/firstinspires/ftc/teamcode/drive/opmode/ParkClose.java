@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
 @Autonomous(group = "drive")
-public class Park extends LinearOpMode {
+public class ParkClose extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -19,9 +19,10 @@ public class Park extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-        Pose2d startingPose = new Pose2d(0, 0, 0);
 
-        TrajectorySequence park = drive.trajectorySequenceBuilder(startingPose)
+        TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(0, 00, Math.toRadians(0)))
+                .waitSeconds(15)
+                .strafeLeft(3)
                 .forward(40)
                 .build();
         drive.followTrajectorySequence(park);

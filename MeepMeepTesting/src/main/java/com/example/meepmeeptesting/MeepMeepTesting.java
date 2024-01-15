@@ -10,7 +10,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep mm = new MeepMeep(800);
-        int detection = 3; // 1 = prop on left spike mark, 2 = middle, 3 = right
+        int detection = 1; // 1 = prop on left spike mark, 2 = middle, 3 = right
         int auto = 1;
         if (auto == 1) {
             if (detection == 1) {
@@ -18,12 +18,10 @@ public class MeepMeepTesting {
                         // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(90)))
-                                        .lineToLinearHeading(new Pose2d(-34, -35, Math.toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(38, -35, Math.toRadians(180)))
-                                        .turn(Math.toRadians(180))
-                                        .lineToLinearHeading(new Pose2d(-58, -35, Math.toRadians(0)))
-                                        .lineToLinearHeading(new Pose2d(38, -35, Math.toRadians(0)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-34, -60, Math.toRadians(0)))
+//                                        .lineToLinearHeading(new Pose2d(38, -34, Math.toRadians(0)))
+                                        .strafeLeft(3)
+                                        .forward(80)
 
                                         //                                        .splineToConstantHeading(new Vector2d(10, -34), Math.toRadians(-180))
 //                                        .lineToLinearHeading(new Pose2d(-34, -60, Math.toRadians(0)))

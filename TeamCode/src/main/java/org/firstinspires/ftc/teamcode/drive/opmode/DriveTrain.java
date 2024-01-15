@@ -164,6 +164,9 @@ public class DriveTrain extends OpMode
         if(gamepad1.right_bumper) {
             intakeMotor.setPower(0.6);
         }
+//        else if (gamepad1.left_bumper) {
+//            intakeMotor.setPower(-0.6);
+//        }
         else {
             intakeMotor.setPower(0);
         }
