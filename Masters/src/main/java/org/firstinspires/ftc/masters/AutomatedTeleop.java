@@ -153,7 +153,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
         clawAngle = hardwareMap.servo.get("clawAngle");
-        cameraTurning = hardwareMap.servo.get("cameraTurning");
+        //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("outtakeMovement");
@@ -239,7 +239,7 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
                     }
 
-                    if (clawPosition == ClawPosition.OPEN && colorSensor.getDistance(DistanceUnit.CM) < CSCons.closeClawDistance) {
+                    if (clawPosition == ClawPosition.OPEN && detectPixel()) {
                         clawPosition = ClawPosition.CLOSED;
                         clawServo.setPosition(CSCons.clawClosed);
 
@@ -547,6 +547,14 @@ public class AutomatedTeleop extends LinearOpMode {
         hookPosition = HookPosition.CLOSED;
         outtakeHook.setPosition(CSCons.closeHook);
         return time;
+    }
+
+    protected boolean detectPixel(){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

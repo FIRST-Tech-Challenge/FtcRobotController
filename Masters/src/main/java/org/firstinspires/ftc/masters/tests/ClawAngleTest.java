@@ -20,7 +20,7 @@ public class ClawAngleTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Servo clawAngle = hardwareMap.servo.get("clawAngle");
+        Servo clawAngle = hardwareMap.servo.get("clawArm");
 
         waitForStart();
 
