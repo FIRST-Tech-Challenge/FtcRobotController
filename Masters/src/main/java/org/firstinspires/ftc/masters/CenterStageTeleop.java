@@ -158,7 +158,7 @@ RB - Hang up
 
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.claw[2]);
+        clawServo.setPosition(CSCons.clawOpen);
 
 
 
@@ -195,7 +195,7 @@ RB - Hang up
                     //gp slides 1/3rds extension
                     //v4b preset 1 pixel high
                     //claw open
-                        clawArm.setPosition(CSCons.clawArmG);
+                        clawArm.setPosition(CSCons.clawArmGround);
                         clawAngle.setPosition(CSCons.clawAngleGroundToThree);
 
                     }

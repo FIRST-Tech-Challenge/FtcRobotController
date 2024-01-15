@@ -11,13 +11,16 @@ public class CSCons {
     public static int[] backSlidesPos = {0,1725,2400,0,0,0,0,0,0,0,0}; // 11 layers of scoring
     public static double[] gpSlidePos = {0,0,0,0}; // in, thirds to full extension
     public static double[] claw = {0.4,0.82, 0.72}; // open, closed, transfer
+    public static double clawOpen = 0.4;
+    public static double clawClosed = 0.82;
+    public static double clawTransfer = 0.72;
     //public static double[] clawAngles = {1,1,0.3,0.225}; // Ground - 3, 4 - 5, TRANSition, TRANSfer
     public static double clawAngleGroundToThree = 1;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .3;
     public static double clawAngleTransfer = .225;
     //public static double[] clawArm = {0.885,0.795,0.755,0.73,0.695,0.375,0.375}; // In Order G,2,3,4,5,TRANSition,TRANSfer
-    public static double clawArmG = .885;
+    public static double clawArmGround = .885;
     public static double clawArm2 = .795;
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
@@ -33,9 +36,18 @@ public class CSCons {
     public static double outtakeMovementBackTransfer = .15;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double[] outtakeHook = {0.309,0.79}; // open, close
+    public static double openHook = 0.309;
+    public static double closeHook = 0.79;
 
-    public static double outakeHookOpen = 0.309;
-    public static double outakeHookClosed = 0.78;
+    public static double droneFlat = 0.3;
+    public static double droneShooting = 0.1;
+
+    public static double closeClawDistance = 3; //in cm
+
+    public static long transferToBottomIntake = 200; //time in ms
+    public static long transferToScoreOuttake = 200;
+    public static long scoreToTransferOuttake = 200;
+    public static long closingHook = 100;
 
     public enum OuttakePosition{
         BOTTOM (30),
@@ -55,17 +67,25 @@ public class CSCons {
     }
 
     public enum IntakeState {
-        Transition, Transfer, Intake
+        Transition, Transfer, Intake, MoveToIntake;
     }
 
     public enum OuttakeState{
-        MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp
+        ClosingHook, MoveToTransfer, ReadyToTransfer, MoveToDrop, ReadyToDrop, Align, BackUp
     }
 
     public enum DriveMode {
         NORMAL,
         PIXEL_SCORE,
         END_GAME
+    }
+
+    public enum ClawPosition{
+        OPEN, CLOSED, TRANSFER
+    }
+
+    public enum  HookPosition{
+        OPEN, CLOSED
     }
 
 /**

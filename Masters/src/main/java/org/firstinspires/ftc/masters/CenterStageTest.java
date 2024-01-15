@@ -234,7 +234,7 @@ RB - Hang up
 
             if (gamepad2.dpad_down) {
                 clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-                clawArm.setPosition(CSCons.clawArmG);
+                clawArm.setPosition(CSCons.clawArmGround);
             }
 
             if (gamepad2.dpad_up) {

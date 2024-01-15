@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.masters;
 
+
+import static org.firstinspires.ftc.masters.CSCons.backSlidesPos;
+import static org.firstinspires.ftc.masters.CSCons.claw;
+import static org.firstinspires.ftc.masters.CSCons.clawOpen;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,16 +17,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
+import org.firstinspires.ftc.masters.CSCons.*;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Config
 @TeleOp(name = "Center Stage automated teleop", group = "competition")
 public class AutomatedTeleop extends LinearOpMode {
 
     static int target = 0;
-    static OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
+    OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
 
     private final double ticks_in_degrees = 384.5 / 180;
 
@@ -83,11 +92,16 @@ public class AutomatedTeleop extends LinearOpMode {
 
     private boolean isRetracting = false;
 
-    private CSCons.DriveMode driveMode = CSCons.DriveMode.NORMAL;
-    private CSCons.OuttakeState outtakeState = CSCons.OuttakeState.MoveToTransfer;
-    private CSCons.IntakeState intakeState = CSCons.IntakeState.Transition;
+    private DriveMode driveMode = DriveMode.NORMAL;
+    private OuttakeState outtakeState = OuttakeState.MoveToTransfer;
+    private IntakeState intakeState = IntakeState.Transition;
 
     private Retract retract = Retract.back;
+
+    private ClawPosition clawPosition = ClawPosition.OPEN;
+    private HookPosition hookPosition = HookPosition.OPEN;
+    RevColorSensorV3 colorSensor;
+    double angleRotationAdjustment = 0;
 
     @Override
     public void runOpMode() {
@@ -151,6 +165,8 @@ RB - Hang up
         outtakeMovementRight = hardwareMap.servo.get("outtakeMovementRight");
         outtakeMovementLeft = hardwareMap.servo.get("outtakeMovementLeft");
         touchSensor = hardwareMap.touchSensor.get("touch");
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
+
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -182,17 +198,21 @@ RB - Hang up
 
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.claw[2]);
+        clawServo.setPosition(CSCons.clawOpen);
 
         outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+        outtakeHook.setPosition(CSCons.openHook);
+        hookPosition = HookPosition.OPEN;
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
         target = backSlidePos.getTarget();
+        angleRotationAdjustment = 0;
+
+        ElapsedTime intakeElapsedTime = null, outtakeElapsedTime = null;
 
 
         waitForStart();
@@ -215,70 +235,259 @@ RB - Hang up
                     break;
             }
 
-           backSlidesMove();
+            backSlidesMove(target);
+
+            switch (intakeState) {
+                case Intake:
+                    if (gamepad2.a) {
+                        if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
+                            clawPosition = ClawPosition.CLOSED;
+                            clawServo.setPosition(CSCons.clawClosed);
+                        } else if (clawPosition == ClawPosition.CLOSED) {
+                            clawPosition = ClawPosition.OPEN;
+                            clawServo.setPosition(clawOpen);
+                        }
+                    }
+
+                    if (clawPosition == ClawPosition.OPEN && colorSensor.getDistance(DistanceUnit.CM) < CSCons.closeClawDistance) {
+                        clawPosition = ClawPosition.CLOSED;
+                        clawServo.setPosition(CSCons.clawClosed);
+
+                    }
+
+                    if (gamepad2.dpad_up) {
+                        intakeState = IntakeState.Transfer;
+                        clawAngle.setPosition(CSCons.clawAngleTransfer);
+                        clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+                    }
+
+                    if (gamepad2.dpad_left) {
+                        intakeState = IntakeState.Transition;
+                        clawAngle.setPosition(CSCons.clawAngleTransition);
+                        clawArm.setPosition(CSCons.clawArmTransition);
+                    }
 
 
+                    break;
+                case MoveToIntake:
+                    if (intakeElapsedTime != null && intakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToBottomIntake) {
+                        intakeState = IntakeState.Intake;
+                        clawPosition = ClawPosition.OPEN;
+                        clawServo.setPosition(clawOpen);
+                    }
 
 
+                    break;
+                case Transfer:
+                    //is there a reason we would ever want to close the claw here?
+                    if (gamepad2.a && outtakeState == OuttakeState.ReadyToTransfer) {
+                        clawPosition = ClawPosition.TRANSFER;
+                        clawServo.setPosition(CSCons.clawTransfer);
+                    }
 
-            if (gamepad2.b && clawClosed == true) {
-                clawClosed = false;
-                clawServo.setPosition(CSCons.claw[0]);
-            } else if (gamepad2.a && clawClosed == false) {
-                clawClosed = true;
-                clawServo.setPosition(CSCons.claw[1]);
+
+                    if (gamepad2.dpad_down) {
+                        intakeState = IntakeState.MoveToIntake;
+                        intakeElapsedTime = new ElapsedTime();
+                        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                        clawArm.setPosition(CSCons.clawArmGround);
+                    }
+
+                    if (gamepad2.dpad_left) {
+                        intakeState = IntakeState.Transition;
+                        clawAngle.setPosition(CSCons.clawAngleTransition);
+                        clawArm.setPosition(CSCons.clawArmTransition);
+                    }
+
+
+                    break;
+                case Transition:
+
+                    if (gamepad2.dpad_down) {
+                        intakeState = IntakeState.MoveToIntake;
+                        intakeElapsedTime = new ElapsedTime();
+                        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                        clawArm.setPosition(CSCons.clawArmGround);
+                    }
+
+
+                    if (gamepad2.dpad_up) {
+                        intakeState = IntakeState.Transfer;
+                        clawAngle.setPosition(CSCons.clawAngleTransfer);
+                        clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+                    }
+
+                    break;
             }
 
-            if (gamepad2.dpad_down) {
-                clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-                clawArm.setPosition(CSCons.clawArmG);
+            switch (outtakeState){
+                case ReadyToTransfer:
+                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){
+                        if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
+                            outtakeElapsedTime = new ElapsedTime();
+                            hookPosition = HookPosition.OPEN;
+                            outtakeHook.setPosition(CSCons.openHook);
+                        } else {
+                            outtakeHook.setPosition(CSCons.closeHook);
+                        }
+                    }
+                    if (gamepad2.x && hookPosition == HookPosition.OPEN){
+                        if(outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300){
+                            outtakeElapsedTime = closeHook();
+                        } else {
+                        outtakeHook.setPosition(CSCons.openHook);
+                        }
+                    }
+
+                    if (gamepad2.left_trigger>0.5){
+                        backSlidePos = OuttakePosition.LOW;
+                       outtakeElapsedTime = closeHook();
+                       outtakeState = OuttakeState.ClosingHook;
+
+                    }
+                    if (gamepad2.right_trigger>0.5){
+                        backSlidePos = OuttakePosition.MID;
+                        outtakeElapsedTime = closeHook();
+                        outtakeState = OuttakeState.ClosingHook;
+                    }
+
+                    break;
+                case MoveToTransfer:
+
+
+                    //if touch sensor => ready to transfer
+                    break;
+                case ReadyToDrop:
+                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){
+                        if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
+                            outtakeElapsedTime = new ElapsedTime();
+                            hookPosition = HookPosition.OPEN;
+                            outtakeHook.setPosition(CSCons.openHook);
+                        } else {
+                            outtakeHook.setPosition(CSCons.closeHook);
+                        }
+                    }
+                    if (gamepad2.x && hookPosition == HookPosition.OPEN){
+                        if(outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300){
+                            outtakeElapsedTime = closeHook();
+                        } else {
+                            outtakeHook.setPosition(CSCons.openHook);
+                        }
+                    }
+
+                    if (gamepad2.left_trigger>0.5){
+                        backSlidePos = OuttakePosition.LOW;
+                        target = backSlidePos.getTarget();
+
+                    }
+                    if (gamepad2.right_trigger>0.5){
+                        backSlidePos = OuttakePosition.MID;
+                        target = backSlidePos.getTarget();
+                    }
+
+
+                    //what button to mode back to transfer?
+                    // what order to move (slide down or flip first?
+
+
+
+
+
+
+
+
+
+
+                    break;
+                case MoveToDrop:
+                    if (backSlides.getCurrentPosition()>100){
+                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                    }
+                    if (backSlides.getCurrentPosition()>backSlidePos.getTarget()-100){
+                        outtakeState = OuttakeState.ReadyToDrop;
+                    }
+                    break;
+                case Align:
+                    break;
+                case BackUp:
+                    break;
+                case ClosingHook:
+                    if (outtakeElapsedTime!=null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>CSCons.transferToScoreOuttake){
+                        outtakeState = OuttakeState.MoveToDrop;
+                        target = backSlidePos.getTarget();
+                    }
+                    break;
             }
 
-            if (gamepad2.dpad_up) {
-                clawAngle.setPosition(CSCons.clawAngleTransfer);
-                clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+
+
+
+
+
+
+
+            if (outtakeState == OuttakeState.ReadyToDrop || outtakeState == OuttakeState.ReadyToTransfer) {
+
+                if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1] - .1 && runtime.time() > x_last_pressed + .4) {
+                    outtakeHook.setPosition(CSCons.openHook);
+                    hookPosition = HookPosition.OPEN;
+
+                    x_last_pressed = runtime.time();
+                } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0] - .1 && runtime.time() > x_last_pressed + .4) {
+                    outtakeHook.setPosition(CSCons.closeHook);
+                    hookPosition = HookPosition.CLOSED;
+                    x_last_pressed = runtime.time();
+                }
             }
 
-            if (gamepad2.dpad_right) {
-                clawAngle.setPosition(CSCons.clawAngleTransfer);
-                clawArm.setPosition(CSCons.clawArmTransfer);
+            //outtake
+
+            if (gamepad2.left_stick_y > 0.2) { // move to backdrop
+                outtakeHook.setPosition(CSCons.closeHook);
+                outtakeState = OuttakeState.ClosingHook;
+                outtakeElapsedTime = new ElapsedTime();
             }
 
-            if (gamepad2.dpad_left) {
-                clawAngle.setPosition(CSCons.clawAngleTransition);
-                clawArm.setPosition(CSCons.clawArmTransition);
+            //does the slide need to go up before the flip?
+            if (outtakeState == OuttakeState.ClosingHook && outtakeElapsedTime != null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.closingHook) {
+
+                hookPosition = HookPosition.CLOSED;
+                backSlidePos = OuttakePosition.LOW;
+                if (backSlides.getCurrentPosition() > 150) {
+                    outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
+                    outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
+                    outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                    outtakeState = OuttakeState.MoveToDrop;
+                }
             }
 
-            if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1] - .1 && runtime.time() > x_last_pressed + .4) {
-                outtakeHook.setPosition(CSCons.outtakeHook[0]);
-                x_last_pressed = runtime.time();
-            } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0] - .1 && runtime.time() > x_last_pressed + .4) {
-                outtakeHook.setPosition(CSCons.outtakeHook[1]);
-                x_last_pressed = runtime.time();
+            if (outtakeState == OuttakeState.MoveToDrop && backSlides.getCurrentPosition() > OuttakePosition.LOW.getTarget() - 100) {
+                outtakeState = OuttakeState.ReadyToDrop;
             }
 
-            if (gamepad2.left_stick_y > 0.2) {
-                outtakeHook.setPosition(CSCons.outtakeHook[1]);
-                outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackDrop);
-                outtakeMovementRight.setPosition(CSCons.outtakeMovementBackDrop);
-                outtakeRotationTarget = CSCons.outtakeAngleFolder;
-            }
+
             if (gamepad2.left_stick_y < -0.2 && backSlidePos != OuttakePosition.BOTTOM) {
                 outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
                 outtakeGoingToTransfer = true;
-                outtakeRotationTarget = CSCons.outtakeAngleTransfer;
                 outtakeHook.setPosition(CSCons.outtakeHook[0]);
             }
 
             if (gamepad2.left_bumper) {
-                outtakeRotationTarget += .005;
+                angleRotationAdjustment += .005;
             }
 
             outtakeRotation.setPosition(outtakeRotationTarget);
 
 
             if (gamepad2.left_trigger > 0.5) {
+
+                if (outtakeState != OuttakeState.ReadyToDrop) {
+
+                }
+
                 backSlidePos = OuttakePosition.LOW;
                 target = backSlidePos.getTarget();
             }
@@ -288,14 +497,14 @@ RB - Hang up
             }
 
             if (gamepad2.right_bumper) {
+
                 backSlidePos = OuttakePosition.BOTTOM;
                 target = backSlidePos.getTarget();
             }
 
             if (gamepad1.a) {
-                clawServo.setPosition(CSCons.claw[2]);
+                clawServo.setPosition(claw[2]);
             }
-
 
 
             telemetry.addData("left y", gamepad1.left_stick_y);
@@ -344,7 +553,7 @@ RB - Hang up
         rightRearMotor.setPower(rightRearPower);
     }
 
-    protected void backSlidesMove(){
+    protected void backSlidesMove(int target) {
 
         int slidePos = backSlides.getCurrentPosition();
         double pid = controller.calculate(slidePos, target);
@@ -353,6 +562,13 @@ RB - Hang up
         double liftPower = pid + ff;
 
         backSlides.setPower(liftPower);
+    }
+
+    protected ElapsedTime closeHook(){
+        ElapsedTime time = new ElapsedTime();
+        hookPosition = HookPosition.CLOSED;
+        outtakeHook.setPosition(CSCons.closeHook);
+        return time;
     }
 
 }
