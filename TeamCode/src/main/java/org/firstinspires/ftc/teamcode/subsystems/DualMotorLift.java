@@ -39,8 +39,8 @@ public class DualMotorLift implements Subsystem {
     public Mode mode;
     // Public just to allow tuning through Dashboard
     public static double  UP_VELOCITY = 500; // x inches per 1 second
-    public static double[] LEVEL_HT = {3, 7, 17.0, 29.0}; // in inches, please fine-tune
-    public static double[] LEVEL_HT_AUTO = {2, 4, 17.0, 29.0};
+    public static double[] LEVEL_HT = {11, 8, 17.0, 29.0}; // in inches, please fine-tune
+    public static double[] LEVEL_HT_AUTO = {8, 4, 17.0, 29.0};
     //4 levels: 0 = minimum arm swing height; 1= ground, 2= low, 3= middle, 4= high,
     //0:5.0
 
@@ -213,7 +213,7 @@ public class DualMotorLift implements Subsystem {
     public int inchToTicks(double inches) {
         return (int) (inches * TICKS_PER_REV / (PULLEY_DIAMETER_IN * Math.PI));
     }
-    private double ticksToInches(int ticks){
+    public double ticksToInches(int ticks){
         return ((double) ticks) / (TICKS_PER_REV / (PULLEY_DIAMETER_IN * Math.PI));
     }
 
