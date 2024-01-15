@@ -4,29 +4,27 @@ import static org.opencv.core.Core.inRange;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Constants;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.opencv.core.Scalar;
-
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 import java.util.List;
 
 @TeleOp(name="cameraTest", group="Linear Opmode")
 public class camera_pixel_detection extends OpMode {
-    boolean lastA = false, lastB = false, lastY = false, lastX = false ,lastLeftBumber = false, lastRightBumper = false;
+    boolean lastA = false, lastB = false, lastY = false, lastX = false ,
+            lastLeftTrigger = false, lastRightTrigger = false, lastLeftBumper = false, lastRightBumper = false;
     int cameraMonitorViewId;
-    public static double Choose_H_S_V = 0; // first arm weight KG
+    int l_or_u = 1;
+    public static int choose_H_S_V = 0; // first arm weight KG
     WebcamName webcamName;
     OpenCvCamera camera;
     double[] lowerPvals = new double[]{0, 0, 0};
@@ -84,32 +82,47 @@ public class camera_pixel_detection extends OpMode {
     public void init_loop() {
         telemetry.addData("lowerW: ", lowerW);
         telemetry.addData("upperW: ", upperW);
-        telemetry.addData("H_S_V_number ", Choose_H_S_V);
-        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_bumper=Choose H or S or V");
-        if(gamepad1.left_bumper && !lastLeftBumber){
-            Choose_H_S_V += 1;
-        }lastLeftBumber=gamepad1.left_bumper;
+        telemetry.addData("HSV number ", choose_H_S_V);
+        telemetry.addData("lower or upper ", l_or_u);
+        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_trigger > 0.1=Choose H or S or V");
+        if(gamepad1.left_bumper && !lastLeftBumper && l_or_u > 1) {
+            l_or_u -= 1;
+        }lastLeftBumper = gamepad1.left_bumper;
 
-        if(gamepad1.right_bumper && !lastRightBumper){
-            Choose_H_S_V -= 1;
-        }lastRightBumper=gamepad1.right_bumper;
+        if(gamepad1.right_bumper && !lastRightBumper && l_or_u < 2){
+            l_or_u += 1;
+        }lastRightBumper = gamepad1.right_bumper;
+
+        if(gamepad1.left_trigger > 0.1 && !lastLeftTrigger && choose_H_S_V > 0){
+            choose_H_S_V -= 1;
+        }lastLeftTrigger =gamepad1.left_trigger > 0.1;
+
+        if(gamepad1.right_trigger > 0.1 && !lastRightTrigger){
+            choose_H_S_V += 1;
+        }lastRightTrigger=gamepad1.right_trigger > 0.1 && choose_H_S_V < 2;
+
+
 
         if(gamepad1.a && !lastA){
-            upperWvals[2]++;
+            if(l_or_u == 2){
+                upperWvals[choose_H_S_V]++;}
+            if(l_or_u == 1){
+                lowerWvals[choose_H_S_V]++;}
         }lastA=gamepad1.a;
 
         if(gamepad1.b && !lastB){
-            upperWvals[2]--;
+            upperWvals[choose_H_S_V]--;
         }lastB=gamepad1.b;
 
         if(gamepad1.x && !lastX){
-            upperWvals[2] += 10;
+            upperWvals[choose_H_S_V] += 10;
         }lastX=gamepad1.x;
 
         if(gamepad1.y && !lastY){
-            upperWvals[2] -= 10;
+            upperWvals[choose_H_S_V] -= 10;
         }lastY=gamepad1.y;
 
+        lowerW.set(lowerWvals);
         upperW.set(upperWvals);
     }
 
