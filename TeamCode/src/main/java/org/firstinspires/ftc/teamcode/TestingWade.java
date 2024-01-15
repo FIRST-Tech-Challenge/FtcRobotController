@@ -21,9 +21,35 @@ public class TestingWade extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.mecanumBlocking2(-24); // left
-            this.sleep(5000);
-            robot.mecanumBlocking2(24); // right
+            /*
+            robot.stackAttachment.setPosition(0.5);
+            robot.trayAngle.setPosition(0.5);
+            */
+
+            robot.mecanumBlocking2(36); // right
+            this.sleep(2000);
+            robot.mecanumBlocking2(-36); // left
+            this.sleep(2000);
+
+            /*
+            robot.mecanumBlockingFixHeading(-24); //2 motors
+            this.sleep(2000);
+            robot.mecanumBlockingFixHeading(24);
+            this.sleep(2000);
+            */
+
+            //robot.mecanumBlockingTwoMotors(-24);
+            //this.sleep(2000);
+            //robot.mecanumBlockingTwoMotors(24);
+            //this.sleep(2000);
+
+            /*
+            robot.setHeading2(90);
+            this.sleep(2000);
+            robot.setHeading2(0);
+            this.sleep(2000);
+            */
+
             break;
         }
     }

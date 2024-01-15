@@ -41,6 +41,7 @@ public class Robot {
     Servo hook;
     DcMotor planeLauncher;
     Servo spikeServo;
+    Servo trayAngle;
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
@@ -81,12 +82,13 @@ public class Robot {
             hook = hardwareMap.servo.get("linearLocker");
             spikeServo = hardwareMap.servo.get("spikeServo");
             stackAttachment = hardwareMap.servo.get("stackAttachment");
+            trayAngle = hardwareMap.servo.get("trayAngle");
 
             // initialize controllers
-            straightController = new PIDController(0.003, 0.0000005, 0.4);
-            fLeftMecanumController = new PIDController(0.5, 0, 0);
-            bRightMecanumController = new PIDController(0.5, 0, 0);
-            setHeadingController = new PIDController(0.5, 0, 0);
+            straightController = new PIDController("straight", 0.003, 0.0000005, 0.4, false);
+            fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true); //0.01 - 0.0001
+            bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
+            setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
         }
     }
 
@@ -261,6 +263,23 @@ public class Robot {
 
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void resetDrivetrainEncoders () {
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setUpIntakeOuttake() {
@@ -297,10 +316,6 @@ public class Robot {
 
     // todo: change to use pid controller class. do we need maxpower?
     public void setHeading(double targetAbsDegrees, double maxPower) {
-    /*
-        assert(targetAbsDegrees > 180);
-        assert(targetAbsDegrees <= -180);
-     */
         if (targetAbsDegrees == 180) {
             setHeading(179.5, maxPower);
         } else {
@@ -417,7 +432,7 @@ public class Robot {
 
         //inch to tick
         final double wheelDiaMm = 96;
-        final double PI = 3.14159;
+        final double PI = Math.PI;
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
         final double IN_TO_TICK = 537 / wheelCircIn;
 
@@ -920,7 +935,7 @@ public class Robot {
 
         //inch to tick
         final double wheelDiaMm = 96;
-        final double PI = 3.14159;
+        final double PI = Math.PI;
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
         final double IN_TO_TICK = 537 / wheelCircIn;  //45.24
 
@@ -1371,7 +1386,7 @@ public class Robot {
 
         //inch to tick
         final double wheelDiaMm = 96;
-        final double PI = 3.14159;
+        final double PI = Math.PI;
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
         final double IN_TO_TICK = 537 / wheelCircIn;  //45.24
 
@@ -1551,9 +1566,12 @@ public class Robot {
     // positive inches - right
     // negative inches - left
     public void mecanumBlocking2(double inches) {
+        resetDrivetrainEncoders();
+        fLeftMecanumController.integral = 0;
+        fLeftMecanumController.lastError = 0;
+        fLeftMecanumController.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
-        final double IN_TO_TICK = 56.3; //todo: test
-        double targetPos = currentPos + (inches * IN_TO_TICK);
+        double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inches));
         double power;
         double ERROR_TOLERANCE_IN_TICKS = 15;
         int counter = 0;
@@ -1568,6 +1586,7 @@ public class Robot {
             currentPos = fLeft.getCurrentPosition();
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
             setMotorPower(power, -1 * power, -1 * power, power);
+
         }
 
         setMotorPower(0, 0, 0, 0); // stop, to be safe
@@ -1575,11 +1594,13 @@ public class Robot {
     }
 
     public void mecanumBlockingTwoMotors(double inches) {
+        resetDrivetrainEncoders();
         double fLeftCurrentPos = fLeft.getCurrentPosition();
         double bRightCurrentPos = bRight.getCurrentPosition();
-        final double IN_TO_TICK = 56.3; //todo: test
-        double fLeftTargetPos = fLeftCurrentPos + (inches * IN_TO_TICK);
-        double bRightTargetPos = bRightCurrentPos + (inches * IN_TO_TICK);
+        double fLeftTargetPos = fLeftCurrentPos + fLeftMecanumController.convertInchesToTicks(inches);
+        Log.d("new pid", "mecanumBlockingTwoMotors: fl target position is " + fLeftTargetPos);
+        double bRightTargetPos = bRightCurrentPos + fLeftMecanumController.convertInchesToTicks(inches);
+        Log.d("new pid", "mecanumBlockingTwoMotors: br target position is " + bRightTargetPos);
         double leftPower;
         double rightPower;
         double ERROR_TOLERANCE_IN_TICKS = 15;
@@ -1590,11 +1611,19 @@ public class Robot {
                     (Math.abs(bRightMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
                 counter++;
             } else { //todo: test this
-                counter = 0;
+                //counter = 0;
             }
 
             fLeftCurrentPos = fLeft.getCurrentPosition();
             bRightCurrentPos = bRight.getCurrentPosition();
+
+            Log.d("new pid", "mecanumBlockingTwoMotors: fl pwr " + fLeft.getPower());
+            Log.d("new pid", "mecanumBlockingTwoMotors: br pwr " + bRight.getPower());
+            Log.d("new pid", "mecanumBlockingTwoMotors: fl pos " + fLeftCurrentPos);
+            Log.d("new pid", "mecanumBlockingTwoMotors: fr pos " + fRight.getCurrentPosition());
+            Log.d("new pid", "mecanumBlockingTwoMotors: bl pos " + bRightCurrentPos);
+            Log.d("new pid", "mecanumBlockingTwoMotors: br pos " + bRight.getCurrentPosition());
+
             leftPower = fLeftMecanumController.calculatePID(fLeftCurrentPos, fLeftTargetPos);
             rightPower = bRightMecanumController.calculatePID(bRightCurrentPos, bRightTargetPos);
             setMotorPower(leftPower, -1 * rightPower, -1 * leftPower, rightPower);
@@ -1663,6 +1692,30 @@ public class Robot {
         setMotorPower(0, 0, 0, 0);
         opMode.sleep(100);
         botHeading = initialHeading;
+    }
+
+    public void setHeading2 (double targetHeading) {
+        if (targetHeading == 180) {
+            setHeading(179.5, targetHeading);
+        } else {
+            YawPitchRollAngles robotOrientation;
+            double ERROR_TOLERANCE = 0.5; //degrees
+            double currentHeading = getCurrentHeading();
+            double power;
+
+            //while start
+            while (Math.abs(setHeadingController.lastError) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+                power = setHeadingController.calculatePID(currentHeading, targetHeading);
+                setMotorPower(-1 * power, power, -1 * power, power);
+            }
+            setMotorPower(0, 0, 0, 0);
+            opMode.sleep(100);
+            currentHeading = getCurrentHeading();
+            botHeading = targetHeading;
+            Log.d("pid", "setHeading: final heading is " + currentHeading);
+        }
     }
 }
 
