@@ -234,7 +234,6 @@ public class Auto extends LinearOpMode {
 
 
         //Follow trajectories in order
-        //switch between parking
         drive.followTrajectorySequence(sequence1);
         drive.followTrajectorySequence(sequence2);
         PoseStorage.currentPose = drive.getPoseEstimate();

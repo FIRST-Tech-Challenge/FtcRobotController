@@ -35,8 +35,8 @@ public class TensorflowVision {
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName("testmodel2.tflite")
-                //.setModelFileName("testmodel.tflite")
+                .setModelAssetName("newmodel.tflite")
+                //.setModelFileName("newmodel.tflite")
 
                 .setModelLabels(LABELS)
                 //.setIsModelTensorFlow2(true)
