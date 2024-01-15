@@ -51,7 +51,7 @@ public class TestBatteryVoltage extends OpMode {
         dbp.createNewTelePacket();
         runLights();
 
-        if (minimumBatteryVoltageReached()) {
+        if (minimumBatteryVoltageReached() || shouldStop) {
             dbp.put("Battery Voltage",
                     String.format(Locale.ENGLISH,
                             "Battery Voltage reached the cutoff of %.1f v",
