@@ -36,7 +36,7 @@ public class LiftArm {
         slide = hardwareMap.get(DcMotor.class, "slide");
         trapdoor = hardwareMap.get(Servo.class, "trapdoor");
 
-        trapdoor.setPosition(.2);
+        closeTrapdoor();
 
         //Set motor directions
         hand.setDirection(DcMotor.Direction.FORWARD);
@@ -57,10 +57,10 @@ public class LiftArm {
                 slide.setTargetPosition(0);
                 break;
             case AUTO:
-                slide.setTargetPosition(2000);
+                slide.setTargetPosition(1800);
                 break;
             case HALF:
-                slide.setTargetPosition(5000);
+                slide.setTargetPosition(4400);
                 break;
             case FULL:
                 slide.setTargetPosition(8000);
@@ -79,25 +79,30 @@ public class LiftArm {
                 hand.setTargetPosition(0);
                 break;
             case OUT:
-                hand.setTargetPosition(-140);
+                hand.setTargetPosition(150);
                 break;
         }
         hand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hand.setPower(.35);
-
+        float startPos = hand.getCurrentPosition();
+        float endPos = hand.getTargetPosition();
+        if (endPos == 150) {
+            hand.setPower(0.25);
+        } else if (endPos == 0) {
+            hand.setPower(0.15);
+        }
     }
 
 
 
     public void openTrapdoor() {
-        trapdoor.setPosition(0.7);
-    }
-    public void closeTrapdoor() {
         trapdoor.setPosition(0.2);
     }
+    public void closeTrapdoor() {
+        trapdoor.setPosition(0.7);
+    }
 
 
-    public void extendAndDrop(Distance targetDistance) {
+    public void extend(Distance targetDistance) {
         setArmDistance(targetDistance);
         setHandPosition(HandPosition.OUT);
     }
