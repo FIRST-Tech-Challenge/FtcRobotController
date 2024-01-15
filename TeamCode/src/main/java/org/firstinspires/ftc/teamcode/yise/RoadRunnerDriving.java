@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 public class RoadRunnerDriving {
 
@@ -62,44 +63,99 @@ public class RoadRunnerDriving {
         drive.update();
     }
 
-    public void navigateToCornerRed() {
-        if (drive.getPoseEstimate().getX() < -24) {
-            if (!drive.isBusy()) {
-                Trajectory navigateToCornerRed = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-53, 53, Math.toRadians(135)))
+    public Pose2d getPosition() {
+        return drive.getPoseEstimate();
+    }
+
+    public void calibratePos(AprilTagDetection detection) {
+        if (Parameters.allianceColor == Parameters.Color.RED) {
+            drive.setPoseEstimate(new Pose2d(55.5 - detection.ftcPose.y, -(36.25 + detection.ftcPose.x), drive.getRawExternalHeading()));
+        } else {
+            double driveHeading = drive.getPoseEstimate().getHeading();
+            drive.setPoseEstimate(new Pose2d(55.5 - detection.ftcPose.y, 36.25 + detection.ftcPose.x, driveHeading));
+        }
+    }
+
+    public void navigateToCorner() {
+        if (!drive.isBusy()) {
+            if (Parameters.allianceColor == Parameters.Color.RED) {
+
+                Trajectory navigateToCorner = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(-51, 51, Math.toRadians(135)))
                         .build();
-                drive.followTrajectory(navigateToCornerRed);
+                drive.followTrajectory(navigateToCorner);
+
+            } else {
+
+                Trajectory navigateToCorner = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(-51, -51, Math.toRadians(-135)))
+                        .build();
+                drive.followTrajectory(navigateToCorner);
+
             }
         }
     }
 
-    public void pixelDropRedNear() {
+    public void dropPixelNear() {
 
         if (!drive.isBusy()) {
-            Trajectory pixelDropRedNear = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(40,-36, Math.toRadians(180)))
-                    .build();
-            drive.followTrajectory(pixelDropRedNear);
+            if (Parameters.allianceColor == Parameters.Color.RED) {
+
+                Trajectory dropPixelNear = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(50.5,-36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelNear);
+
+            } else {
+
+                Trajectory dropPixelNear = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(50.5,36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelNear);
+
+            }
         }
     }
 
-    public void pixelDropBlueFar() {
+    public void dropPixelMid() {
 
         if (!drive.isBusy()) {
-            Trajectory pixelDropBlueFar = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(31,36, Math.toRadians(180)))
-                    .build();
-            drive.followTrajectory(pixelDropBlueFar);
+            if (Parameters.allianceColor == Parameters.Color.RED) {
+
+                Trajectory dropPixelMid = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(46,-36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelMid);
+
+            } else {
+
+                Trajectory dropPixelMid = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(46,36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelMid);
+
+            }
         }
     }
 
-    public void pixelDropBlueNear() {
+    public void dropPixelFar() {
 
         if (!drive.isBusy()) {
-            Trajectory pixelDropRed = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(40,36, Math.toRadians(180)))
-                    .build();
-            drive.followTrajectory(pixelDropRed);
+            if (Parameters.allianceColor == Parameters.Color.RED) {
+
+                Trajectory dropPixelFar = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(39,-36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelFar);
+
+            } else {
+
+                Trajectory dropPixelFar = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(39,36, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectory(dropPixelFar);
+
+            }
         }
     }
 }

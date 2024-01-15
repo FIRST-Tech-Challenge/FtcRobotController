@@ -15,6 +15,7 @@ public class TensorflowVision {
 
     private static final String[] LABELS = {
             "Red Prop",
+            "Blue Prop"
     };
 
     /**

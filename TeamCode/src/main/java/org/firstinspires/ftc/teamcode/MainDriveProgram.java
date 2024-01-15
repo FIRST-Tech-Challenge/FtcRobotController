@@ -4,12 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.yise.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.yise.DriveColorExample;
 import org.firstinspires.ftc.teamcode.yise.IntakeSystem;
 import org.firstinspires.ftc.teamcode.yise.LedLights;
 import org.firstinspires.ftc.teamcode.yise.LiftArm;
 import org.firstinspires.ftc.teamcode.yise.Parameters;
 import org.firstinspires.ftc.teamcode.yise.RoadRunnerDriving;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp(name="Competition drive", group="Linear Opmode")
 public class MainDriveProgram extends LinearOpMode {
@@ -19,7 +22,6 @@ public class MainDriveProgram extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     boolean canToggleSlowMode = true;
-    boolean canToggleHandPosition = true;
     boolean reverseIntake = false;
 
     boolean inEndGame = false;
@@ -37,6 +39,8 @@ public class MainDriveProgram extends LinearOpMode {
         //LedLights leds = new LedLights(hardwareMap);
 
         DriveColorExample colorSensors = new DriveColorExample(hardwareMap);
+
+        AprilTagDetector aprilTagDetector = new AprilTagDetector(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -61,9 +65,32 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Driving
              */
+            if (gamepad1.dpad_up) {
+                if (rrDrive.getPosition().getX() < -30) {
+                    rrDrive.navigateToCorner();
+                } else if (rrDrive.getPosition().getX() > 0) {
+                    rrDrive.dropPixelNear();
+                }
+            } else if (gamepad1.dpad_down) {
+                if (rrDrive.getPosition().getX() > 0) {
+                    rrDrive.dropPixelFar();
+                }
+            } else if (gamepad1.dpad_right || gamepad1.dpad_left) {
+                if (rrDrive.getPosition().getX() > 0) {
+                    rrDrive.dropPixelMid();
+                }
+            } else {
+                rrDrive.updateMotorsFromStick(gamepad1);
+                rrDrive.update();
+            }
 
-            rrDrive.updateMotorsFromStick(gamepad1);
-            rrDrive.update();
+            if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
+                AprilTagDetection detection = aprilTagDetector.getAprilTag();
+                rrDrive.calibratePos(detection);
+
+                telemetry.addData("X pos: ", 36.25 + detection.ftcPose.x);
+                telemetry.addData("Y pos: ", 55.5 - detection.ftcPose.y);
+            }
 
 
 
@@ -154,6 +181,10 @@ public class MainDriveProgram extends LinearOpMode {
             telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
             telemetry.addData("Hand power: ", arm.hand.getPower());
+
+            telemetry.addData("X: ", rrDrive.getPosition().getX());
+            telemetry.addData("Y: ", rrDrive.getPosition().getY());
+            telemetry.addData("Heading: ", rrDrive.getPosition().getHeading());
 
             telemetry.addLine();
 
