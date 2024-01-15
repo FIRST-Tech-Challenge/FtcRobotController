@@ -8,7 +8,7 @@ public class CSCons {
 
     public static double skewampus = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    public static double pixelDetectThreshold = 230;
+    public static double pixelDetectThreshold = 250;
     public static double clawOpen = 0.4;
     public static double clawClosed = 0.82;
     public static double clawTransfer = 0.72;

@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons.*;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 import java.util.List;
@@ -72,13 +71,14 @@ public class AutomatedTeleop extends LinearOpMode {
     double claw2transfer_delay = .5;
     double x_last_pressed = -1;
 
+
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
     boolean outtakeGoingToTransfer;
     double outtakeRotationTarget;
 
     int v4bPresetTarget = 0;
-
+    private double claw_last_closed;
 
     private enum Retract {
         back,
@@ -180,6 +180,10 @@ public class AutomatedTeleop extends LinearOpMode {
         //backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intakeSlides.setTargetPosition(0);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -233,6 +237,7 @@ public class AutomatedTeleop extends LinearOpMode {
                         if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
                             clawPosition = ClawPosition.CLOSED;
                             clawServo.setPosition(CSCons.clawClosed);
+                            claw_last_closed = runtime.time();
                         } else if (clawPosition == ClawPosition.CLOSED) {
                             clawPosition = ClawPosition.OPEN;
                             clawServo.setPosition(clawOpen);
@@ -550,7 +555,7 @@ public class AutomatedTeleop extends LinearOpMode {
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time() > claw_last_closed + .500){
             return true;
         } else {
             return false;
