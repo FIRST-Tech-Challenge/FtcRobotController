@@ -70,10 +70,10 @@ public class Auto extends LinearOpMode {
         return location;
     }
 
-    public TrajectorySequence propPlacment(SampleMecanumDrive drive, Parameters parameters, Pose2d startPose) {
+    public TrajectorySequence propPlacment(SampleMecanumDrive drive, Pose2d startPose) {
         double z_coordinate = 0.0;
-        Double x_coordinate = 0.0;
-        Double y_coordinate = 0.0;
+        double x_coordinate = 0.0;
+        double y_coordinate = 0.0;
 
         switch (Parameters.allianceColor) {
             case RED:
@@ -126,7 +126,7 @@ public class Auto extends LinearOpMode {
         return mySequence;
     }
 
-    public TrajectorySequence yellowPixle(SampleMecanumDrive drive, Parameters parameters, Pose2d startPose) {
+    public TrajectorySequence yellowPixle(SampleMecanumDrive drive, Pose2d startPose) {
         Double x_coordinate = 48.0;
         Double y_coordinate = 0.0;
         Double z_coordinate = 0.0;
@@ -228,15 +228,15 @@ public class Auto extends LinearOpMode {
         //TrajectorySequence dropPixelLeft = drive.trajectorySequenceBuilder(startPose)
         //        .lineToLinearHeading(new Pose2d(-33, 44, Math.toRadians(130)))
         //        .build();
-        TrajectorySequence propPlacment = propPlacment(drive, parameters, startPose);
+        TrajectorySequence sequence1 = propPlacment(drive, startPose);
 
-        TrajectorySequence yellowPixle = yellowPixle(drive, parameters, propPlacment.end());
+        TrajectorySequence sequence2 = yellowPixle(drive, sequence1.end());
 
 
         //Follow trajectories in order
         //switch between parking
-        drive.followTrajectorySequence(propPlacment);
-        drive.followTrajectorySequence(yellowPixle);
+        drive.followTrajectorySequence(sequence1);
+        drive.followTrajectorySequence(sequence2);
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }
