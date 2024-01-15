@@ -52,7 +52,7 @@ public class RoadRunnerSubsystem {
     protected static int RobotX = 13; //inch
     protected static int RobotY = 14; //inch
     protected static int BackdropDistance = 0; //inch
-    protected static int StationDistance = 0; //inch
+    protected static int StationDistance = 2; //inch
     protected static int Invert = 1; //false
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -132,9 +132,9 @@ public class RoadRunnerSubsystem {
         Pose2d middle_LOW = new Pose2d(1.5 * TileInverted * Invert, TileInverted/2, Math.toRadians(180));
         Pose2d middle_HIGH = new Pose2d(1.5 * TileInverted * Invert, 1.5 * Tile, 0);
 
-        Pose2d station_POS_OUTER = new Pose2d(1.5 * TileInverted * Invert, 3 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
-        Pose2d station_POS_MID = new Pose2d(TileInverted * Invert, 3 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
-        Pose2d station_POS_INNER = new Pose2d(TileInverted/2 * Invert, 3 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+        Pose2d station_POS_OUTER = new Pose2d(1.5 * TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+        Pose2d station_POS_MID = new Pose2d(TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+        Pose2d station_POS_INNER = new Pose2d(TileInverted/2 * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
 
         ////////////////////////////////////////////////////////////////////////////////////
 

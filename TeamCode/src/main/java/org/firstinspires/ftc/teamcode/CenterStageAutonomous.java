@@ -18,13 +18,13 @@ public class CenterStageAutonomous extends LinearOpMode {
     public void runOpMode() {
         drive = new MecanumDrive(hardwareMap, homePose);
         RR = new RoadRunnerSubsystem(drive, RoadRunnerSubsystem.Alliance.RED, RoadRunnerSubsystem.Start.LOW,
-                RoadRunnerSubsystem.Corridor.INNER, RoadRunnerSubsystem.Corridor.INNER,
+                RoadRunnerSubsystem.Corridor.OUTER, RoadRunnerSubsystem.Corridor.OUTER,
                 RoadRunnerSubsystem.Station.INNER, RoadRunnerSubsystem.Parking.INNER);
 
         waitForStart();
 
         Actions.runBlocking(new SequentialAction(
-                RR.LOW_HomeToPixel_LEFT.build(),
+                RR.LOW_HomeToPixel_RIGHT.build(),
                 RR.RobotToBackdrop().build(),
                 RR.RobotBackdropToStation().build(),
                 RR.RobotStation().first.build(),
