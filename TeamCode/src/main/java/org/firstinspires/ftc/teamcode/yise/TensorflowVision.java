@@ -15,6 +15,7 @@ public class TensorflowVision {
 
     private static final String[] LABELS = {
             "Red Prop",
+            "Blue Prop"
     };
 
     /**
@@ -35,8 +36,8 @@ public class TensorflowVision {
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName("newmodel.tflite")
-                //.setModelFileName("newmodel.tflite")
+                .setModelAssetName("redownloadedmodel.tflite")
+                //.setModelFileName("redownloadedmodel.tflite")
 
                 .setModelLabels(LABELS)
                 //.setIsModelTensorFlow2(true)
