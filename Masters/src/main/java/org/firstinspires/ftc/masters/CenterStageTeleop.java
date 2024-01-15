@@ -158,7 +158,7 @@ RB - Hang up
 
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.claw[2]);
+        clawServo.setPosition(CSCons.clawOpen);
 
 
 
@@ -195,7 +195,7 @@ RB - Hang up
                     //gp slides 1/3rds extension
                     //v4b preset 1 pixel high
                     //claw open
-                        clawArm.setPosition(CSCons.clawArmG);
+                        clawArm.setPosition(CSCons.clawArmGround);
                         clawAngle.setPosition(CSCons.clawAngleGroundToThree);
 
                     }
@@ -206,10 +206,10 @@ RB - Hang up
                     }
                     if (gamepad2.a && clawClosed == true) {
                         clawClosed = false;
-                        clawServo.setPosition(CSCons.claw[0]);
+                        clawServo.setPosition(CSCons.clawOpen);
                     } else if (gamepad2.b && clawClosed == false) {
                         clawClosed = true;
-                        clawServo.setPosition(CSCons.claw[1]);
+                        clawServo.setPosition(CSCons.clawClosed);
                     }
                     if (gamepad1.b || isRetracting) {
                         isRetracting = true;
@@ -225,7 +225,7 @@ RB - Hang up
                             case cartridge:
                                 if (touchSensor.isPressed()){
                                     //open claw
-                                    clawServo.setPosition(CSCons.claw[2]);
+                                    clawServo.setPosition(CSCons.clawTransfer);
 
                                     //clawServo.setPosition();
                                 }
@@ -238,7 +238,7 @@ RB - Hang up
                     if (gamepad1.x) {
                         // Solinexi's april tag alignment
                         driveMode = DriveMode.PIXEL_SCORE;
-                        outtakeHook.setPosition(CSCons.outtakeHook[1]);
+                        outtakeHook.setPosition(CSCons.closeHook);
                         isRetracting = false;
                     }
                     if (gamepad1.y) {
@@ -253,7 +253,7 @@ RB - Hang up
                             // wait slightly
                             // outtake movement and rotation to transfer
 //                        }
-                        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                        outtakeHook.setPosition(CSCons.openHook);
                     }
                     if (gamepad1.left_stick_button) {
                         driveMode = DriveMode.PIXEL_SCORE;
@@ -305,10 +305,10 @@ RB - Hang up
 
                     }
                     if (gamepad1.x){
-                        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+                        outtakeHook.setPosition(CSCons.openHook);
                         sleep(100);
-                        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
-                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
+                        outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
+                        outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
                         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
                     }
                     break;

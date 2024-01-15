@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.masters.CSCons;
 
 @TeleOp(name = "Vslidetest")
 public class verticalSlideTest extends LinearOpMode {
@@ -20,10 +22,10 @@ public class verticalSlideTest extends LinearOpMode {
 
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        outtakeMovementLeft.setPosition(CSCons.outtakeMovementBackTransfer);
-        outtakeMovementRight.setPosition(CSCons.outtakeMovementBackTransfer);
+        outtakeMovementLeft.setPosition(CSCons.outtakeMovementTransfer);
+        outtakeMovementRight.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.outtakeHook[0]);
+        outtakeHook.setPosition(CSCons.openHook);
 
         waitForStart();
 

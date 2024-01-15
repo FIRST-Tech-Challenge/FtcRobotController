@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.deprecated;
 
 
 import com.acmerobotics.dashboard.config.Config;

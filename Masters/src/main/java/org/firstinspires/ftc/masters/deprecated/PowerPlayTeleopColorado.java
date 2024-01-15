@@ -1,28 +1,26 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.deprecated;
 
-import static org.firstinspires.ftc.masters.BadgerConstants.ALIGNER_IN;
-import static org.firstinspires.ftc.masters.BadgerConstants.ALIGNER_OUT;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
-import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
-import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_CONE_INCREMENT;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
-import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ALIGNER_IN;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ALIGNER_OUT;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BACK_TOP;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BOTTOM;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_BOTTOM_JUNCTION;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_CONE_STACK;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_CONE_INCREMENT;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_HIGH_BACK;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_BACK;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_CENTER;
+import static org.firstinspires.ftc.masters.deprecated.BadgerConstants.TIP_FRONT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,6 +30,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.masters.PowerPlayComputerVisionPipelines;
 
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     int liftOffset;
     int armOffset;
-    PowerPlayComputerVisionPipelines  CV= null;
+    PowerPlayComputerVisionPipelines CV= null;
 
     public static double kp=6, ki=0, kd=0.09;
 

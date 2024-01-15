@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.tests;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
