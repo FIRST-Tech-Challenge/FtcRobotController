@@ -81,8 +81,7 @@ public class Robot {
             clamp = hardwareMap.servo.get("holderClamp");
             hook = hardwareMap.servo.get("linearLocker");
             spikeServo = hardwareMap.servo.get("spikeServo");
-            stackAttachment = hardwareMap.servo.get("stackAttachment");
-            trayAngle = hardwareMap.servo.get("trayAngle");
+            stackAttachment = hardwareMap.servo.get("stackAttachment");trayAngle = hardwareMap.servo.get("trayAngle");
 
             // initialize controllers
             straightController = new PIDController("straight", 0.003, 0.0000005, 0.4, false);
@@ -314,7 +313,7 @@ public class Robot {
         return currentYaw;
     }
 
-    // todo: change to use pid controller class. do we need maxpower?
+    // todo: change to use pidcontroller class. do we need maxpower?
     public void setHeading(double targetAbsDegrees, double maxPower) {
         if (targetAbsDegrees == 180) {
             setHeading(179.5, maxPower);
@@ -369,6 +368,11 @@ public class Robot {
             botHeading = targetAbsDegrees;
             Log.d("pid", "setHeading: final heading is " + currentHeading);
         }
+    }
+
+    public void setTrayAngle() {
+        double currentHeading = getCurrentHeading();
+        setServoPosBlocking();
     }
 
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
