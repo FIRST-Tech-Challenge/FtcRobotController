@@ -64,14 +64,10 @@ public class CenterStageBackdropBluePreOdo extends LinearOpMode {
 
         waitForStart();
 
-        long startTime = new Date().getTime();
-        long time = 0;
+        telemetry.addData("PENIS", "True");
+        robot.init();
+        robot.forward(3, .65);
 
-        while (time < 50 && opModeIsActive()) {
-
-        }
-
-//        robot.forward(24.5674, .65);
 
     }
 }
