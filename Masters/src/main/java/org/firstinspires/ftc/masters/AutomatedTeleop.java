@@ -112,36 +112,36 @@ public class AutomatedTeleop extends LinearOpMode {
             Gamepad1
 
             --------
-Drive with sticks intake is the front
-Four bar position 1-5 auto stack pixels
-Slides position 1-11 placement on backboard
-Normal mode - pixel grabbing mode - entered with left stick down
-D-pad controls extendo
-D-pad up - extendo fully extended with four bar in position 4
-D-pad right - extendo out 2/3? with four bar in position 1
-D-pad down - extendo out 1/3? with four bar in position 1
-D-pad left - extendo fully in and four bar in position 1
-Buttons
-A - claw opens and closes
-B - transfers and moves to slide pos 1
-X - auto aligns and switches to pixel scoring mode
-Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
-LB - four bar down (presets)
-RB - four bar up (presets)
-LT - slides down (presets)
-RT - slides up (presets)
+    Drive with sticks intake is the front
+    Four bar position 1-5 auto stack pixels
+    Slides position 1-11 placement on backboard
+    Normal mode - pixel grabbing mode - entered with left stick down
+    D-pad controls extendo
+    D-pad up - extendo fully extended with four bar in position 4
+    D-pad right - extendo out 2/3? with four bar in position 1
+    D-pad down - extendo out 1/3? with four bar in position 1
+    D-pad left - extendo fully in and four bar in position 1
+    Buttons
+    A - claw opens and closes
+    B - transfers and moves to slide pos 1
+    X - auto aligns and switches to pixel scoring mode
+    Y - press once drop one pixel, hold for drop both pixels, once both are placed outtake goes back into transfer
+    LB - four bar down (presets)
+    RB - four bar up (presets)
+    LT - slides down (presets)
+    RT - slides up (presets)
 
-Pixel scoring mode - entered with x while in normal
-Only moves right and left no forward/ backwards
-LT - slides down (presets)
-RT - slides up (presets)
-Y - press once drop one pixel, hold for drop both pixels
+    Pixel scoring mode - entered with x while in normal
+    Only moves right and left no forward/ backwards
+    LT - slides down (presets)
+    RT - slides up (presets)
+    Y - press once drop one pixel, hold for drop both pixels
 
-Endgame mode - entered with right stick down
-Normal driving
-X - Auto aligns on April tag for shooter, raise shooter, shoot
-LB - Hang down
-RB - Hang up
+    Endgame mode - entered with right stick down
+    Normal driving
+    X - Auto aligns on April tag for shooter, raise shooter, shoot
+    LB - Hang down
+    RB - Hang up
         */
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
@@ -419,21 +419,12 @@ RB - Hang up
 
 
 
-
-
-
-
-
             if (outtakeState == OuttakeState.ReadyToDrop || outtakeState == OuttakeState.ReadyToTransfer) {
-
-                if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[1] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[1] - .1 && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.openHook);
-                    hookPosition = HookPosition.OPEN;
-
+                if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
+                    outtakeHook.setPosition(CSCons.outtakeHook[0]);
                     x_last_pressed = runtime.time();
-                } else if (gamepad2.x && outtakeHook.getPosition() <= CSCons.outtakeHook[0] + .1 && outtakeHook.getPosition() >= CSCons.outtakeHook[0] - .1 && runtime.time() > x_last_pressed + .4) {
-                    outtakeHook.setPosition(CSCons.closeHook);
-                    hookPosition = HookPosition.CLOSED;
+                } else if (gamepad2.x && runtime.time() > x_last_pressed + .4) {
+                    outtakeHook.setPosition(CSCons.outtakeHook[1]);
                     x_last_pressed = runtime.time();
                 }
             }
