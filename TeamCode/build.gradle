@@ -35,6 +35,6 @@ dependencies {
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'org.openftc:apriltag:2.0.0'
-    implementation 'com.github.theinventors-ftc:InventorsFtcLib:c5bd568' // (c38b19b) Old Seasons
+    implementation 'com.github.theinventors-ftc:InventorsFtcLib:b9c3798' // (c38b19b) Old Seasons
     implementation 'org.openftc:easyopencv:1.7.0'
 }

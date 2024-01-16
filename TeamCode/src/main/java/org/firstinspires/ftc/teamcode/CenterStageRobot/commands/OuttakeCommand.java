@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.CenterStageRobot.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
 
-public class OuttakeCommand extends CommandBase {
+public class OuttakeCommand extends SequentialCommandGroup {
     OuttakeSusystem outtakeSusystem;
     public OuttakeCommand(OuttakeSusystem outtakeSusystem) {
         this.outtakeSusystem = outtakeSusystem;
@@ -12,7 +13,7 @@ public class OuttakeCommand extends CommandBase {
     }
     @Override
     public void initialize() {
-        super.initialize();
+        outtakeSusystem.go_outtake_second();
     }
 
     @Override

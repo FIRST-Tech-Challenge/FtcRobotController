@@ -41,7 +41,7 @@ public class CenterStageTeleOp extends CommandOpMode {
     public static double rearRightKV = 1;
     public static double rearRightKA = 0;
 
-    public static double VELO_KP = 1.1;
+    public static double VELO_KP = 0;
     public static double VELO_KI  = 0;
     public static double VELO_KD = 0;
     public static double minIntegralBound = -400;

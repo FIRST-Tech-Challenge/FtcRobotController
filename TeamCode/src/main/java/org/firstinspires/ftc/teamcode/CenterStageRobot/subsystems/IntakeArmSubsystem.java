@@ -17,7 +17,7 @@ public class IntakeArmSubsystem extends SubsystemBase {
 //        leftArm = new SimpleServo(hm, "left_intake_arm", 0, 180, AngleUnit.DEGREES); // TODO: Angle Values Might Change
         rightArm = hm.get(ServoImplEx.class, "right_intake_arm");
 
-        setPosition(0);
+        setPosition(MAX);
     }
 
     public void setPosition(double position) {
