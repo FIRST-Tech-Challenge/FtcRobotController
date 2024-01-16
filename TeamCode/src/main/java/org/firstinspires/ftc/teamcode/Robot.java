@@ -1254,6 +1254,7 @@ public class Robot {
                 // do nothing
             } else if (gamepad2.a) { // a - intake position
                 allowTrayAngle = false;
+                trayAngle.setPosition(0.52);
                 trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
                 allowTrayAngle = true;
