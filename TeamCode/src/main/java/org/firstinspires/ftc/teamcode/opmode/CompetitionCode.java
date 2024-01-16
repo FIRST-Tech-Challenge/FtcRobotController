@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.mechanism.*;
 public class CompetitionCode extends OpMode {
 
     Traction DriveTrain = new Traction();
-    // This is the class which does all the computations for each motor's speed.
+// This is the class which does all the computations for each motor's speed.
     ProgrammingBoard Board = new ProgrammingBoard();
-    // This class directly controls each motor.
+// This class directly controls each motor.
     double axial;
     double lateral;
     double yaw;
@@ -23,7 +23,7 @@ public class CompetitionCode extends OpMode {
     @Override
     public void init(){
         Board.init(hardwareMap);
-        // This initializes the hardware map.
+// This initializes the hardware map.
         telemetry.addLine("Initialized");
         telemetry.update();
     }
@@ -31,6 +31,7 @@ public class CompetitionCode extends OpMode {
     @Override
     public void loop(){
 
+// The "if" block is a toggle.
         if (gamepad1.a && !alreadyPressed) {
             state = !state;
         }
@@ -39,21 +40,15 @@ public class CompetitionCode extends OpMode {
         if (!state) {
             axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             lateral =  gamepad1.left_stick_x;
-            yaw     =  gamepad1.right_stick_x;
-            intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
         } else {
             axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             lateral =  -gamepad1.left_stick_x;
-            yaw     =  gamepad1.right_stick_x;
-            intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
         }
 
-
+// Arm variable is set. Due to binary variable, it only has 2 modes. Eventually implement an encoder system?
         if (gamepad1.right_bumper) {
             armPower = .25;
-        }
-
-        else {
+        } else {
             armPower = 0;
         }
 
@@ -61,28 +56,19 @@ public class CompetitionCode extends OpMode {
             armPower = -.25;
         }
 
+// Normal arm control is dialed down. This allows super-strength.
         if (gamepad1.y) {
             armPower = -.5;
-        }
-
-        else {
+        } else {
             armPower = 0;
         }
 
-
+// Set arm and intake power based off variables defined above.
         Board.setIntakePower(intakePower);
         Board.setArmPower(armPower);
 
+// This function sends the game pad inputs to the Traction class.
         DriveTrain.controllerDrive(axial, lateral, yaw);
-        // This function sends the game pad inputs to the Traction class.
-
-        if (gamepad1.dpad_up) {
-            Board.setPanAngle(0.5);
-        }
-
-        else if (gamepad1.dpad_down) {
-            Board.setPanAngle(0);
-        }
 
     }
-}
+    }
