@@ -26,6 +26,8 @@ public class TestAuto extends LinearOpMode {
 
     private double currentAngle = 0;
 
+    private final boolean debug = false;
+
     private void setPower(double axial, double lateral, double yaw) {
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
@@ -63,13 +65,14 @@ public class TestAuto extends LinearOpMode {
     }
 
     private void turnRight(double power, double targetAngle) {
-
-
-
         while(currentAngle < targetAngle) {
             currentAngle = getIntegratedHeading();
 
-            System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
+            // for debugging
+            //System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
+            telemetry.addData("current angle", currentAngle);
+            telemetry.update();
+
             setPower(0,0, power);
         }
 
@@ -80,8 +83,13 @@ public class TestAuto extends LinearOpMode {
     private void turnLeft(double power, double targetAngle) {
         while(currentAngle > targetAngle) {
             currentAngle = getIntegratedHeading();
+            // for debugging
+            if (debug) {
+                //System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
+                telemetry.addData("current angle", currentAngle);
+                telemetry.update();
+            }
 
-            System.out.println("Turning clockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
             setPower(0,0, -power);
         }
 
@@ -127,10 +135,10 @@ public class TestAuto extends LinearOpMode {
 
         return -integratedHeading;
     }
-    
+
     private void unitTestTurn() {
         turnLeft(0.5, -90);
-        turnRight(0.5, -110);
+        turnLeft(0.5, -110);
 
         turnRight(0.5, 100);
         turnLeft(0.5, 75);
@@ -140,8 +148,6 @@ public class TestAuto extends LinearOpMode {
 
         turnLeft(0.5, -279);
         turnRight(0.5, 73);
-
-
     }
 
     @Override
