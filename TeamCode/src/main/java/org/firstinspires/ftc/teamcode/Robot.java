@@ -132,14 +132,14 @@ public class Robot {
     }
 
     public void trayToIntakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.415);
+        setServoPosBlocking(tray, 0.35);
         if (blocking) {
             opMode.sleep(500);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.36);
+        setServoPosBlocking(tray, 0.05);
         if (blocking) {
             opMode.sleep(100);
         }
@@ -372,7 +372,7 @@ public class Robot {
 
     public void setTrayAngle() {
         double currentHeading = getCurrentHeading();
-        setServoPosBlocking();
+        //setServoPosBlocking();
     }
 
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
@@ -1138,6 +1138,10 @@ public class Robot {
 
         double targetLinearSlideTicks = 0;
 
+        boolean allowTrayAngle = false;
+        double currentHeading = getCurrentHeading();
+        double trayAngleServoPos = 0.52;
+
         boolean linearSlideFlag = false;
         while (opMode.opModeIsActive()) {
 
@@ -1249,9 +1253,17 @@ public class Robot {
             if (gamepad2.a && gamepad2.y) { // both - stay at current
                 // do nothing
             } else if (gamepad2.a) { // a - intake position
+                allowTrayAngle = false;
                 trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
+                allowTrayAngle = true;
                 trayToOuttakePos(false);
+            }
+
+            if (allowTrayAngle) {
+                currentHeading = getCurrentHeading();
+                trayAngleServoPos = -0.00413*currentHeading + 0.15;
+                trayAngle.setPosition(trayAngleServoPos);
             }
 
             // clamp controls
@@ -1335,6 +1347,10 @@ public class Robot {
             */
 
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
+            telemetry.addData("tray angle position servo", trayAngle);
+            telemetry.addData("imu", getCurrentHeading());
+            Log.d("trayAngle", trayAngle + "tray" + getCurrentHeading() + "heading");
+            telemetry.update();
         }
     }
 
