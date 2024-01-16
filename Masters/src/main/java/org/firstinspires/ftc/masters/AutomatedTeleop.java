@@ -236,9 +236,16 @@ public class AutomatedTeleop extends LinearOpMode {
 
             backSlidesMove(target);
 
-            intakeSlides.setTargetPosition(0);
-            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            intakeSlides.setPower(.5);
+
+
+            if (gamepad1.x){
+                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+            }
+            if (gamepad1.y){
+                outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+                outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
+            }
 
             switch (intakeState) {
                 case Intake:
@@ -264,12 +271,25 @@ public class AutomatedTeleop extends LinearOpMode {
                         intakeState = IntakeState.Transfer;
                         clawAngle.setPosition(CSCons.clawAngleTransfer);
                         clawArm.setPosition(CSCons.clawArmTransfer);
+
                     }
 
                     if (gamepad2.dpad_left) {
                         intakeState = IntakeState.Transition;
                         clawAngle.setPosition(CSCons.clawAngleTransition);
                         clawArm.setPosition(CSCons.clawArmTransition);
+                    }
+
+                    if (gamepad1.dpad_up){
+                        intakeSlides.setTargetPosition(1700);
+                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        intakeSlides.setPower(0.8);
+                    }
+
+                    if (gamepad1.dpad_down){
+                        intakeSlides.setTargetPosition(0);
+                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        intakeSlides.setPower(1);
                     }
 
 
@@ -285,7 +305,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     break;
                 case Transfer:
                     //is there a reason we would ever want to close the claw here?
-                    if (gamepad2.a && outtakeState == OuttakeState.ReadyToTransfer) {
+                    if (gamepad1.a && outtakeState == OuttakeState.ReadyToTransfer) {
                         clawPosition = ClawPosition.TRANSFER;
                         clawServo.setPosition(CSCons.clawTransfer);
                     }
@@ -304,6 +324,12 @@ public class AutomatedTeleop extends LinearOpMode {
                         clawArm.setPosition(CSCons.clawArmTransition);
                     }
 
+                    if (gamepad1.dpad_down){
+                        intakeSlides.setTargetPosition(0);
+                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        intakeSlides.setPower(1);
+                    }
+
 
                     break;
                 case Transition:
@@ -320,6 +346,12 @@ public class AutomatedTeleop extends LinearOpMode {
                         intakeState = IntakeState.Transfer;
                         clawAngle.setPosition(CSCons.clawAngleTransfer);
                         clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+                    }
+
+                    if (gamepad1.dpad_down){
+                        intakeSlides.setTargetPosition(0);
+                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        intakeSlides.setPower(1);
                     }
 
                     break;
@@ -358,6 +390,11 @@ public class AutomatedTeleop extends LinearOpMode {
 
                     break;
                 case MoveToTransfer:
+                    if (backSlides.getCurrentPosition()<30){
+                        outtakeHook.setPosition(CSCons.openHook);
+                        outtakeState= OuttakeState.ReadyToTransfer;
+                        target =0;
+                    }
 
 
                     //if touch sensor => ready to transfer
@@ -382,13 +419,23 @@ public class AutomatedTeleop extends LinearOpMode {
 
                     if (gamepad2.left_trigger>0.5){
                         backSlidePos = OuttakePosition.LOW;
-                        target = backSlidePos.getTarget();
+
 
                     }
                     if (gamepad2.right_trigger>0.5){
                         backSlidePos = OuttakePosition.MID;
                         target = backSlidePos.getTarget();
                     }
+
+                    if (gamepad2.left_stick_y>0.2){
+                        backSlidePos= OuttakePosition.BOTTOM;
+                        outtakeHook.setPosition(CSCons.openHook);
+                        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+                        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                        target = backSlidePos.getTarget();
+                        outtakeState= OuttakeState.MoveToTransfer;
+                    }
+
 
 
                     //what button to mode back to transfer?
@@ -408,6 +455,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     if (backSlides.getCurrentPosition()>100){
                         outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
                         outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                        outtakeRotation.setPosition(outtakeRotationTarget);
                     }
                     if (backSlides.getCurrentPosition()>backSlidePos.getTarget()-100){
                         outtakeState = OuttakeState.ReadyToDrop;

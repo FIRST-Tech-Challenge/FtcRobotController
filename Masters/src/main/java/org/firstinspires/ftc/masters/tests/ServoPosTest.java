@@ -27,7 +27,7 @@ public class ServoPosTest extends LinearOpMode {
         clawAngle = hardwareMap.servo.get("clawAngle");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
+        outtakeMovement = hardwareMap.servo.get("backSlideServo");
 
 
         waitForStart();

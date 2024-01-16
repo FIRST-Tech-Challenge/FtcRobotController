@@ -25,13 +25,13 @@ public class CSCons {
     public static double clawArmTransfer = .2;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
-    public static double outtakeAngleFolder=.05;
-    public static double outtakeAngleTransfer=.67;
+    public static double outtakeAngleFolder=0.15;
+    public static double outtakeAngleTransfer=.55;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop = .54;
+    public static double outtakeMovementBackDrop = .65;
     public static double outtakeMovementTransfer = .064;
     //public static double[] rightSideBack = {0.955, 0.65};
-    public static double openHook = 0.8;
+    public static double openHook = 0.6;
     public static double closeHook = 1;
 
     public static double droneFlat = 0.3;
@@ -45,10 +45,10 @@ public class CSCons {
     public static long closingHook = 100;
 
     public enum OuttakePosition{
-        BOTTOM (30),
-        LOW(500),
-        MID(1000),
-        HIGH(2600);
+        BOTTOM (-10),
+        LOW(1400),
+        MID(2400),
+        HIGH(3400);
 
         private int target;
 
