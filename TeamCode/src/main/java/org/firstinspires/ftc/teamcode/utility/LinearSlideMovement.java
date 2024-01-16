@@ -11,11 +11,11 @@ public class LinearSlideMovement {
 
     private DcMotor rightLinearSlide;
 
-    public static final int top_linearslide_ticks = 1750; // adjusted to proper field height at T1 from memory
+    public static final int top_linearslide_ticks = 1660; // adjusted to proper field height at T1 from memory
 
-    public static final int mid_linearslide_ticks = 1000;
+    public static final int mid_linearslide_ticks = 900;
 
-    public static final int low_linearslide_ticks = 400;
+    public static final int low_linearslide_ticks = 450;
 
     public static final int bottom_linearslide_ticks = 0;
 

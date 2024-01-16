@@ -7,6 +7,7 @@ import android.util.Size;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
@@ -30,6 +32,7 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -37,7 +40,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public abstract class AutoBase extends OpMode {
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+public abstract class AutoBase extends LinearOpMode {
 
     // <<<<<<end of configurable parameters >>>>>>>>>>>
     static final int STREAM_WIDTH = 1280; // modify for your camera
@@ -92,10 +98,10 @@ public abstract class AutoBase extends OpMode {
     // Motor is 28 ticks per revolution
     // Gear Ratio is 12:1
     // Wheel diameter is 100mm
-    double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
+    final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
 
     @Override
-    public void init() {
+    public void runOpMode() {
 
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 //        WebcamName webcamName = null;
@@ -193,15 +199,15 @@ public abstract class AutoBase extends OpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
+        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(10, 0.2, 0.1, 8);
         // For Lift, PIDF values set to reduce jitter on high lift
-        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
-        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
+        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 8);
+        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 8);
         // For Wrist, PIDF values set to reduce jitter
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(8, 0, 0, 1);
+        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -309,6 +315,138 @@ public abstract class AutoBase extends OpMode {
     }
 
 
+    public boolean GoToAprilTag(int tagNumber) {
+        double targetX = 0;
+        // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
+        if (tagNumber == 1 || tagNumber == 4) {
+            targetX = 0.5;
+        } else if (tagNumber == 3 || tagNumber == 6) {
+            targetX = -0.5;
+        }
+        double targetY = 10;
+        double targetAngle = 0;
 
+        // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
+        if (tagNumber <= 3) {
+            targetAngle = -90;
+        } else if (tagNumber > 3) {
+            targetAngle = 90;
+        }
+
+        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        // Scan for April Tag detections and update current values if you find one.
+        List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
+        if (tag != null) {
+            for (int i = 0; i < tag.size(); i++) {
+                if (tag.get(i) != null) {
+                    if (tag.get(i).id == tagNumber) {
+                        currentX = tag.get(i).ftcPose.x;
+                        currentY = tag.get(i).ftcPose.y;
+                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                        tagDetected = true;
+                    }
+                }
+            }
+        }
+
+        // Update Telemetry with key data
+        telemetry.addData("tags found: ", tag.size());
+        telemetry.addData("AlignStage: ", alignStage);
+        telemetry.addData("Current X: ", currentX);
+        telemetry.addData("Target X: ", targetX);
+        telemetry.addData("Current Y: ", currentY);
+        telemetry.addData("Target Y: ", targetY);
+        telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        telemetry.addData("Target Angle: ", targetAngle);
+        telemetry.update();
+
+        // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
+        // the motion needed to get to the April Tag.
+        // axial from drive is gamepad1.left_stick_y;
+        // lateral from drive is -gamepad1.left_stick_x;
+        // yaw from drive is -gamepad1.right_stick_x;
+
+        // Stage 0 - Ensure that motor powers are zeroed and switch to RUN_USING_ENCODER mode.
+        if (alignStage == 0) {
+            // Motors will bee to be in RUN_USING_ENCODER for this vs. RUN_TO_POSITION mode
+            // Refactor this to the Movement class to make a method to switch motors to run
+            // on a defined power level.
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // Set default to BRAKE mode for control
+            leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            // Set Powers to 0 for safety and not knowing what they are set to.
+            moveTo.StopMotors();
+            // Init variables for motion
+            axial = 0;
+            lateral = 0;
+            yaw = 0;
+            // increment alignStage
+            alignStage = 1;
+        }
+
+        // If no tag is detected, creep backwards.
+        if (!tagDetected){
+            axial = -0.10;
+            aprilTagAligned = false;
+        }
+
+        // Square up the robot to the backdrop (from targetAngle above)
+        // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
+        if (abs (targetAngle - currentAngle) > 2) {
+            yaw = -Movement.CalcTurnError(targetAngle, currentAngle) / 45;
+            if (yaw > 0.3){
+                yaw = 0.3;
+            } else if (yaw < -0.3){
+                yaw = -0.3;
+            }
+        } else {
+            yaw = 0;
+        }
+
+        // Slide laterally to correct for X or right motion
+        // If the x distance is > 1 inch off of targetX move left or right accordingly
+        // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
+        // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
+        if (targetX - currentX > 1) {
+            lateral = 0.2;
+        } else if (targetX - currentX < -1) {
+            lateral = -0.2;
+        }else {
+            lateral = 0;
+        }
+
+        // Back the robot up to the right distance to raise the lift
+        if (currentY > targetY) {
+            axial = -0.15;
+        } else {
+            axial = 0;
+        }
+
+        // Combine the axial, lateral and yaw factors to be powers
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
+
+        // Apply calculated values to drive motors
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+
+        // Test to see if we are at all three parts of our desired position and we are aligned.
+        if (abs (targetX - currentX) < 1 && currentY < targetY && abs (targetAngle - currentAngle) < 2){
+            aprilTagAligned = true;
+            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+        }
+        return aprilTagAligned;
+    }
 }
 

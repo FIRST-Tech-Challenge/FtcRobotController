@@ -80,7 +80,7 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="GGE Drive T1", group="Linear OpMode")
+@TeleOp(name="GGE Drive T2", group="Linear OpMode")
 //@Disabled
 public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
@@ -151,13 +151,13 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
-        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(8, 0.1, 0.2, 8);
+        ((DcMotorEx) leftFrontDrive).setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
+        ((DcMotorEx) leftBackDrive).setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
+        ((DcMotorEx) rightFrontDrive).setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
+        ((DcMotorEx) rightBackDrive).setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
         // For Lift, PIDF values set to reduce jitter on high lift
-        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
-        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(8, 0.75, 0, 4);
+        ((DcMotorEx) leftLinearSlide).setVelocityPIDFCoefficients(12, 0.75, 0, 8);
+        ((DcMotorEx) rightLinearSlide).setVelocityPIDFCoefficients(12, 0.75, 0, 8);
         // For Wrist, PIDF values set to reduce jitter
         ((DcMotorEx) wrist).setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
 
