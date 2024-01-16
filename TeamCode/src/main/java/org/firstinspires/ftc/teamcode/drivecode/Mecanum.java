@@ -183,8 +183,8 @@ public class Mecanum extends LinearOpMode {
                 if (gamepad2.b) {
                     c = true;
                     d = false;
-                    linearGripper.setPosition(a+=.01);
-                } else if (gamepad2.x) {
+                    linearGripper.setPosition(a+=.02);
+                } else if (gamepad2.a) {
                     c = false;
                     d = true;
                     a = .01;
