@@ -95,22 +95,37 @@ public class RedLeftPathTest extends LinearOpMode {
             .setReversed(true)
             .build();
     waitForStart();
-    while (opModeIsActive() && !isStopRequested() && !robot.queuer.isFullfilled()) {
-      //            for (int i = 0; i < 6; i++) {
-      //              robot.followPPPath(testPath);
-      //              robot.followPPPath(testPath2);
-      //            }
-      //                  robot.update();
-      //                }
-//      robot.followPPPath(dropPath);
-//            for (int i = 0; i < 3; i++) {
-//              robot.followPPPath(toTruss);
-//              robot.followPPPath(toBackdrop);
-//              robot.followPPPath(backToTruss);
-//            }
-//            robot.followPPPath(toTruss);
-//            robot.followPPPath(toBackdrop);
-      robot.followTrajSeq(tradegy);
+    while (opModeIsActive() && !isStopRequested() /*&& !robot.queuer.isFullfilled()*/) {
+      robot.upAuto();
+      robot.queuer.addDelay(2.0);
+
+      robot.purpurAuto();
+      robot.queuer.addDelay(2.0);
+
+      robot.dropAuto(1);
+      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+      robot.queuer.addDelay(2.0);
+
+      robot.resetAuto();
+      robot.queuer.addDelay(2.0);
+
+      robot.intakeAuto(1);
+      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+      robot.queuer.addDelay(2.0);
+
+//      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+//
+//      robot.drop();
+//      robot.queuer.addDelay(2.0);
+
       robot.update();
       }
     robot.stop();

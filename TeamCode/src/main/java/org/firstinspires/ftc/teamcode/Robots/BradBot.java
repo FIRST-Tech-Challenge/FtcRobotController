@@ -120,6 +120,66 @@ public class BradBot extends BasicRobot {
     }
   }
 
+  public void purpurAuto() {
+    if (queuer.queue(false, HOVER.getState())) {
+      if (!queuer.isExecuted()) {
+        arm.purpurPigzl();
+        Lift.LiftMovingStates.LOW.state = false;
+        lift.iterateDown();
+        LOGGER.log("purpuring");
+      }
+    }
+  }
+
+  public void dropAuto(int servo) {
+    if (queuer.queue(false, queuer.isExecuted())) {
+      if (!queuer.isExecuted()) {
+        if (servo == 1) {
+          claw.moveOne(false);
+        } else {
+          claw.moveTwo(false);
+        }
+        LOGGER.log("dropping claw " + servo);
+      }
+    }
+  }
+
+  public void upAuto() {
+    if (queuer.queue(false, true)) {
+      if (!queuer.isExecuted()) {
+        lift.iterateUp();
+        intake.stopIntake();
+        arm.flipTo(DROP);
+      }
+    }
+  }
+
+  public void lowAuto() {
+    if (queuer.queue(false, Arm.ArmStates.DROP.getState())) {
+      if (!queuer.isExecuted()) {
+        HOVER.state = false;
+        lift.iterateUp();
+        intake.stopIntake();
+        arm.flipTo(DROP);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        twrist.flipTo(Twrist.twristTargetStates.DROP);
+      }
+    }
+  }
+
+  public void grabAuto() {
+    if (queuer.queue(false, Claw.clawStates.GRAB.getState())) {
+      if (!queuer.isExecuted()) {
+        arm.flipTo(GRAB);
+        wrist.flipTo(Wrist.WristTargetStates.LOCK);
+        claw.moveTwo(true);
+        claw.moveOne(true);
+        Claw.clawStates.GRAB.setStateTrue();
+        LOGGER.log("grabbing");
+      }
+    }
+  }
+
   public void loadAuto() {
     if (queuer.queue(true, preloader.getLoaded())) {
       if (!queuer.isExecuted()) {
@@ -139,10 +199,25 @@ public class BradBot extends BasicRobot {
   }
 
   public void resetAuto() {
-    if (queuer.queue(true, Lift.LiftPositionStates.AT_ZERO.getState())) {
+    if (queuer.queue(false, Lift.LiftPositionStates.AT_ZERO.getState())) {
       if (!queuer.isExecuted()) {
-        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+        twrist.flipTo(Twrist.twristTargetStates.GRAB);
+        wrist.flipTo(Wrist.WristTargetStates.GRAB);
         arm.flipTo(HOVER);
+        lift.update();
+        wrist.update();
+        twrist.update();
+        intake.stopIntake();
+      }
+      lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
+    }
+  }
+
+  public void intakeAuto(int height) {
+    if (queuer.queue(false, Intake.IntakeStates.STOPPED.getState())) {
+      if (!queuer.isExecuted()) {
+        intake.setHeight(height);
+        intake.intake();
       }
     }
   }
@@ -163,13 +238,14 @@ public class BradBot extends BasicRobot {
   }
 
   public void drop() {
-//    if (queuer.queue(false, Claw.clawTargetStates.DROP.getState())) {
-//      if (!queuer.isExecuted()) {
-//        claw.flipTo(Claw.clawTargetStates.DROP);
-//      }
-//    }
+    if (queuer.queue(false, Claw.clawStates.CLOSE.getState())) {
+      if (!queuer.isExecuted()) {
+        claw.moveTwo(false);
+        claw.moveOne(false);
+        Claw.clawStates.CLOSE.setStateTrue();
+      }
+    }
   }
-
 
   /**
    * Calls other lift auto Logs that function is called
@@ -293,7 +369,8 @@ public class BradBot extends BasicRobot {
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
-    boolean intUp = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "intake iterate up");
+    boolean intUp =
+        gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "intake iterate up");
     boolean isRightBumper2 =
         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
     ;
@@ -316,16 +393,17 @@ public class BradBot extends BasicRobot {
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-//        magazine.clampTo(Magazine.MagazineTargetStates.CLOSE);
+        //        magazine.clampTo(Magazine.MagazineTargetStates.CLOSE);
         intake.intake();
       } else {
-//        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
+        //        magazine.clampTo(Magazine.MagazineTargetStates.OPEN);
         intake.stopIntake();
       }
     }
     if (left) {
-      if (HOVER.getState()&&!Arm.ArmTargetStates.GRAB.getState()){
+      if (HOVER.getState() && !Arm.ArmTargetStates.GRAB.getState()) {
         arm.flipTo(GRAB);
+        wrist.flipTo(Wrist.WristTargetStates.LOCK);
       }
       if (Claw.clawStates.CLOSE.getState()) {
         claw.flipTo(Claw.clawTargetStates.GRAB);
@@ -343,11 +421,13 @@ public class BradBot extends BasicRobot {
       wrist.flipTo(Wrist.WristTargetStates.DROP);
       twrist.flipTo(Twrist.twristTargetStates.DROP);
     }
-    if(intUp){
+    if (intUp) {
       intake.toggleIntakeHeight();
     }
     if (down) {
       arm.flipTo(DROP);
+      wrist.flipTo(Wrist.WristTargetStates.DROP);
+      twrist.flipTo(Twrist.twristTargetStates.DROP);
       lift.iterateDown();
       intake.stopIntake();
     }

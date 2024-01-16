@@ -45,8 +45,7 @@ public class CVMaster {
     webcam =
         OpenCvCameraFactory.getInstance()
             .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
-    webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.NATIVE_VIEW);
-//    observeSpike();
+   observeSpike();
     isStreaming = true;
   }
 
@@ -91,19 +90,20 @@ public class CVMaster {
              * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
              * away from the user.
              */
-            if (isRed&&!isBlue) {
-              webcam.setPipeline(openSleevi);
-            } else if(isRed&&isBlue){
-              webcam.setPipeline(openSleeviy);
-            }else if(!isRed&&isBlue){
-              webcam.setPipeline(openSleevey);
-            }
-            else {
-              webcam.setPipeline(openSleeve);
-            }
+//            if (isRed&&!isBlue) {
+//              webcam.setPipeline(openSleevi);
+//            } else if(isRed&&isBlue){
+//              webcam.setPipeline(openSleeviy);
+//            }else if(!isRed&&isBlue){
+//              webcam.setPipeline(openSleevey);
+//            }
+//            else {
+//              webcam.setPipeline(openSleeve);
+//            }
 
             webcam.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
             dashboard.startCameraStream(webcam, 10);
+            LOGGER.log("Camera Streaming now!");
           }
 
           @Override

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -14,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double GRAB_POS = 0.33,
+  public static double GRAB_POS = 0.28,
       CLOSE_POS = 0.56,
-      FLIP_TIME = 0.3, GRAB2=0.73, CLOSE2 = 0.46;
+      FLIP_TIME = 0.3, GRAB2=0.8, CLOSE2 = 0.46;
   private double lastTime = 0;
   private Servo servo2;
   public Claw() {
@@ -24,12 +25,21 @@ public class Claw extends RFServo {
     servo2 = op.hardwareMap.get(Servo.class, "clawServo2");
     lastTime = -100;
     super.setLastTime(-100);
-    super.setPosition(GRAB_POS);
-    servo2.setPosition(GRAB2);
-    super.setFlipTime(FLIP_TIME);
-    clawStates.GRAB.setStateTrue();
-    clawTargetStates.GRAB.setStateTrue();
-    clawTargetStates.GRAB.state=false;
+    if (!isTeleop) {
+      super.setPosition(GRAB_POS);
+      servo2.setPosition(GRAB2);
+      super.setFlipTime(FLIP_TIME);
+      clawStates.GRAB.setStateTrue();
+      clawTargetStates.GRAB.setStateTrue();
+      clawTargetStates.GRAB.state = false;
+    } else{
+      super.setPosition(CLOSE_POS);
+      servo2.setPosition(CLOSE2);
+      super.setFlipTime(FLIP_TIME);
+      clawStates.CLOSE.setStateTrue();
+      clawTargetStates.CLOSE.setStateTrue();
+      clawTargetStates.CLOSE.state = false;
+    }
     lastTime = -100;
     super.setLastTime(-100);
   }
@@ -101,6 +111,22 @@ public class Claw extends RFServo {
       }
     }
     }
+  public void moveOne(boolean grab) {
+    if (grab) {
+      super.setPosition(GRAB_POS);
+    }
+    else{
+      super.setPosition(CLOSE_POS);
+    }
+  }
+  public void moveTwo(boolean grab) {
+    if (grab) {
+      servo2.setPosition(GRAB2);
+    }
+    else{
+      servo2.setPosition(CLOSE2);
+    }
+  }
 
   public void update() {
     for (var i : clawStates.values()) {

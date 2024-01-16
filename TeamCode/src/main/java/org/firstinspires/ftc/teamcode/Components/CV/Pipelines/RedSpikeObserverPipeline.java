@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
@@ -15,111 +18,95 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 /**
- * Warren
- * This is the pipeline that is activated when the robot is initializing, it will determine which position the team prop is in
+ * Warren This is the pipeline that is activated when the robot is initializing, it will determine
+ * which position the team prop is in
  */
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
-    ArrayList<double[]> frameList;
-    public static double p1x = 0, p1y =230, p2x = 80, p2y =360, p21x = 260, p21y =200, p22x = 420, p22y =340, threshhold = 1.0,
+  ArrayList<double[]> frameList;
+  public static double p1x = 0,
+      p1y = 390,
+      p2x = 80,
+      p2y = 540,
+      p21x = 290,
+      p21y = 390,
+      p22x = 460,
+      p22y = 540,
+      p31x = 650,
+      p31y = 390,
+      p32x = 830,
+      p32y = 540,
+      threshhold = 1.0,
 
-    //h3u and s3u: 71 and 90
-    colour = 1, h1 = 0, h1H = 30, h2 =160, h2H = 180;
-    
+      // h3u and s3u: 71 and 90
+      colour = 1,
+      h1 = 0,
+      h1H = 30,
+      h2 = 160,
+      h2H = 180;
 
+  /** This will construct the pipeline */
+  public RedSpikeObserverPipeline() {
+    frameList = new ArrayList<>();
+  }
 
-    /**
-     * This will construct the pipeline
-     */
-    public RedSpikeObserverPipeline() {
-        frameList=new ArrayList<>();
+  /**
+   * This will process the frame will NOT log, all this done asynchronously
+   *
+   * @param input inputted fram from camera
+   * @return outputted frame from this function
+   */
+  @Override
+  public Mat processFrame(Mat input) {
+
+    Rect ROI1 =
+        new Rect( // 130 x 210, 60 x 120
+            new Point(p1x, p1y), new Point(p2x, p2y));
+    Rect ROI2 =
+        new Rect( // 130 x 210, 60 x 120
+            new Point(p21x, p21y), new Point(p22x, p22y));
+    Rect ROI3 = new Rect(new Point(p31x, p32y), new Point(p32x, p32y));
+    Mat cone = input.submat(ROI1);
+    double redValue = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    cone = input.submat(ROI2);
+    double redValue2 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    cone = input.submat(ROI3);
+    double redValue3 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    frameList.add(new double[] {redValue, redValue2, redValue3});
+    if (frameList.size() > 5) {
+      frameList.remove(0);
     }
+    cone.release();
+    Scalar color = new Scalar(255, 0, 0);
+    Imgproc.rectangle(input, ROI1, color, 5);
+    Imgproc.rectangle(input, ROI2, color, 5);
+    Imgproc.rectangle(input, ROI3, color, 5);
+    return input;
+  }
 
-    /**
-     * This will process the frame
-     * will NOT log, all this done asynchronously
-     * @param input inputted fram from camera
-     * @return outputted frame from this function
-     */
-    @Override
-    public Mat processFrame(Mat input) {
-
-        Rect ROI1 = new Rect( //130 x 210, 60 x 120
-                new Point(p1x,p1y),
-                new Point(p2x,p2y));
-        Rect ROI2 = new Rect( //130 x 210, 60 x 120
-                new Point(p21x,p21y),
-                new Point(p22x,p22y));
-        Mat cone = input.submat(ROI1);
-        Mat nCone = new Mat();
-        Mat newCone = new Mat();
-        Imgproc.cvtColor(cone, nCone, Imgproc.COLOR_GRAY2BGR);
-        Imgproc.cvtColor(nCone, newCone, Imgproc.COLOR_BGR2HSV);
-        Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
-    Scalar thresh2 = new Scalar(h2,59,0), hthresh2 = new Scalar(h2H,255,255);
-        Mat filtered = new Mat(), filtered1 = new Mat();
-        Core.inRange(newCone, thresh1, hthresh1, filtered);
-        Core.inRange(newCone, thresh2, hthresh2, filtered1);
-        Mat thresh = new Mat();
-        Core.add(filtered1, filtered, thresh);
-        double redValue = Core.sumElems(thresh).val[0]/ROI1.area()/255;
-        cone = input.submat(ROI2);
-        newCone = new Mat();
-        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
-         filtered = new Mat();
-         filtered1 = new Mat();
-        Core.inRange(newCone, thresh1, hthresh1, filtered);
-        Core.inRange(newCone, thresh2, hthresh2, filtered1);
-        thresh = new Mat();
-        Core.add(filtered1, filtered, thresh);
-        double redValue2 = Core.sumElems(thresh).val[0]/ROI2.area()/255;
-        frameList.add(new double[]{redValue, redValue2});
-        if(frameList.size()>5) {
-            frameList.remove(0);
-        }
-        cone.release();
-        newCone.release();
-        filtered.release();
-        filtered1.release();
-        thresh.release();
-        //release all the data
-//        input.release();
-//        mat.release();
-        nCone.release();
-        Scalar color = new Scalar(255,0,0);
-        Imgproc.rectangle(input, ROI1, color, 5);
-        Imgproc.rectangle(input, ROI2, color, 5);
-        return input;
+  /**
+   * This will get the spike location Logs spike location to general medium verbosity
+   *
+   * @return spike's location
+   */
+  public int getPosition() {
+    double[] sums = {0, 0, 0};
+    for (int i = 0; i < frameList.size() - 1; i++) {
+      sums[0] += frameList.get(i)[0];
+      sums[1] += frameList.get(i)[1];
+      sums[2] += frameList.get(i)[2];
     }
-
-    /**
-     * This will get the spike location
-     * Logs spike location to general medium verbosity
-     * @return spike's location
-     */
-    public int getPosition(){
-        double[] sums = {0,0,0};
-        for(int i=0;i<frameList.size()-1;i++){
-            sums[0]+=frameList.get(i)[0];
-            sums[1]+=frameList.get(i)[1];
-        }
-        packet.put("frameListSize", frameList.size());
-        packet.put("cvThresh0", sums[0]);
-        packet.put("cvThresh1", sums[1]);
-
-        if(sums[0]>threshhold&&sums[1]>threshhold){
-            if(sums[0]>sums[1]){
-                return 1;
-            }
-            else{
-                return 2;
-            }
-        }else if(sums[1]>threshhold){
-            return 2;
-        } else if(sums[0]>threshhold){
-            return 1;
-        }else{
-            return 3;
-        }
+    double diffRatio = abs(sums[1] - sums[0]) / sums[0];
+    packet.put("frameListSize", frameList.size());
+    packet.put("cvThresh0", sums[0]);
+    packet.put("cvThresh1", sums[1]);
+    packet.put("diffRatio", diffRatio);
+    if (sums[0] < sums[1] && sums[0] < sums[2]) {
+      return 0;
+    } else if (sums[1] < sums[2] && sums[1] < sums[0]) {
+      return 1;
+    } else {
+      return 2;
     }
+  }
 }

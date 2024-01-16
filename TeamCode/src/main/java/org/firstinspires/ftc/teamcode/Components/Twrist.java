@@ -10,7 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.58, DROPPY = 0.113, FLIP_TIME=0.3;
+    public static double GRABBY = 0.585, DROPPY = 0.113, FLIP_TIME=0.3;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
