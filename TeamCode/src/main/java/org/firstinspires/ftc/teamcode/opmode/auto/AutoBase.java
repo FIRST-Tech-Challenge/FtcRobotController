@@ -65,7 +65,7 @@ public abstract class AutoBase extends LinearOpMode {
     private AprilTagProcessor myAprilTagProcessor;
 
     // Used to manage the video source.
-    private VisionPortal myVisionPortal;
+    protected VisionPortal myVisionPortal;
 
     HSVSaturationPipeline HSVProcessor;
 
@@ -103,33 +103,9 @@ public abstract class AutoBase extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        WebcamName webcamName = null;
-//        webcamName = hardwareMap.get(WebcamName.class, "gge_cam"); // put your camera's name here
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-//
-//        HSVProcessor = new HSVSaturationPipeline();
-//
-//        webcam.setPipeline(HSVProcessor);
-//
-//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                telemetry.addData("Camera Failed", "");
-//                telemetry.update();
-//            }
-//        });
-
         // Build the AprilTag processor
         // set parameters of AprilTagProcessor, then use Builder to build
         myAprilTagProcessor = new AprilTagProcessor.Builder()
-                //.setTagLibrary(myAprilTagLibrary)
-                //.setNumThreads(tbd)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)

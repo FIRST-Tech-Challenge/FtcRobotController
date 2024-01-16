@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
@@ -66,6 +67,18 @@ public class Auto1_BlueFieldLeft extends AutoBase {
          * This loop is run continuously
          */
         while (opModeInInit()) {
+
+            // put this if in to address an error I remembered from pre tournament.  may not need this
+            if (!isStopRequested() && (myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            else {
+                // To start auto, we will be using the front camera
+                if (rearCam == myVisionPortal.getActiveCamera()) {
+                    myVisionPortal.setActiveCamera(frontCam);
+                }
+            }
+
             state = 0;
             SpikePosition spikePos = getSpikePosition();
             switch (spikePos) {
@@ -79,6 +92,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                     gamepieceLocation = GamePieceLocation.RIGHT;
             }
             telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.addData("Camera state",myVisionPortal.getCameraState());
             telemetry.update();
         }
         while (opModeIsActive()) {
