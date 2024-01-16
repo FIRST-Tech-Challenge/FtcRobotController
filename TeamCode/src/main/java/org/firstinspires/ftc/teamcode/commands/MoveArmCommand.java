@@ -50,7 +50,7 @@ public class MoveArmCommand extends CommandBase {
         double power = frontwardSupplier.getAsDouble()-backwardSupplier.getAsDouble();
 
         if (moveArmToZero.getAsBoolean()) {
-            subsystem.positionMoveArm(ZERO);
+            subsystem.positionMoveArm(FLOOR);
             return;
         } else if (moveArmToBoard.getAsBoolean()) {
             subsystem.positionMoveArm(BOARD);

@@ -28,8 +28,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public enum ArmPosition {
-        ZERO(-25),
-        BOARD(25);
+        FLOOR(0),
+        BOARD(40+90+45);
 
         private final int position;
 
