@@ -32,9 +32,9 @@ public class RedRightCS extends LinearOpMode {
     static final Vector2d TrajC1 = new Vector2d(10, 0);
     static final Vector2d TrajC2 = new Vector2d(10,-37);
 
-    static final Vector2d TrajR0 = new Vector2d(24.4,-2.1);
-    static final Vector2d TrajR1 = new Vector2d(10,0);
-    static final Vector2d TrajR2 = new Vector2d(10, -37);
+    static final Vector2d TrajR0 = new Vector2d(24.4,-1);
+    static final Vector2d TrajR1 = new Vector2d(35,0);
+    static final Vector2d TrajR2 = new Vector2d(35, -39);
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
@@ -96,11 +96,11 @@ public class RedRightCS extends LinearOpMode {
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(-59))
+                .turn(Math.toRadians(-49))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
-                .turn(Math.toRadians(59))
+                .turn(Math.toRadians(50))
                 .lineTo(TrajR1)
                 .build();
 

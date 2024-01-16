@@ -24,17 +24,19 @@ public class BlueRightCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(23.3, -.4);
-    static final Vector2d TrajL1 = new Vector2d(23.5, -4);
-    static final Vector2d TrajL2 = new Vector2d(52,45);
+    static final Vector2d TrajL0 = new Vector2d(27.3, -1.5);
+    static final Vector2d TrajL1 = new Vector2d(3, 0);
+    static final Vector2d TrajL2 = new Vector2d(3,75);
 
     static final Vector2d TrajC0 = new Vector2d(27,.8);
-    static final Vector2d TrajC1 = new Vector2d(20, 36);
-    static final Vector2d TrajC2 = new Vector2d(52,36);
+    static final Vector2d TrajC1 = new Vector2d(3, 0);
+    static final Vector2d TrajC2 = new Vector2d(3,75);
 
-    static final Vector2d TrajR0 = new Vector2d(20.2,-5);
-    static final Vector2d TrajR1 = new Vector2d(22, 37);
-    static final Vector2d TrajR2 = new Vector2d(52,32);
+    static final Vector2d TrajR0 = new Vector2d(20.2,-4.5);
+    static final Vector2d TrajR1 = new Vector2d(3, 0);
+    static final Vector2d TrajR2 = new Vector2d(3,75);
+
+
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -71,11 +73,11 @@ public class BlueRightCS extends LinearOpMode {
 
         TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajL0)
-                .turn(Math.toRadians(50))
+                .turn(Math.toRadians(70))
                 .build();
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
-                .turn(Math.toRadians(-50))
+                .turn(Math.toRadians(-70))
                 .lineTo(TrajL1)
                 .build();
 
@@ -85,30 +87,35 @@ public class BlueRightCS extends LinearOpMode {
                 .build();
 
         TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(8))
                 .lineTo(TrajC0)
                 .build();
 
         TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
                 .lineTo(TrajC1)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-8))
                 .build();
 
         TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
+                .turn(Math.toRadians(90))
                 .lineTo(TrajC2)
                 .build();
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(-48))
+                .turn(Math.toRadians(-47))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+                .turn(Math.toRadians(47))
                 .lineTo(TrajR1)
                 .build();
 
         TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
+                .turn(Math.toRadians(90))
                 .lineTo(TrajR2)
                 .build();
+
 
         drive.getExpansionHubs().update(getDt());
 
@@ -189,14 +196,14 @@ public class BlueRightCS extends LinearOpMode {
                 case DROP:
                     if(!drive.isBusy()){
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
-                        currentState = State.IDLE;
+                        currentState = State.MOVEBACK;
                         waitTimer.reset();
                     }
                     break;
 
                 case MOVEBACK:
                     //give it 2 seconds to drop before moving back
-                    if(waitTimer.milliseconds() >= 2000) {
+                    if(waitTimer.milliseconds() >= 1000) {
                         //stop the intake first
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
                         if (placement == 1) {
@@ -220,7 +227,7 @@ public class BlueRightCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR2);
                         }
-                        currentState = State.LIFTUP;
+                        currentState = State.IDLE;
                     }
                     break;
 
@@ -251,6 +258,7 @@ public class BlueRightCS extends LinearOpMode {
                     break;
 
                 case IDLE:
+
                     PoseStorage.currentPose = drive.getPoseEstimate();
                     break;
             }

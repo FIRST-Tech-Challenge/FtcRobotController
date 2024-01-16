@@ -24,7 +24,7 @@ public class BlueLeftCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(24.4,-1.9);
+    static final Vector2d TrajL0 = new Vector2d(24.4,-1);
     static final Vector2d TrajL1 = new Vector2d(10, 0);
     static final Vector2d TrajL2 = new Vector2d(10,37);
 

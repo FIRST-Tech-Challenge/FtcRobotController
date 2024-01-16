@@ -25,16 +25,16 @@ public class RedLeftCS extends LinearOpMode {
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
     static final Vector2d TrajL0 = new Vector2d(25.7,0);
-    static final Vector2d TrajL1 = new Vector2d(28.5, 45);
-    static final Vector2d TrajL2 = new Vector2d(52,45);
+    static final Vector2d TrajL1 = new Vector2d(3, 0);
+    static final Vector2d TrajL2 = new Vector2d(3,-75);
 
     static final Vector2d TrajC0 = new Vector2d(26,.8);
-    static final Vector2d TrajC1 = new Vector2d(20, 36);
-    static final Vector2d TrajC2 = new Vector2d(52,36);
+    static final Vector2d TrajC1 = new Vector2d(3, 0);
+    static final Vector2d TrajC2 = new Vector2d(3,-75);
 
-    static final Vector2d TrajR0 = new Vector2d(23.8,-4);
-    static final Vector2d TrajR1 = new Vector2d(22, 37);
-    static final Vector2d TrajR2 = new Vector2d(52,32);
+    static final Vector2d TrajR0 = new Vector2d(23.8,-3.5);
+    static final Vector2d TrajR1 = new Vector2d(3, 0);
+    static final Vector2d TrajR2 = new Vector2d(3,-75);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -76,10 +76,11 @@ public class RedLeftCS extends LinearOpMode {
 
         TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
                 .lineTo(TrajL1)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-48))
                 .build();
 
         TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+                .turn(Math.toRadians(-90))
                 .lineTo(TrajL2)
                 .build();
 
@@ -89,23 +90,25 @@ public class RedLeftCS extends LinearOpMode {
 
         TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
                 .lineTo(TrajC1)
-                .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
+                .turn(Math.toRadians(-90))
                 .lineTo(TrajC2)
                 .build();
 
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(TrajR0)
-                .turn(Math.toRadians(-48))
+                .turn(Math.toRadians(-51))
                 .build();
 
         TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+                .turn(Math.toRadians(51))
                 .lineTo(TrajR1)
                 .build();
 
         TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
+                .turn(Math.toRadians(-90))
                 .lineTo(TrajR2)
                 .build();
 
@@ -179,7 +182,8 @@ public class RedLeftCS extends LinearOpMode {
 
                 case MOVEBACK:
                     //give it 2 seconds to drop before moving back
-                    if(waitTimer.milliseconds() >= 2000) {
+                    //give it 2 seconds to drop before moving back
+                    if(waitTimer.milliseconds() >= 1000) {
                         //stop the intake first
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
                         if (placement == 1) {
@@ -203,7 +207,7 @@ public class RedLeftCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR2);
                         }
-                        currentState = State.LIFTUP;
+                        currentState = State.IDLE;
                     }
                     break;
 
@@ -233,6 +237,9 @@ public class RedLeftCS extends LinearOpMode {
                     break;
 
                 case IDLE:
+                    while(waitTimer.milliseconds() > 3000) {
+                        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
+                    }
                     PoseStorage.currentPose = drive.getPoseEstimate();
                     break;
             }
