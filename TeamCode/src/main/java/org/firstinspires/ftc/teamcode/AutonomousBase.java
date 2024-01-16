@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot();
+    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
 
     static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
     static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
@@ -192,31 +192,20 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void autoGrabPixelsInBin() {
-       // Wrist should already be in the vertical position, but just make sure
-       robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-       // Partially extend the wrist assembly to grab the pixels
-       robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
-       sleep(500);
-       // Rotate both fingers to grab the pixels
-       robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
-       robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
+        robot.startPixelGrab();
+        while(opModeIsActive() && (robot.pixelGrabState != HardwarePixelbot.PixelGrabActivity.IDLE)) {
+            performEveryLoop();
+            robot.processPixelGrab();
+        }
     } // autoGrabPixelsInBin
 
     /*---------------------------------------------------------------------------------*/
     void autoReleaseBothPixels() {
-       // Release both pixels
-       robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
-       robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
-       // Wait for servos to actually move/release
-       sleep( 350 );
-       // BEGIN to pull back (so that pixels can drop)
-       robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
-       // Allow time for pixels to be clear/dropping before starting any rotational movement
-       sleep( 150 );
-       // Finish the backward movment to the safe/stored position, and ensure wrist is vertical
-       robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-       // Ensure both movements are complete before doing anything else (like lowering the lift)
-       sleep( 500 );
+        robot.startPixelScoreAuto();
+        while(opModeIsActive() && (robot.pixelScoreAutoState != HardwarePixelbot.PixelScoreAutoActivity.IDLE)) {
+            performEveryLoop();
+            robot.processPixelScoreAuto();
+        }
     } // autoReleaseBothPixels
 
     /*---------------------------------------------------------------------------------*/

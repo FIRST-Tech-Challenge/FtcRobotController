@@ -58,7 +58,7 @@ public class TeleopServoTest extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot();
+    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
 
     @Override
     public void runOpMode() throws InterruptedException {

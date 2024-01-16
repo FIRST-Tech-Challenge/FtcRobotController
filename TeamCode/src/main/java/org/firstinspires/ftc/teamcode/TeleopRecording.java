@@ -80,7 +80,7 @@ public class TeleopRecording extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot();
+    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");

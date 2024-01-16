@@ -72,7 +72,7 @@ public abstract class Teleop extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot();
+    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -176,6 +176,8 @@ public abstract class Teleop extends LinearOpMode {
             ProcessLiftControls();
            //ProcessLiftStateMachine();
             ProcessHangControls();
+            robot.processPixelGrab();
+            robot.processPixelScore();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -455,8 +457,9 @@ public abstract class Teleop extends LinearOpMode {
     } // ProcessPixelBinFeedback
 
     /*---------------------------------------------------------------------------------*/
-    void ProcessFingerControls() {
+    void ProcessFingerControlsOld() {
 
+        // Grab pixels from storage
         // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button (GRAB)
         if( gamepad2_square_now && !gamepad2_square_last)
         {
@@ -470,6 +473,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
         } // grab
 
+        // Score Pixels
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button (SCORE/DROP)
         else if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {
@@ -495,6 +499,24 @@ public abstract class Teleop extends LinearOpMode {
         } // score/drop
 
     } // ProcessFingerControls
+    void ProcessFingerControls() {
+
+        // Grab pixels from storage
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button (GRAB)
+        if( gamepad2_square_now && !gamepad2_square_last)
+        {
+            robot.startPixelGrab();
+        } // grab
+
+        // Score Pixels
+        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button (SCORE/DROP)
+        else if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        {
+            robot.startPixelScore();
+        } // score/drop
+
+    } // ProcessFingerControls
+
 
     /*---------------------------------------------------------------------------------*/
     void ProcessLiftControls() {

@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -166,34 +167,38 @@ public class HardwarePixelbot
     public double PUSH_SERVO_INIT = 0.470;
     final public static double PUSH_SERVO_INIT_ANGLE = 188.5;
     public double PUSH_SERVO_SAFE = 0.470;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
-    final public static double PUSH_SERVO_SAFE_ANGLE = 188.5;
+    final public static double PUSH_SERVO_SAFE_ANGLE = 184.0;
     public double PUSH_SERVO_GRAB = 0.540;  // Partially extend to align fingers inside pixels
     final public static double PUSH_SERVO_GRAB_ANGLE = 166.0;
     public double PUSH_SERVO_DROP = 0.890;  // Fully extend finger assembly toward the Backdrop
     final public static double PUSH_SERVO_DROP_ANGLE = 56.1;
+    final public static double PUSH_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
     public double WRIST_SERVO_INIT = 0.450;   // higher is counter-clockwise
     final public static double WRIST_SERVO_INIT_ANGLE = 188.0; // no idea yet, will have to figure it out!
     public double WRIST_SERVO_GRAB = 0.450;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 188.0;
+    final public static double WRIST_SERVO_GRAB_ANGLE = 183.5;
     public double WRIST_SERVO_DROP = 0.810;
     final public static double WRIST_SERVO_DROP_ANGLE = 128.9;
 
     public AnalogInput fingerServo1Pos = null;
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
     public double FINGER1_SERVO_DROP = 0.500;
-    final public static double FINGER1_SERVO_DROP_ANGLE = 179.5;
+    final public static double FINGER1_SERVO_DROP_ANGLE = 175.0;
     public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.242; // 0.742
-    final public static double FINGER1_SERVO_GRAB_ANGLE = 102.1;
+
+    // Increased the "grabbed" angle to account for pixel variation
+    final public static double FINGER1_SERVO_GRAB_ANGLE = 104.0;
 
     public AnalogInput fingerServo2Pos = null;
 	public Servo  fingerServo2 = null;  // BOTTOM (bin) or LEFT (backdrop)
     public double FINGER2_SERVO_DROP = 0.480;
-    final public static double FINGER2_SERVO_DROP_ANGLE = 185.1;
+    final public static double FINGER2_SERVO_DROP_ANGLE = 181.0;
     public double FINGER2_SERVO_GRAB = FINGER2_SERVO_DROP + 0.262;  // 0.742
-    final public static double FINGER2_SERVO_GRAB_ANGLE = 102.1;
+    // Increased the "grabbed" angle to account for pixel variation
+    final public static double FINGER2_SERVO_GRAB_ANGLE = 104.0;
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
@@ -216,9 +221,11 @@ public class HardwarePixelbot
     /* local OpMode members. */
     protected HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
+    private Telemetry telemetry;
 
     /* Constructor */
-    public HardwarePixelbot(){
+    public HardwarePixelbot(Telemetry telem){
+        telemetry = telem;
     }
 
     /* Initialize standard Hardware interfaces */
@@ -809,4 +816,286 @@ public class HardwarePixelbot
         period.reset();
     } /* waitForTick() */
 
+    // Functions to have the scorer grab the pixels from the storage bins
+    public enum PixelGrabActivity {
+        IDLE,
+        EXTENDING,
+        GRABBING
+    }
+    public PixelGrabActivity pixelGrabState = PixelGrabActivity.IDLE;
+    private ElapsedTime pixelGrabTimer = new ElapsedTime();
+    public void startPixelGrab()
+    {
+        // Ensure pre-conditions are met
+        if((pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE)) {
+            pushServo.setPosition(PUSH_SERVO_GRAB);
+            pixelGrabTimer.reset();
+            pixelGrabState = PixelGrabActivity.EXTENDING;
+        }
+    }
+    public void processPixelGrab()
+    {
+        switch(pixelGrabState){
+            case EXTENDING:
+                // We have extended to the desired position
+                if(getPushServoAngle() <= PUSH_SERVO_GRAB_ANGLE) {
+                    // Rotate both fingers to grab the pixels
+                    fingerServo1.setPosition(FINGER1_SERVO_GRAB);
+                    fingerServo2.setPosition(FINGER2_SERVO_GRAB);
+                    pixelGrabTimer.reset();
+                    pixelGrabState = PixelGrabActivity.GRABBING;
+                }
+                // This is a timeout, do we want to retract and try again or just go idle and allow
+                // driver to retry?
+                else if(pixelGrabTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelGrab", "Timed out extending");
+                    telemetry.addData("processPixelGrab", "Push: %.2f", getPushServoAngle());
+                    telemetry.update();
+                    telemetrySleep();
+                    pushServo.setPosition(PUSH_SERVO_INIT);
+                    pixelGrabState = PixelGrabActivity.IDLE;
+                }
+                break;
+            case GRABBING:
+                // We have grabbed the pixels
+                if((getFingerServo1Angle() <= FINGER1_SERVO_GRAB_ANGLE) &&
+                        (getFingerServo2Angle() <= FINGER2_SERVO_GRAB_ANGLE)) {
+                    pixelGrabState = PixelGrabActivity.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we grabbed.
+                else if(pixelGrabTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelGrab", "Timed out grabbing");
+                    telemetry.addData("processPixelGrab", "Finger1: %.2f Finger2: %.2f", getFingerServo1Angle(), getFingerServo2Angle());
+                    telemetry.update();
+                    telemetrySleep();
+                    pixelGrabState = PixelGrabActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    // Functions to have the scorer score the pixels on the backdrop
+    public enum PixelScoreActivity {
+        IDLE,
+        EXTENDING,
+        RELEASING,
+        RETRACTING,
+        ROTATING
+    }
+    public PixelScoreActivity pixelScoreState = PixelScoreActivity.IDLE;
+    private ElapsedTime pixelScoreTimer = new ElapsedTime();
+    public void startPixelScore()
+    {
+        // Ensure pre-conditions are met
+        if((pixelScoreState == PixelScoreActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (viperMotorsPos > VIPER_EXTEND_BIN)) {
+            // Rotate wrist to the scoring position
+            wristServo.setPosition(WRIST_SERVO_DROP);
+            // Fully extend the wrist assembly toward the backdrop
+            // (we should do these automatically once we're above the top of the bin??)
+            pushServo.setPosition(PUSH_SERVO_DROP);
+            pixelScoreTimer.reset();
+            pixelScoreState = PixelScoreActivity.EXTENDING;
+        }
+    }
+    public void processPixelScore() {
+        switch(pixelScoreState){
+            case EXTENDING:
+                // We have extended to the desired position
+                if((getPushServoAngle() <= PUSH_SERVO_DROP_ANGLE) &&
+                        (getWristServoAngle() <= WRIST_SERVO_DROP_ANGLE)) {
+                    // Rotate both fingers to release the pixels
+                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
+                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.RELEASING;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScore", "Timed out extending");
+                    telemetry.addData("processPixelScore", "Push: %.2f Wrist: %.2f", getPushServoAngle(), getWristServoAngle());
+                    // Rotate both fingers to release the pixels
+                    telemetry.update();
+                    telemetrySleep();
+                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
+                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.RELEASING;
+                }
+                break;
+            case RELEASING:
+                // We have extended to the desired position
+                if((getFingerServo1Angle() >= FINGER1_SERVO_DROP_ANGLE) &&
+                        (getFingerServo2Angle() >= FINGER2_SERVO_DROP_ANGLE)) {
+                    // Pull back to the safe/stored position
+                    pushServo.setPosition(PUSH_SERVO_SAFE);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.RETRACTING;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScore", "Timed out releasing");
+                    telemetry.addData("processPixelScore", "Finger1: %.2f Finger2: %.2f", getFingerServo1Angle(), getFingerServo2Angle());
+                    // Pull back to the safe/stored position
+                    telemetry.update();
+                    telemetrySleep();
+                    pushServo.setPosition(PUSH_SERVO_SAFE);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.RETRACTING;
+                }
+                break;
+            case RETRACTING:
+                // We have pulled back to where we have cleared the pixels and can rotate the wrist
+                // to safe position
+                if(getPushServoAngle() >= PUSH_SERVO_PIXEL_CLEAR_ANGLE) {
+                    wristServo.setPosition(WRIST_SERVO_GRAB);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.ROTATING;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScore", "Timed out retracting");
+                    telemetry.addData("processPixelScore", "Push: %.2f", getPushServoAngle());
+                    // Pull back to the safe/stored position
+                    telemetry.update();
+                    telemetrySleep();
+                    wristServo.setPosition(WRIST_SERVO_GRAB);
+                    pixelScoreTimer.reset();
+                    pixelScoreState = PixelScoreActivity.ROTATING;
+                }
+                break;
+            case ROTATING:
+                // We are storing the scorer to safe position for operating the lift 185 184.5
+                if((getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) &&
+                        (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
+                    pixelScoreState = PixelScoreActivity.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScore", "Timed out rotating");
+                    telemetry.addData("processPixelScore", "Push: %.2f Wrist: %.2f", getPushServoAngle(), getWristServoAngle());
+                    telemetry.update();
+                    telemetrySleep();
+                    pixelScoreState = PixelScoreActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    // Functions to have the scorer score the pixels on the backdrop during Auto
+    public enum PixelScoreAutoActivity {
+        IDLE,
+        EXTENDING,
+        RELEASING,
+        RETRACTING
+    }
+    public PixelScoreAutoActivity pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
+    private ElapsedTime pixelScoreAutoTimer = new ElapsedTime();
+    public void startPixelScoreAuto()
+    {
+        // Ensure pre-conditions are met
+        if((pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE) &&
+                (viperMotorsPos > VIPER_EXTEND_BIN)) {
+            // Fully extend the wrist assembly toward the backdrop
+            // (we should do these automatically once we're above the top of the bin??)
+            pushServo.setPosition(PUSH_SERVO_DROP);
+            pixelScoreAutoTimer.reset();
+            pixelScoreAutoState = PixelScoreAutoActivity.EXTENDING;
+        }
+    }
+    public void processPixelScoreAuto() {
+        switch(pixelScoreAutoState){
+            case EXTENDING:
+                // We have extended to the desired position
+                if(getPushServoAngle() <= PUSH_SERVO_DROP_ANGLE) {
+                    // Rotate both fingers to release the pixels
+                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
+                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.RELEASING;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreAutoTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScoreAuto", "Timed out extending");
+                    telemetry.addData("processPixelScoreAuto", "Push: %.2f", getPushServoAngle());
+                    // Rotate both fingers to release the pixels
+                    telemetry.update();
+                    telemetrySleep();
+                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
+                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.RELEASING;
+                }
+                break;
+            case RELEASING:
+                // We have extended to the desired position 176 182
+                if((getFingerServo1Angle() >= FINGER1_SERVO_DROP_ANGLE) &&
+                        (getFingerServo2Angle() >= FINGER2_SERVO_DROP_ANGLE)) {
+                    // Pull back to the safe/stored position
+                    pushServo.setPosition(PUSH_SERVO_SAFE);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.RETRACTING;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreAutoTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScoreAuto", "Timed out releasing");
+                    telemetry.addData("processPixelScoreAuto", "Finger1: %.2f Finger2: %.2f", getFingerServo1Angle(), getFingerServo2Angle());
+                    // Pull back to the safe/stored position
+                    telemetry.update();
+                    telemetrySleep();
+                    pushServo.setPosition(PUSH_SERVO_SAFE);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.RETRACTING;
+                }
+                break;
+            case RETRACTING:
+                // We have pulled back to where we have cleared the pixels and can rotate the wrist
+                // to safe position
+                if(getPushServoAngle() >= PUSH_SERVO_PIXEL_CLEAR_ANGLE) {
+                    wristServo.setPosition(WRIST_SERVO_GRAB);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreAutoTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScoreAuto", "Timed out retracting");
+                    telemetry.addData("processPixelScoreAuto", "Push: %.2f", getPushServoAngle());
+                    // Pull back to the safe/stored position
+                    telemetry.update();
+                    telemetrySleep();
+                    wristServo.setPosition(WRIST_SERVO_GRAB);
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+    private void telemetrySleep() {
+        try {
+            sleep(5000);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
 } /* HardwarePixelbot */
