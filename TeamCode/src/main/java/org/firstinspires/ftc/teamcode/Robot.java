@@ -1738,5 +1738,265 @@ public class Robot {
             Log.d("pid", "setHeading: final heading is " + currentHeading);
         }
     }
-}
 
+    public void oneButtonOuttake(Gamepad gamepad1, Gamepad gamepad2) {
+        double distanceToMove = 0 - lsFront.getCurrentPosition();
+
+        openClamp(true, true);
+        trayToIntakePos(false);
+
+        while(opMode.opModeIsActive() && distanceToMove > 10) {
+            distanceToMove = 0 - lsFront.getCurrentPosition();
+            linearSlidesMoveToZeroParallel();
+
+            distanceToMove = 0 - lsFront.getCurrentPosition();
+
+            boolean hangingMode = false;
+            int TRIGGER_PRESSED = 0; // TODO: test
+            int frontFacing = 1;
+            boolean slowMode = false;
+
+            //doubles for amount of input for straight, turning, and mecanuming variables
+            double straight;
+            double turning;
+            double mecanuming;
+
+            double fLeftPower;
+            double fRightPower;
+            double bLeftPower;
+            double bRightPower;
+            double maxPower;
+            double scale;
+
+            double fLeftPowerPrev = 0;
+            double fRightPowerPrev = 0;
+            double bLeftPowerPrev = 0;
+            double bRightPowerPrev = 0;
+            boolean willOpenClamp = false;
+
+            double lsPowerSlow = 0.3;
+            double lsPowerFast = 1;
+            double lsStayUpAddPower = 0.1;
+
+            double targetLinearSlideTicks = 0;
+
+            boolean linearSlideFlag = false;
+            while (opMode.opModeIsActive()) {
+
+                if(lsFront.getCurrentPosition() > 857) {
+                    lsStayUpAddPower = 0.1;
+                } else if (lsFront.getCurrentPosition() < 856) {
+                    lsStayUpAddPower = 0;
+                }
+
+                // GAMEPAD 1: DRIVER CONTROLS
+
+                // b aligns bot to board
+                if (gamepad1.b) {
+                    if (isRedAlliance) {
+                        setHeading(-90, 0.7);
+                    } else {
+                        setHeading(90, 0.7);
+                    }
+                }
+
+                //a and y switch which side is front
+                if (gamepad1.a) {
+                    frontFacing = 1;
+                } else if (gamepad1.y) {
+                    frontFacing = -1;
+                }
+
+                //hold right bumper for slow mode
+                if (gamepad1.right_bumper) {
+                    slowMode = true;
+                } else {
+                    slowMode = false;
+                }
+
+                // both bumper launches drone
+                if (gamepad1.right_bumper && gamepad1.left_bumper) {
+                    planeLauncher.setPower(-1);
+                } else {
+                    planeLauncher.setPower(0);
+                }
+
+
+                //setting forward and mecanum based on where the front is
+                straight = gamepad1.left_stick_y * frontFacing * -1;
+                mecanuming = gamepad1.left_stick_x * frontFacing;
+
+                //turning stays the same
+                turning = gamepad1.right_stick_x;
+
+                //Pure Mecanum overrides straight and turn
+                if (gamepad1.right_trigger != 0) {
+                    straight = 0;
+                    turning = 0;
+                    mecanuming = 0.7;
+                } else if (gamepad1.left_trigger != 0) {
+                    straight = 0;
+                    turning = 0;
+                    mecanuming = -0.7;
+                }
+
+                //set powers using this input
+                fLeftPower = straight + turning + mecanuming;
+                fRightPower = straight - turning - mecanuming;
+                bLeftPower = straight + turning - mecanuming;
+                bRightPower = straight - turning + mecanuming;
+
+
+                //scale powers
+                maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
+
+                if (Math.abs(maxPower) > 1) {
+                    scale = Math.abs(maxPower);
+                    fLeftPower /= scale;
+                    bLeftPower /= scale;
+                    fRightPower /= scale;
+                    bRightPower /= scale;
+                }
+
+                //uses different powers based on which bumper was pressed last
+                if (slowMode) {
+                    fLeftPower *= 0.7;
+                    bLeftPower *= 0.7;
+                    fRightPower *= 0.7;
+                    bRightPower *= 0.7;
+                }
+
+                //set motor power ONLY if a value has changed. else, use previous value.
+                if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
+                        || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
+                    setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+                    fLeftPowerPrev = fLeftPower;
+                    fRightPowerPrev = fRightPower;
+                    bLeftPowerPrev = bLeftPower;
+                    bRightPowerPrev = bRightPower;
+                }
+
+
+                // GAMEPAD 2: ARM CONTROLS
+
+                // dpad controlling lock
+                if (gamepad2.dpad_up) { // up - close
+                    closeHook();
+                } else if (gamepad2.dpad_down) { // down - open
+                    openHook();
+                }
+
+                // pivoting tray
+                if (gamepad2.a && gamepad2.y) { // both - stay at current
+                    // do nothing
+                } else if (gamepad2.a) { // a - intake position
+                    trayToIntakePos(false);
+                } else if (gamepad2.y) { // y - outtake position
+                    trayToOuttakePos(false);
+                }
+
+                // clamp controls
+                if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
+                    willOpenClamp = false;
+                } else if (gamepad2.right_bumper) {
+                    willOpenClamp = true;
+                } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
+                    willOpenClamp = true;
+                } else {
+                    willOpenClamp = false;
+                }
+
+                if (willOpenClamp) {
+                    openClamp(true, false);
+                } else {
+                    closeClamp(false);
+                }
+
+                // intake regurgitate
+                if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
+                    // do nothing
+                } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
+                    intake.setPower(-0.7);
+                } else if (gamepad2.left_bumper) { // left bumper - regurgitate
+                    intake.setPower(0.7);
+                } else { // neither - stop
+                    intake.setPower(0);
+                }
+
+                //b to use slow linear slide
+                if (gamepad2.b) {
+                    //if b is held linear slide is slow
+                    if (-gamepad2.left_stick_y > 0) {
+                        //only if the linear slides aren't at upper the limit
+                        if (lsFront.getCurrentPosition() < 3100) {
+                            lsBack.setPower(lsPowerSlow);
+                            lsFront.setPower(lsPowerSlow);
+                        }
+                    } else if (-gamepad2.left_stick_y < 0) {
+                        //only if the linear slides aren't at the lower limit
+                        if (lsFront.getCurrentPosition() > 50 || gamepad2.x) {
+                            lsBack.setPower(-lsPowerSlow);
+                            lsFront.setPower(-lsPowerSlow);
+                        }
+                    } else {
+                        lsBack.setPower(0 + lsStayUpAddPower);
+                        lsFront.setPower(0 + lsStayUpAddPower);
+                    }
+                } else {
+                    //if b is not held linear slide is fast
+                    if (-gamepad2.left_stick_y > 0) {
+                        //only if the linear slides aren't at upper the limit
+                        if (lsFront.getCurrentPosition() < 3100) {
+                            lsBack.setPower(lsPowerFast);
+                            lsFront.setPower(lsPowerFast);
+                        }
+                    } else if (-gamepad2.left_stick_y < 0) {
+                        //only if the linear slides aren't at the lower limit
+                        if (lsFront.getCurrentPosition() > 50 || gamepad2.x) {
+                            lsBack.setPower(-lsPowerFast);
+                            lsFront.setPower(-lsPowerFast);
+                        }
+                    } else {
+                        lsBack.setPower(0 + lsStayUpAddPower);
+                        lsFront.setPower(0 + lsStayUpAddPower);
+                    }
+                }
+
+
+/*
+            if (gamepad2.x) {
+                linearSlideFlag = true;
+                targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
+            }
+
+            if (linearSlideFlag = true) {
+                boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
+                linearSlideFlag = !done;
+            }
+            */
+
+                Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
+
+            if (distanceToMove < 10) {
+                break;
+            }
+        }
+
+    }
+
+    public void linearSlidesMoveToZeroParallel() {
+        double distanceToMove = 0 - lsFront.getCurrentPosition();
+        double p_constant = 0.1;
+
+        if (distanceToMove > 10) {
+            lsFront.setPower(-distanceToMove * p_constant);
+            lsBack.setPower(-distanceToMove * p_constant);
+        } else {
+            lsFront.setPower(0);
+            lsBack.setPower(0);
+        }
+
+    }
+
+}
