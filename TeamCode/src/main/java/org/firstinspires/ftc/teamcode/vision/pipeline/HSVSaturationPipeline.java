@@ -175,6 +175,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        return(processFrame( frame ));
+        processFrame( frame );
+        return(null);
     }
 }
