@@ -138,10 +138,10 @@ public abstract class AutoBase extends LinearOpMode {
                 .build();
 
 
-        // To start, we will be using the front camera
-        if(rearCam == myVisionPortal.getActiveCamera()) {
-            myVisionPortal.setActiveCamera(frontCam);
-        }
+//        // To start, we will be using the front camera
+//        if(rearCam == myVisionPortal.getActiveCamera()) {
+//            myVisionPortal.setActiveCamera(frontCam);
+//        }
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -206,7 +206,7 @@ public abstract class AutoBase extends LinearOpMode {
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive,
-                            imu, hardwareMap, telemetry,myVisionPortal,frontCam,rearCam,HSVProcessor,myAprilTagProcessor);
+                            imu, blinkinLED, telemetry,myVisionPortal,frontCam,rearCam,HSVProcessor,myAprilTagProcessor);
 
         // set the proper camera and processor
         moveTo.selectVisionProcessor(VisionProcessorMode.FRONT_CAMERA_HSV);

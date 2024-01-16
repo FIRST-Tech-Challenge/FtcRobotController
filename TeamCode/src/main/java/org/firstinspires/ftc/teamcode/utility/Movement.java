@@ -50,9 +50,7 @@ public class Movement {
     private VisionPortal myVisionPortal;
 
     private VisionProcessor HSVProcessor;
-    private VisionProcessor AprilTagProcessor;
-
-    private HardwareMap map;
+    private AprilTagProcessor AprilTagProcessor;
 
     WebcamName frontCam;
     WebcamName rearCam;
@@ -85,14 +83,13 @@ public class Movement {
      * @param  rightBackDrive  the back right wheels motor
      */
     public Movement(DcMotor leftFrontDrive, DcMotor rightFrontDrive,
-                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, HardwareMap hMap,
+                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, RevBlinkinLedDriver blink,
                     Telemetry telemetry1, VisionPortal vp, WebcamName fCam, WebcamName rCam,
-                    VisionProcessor hsvProc, VisionProcessor aprilProc){
+                    VisionProcessor hsvProc, AprilTagProcessor aprilProc){
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
         rbDrive = rightBackDrive;
-        map = hMap;
         imu = imu1;
         telemetry = telemetry1;
         myVisionPortal = vp;
@@ -100,7 +97,7 @@ public class Movement {
         rearCam = rCam;
         HSVProcessor = hsvProc;
         AprilTagProcessor = aprilProc;
-        blinkinLED = map.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLED = blink;
 
 
     }
@@ -366,13 +363,17 @@ public class Movement {
         currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         // Scan for April Tag detections and update current values if you find one.
-        List<AprilTagDetection> tag = myAprilTagProcessor.getDetections();
-        for (int i = 0; i < tag.size(); i++) {
-            if (tag.get(i).id == tagNumber) {
-                currentX = tag.get(i).ftcPose.x;
-                currentY = tag.get(i).ftcPose.y;
-                //blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                tagDetected = true;
+        List<AprilTagDetection> tag = AprilTagProcessor.getDetections();
+        if(tag != null) {
+            for (int i = 0; i < tag.size(); i++) {
+                if (tag.get(i) != null) {
+                    if (tag.get(i).id == tagNumber) {
+                        currentX = tag.get(i).ftcPose.x;
+                        currentY = tag.get(i).ftcPose.y;
+                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                        tagDetected = true;
+                    }
+                }
             }
         }
 
@@ -447,7 +448,7 @@ public class Movement {
         // Test to see if we are at all three parts of our desired position and we are aligned.
         if (abs (targetX - currentX) < 1 && currentY < targetY && abs (targetAngle - currentAngle) < 2){
             aprilTagAligned = true;
-            //blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
         }
         return aprilTagAligned;
     }
@@ -464,14 +465,17 @@ public class Movement {
     public void selectVisionProcessor(VisionProcessorMode vpMode){
         switch(vpMode){
             case FRONT_CAMERA_HSV:
-                myVisionPortal.setActiveCamera(frontCam);
-                myVisionPortal.setProcessorEnabled(AprilTagProcessor,true);
-                myVisionPortal.setProcessorEnabled(HSVProcessor,false);
+                // todo: need some safeguards
+                while((myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING){
+                    myVisionPortal.setActiveCamera(frontCam);
+                }
+                myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
+                myVisionPortal.setProcessorEnabled(HSVProcessor,true);
                 break;
             case REAR_CAMERA_APRIL_TAG:
                 myVisionPortal.setActiveCamera(rearCam);
-                myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
-                myVisionPortal.setProcessorEnabled(HSVProcessor,true);
+                myVisionPortal.setProcessorEnabled(AprilTagProcessor,true);
+                myVisionPortal.setProcessorEnabled(HSVProcessor,false);
                 break;
         }
     }

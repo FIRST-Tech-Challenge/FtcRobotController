@@ -258,5 +258,11 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Show the elapsed game time and wheel power.
             displayTelemetry(DirectionNow);
         }
+
+        // this should happen automagically ... should
+        // we were crashing at the end of auto perhaps this will help
+        if(isStopRequested()){
+            myVisionPortal.close();
+        }
     }
 }
