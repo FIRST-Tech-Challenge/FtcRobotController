@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
-import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING;
-import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
@@ -212,18 +209,17 @@ public abstract class AutonomousBase extends LinearOpMode {
     void autoRaiseViperSlide( int targetEncoderCount ) {   // Ex: robot.VIPER_EXTEND_LOW
         // Initiate the automatic movement to the desired lift height
         robot.startViperSlideExtension( targetEncoderCount );
-/*
-        TODO: add a timer and 
-           runtime.reset();
-           while (opModeIsActive() && (runtime.seconds() < timeoutS) && (motor.isBusy())) {
-           }
-        // Stop all motion;
-        motor.setPower(0);
-        // Turn off RUN_TO_POSITION
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-*/
+        while(opModeIsActive() && (robot.viperMotorAutoMove == true)) {
+            performEveryLoop();
+            robot.processViperSlideExtension();
+        }
     } // autoRaiseViperSlide
 
+    void scoreYellowPixel() {
+        autoGrabPixelsInBin();
+        autoRaiseViperSlide(robot.VIPER_EXTEND_LOW);
+        autoReleaseBothPixels();
+    }
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters
         // We're in position, so trigger the first ultrasonic ping

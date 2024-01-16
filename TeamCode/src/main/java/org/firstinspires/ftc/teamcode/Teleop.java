@@ -560,7 +560,7 @@ public abstract class Teleop extends LinearOpMode {
             // Does user want to manually RAISE the lift?
             if( safeToManuallyRaise && (gamepad2_right_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
-                robot.checkViperSlideExtension();
+                robot.abortViperSlideExtension();
                 viperPower = gamepad2_right_trigger;
                 robot.viperMotors.setPower( viperPower );  // fixed power? (robot.VIPER_RAISE_POWER)
                 liftTweaked = true;
@@ -568,7 +568,7 @@ public abstract class Teleop extends LinearOpMode {
             // Does user want to manually LOWER the lift?
             else if( safeToManuallyLower && (gamepad2_left_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
-                robot.checkViperSlideExtension();
+                robot.abortViperSlideExtension();
                 viperPower = robot.VIPER_LOWER_POWER;
                 robot.viperMotors.setPower( viperPower );
                 liftTweaked = true;

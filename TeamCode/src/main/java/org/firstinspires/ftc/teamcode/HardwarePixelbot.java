@@ -646,6 +646,7 @@ public class HardwarePixelbot
         rearRightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
     } // setRunToPosition
 
+    public ElapsedTime viperSlideTimer = new ElapsedTime();
     /*--------------------------------------------------------------------------------------------*/
     /* viperSlideExtension()                                                                      */
     /* NOTE: Comments online say the firmware that executes the motor RUN_TO_POSITION logic want  */
@@ -665,11 +666,37 @@ public class HardwarePixelbot
         // power setting, no matter which way the motor must rotate to achieve that target.
         double motorPower = (directionUpward)? VIPER_RAISE_POWER : -VIPER_LOWER_POWER;
         viperMotors.setPower( motorPower );
+        viperSlideTimer.reset();
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
         viperMotorAutoMove = true;
     } // viperSlideExtension
 
-    public void checkViperSlideExtension()
+    public void processViperSlideExtension()
+    {
+        // Has the automatic movement reached its destination?.
+        if( viperMotorAutoMove ) {
+            if (!viperMotors.isBusy()) {
+                // turn off the auto-movement power, but don't go to ZERO POWER or
+                // the weight of the lift will immediately drop it back down.
+                viperMotors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                viperMotors.setPower(VIPER_HOLD_POWER);
+                viperMotorAutoMove = false;
+                // Timeout reaching destination.
+            } else if (viperSlideTimer.milliseconds() > 5000) {
+                // turn off the auto-movement power, but don't go to ZERO POWER or
+                // the weight of the lift will immediately drop it back down.
+                viperMotors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                viperMotors.setPower(VIPER_HOLD_POWER);
+                viperMotorAutoMove = false;
+                telemetry.addData("processViperSlideExtension", "Movement timed out.");
+                telemetry.addData("processViperSlideExtension", "Position: %d", viperMotors.getCurrentPosition());
+                telemetry.update();
+                telemetrySleep();
+            }
+        }
+    } // processViperSlideExtension
+
+    public void abortViperSlideExtension()
     {
         // Have we commanded an AUTOMATIC lift movement that we need to terminate so we
         // can return to MANUAL control?  (NOTE: we don't care here whether the AUTOMATIC
@@ -681,7 +708,7 @@ public class HardwarePixelbot
            viperMotors.setPower( VIPER_HOLD_POWER );
            viperMotorAutoMove = false;
         }
-    } // checkViperSlideExtension
+    } // abortViperSlideExtension
 
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE ABOUT RANGE SENSORS:                                                                  */
