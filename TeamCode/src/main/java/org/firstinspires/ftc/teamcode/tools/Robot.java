@@ -125,6 +125,7 @@ public class Robot {
         idle.addTransitionTo(holdingPixels, closeClawSupplier,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawCloseOnePixel)
+                        .waitUntil(timer, 500)
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
                         .stopMotor(lift.liftMotor));
@@ -137,7 +138,7 @@ public class Robot {
         holdingPixels.addTransitionTo(outTakingPixels, outtakePixelsSupplier,
                 new ActionBuilder()
                         .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin+200)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding+400)
                         .stopMotor(lift.liftMotor)
                         .servoRunToPosition(clawPitch, clawPitchOutTake));
 
