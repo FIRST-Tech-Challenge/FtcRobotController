@@ -63,6 +63,9 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public void positionMoveArm(final double position) {
         int calculatedPosition = positionFromAngle(position - ARM_ANGLE_OFFSET, AngleUnit.DEGREES);
+        // calculated the error in the arm and multiplied by it
+        // (may be an issue of gear ratios in the end)
+        calculatedPosition = (int) (4.375d*calculatedPosition);
         armMotor.setTargetPosition(calculatedPosition);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1); //POSITION_MOVE_POWER);
