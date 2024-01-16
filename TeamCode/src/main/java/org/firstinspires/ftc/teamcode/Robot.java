@@ -55,6 +55,8 @@ public class Robot {
     private VisionPortal visionPortal;
     boolean isRedAlliance;
     boolean testingOnBert = false;
+
+    boolean allowTrayAngle = false;
     PIDController straightController;
     PIDController fLeftMecanumController;
     PIDController bRightMecanumController;
@@ -115,9 +117,9 @@ public class Robot {
 
             // opMode.sleep(100); TIME OPTIMIZATION
 
-            Log.d("vision ls", "moveLinearSlideByTicksBlocking: lsFront position " + lsFront.getCurrentPosition());
-            Log.d("vision ls", "moving linear slide: remaining distance " + remainingDistanceLow);
-            Log.d("vision ls", "moving linear slide: power " + power);
+//            Log.d("vision ls", "moveLinearSlideByTicksBlocking: lsFront position " + lsFront.getCurrentPosition());
+//            Log.d("vision ls", "moving linear slide: remaining distance " + remainingDistanceLow);
+//            Log.d("vision ls", "moving linear slide: power " + power);
         }
 
         lsFront.setPower(0);
@@ -1138,7 +1140,6 @@ public class Robot {
 
         double targetLinearSlideTicks = 0;
 
-        boolean allowTrayAngle = false;
         double currentHeading = getCurrentHeading();
         double trayAngleServoPos = 0.52;
 
@@ -1332,6 +1333,10 @@ public class Robot {
                     lsBack.setPower(0 + lsStayUpAddPower);
                     lsFront.setPower(0 + lsStayUpAddPower);
                 }
+            }
+
+            if(gamepad2.dpad_left) {
+                oneButtonOuttake(gamepad1, gamepad2);
             }
 
 
@@ -1743,9 +1748,16 @@ public class Robot {
         double distanceToMove = 0 - lsFront.getCurrentPosition();
 
         openClamp(true, true);
+        opMode.sleep(500);
+        trayAngle.setPosition(0.50);
+        allowTrayAngle = false;
+        opMode.sleep(50);
         trayToIntakePos(false);
+        opMode.sleep(50);
 
-        while(opMode.opModeIsActive() && distanceToMove > 10) {
+        Log.d("linear slides", "moving linear slides now");
+
+        while(opMode.opModeIsActive() && distanceToMove < -10) {
             distanceToMove = 0 - lsFront.getCurrentPosition();
             linearSlidesMoveToZeroParallel();
 
@@ -1772,22 +1784,6 @@ public class Robot {
             double fRightPowerPrev = 0;
             double bLeftPowerPrev = 0;
             double bRightPowerPrev = 0;
-            boolean willOpenClamp = false;
-
-            double lsPowerSlow = 0.3;
-            double lsPowerFast = 1;
-            double lsStayUpAddPower = 0.1;
-
-            double targetLinearSlideTicks = 0;
-
-            boolean linearSlideFlag = false;
-            while (opMode.opModeIsActive()) {
-
-                if(lsFront.getCurrentPosition() > 857) {
-                    lsStayUpAddPower = 0.1;
-                } else if (lsFront.getCurrentPosition() < 856) {
-                    lsStayUpAddPower = 0;
-                }
 
                 // GAMEPAD 1: DRIVER CONTROLS
 
@@ -1877,121 +1873,28 @@ public class Robot {
                     bRightPowerPrev = bRightPower;
                 }
 
-
-                // GAMEPAD 2: ARM CONTROLS
-
-                // dpad controlling lock
-                if (gamepad2.dpad_up) { // up - close
-                    closeHook();
-                } else if (gamepad2.dpad_down) { // down - open
-                    openHook();
-                }
-
-                // pivoting tray
-                if (gamepad2.a && gamepad2.y) { // both - stay at current
-                    // do nothing
-                } else if (gamepad2.a) { // a - intake position
-                    trayToIntakePos(false);
-                } else if (gamepad2.y) { // y - outtake position
-                    trayToOuttakePos(false);
-                }
-
-                // clamp controls
-                if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
-                    willOpenClamp = false;
-                } else if (gamepad2.right_bumper) {
-                    willOpenClamp = true;
-                } else if (gamepad2.left_trigger > TRIGGER_PRESSED) {
-                    willOpenClamp = true;
-                } else {
-                    willOpenClamp = false;
-                }
-
-                if (willOpenClamp) {
-                    openClamp(true, false);
-                } else {
-                    closeClamp(false);
-                }
-
-                // intake regurgitate
-                if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
-                    // do nothing
-                } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
-                    intake.setPower(-0.7);
-                } else if (gamepad2.left_bumper) { // left bumper - regurgitate
-                    intake.setPower(0.7);
-                } else { // neither - stop
-                    intake.setPower(0);
-                }
-
-                //b to use slow linear slide
-                if (gamepad2.b) {
-                    //if b is held linear slide is slow
-                    if (-gamepad2.left_stick_y > 0) {
-                        //only if the linear slides aren't at upper the limit
-                        if (lsFront.getCurrentPosition() < 3100) {
-                            lsBack.setPower(lsPowerSlow);
-                            lsFront.setPower(lsPowerSlow);
-                        }
-                    } else if (-gamepad2.left_stick_y < 0) {
-                        //only if the linear slides aren't at the lower limit
-                        if (lsFront.getCurrentPosition() > 50 || gamepad2.x) {
-                            lsBack.setPower(-lsPowerSlow);
-                            lsFront.setPower(-lsPowerSlow);
-                        }
-                    } else {
-                        lsBack.setPower(0 + lsStayUpAddPower);
-                        lsFront.setPower(0 + lsStayUpAddPower);
-                    }
-                } else {
-                    //if b is not held linear slide is fast
-                    if (-gamepad2.left_stick_y > 0) {
-                        //only if the linear slides aren't at upper the limit
-                        if (lsFront.getCurrentPosition() < 3100) {
-                            lsBack.setPower(lsPowerFast);
-                            lsFront.setPower(lsPowerFast);
-                        }
-                    } else if (-gamepad2.left_stick_y < 0) {
-                        //only if the linear slides aren't at the lower limit
-                        if (lsFront.getCurrentPosition() > 50 || gamepad2.x) {
-                            lsBack.setPower(-lsPowerFast);
-                            lsFront.setPower(-lsPowerFast);
-                        }
-                    } else {
-                        lsBack.setPower(0 + lsStayUpAddPower);
-                        lsFront.setPower(0 + lsStayUpAddPower);
-                    }
-                }
-
-
-/*
-            if (gamepad2.x) {
-                linearSlideFlag = true;
-                targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
-            }
-
-            if (linearSlideFlag = true) {
-                boolean done = moveLinearSlidesByTicksParallel(targetLinearSlideTicks);
-                linearSlideFlag = !done;
-            }
-            */
-
                 Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
 
-            if (distanceToMove < 10) {
-                break;
-            }
+                trayAngle.setPosition(0.50);
+
+                if(distanceToMove > -80) {
+                    lsFront.setPower(0);
+                    lsBack.setPower(0);
+                    break;
+                }
+
+
         }
 
     }
 
     public void linearSlidesMoveToZeroParallel() {
         double distanceToMove = 0 - lsFront.getCurrentPosition();
-        double p_constant = 0.1;
+        double p_constant = 0.0001;
 
-        if (distanceToMove > 10) {
-            lsFront.setPower(-distanceToMove * p_constant);
-            lsBack.setPower(-distanceToMove * p_constant);
+        if (distanceToMove < -10) {
+            lsFront.setPower(distanceToMove * p_constant);
+            lsBack.setPower(distanceToMove * p_constant);
         } else {
             lsFront.setPower(0);
             lsBack.setPower(0);
