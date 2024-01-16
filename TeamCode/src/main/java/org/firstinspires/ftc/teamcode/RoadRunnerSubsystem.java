@@ -51,7 +51,7 @@ public class RoadRunnerSubsystem {
     protected static int TileInverted = -24; //inch
     protected static int RobotX = 13; //inch
     protected static int RobotY = 14; //inch
-    protected static int BackdropDistance = 0; //inch
+    protected static double BackdropDistance = 9; //inch
     protected static int StationDistance = 2; //inch
     protected static int Invert = 1; //false
 
@@ -126,11 +126,11 @@ public class RoadRunnerSubsystem {
 
         Pose2d backdrop = new Pose2d(1.5 * TileInverted * Invert, 2 * TileInverted + (RobotY/2) - BackdropDistance, Math.PI/2);
 
-        Pose2d station_INNER = new Pose2d(TileInverted/2 * Invert, 2.5 * Tile, Math.PI/2);
+        Pose2d station_INNER = new Pose2d(TileInverted/2 * Invert, 2 * Tile, Math.PI/2);
         Pose2d station_OUTER = new Pose2d(2.5 * TileInverted * Invert, 1.5 * Tile, Math.PI/2);
 
         Pose2d middle_LOW = new Pose2d(1.5 * TileInverted * Invert, TileInverted/2, Math.toRadians(180));
-        Pose2d middle_HIGH = new Pose2d(1.5 * TileInverted * Invert, 1.5 * Tile, 0);
+        Pose2d middle_HIGH = new Pose2d(1.5 * TileInverted * Invert, 1.5 * Tile, Math.toRadians(-90));
 
         Pose2d station_POS_OUTER = new Pose2d(1.5 * TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
         Pose2d station_POS_MID = new Pose2d(TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
@@ -154,7 +154,7 @@ public class RoadRunnerSubsystem {
                 .turnTo(Math.toRadians(180));
 
         LOW_HomeToPixel_CENTER = driveR.actionBuilder(driveR.pose)
-                .lineToX(TileInverted * Invert - (RobotY/2 * Invert))
+                .lineToX(TileInverted * Invert - 2 - (RobotY/2 * Invert))
                 .lineToX(middle_LOW.position.x);
 
         LOW_HomeToPixel_RIGHT = driveR.actionBuilder(driveR.pose)
@@ -172,14 +172,14 @@ public class RoadRunnerSubsystem {
                 .turnTo(Math.toRadians(180));
 
         HIGH_HomeToPixel_CENTER = driveR.actionBuilder(driveR.pose)
-                .lineToX(TileInverted * Invert - (RobotY/2 * Invert))
+                .lineToX(TileInverted * Invert - 2 - (RobotY/2 * Invert))
                 .lineToX(middle_HIGH.position.x);
 
         HIGH_HomeToPixel_RIGHT = driveR.actionBuilder(driveR.pose)
                 .lineToX((2 * TileInverted * Invert) - (RobotY/2 * Invert))
                 .splineTo(rightPixel_HIGH, -(Math.PI)/2)
                 .lineToY(middle_HIGH.position.y)
-                .turnTo(Math.toRadians(180));
+                .turnTo(Math.toRadians(-90));
 
         ////////////////////////////////////////////////////////////////////////////////////
 

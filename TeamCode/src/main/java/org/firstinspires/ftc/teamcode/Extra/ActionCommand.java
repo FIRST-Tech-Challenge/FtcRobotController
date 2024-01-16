@@ -1,40 +1,38 @@
-package org.firstinspires.ftc.teamcode.Extra;//package org.firstinspires.ftc.teamcode.Extra;
-//
-//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-//import com.acmerobotics.roadrunner.Action;
-//import com.acmerobotics.roadrunner.PoseVelocity2d;
-//import com.acmerobotics.roadrunner.Vector2d;
-//import com.arcrobotics.ftclib.command.CommandBase;
-//
-//import org.firstinspires.ftc.teamcode.MecanumDrive;
-//
-//public class ActionCommand extends CommandBase {
-//    private final Action action;
-//    private TelemetryPacket packet;
-//    private Boolean isFinished = false;
-//    private final MecanumDrive mecanumDrive;
-//
-//    public ActionCommand(Action action, TelemetryPacket packet, MecanumDrive mecanumDrive){
-//        this.action = action;
-//        this.packet = packet;
-//        this.mecanumDrive = mecanumDrive;
-//    }
-//
-//    @Override
-//    public void execute() {
-//        isFinished = ! action.run(packet);
-//    }
-//
-//
-//    @Override
-//    public void end(boolean interrupted) {
-//        if (interrupted) {
-//            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
-//        }
-//    }
-//
-//    @Override
-//    public boolean isFinished() {
-//        return isFinished;
-//    }
-//}
+package org.firstinspires.ftc.teamcode.Extra;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.Subsystem;
+
+import java.util.Set;
+
+public class ActionCommand implements Command {
+    private final Action action;
+    private final Set<Subsystem> requirements;
+    private boolean finished = false;
+
+    public ActionCommand(Action action, Set<Subsystem> requirements) {
+        this.action = action;
+        this.requirements = requirements;
+    }
+
+    @Override
+    public Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public void execute() {
+        TelemetryPacket packet = new TelemetryPacket();
+        action.preview(packet.fieldOverlay());
+        finished = !action.run(packet);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+}

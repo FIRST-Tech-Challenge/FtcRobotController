@@ -7,12 +7,12 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandGroupBase;
 
-public class CommandAction implements Action {
-    private Command command;
+public class CommandGroupBaseAction implements Action {
+    private CommandGroupBase command;
     private boolean initialized = false;
     private boolean finished = false;
 
-    public CommandAction(Command command){
+    public CommandGroupBaseAction(CommandGroupBase command){
         this.command = command;
     }
 
