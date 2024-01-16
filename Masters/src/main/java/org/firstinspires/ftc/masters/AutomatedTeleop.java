@@ -182,6 +182,7 @@ public class AutomatedTeleop extends LinearOpMode {
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeSlides.setTargetPosition(0);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -234,6 +235,10 @@ public class AutomatedTeleop extends LinearOpMode {
             }
 
             backSlidesMove(target);
+
+            intakeSlides.setTargetPosition(0);
+            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intakeSlides.setPower(.5);
 
             switch (intakeState) {
                 case Intake:
@@ -499,7 +504,8 @@ public class AutomatedTeleop extends LinearOpMode {
             telemetry.addData("left x", gamepad1.left_stick_x);
             telemetry.addData("right x", gamepad1.right_stick_x);
             telemetry.addData("Arm", clawArm.getPosition());
-            telemetry.addData("backSlides", target); // 1725, 2400,
+            telemetry.addData("backSlides", target);
+            telemetry.addData("intakeSides", intakeSlides.getCurrentPosition());// 1725, 2400,
             telemetry.addData("time", runtime.time());
             telemetry.addData("Sensed Red", colorSensor.red());
             telemetry.addData("Sensed Blue", colorSensor.blue());
