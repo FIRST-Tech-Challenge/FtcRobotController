@@ -2,10 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 
 public class RoadRunnerSubsystem {
     protected MecanumDrive driveR;
@@ -19,8 +25,12 @@ public class RoadRunnerSubsystem {
     public TrajectoryActionBuilder HIGH_HomeToPixel_CENTER;
     public TrajectoryActionBuilder HIGH_HomeToPixel_RIGHT;
 
-    public TrajectoryActionBuilder ToBackdrop_LOW;
-    public TrajectoryActionBuilder ToBackdrop_HIGH;
+    public TrajectoryActionBuilder LOW_ToBackdrop_INNER;
+    public TrajectoryActionBuilder LOW_ToBackdrop_MID;
+    public TrajectoryActionBuilder LOW_ToBackdrop_OUTER;
+    public TrajectoryActionBuilder HIGH_ToBackdrop_INNER;
+    public TrajectoryActionBuilder HIGH_ToBackdrop_MID;
+    public TrajectoryActionBuilder HIGH_ToBackdrop_OUTER;
 
     public TrajectoryActionBuilder BackdropToStation_INNER;
     public TrajectoryActionBuilder StationToBackdrop_INNER;
@@ -30,6 +40,7 @@ public class RoadRunnerSubsystem {
     public TrajectoryActionBuilder INNER_Station_OUTER;
     public TrajectoryActionBuilder INNER_Station_MID;
     public TrajectoryActionBuilder INNER_Station_INNER;
+    public TrajectoryActionBuilder INNER_Station_INNER_SMALL;
     public TrajectoryActionBuilder OUTER_Station_OUTER;
     public TrajectoryActionBuilder OUTER_Station_MID;
     public TrajectoryActionBuilder OUTER_Station_INNER;
@@ -51,8 +62,8 @@ public class RoadRunnerSubsystem {
     protected static int TileInverted = -24; //inch
     protected static int RobotX = 13; //inch
     protected static int RobotY = 14; //inch
-    protected static double BackdropDistance = 9; //inch
-    protected static int StationDistance = 2; //inch
+    protected static double BackdropDistance = 11; //inch
+    protected static int StationDistance = 9; //inch
     protected static int Invert = 1; //false
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +135,9 @@ public class RoadRunnerSubsystem {
         Vector2d leftPixel_HIGH = new Vector2d(1.25 * TileInverted - (RobotX/2), 2 * Tile - (RobotY/2));
         Vector2d rightPixel_HIGH = new Vector2d(1.25 * TileInverted - (RobotX/2), Tile + (RobotY/2));
 
-        Pose2d backdrop = new Pose2d(1.5 * TileInverted * Invert, 2 * TileInverted + (RobotY/2) - BackdropDistance, Math.PI/2);
+        Pose2d backdrop_INNER = new Pose2d(1.25 * TileInverted * Invert, 2 * TileInverted + (RobotY/2) - BackdropDistance, Math.PI/2);
+        Pose2d backdrop_MID = new Pose2d(1.5 * TileInverted * Invert, 2 * TileInverted + (RobotY/2) - BackdropDistance, Math.PI/2);
+        Pose2d backdrop_OUTER = new Pose2d(1.75 * TileInverted * Invert, 2 * TileInverted + (RobotY/2) - BackdropDistance, Math.PI/2);
 
         Pose2d station_INNER = new Pose2d(TileInverted/2 * Invert, 2 * Tile, Math.PI/2);
         Pose2d station_OUTER = new Pose2d(2.5 * TileInverted * Invert, 1.5 * Tile, Math.PI/2);
@@ -134,7 +147,9 @@ public class RoadRunnerSubsystem {
 
         Pose2d station_POS_OUTER = new Pose2d(1.5 * TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
         Pose2d station_POS_MID = new Pose2d(TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
-        Pose2d station_POS_INNER = new Pose2d(TileInverted/2 * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+        Pose2d station_POS_INNER = new Pose2d(TileInverted/2 * Invert + 2, 3 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+
+        Pose2d station_POS_INNER_SMALL = new Pose2d(TileInverted/2 * Invert + 2, 2.7 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
 
         ////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,7 +169,7 @@ public class RoadRunnerSubsystem {
                 .turnTo(Math.toRadians(180));
 
         LOW_HomeToPixel_CENTER = driveR.actionBuilder(driveR.pose)
-                .lineToX(TileInverted * Invert - 2 - (RobotY/2 * Invert))
+                .lineToX(TileInverted * Invert - 5 - (RobotY/2 * Invert))
                 .lineToX(middle_LOW.position.x);
 
         LOW_HomeToPixel_RIGHT = driveR.actionBuilder(driveR.pose)
@@ -172,7 +187,7 @@ public class RoadRunnerSubsystem {
                 .turnTo(Math.toRadians(180));
 
         HIGH_HomeToPixel_CENTER = driveR.actionBuilder(driveR.pose)
-                .lineToX(TileInverted * Invert - 2 - (RobotY/2 * Invert))
+                .lineToX(TileInverted * Invert - 5 - (RobotY/2 * Invert))
                 .lineToX(middle_HIGH.position.x);
 
         HIGH_HomeToPixel_RIGHT = driveR.actionBuilder(driveR.pose)
@@ -183,25 +198,41 @@ public class RoadRunnerSubsystem {
 
         ////////////////////////////////////////////////////////////////////////////////////
 
-        ToBackdrop_LOW = driveR.actionBuilder(middle_LOW)
-                .splineToLinearHeading(backdrop, Math.toRadians(0));
+        LOW_ToBackdrop_INNER = driveR.actionBuilder(middle_LOW)
+                .splineToLinearHeading(backdrop_INNER, Math.toRadians(0));
 
-        ToBackdrop_HIGH = driveR.actionBuilder(middle_HIGH)
+        LOW_ToBackdrop_MID = driveR.actionBuilder(middle_LOW)
+                .splineToLinearHeading(backdrop_MID, Math.toRadians(0));
+
+        LOW_ToBackdrop_OUTER = driveR.actionBuilder(middle_LOW)
+                .splineToLinearHeading(backdrop_OUTER, Math.toRadians(0));
+
+        HIGH_ToBackdrop_INNER = driveR.actionBuilder(middle_HIGH)
                 .strafeToLinearHeading(new Vector2d(2.5 * TileInverted * Invert,1.5 * Tile), Math.toRadians(90))
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
-                .strafeToLinearHeading(backdrop.component1(), Math.PI/2);
+                .strafeToLinearHeading(backdrop_INNER.component1(), Math.PI/2);
+
+        HIGH_ToBackdrop_MID = driveR.actionBuilder(middle_HIGH)
+                .strafeToLinearHeading(new Vector2d(2.5 * TileInverted * Invert,1.5 * Tile), Math.toRadians(90))
+                .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
+                .strafeToLinearHeading(backdrop_MID.component1(), Math.PI/2);
+
+        HIGH_ToBackdrop_OUTER = driveR.actionBuilder(middle_HIGH)
+                .strafeToLinearHeading(new Vector2d(2.5 * TileInverted * Invert,1.5 * Tile), Math.toRadians(90))
+                .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
+                .strafeToLinearHeading(backdrop_OUTER.component1(), Math.PI/2);
 
         ////////////////////////////////////////////////////////////////////////////////////
 
-        BackdropToStation_INNER = driveR.actionBuilder(backdrop)
+        BackdropToStation_INNER = driveR.actionBuilder(backdrop_MID)
                 .splineToConstantHeading(new Vector2d(station_INNER.position.x, 1.2 * TileInverted), Math.PI/2)
                 .strafeTo(station_INNER.component1());
 
         StationToBackdrop_INNER = driveR.actionBuilder(station_INNER)
                 .strafeTo(new Vector2d(station_INNER.position.x, 1.2 * TileInverted))
-                .strafeTo(backdrop.component1());
+                .strafeTo(backdrop_MID.component1());
 
-        BackdropToStation_OUTER = driveR.actionBuilder(backdrop)
+        BackdropToStation_OUTER = driveR.actionBuilder(backdrop_MID)
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert,1.5 * Tile))
                 .strafeTo(station_OUTER.component1());
@@ -209,7 +240,7 @@ public class RoadRunnerSubsystem {
         StationToBackdrop_OUTER = driveR.actionBuilder(station_OUTER)
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert,1.5 * Tile))
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
-                .strafeToLinearHeading(backdrop.component1(), Math.PI/2);
+                .strafeToLinearHeading(backdrop_MID.component1(), Math.PI/2);
 
         ////////////////////////////////////////////////////////////////////////////////////
 
@@ -220,7 +251,20 @@ public class RoadRunnerSubsystem {
                 .strafeTo(station_POS_MID.component1());
 
         INNER_Station_INNER = driveR.actionBuilder(station_INNER)
-                .strafeTo(station_POS_INNER.component1());
+                .strafeTo(station_POS_INNER.component1(), new VelConstraint() {
+                    @Override
+                    public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                        return 10;
+                    }
+                });
+
+        INNER_Station_INNER_SMALL = driveR.actionBuilder(station_INNER)
+                .strafeTo(station_POS_INNER_SMALL.component1(), new VelConstraint() {
+                    @Override
+                    public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                        return 10;
+                    }
+                });
 
         OUTER_Station_OUTER = driveR.actionBuilder(station_OUTER)
                 .setTangent(90)
@@ -256,15 +300,15 @@ public class RoadRunnerSubsystem {
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        Parking_OUTER = driveR.actionBuilder(backdrop)
+        Parking_OUTER = driveR.actionBuilder(backdrop_MID)
             .setTangent(90)
             .splineToConstantHeading(new Vector2d(2.5 * TileInverted * Invert, 2 * TileInverted), -90)
             .splineToConstantHeading(new Vector2d(2.5 * TileInverted * Invert, 2.5 * TileInverted), -90);
 
-        Parking_MID = driveR.actionBuilder(backdrop)
+        Parking_MID = driveR.actionBuilder(backdrop_MID)
                 .strafeTo(new Vector2d(1.5 * TileInverted * Invert, 2.4 * TileInverted + (RobotY/2)));
 
-        Parking_INNER = driveR.actionBuilder(backdrop)
+        Parking_INNER = driveR.actionBuilder(backdrop_MID)
                 .setTangent(90)
                 .splineToConstantHeading(new Vector2d(TileInverted/2 * Invert, 2 * TileInverted), -90)
                 .splineToConstantHeading(new Vector2d(TileInverted/2 * Invert, 2.5 * TileInverted), -90);
@@ -277,16 +321,6 @@ public class RoadRunnerSubsystem {
     ////////////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
-
-    public TrajectoryActionBuilder RobotToBackdrop(){
-        if (start == Start.LOW){
-            return ToBackdrop_LOW;
-        } else if (start == Start.HIGH){
-            return ToBackdrop_HIGH;
-        }
-
-        return ToBackdrop_LOW;
-    }
 
     public TrajectoryActionBuilder RobotBackdropToStation(){
         if (corridor_backdropToStation == Corridor.INNER){
