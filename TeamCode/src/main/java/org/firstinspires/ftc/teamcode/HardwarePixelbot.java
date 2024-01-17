@@ -105,14 +105,14 @@ public class HardwarePixelbot
 
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
-    public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
+    public double  VIPER_HOLD_POWER  =  0.007; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
     public int     VIPER_EXTEND_AUTO  = 130;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_LOW  = 250;  // Encoder count when raised to lowest possible scoring position (200)
     public int     VIPER_EXTEND_MID  = 325;  // Encoder count when raised to medium scoring height (350)
-    public int     VIPER_EXTEND_HIGH = 400;  // Encoder count when raised to upper scoring height (500)
+    public int     VIPER_EXTEND_HIGH = 500;  // Encoder count when raised to upper scoring height (500)
     public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
