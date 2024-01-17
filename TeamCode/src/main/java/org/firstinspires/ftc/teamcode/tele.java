@@ -153,13 +153,13 @@ public class tele extends OpMode {
                 robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.lift.setPower(-gamepad2.right_stick_y);
             }
-        } else if (robot.lift.getCurrentPosition() < 380 && !gamepad2.right_stick_button) {
-            if (-gamepad2.right_stick_y <= 0) {
-                robot.lift.setPower(.5);
-            } else {
-                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.lift.setPower(-gamepad2.right_stick_y);
-            }
+//        } else if (robot.lift.getCurrentPosition() < 380 && !gamepad2.right_stick_button) {
+//            if (-gamepad2.right_stick_y >= 0) {
+//                robot.lift.setPower(.5);
+//            } else {
+//                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                robot.lift.setPower(-gamepad2.right_stick_y);
+//            }
         } else {
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.setPower(-gamepad2.right_stick_y);
@@ -241,7 +241,8 @@ public class tele extends OpMode {
         }
 
         /** Drone Launcher **/
-        if (gamepad2.y) {
+        if (gamepad2.y && angleTime < (getRuntime() + 1)) {
+            angleTime = getRuntime();
             launcherAngle++;
         }
 
@@ -250,13 +251,13 @@ public class tele extends OpMode {
                 launcherAngle++;
                 break;
             case 1:
-                    robot.droneAngle.setPosition(robot.droneAngleUp);
-                    launcherAngle++;
+                    robot.droneAngle.setPosition(robot.droneAngleDown);
                 break;
             case 2:
-                    robot.droneAngle.setPosition(0);
-                    launcherAngle = 1;
+                    robot.droneAngle.setPosition(robot.droneAngleUp);
                 break;
+            case 3:
+                launcherAngle = 1;
         }
 
         if (gamepad2.x && gamepad2.b) {
@@ -266,10 +267,6 @@ public class tele extends OpMode {
         }
 
         /** Intake/Transfer **/
-
-        transferRPM = (Math.abs(robot.transfer.getCurrentPosition() - oldTransferPosition) / 751.8) / ((getRuntime() - oldTransferPosition) * 60);
-        oldTransferTime = getRuntime();
-        oldTransferPosition = robot.transfer.getCurrentPosition();
 
         switch (escapmentFingerPosition) {
             case 0:
@@ -344,12 +341,9 @@ public class tele extends OpMode {
             gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
             gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
         }
-        telemetry.addData("Stripper State", deploymentState);
-        telemetry.addData("BB1", robot.firstPixelDetector.isPressed());
-        telemetry.addData("transfer RPM", transferRPM);
+        telemetry.addData("First Pixel", robot.firstPixelDetector.isPressed());
+        telemetry.addData("Second Pixel", robot.secondPixelDetector.isPressed());
 
-        telemetry.addData("Winch Switch", robot.winchDownSwitch.getVoltage());
-        telemetry.addData("Lift Switch", robot.liftDownSwitch.getVoltage());
         telemetry.update();
 
     }
