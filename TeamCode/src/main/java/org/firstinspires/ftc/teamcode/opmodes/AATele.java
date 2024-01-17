@@ -147,8 +147,8 @@ public class AATele extends LinearOpMode {
             //telemetry.addData("slide pos", robot.outtake.getLiftPos());
             //telemetry.addData("slide power", robot.outtake.getLiftPower());
             //Log.v("arm", "right servo position: "+ robot.outtake.getRightServoPos());
-            //telemetry.addData("DistR: ",distanceSensor.distanceRight());
-            //telemetry.addData("DistL: ",distanceSensor.distanceLeft());
+            telemetry.addData("DistR: ",distanceSensor.distanceRight());
+            telemetry.addData("DistL: ",distanceSensor.distanceLeft());
             double currentTime = clock.seconds();
             //telemetry.addData("Update time: ", currentTime - prevTime);
             prevTime = currentTime;
