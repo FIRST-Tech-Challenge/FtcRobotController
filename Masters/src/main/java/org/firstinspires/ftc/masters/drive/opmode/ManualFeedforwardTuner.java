@@ -18,6 +18,7 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -81,6 +82,8 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry.update();
         telemetry.clearAll();
 
+        drive.haltSlides();
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -91,6 +94,8 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
 
         while (!isStopRequested()) {
+            drive.haltSlides();
+
             telemetry.addData("mode", mode);
 
             switch (mode) {

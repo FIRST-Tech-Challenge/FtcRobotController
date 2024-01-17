@@ -75,8 +75,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     //private Encoder leftEncoder, rightEncoder, middleEncoder;
     private List<DcMotorEx> motors;
-    DcMotor gpSlideRight = null;
-    DcMotor gpSlideLeft = null;
+    DcMotor intakeSlides = null;
     DcMotor backSlides = null;
     DcMotor hangingMotor = null;
 
@@ -145,15 +144,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
-        gpSlideLeft = hardwareMap.dcMotor.get("gpSlideLeft");
-        gpSlideRight = hardwareMap.dcMotor.get("gpSlideRight");
+        intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
 
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
         clawAngle = hardwareMap.servo.get("clawAngle");
-        cameraTurning = hardwareMap.servo.get("cameraTurning");
+        //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("outtakeMovement");
@@ -186,18 +184,15 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 //        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         hangingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        gpSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        gpSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         hangingMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        gpSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        gpSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        gpSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        gpSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -207,6 +202,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void closeClaw(){
         clawServo.setPosition(clawClosed);
+    }
+
+    public void haltSlides() {
+        intakeSlides.setTargetPosition(0);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intakeSlides.setPower(.5);
     }
 
     public void intakeToGround() {
