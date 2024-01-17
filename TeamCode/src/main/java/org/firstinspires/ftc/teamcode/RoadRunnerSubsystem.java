@@ -149,7 +149,7 @@ public class RoadRunnerSubsystem {
         Pose2d station_POS_MID = new Pose2d(TileInverted * Invert, 2.5 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
         Pose2d station_POS_INNER = new Pose2d(TileInverted/2 * Invert + 2, 3 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
 
-        Pose2d station_POS_INNER_SMALL = new Pose2d(TileInverted/2 * Invert + 2, 2.7 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
+        Pose2d station_POS_INNER_SMALL = new Pose2d(TileInverted/2 * Invert, 2.7 * Tile - (RobotY/2) - StationDistance, Math.PI/2);
 
         ////////////////////////////////////////////////////////////////////////////////////
 
