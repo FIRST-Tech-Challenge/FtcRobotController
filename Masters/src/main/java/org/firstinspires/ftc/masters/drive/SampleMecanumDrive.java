@@ -32,6 +32,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -89,6 +90,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     Servo outtakeMovement;
 
     TouchSensor touchSensor;
+    RevColorSensorV3 colorSensor;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -141,6 +143,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
@@ -154,8 +161,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
+        outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchSensor = hardwareMap.touchSensor.get("touch");
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -183,6 +191,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
 //        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+
+
         hangingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
