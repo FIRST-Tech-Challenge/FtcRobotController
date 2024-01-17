@@ -147,7 +147,11 @@ public class tele extends OpMode {
         /*
         if (robot.lift.getCurrentPosition() < 390 && !gamepad2.right_stick_button) {
             if (-gamepad2.right_stick_y <= 0) {
-                robot.lift.setPower(.5);
+                if (robot.lift.getCurrentPosition() < 380) {
+                    robot.lift.setPower(.7);
+                } else {
+                    robot.lift.setPower(0);
+                }
             } else {
                 robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.lift.setPower(-gamepad2.right_stick_y);
@@ -165,6 +169,8 @@ public class tele extends OpMode {
             robot.lift.setPower(-gamepad2.right_stick_y);
         }
         */
+
+        
         if (robot.liftDownSwitch.getVoltage() < .5) {
             if (-gamepad2.right_stick_y < 0) {
                 robot.lift.setPower(0);
