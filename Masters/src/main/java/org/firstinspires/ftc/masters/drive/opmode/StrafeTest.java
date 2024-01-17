@@ -29,6 +29,8 @@ public class StrafeTest extends LinearOpMode {
                 .strafeRight(DISTANCE)
                 .build();
 
+        drive.haltSlides();
+
         waitForStart();
 
         if (isStopRequested()) return;
