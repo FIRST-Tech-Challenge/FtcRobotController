@@ -108,6 +108,7 @@ public class HardwarePixelbot
     public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_AUTO  = 130;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_LOW  = 250;  // Encoder count when raised to lowest possible scoring position (200)
     public int     VIPER_EXTEND_MID  = 325;  // Encoder count when raised to medium scoring height (350)
@@ -169,7 +170,7 @@ public class HardwarePixelbot
     public double PUSH_SERVO_SAFE = 0.470;  // Retract linkage servo back behind the pixel bin (safe to raise/lower)
     final public static double PUSH_SERVO_SAFE_ANGLE = 184.0;
     public double PUSH_SERVO_GRAB = 0.540;  // Partially extend to align fingers inside pixels
-    final public static double PUSH_SERVO_GRAB_ANGLE = 166.0;
+    final public static double PUSH_SERVO_GRAB_ANGLE = 168.0;
     public double PUSH_SERVO_DROP = 0.890;  // Fully extend finger assembly toward the Backdrop
     final public static double PUSH_SERVO_DROP_ANGLE = 56.1;
     final public static double PUSH_SERVO_PIXEL_CLEAR_ANGLE = 90.0; // Pulling back from backdrop but cleared pixel
@@ -676,17 +677,9 @@ public class HardwarePixelbot
         // Has the automatic movement reached its destination?.
         if( viperMotorAutoMove ) {
             if (!viperMotors.isBusy()) {
-                // turn off the auto-movement power, but don't go to ZERO POWER or
-                // the weight of the lift will immediately drop it back down.
-                viperMotors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                viperMotors.setPower(VIPER_HOLD_POWER);
                 viperMotorAutoMove = false;
                 // Timeout reaching destination.
             } else if (viperSlideTimer.milliseconds() > 5000) {
-                // turn off the auto-movement power, but don't go to ZERO POWER or
-                // the weight of the lift will immediately drop it back down.
-                viperMotors.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                viperMotors.setPower(VIPER_HOLD_POWER);
                 viperMotorAutoMove = false;
                 telemetry.addData("processViperSlideExtension", "Movement timed out.");
                 telemetry.addData("processViperSlideExtension", "Position: %d", viperMotors.getCurrentPosition());
@@ -1037,7 +1030,7 @@ public class HardwarePixelbot
         if((pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
                 (pixelGrabState == PixelGrabActivity.IDLE) &&
                 (pixelScoreState == PixelScoreActivity.IDLE) &&
-                (viperMotorsPos > VIPER_EXTEND_BIN)) {
+                (viperMotorsPos >= (VIPER_EXTEND_AUTO - 10))) {
             // Fully extend the wrist assembly toward the backdrop
             // (we should do these automatically once we're above the top of the bin??)
             pushServo.setPosition(PUSH_SERVO_DROP);
