@@ -65,18 +65,22 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Driving
              */
+            //Check for auto navigation requested by driver, otherwise give manual control to driver
             if (gamepad1.dpad_up) {
                 if (rrDrive.getPosition().getX() < -30) {
                     rrDrive.navigateToCorner();
                 } else if (rrDrive.getPosition().getX() > 0) {
+                    arm.extend(LiftArm.Distance.AUTO);
                     rrDrive.dropPixelNear();
                 }
             } else if (gamepad1.dpad_down) {
                 if (rrDrive.getPosition().getX() > 0) {
+                    arm.extend(LiftArm.Distance.FULL);
                     rrDrive.dropPixelFar();
                 }
             } else if (gamepad1.dpad_right || gamepad1.dpad_left) {
                 if (rrDrive.getPosition().getX() > 0) {
+                    arm.extend(LiftArm.Distance.HALF);
                     rrDrive.dropPixelMid();
                 }
             } else {
@@ -84,6 +88,7 @@ public class MainDriveProgram extends LinearOpMode {
                 rrDrive.update();
             }
 
+            //If button is pressed on gamepad, calibrate position based on middle april tag
             if (aprilTagDetector.getAprilTag() != null && gamepad2.back) {
                 AprilTagDetection detection = aprilTagDetector.getAprilTag();
                 rrDrive.calibratePos(detection);
@@ -97,6 +102,7 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Intake
              */
+            //Check if both slots are full in bucket
             if ((colorSensors.getBackPixelColor() != DriveColorExample.Colors.NONE) && (colorSensors.getFrontPixelColor() != DriveColorExample.Colors.NONE)) {
                 reverseIntake = true;
             } else {
@@ -104,14 +110,17 @@ public class MainDriveProgram extends LinearOpMode {
             }
 
             if ((gamepad2.right_trigger > 0.5 || gamepad1.right_trigger > 0.5)) {
+                //If both slot are full, outtake excess pixels
                 if (reverseIntake) {
                     intakeSystem.runIntakeSystem(-1);
                 } else {
                     intakeSystem.runIntakeSystem(1);
                 }
             } else if ((gamepad2.left_trigger > 0.5 || gamepad1.left_trigger > 0.5)) {
+                //Manual outtake
                 intakeSystem.runIntakeSystem(-0.5);
             } else {
+                //If no inputs, stop intake
                 intakeSystem.runIntakeSystem(0);
             }
 
@@ -120,6 +129,7 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Arm slides
              */
+            //If driver input extend the slides to different legnths
             if (gamepad2.dpad_up){
                 arm.extend(LiftArm.Distance.FULL);
                 arm.holdArm();
@@ -156,13 +166,13 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Slow mode toggle
              */
+            //If input released, slow mode can be toggled again. This prevents an infinite loop of toggling.
             if (!gamepad1.y) {
                 canToggleSlowMode = true;
             }
 
             if (gamepad1.y && canToggleSlowMode) {
                 canToggleSlowMode = false;
-                telemetry.addLine("Toggled");
                 //Toggle between slow and normal speeds
                 switch (rrDrive.currentSpeed) {
                     case SLOW:
