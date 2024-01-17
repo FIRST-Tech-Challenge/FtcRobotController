@@ -7,6 +7,11 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.util.Angle;
+<<<<<<< Updated upstream
+=======
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
+>>>>>>> Stashed changes
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.util.Timing;
@@ -80,6 +85,11 @@ public class DriveSubsystem extends SubsystemBase {
         );
     }
 
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
     private Vector2d quadraticControlLaw(Vector2d inputVec)
     {
         double outX = inputVec.getX() * inputVec.getX();
@@ -92,6 +102,32 @@ public class DriveSubsystem extends SubsystemBase {
         m_isPotentialFieldEn = !m_isPotentialFieldEn;
     }
 
+<<<<<<< Updated upstream
+=======
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        m_drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
+    }
+
+>>>>>>> Stashed changes
 
 
     public void correctHeadingOffset()
@@ -107,6 +143,11 @@ public class DriveSubsystem extends SubsystemBase {
 //        prev_time = m_timer.elapsedTime();
     }
 
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
     public boolean isBusy() {
         return m_drive.isBusy();
     }
@@ -115,6 +156,12 @@ public class DriveSubsystem extends SubsystemBase {
         drive(0,0,0, 0, true);
     }
 
+<<<<<<< Updated upstream
+=======
+    public Command stopCommand(){return new InstantCommand(()-> this.stop());
+    }
+
+>>>>>>> Stashed changes
     public void followTrajectory(Trajectory trajectory){
         m_drive.followTrajectory(trajectory);
     }
@@ -147,10 +194,19 @@ public class DriveSubsystem extends SubsystemBase {
 //    }
 
     public TrajectoryFollowerCommand runTrajectory(String trajectory){return new TrajectoryFollowerCommand(this, trajectory);}
+<<<<<<< Updated upstream
     @Override
     public void periodic() {
         m_telemetry.addData("robotPosePoseEstimate", getPoseEstimate());
         m_telemetry.update();
+=======
+
+    public TrajectoryFollowerCommand runTrajectory(String trajectory, double speed, double acc){return new TrajectoryFollowerCommand(this, trajectory, speed, acc);}
+    @Override
+    public void periodic() {
+        m_telemetry.addData("robotPosePoseEstimate", getPoseEstimate());
+        //m_telemetry.update();
+>>>>>>> Stashed changes
         m_drive.updatePoseEstimate();
 
         //    update();

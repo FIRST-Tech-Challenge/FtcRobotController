@@ -16,10 +16,17 @@ public class DoubleCassetSubsystem extends SubsystemBase{
         Servo m_cassetRightServo;
         double m_leftPosition;
         double m_rightPosition;
+<<<<<<< Updated upstream
         public static double openPoseR = 0.7;
         public static double closePoseR = 0.5;
 
         public static double openPoseL = 0.7;
+=======
+        public static double openPoseR = 0.8;
+        public static double closePoseR = 0.5;
+
+        public static double openPoseL = 0.8;
+>>>>>>> Stashed changes
         public static double closePoseL = 0.5;
 
         public static double minScale = 0.0;

@@ -65,8 +65,13 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
+<<<<<<< Updated upstream
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10.0, 1, 1); //was 6.6
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(9.0, 1, 1);
+=======
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9.0, 1, 1); //was 6.6
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.0, 1, 1);
+>>>>>>> Stashed changes
 
     public static double LATERAL_MULTIPLIER = 1.0;
 
@@ -94,7 +99,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+<<<<<<< Updated upstream
                 new Pose2d(0.1, 0.1 , Math.toRadians(0.2)), 2.0);
+=======
+                new Pose2d(0.1, 0.1 , Math.toRadians(0.0)), 0.2);
+>>>>>>> Stashed changes
 
 
         m_telemetry = telemetry;
@@ -110,7 +119,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
+<<<<<<< Updated upstream
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+=======
+                RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
+>>>>>>> Stashed changes
 
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
         );
@@ -169,6 +182,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+<<<<<<< Updated upstream
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -178,6 +192,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     //    setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+=======
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+       setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+      //  setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+>>>>>>> Stashed changes
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }

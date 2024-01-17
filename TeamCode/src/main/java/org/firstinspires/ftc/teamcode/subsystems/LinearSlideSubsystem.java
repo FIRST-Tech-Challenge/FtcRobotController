@@ -72,6 +72,11 @@ public class LinearSlideSubsystem extends SubsystemBase {
             extendToZero();
         } else if(desiredLevel == "LOWLOW"){
             targetPosition = Constants.LOWLOW;
+<<<<<<< Updated upstream
+=======
+        } else if(desiredLevel == "auton"){
+            targetPosition = Constants.AUTON;
+>>>>>>> Stashed changes
         }
     }
     public void extendToZero()
@@ -89,6 +94,21 @@ public class LinearSlideSubsystem extends SubsystemBase {
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+<<<<<<< Updated upstream
+=======
+    public void lowerSlide() {
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlide.setPower(-0.4);
+    }
+
+    public void resetEncoder(){
+        linearSlide.setPower(0.0);
+        targetPosition = 0;
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        targetPosition = zero;
+    }
+>>>>>>> Stashed changes
 
     public void setLevel(String level){
         desiredLevel = level;

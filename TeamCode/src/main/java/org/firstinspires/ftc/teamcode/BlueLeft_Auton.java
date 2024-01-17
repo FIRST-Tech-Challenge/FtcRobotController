@@ -52,7 +52,11 @@ public class BlueLeft_Auton extends LinearOpMode {
 //        Pose2d initialPose = new Pose2d(new Vector2d( 35.0, 60.0), -90.0);
        // Pose2d initialPose = new Pose2d(new Vector2d( 40.5, 65.0), Math.toRadians(-90.0));
 //        Pose2d initialPose = new Pose2d(new Vector2d( 36, 65.0), Math.toRadians(180.0));
+<<<<<<< Updated upstream
         Pose2d initialPose = new Pose2d(new Vector2d(12 , 60), Math.toRadians(180.0));
+=======
+        Pose2d initialPose = new Pose2d(new Vector2d(18 , 62), Math.toRadians(270.0));
+>>>>>>> Stashed changes
        // Pose2d initialPose = new Pose2d(DistancelocalizerSubsystem.class.);
         //Instantiate the robot
         RobotContainer m_robot = new RobotContainer(

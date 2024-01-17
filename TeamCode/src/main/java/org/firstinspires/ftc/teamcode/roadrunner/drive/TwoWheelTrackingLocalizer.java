@@ -35,6 +35,7 @@ import java.util.List;
  *
  */
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
+<<<<<<< Updated upstream
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.6889764; // in
     public static double GEAR_RATIO = 1.0; // output (wheel) speed / input (encoder) speed
@@ -44,6 +45,17 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     public static double PERPENDICULAR_X = -5.04;//-4.5; was -5.04
     public static double PERPENDICULAR_Y = 1.36;//-0.65;
+=======
+    public static double TICKS_PER_REV = 2000;
+    public static double WHEEL_RADIUS = 0.945; // in
+    public static double GEAR_RATIO = 1.0; // output (wheel) speed / input (encoder) speed
+
+    public static double PARALLEL_X = -3.85;//-1.5; // X is the up and down direction
+    public static double PARALLEL_Y = 5.25/2;//-4.3125; // Y is the strafe direction
+
+    public static double PERPENDICULAR_X = -3.75;//-4.5; was -5.04
+    public static double PERPENDICULAR_Y = 0.8;//-0.65;
+>>>>>>> Stashed changes
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -60,11 +72,19 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         this.drive = drive;
 
+<<<<<<< Updated upstream
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "pe"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "flyWheel"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
+=======
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FL"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BL"));
+
+        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+
+>>>>>>> Stashed changes
     }
 
     public static double encoderTicksToInches(double ticks) {

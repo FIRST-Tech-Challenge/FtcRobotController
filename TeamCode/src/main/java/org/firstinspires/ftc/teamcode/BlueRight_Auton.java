@@ -53,11 +53,19 @@ public class BlueRight_Auton extends LinearOpMode {
         //Initialize the robot's Pose
 //        Pose2d initialPose = new Pose2d(new Vector2d( 35.0, 60.0), -90.0);
 //        Pose2d initialPose = new Pose2d(new Vector2d( -40.50, 65.0), Math.toRadians(-90.0));
+<<<<<<< Updated upstream
         Pose2d initialPose = new Pose2d(new Vector2d( -41, 64), Math.toRadians(90.0));
 
         //Instantiate the robot
         RobotContainer m_robot = new RobotContainer(
                 Constants.OpModeType.RED_RIGHT_AUTO,
+=======
+        Pose2d initialPose = new Pose2d(new Vector2d( -30.5, 64), Math.toRadians(270.0));
+
+        //Instantiate the robot
+        RobotContainer m_robot = new RobotContainer(
+                Constants.OpModeType.BLUE_RIGHT_AUTO,
+>>>>>>> Stashed changes
                 hardwareMap,
                 telemetry,
                 gamepad1,
@@ -73,7 +81,11 @@ public class BlueRight_Auton extends LinearOpMode {
 //        resetRuntime();
 
         //Disable the parking detection pipeline and start the parking timer countdown
+<<<<<<< Updated upstream
         m_robot.disableVision();
+=======
+     m_robot.disableVision();
+>>>>>>> Stashed changes
 
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())

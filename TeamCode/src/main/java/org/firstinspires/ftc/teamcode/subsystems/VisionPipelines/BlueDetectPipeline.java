@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 package org.firstinspires.ftc.teamcode.subsystems.visionpipelines;
+=======
+package org.firstinspires.ftc.teamcode.subsystems.VisionPipelines;
+>>>>>>> Stashed changes
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -44,8 +48,13 @@ public class BlueDetectPipeline extends OpenCvPipeline {
     int maxIndex = 0;
 
     //Color thresholding (Hue) upper/lower bounds
+<<<<<<< Updated upstream
     public static double H_start = 9.0;
     public static double H_end = 15.0;
+=======
+    public static double H_start = 90.0;
+    public static double H_end = 105.0;
+>>>>>>> Stashed changes
 
     //Erosion Kernel
     public static double kernelDimx = 7;
@@ -57,6 +66,12 @@ public class BlueDetectPipeline extends OpenCvPipeline {
     public static int textScale = 3;
     public static int textThickness = 12;
 
+<<<<<<< Updated upstream
+=======
+    public static double object = 0.02;
+
+    public boolean isFinished = false;
+>>>>>>> Stashed changes
     @Override
     public Mat processFrame(Mat input)
     {
@@ -85,6 +100,7 @@ public class BlueDetectPipeline extends OpenCvPipeline {
 
         //Draw three simple boxes around the middle of the image
         maxVal = 0.0;
+<<<<<<< Updated upstream
         for (int i=0; i<3; i++) {
             Imgproc.rectangle(
                     input_withBoxes,
@@ -113,6 +129,39 @@ public class BlueDetectPipeline extends OpenCvPipeline {
                 maxIndex = i;
             }
         }
+=======
+        float objectAmount = (float) object;
+        for (int i = 0; i < 2; i++) {
+            // Draw rectangles on the input_withBoxes image
+            Imgproc.rectangle(
+                    input_withBoxes,
+                    new Point(i * input.cols() / 2, 0),
+                    new Point((i + 1) * input.cols() / 2, input.rows() ),
+                    new Scalar(0, 0, 255), 4);
+
+            // Extract submatrices from the erodedMask
+            cropped = erodedMask.submat(
+                    new org.opencv.core.Range(0, input.rows()),
+                    new org.opencv.core.Range(i * input.cols() / 2, (i + 1) * input.cols() / 2)
+            );
+
+            // Sum all the color thresholded pixels to detect the color of interest
+            sumValue = Core.sumElems(cropped);
+            totalPixs = (float) (cropped.cols() * cropped.rows());
+            sumValNorm[i] = (float) (sumValue.val[0]) / totalPixs / 255.0f; // Check if scaling is correct
+
+            // Get the index of the box with the most color-thresholded pixels
+            if (sumValNorm[i] > maxVal) {
+                maxVal = sumValNorm[i];
+                maxIndex = i;
+            }
+
+        }
+        if (maxVal < objectAmount) {
+            maxIndex = 2;
+        }
+        isFinished = true;
+>>>>>>> Stashed changes
 
         //Write the detected position on the image
         Imgproc.putText(input_withBoxes, Integer.toString(maxIndex), new Point(textLocX,textLocY), Imgproc.FONT_HERSHEY_SIMPLEX, textScale, new Scalar(0,0,255), textThickness);

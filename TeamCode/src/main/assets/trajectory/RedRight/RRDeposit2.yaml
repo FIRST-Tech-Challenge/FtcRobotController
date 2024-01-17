@@ -1,5 +1,6 @@
 ---
 startPose:
+<<<<<<< Updated upstream
   x: 36.0
   y: -48.0
   heading: 3.141592653589793
@@ -9,6 +10,17 @@ waypoints:
     x: 48.0
     y: -40.0
   heading: 3.141592653589793
+=======
+  x: 12.0
+  y: -28.0
+  heading: -4.71238898038469
+startTangent: -0.6981317007977318
+waypoints:
+- position:
+    x: 52.0
+    y: -40.0
+  heading: -3.141592653589793
+>>>>>>> Stashed changes
   tangent: 0.0
   interpolationType: "LINEAR"
 resolution: 0.25

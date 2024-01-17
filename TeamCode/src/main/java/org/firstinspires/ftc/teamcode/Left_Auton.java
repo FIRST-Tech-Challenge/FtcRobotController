@@ -70,7 +70,11 @@ public class Left_Auton extends LinearOpMode {
 //        resetRuntime();
 
         //Disable the parking detection pipeline and start the parking timer countdown
+<<<<<<< Updated upstream
         m_robot.disableVision();
+=======
+  //      m_robot.disableVision();
+>>>>>>> Stashed changes
 
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())
