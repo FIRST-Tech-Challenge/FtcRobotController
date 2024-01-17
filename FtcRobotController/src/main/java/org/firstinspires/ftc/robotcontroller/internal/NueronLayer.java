@@ -29,6 +29,7 @@ public class NueronLayer {
         bias = loadedBias;
     }
 
+    //Not correctly implemented use evolution training method.
     public double[][] back_propagate(double[][] next_derivative){
         double[][] d1 = Matrix.tanhDerivative(layer);
         double[][] d2 = Matrix.elementMultiply(next_derivative, d1);
