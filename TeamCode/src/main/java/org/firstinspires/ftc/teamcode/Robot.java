@@ -1255,7 +1255,7 @@ public class Robot {
                 // do nothing
             } else if (gamepad2.a) { // a - intake position
                 allowTrayAngle = false;
-                trayAngle.setPosition(0.52);
+                trayAngle.setPosition(0.5);
                 trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
                 allowTrayAngle = true;
@@ -1880,6 +1880,42 @@ public class Robot {
                 if(distanceToMove > -80) {
                     lsFront.setPower(0);
                     lsBack.setPower(0);
+                    //set powers using this input
+                    fLeftPower = straight + turning + mecanuming;
+                    fRightPower = straight - turning - mecanuming;
+                    bLeftPower = straight + turning - mecanuming;
+                    bRightPower = straight - turning + mecanuming;
+
+
+                    //scale powers
+                    maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
+
+                    if (Math.abs(maxPower) > 1) {
+                        scale = Math.abs(maxPower);
+                        fLeftPower /= scale;
+                        bLeftPower /= scale;
+                        fRightPower /= scale;
+                        bRightPower /= scale;
+                    }
+
+                    //uses different powers based on which bumper was pressed last
+                    if (slowMode) {
+                        fLeftPower *= 0.7;
+                        bLeftPower *= 0.7;
+                        fRightPower *= 0.7;
+                        bRightPower *= 0.7;
+                    }
+
+                    //set motor power ONLY if a value has changed. else, use previous value.
+                    if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
+                            || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
+                        setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+                        fLeftPowerPrev = fLeftPower;
+                        fRightPowerPrev = fRightPower;
+                        bLeftPowerPrev = bLeftPower;
+                        bRightPowerPrev = bRightPower;
+                    }
                     break;
                 }
 
