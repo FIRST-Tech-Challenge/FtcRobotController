@@ -224,10 +224,19 @@ public class AutomatedTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
 
+            if (gamepad1.right_trigger>0.5){
+                driveMode= DriveMode.END_GAME;
+            }
             switch (driveMode) {
                 case NORMAL:
+
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    if (gamepad2.y){
+                        planeRaise.setPosition(CSCons.droneShooting);
+                    }
                     break;
                 case PIXEL_SCORE:
                     drive(gamepad1.left_stick_x, 0, 0);
@@ -237,15 +246,6 @@ public class AutomatedTeleop extends LinearOpMode {
             backSlidesMove(target);
 
 
-
-            if (gamepad1.x){
-                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-                outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-            }
-            if (gamepad1.y){
-                outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-                outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
-            }
 
             switch (intakeState) {
                 case Intake:

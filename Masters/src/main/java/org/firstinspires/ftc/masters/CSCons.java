@@ -12,11 +12,11 @@ public class CSCons {
     public static double clawOpen = 0.4;
     public static double clawClosed = 0.82;
     public static double clawTransfer = 0.72;
-    public static double clawAngleGroundToThree = .92;
+    public static double clawAngleGroundToThree = .94;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .2;
     public static double clawAngleTransfer = .02;
-    public static double clawArmGround = .79;
+    public static double clawArmGround = .76;
     public static double clawArm2 = .795;
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
@@ -35,7 +35,7 @@ public class CSCons {
     public static double closeHook = 1;
 
     public static double droneFlat = 0.3;
-    public static double droneShooting = 0.1;
+    public static double droneShooting = 0.2;
 
     public static double closeClawDistance = 3; //in cm
 
