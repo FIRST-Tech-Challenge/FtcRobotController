@@ -18,20 +18,21 @@ public class MeepMeepTesting {
 
        int num = 1;
                 if(num ==1) {
+                    Pose2d pose = new Pose2d(12,60,Math.toRadians(270));
                     RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                             // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                             .setConstraints(47.25, 47.25, Math.toRadians(22.36), Math.toRadians(22.36), 13.9)
                             // Option: Set theme. Default = ColorSchemeRedDark()
                             .setColorScheme(new ColorSchemeRedDark())
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
-                                            .strafeLeft(16)
-                                            .forward(60)
-                                            .turn(Math.toRadians(-90))
-                                            .forward(108)
-                                            .strafeRight(12)
-                                            .back(2)
-                                            .build()
+                                    drive.trajectorySequenceBuilder(pose)
+                                            .strafeLeft(15)
+                                            .forward(18)
+                                            .back(18)
+                                            .splineToLinearHeading(new Pose2d(48, 42, Math.toRadians(180)),Math.toRadians(0))
+                                            .strafeRight(18)
+                                            .back(6)
+                                    .build()
 
                             );
                     meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)

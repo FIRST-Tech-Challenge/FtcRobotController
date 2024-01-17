@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Toros;
+package org.firstinspires.ftc.teamcode.Toros.Autonomous;
 
 import android.util.Size;
 
@@ -79,11 +79,11 @@ public class Autonomus extends LinearOpMode {
             resetRuntime();
             while (opModeIsActive()) {
                 telem();
-                if (getRuntime() < 3) {
+                if (getRuntime() < 2) {
                     servoPos = 0;
-                } else if (getRuntime() > 4 && getRuntime() < 7) {
+                } else if (getRuntime() > 3 && getRuntime() < 5) {
                     servoPos = 90;
-                } else if (getRuntime() > 10) {
+                } else if (getRuntime() > 8) {
                     servoPos = 180;
                 }
 
@@ -174,13 +174,13 @@ public class Autonomus extends LinearOpMode {
                 cone = Color.RED;
             }
 
-            if (currentRecognitions.size() == 1 && servoPos == 0 && getRuntime() < 3) {
+            if (currentRecognitions.size() == 1 && servoPos == 0 && getRuntime() < 2) {
                 spike = 1;
             }
-            if (currentRecognitions.size() == 1 && servoPos == 90 && getRuntime() > 5 && getRuntime() < 7) {
+            if (currentRecognitions.size() == 1 && servoPos == 90 && getRuntime() > 3 && getRuntime() < 5) {
                 spike = 2;
             }
-            if (currentRecognitions.size() == 1 && servoPos == 180 && getRuntime() > 10) {
+            if (currentRecognitions.size() == 1 && servoPos == 180 && getRuntime() > 8) {
                 spike = 3;
             }
             switch (cone) {
@@ -194,31 +194,32 @@ public class Autonomus extends LinearOpMode {
                     }
                 case BLUE:
                     if (spike == 1) {
+
+
+
+
+                    } else if (spike == 2) {
                         Trajectory tra1 = drive.trajectoryBuilder(new Pose2d(12, 62, Math.toRadians(270)))
-                                .forward(27)
+                                .strafeLeft(15)
                                 .build();
                         Trajectory tra2 = drive.trajectoryBuilder(tra1.end())
-                                .forward(2)
-                                .back(5)
+                                .forward(15)
                                 .build();
                         Trajectory tra3 = drive.trajectoryBuilder(tra2.end())
-                                .lineTo(new Vector2d(23,54))
-                                .splineToLinearHeading(new Pose2d(41,35,Math.toRadians(180)),Math.toRadians(270))
-                                .back(7)
+                                .back(18)
+                                .splineToLinearHeading(new Pose2d(48, 42, Math.toRadians(180)),Math.toRadians(0))
                                 .build();
                         TrajectorySequence tra4 = drive.trajectorySequenceBuilder(tra3.end())
-                                .strafeRight(24)
-                                .back(10)
+                                .strafeRight(18)
+                                .back(6)
                                 .build();
                         drive.followTrajectory(tra1);
                         drive.turn(Math.toRadians(90));
                         drive.followTrajectory(tra2);
                         drive.followTrajectory(tra3);
                         arm(1250);
+                        //claw drop
                         drive.followTrajectorySequence(tra4);
-
-
-                    } else if (spike == 2) {
 
                     } else {
 
