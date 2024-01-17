@@ -37,6 +37,7 @@ public class EvolutionTrainingBlueFront extends LinearOpMode {
     private DcMotor lift2 = null;
 
     private Servo pixel = null;
+    private double pixelO = 1;
 
     private ColorSensor color = null;
     private double colorNum = 0.0;
@@ -191,8 +192,10 @@ public class EvolutionTrainingBlueFront extends LinearOpMode {
 
             if(gamepad1.b){
                 pixel.setPosition(0.0);
+                pixelO = -1.0;
             }else{
                 pixel.setPosition(1.0);
+                pixelO = 1.0;
             }
 
             if(color.blue() > 0)
@@ -210,7 +213,7 @@ public class EvolutionTrainingBlueFront extends LinearOpMode {
             updates += 1;
 
             in = append(in, new double[]{-1.0, 1.0, runtime.time(), leftDriveFront.getVelocity(), rightDriveFront.getVelocity(), leftDriveBack.getVelocity(), rightDriveBack.getVelocity(), clawOpen, lift.getPower(), ziptie.getPower(), colorNum, pos});
-            out = append(out, new double[]{gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_stick_y, clawOpen, lift.getPower(), ziptie.getPower(), pixel.getPosition(), pos});
+            out = append(out, new double[]{gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.left_stick_y, clawOpen, lift.getPower(), ziptie.getPower(), pixelO, pos});
 
             if(gamepad1.start)
                 endGeneration();

@@ -70,8 +70,8 @@ public class EvolutionBlueFrontDelay extends LinearOpMode {
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(1.0f);
-        claw1.setPosition(0.0f);
+        claw0.setPosition(0.25f);
+        claw1.setPosition(0.75f);
 
         network = new WolfNet(12, 8, 2, "Weights0", 0.5);
         network.LoadWeights();
@@ -99,7 +99,11 @@ public class EvolutionBlueFrontDelay extends LinearOpMode {
                 lift.setPower(network.output.layer[0][4]);
                 ziptie.setPower(network.output.layer[0][5]);
 
-                pixel.setPosition(network.output.layer[0][6]);
+                if(network.output.layer[0][6] > 0){
+                    pixel.setPosition(1.0);
+                }else{
+                    pixel.setPosition(0.0);
+                }
 
                 pos = network.output.layer[0][7];
             }else if(runtime.time() >= 11000){
