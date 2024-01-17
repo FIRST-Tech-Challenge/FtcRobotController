@@ -179,11 +179,11 @@ public class DualMotorLift implements Subsystem {
 
     private void updateTargetReached() {
         //if it is already true, don't change it. only change when slide is set to a level
-        double motorLVel = Math.abs(slideMotorL.getVelocity());
+        double motorLVel;// = Math.abs(slideMotorL.getVelocity());
         double targetPos, currPos;
 
-        motorLVel = Math.abs(slideMotorR.getVelocity());
-        currPos = slideMotorR.getCurrentPosition();
+        motorLVel = Math.abs(slideMotorL.getVelocity());
+        currPos = slideMotorL.getCurrentPosition();
 
 
 

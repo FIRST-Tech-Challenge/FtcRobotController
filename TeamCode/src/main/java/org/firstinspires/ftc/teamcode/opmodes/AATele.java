@@ -36,11 +36,11 @@ public class AATele extends LinearOpMode {
             double factor = robot.mecanumDrive.mapJsRadiusVal(joystickRadius,slowMode);
             double jsX = robot.mecanumDrive.mapJsComponents(-gamepad1.left_stick_x, joystickRadius, slowMode);
             double jsY = robot.mecanumDrive.mapJsComponents(gamepad1.left_stick_y, joystickRadius, slowMode);
-            robot.mecanumDrive.setDrivePower(new Pose2d(-jsY, -jsX, -(0.8)*gamepad1.right_stick_x));
+            robot.mecanumDrive.setDrivePower(new Pose2d(-jsY, jsX, -(0.8)*gamepad1.right_stick_x));
             robot.mecanumDrive.setPowerFactor(0.7); //remove with actual robot.
 
 
-//            robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x));
+//            robot.mecanumDrive.setDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left _stick_x, -gamepad1.right_stick_x));
 
             // do not move
             if(smartGamepad1.right_bumper == false && robot.intake.intakeState == 21){// reverses the intake motor for a few seconds :)
