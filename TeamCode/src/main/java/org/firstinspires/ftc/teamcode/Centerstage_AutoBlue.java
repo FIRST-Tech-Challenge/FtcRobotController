@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -80,7 +81,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 5;
+    private static final int DESIRED_TAG_ID = 3;
 
     private AprilTagProcessor aprilTag;
 
@@ -108,9 +109,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            targetFound = false;
-            desiredTag = null;
-
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
                 // Look to see if we have size info on this tag.
@@ -125,7 +123,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                         targetFound = true;
                         desiredTag = detection;
 
-                        gobbler.driveTrain.moveForward(1,0.5);
+                       // gobbler.driveTrain.moveForward(1,0.5);
 
                         break;  // don't look any further.
                     } else {
@@ -136,6 +134,17 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                     // This tag is NOT in the library, so we don't have enough information to track to it.
                     telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
+            }
+
+            if (targetFound) {
+                telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                telemetry.update();
+            } else {
+                telemetry.addData("\n>","Target ID not found\n");
+                telemetry.update();
             }
 
 
