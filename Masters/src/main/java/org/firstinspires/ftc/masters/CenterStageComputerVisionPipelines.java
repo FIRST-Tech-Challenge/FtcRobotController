@@ -172,7 +172,7 @@ public class CenterStageComputerVisionPipelines {
     public class PropFind extends OpenCvPipeline {
 
         private final Rect interestMid = new Rect(178, 180, 32, 50);
-        private final Rect interestRight = new Rect(460, 230, 32, 50);
+        private final Rect interestRight = new Rect(460, 250, 32, 50);
         private final Rect pix = new Rect(1,1,1,1);
 
 

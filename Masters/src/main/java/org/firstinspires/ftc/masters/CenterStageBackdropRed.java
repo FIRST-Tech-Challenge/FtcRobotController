@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Blue", group = "competition")
+@Autonomous(name = "Center Stage Backdrop Red", group = "competition")
 public class CenterStageBackdropRed extends LinearOpMode {
     enum State {
         PURPLE_DEPOSIT_PATH,
