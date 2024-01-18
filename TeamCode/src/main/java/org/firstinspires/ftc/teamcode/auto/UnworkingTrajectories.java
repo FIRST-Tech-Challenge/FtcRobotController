@@ -325,6 +325,7 @@ public class UnworkingTrajectories {
                 .build();
 
         redParkClose = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .forward(2)
                 .strafeRight(parkRight)
                 .build();
         redParkFar = drive.trajectorySequenceBuilder(startPoseFarRed)

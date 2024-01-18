@@ -35,10 +35,10 @@ public class RedClose1Pixel extends CommandOpMode {
     public void initialize() {
         drive = new SampleMecanumDrive(hardwareMap);
         //motors and servos hardwareMap stuff here
-        fl= hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "bl");
+//        fl= hardwareMap.get(DcMotor.class, "fl");
+//        fr = hardwareMap.get(DcMotor.class, "fr");
+//        bl = hardwareMap.get(DcMotor.class, "bl");
+//        br = hardwareMap.get(DcMotor.class, "bl");
 //        Impasta autoImp = new Impasta(fl, fr, bl, br, imu);
 
 

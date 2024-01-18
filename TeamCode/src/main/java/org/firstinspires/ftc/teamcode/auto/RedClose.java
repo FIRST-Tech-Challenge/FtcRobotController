@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
 
-@Disabled
 @Autonomous(name="Red Close")
 public class RedClose extends CommandOpMode {
     //Add Motors and servos not for drivebase here
