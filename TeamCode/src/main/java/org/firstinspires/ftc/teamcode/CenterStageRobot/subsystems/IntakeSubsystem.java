@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final MotorExEx motor;
+  
     private final double speed = 0.8;  // TODO: Speed Value Might Change
     private final double ampThreshold = 1.4;
     private Telemetry telemetry;
