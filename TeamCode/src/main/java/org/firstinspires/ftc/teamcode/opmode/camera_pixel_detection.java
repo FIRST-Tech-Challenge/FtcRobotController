@@ -28,17 +28,26 @@ public class camera_pixel_detection extends OpMode {
     public static int choose_upper_or_lower = 0;
     WebcamName webcamName;
     OpenCvCamera camera;
-    double[] lowerPvals = new double[]{50, 20, 20};
-    double[] upperPvals = new double[]{250, 125, 200};
-    Scalar lowerP = new Scalar(50, 20, 20);
-    Scalar upperP = new Scalar(250, 125, 200);
     int l_or_u = 1;
-//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
-//    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
+    double[] lowerYvals = new double[]{100, 37, 37};
+    double[] upperYvals = new double[]{165, 125, 200};
+    Scalar lowerY = new Scalar(28, 37, 37);
+    Scalar upperY = new Scalar(52, 125, 200);
+    
+/**    double[] lowerPvals = new double[]{100, 37, 37}; the REAL lowerPvals
+//    double[] upperPvals = new double[]{165, 125, 200}; the REAL upperPvals
+//    Scalar lowerP = new Scalar(90, 37, 37); the REAL lowerP
+//    Scalar upperP = new Scalar(165, 125, 200); the REAL upperP
+
+//    double[] lowerPvals = new double[]{50, 75, 37}; the REAL lowerGvals
+//    double[] upperPvals = new double[]{150, 250, 250}; the REAL upperGvals
+//    Scalar lowerG = new Scalar(50, 75, 80); the REAL lowerG
+//    Scalar upperG = new Scalar(150, 250, 250); the REAL upperG
+
+//    double[] lowerWvals = new double[]{0, 0, 200}; the FAKE upperWvals
+//    double[] upperWvals = new double[]{360, 25, 240}; the FAKE upperWvals
 //    Scalar lowerW = new Scalar(0, 0, 200); todo:not best numbers, check better
-//    Scalar upperW = new Scalar(360, 25, 240);todo:not best numbers, check better
-//    double[] lowerWvals = new double[]{0, 0, 200}; the real upperWvals
-//    double[] upperWvals = new double[]{360, 25, 240}; the real upperWvals
+//    Scalar upperW = new Scalar(360, 25, 240);todo:not best numbers, check better */
 
 
     @Override
@@ -83,18 +92,18 @@ public class camera_pixel_detection extends OpMode {
 
     @Override
     public void init_loop() {
-        telemetry.addData("lowerP: ", lowerP);
-        telemetry.addData("upperP: ", upperP);
+        telemetry.addData("lowerP: ", lowerY);
+        telemetry.addData("upperP: ", upperY);
         telemetry.addData("H_S_V_number ", choose_H_S_V);
         telemetry.addData("lower = 0, upper = 1 ", choose_upper_or_lower);
         telemetry.addLine("a = +1 \n b = -1 \n x = +10 \n y = -10 \n" +
                 " triggers=Choose H or S or V (H=0 S=1 V=2) \n bumpers = upper/lower ");
-        if (gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 0) {
+        if (gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 1) {
             choose_upper_or_lower -= 1;
         }
         lastleft_bumper = gamepad1.left_bumper;
 
-        if (gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 1) {
+        if (gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 2) {
             choose_upper_or_lower += 1;
         }
         lastright_bumper = gamepad1.right_bumper;
@@ -112,49 +121,49 @@ public class camera_pixel_detection extends OpMode {
 
         if (gamepad1.a && !lastA) {
             if (choose_upper_or_lower == 1) {
-                upperPvals[choose_H_S_V]++;
+                upperYvals[choose_H_S_V]++;
             }
 
             if (choose_upper_or_lower == 0) {
-                lowerPvals[choose_H_S_V]++;
+                lowerYvals[choose_H_S_V]++;
             }
         }
         lastA = gamepad1.a;
 
         if (gamepad1.b && !lastB) {
             if (choose_upper_or_lower == 1) {
-                upperPvals[choose_H_S_V]--;
+                upperYvals[choose_H_S_V]--;
             }
 
             if (choose_upper_or_lower == 0) {
-                lowerPvals[choose_H_S_V]--;
+                lowerYvals[choose_H_S_V]--;
             }
         }
         lastB = gamepad1.b;
 
         if (gamepad1.x && !lastX) {
             if (choose_upper_or_lower == 1) {
-                upperPvals[choose_H_S_V] += 10;
+                upperYvals[choose_H_S_V] += 10;
             }
 
             if (choose_upper_or_lower == 0) {
-                lowerPvals[choose_H_S_V] += 10;
+                lowerYvals[choose_H_S_V] += 10;
             }
         }
         lastX = gamepad1.x;
 
         if (gamepad1.y && !lastY) {
             if (choose_upper_or_lower == 1) {
-                upperPvals[choose_H_S_V] -= 10;
+                upperYvals[choose_H_S_V] -= 10;
             }
 
             if (choose_upper_or_lower == 0) {
-                lowerPvals[choose_H_S_V] -= 10;
+                lowerYvals[choose_H_S_V] -= 10;
             }
         }
         lastY = gamepad1.y;
-        upperP.set(upperPvals);
-        lowerP.set(lowerPvals);
+        upperY.set(upperYvals);
+        lowerY.set(lowerYvals);
     }
 
     @Override
@@ -174,9 +183,9 @@ public class camera_pixel_detection extends OpMode {
         List contours;
         public Mat processframeG(Mat input) {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-            //                Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
-            inRange(hsv, lowerP, upperP, binaryG);
-            //                Imgproc.erode(binaryG,binaryAfterG,kernel);
+//            Mat kernel = Imgproc.getStructuringElement(0, new Size(5.0,5.0),new Point(5, 5));
+            inRange(hsv, lowerY, upperY, binaryG);
+//            Imgproc.erode(binaryG,binaryAfterG,kernel);
             return binaryG;
         }
         @Override
