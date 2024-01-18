@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.1, HOVER_POS = 0.86, GRAB_POS = 0.71, FLIP_TIME = 0.6;
+  public static double DROP_POS = 0.1, HOVER_POS = 0.86, GRAB_POS = 0.71, FLIP_TIME = 0.5;
   private double lastTime = 0;
 
   /** constructs arm servo, logs to general with CONFIG severity */
