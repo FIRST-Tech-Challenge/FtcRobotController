@@ -9,9 +9,9 @@ public class Slides extends SubsystemBase {
 
     public enum SlidePos {
         DOWN(0),
-        LOW(500),
-        MED(1000),
-        HIGH(1500);
+        LOW(150), //way too high
+        MED(300),
+        HIGH(450);
 
         public int position;
 
@@ -25,7 +25,7 @@ public class Slides extends SubsystemBase {
     private double voltageComp = 1.0;
 
     public Slides(HardwareMap hardwareMap) {
-        lMotor = hardwareMap.get(DcMotorEx.class, "Left Slide");
+        lMotor = hardwareMap.get(DcMotorEx.class, "frontEncoder");
         rMotor = hardwareMap.get(DcMotorEx.class, "Right Slide");
 
         lMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -84,7 +84,9 @@ public class Slides extends SubsystemBase {
     public void goToPosition(SlidePos position) {
         lMotor.setTargetPosition(position.position);
         lMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slidePower(1.0);
+        rMotor.setTargetPosition(-position.position);
+        rMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slidePower(0.1);
     }
     public void switchMaxMin(){
         if(this.atUpper() == true){

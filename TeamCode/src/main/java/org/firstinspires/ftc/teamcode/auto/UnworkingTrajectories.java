@@ -63,14 +63,14 @@ public class UnworkingTrajectories {
     public static TrajectorySequence toParkCloseBlue;
 
     public static double toLineShort = 6;
-    public static double toLineLong = 2.5;
-    public static double toMiddle = 28.75;
-    public static double parkRight = 11;
+    public static double toLineLong = 11;
+    public static double toMiddle = 25;
+    public static double parkRight = 38;
     public static double parkLeft = 97;
     public static double prepPark = 20;//this is for far left and far right
     public static double prepParkMid = 4;//this is for mid
     public static double toTurn = 18;
-    public static double backBoard = 24;
+    public static double backBoard = 19;
 
     public static double farBoxToPerp = 22;
 
@@ -153,7 +153,7 @@ public class UnworkingTrajectories {
                 .build();
 
         parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
-                .strafeRight(backBoard)
+                .strafeRight(backBoard+6)
                 .forward(12)
                 .build();
 

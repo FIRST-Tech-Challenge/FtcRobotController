@@ -17,8 +17,8 @@ public class    Outtake extends SubsystemBase {
     private GamepadEx gamepad;
 
     public Outtake(GamepadEx gamepad, HardwareMap hardwareMap) {
-        leftOuttake = hardwareMap.get(ServoImplEx.class, "OL");
-        rightOuttake = hardwareMap.get(ServoImplEx.class, "OR");
+        leftOuttake = hardwareMap.get(ServoImplEx.class, "leftOut");
+        rightOuttake = hardwareMap.get(ServoImplEx.class, "rightOut");
 
         this.gamepad = gamepad;
 

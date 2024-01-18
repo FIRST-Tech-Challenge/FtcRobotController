@@ -21,11 +21,9 @@ public class V4B extends SubsystemBase {
     private CRServo servo2;
 
     public V4B(HardwareMap hardwareMap) {
-        servo1 = hardwareMap.get(CRServo.class, "CRServoL"); // Left Side
-        servo2 = hardwareMap.get(CRServo.class, "CRServoR"); // Right Side
+        servo1 = hardwareMap.get(CRServo.class, "leftV4B"); // Left Side
+        servo2 = hardwareMap.get(CRServo.class, "rightV4B"); // Right Side
 
-        // Set the initial servo powers
-        forceDown(); // Puts down at the start
     }
 
     @Override
