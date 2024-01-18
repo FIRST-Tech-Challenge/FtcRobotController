@@ -72,7 +72,8 @@ public class climb {
     public Command climb(TrapezoidProfile.State goal) {
 
         Runnable init = () -> {
-            TrapezoidProfile.State initPose = new TrapezoidProfile.State(climb_motor.encoder.getPosition(), climb_motor.encoder.getRawVelocity());
+            TrapezoidProfile.State initPose = new TrapezoidProfile.State(climb_motor.encoder.getPosition(),
+                    climb_motor.encoder.getRawVelocity());
             m_profile = new TrapezoidProfile(m_sysConstraints,goal , initPose);
             m_elapsedTime.reset();
         };
@@ -88,13 +89,14 @@ public class climb {
         return new FunctionalCommand(init, loop, stopMotors, atGoal, (Subsystem) this);
 
     }
-    public Command toggleClimb(){
-        if(isUp){
-            climb_down();
-        }else{
-            climb_up();
-        }
-    }
+//    public Command toggleClimb(){
+//        if(isUp){
+//            climb_down();
+//        }else{
+//            climb_up();
+//        }
+//        return new RunCommand(climb_up(), climb_down());
+//    }
 }
 
 

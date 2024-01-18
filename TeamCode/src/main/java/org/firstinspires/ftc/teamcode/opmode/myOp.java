@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 @TeleOp
 public class myOp extends CommandOpMode {
-    Gamepad gamepad1;
     RobotContainer m_robot;
     @Override
     public void initialize() {
