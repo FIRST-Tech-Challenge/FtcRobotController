@@ -59,6 +59,7 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    public double globalHeading = 0.0;
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -90,7 +91,7 @@ public final class MecanumDrive {
         // path controller gains
         public double axialGain = 4.0;
         public double lateralGain = 1.0;
-        public double headingGain = 1.7; // shared with turn
+        public double headingGain = 2; // shared with turn
 
         public double axialVelGain = 0.8;
         public double lateralVelGain = 0.8;
@@ -151,6 +152,7 @@ public final class MecanumDrive {
             lastRightFrontPos = rightFront.getPositionAndVelocity().position;
 
             lastHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+            globalHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)).toDouble();
         }
 
         @Override
@@ -435,6 +437,10 @@ public final class MecanumDrive {
             c.setStroke("#7C4DFF7A");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
+    }
+
+    public double getHeading() {
+        return this.globalHeading;
     }
 
     public PoseVelocity2d updatePoseEstimate() {

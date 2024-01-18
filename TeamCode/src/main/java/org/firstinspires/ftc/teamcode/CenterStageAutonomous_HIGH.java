@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -21,10 +21,8 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusyste
 import org.firstinspires.ftc.teamcode.Extra.CommandAction;
 import org.firstinspires.ftc.teamcode.Extra.CommandGroupBaseAction;
 
-import java.util.function.DoubleSupplier;
-
-@Autonomous(name = "CenterStageAutonomous", group = "Final Autonomous")
-public class CenterStageAutonomous extends LinearOpMode {
+@Autonomous(name = "CenterStageAutonomous_HIGH", group = "Final Autonomous")
+public class CenterStageAutonomous_HIGH extends LinearOpMode {
 
     protected MecanumDrive drive;
     protected RoadRunnerSubsystem RR;
@@ -41,8 +39,8 @@ public class CenterStageAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        drive = new MecanumDrive(hardwareMap, homePose_LOW_RED);
-        RR = new RoadRunnerSubsystem(drive, RoadRunnerSubsystem.Alliance.RED, RoadRunnerSubsystem.Start.LOW,
+        drive = new MecanumDrive(hardwareMap, homePose_HIGH_RED);
+        RR = new RoadRunnerSubsystem(drive, RoadRunnerSubsystem.Alliance.RED, RoadRunnerSubsystem.Start.HIGH,
                 RoadRunnerSubsystem.Corridor.INNER, RoadRunnerSubsystem.Corridor.INNER,
                 RoadRunnerSubsystem.Station.INNER, RoadRunnerSubsystem.Parking.OUTER);
 
@@ -60,21 +58,24 @@ public class CenterStageAutonomous extends LinearOpMode {
         Actions.runBlocking(new SequentialAction(
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                RR.LOW_HomeToPixel_CENTER.build(), // Change with TO_BACKDROP
+                RR.HIGH_HomeToPixel_CENTER.build(), // Change with TO_BACKDROP
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 new ParallelAction(
-                        new CommandAction(
-                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.AUTO)
+                        new SequentialAction(
+                                new CommandAction(new WaitCommand(6000)),
+                                new CommandAction(
+                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.AUTO)
+                                ),
+                                new CommandGroupBaseAction(new SequentialCommandGroup(
+                                        new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
+                                        new WaitCommand(80),
+                                        new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
+                                ))
                         ),
-                        new CommandGroupBaseAction(new SequentialCommandGroup(
-                                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                                new WaitCommand(80),
-                                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-                        )),
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                        RR.LOW_ToBackdrop_MID.build() // Change with the HOME_TO_PIXEL
+                        RR.HIGH_ToBackdrop_MID.build() // Change with the HOME_TO_PIXEL
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 ),
