@@ -56,7 +56,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1540, false),
     MID_SET_LINE(900, false),
-    LOW_SET_LINE(800, false),
+    LOW_SET_LINE(600, false),
     AT_ZERO(0, true);
 
     double position;
@@ -139,13 +139,13 @@ public class Lift extends RFDualMotor {
     for (var i : LiftPositionStates.values()) {
       if (abs(super.getCurrentPosition() - i.position) < 50
           && (i != LiftPositionStates.AT_ZERO
-              || (!Arm.ArmStates.DROP.state && !Arm.ArmTargetStates.DROP.getState()))) {
+              || (Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.getState()))) {
         i.setStateTrue();
         LiftMovingStates.values()[i.ordinal()].state=false;
       }
     }
 
-    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-50)
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-150)
       LiftPositionStates.AT_ZERO.setStateTrue();
     else LiftPositionStates.AT_ZERO.state = false;
 
@@ -192,18 +192,18 @@ public class Lift extends RFDualMotor {
       if ((Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.getState())
           && (!Arm.ArmTargetStates.DROP.state||!Arm.ArmTargetStates.GRAB.getState())) {
         super.setPosition(p_state.position, 0);
-        LiftMovingStates.AT_ZERO.setStateTrue();
+
       } else {
         super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
+        LOGGER.log("Out");
       }
       iterateHeight=3;
     } else {
-      if (!Arm.ArmStates.GRAB.getState()) super.setPosition(p_state.position, 0);
+      if (!Arm.ArmStates.GRAB.getState())
+        super.setPosition(p_state.position, 0);
     }
 
-    if (!LiftMovingStates.values()[p_state.ordinal()].state) {
       LiftMovingStates.values()[p_state.ordinal()].state = true;
-    }
   }
 
   /**

@@ -32,12 +32,12 @@ public class Intake extends RFMotor {
   double requestTime = 0.0;
 
   private final double INTAKE_POWER = 1.0;
-  private final double REVERSE_POWER = -0.6;
+  private final double REVERSE_POWER = -1.0;
 
   private boolean full = false;
   private double pixelCount = 0;
   public static double HALF_TICKS_PER_REV = 383.6 / 2;
-  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.66, FIVE =0.7, STOP_DELAY = 0.5;
+  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.63, FIVE =0.65, STOP_DELAY = 0.5;
   double lastTime =0;
   boolean pixeled = false;
   int height = 1;
@@ -48,10 +48,12 @@ public class Intake extends RFMotor {
     intakeServo = new RFServo("intakeServo", 1.0);
     super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     super.setDirection(DcMotorSimple.Direction.REVERSE);
+    super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
 //    intakeServo.setPosition();
     intakeServo.setLastTime(-100);
+    IntakeStates.STOPPED.setStateTrue();
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -175,19 +177,19 @@ public class Intake extends RFMotor {
 
   public void setHeight(int height){
     if(height==1){
-      intakeServo.setPosition(height);
+      intakeServo.setPosition(ONE);
     }
     else if(height ==2){
-      intakeServo.setPosition(height);
+      intakeServo.setPosition(TWO);
     }
     else if(height ==3){
-      intakeServo.setPosition(height);
+      intakeServo.setPosition(THREE);
     }
     else if(height==4){
-      intakeServo.setPosition(height);
+      intakeServo.setPosition(FOUR);
     }
     else{
-      intakeServo.setPosition(height);
+      intakeServo.setPosition(FIVE);
     }
   }
 

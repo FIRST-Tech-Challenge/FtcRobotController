@@ -20,6 +20,9 @@ public class Twrist extends RFServo {
         super.setFlipTime(FLIP_TIME);
         twristStates.GRAB.setStateTrue();
         twristTargetStates.GRAB.setStateTrue();
+        twristTargetStates.GRAB.state = false;
+        lastTime = -100;
+        super.setLastTime(-100);
     }
     public enum twristStates{
         DROP(false, DROPPY),
@@ -42,7 +45,7 @@ public class Twrist extends RFServo {
     }
     public enum twristTargetStates{
         DROP(false, DROPPY),
-        GRAB(true, GRABBY);
+        GRAB(false, GRABBY);
         boolean state;
         double pos;
         twristTargetStates(boolean p_state, double p_pos){

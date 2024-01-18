@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.1, HOVER_POS = 0.83, GRAB_POS = 0.71;
-  private double lastTime = 0, FLIP_TIME = 1.4;
+  public static double DROP_POS = 0.1, HOVER_POS = 0.86, GRAB_POS = 0.71, FLIP_TIME = 0.6;
+  private double lastTime = 0;
 
   /** constructs arm servo, logs to general with CONFIG severity */
   public Arm() {
@@ -103,14 +103,14 @@ public class Arm extends RFServo {
   }
 
   public void purpurPigzl() {
-    ArmStates.HOVER.state = true;
+    ArmStates.DROP.state = true;
     super.setPosition(0.2);
-    LOGGER.log(RFLogger.Severity.INFO, "flipping to DROP");
+    LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
     lastTime = time;
   }
 
   public void flipTo(ArmStates p_state) {
-    if (!p_state.state && time - lastTime > FLIP_TIME) {
+    if (time - lastTime > FLIP_TIME) {
       if ((p_state == ArmStates.DROP || p_state == ArmStates.HOVER)
           && super.getPosition() != p_state.pos) {
         if (p_state == ArmStates.DROP) {
@@ -119,16 +119,16 @@ public class Arm extends RFServo {
             flipTo(ArmStates.HOVER);
             return;
           }
-          if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
+          if (super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)) {
             super.setPosition(DROP_POS);
 //            Wrist.WristTargetStates.DROP.setStateTrue();
 //            Twrist.twristTargetStates.DROP.setStateTrue();
             LOGGER.log(RFLogger.Severity.INFO, "flipping to DROP");
             lastTime = time;
           } else {
-            Lift.LiftMovingStates.LOW.state = true;
+//            Lift.LiftMovingStates.LOW.state = true;
           }
-        } else {
+        } else if(super.getPosition() != HOVER_POS){
           if (!Lift.LiftPositionStates.AT_ZERO.state || ArmStates.GRAB.getState()) {
 
             super.setPosition(HOVER_POS);
@@ -138,8 +138,8 @@ public class Arm extends RFServo {
 //            Twrist.twristTargetStates.GRAB.setStateTrue();
             lastTime = time;
           }
-          if (!Lift.LiftPositionStates.AT_ZERO.state) {
-            Lift.LiftMovingStates.LOW.state = true;
+          if (Lift.LiftPositionStates.AT_ZERO.state) {
+//            Lift.LiftMovingStates.LOW.state = true;
           }
         }
       }
@@ -174,7 +174,12 @@ public class Arm extends RFServo {
       if (super.getPosition() == i.pos && time > lastTime + FLIP_TIME) {
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
-        LOGGER.log("Assigned false to state: " + ArmTargetStates.values()[i.ordinal()].name());
+        LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
+      }
+      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.2){
+        i.setStateTrue();
+        ArmTargetStates.values()[i.ordinal()].state = false;
+        LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
     }
     for (var i : ArmTargetStates.values()) {

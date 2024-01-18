@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 @Config
 public class Claw extends RFServo {
-  public static double GRAB_POS = 0.28,
-      CLOSE_POS = 0.56,
-      FLIP_TIME = 0.3, GRAB2=0.8, CLOSE2 = 0.46;
+  public static double GRAB_POS = 0.35,
+      CLOSE_POS = 0.53,
+      FLIP_TIME = 0.3, GRAB2=0.78, CLOSE2 = 0.55;
   private double lastTime = 0;
   private Servo servo2;
   public Claw() {
@@ -130,7 +130,7 @@ public class Claw extends RFServo {
 
   public void update() {
     for (var i : clawStates.values()) {
-      if (super.getPosition() == i.pos && time > lastTime + FLIP_TIME) i.setStateTrue(); clawTargetStates.values()[i.ordinal()].state=false;
+      if (super.getPosition() == i.pos && time > super.getLastTime() + FLIP_TIME) i.setStateTrue(); clawTargetStates.values()[i.ordinal()].state=false;
       if(i.state) packet.put("clawPos", i.name());
 
     }

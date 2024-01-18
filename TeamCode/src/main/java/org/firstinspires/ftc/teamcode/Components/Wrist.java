@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import static java.lang.Math.abs;
@@ -11,16 +12,28 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
   public static double GRABBY = 0.08
-          , DROPPY = 0.35, FLIP_TIME=0.3, LOCKY=0.2;
+          , DROPPY = 0.35, FLIP_TIME=0.1, LOCKY=0.2;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);
     lastTime = -100;
     super.setLastTime(-100);
-    super.setPosition(GRABBY);
-    super.setFlipTime(FLIP_TIME);
-    WristStates.GRAB.setStateTrue();
-    WristTargetStates.GRAB.setStateTrue();
+    if (isTeleop) {
+      super.setPosition(GRABBY);
+      super.setFlipTime(FLIP_TIME);
+      WristStates.GRAB.setStateTrue();
+      WristTargetStates.GRAB.setStateTrue();
+      WristTargetStates.GRAB.state = false;
+    }
+    else{
+      super.setPosition(LOCKY);
+      super.setFlipTime(FLIP_TIME);
+      WristStates.LOCK.setStateTrue();
+      WristTargetStates.LOCK.setStateTrue();
+      WristTargetStates.LOCK.state = false;
+    }
+    lastTime = -100;
+    super.setLastTime(-100);
   }
   public enum WristStates{
     DROP(false, DROPPY),
@@ -73,7 +86,7 @@ public class Wrist extends RFServo {
         }
         WristTargetStates.GRAB.state = true;
       } else if(p_state == WristTargetStates.DROP){
-        if((Arm.ArmStates.DROP.state) && super.getPosition() != DROPPY){
+        if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != DROPPY){
           super.setPosition(DROPPY);
           LOGGER.log("wrist to DROP");
           lastTime = time;

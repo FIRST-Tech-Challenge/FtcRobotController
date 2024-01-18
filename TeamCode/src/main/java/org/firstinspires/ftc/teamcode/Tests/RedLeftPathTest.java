@@ -97,34 +97,59 @@ public class RedLeftPathTest extends LinearOpMode {
     waitForStart();
     while (opModeIsActive() && !isStopRequested() /*&& !robot.queuer.isFullfilled()*/) {
       robot.upAuto();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.purpurAuto();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.dropAuto(1);
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.lowAuto();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.drop();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.resetAuto();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.intakeAuto(1);
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
       robot.grabAuto();
-      robot.queuer.addDelay(2.0);
+//      robot.queuer.addDelay(2.0);
 
-//      robot.lowAuto();
+      robot.lowAuto();
 //      robot.queuer.addDelay(2.0);
-//
-//      robot.drop();
+
+      robot.drop();
 //      robot.queuer.addDelay(2.0);
+      robot.resetAuto();
+      robot.intakeAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+      robot.resetAuto();robot.intakeAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+      robot.resetAuto();
+
 
       robot.update();
       }
