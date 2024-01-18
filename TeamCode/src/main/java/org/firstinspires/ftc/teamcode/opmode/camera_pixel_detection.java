@@ -4,43 +4,45 @@ import static org.opencv.core.Core.inRange;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Constants;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.opencv.core.Scalar;
-
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 import java.util.List;
 
 @TeleOp(name="cameraTest", group="Linear Opmode")
 public class camera_pixel_detection extends OpMode {
-    boolean lastA = false, lastB = false, lastY = false, lastX = false ,lastleft_trigger = false, lastright_trigger, lastleft_bumper = false, lastright_bumper = false;
+    boolean lastA = false, lastB = false, lastY = false, lastX = false ,
+            lastLeftTrigger = false, lastRightTrigger = false, lastLeftBumper = false, lastRightBumper = false;
     int cameraMonitorViewId;
-    public static int choose_H_S_V = 0;
-
-    public static int choose_upper_or_lower = 0;
+    int l_or_u = 1;
+    public static int choose_H_S_V = 0; // first arm weight KG
     WebcamName webcamName;
     OpenCvCamera camera;
-    double[] lowerPvals = new double[]{50, 20, 20};
-    double[] upperPvals = new double[]{250, 125, 200};
-    Scalar lowerP = new Scalar(50, 20, 20);
-    Scalar upperP = new Scalar(250, 125, 200);
-//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
+    double[] lowerPvals = new double[]{120, 50, 85};
+    double[] upperPvals = new double[]{150, 90, 155};
+
+    Scalar lowerP = new Scalar(120, 50, 85); // todo: make it more accurate
+    Scalar upperP = new Scalar(150, 90, 155); // todo: make it more accurate
+
+//    Scalar lowerW = new Scalar(0, 0, 200); the real lowerW
+//    Scalar upperw = new Scalar(360, 25, 240); the real upperW
+//    double[] lowerWvals = new double[]{0, 0, 200}; the real upperWvals
+//    double[] upperWvals = new double[]{360, 25, 240}; the real upperWvals
+
+//    double[] lowerGvals = new double[]{50, 75, 80}; the real lowerGvals
+//    double[] upperGvals = new double[]{150, 250, 250}; the real upperGvals
 //    Scalar lowerG = new Scalar(50, 75, 80); the real lowerG
-//    Scalar lowerW = new Scalar(0, 0, 200); todo:not best numbers, check better
-//    Scalar upperW = new Scalar(360, 25, 240);todo:not best numbers, check better
-//    double[] lowerPvals = new double[]{0, 0, 200};
-//    double[] upperWvals = new double[]{360, 25, 240};
+//    Scalar upperG = new Scalar(150, 250, 250); the real upperG
+
 
 
     @Override
@@ -87,61 +89,57 @@ public class camera_pixel_detection extends OpMode {
     public void init_loop() {
         telemetry.addData("lowerP: ", lowerP);
         telemetry.addData("upperP: ", upperP);
-        telemetry.addData("H_S_V_number ", choose_H_S_V);
-        telemetry.addData("lower = 0, upper = 1 ", choose_upper_or_lower);
-        telemetry.addLine("a = +1 \n b = -1 \n x = +10 \n y = -10 \n" +
-                " triggers=Choose H or S or V (H=0 S=1 V=2) \n bumpers = upper/lower ") ;
-        if(gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 0){
-            choose_upper_or_lower -= 1;
-        }lastleft_bumper=gamepad1.left_bumper;
+        telemetry.addData("HSV number ", choose_H_S_V);
+        telemetry.addData("lower or upper ", l_or_u);
+        telemetry.addLine("a=+1 \n b=-1 \n x=+10 \n y=-10 \n left_trigger > 0.1=Choose H or S or V \n lower = 1   upper = 2");
+        if(gamepad1.left_bumper && !lastLeftBumper && l_or_u > 1) {
+            l_or_u -= 1;
+        }lastLeftBumper = gamepad1.left_bumper;
 
-        if(gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 1){
-            choose_upper_or_lower += 1;
-        }lastright_bumper=gamepad1.right_bumper;
+        if(gamepad1.right_bumper && !lastRightBumper && l_or_u < 2){
+            l_or_u += 1;
+        }lastRightBumper = gamepad1.right_bumper;
 
-        if(gamepad1.left_trigger > 0.1 && !lastleft_trigger && choose_H_S_V > 0){
+        if(gamepad1.left_trigger > 0.1 && !lastLeftTrigger && choose_H_S_V > 0){
             choose_H_S_V -= 1;
-        }lastleft_trigger=gamepad1.left_trigger > 0.1;
+        }lastLeftTrigger =gamepad1.left_trigger > 0.1;
 
-        if(gamepad1.right_trigger>0.1 && !lastright_trigger && choose_H_S_V < 2){
+        if(gamepad1.right_trigger > 0.1 && !lastRightTrigger && choose_H_S_V < 2){
             choose_H_S_V += 1;
-        }lastright_trigger=gamepad1.right_trigger > 0.1;
+        }lastRightTrigger=gamepad1.right_trigger > 0.1;
+
 
 
         if(gamepad1.a && !lastA){
-            if(choose_upper_or_lower == 1){
+            if(l_or_u == 2){
                 upperPvals[choose_H_S_V]++;}
-
-            if(choose_upper_or_lower == 0){
+            if(l_or_u == 1){
                 lowerPvals[choose_H_S_V]++;}
-        }
-        lastA=gamepad1.a;
+        }lastA=gamepad1.a;
 
         if(gamepad1.b && !lastB){
-            if(choose_upper_or_lower == 1){
-                upperPvals[choose_H_S_V]--;}
-
-            if(choose_upper_or_lower == 0){
-                lowerPvals[choose_H_S_V]--;}
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V]--;}
+            if(l_or_u == 1){
+            lowerPvals[choose_H_S_V]--;}
         }lastB=gamepad1.b;
 
         if(gamepad1.x && !lastX){
-            if(choose_upper_or_lower == 1){
-                upperPvals[choose_H_S_V] += 10;}
-
-            if(choose_upper_or_lower == 0){
-                lowerPvals[choose_H_S_V] += 10;}
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V] += 10;}
+            if(l_or_u == 1){
+            lowerPvals[choose_H_S_V] += 10;}
         }lastX=gamepad1.x;
 
         if(gamepad1.y && !lastY){
-            if(choose_upper_or_lower == 1){
-                upperPvals[choose_H_S_V] -= 10;}
-
-            if(choose_upper_or_lower == 0){
-                lowerPvals[choose_H_S_V] -= 10;}
+            if(l_or_u == 2){
+            upperPvals[choose_H_S_V] -= 10;}
+            if(l_or_u == 1){
+            lowerPvals[choose_H_S_V] -= 10;}
         }lastY=gamepad1.y;
-        upperP.set(upperPvals);
+
         lowerP.set(lowerPvals);
+        upperP.set(upperPvals);
     }
 
     @Override

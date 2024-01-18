@@ -7,7 +7,9 @@
 //
 //import static org.firstinspires.ftc.teamcode.Constants.*;
 //
-//public class ArmSubsystem implements Subsystem {
+//public class ArmSubsystem extends Subsystem {
+//
+//    private
 //    private final HardwareMap map;
 //    MotorEx arm1;
 //    MotorEx arm2;

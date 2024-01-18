@@ -57,7 +57,7 @@ public class climb {
         return climb(goal_up);
     }
 
-    public Command climb(TrapezoidProfile.State goal ) {
+    public Command climb(TrapezoidProfile.State goal) {
 
         Runnable init = () -> {
             TrapezoidProfile.State initPose = new TrapezoidProfile.State(climb_motor.encoder.getPosition(), climb_motor.encoder.getRawVelocity());

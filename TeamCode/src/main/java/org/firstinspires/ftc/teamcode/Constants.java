@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 public class Constants  {
     public static final double l1ff = 1;// com distant from axis first arm METERS
     public static final double l2ff = 0.70;// com distant from axis second arm METERS
@@ -39,6 +40,6 @@ public class Constants  {
 //
 //        }
 //    }
-
-    }
+//
+}
 }
