@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
+
 import static org.firstinspires.ftc.teamcode.Constants.Climb.*;
 
 import java.util.Set;
@@ -35,6 +37,7 @@ public class climb {
 
     private HardwareMap map;
     private MotorEx climb_motor;
+    private boolean isUp;
 
 
     public climb(HardwareMap map, Telemetry telemetry) {
@@ -43,17 +46,26 @@ public class climb {
         m_pidfController = new PIDFController(kp, ki, kd, kf);
         climb_motor = new MotorEx(map, "climb_motor");
         m_sysConstraints = new TrapezoidProfile.Constraints(climb_max_speed, climb_max_accel);
+        isUp = false;
     }
 
     public void stopMotors() {
         climb_motor.set(0);
     }
     public Command climb_down(){
-        TrapezoidProfile.State gaol_down = new TrapezoidProfile.State(0, 0);
-        return climb(gaol_down);
+        TrapezoidProfile.State goal_down = new TrapezoidProfile.State(0, 0);
+        if((climb_motor.encoder.getPosition() <= 0)){
+            stopMotors();
+        }
+        isUp = false;
+        return climb(goal_down);
     }
     public Command climb_up() {
         TrapezoidProfile.State goal_up = new TrapezoidProfile.State(max_ticks, 0);
+        if((climb_motor.encoder.getPosition() >= max_ticks)){
+            stopMotors();
+        }
+        isUp = true;
         return climb(goal_up);
     }
 
@@ -70,10 +82,18 @@ public class climb {
                     m_profile.calculate(m_elapsedTime.time()).position
             ));
         };
+
         BooleanSupplier atGoal = () -> climb_motor.encoder.getPosition() == goal.position;
         Consumer<Boolean> stopMotors = interrupt -> stopMotors();
         return new FunctionalCommand(init, loop, stopMotors, atGoal, (Subsystem) this);
 
+    }
+    public Command toggleClimb(){
+        if(isUp){
+            climb_down();
+        }else{
+            climb_up();
+        }
     }
 }
 

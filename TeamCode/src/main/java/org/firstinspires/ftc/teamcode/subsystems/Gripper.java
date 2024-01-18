@@ -18,6 +18,7 @@ public class Gripper extends SubsystemBase {
     private boolean isOpen1;
     private boolean isOpen2;
 
+
     public Gripper(HardwareMap map, Telemetry telemetry) {
         this.map = map;
         this.telemetry = telemetry;
@@ -49,7 +50,6 @@ public class Gripper extends SubsystemBase {
         return toggleGripper1().alongWith(toggleGripper2());
     }
 
-    //    todo: maybe add toggle option
     public Command toggleGripper1(){
         if (isOpen1) return closeGripper1();
         else return openGripper1();

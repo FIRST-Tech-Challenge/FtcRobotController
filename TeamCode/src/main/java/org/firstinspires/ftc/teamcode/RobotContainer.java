@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_TRI
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_TRIGGER2;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_X2;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.LEFT_Y2;
+import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.RIGHT_TRIGGER1;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.RIGHT_TRIGGER2;
 
 import com.arcrobotics.ftclib.command.Command;
@@ -63,7 +64,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller.assignCommand(m_plane.shootPlane(),false,LEFT_TRIGGER1);
         m_controller.assignCommand(m_gripper.toggleGripper1(),false,BUMPER_LEFT1);
         m_controller.assignCommand(m_gripper.toggleGripper2(),false,BUMPER_RIGHT1);
-//        m_controller.assignCommand(m_climb.climb( ),false,RIGHT_TRIGGER1); //TODO: ask Adi about trapezoid profiles
+        m_controller.assignCommand(m_climb.climb_up( ),false,RIGHT_TRIGGER1);
 
 
 
