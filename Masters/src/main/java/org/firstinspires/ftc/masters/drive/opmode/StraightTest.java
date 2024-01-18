@@ -29,6 +29,8 @@ public class StraightTest extends LinearOpMode {
                 .forward(DISTANCE)
                 .build();
 
+        drive.haltSlides();
+
         waitForStart();
 
         if (isStopRequested()) return;

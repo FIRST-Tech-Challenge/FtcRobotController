@@ -54,6 +54,8 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
         telemetry.addLine("Press play to begin the feedforward tuning routine");
         telemetry.update();
 
+        drive.haltSlides();
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -65,6 +67,7 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         boolean fitIntercept = false;
         while (!isStopRequested()) {
+            drive.haltSlides();
             if (gamepad1.y) {
                 fitIntercept = true;
                 while (!isStopRequested() && gamepad1.y) {

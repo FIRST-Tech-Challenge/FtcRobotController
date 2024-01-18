@@ -146,6 +146,11 @@ public class AutomatedTeleop extends LinearOpMode {
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
         intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
@@ -236,6 +241,11 @@ public class AutomatedTeleop extends LinearOpMode {
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
                     if (gamepad2.y){
                         planeRaise.setPosition(CSCons.droneShooting);
+                        ElapsedTime elapsedTime= new ElapsedTime();
+                        while (elapsedTime.time(TimeUnit.MILLISECONDS)<500 && opModeIsActive()){
+
+                        }
+                        planeRaise.setPosition((CSCons.droneFlat));
                     }
                     break;
                 case PIXEL_SCORE:
@@ -257,20 +267,32 @@ public class AutomatedTeleop extends LinearOpMode {
                         } else if (clawPosition == ClawPosition.CLOSED) {
                             clawPosition = ClawPosition.OPEN;
                             clawServo.setPosition(clawOpen);
-                            claw_last_opened = runtime.time();
+                            claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
                         }
                     }
 
                     if (clawPosition == ClawPosition.OPEN && detectPixel()) {
                         clawPosition = ClawPosition.CLOSED;
                         clawServo.setPosition(CSCons.clawClosed);
+                        intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
+                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        intakeSlides.setPower(0.5);
 
                     }
 
                     if (gamepad2.dpad_up) {
-                        intakeState = IntakeState.Transfer;
-                        clawAngle.setPosition(CSCons.clawAngleTransfer);
-                        clawArm.setPosition(CSCons.clawArmTransfer);
+                        if (intakeSlides.getCurrentPosition()>50){
+                            intakeSlides.setTargetPosition(0);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
+                            clawAngle.setPosition(CSCons.clawAngleTransition);
+                            clawArm.setPosition(CSCons.clawArmTransition);
+                            intakeState = IntakeState.MoveToTransfer;
+                        } else {
+                            intakeState = IntakeState.Transfer;
+                            clawAngle.setPosition(CSCons.clawAngleTransfer);
+                            clawArm.setPosition(CSCons.clawArmTransfer);
+                        }
 
                     }
 
@@ -283,7 +305,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     if (gamepad1.dpad_up){
                         intakeSlides.setTargetPosition(1700);
                         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(0.8);
+                        intakeSlides.setPower(1);
                     }
 
                     if (gamepad1.dpad_down){
@@ -293,6 +315,13 @@ public class AutomatedTeleop extends LinearOpMode {
                     }
 
 
+                    break;
+                case MoveToTransfer:
+                    if (intakeSlides.getCurrentPosition()<50){
+                        intakeState = IntakeState.Transfer;
+                        clawAngle.setPosition(CSCons.clawAngleTransfer);
+                        clawArm.setPosition(CSCons.clawArmTransfer);
+                    }
                     break;
                 case MoveToIntake:
                     if (intakeElapsedTime != null && intakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToBottomIntake) {
@@ -388,6 +417,8 @@ public class AutomatedTeleop extends LinearOpMode {
                         outtakeState = OuttakeState.ClosingHook;
                     }
 
+
+
                     break;
                 case MoveToTransfer:
                     if (backSlides.getCurrentPosition()<30){
@@ -434,6 +465,14 @@ public class AutomatedTeleop extends LinearOpMode {
                         outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
                         target = backSlidePos.getTarget();
                         outtakeState= OuttakeState.MoveToTransfer;
+                    }
+
+                    if (gamepad2.left_bumper){ //down
+                        target-=60;
+                    }
+
+                    if (gamepad2.right_bumper){ //up
+                        target+=60;
                     }
 
 
@@ -555,15 +594,20 @@ public class AutomatedTeleop extends LinearOpMode {
             telemetry.addData("backSlides", target);
             telemetry.addData("intakeSides", intakeSlides.getCurrentPosition());// 1725, 2400,
             telemetry.addData("time", runtime.time());
-            telemetry.addData("Sensed Red", colorSensor.red());
-            telemetry.addData("Sensed Blue", colorSensor.blue());
-            telemetry.addData("Sensed Green", colorSensor.green());
-            telemetry.addData("Distance CM", colorSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("Light Detected", colorSensor.getLightDetected());
-            telemetry.addData("Raw Light Detected", colorSensor.getRawLightDetected());
-            telemetry.addData("Max Raw Light Detected", colorSensor.getRawLightDetectedMax());
-            telemetry.addData("Raw Optics", colorSensor.rawOptical());
+//            telemetry.addData("Sensed Red", colorSensor.red());
+//            telemetry.addData("Sensed Blue", colorSensor.blue());
+//            telemetry.addData("Sensed Green", colorSensor.green());
+//            telemetry.addData("Distance CM", colorSensor.getDistance(DistanceUnit.CM));
+//            telemetry.addData("Light Detected", colorSensor.getLightDetected());
+//            telemetry.addData("Raw Light Detected", colorSensor.getRawLightDetected());
+//            telemetry.addData("Max Raw Light Detected", colorSensor.getRawLightDetectedMax());
+//            telemetry.addData("Raw Optics", colorSensor.rawOptical());
             telemetry.addData("Status", colorSensor.status());
+            telemetry.addData("Outtake state", outtakeState.name());
+            telemetry.addData("back left", leftRearMotor.getCurrentPosition());
+            telemetry.addData("back right", rightRearMotor.getCurrentPosition());
+            telemetry.addData("front left", leftFrontMotor.getCurrentPosition());
+            telemetry.addData("front right", rightFrontMotor.getCurrentPosition());
             telemetry.update();
 
             telemetry.update();
@@ -624,7 +668,7 @@ public class AutomatedTeleop extends LinearOpMode {
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time() > claw_last_opened + .500){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 600){
             return true;
         } else {
             return false;

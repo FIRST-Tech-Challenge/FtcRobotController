@@ -76,6 +76,8 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
                     + "(hardwareMap));\" is called in SampleMecanumDrive.java");
         }
 
+        drive.haltSlides();
+
         telemetry.addLine("Prior to beginning the routine, please read the directions "
                 + "located in the comments of the opmode file.");
         telemetry.addLine("Press play to begin the tuning routine.");

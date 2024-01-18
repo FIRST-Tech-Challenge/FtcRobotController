@@ -21,15 +21,15 @@ public class CSCons {
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
     public static double clawArm5 = .695;
-    public static double clawArmTransition = .2;
-    public static double clawArmTransfer = .2;
+    public static double clawArmTransition = .16;
+    public static double clawArmTransfer = .16;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0.15;
-    public static double outtakeAngleTransfer=.55;
+    public static double outtakeAngleTransfer=.58;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop = .65;
-    public static double outtakeMovementTransfer = .064;
+    public static double outtakeMovementTransfer = .1;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -62,7 +62,7 @@ public class CSCons {
     }
 
     public enum IntakeState {
-        Transition, Transfer, Intake, MoveToIntake;
+        Transition, Transfer, Intake, MoveToIntake, MoveToTransfer;
     }
 
     public enum OuttakeState{

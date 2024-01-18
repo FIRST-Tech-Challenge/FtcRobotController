@@ -42,6 +42,8 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");
         telemetry.update();
 
+        drive.haltSlides();
+
         waitForStart();
 
         if (isStopRequested()) return;
