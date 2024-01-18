@@ -74,7 +74,11 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(new Vector2d(56, 56), Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
+        drive.closeClaw();
+
         waitForStart();
+
+        drive.closeClaw();
 
         long startTime = new Date().getTime();
         long time = 0;
