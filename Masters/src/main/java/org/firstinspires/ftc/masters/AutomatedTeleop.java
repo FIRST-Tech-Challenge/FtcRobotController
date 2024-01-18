@@ -220,6 +220,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        boolean buttonPushed= false;
 
         waitForStart();
 
@@ -259,7 +260,8 @@ public class AutomatedTeleop extends LinearOpMode {
 
             switch (intakeState) {
                 case Intake:
-                    if (gamepad2.a) {
+                    if (gamepad2.a && !buttonPushed) {
+                        buttonPushed= true;
                         if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
                             clawPosition = ClawPosition.CLOSED;
                             clawServo.setPosition(CSCons.clawClosed);
@@ -269,6 +271,8 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawServo.setPosition(clawOpen);
                             claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
                         }
+                    } else {
+                        buttonPushed = false;
                     }
 
                     if (clawPosition == ClawPosition.OPEN && detectPixel()) {
@@ -668,7 +672,7 @@ public class AutomatedTeleop extends LinearOpMode {
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 600){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 300){
             return true;
         } else {
             return false;
