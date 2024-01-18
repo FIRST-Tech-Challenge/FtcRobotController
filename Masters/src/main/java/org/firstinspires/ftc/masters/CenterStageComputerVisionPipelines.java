@@ -45,7 +45,7 @@ public class CenterStageComputerVisionPipelines {
 
     //    Declare webcam
     public OpenCvWebcam webcam;
-    public OpenCvWebcam backWebcam;
+//    public OpenCvWebcam backWebcam;
 
     //    Initial declaration of pipelines (One for each we use)
     public FrontPipeline backPipeline;
@@ -73,7 +73,7 @@ public class CenterStageComputerVisionPipelines {
         propFind.setPipelineType(PipelineType.PROP_FIND);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "backWebcam"), cameraMonitorViewId);
+//        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "backWebcam"), cameraMonitorViewId);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -110,20 +110,20 @@ public class CenterStageComputerVisionPipelines {
             }
         });
 
-        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                telemetry.addData("sleeve webcam open", "yes");
-                backWebcam.setPipeline(backPipeline);
-                backWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addLine("Can't open sleeve camera");
-                telemetry.update();
-            }
-        });
+//        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//            @Override
+//            public void onOpened() {
+//                telemetry.addData("sleeve webcam open", "yes");
+//                backWebcam.setPipeline(backPipeline);
+//                backWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addLine("Can't open sleeve camera");
+//                telemetry.update();
+//            }
+//        });
 
 
     }
@@ -142,11 +142,11 @@ public class CenterStageComputerVisionPipelines {
         webcam.stopStreaming();
         webcam.setPipeline(new DoNothingPipeline());
     }
-
-    public void stopBackCamera() {
-        backWebcam.stopStreaming();
-        backWebcam.setPipeline(new DoNothingPipeline());
-    }
+//
+//    public void stopBackCamera() {
+//        backWebcam.stopStreaming();
+//        backWebcam.setPipeline(new DoNothingPipeline());
+//    }
 
     //    The aforementioned pipeline. Aptly named.
     public static class DoNothingPipeline extends OpenCvPipeline {

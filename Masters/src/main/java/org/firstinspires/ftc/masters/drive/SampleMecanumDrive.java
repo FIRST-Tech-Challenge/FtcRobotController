@@ -154,7 +154,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
-        outtakeMovement = hardwareMap.servo.get("outtakeMovement");
+        outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchSensor = hardwareMap.touchSensor.get("touch");
 
         for (DcMotorEx motor : motors) {
