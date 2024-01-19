@@ -51,12 +51,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: AprilTag", group = "Concept")
-
+@Disabled
 public class
 ConceptAprilTag extends LinearOpMode {
-
-    Hardware robot = new Hardware();
-
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -70,22 +67,10 @@ ConceptAprilTag extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    double y;
-    double x;
-    double rx;
-
-    double denominator;
-    double frontLeftPower;
-    double frontRightPower;
-    double backLeftPower;
-    double backRightPower;
-
     @Override
     public void runOpMode() {
 
         initAprilTag();
-        robot.init(hardwareMap);
-
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -107,35 +92,6 @@ ConceptAprilTag extends LinearOpMode {
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
-
-                if (gamepad1.left_trigger > .5) {
-                    y = gamepad1.left_stick_y;
-                    x = -gamepad1.left_stick_x * 1.1;
-                } else {
-                    y = -gamepad1.left_stick_y; // Remember, this is reversed!
-                    x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-                }
-                rx = gamepad1.right_stick_x;
-
-                denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-
-                frontLeftPower = (y + x + rx) / denominator;
-                frontRightPower = (y - x - rx) / denominator;
-                backLeftPower = (y - x + rx) / denominator;
-                backRightPower = (y + x - rx) / denominator;
-
-                if ((Math.abs(gamepad1.right_stick_x) > 0.1) || (Math.abs(gamepad1.right_stick_y) > 0.1) || (Math.abs(gamepad1.left_stick_x) > 0.1) || (Math.abs(gamepad1.left_stick_y) > 0.1)) {
-                    robot.leftDrive.setPower(frontLeftPower);
-                    robot.leftBackDrive.setPower(backLeftPower);
-                    robot.rightDrive.setPower(frontRightPower);
-                    robot.rightBackDrive.setPower(backRightPower);
-                } else {
-                    robot.leftDrive.setPower(0);
-                    robot.leftBackDrive.setPower(0);
-                    robot.rightDrive.setPower(0);
-                    robot.rightBackDrive.setPower(0);
-                }
-
                 // Share the CPU.
                 sleep(20);
             }
