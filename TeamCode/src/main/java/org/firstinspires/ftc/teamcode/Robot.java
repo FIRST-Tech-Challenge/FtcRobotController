@@ -134,14 +134,14 @@ public class Robot {
     }
 
     public void trayToIntakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.35);
+        setServoPosBlocking(tray, 0.45);
         if (blocking) {
             opMode.sleep(500);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.05);
+        setServoPosBlocking(tray, 0.15);
         if (blocking) {
             opMode.sleep(100);
         }
@@ -1092,7 +1092,6 @@ public class Robot {
     }
 
     public void initForTeleOp() {
-
         // initialize robot class
         setUpDrivetrainMotors();
         setUpIntakeOuttake();
@@ -1105,6 +1104,7 @@ public class Robot {
         trayToIntakePos(true);
         opMode.sleep(100);
         planeLauncher.setPower(0);
+        trayAngle.setPosition(0.5);
         //planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
     }
@@ -1140,10 +1140,12 @@ public class Robot {
 
         double targetLinearSlideTicks = 0;
 
+        double trayAngleDefault = 0.5;
         double currentHeading = getCurrentHeading();
-        double trayAngleServoPos = 0.52;
+        double trayAngleServoPos = trayAngleDefault;
 
         boolean linearSlideFlag = false;
+
         while (opMode.opModeIsActive()) {
 
             if(lsFront.getCurrentPosition() > 857) {
@@ -1255,17 +1257,22 @@ public class Robot {
                 // do nothing
             } else if (gamepad2.a) { // a - intake position
                 allowTrayAngle = false;
-                trayAngle.setPosition(0.5);
+                trayAngle.setPosition(trayAngleDefault);
                 trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
-                allowTrayAngle = true;
+                //allowTrayAngle = true;
                 trayToOuttakePos(false);
             }
 
+            if (trayAngleServoPos > 0.75) {
+                trayAngle.setPosition(0.75);
+            } else if (trayAngleServoPos < 0.25) {
+                trayAngle.setPosition(0.25);
+            }
 
             if (allowTrayAngle) {
                 currentHeading = getCurrentHeading();
-                trayAngleServoPos = -0.00413*currentHeading + 0.15;
+                trayAngleServoPos = -0.00413*currentHeading + 0.7;
                 trayAngle.setPosition(trayAngleServoPos);
             }
 
@@ -1354,7 +1361,7 @@ public class Robot {
             */
 
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
-            telemetry.addData("tray angle position servo", trayAngle);
+            telemetry.addData("tray angle position servo", trayAngleServoPos);
             telemetry.addData("imu", getCurrentHeading());
             Log.d("trayAngle", trayAngle + "tray" + getCurrentHeading() + "heading");
             telemetry.update();
