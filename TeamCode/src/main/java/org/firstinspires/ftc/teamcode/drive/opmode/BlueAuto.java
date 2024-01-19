@@ -62,19 +62,19 @@ public class BlueAuto extends LinearOpMode{
     int MIDDLE = 2;
     int RIGHT = 3;
 
+    String detection;
+
     double xCoordinate;
     double yCoordinate;
 
 
     @Override
     public void runOpMode() {
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         double distanceInches = 1;
         double placeHolderDistance = 1;
         initTfod();
 
-        //
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -83,7 +83,6 @@ public class BlueAuto extends LinearOpMode{
             public void onOpened() {
                 camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode) {
             }
@@ -155,7 +154,6 @@ public class BlueAuto extends LinearOpMode{
     private void updateTfod() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
-
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
@@ -164,8 +162,17 @@ public class BlueAuto extends LinearOpMode{
             yCoordinate = y;
             telemetry.addData("", " ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Position", "%.0f / %.0f / %s", x, y, detection);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }
+        if (xCoordinate < 200) {
+            detection = "left";
+        }
+        else if (xCoordinate < 400) {
+            detection = "middle";
+        }
+        else {
+            detection = "right";
         }
     }
 
