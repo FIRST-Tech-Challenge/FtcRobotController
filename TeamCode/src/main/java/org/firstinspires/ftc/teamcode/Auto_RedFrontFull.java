@@ -19,16 +19,16 @@ public class Auto_RedFrontFull extends CSBase {
         drive(-16);
         if (pos == spike.l) {
             turn(-30);
-            drive(-8);
-            drive(8);
+            drive(-9);
+            drive(9);
             turn(30);
         } else if (pos == spike.m) {
             drive(-10);
             drive(10);
         } else {
             turn(30);
-            drive(-8);
-            drive(8);
+            drive(-9);
+            drive(9);
             turn(-30);
         }
         drive(20);

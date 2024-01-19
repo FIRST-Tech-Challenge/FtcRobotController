@@ -50,6 +50,6 @@ public class Auto_RedBackFull extends CSBase {
 
         //*/
 
-        sleep(1000);  // Pause to display final telemetry message.
+        s(1);  // Pause to display final telemetry message.
     }
 }
