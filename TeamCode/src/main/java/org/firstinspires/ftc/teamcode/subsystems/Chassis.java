@@ -35,12 +35,14 @@ public class Chassis implements Subsystem {
         motor_BL.set(BL);
     }
 
-
-    public BTCommand drive(DoubleSupplier x, DoubleSupplier theta, DoubleSupplier y) {
+//x is front facing, y is
+    public BTCommand drive(DoubleSupplier front, DoubleSupplier theta, DoubleSupplier sideways) {
         return new RunCommand(()->{
-            double r = Math.hypot(y.getAsDouble(), theta.getAsDouble());
-            double robotAngle = Math.atan2(y.getAsDouble(), theta.getAsDouble()) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
-            double rightX = x.getAsDouble();
+            m_telemetry.addData("front",front);
+            m_telemetry.update();
+            double r = Math.hypot(sideways.getAsDouble(), theta.getAsDouble());
+            double robotAngle = Math.atan2(sideways.getAsDouble(), theta.getAsDouble()) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
+            double rightX = front.getAsDouble();
             final double v1 = r * Math.cos(robotAngle) + rightX;
             final double v2 = r * Math.sin(robotAngle) - rightX;
             final double v3 = r * Math.sin(robotAngle) + rightX;
@@ -50,6 +52,9 @@ public class Chassis implements Subsystem {
         },this);
     }
 
+    public BTCommand stopMotor(){
+        return new RunCommand(()->setMotors(0,0,0,0));
+    }
     @Override
     public void periodic() {
     }

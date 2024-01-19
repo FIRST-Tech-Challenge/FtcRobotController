@@ -46,9 +46,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     //bind commands to trigger
     public void bindCommands(){
 
-        m_controller.assignCommand(m_chassis.drive(m_controller.left_x,
-                        ()-> m_controller.left_trigger.getAsDouble()+ m_controller.right_trigger.getAsDouble(), m_controller.left_y),
-                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER);
+        m_controller.assignCommand(m_chassis.drive(()->-m_controller.left_y.getAsDouble(),
+                        ()-> -m_controller.left_trigger.getAsDouble()+ m_controller.right_trigger.getAsDouble(), m_controller.left_x),
+                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
 
 //        m_controller.assignCommand(m_gripper.toggleGripper(),false,BUTTON_RIGHT1);
 //        m_controller.assignCommand(m_plane.shootPlane(),false,LEFT_TRIGGER1);
