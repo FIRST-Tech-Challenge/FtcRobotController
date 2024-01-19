@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;

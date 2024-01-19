@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
+@Disabled
 @TeleOp(name = "move x")
 public class poopoogarbage extends LinearOpMode {
 

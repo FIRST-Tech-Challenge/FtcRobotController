@@ -1,27 +1,27 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-
 @Config
-@TeleOp(name = "Teleop 1 controllers")
-public class Teleop1Controller extends LinearOpMode {
+@Disabled
+@TeleOp(name = "Teleop 2 controllers")
+public class Teleop2Controllers extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    public static double clawOpeningValue = 0.5;
+    public static double clawOpeningValue = 0.50;
     public static double clawClosingValue = 0.2;
 
     public static double armBackwardsValue = 0.9;
 
     public static double armForwardsValue = 0.18;
 
-    double manualClawRotation = 0;
+    //double manualClawRotation = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,7 +43,6 @@ public class Teleop1Controller extends LinearOpMode {
 
         // Idk it just feels wrong not to comment this
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        TouchSensor touch = hardwareMap.get(TouchSensor.class, "Touch");
 
         boolean move = false;
 
@@ -67,7 +66,7 @@ public class Teleop1Controller extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 
             // Manages lifting and lowering the linear slide
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_up) {
                 if (linearSlide.getCurrentPosition() < 3250) {
                     move = true;
                     linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -75,7 +74,7 @@ public class Teleop1Controller extends LinearOpMode {
                 } else {
                     linearSlide.setPower(0);
                 }
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 if (linearSlide.getCurrentPosition() > 0) {
                     move = true;
                     linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -93,31 +92,25 @@ public class Teleop1Controller extends LinearOpMode {
             }
 
             // Opens and closes the claw
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 clawServo.setPosition(clawOpeningValue);
             }
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 clawServo.setPosition(clawClosingValue);
             }
 
             // Rotates the arm that the claw is mounted to
-            if (gamepad1.left_bumper && linearSlide.getCurrentPosition() > 1000){
+            if (gamepad2.left_bumper && linearSlide.getCurrentPosition() > 1000){
                 armRotationServo.setPosition(armBackwardsValue);
                 //manualClawRotation-=0.0035;
             }
-            if (gamepad1.right_bumper && linearSlide.getCurrentPosition() > 1000){
+            if (gamepad2.right_bumper && linearSlide.getCurrentPosition() > 1000){
                 armRotationServo.setPosition(armForwardsValue);
                 //manualClawRotation-=0.0035;
             }
 
-            if (touch.isPressed()){
-                telemetry.addData("Silly", 1);
-            } else {
-                telemetry.addData("Silly", 0);
-            }
-
             // Apply's the variable set in above if statements
-            //2armRotationServo.setPosition(manualClawRotation);
+            //armRotationServo.setPosition(manualClawRotation);
 
             // Some Silly Telemetry
             telemetry.addData("Gamepad X", x);

@@ -1,10 +1,14 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.blackswan.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -18,15 +22,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-@TeleOp(name = "ParkingComputerVision")
-public class ParkingComputerVision extends LinearOpMode {
+@Disabled
+@Autonomous(name = "LAutoLeft")
+public class TwoConeParkingAutoLeftLowering extends LinearOpMode {
 
     DeterminationPipeline pipeline;
+
     TelemetryPacket packet = new TelemetryPacket();
 
+    public int parking;
+
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -48,24 +56,92 @@ public class ParkingComputerVision extends LinearOpMode {
             }
         });
 
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this);
+
+        drive.closeClaw();
+        drive.setArm();
+
         waitForStart();
 
-        while (opModeIsActive()) {
+        parking = pipeline.ParkDot;
 
-            telemetry.addData("Lightness", pipeline.AVG_L);
-            telemetry.addData("GM", pipeline.AVG_A);
-            telemetry.addData("BY", pipeline.AVG_B);
-
-            FtcDashboard dashboard = FtcDashboard.getInstance();
-            packet.put("Lightness", pipeline.AVG_L);
-            packet.put("GM", pipeline.AVG_A);
-            packet.put("BY", pipeline.AVG_B);
-            dashboard.sendTelemetryPacket(packet);
+        telemetry.addData("parking dot number", parking);
+        telemetry.update();
 
 
-            telemetry.update();
+//            telemetry.addData("Lightness", pipeline.AVG_L);
+//            telemetry.addData("GM", pipeline.AVG_A);
+//            telemetry.addData("BY", pipeline.AVG_B);
+//
+//            FtcDashboard dashboard = FtcDashboard.getInstance();
+//            packet.put("Lightness", pipeline.AVG_L);
+//            packet.put("GM", pipeline.AVG_A);
+//            packet.put("BY", pipeline.AVG_B);
+//            dashboard.sendTelemetryPacket(packet);
+//
+//
+//            telemetry.update();
+//
+//            sleep(50);
 
-            sleep(50);
+
+
+
+
+        Pose2d startPose = new Pose2d(-35.3 , -58.5,90);
+
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+
+                .forward(53)
+                .turn(Math.toRadians(-40))
+                .build();
+
+        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
+                .forward(9)
+                .build();
+
+        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(trajSeq.end())
+                .back(7)
+                .turn(Math.toRadians(40))
+                .back(20)
+                .build();
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(trajSeq3.end())
+                .strafeLeft(31)
+                .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(trajSeq3.end())
+                .strafeRight(31)
+                .build();
+
+        if (!isStopRequested()) {
+            drive.liftDaBoi();
+            drive.followTrajectorySequence(trajSeq);
+            drive.followTrajectorySequence(trajSeq2);
+            drive.pause(50);
+            drive.numberTheArm(4500);
+            while(opModeIsActive() && drive.linearslide.isBusy()){
+
+            }
+            drive.pause(50);
+            drive.openClaw();
+            drive.pause(200);
+            drive.closeClaw();
+            drive.pause(50);
+            drive.liftDaBoi();
+            drive.followTrajectorySequence(trajSeq3);
+            drive.pause(2000);
+            if (parking == 1){
+                drive.followTrajectorySequence(left);
+            } else if (parking == 3) {
+                drive.followTrajectorySequence(right);
+            }
+            drive.lowerDaBoi();
+            drive.pause(5000);
+            drive.lowerDaBoi();
+            drive.thingDaBoi();
         }
     }
 
@@ -83,7 +159,7 @@ public class ParkingComputerVision extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(200, 200);
+        static final Point DETECTION_ANCHOR = new Point(200, 40);
 
         static final int DETECTION_WIDTH = 20;
         static final int DETECTION_HEIGHT = 20;
@@ -94,6 +170,8 @@ public class ParkingComputerVision extends LinearOpMode {
         Point region1_pointB = new Point(
                 DETECTION_ANCHOR.x + DETECTION_WIDTH,
                 DETECTION_ANCHOR.y - DETECTION_HEIGHT);
+
+        public int ParkDot = 0;
 
         Mat DETECTION_L;
         Mat DETECTION_A;
@@ -146,7 +224,7 @@ public class ParkingComputerVision extends LinearOpMode {
 
             telemetry.update();
 
-            int ParkDot = 0;
+
 
             // A = GM // B = BY
             // one dot values, GM 174, BY 124
@@ -192,3 +270,4 @@ public class ParkingComputerVision extends LinearOpMode {
 
     }
 }
+

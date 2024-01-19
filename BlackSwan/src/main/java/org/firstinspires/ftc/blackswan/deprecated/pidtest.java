@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

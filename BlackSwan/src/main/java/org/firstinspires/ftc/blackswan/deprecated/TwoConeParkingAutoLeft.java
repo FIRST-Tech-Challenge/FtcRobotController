@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
@@ -21,9 +22,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-@Autonomous(name = "LAutoLeft")
-public class TwoConeParkingAutoLeftLowering extends LinearOpMode {
+@Disabled
+@Autonomous(name = "AutoLeft")
+public class TwoConeParkingAutoLeft extends LinearOpMode {
 
     DeterminationPipeline pipeline;
 
@@ -120,16 +121,9 @@ public class TwoConeParkingAutoLeftLowering extends LinearOpMode {
             drive.followTrajectorySequence(trajSeq);
             drive.followTrajectorySequence(trajSeq2);
             drive.pause(50);
-            drive.numberTheArm(4500);
-            while(opModeIsActive() && drive.linearslide.isBusy()){
-
-            }
-            drive.pause(50);
             drive.openClaw();
             drive.pause(200);
             drive.closeClaw();
-            drive.pause(50);
-            drive.liftDaBoi();
             drive.followTrajectorySequence(trajSeq3);
             drive.pause(2000);
             if (parking == 1){

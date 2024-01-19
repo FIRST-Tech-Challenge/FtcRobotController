@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,18 +19,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+@Disabled
+@TeleOp(name = "ParkingComputerVision")
+public class ParkingComputerVision extends LinearOpMode {
 
-@Autonomous(name = "ParkingAutonomous")
-public class ParkingAutonomous extends LinearOpMode {
-
-    Robot robot;
     DeterminationPipeline pipeline;
     TelemetryPacket packet = new TelemetryPacket();
-    public static int ParkDot;
 
     @Override
     public void runOpMode() {
-        robot = new Robot(hardwareMap, telemetry, this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -53,17 +51,6 @@ public class ParkingAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        if (ParkDot == 1){
-            robot.forward(2.2,.5);
-            robot.left(2.2,.5);
-        } else if (ParkDot == 2){
-            robot.forward(2.2,.5);
-        }else if (ParkDot == 3){
-            robot.forward(2.2,.5);
-            robot.right(2.2, .5);
-        } else {
-            robot.forward(2.2, .5);
-        }
         while (opModeIsActive()) {
 
             telemetry.addData("Lightness", pipeline.AVG_L);
@@ -97,7 +84,7 @@ public class ParkingAutonomous extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(200, 60);
+        static final Point DETECTION_ANCHOR = new Point(200, 200);
 
         static final int DETECTION_WIDTH = 20;
         static final int DETECTION_HEIGHT = 20;
@@ -160,7 +147,7 @@ public class ParkingAutonomous extends LinearOpMode {
 
             telemetry.update();
 
-
+            int ParkDot = 0;
 
             // A = GM // B = BY
             // one dot values, GM 174, BY 124

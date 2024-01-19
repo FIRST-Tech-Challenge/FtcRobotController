@@ -32,6 +32,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -46,6 +47,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.masters.CSCons;
@@ -102,6 +104,21 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+
+    PIDController controller;
+
+    public static double p = 0.01, i = 0, d = 0.0001;
+    public static double f = 0.05;
+
+    private final double ticks_in_degrees = 384.5 / 180;
+
+    Telemetry telemetry;
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
+        this(hardwareMap);
+        this.telemetry= telemetry;
+
+    }
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -173,6 +190,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         touchSensor = hardwareMap.touchSensor.get("touch");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
+        controller = new PIDController(p, i, d);
+        controller.setPID(p, i, d);
+
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
@@ -242,6 +262,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void intakeToTransfer() {
         clawAngle.setPosition(CSCons.clawAngleTransfer);
         clawArm.setPosition(clawArmTransfer);
+    }
+
+    public void closeHook(){
+        outtakeHook.setPosition(CSCons.closeHook);
     }
 
     public void outtakeToBackdrop() {
@@ -436,6 +460,24 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void breakFollowing() {
 
+    }
+
+    public void backSlidesMove(int target) {
+
+        int slidePos = backSlides.getCurrentPosition();
+        double pid = controller.calculate(slidePos, target);
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+
+        double liftPower = pid + ff;
+
+        if (telemetry!=null) {
+            telemetry.addData("liftPower", liftPower);
+        }
+        backSlides.setPower(liftPower);
+    }
+
+    public DcMotor getBackSlides(){
+        return backSlides;
     }
 
 

@@ -136,8 +136,8 @@ public class aprilTagButItMoves extends LinearOpMode {
                 }
 
                 // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-                builder.enableCameraMonitoring(true);
 
+        builder.enableLiveView(true);
                 // Set and enable the processor.
                 builder.addProcessor(aprilTag);
 

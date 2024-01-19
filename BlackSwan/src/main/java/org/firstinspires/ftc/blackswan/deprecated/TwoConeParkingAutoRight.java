@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
@@ -21,9 +22,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-@Autonomous(name = "AutoLeft")
-public class TwoConeParkingAutoLeft extends LinearOpMode {
+@Disabled
+@Autonomous(name = "AutoRight")
+public class TwoConeParkingAutoRight extends LinearOpMode {
 
     DeterminationPipeline pipeline;
 
@@ -94,16 +95,16 @@ public class TwoConeParkingAutoLeft extends LinearOpMode {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
 
                 .forward(53)
-                .turn(Math.toRadians(-40))
+                .turn(Math.toRadians(50))
                 .build();
 
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .forward(9)
+                .forward(11)
                 .build();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .back(7)
-                .turn(Math.toRadians(40))
+                .back(3)
+                .turn(Math.toRadians(-50))
                 .back(20)
                 .build();
 
@@ -213,6 +214,8 @@ public class TwoConeParkingAutoLeft extends LinearOpMode {
                     region1_pointB, // Second point which defines the rectangle
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+            Imgproc.rectangle(input, new Point(200,200), new Point(300, 300), GREEN, 2 );
 
             telemetry.update();
 

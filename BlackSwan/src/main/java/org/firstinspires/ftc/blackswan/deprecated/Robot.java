@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.deprecated;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,7 +20,7 @@ import static java.lang.Math.abs;
 import android.graphics.Color;
 
 import java.util.Date;
-
+@Disabled
 public class Robot {
     Telemetry telemetry;
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;

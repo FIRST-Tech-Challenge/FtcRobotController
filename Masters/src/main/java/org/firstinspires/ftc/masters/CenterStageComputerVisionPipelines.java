@@ -270,14 +270,16 @@ public class CenterStageComputerVisionPipelines {
             avg_a_right = (int) Core.mean(region_a_right).val[0];
             avg_b_right = (int) Core.mean(region_b_right).val[0];
 
-            if (avg_a_mid<5) {
+            if (avg_a_mid<10) {
                 position = pos.MID;
-            } else if (avg_a_right<5) {
+            } else if (avg_a_right<10) {
                 position = pos.RIGHT;
             } else {
                 position = pos.LEFT;
             }
-
+            telemetry.addData("avg a mid", avg_a_mid);
+            telemetry.addData("avg a right", avg_a_right);
+            telemetry.addData("Position", position);
             telemetry.update();
 
             Imgproc.rectangle(input, new Point(interestMid.x, interestMid.y), new Point(interestMid.x + interestMid.width, interestMid.y+ interestMid.height), new Scalar(0,255,0),1 );
