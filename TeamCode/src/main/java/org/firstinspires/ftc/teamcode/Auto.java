@@ -34,6 +34,7 @@ public class Auto extends LinearOpMode {
     public static Prop location;
 
     public Prop propDetection(TensorflowVision vision) {
+        prop = vision.getPropPosition();
         if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
             if (prop == 2) {
                 location = Prop.RIGHT;
