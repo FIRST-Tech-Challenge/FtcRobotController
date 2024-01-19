@@ -10,8 +10,7 @@ public class Test_AprilTag extends CSBase {
 
         setup(true);
 
-        strafeUntilTagDetection(dir.left,0);
-        drive(-10);
+        drive(0);
 
     }
 }

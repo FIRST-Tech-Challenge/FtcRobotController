@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 public class Auto_RedFrontFull extends CSBase {
     @Override
     public void runOpMode() {
-        setup(color.red);
+        setup(color.r);
 
         // ---------------------
         // ------Main Code------
@@ -17,12 +17,12 @@ public class Auto_RedFrontFull extends CSBase {
         telemetry.update();
         s(2);
         drive(-16);
-        if (pos == spike.left) {
+        if (pos == spike.l) {
             turn(-30);
             drive(-8);
             drive(8);
             turn(30);
-        } else if (pos == spike.middle) {
+        } else if (pos == spike.m) {
             drive(-10);
             drive(10);
         } else {
@@ -37,7 +37,7 @@ public class Auto_RedFrontFull extends CSBase {
         turn(-90);
         s(3);
         drive(70);
-        strafe(5, dir.right);
+        strafe(5, xDir.r);
         setSpeed(1000);
         drive(15);
         setSpeed(2000);

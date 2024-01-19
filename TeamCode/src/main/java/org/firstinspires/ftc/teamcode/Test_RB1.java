@@ -38,7 +38,7 @@ public class Test_RB1 extends CSBase {
         // ------Main Code------
         // ---------------------
 
-        drive(tiles(-2.1));
+        drive(tilesToInches(-2.1));
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
