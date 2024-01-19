@@ -95,7 +95,7 @@ public class Intake extends RFMotor {
   public void intake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    setPower(INTAKE_POWER);
+    setRawPower(INTAKE_POWER);
     IntakeStates.INTAKING.setStateTrue();
   }
 
@@ -138,7 +138,7 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    setPower(REVERSE_POWER);
+    setRawPower(REVERSE_POWER);
     IntakeStates.REVERSING.setStateTrue();
   }
 
@@ -146,7 +146,7 @@ public class Intake extends RFMotor {
   public void stopIntake() {
 
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " );
-      setPower(0);
+      setRawPower(0);
 
     //        }
     //        LOGGER.log("position" + pos);
