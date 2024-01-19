@@ -170,7 +170,7 @@ public class tele extends OpMode {
         }
         */
 
-        
+
         if (robot.liftDownSwitch.getVoltage() < .5) {
             if (-gamepad2.right_stick_y < 0) {
                 robot.lift.setPower(0);
@@ -262,25 +262,25 @@ public class tele extends OpMode {
                 robot.winch.setPower(-gamepad2.left_stick_y);
             }
 
-        /** Drone Launcher **/
-        if (gamepad2.y && angleTime < (getRuntime() + 1)) {
-            angleTime = getRuntime();
-            launcherAngle++;
-        }
-
-        switch (launcherAngle) {
-            case 0:
+            /** Drone Launcher **/
+            if (gamepad2.y && angleTime < (getRuntime() + 1)) {
+                angleTime = getRuntime();
                 launcherAngle++;
-                break;
-            case 1:
+            }
+
+            switch (launcherAngle) {
+                case 0:
+                    launcherAngle++;
+                    break;
+                case 1:
                     robot.droneAngle.setPosition(robot.droneAngleDown);
-                break;
-            case 2:
+                    break;
+                case 2:
                     robot.droneAngle.setPosition(robot.droneAngleUp);
-                break;
-            case 3:
-                launcherAngle = 1;
-        }
+                    break;
+                case 3:
+                    launcherAngle = 1;
+            }
 
             if (gamepad2.x && gamepad2.b) {
                 robot.launcherRelease.setPosition(robot.launchOpen);
@@ -290,52 +290,52 @@ public class tele extends OpMode {
 
             /** Intake/Transfer **/
 
-        switch (escapmentFingerPosition) {
-            case 0:
-                escapementTime = getRuntime();
-                escapmentFingerPosition++;
-                break;
-            case 1:
-                robot.escapementFinger.setPosition(-.1);
-                if (getRuntime() > escapementTime + .5) {
-                    robot.escapementFinger.setPosition(0);
-                    escapmentFingerPosition++;
-                }
-                break;
-            case 2:
-                if (gamepad2.dpad_down) {
-                    escapementTime = getRuntime();
-                    escapmentFingerPosition++;
-                    break;
-                case 1:
-                    robot.escapementFinger.setPosition(-.1);
-                    if (getRuntime() > escapementTime + .5) {
-                        robot.escapementFinger.setPosition(0);
-                        escapmentFingerPosition++;
-                    }
-                    break;
-                case 2:
-                    if (gamepad2.dpad_down) {
-                        escapementTime = getRuntime();
-                        escapmentFingerPosition++;
-                    }
-                    break;
-                case 3:
-                    robot.escapementFinger.setPosition(.1);
-                    if (getRuntime() > escapementTime + .5) {
-                        robot.escapementFinger.setPosition(0);
-                        escapmentFingerPosition++;
-                    }
-                    break;
-                case 4:
-                    if (gamepad2.dpad_down) {
-                        escapmentFingerPosition++;
-                    }
-                    break;
-                case 5:
-                    escapmentFingerPosition = 0;
-                    break;
-            }
+//        switch (escapmentFingerPosition) {
+//            case 0:
+//                escapementTime = getRuntime();
+//                escapmentFingerPosition++;
+//                break;
+//            case 1:
+//                robot.escapementFinger.setPosition(-.1);
+//                if (getRuntime() > escapementTime + .5) {
+//                    robot.escapementFinger.setPosition(0);
+//                    escapmentFingerPosition++;
+//                }
+//                break;
+//            case 2:
+//                if (gamepad2.dpad_down) {
+//                    escapementTime = getRuntime();
+//                    escapmentFingerPosition++;
+//                    break;
+//                case 1:
+//                    robot.escapementFinger.setPosition(-.1);
+//                    if (getRuntime() > escapementTime + .5) {
+//                        robot.escapementFinger.setPosition(0);
+//                        escapmentFingerPosition++;
+//                    }
+//                    break;
+//                case 2:
+//                    if (gamepad2.dpad_down) {
+//                        escapementTime = getRuntime();
+//                        escapmentFingerPosition++;
+//                    }
+//                    break;
+//                case 3:
+//                    robot.escapementFinger.setPosition(.1);
+//                    if (getRuntime() > escapementTime + .5) {
+//                        robot.escapementFinger.setPosition(0);
+//                        escapmentFingerPosition++;
+//                    }
+//                    break;
+//                case 4:
+//                    if (gamepad2.dpad_down) {
+//                        escapmentFingerPosition++;
+//                    }
+//                    break;
+//                case 5:
+//                    escapmentFingerPosition = 0;
+//                    break;
+//            }
 
 
             if (gamepad2.right_trigger > .5 && (!robot.firstPixelDetector.isPressed() || !robot.secondPixelDetector.isPressed())) {
@@ -375,59 +375,13 @@ public class tele extends OpMode {
                 gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
                 gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
             }
-            telemetry.addData("Stripper State", deploymentState);
-            telemetry.addData("BB1", robot.firstPixelDetector.isPressed());
-            telemetry.addData("transfer RPM", transferRPM);
 
-            telemetry.addData("Winch Switch", robot.winchDownSwitch.getVoltage());
-            telemetry.addData("Lift Switch", robot.liftDownSwitch.getVoltage());
+            telemetry.addData("First Pixel", robot.firstPixelDetector.isPressed());
+            telemetry.addData("Second Pixel", robot.secondPixelDetector.isPressed());
+            telemetry.addData("ldist", robot.leftDistance.getProductID());
             telemetry.update();
 
         }
 
-
-        if (gamepad2.right_trigger > .5 && (!robot.firstPixelDetector.isPressed() || !robot.secondPixelDetector.isPressed())) {
-            robot.transfer.setPower(.62);
-            robot.intake.setPower(gamepad2.right_trigger);
-        } else if (gamepad2.right_bumper) {
-            robot.transfer.setPower(-1);
-            robot.intake.setPower(-1);
-        } else {
-            robot.transfer.setPower(0);
-            robot.intake.setPower(0);
-        }
-
-        if (gamepad1.x) {
-            gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);
-            gamepad2.setLedColor(255, 0, 255, pixlePickerColorTime);
-        }
-
-        if (gamepad1.y) {
-            gamepad1.setLedColor(0, 255, 0, pixlePickerColorTime);
-            gamepad2.setLedColor(0, 255, 0, pixlePickerColorTime);
-        }
-
-        if (gamepad1.b) {
-            gamepad1.setLedColor(249, 100, 0, pixlePickerColorTime);
-            gamepad2.setLedColor(249, 100, 0, pixlePickerColorTime);
-        }
-
-        if (gamepad1.a) {
-            gamepad1.setLedColor(255, 255, 255, pixlePickerColorTime);
-            gamepad2.setLedColor(255, 255, 255, pixlePickerColorTime);
-        }
-
-        if (gamepad2.right_bumper && gamepad1.left_bumper) {
-            gamepad1.runLedEffect(gamepadLaunchSequenceLed);
-            gamepad2.runLedEffect(gamepadLaunchSequenceLed);
-            gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
-            gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
-        }
-        telemetry.addData("First Pixel", robot.firstPixelDetector.isPressed());
-        telemetry.addData("Second Pixel", robot.secondPixelDetector.isPressed());
-
-        telemetry.update();
-
     }
-
 }

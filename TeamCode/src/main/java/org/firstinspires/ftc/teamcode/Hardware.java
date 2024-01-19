@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 
 public class Hardware {
     public DcMotor leftDrive = null;
@@ -31,6 +33,8 @@ public class Hardware {
     public VCNL4000 leftDistance = null;
     public TouchSensor firstPixelDetector = null;
     public TouchSensor secondPixelDetector = null;
+
+    public WebcamName webcam = null;
 
     public AnalogInput liftDownSwitch = null;
     public AnalogInput winchDownSwitch = null;
@@ -79,7 +83,9 @@ public class Hardware {
         liftDownSwitch = hwMap.get(AnalogInput.class, "liftSwitch");
         winchDownSwitch = hwMap.get(AnalogInput.class, "winchSwitch");
 
-        rightDistance = hwMap.get(VCNL4000.class, "rdist");
+        leftDistance = hwMap.get(VCNL4000.class, "ldist");
+
+        webcam = hwMap.get(WebcamName.class, "Webcam 1");
 
 
         leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
