@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -23,36 +24,43 @@ public class RedClose extends CommandOpMode {
     Slides s;
     Outtake o;
     V4B v4b;
-
     GamepadEx gamepad;
+
+    public static Pose2d startPoseCloseRed = new Pose2d(12,-62, Math.toRadians(90));
+
     @Override
     public void initialize() {
         drive = new SampleMecanumDrive(hardwareMap);
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
         v4b = new V4B(hardwareMap);
-        //motors and servos hardwareMap stuff here
+
 
         while (!isStarted() && !isStopRequested()) {
-            //dw about it
+            telemetry.addLine("Waiting For Start...");
         }
 
-        UnworkingTrajectories.generateTrajectories(drive); //Loads trajectories from trajectories file
+       TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .forward(25)
+                .lineToLinearHeading(new Pose2d(12, -62, 0))
+                .build();
 
-        TrajectorySequence prop;
-        TrajectorySequence score;
-        TrajectorySequence park;
+        TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
+                .forward(34)
+                .strafeLeft(19)
+                .build();
 
-        prop = UnworkingTrajectories.propCloseMidRed;
-        score = UnworkingTrajectories.scoreCloseMidRed;
-        park = UnworkingTrajectories.parkCloseMidRed;
+        TrajectorySequence parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
+                .strafeRight(25)
+                .forward(12)
+                .build();
 
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
 //            new ParallelCommandGroup(
 //                new SequentialCommandGroup(
-//                    new TrajectorySequenceCommand(drive, prop),
-//                    new TrajectorySequenceCommand(drive, score),
-//                    new TrajectorySequenceCommand(drive, park)
+//                    new TrajectorySequenceCommand(drive, propCloseMidRed),
+//                    new TrajectorySequenceCommand(drive, scoreCloseMidRed),
+//                    new TrajectorySequenceCommand(drive, parkCloseMidRed)
 //                ),
 //                new InstantCommand(() -> {
 //                    new WaitCommand(4000);
@@ -71,12 +79,12 @@ public class RedClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-//                new TrajectorySequenceCommand(drive, prop),
+//                new TrajectorySequenceCommand(drive, propCloseMidRed),
                 new InstantCommand(() -> {
                         s.goToPosition(Slides.SlidePos.LOW);
                 })
-//                new TrajectorySequenceCommand(drive, score),
-//                new TrajectorySequenceCommand(drive, park)
+//                new TrajectorySequenceCommand(drive, scoreCloseMidRed),
+//                new TrajectorySequenceCommand(drive, parkCloseMidRed)
         ));
     }
 }
