@@ -42,8 +42,12 @@ public class Movement {
 
     private Telemetry telemetry;
 
-    //AprilTag variables:
-    // Used for managing the AprilTag detection process.
+    // Tracks if it's quicker to turn right or left
+    double turnError = 0;
+
+    double moveStartDirection = 0.0;
+    // Initialize several variables for GoToAprilTag method.
+// Used for managing the AprilTag detection process.
     private AprilTagProcessor myAprilTagProcessor;
 
     // Used to manage the video source.
@@ -69,18 +73,20 @@ public class Movement {
 
     private RevBlinkinLedDriver blinkinLED;
 
-    // Tracks if it's quicker to turn right or left
-    double turnError = 0;
-
-    double moveStartDirection = 0.0;
 
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
-     * @param leftFrontDrive  the front left wheels motor,
-     * @param  rightFrontDrive  the front right wheels motor,
-     * @param  leftBackDrive  the back left wheels motor,
-     * @param  rightBackDrive  the back right wheels motor
+     *
+     * @param leftFrontDrive       the front left wheels motor,
+     * @param rightFrontDrive      the front right wheels motor,
+     * @param leftBackDrive        the back left wheels motor,
+     * @param rightBackDrive       the back right wheels motor,
+     * @param imu1                 the ControlHub gyro,
+     * @param blink          the BlinkinLED,
+     * @param aprilProc the AprilTag Processor,
+     * @param hsvProc      the Vision Portal,
+     * @param telemetry1           telemetry for the Drive Station
      */
     public Movement(DcMotor leftFrontDrive, DcMotor rightFrontDrive,
                     DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, RevBlinkinLedDriver blink,
@@ -118,31 +124,33 @@ public class Movement {
     /**
      * Resets all wheel motor encoder positions to 0
      */
-    private void initMovement(boolean resetEncoders){
+    private void initMovement(){
         motor_ticks = 0;
 
         moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
-        if (resetEncoders) {
-            lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-            //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-            rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-            //rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-            lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-            //lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-            rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-            //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        }
-        // Set default to BRAKE mode for control
-        lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        //rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
+        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        //lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
+        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
+    }
+    /**
+     * Stops all drive motors.
+     */
+    public void StopMotors() {
+        // Set Powers to 0 for safety and not knowing what they are set to.
+        lfDrive.setPower(0);
+        rfDrive.setPower(0);
+        lbDrive.setPower(0);
+        rbDrive.setPower(0);
     }
 
     /**
@@ -150,7 +158,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Forward(int ticks, double power){
-        initMovement(true);
+        initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -180,7 +188,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Backwards(int ticks, double power){
-        initMovement(true);
+        initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -212,7 +220,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Left(int ticks, double power){
-        initMovement(true);
+        initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -243,7 +251,7 @@ public class Movement {
      * @param power  the power given to the motors
      */
     public void Right(int ticks, double power){
-        initMovement(true);
+        initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         lbDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -306,6 +314,10 @@ public class Movement {
         turnError = degrees - currentDirection;
         //Closed loop turn.  Stay in the while loop until the desired bering is achieved.
         while (abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) < 10) {
+            // continue rotation until at target angle.
+            telemetry.addData("Turn Target Direction", lbDrive.getTargetPosition());
+            telemetry.addData("Turn Current Direction", lbDrive.getCurrentPosition());
+            telemetry.update();
         }
     }
 
@@ -314,7 +326,7 @@ public class Movement {
      * @param desiredDirection - which direction you want to go to
      * @param currentDirection - your current direction
      */
-    public static double CalcTurnError(double desiredDirection, double currentDirection){
+    public double CalcTurnError(double desiredDirection, double currentDirection){
         double turnDiff = desiredDirection - currentDirection;
         if (turnDiff < -180) {
             turnDiff = turnDiff + 360;
@@ -325,24 +337,6 @@ public class Movement {
     }
 
     public boolean GoToAprilTag(int tagNumber) {
-
-        initMovement(false);
-
-        // switching to the rear camera and use april tag processor
-        selectVisionProcessor(VisionProcessorMode.REAR_CAMERA_APRIL_TAG);
-
-        if (alignStage == 0) {
-            // Set Powers to 0 for safety and not knowing what they are set to.
-            StopMotors();
-
-            // Init variables for April motion
-            axial = 0;
-            lateral = 0;
-            yaw = 0;
-
-            alignStage = 1;
-        }
-
         double targetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
         if (tagNumber == 1 || tagNumber == 4) {
@@ -350,7 +344,7 @@ public class Movement {
         } else if (tagNumber == 3 || tagNumber == 6) {
             targetX = -0.5;
         }
-        double targetY = 10;
+        double targetY = 5;
         double targetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
@@ -394,17 +388,34 @@ public class Movement {
         // lateral from drive is -gamepad1.left_stick_x;
         // yaw from drive is -gamepad1.right_stick_x;
 
+        // Stage 0 - Ensure that motor powers are zeroed and switch to RUN_USING_ENCODER mode.
+        if (alignStage == 0) {
+            // Motors will need to be in RUN_USING_ENCODER for this vs. RUN_TO_POSITION mode
+            // Refactor this to the Movement class to make a method to switch motors to run
+            // on a defined power level.
+            lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // Set default to BRAKE mode for control
+            lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //
+            alignStage = 1;
+        }
 
-
+        // If no tag is detected, creep backwards.
         if (!tagDetected){
-            axial = -0.15;
+            axial = -0.10;
             aprilTagAligned = false;
         }
 
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
         if (abs (targetAngle - currentAngle) > 2) {
-            yaw = -Movement.CalcTurnError(targetAngle, currentAngle) / 45;
+            yaw = -CalcTurnError(targetAngle, currentAngle) / 45;
             if (yaw > 0.3){
                 yaw = 0.3;
             } else if (yaw < -0.3){
@@ -418,17 +429,19 @@ public class Movement {
         // If the x distance is > 1 inch off of targetX move left or right accordingly
         // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
-        if (targetX - currentX > 1) {
+        lateral = (targetX - currentY) / 20;
+        if (targetX - currentX > 1 && lateral < 0.2) {
             lateral = 0.2;
-        } else if (targetX - currentX < -1) {
+        } else if (targetX - currentX < -1 && lateral > -0.2) {
             lateral = -0.2;
         }else {
             lateral = 0;
         }
 
         // Back the robot up to the right distance to raise the lift
-        if (currentY > targetY) {
-            axial = -0.15;
+        axial = -(currentY - targetY) / 40;
+        if ((currentY > targetY) && axial < -0.20) {
+            axial = -0.20;
         } else {
             axial = 0;
         }
@@ -452,26 +465,16 @@ public class Movement {
         }
         return aprilTagAligned;
     }
-
-
-    public void StopMotors() {
-        // Set Powers to 0 for safety and not knowing what they are set to.
-        lfDrive.setPower(0);
-        rfDrive.setPower(0);
-        lbDrive.setPower(0);
-        rbDrive.setPower(0);
-    }
-
     public void selectVisionProcessor(VisionProcessorMode vpMode){
         switch(vpMode){
             case FRONT_CAMERA_HSV:
                 // todo: need some safeguards
-                while((myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING){
-                    myVisionPortal.setActiveCamera(frontCam);
-                }
-                myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
-                myVisionPortal.setProcessorEnabled(HSVProcessor,true);
-                break;
+                while((myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)){
+                myVisionPortal.setActiveCamera(frontCam);
+            }
+            myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
+            myVisionPortal.setProcessorEnabled(HSVProcessor,true);
+            break;
             case REAR_CAMERA_APRIL_TAG:
                 myVisionPortal.setActiveCamera(rearCam);
                 myVisionPortal.setProcessorEnabled(AprilTagProcessor,true);

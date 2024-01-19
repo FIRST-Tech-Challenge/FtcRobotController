@@ -76,9 +76,6 @@ public abstract class AutoBase extends LinearOpMode {
     IntakeMovement intake;
     LinearSlideMovement linearSlideMove;
     int state;
-    double rightCount = 0;
-    double centerCount = 0;
-    double leftCount = 0;
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
     private DcMotor wrist = null;
@@ -376,7 +373,7 @@ public abstract class AutoBase extends LinearOpMode {
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
         if (abs (targetAngle - currentAngle) > 2) {
-            yaw = -Movement.CalcTurnError(targetAngle, currentAngle) / 45;
+            yaw = -moveTo.CalcTurnError(targetAngle, currentAngle) / 45;
             if (yaw > 0.3){
                 yaw = 0.3;
             } else if (yaw < -0.3){

@@ -302,7 +302,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                         targetDirection = DirectionNow;
                     }
                     // Whenever there is error in the direction, accumulate this over time (i gain).
-                    accumulatedError += 0.0002 * Movement.CalcTurnError (targetDirection, DirectionNow);
+                    accumulatedError += 0.0002 * moveTo.CalcTurnError (targetDirection, DirectionNow);
                     // We already know that joystick yaw is 0, apply an automatic rotational angle to compensate for rotation.
                     yaw = accumulatedError + 0.01 * Movement.CalcTurnError (targetDirection, DirectionNow);
                 }

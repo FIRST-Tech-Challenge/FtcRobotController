@@ -165,17 +165,17 @@ public class Auto2_Blue53Right extends AutoBase {
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
                 // Align and drive to April Tag.  1 is BLUE side LEFT.
-                if (GoToAprilTag(1) == true) {
+                if (moveTo.GoToAprilTag(1) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
                 // Align and drive to April Tag.  2 is BLUE side CENTER.
-                if (GoToAprilTag(2) == true) {
+                if (moveTo.GoToAprilTag(2) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
                 // Align and drive to April Tag.  3 is BLUE side RIGHT.
-                if (GoToAprilTag(3) == true) {
+                if (moveTo.GoToAprilTag(3) == true) {
                     state = 2;
                 }
             }
