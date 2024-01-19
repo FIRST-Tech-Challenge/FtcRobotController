@@ -36,7 +36,7 @@ public class Magazine {
         NONE("NONE",true);
 
         String color;
-        boolean state;
+        private boolean state;
 
         ColorStates(String p_color, boolean p_state) {
             this.color = p_color;

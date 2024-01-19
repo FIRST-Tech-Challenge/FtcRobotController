@@ -122,8 +122,8 @@ public class BradBot extends BasicRobot {
   }
 
   public void purpurAuto() {
-    if (queuer.queue(false, abs(lift.getCurrentPosition()-150)<80)) {
-      if (!queuer.isExecuted()) {
+    if (queuer.queue(true, abs(lift.getCurrentPosition()-150)<80)) {
+      if (DROP.getState()) {
         arm.purpurPigzl();
         Lift.LiftMovingStates.LOW.state = false;
         lift.iterateDown();
@@ -146,7 +146,7 @@ public class BradBot extends BasicRobot {
   }
 
   public void upAuto() {
-    if (queuer.queue(false, DROP.getState())) {
+    if (queuer.queue(true, DROP.getState())) {
       if (!Lift.LiftMovingStates.LOW.state) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
@@ -157,8 +157,8 @@ public class BradBot extends BasicRobot {
   }
 
   public void lowAuto() {
-    if (queuer.queue(false, Twrist.twristStates.DROP.getState())) {
-      if (!Lift.LiftMovingStates.LOW.state) {
+    if (queuer.queue(true, Twrist.twristStates.DROP.getState())) {
+      if (!Lift.LiftMovingStates.LOW.state&&currentPose.getX()>12) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
         arm.flipTo(DROP);
@@ -377,6 +377,8 @@ public class BradBot extends BasicRobot {
     float hangDown = op.gamepad2.left_trigger;
     boolean intUp =
         gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "intake iterate up");
+    boolean intDown =
+            gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "intake iterate down");
     boolean isRightBumper2 =
         gampad.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "startIntake");
     ;
@@ -430,6 +432,8 @@ public class BradBot extends BasicRobot {
     if (intUp) {
       intake.toggleIntakeHeight();
     }
+    if(intDown)
+      intake.toggleIntakeHeightDown();
     if (down) {
       arm.flipTo(DROP);
       wrist.flipTo(Wrist.WristTargetStates.DROP);

@@ -35,6 +35,8 @@ public class Intake extends RFMotor {
   private final double REVERSE_POWER = -1.0;
 
   private boolean full = false;
+
+  private boolean stopped = false;
   private double pixelCount = 0;
   public static double HALF_TICKS_PER_REV = 383.6 / 2;
   public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.63, FIVE =0.65, STOP_DELAY = 0.5;
@@ -65,7 +67,7 @@ public class Intake extends RFMotor {
     INTAKING(false),
     REVERSING(false);
 
-    boolean state;
+    private boolean state;
 
     IntakeStates(boolean p_state) {
       state = p_state;
@@ -94,13 +96,7 @@ public class Intake extends RFMotor {
   public void intake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    if (!IntakeStates.INTAKING.state) {
-      requestTime = time;
-    }
-    if (time - requestTime > 0.1) {
-      setPower(INTAKE_POWER);
-    }
-
+    setPower(INTAKE_POWER);
     IntakeStates.INTAKING.setStateTrue();
   }
 
@@ -110,6 +106,22 @@ public class Intake extends RFMotor {
     }
     else{
       height = 1;
+    }
+    if(height==1)
+      intakeServo.setPosition(ONE);
+    if(height==2)
+      intakeServo.setPosition(TWO);if(height==3)
+      intakeServo.setPosition(THREE);if(height==4)
+      intakeServo.setPosition(FOUR);if(height==5)
+      intakeServo.setPosition(FIVE);
+  }
+
+  public void toggleIntakeHeightDown(){
+    if(height!=1){
+      height--;
+    }
+    else{
+      height = 5;
     }
     if(height==1)
       intakeServo.setPosition(ONE);
@@ -203,7 +215,10 @@ public class Intake extends RFMotor {
     LOGGER.log("intake power:" + power);
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
-      if(i.state&&i==IntakeStates.INTAKING&&getPower()!=INTAKE_POWER)intake();
+      if(i.state&&i==IntakeStates.INTAKING)intake();
+      if(i.state&&i==IntakeStates.STOPPED)stopIntake();
+      if(i.state&&i==IntakeStates.REVERSING)reverseIntake();
+
     }
     if (IntakeStates.STOPPED.state) {
       stopIntake();
@@ -213,12 +228,15 @@ public class Intake extends RFMotor {
         lastTime = time;
         pixeled=true;
       }
-      if (time - lastTime > STOP_DELAY) {
+      if (time - lastTime > STOP_DELAY && !stopped) {
         stopIntake();
+        stopped = true;
       }
     }
-    else
+    else{
       pixeled = false;
+      stopped = false;
+    }
     double pos = super.getCurrentPosition();
     packet.put("intakePos", pos);
     packet.put("intakeRevs", pos / HALF_TICKS_PER_REV);
