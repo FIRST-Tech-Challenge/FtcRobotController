@@ -104,6 +104,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+        //Name for servo to be used on driver hub
+        servo_Display = hardwareMap.get(Servo.class, "servo_display");
 
 
         waitForStart();
