@@ -48,7 +48,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Position Object Detection", group = "Concept")
+@TeleOp(name = "Auto Position Object Detection", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue extends LinearOpMode {
 
@@ -56,7 +56,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "centerstage_bluemayhem.tflite";
+    private static final String TFOD_MODEL_ASSET = "bluemayhem_v3.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
@@ -69,9 +69,9 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     boolean open = true;
     boolean close = false;
 
-    ElapsedTime trapdoorToggle;
+    ElapsedTime trapdoorToggle  = new ElapsedTime();
 
-    // Variable
+    // Variable that will later be used for placing the second pixel.
     int desiredTag = 0;
 
     /**
@@ -105,47 +105,51 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
                 double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
 
+                // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file.
 
-                if (xValue > 300 && xValue < 530 && yValue > 110 && yValue < 140) {
+                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
+                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+                if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
                         // center
                         telemetry.addData("position","Center");
+                        // drives robot to the center position.
                         gobbler.driveTrain.centerPos();
                         desiredTag = 2;
                         seen = true;
-
                 }
-                else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
-                        // left
-                        telemetry.addData("position","Left");
-                        gobbler.driveTrain.leftPos();
+
+                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
+                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
+                else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
+                        // right
+                        telemetry.addData("position","Right");
+                        // drives robot to the right position.
+                        gobbler.driveTrain.rightPos();
                         desiredTag = 1;
                         seen = true;
 
                 }
 
             }
+
+            // If the team prop is not seen on the center or right, it will assume it is on the left.
              if (!seen) {
                  telemetry.addData("position","Left");
-                 gobbler.driveTrain.rightPos();
+                 // drives robot to the left position.
+                 gobbler.driveTrain.leftPos();
                  desiredTag = 3;
              }
                 telemetryTfod();
-                // Place first pixel
+
+//              Place first pixel
                 gobbler.driveTrain.Wait(0.5);
-                gobbler.outtake.trapdoor(open, trapdoorToggle);
-                gobbler.driveTrain.Wait(0.5);
-                gobbler.outtake.trapdoor(close, trapdoorToggle);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
+                gobbler.driveTrain.Wait(2);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
                 gobbler.driveTrain.Wait(3.0);
-
-                // Save CPU resources; can resume streaming when needed.
-//                if (gamepad1.dpad_down) {
-//                    visionPortal.stopStreaming();
-//                } else if (gamepad1.dpad_up) {
-//                    visionPortal.resumeStreaming();
-//                }
 
 
              sleep(50);
