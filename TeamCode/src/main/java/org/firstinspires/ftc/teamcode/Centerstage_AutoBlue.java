@@ -142,7 +142,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // Cait's code to make the servo react based on prop location
             servo_Display.setPosition(DEF_POS); // Default position for the servo
 
-            gobbler.driveTrain.Wait(2.0);
+            gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
 
             if (desiredTag == 2) { // Center position
                 servo_Display.setPosition(CENTER_POS);
