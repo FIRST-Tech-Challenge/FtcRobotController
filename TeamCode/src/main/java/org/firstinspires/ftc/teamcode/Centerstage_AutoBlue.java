@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -140,6 +141,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // Cait's code to make the servo react based on prop location
             servo_Display.setPosition(DEF_POS); // Default position for the servo
+
+            gobbler.driveTrain.Wait(2.0);
 
             if (desiredTag == 2) { // Center position
                 servo_Display.setPosition(CENTER_POS);
