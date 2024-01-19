@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import static java.lang.Math.abs;
 
 import android.os.SystemClock;
+import android.util.Size;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -46,11 +47,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -103,12 +108,44 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     Servo conveyor;
 
     private IMU imu;
+    // Used for managing the AprilTag detection process.
+    private AprilTagProcessor myAprilTagProcessor;
+    // Used to manage the video source.
+    private VisionPortal myVisionPortal;
 
+    Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearslidemovement;
 
     @Override
     public void runOpMode() {
+
+        // Build the AprilTag processor
+        // set parameters of AprilTagProcessor, then use Builder to build
+        myAprilTagProcessor = new AprilTagProcessor.Builder()
+                //.setTagLibrary(myAprilTagLibrary)
+                //.setNumThreads(tbd)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .build();
+
+        // set apriltag resolution decimation factor
+        myAprilTagProcessor.setDecimation(2);
+
+        // Build the vision portal
+        // set parameters,then use vision builder.
+        myVisionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "gge_backup_cam"))
+                .addProcessor(myAprilTagProcessor)
+                .setCameraResolution(new Size(640, 480))
+                //.setCameraResolution(new Size(1280,720))
+                .enableLiveView(false)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .build();
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -171,10 +208,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Set default power effect to motor to cause braking for safety
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -187,6 +224,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         wrist.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
+        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, blinkinLED, myAprilTagProcessor, myVisionPortal, telemetry);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
@@ -223,7 +261,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 leftBackDrive.setPower(0);
                 rightBackDrive.setPower(0);
                 // If the wrist is down, pickup a piece.
-                if (wrist.getCurrentPosition() > (intake.WRIST_DOWN_TICKS - 10)) {
+                if (wrist.getCurrentPosition() > (IntakeMovement.WRIST_DOWN_TICKS - 10)) {
                     // Pickup automation
                     intake.GrabAndStowPixel();
                     intake.AdvanceConveyor();
@@ -234,9 +272,20 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
+                while (!moveTo.GoToAprilTag(1) && gamepad1.x){
+                    telemetry.addData ("Targeting April Tag: ", 1);
+                    telemetry.update();
+                }
             } else if (gamepad1.y) {
-                blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+                while (!moveTo.GoToAprilTag(2) && gamepad1.y){
+                    telemetry.addData ("Targeting April Tag: ", 2);
+                    telemetry.update();
+                }
+            } else if (gamepad1.b) {
+                while (!moveTo.GoToAprilTag(3) && gamepad1.b){
+                    telemetry.addData ("Targeting April Tag: ", 3);
+                    telemetry.update();
+                }
             }
 
             if(gamepad1.dpad_down){
@@ -245,7 +294,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                 linearslidemovement.LinearSlidesMiddle();
             } else if (gamepad1.dpad_right) {
                 linearslidemovement.LinearSlidesBottom();
-                while (leftLinearSlide.getCurrentPosition() > (linearslidemovement.bottom_linearslide_ticks + 5)){
+                while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 5)){
                     // pause to wait for the slide to lower before raising the wrist back up.
                 }
                 intake.FlipUp();
@@ -270,16 +319,16 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             powerFactor = basePowerFacter + (gamepad1.right_trigger * boostPowerFacter);
 
             // If the linear slides are raised, force powerFactor to slow (i.e. 25%)
-            if (leftLinearSlide.getCurrentPosition() > linearslidemovement.mid_linearslide_ticks + 100) {
+            if (leftLinearSlide.getCurrentPosition() > LinearSlideMovement.mid_linearslide_ticks + 100) {
                 powerFactor = 0.35;
-            } else if (leftLinearSlide.getCurrentPosition() > linearslidemovement.low_linearslide_ticks + 100) {
+            } else if (leftLinearSlide.getCurrentPosition() > LinearSlideMovement.low_linearslide_ticks + 100) {
                 powerFactor = 0.50;
             }
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   =  gamepad1.left_stick_y;  // Note: on Logitech, pushing stick forward gives negative value, make - then
-            double lateral =  -gamepad1.left_stick_x;
+            double axial   =  -gamepad1.left_stick_y;  // Note: on Logitech, pushing stick forward gives negative value, make - then
+            double lateral =  gamepad1.left_stick_x;
             double yaw     = -gamepad1.right_stick_x;
 
             // Set dead zone of the joysticks for very low values
@@ -294,7 +343,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             // Compensate the stick values to ensure that the IMU considers when the robot pulls to one side or another.
-            if (yaw == 0 && gamepad1.back == false && abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES)) < 10) {
+            if (yaw == 0 && !gamepad1.back && abs(imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES)) < 10) {
                 if (autoDriveTimeOk < runtime.milliseconds()){
                     // if the driver is not turning or resetting the Yaw, take the bearing desired
                     if (directionLocked == false){
@@ -304,7 +353,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
                     // Whenever there is error in the direction, accumulate this over time (i gain).
                     accumulatedError += 0.0002 * moveTo.CalcTurnError (targetDirection, DirectionNow);
                     // We already know that joystick yaw is 0, apply an automatic rotational angle to compensate for rotation.
-                    yaw = accumulatedError + 0.01 * Movement.CalcTurnError (targetDirection, DirectionNow);
+                    yaw = accumulatedError + 0.01 * moveTo.CalcTurnError (targetDirection, DirectionNow);
                 }
             } else {
                 // Reset the autoDriveDelay
@@ -322,10 +371,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = field_axial + field_lateral + yaw;
-            double rightFrontPower = field_axial - field_lateral - yaw;
-            double leftBackPower   = field_axial - field_lateral + yaw;
-            double rightBackPower  = field_axial + field_lateral - yaw;
+            double leftFrontPower  = field_axial + field_lateral - yaw;
+            double rightFrontPower = field_axial - field_lateral + yaw;
+            double leftBackPower   = field_axial - field_lateral - yaw;
+            double rightBackPower  = field_axial + field_lateral + yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
