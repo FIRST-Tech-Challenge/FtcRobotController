@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -53,6 +54,13 @@ import java.util.List;
 public class Centerstage_AutoBlue extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    // Variables for servo position testing, displaying team prop location
+    static final double RIGHT_POS     =  1.0;     // Maximum rotational position
+    static final double CENTER_POS     =  0.6;     // Middle rotational position
+    static final double LEFT_POS     =  0.3;     // Minimum rotational position
+    static final double DEF_POS     =  0.0;     // Minimum rotational position
+    Servo servo_Display;
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
