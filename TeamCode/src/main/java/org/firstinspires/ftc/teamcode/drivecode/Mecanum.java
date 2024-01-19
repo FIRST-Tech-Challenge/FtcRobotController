@@ -37,6 +37,7 @@ public class Mecanum extends LinearOpMode {
         double Ly;
         double Lx;
         double a;
+        double h;
         //Value for armLock
         boolean armLocked;
         boolean c = false;
@@ -56,6 +57,7 @@ public class Mecanum extends LinearOpMode {
         //Sets variables to 0 on initialization
         rotation = 0;
         ext = 0;
+        h = 0;
         armLocked = false;
         waitForStart();
 
@@ -70,6 +72,7 @@ public class Mecanum extends LinearOpMode {
             armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armBrace.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armBrace.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            linearGripper.getPosition();
 
             while (opModeIsActive()) {
 
@@ -77,6 +80,7 @@ public class Mecanum extends LinearOpMode {
                 //Ext and Rotation are set to receive inputs from encoders
                 ext = armExt.getCurrentPosition();
                 rotation = armRotate.getCurrentPosition();
+                h = linearGripper.getPosition();
                 //Multipliers are applied to X and Y and they are tied to sticks on the game pads.
                 Ly = gamepad1.left_stick_y;
                 Rx = gamepad1.right_stick_x;
@@ -84,7 +88,7 @@ public class Mecanum extends LinearOpMode {
                 Ry = gamepad1.right_stick_y;
 
 
-                if (gamepad1.left_trigger > 0.5) {
+                if (gamepad1.right_trigger > 0.5) {
 
                     if (Ly > 0.2 || Ly < -0.2 || Rx > .02 || Rx < -.02) {
                         // Waiting for Left Joystick to Move & Scaling the Motor Value
@@ -92,11 +96,16 @@ public class Mecanum extends LinearOpMode {
                         frontRightMotor.setPower((Ly+Rx)*0.4);
                         backLeftMotor.setPower((-Ly+Rx)*0.4);
                         backRightMotor.setPower((Ly+Rx)*0.4);
-                    } else if (Lx > 0.2 || Lx < -0.2) {
-                        frontLeftMotor.setPower((Lx)*0.4);
-                        frontRightMotor.setPower((Lx)*0.4);
-                        backLeftMotor.setPower((-Lx)*0.4);
-                        backRightMotor.setPower((-Lx)*0.4);
+                    } else if (gamepad1.left_bumper) {
+                        frontLeftMotor.setPower(-0.4);
+                        frontRightMotor.setPower(-0.4);
+                        backLeftMotor.setPower(0.4);
+                        backRightMotor.setPower(0.4);
+                    } else if (gamepad1.right_bumper) {
+                        frontLeftMotor.setPower(0.4);
+                        frontRightMotor.setPower(0.4);
+                        backLeftMotor.setPower(-0.4);
+                        backRightMotor.setPower(-0.4);
                     } else {
                         frontLeftMotor.setPower(0);
                         frontRightMotor.setPower(0);
@@ -109,11 +118,16 @@ public class Mecanum extends LinearOpMode {
                         frontRightMotor.setPower(Ly+Rx);
                         backLeftMotor.setPower(-Ly+Rx);
                         backRightMotor.setPower(Ly+Rx);
-                    } else if (Lx > 0.2 || Lx < -0.2) {
-                        frontLeftMotor.setPower(Lx);
-                        frontRightMotor.setPower(Lx);
-                        backLeftMotor.setPower(-Lx);
-                        backRightMotor.setPower(-Lx);
+                    } else if (gamepad1.left_bumper) {
+                        frontLeftMotor.setPower(-1);
+                        frontRightMotor.setPower(-1);
+                        backLeftMotor.setPower(1);
+                        backRightMotor.setPower(1);
+                    } else if (gamepad1.right_bumper) {
+                        frontLeftMotor.setPower(1);
+                        frontRightMotor.setPower(1);
+                        backLeftMotor.setPower(-1);
+                        backRightMotor.setPower(-1);
                     } else {
                         frontLeftMotor.setPower(0);
                         frontRightMotor.setPower(0);
@@ -180,7 +194,7 @@ public class Mecanum extends LinearOpMode {
                 } //end arm extension inputs
 
                 //Gripper
-                if (gamepad2.b) {
+                if (gamepad2.b && h < 3.7) {
                     c = true;
                     d = false;
                     linearGripper.setPosition(a+=.02);

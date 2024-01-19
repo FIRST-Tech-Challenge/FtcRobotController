@@ -382,11 +382,62 @@ public class PlaceLinePixel extends LinearOpMode {
     }
 
     public void BlueLocation1() {
-        //Movement Code
+        try {
+            RobotTurnLeft();
+            TimeUnit.MILLISECONDS.sleep(1550);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            RobotMoveFarward();
+            TimeUnit.MILLISECONDS.sleep(2100);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            RobotStrafeRight();
+            TimeUnit.MILLISECONDS.sleep(3000);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void BlueLocation2() {
-        //MovementCode
+        try {
+            RobotTurnLeft();
+            TimeUnit.MILLISECONDS.sleep(1550);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            armBrace.setPower(-1);
+            armBrace.setPower(-1);
+            TimeUnit.MILLISECONDS.sleep(200);
+            armBrace.setPower(0);
+            armRotate.setPower(0);
+
+            frontLeftMotor.setPower(1);
+            frontRightMotor.setPower(-1);
+            backLeftMotor.setPower(1);
+            backRightMotor.setPower(-1);
+            TimeUnit.MILLISECONDS.sleep(3000);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            armUp();
+
+            RobotStrafeRight();
+            TimeUnit.MILLISECONDS.sleep(3000);
+
+            RobotStop();
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void BoardPixel1() {
