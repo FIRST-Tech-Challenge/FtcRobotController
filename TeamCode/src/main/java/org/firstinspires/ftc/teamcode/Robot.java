@@ -1262,6 +1262,7 @@ public class Robot {
                 trayToOuttakePos(false);
             }
 
+
             if (allowTrayAngle) {
                 currentHeading = getCurrentHeading();
                 trayAngleServoPos = -0.00413*currentHeading + 0.15;
