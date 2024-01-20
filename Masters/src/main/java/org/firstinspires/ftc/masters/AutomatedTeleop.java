@@ -237,7 +237,6 @@ public class AutomatedTeleop extends LinearOpMode {
             }
             switch (driveMode) {
                 case NORMAL:
-
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
                     break;
                 case END_GAME:
@@ -391,7 +390,10 @@ public class AutomatedTeleop extends LinearOpMode {
 
                     break;
             }
-
+            if (gamepad2.dpad_right) {
+                outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+            }
             switch (outtakeState){
                 case ReadyToTransfer:
                     if (gamepad2.x && hookPosition==HookPosition.CLOSED){ // if press x and hook is closed, open hook

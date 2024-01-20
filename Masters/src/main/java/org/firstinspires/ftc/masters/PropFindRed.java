@@ -14,10 +14,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class PropFindBlue extends OpenCvPipeline {
+public class PropFindRed extends OpenCvPipeline {
 
-    public final Rect interestMid = new Rect(227, 148, 32, 50);
-    public final Rect interestRight = new Rect(545, 190, 32, 50);
+    public final Rect interestMid = new Rect(17, 148, 32, 50);
+    public final Rect interestRight = new Rect(300, 190, 32, 50);
     private final Rect pix = new Rect(1,1,1,1);
 
     public enum pos {
@@ -31,7 +31,7 @@ public class PropFindBlue extends OpenCvPipeline {
     Telemetry telemetry;
     private final TelemetryPacket packet;
 
-    public PropFindBlue(Telemetry telemetry, TelemetryPacket packet) {
+    public PropFindRed(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
         this.packet = packet;
     }
@@ -67,8 +67,8 @@ public class PropFindBlue extends OpenCvPipeline {
 
         inputToHSV(input);
 
-//        Core.inRange(HSV, new Scalar(105,40,0), new Scalar(115,255,255), mask);
-        Core.inRange(HSV, new Scalar(0,40,0), new Scalar(255,255,255), mask);
+        //Core.inRange(HSV, new Scalar(150,50,0), new Scalar(180,255,255), mask); //Black out Red
+        Core.inRange(HSV, new Scalar(0,50,0), new Scalar(255,255,255), mask); //Black out Red
 
         diff_im = new Mat();
         Core.add(diff_im, Scalar.all(0), diff_im);
