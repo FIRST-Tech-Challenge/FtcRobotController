@@ -1104,9 +1104,19 @@ public class Robot {
         trayToIntakePos(true);
         opMode.sleep(100);
         planeLauncher.setPower(0);
-        trayAngle.setPosition(0.5);
         //planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
+    }
+
+    public double getHeadingRelativeToBoard() {
+        double absoluteHeading = getCurrentHeading();
+        double relativeHeading;
+        if (isRedAlliance) {
+            relativeHeading = absoluteHeading + 90;
+        } else {
+            relativeHeading = absoluteHeading - 90;
+        }
+        return relativeHeading;
     }
 
     public void teleOpWhileLoop(Gamepad gamepad1, Gamepad gamepad2) {
@@ -1141,8 +1151,9 @@ public class Robot {
         double targetLinearSlideTicks = 0;
 
         double trayAngleDefault = 0.5;
-        double currentHeading = getCurrentHeading();
+        double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
+        double relativeIMU;
 
         boolean linearSlideFlag = false;
 
@@ -1260,21 +1271,27 @@ public class Robot {
                 trayAngle.setPosition(trayAngleDefault);
                 trayToIntakePos(false);
             } else if (gamepad2.y) { // y - outtake position
-                //allowTrayAngle = true;
+                allowTrayAngle = true;
                 trayToOuttakePos(false);
             }
 
-            if (trayAngleServoPos > 0.75) {
+            //TODO  delete
+            /*if (trayAngleServoPos > 0.75) {
                 trayAngle.setPosition(0.75);
             } else if (trayAngleServoPos < 0.25) {
                 trayAngle.setPosition(0.25);
-            }
+            }*/
+
+
 
             if (allowTrayAngle) {
-                currentHeading = getCurrentHeading();
-                trayAngleServoPos = -0.00413*currentHeading + 0.7;
+                relativeHeadingToBoard = getHeadingRelativeToBoard();
+                trayAngleServoPos = Math.min(-0.00413*(relativeHeadingToBoard) + trayAngleDefault, 0.65);
+                trayAngleServoPos = Math.max(trayAngleServoPos, 0.35);
                 trayAngle.setPosition(trayAngleServoPos);
             }
+
+
 
             // clamp controls
             if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
