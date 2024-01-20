@@ -57,15 +57,15 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // Variables for servo position testing, displaying team prop location
-    static final double RIGHT_POS     =  1.0;     // Maximum rotational position
-    static final double CENTER_POS     =  0.6;     // Middle rotational position
-    static final double LEFT_POS     =  0.3;     // Minimum rotational position
-    static final double DEF_POS     =  0.0;     // Minimum rotational position
+    static final double RIGHT_POS     =  0.99;     // Maximum rotational position
+    static final double CENTER_POS     =  0.66;     // Middle rotational position
+    static final double LEFT_POS     =  0.33;     // Minimum rotational position
+    static final double DEF_POS     =  0.01;     // Minimum rotational position
     Servo servo_Display;
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "bluemayhem_v3.tflite";
+    private static final String TFOD_MODEL_ASSET = "bluemayhem_v2.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
@@ -106,7 +106,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         telemetry.update();
         //Name for servo to be used on driver hub
         servo_Display = hardwareMap.get(Servo.class, "servo_display");
-
 
         waitForStart();
 
@@ -178,9 +177,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 telemetry.update();
                 gobbler.driveTrain.Wait(3.0);
 
-
              sleep(50);
-
         }
 
         // Save more CPU resources when camera is no longer needed.
