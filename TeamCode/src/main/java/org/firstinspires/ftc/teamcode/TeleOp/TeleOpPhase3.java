@@ -266,16 +266,16 @@ public class TeleOpPhase3 extends LinearOpMode {
 
         // Hardware map
         DcMotorEx intakeMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakeMotor");
-        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
-        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
-        ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
-        ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+//        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
+//        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
+//        ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
+//        ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
 //        ServoImplEx wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
 //        ServoImplEx fingerServo = hardwareMap.get(ServoImplEx.class, "fingerServo");
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Initialize camera??? Our stuff randomly goes into NaN
         VisionPortal visionPortal = new VisionPortal.Builder()
@@ -285,8 +285,8 @@ public class TeleOpPhase3 extends LinearOpMode {
         waitForStart();
 
         // Ramping for x and y translation
-        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.5); // Raising alpha will make the ramp more drastic but more potentially create slip
-        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.5); // Decreasing alpha will reduce slip
+        TeleOpPhase3.Ewma statsX = new TeleOpPhase3.Ewma(0.3); // Raising alpha will make the ramp more drastic but more potentially create slip
+        TeleOpPhase3.Ewma statsY = new TeleOpPhase3.Ewma(0.3); // Decreasing alpha will reduce slip
 
         // PID controller for heading
         PIDFController headingPID = new PIDFController(new PIDCoefficients(0, 0, 0), 0, 0); // Heading is kinda messed up rn, so I'm temporarily disabling it
@@ -297,10 +297,10 @@ public class TeleOpPhase3 extends LinearOpMode {
         double liftkI = 0;
         double liftkD = 0;
 
-        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
-        liftMotor2.setPIDFCoefficients (DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
-        liftMotor1.setTargetPositionTolerance(0);
-        liftMotor2.setTargetPositionTolerance(0);
+//        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+//        liftMotor2.setPIDFCoefficients (DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+//        liftMotor1.setTargetPositionTolerance(0);
+//        liftMotor2.setTargetPositionTolerance(0);
 
         // Initializing some variables necessary for driving
         Pose2d headingToHold = new Pose2d();
@@ -322,31 +322,31 @@ public class TeleOpPhase3 extends LinearOpMode {
                     relativeHeading = 0;
                 }
 
-                if (gamepad1.x) {
-                    headingToHold = new Pose2d(0, 0, Math.toRadians(90) + relativeHeading);
-                } else if (gamepad1.a) {
-                    headingToHold = new Pose2d(0, 0, Math.toRadians(180) + relativeHeading);
-                } else if (gamepad1.b) {
-                    headingToHold = new Pose2d(0, 0, Math.toRadians(-90) + relativeHeading);
-                } else if (gamepad1.y) {
-                    headingToHold = new Pose2d(0, 0, Math.toRadians(0) + relativeHeading);
-                }
+//                if (gamepad1.x) {
+//                    headingToHold = new Pose2d(0, 0, Math.toRadians(90) + relativeHeading);
+//                } else if (gamepad1.a) {
+//                    headingToHold = new Pose2d(0, 0, Math.toRadians(180) + relativeHeading);
+//                } else if (gamepad1.b) {
+//                    headingToHold = new Pose2d(0, 0, Math.toRadians(-90) + relativeHeading);
+//                } else if (gamepad1.y) {
+//                    headingToHold = new Pose2d(0, 0, Math.toRadians(0) + relativeHeading);
+//                }
             } else if (Math.abs(turnCommand) >= 0.03) {
                 isHolding = false;
             }
 
-            if (isHolding) {
-                // holdHeading utilizes the robots onboard IMU to figure out what direction it's pointed towards
-                // Then, we use a PID controller to go to the target heading
-                double turnErrorDeg = Math.toDegrees(headingToHold.getHeading()) - drive.getExternalHeading();
-                double target = (Math.toDegrees(headingToHold.getHeading()));
-                target = target % 360.0;
-                if (target < 0) {
-                    target += 360.0;
-                }
-                headingPID.setTargetPosition(target);
-                turnCommand = headingPID.update(Math.toDegrees(drive.getExternalHeading()));
-            }
+//            if (isHolding) {
+//                // holdHeading utilizes the robots onboard IMU to figure out what direction it's pointed towards
+//                // Then, we use a PID controller to go to the target heading
+//                double turnErrorDeg = Math.toDegrees(headingToHold.getHeading()) - drive.getExternalHeading();
+//                double target = (Math.toDegrees(headingToHold.getHeading()));
+//                target = target % 360.0;
+//                if (target < 0) {
+//                    target += 360.0;
+//                }
+//                headingPID.setTargetPosition(target);
+//                turnCommand = headingPID.update(Math.toDegrees(drive.getExternalHeading()));
+//            }
 
             // TODO WHY???????????????????????????? (ignore??!??!!?)
             double powX = statsX.update(gamepad1.left_stick_y);
@@ -354,30 +354,26 @@ public class TeleOpPhase3 extends LinearOpMode {
 
             Pose2d poseEstimate = drive.getPoseEstimate();
 
-            Vector2d input = new Vector2d(
-                    powX,
-                    powY
-            ).rotated(-poseEstimate.getHeading());
 
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            input.getX(),
-                            input.getY(),
-                            turnCommand
+                            powX,
+                            powY,
+                            (turnCommand * 0.6)
                     )
             );
 
             drive.update();
 
             // Intake stuff
-            if (gamepad1.left_trigger > 0.03 || gamepad1.right_trigger > 0.03) {
-                intakeMotor.setPower(1);
+            if (gamepad1.right_bumper || gamepad1.left_bumper) {
+                intakeMotor.setPower(0.5);
             } else {
                 intakeMotor.setPower(0.0);
             }
-            if (gamepad1.left_trigger > 0.03) {
+            if (gamepad1.left_bumper) {
                 intakeMotor.setDirection(DcMotor.Direction.FORWARD);
-            } else if (gamepad1.right_trigger > 0.03) {
+            } else if (gamepad1.right_bumper) {
                 intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
@@ -414,46 +410,46 @@ public class TeleOpPhase3 extends LinearOpMode {
             double armStage1 = 0; // Setpoint for clearance
             double armStage2 = 1; // Setpoint for scoring
 
-            Lift lift1 = new Lift(liftMotor1, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
-            Lift lift2 = new Lift(liftMotor2, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
-
-            Arm arm1 = new Arm(armServo1, armStage0, armStage1, armStage2, 0.0);
-            Arm arm2 = new Arm(armServo2, armStage0, armStage1, armStage2, 0.0);
-
-            // Both lifts are in the right direction (i hope)
-            lift1.setReverse(false);
-            lift2.setReverse(false);
-
-            // One servo is oriented in the opposite direction
-            arm1.setReverse(true);
-            arm2.setReverse(false);
-
-            // Do some sequence of events if the lift is going from intake to setpoint
-            // Lift setpoints
-            if (gamepad2.dpad_down || gamepad1.dpad_down) {
-                liftStage = 1;
-                armStage = 1;
-                wristStage = 1;
-            } else if (gamepad2.dpad_left || gamepad1.dpad_left || gamepad2.dpad_right || gamepad1.dpad_right) {
-                liftStage = 2;
-                armStage = 2;
-                wristStage = 2;
-            } else if (gamepad1.dpad_up || gamepad2.dpad_up) {
-                liftStage = 3;
-                armStage = 2;
-                wristStage = 2;
-            } else {
-                lift1.resetPower();
-            }
-
-            lift1.setLiftStage(liftStage);
-            lift2.setLiftStage(liftStage);
-            lift1.goToLiftStage();
-            lift2.goToLiftStage();
-            arm1.setArmStage(armStage);
-            arm2.setArmStage(armStage);
-            arm1.goToArmStage();
-            arm2.goToArmStage();
+//            Lift lift1 = new Lift(liftMotor1, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
+//            Lift lift2 = new Lift(liftMotor2, liftStage0, liftStage1, liftStage2, liftStage3, liftSpeed);
+//
+//            Arm arm1 = new Arm(armServo1, armStage0, armStage1, armStage2, 0.0);
+//            Arm arm2 = new Arm(armServo2, armStage0, armStage1, armStage2, 0.0);
+//
+//            // Both lifts are in the right direction (i hope)
+//            lift1.setReverse(false);
+//            lift2.setReverse(false);
+//
+//            // One servo is oriented in the opposite direction
+//            arm1.setReverse(true);
+//            arm2.setReverse(false);
+//
+//            // Do some sequence of events if the lift is going from intake to setpoint
+//            // Lift setpoints
+//            if (gamepad2.dpad_down || gamepad1.dpad_down) {
+//                liftStage = 1;
+//                armStage = 1;
+//                wristStage = 1;
+//            } else if (gamepad2.dpad_left || gamepad1.dpad_left || gamepad2.dpad_right || gamepad1.dpad_right) {
+//                liftStage = 2;
+//                armStage = 2;
+//                wristStage = 2;
+//            } else if (gamepad1.dpad_up || gamepad2.dpad_up) {
+//                liftStage = 3;
+//                armStage = 2;
+//                wristStage = 2;
+//            } else {
+//                lift1.resetPower();
+//            }
+//
+//            lift1.setLiftStage(liftStage);
+//            lift2.setLiftStage(liftStage);
+//            lift1.goToLiftStage();
+//            lift2.goToLiftStage();
+//            arm1.setArmStage(armStage);
+//            arm2.setArmStage(armStage);
+//            arm1.goToArmStage();
+//            arm2.goToArmStage();
 //            claw.setWrist(wristStage);
 
             // Preventing motors from overheating
@@ -470,36 +466,36 @@ public class TeleOpPhase3 extends LinearOpMode {
 //                lift2.setLiftPosition("down");
 //            }
 
-            // Manual arm control
-            if (gamepad2.a) { // Clearance
-                arm1.setArmStage(0);
-                arm2.setArmStage(0);
-                arm1.goToArmStage();
-                arm2.goToArmStage();
-            } else if (gamepad2.y) { // Placing
-                arm1.setArmStage(1);
-                arm2.setArmStage(1);
-                arm1.goToArmStage();
-                arm2.goToArmStage();
-            } else if (gamepad2.b) { // Fine tuning
-                arm1.setArmPosition(armServo1.getPosition() + 0.1);
-                arm2.setArmPosition(armServo2.getPosition() + 0.1);
-            }
+//            // Manual arm control
+//            if (gamepad2.a) { // Clearance
+//                arm1.setArmStage(0);
+//                arm2.setArmStage(0);
+//                arm1.goToArmStage();
+//                arm2.goToArmStage();
+//            } else if (gamepad2.y) { // Placing
+//                arm1.setArmStage(1);
+//                arm2.setArmStage(1);
+//                arm1.goToArmStage();
+//                arm2.goToArmStage();
+//            } else if (gamepad2.b) { // Fine tuning
+//                arm1.setArmPosition(armServo1.getPosition() + 0.1);
+//                arm2.setArmPosition(armServo2.getPosition() + 0.1);
+//            }
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
-            telemetry.addData("liftStage", lift1.getLiftStage());
-            telemetry.addData("lift1Position", lift1.getLiftPosition());
-            telemetry.addData("lift2Position", lift2.getLiftPosition());
-            telemetry.addData("targetLift1Position", lift1.getLiftTargetPosition());
-            telemetry.addData("targetLift2Position", lift2.getLiftTargetPosition());
-            telemetry.addData("targetLiftMotor1Position", liftMotor1.getTargetPosition());
-            telemetry.addData("targetLiftMotor2Position", liftMotor2.getTargetPosition());
-            telemetry.addData("liftMotor1Power", liftMotor1.getPower());
-            telemetry.addData("liftMotor2Power", liftMotor2.getPower());
-            telemetry.addData("arm1Position", arm1.getArmPosition());
-            telemetry.addData("arm2Position", arm2.getArmPosition());
+//            telemetry.addData("liftStage", lift1.getLiftStage());
+//            telemetry.addData("lift1Position", lift1.getLiftPosition());
+//            telemetry.addData("lift2Position", lift2.getLiftPosition());
+//            telemetry.addData("targetLift1Position", lift1.getLiftTargetPosition());
+//            telemetry.addData("targetLift2Position", lift2.getLiftTargetPosition());
+//            telemetry.addData("targetLiftMotor1Position", liftMotor1.getTargetPosition());
+//            telemetry.addData("targetLiftMotor2Position", liftMotor2.getTargetPosition());
+//            telemetry.addData("liftMotor1Power", liftMotor1.getPower());
+//            telemetry.addData("liftMotor2Power", liftMotor2.getPower());
+//            telemetry.addData("arm1Position", arm1.getArmPosition());
+//            telemetry.addData("arm2Position", arm2.getArmPosition());
 //            telemetry.addData("clawState", claw.getClawState());
 
             telemetry.update();
