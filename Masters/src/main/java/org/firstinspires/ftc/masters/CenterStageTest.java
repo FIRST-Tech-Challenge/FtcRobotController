@@ -329,8 +329,8 @@ RB - Hang up
                     rightRearMotor.setPower(rightRearPower);
 
                     telemetry.addData("Arm", clawArm.getPosition());
-                    telemetry.addData("backSlides",backSlidesTargetPos); // 1725, 2400,
-                    telemetry.addData("time",runtime.time());
+                    telemetry.addData("backSlides",backSlides.getCurrentPosition());// 1725, 2400,
+                    telemetry.addData("target",target);
 
                     telemetry.update();
             }

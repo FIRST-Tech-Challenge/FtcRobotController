@@ -201,6 +201,8 @@ public class AutomatedTeleop extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawOpen);
@@ -483,15 +485,6 @@ public class AutomatedTeleop extends LinearOpMode {
 
                     //what button to mode back to transfer?
                     // what order to move (slide down or flip first?
-
-
-
-
-
-
-
-
-
 
                     break;
                 case MoveToDrop:
