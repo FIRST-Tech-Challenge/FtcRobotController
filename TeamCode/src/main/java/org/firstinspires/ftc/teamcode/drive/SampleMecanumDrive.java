@@ -124,7 +124,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftServo1 = hardwareMap.servo.get("lift1");
-//        liftServo2 = hardwareMap.servo.get("lift2");
+        liftServo2 = hardwareMap.servo.get("lift2");
         doorServo = hardwareMap.servo.get("door");
         pixelServo = hardwareMap.servo.get("pixel");
 

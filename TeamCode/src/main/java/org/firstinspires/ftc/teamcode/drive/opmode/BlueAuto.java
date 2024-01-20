@@ -112,40 +112,80 @@ public class BlueAuto extends LinearOpMode{
 
         while (opModeIsActive()) {
             drive.setPoseEstimate(startingPose);
-            switch (detection) {
-                case "left":
-                    TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
-                            .splineTo(new Vector2d(8, -30), Math.toRadians(180))
-//                            .lineToLinearHeading(new Pose2d(10, -30, Math.toRadians(180)))
+            if (detection == "left") {
+                TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(5, -30), Math.toRadians(180))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
+                        .build();
+                drive.followTrajectorySequence(left);
+                drive.breakFollowing();
+                break;
+            }
+            else if (detection == "middle") {
+                TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
+                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
                             .addTemporalMarker(() -> {
                                 drive.pixelServo.setPosition(1);
                             })
+                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
                             .build();
-                    drive.followTrajectorySequence(left);
+                    drive.followTrajectorySequence(middle);
                     drive.breakFollowing();
                     break;
+            }
+            else {
+                TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
+                            .splineTo(new Vector2d(15, -30), Math.toRadians(0))
+                            .addTemporalMarker(() -> {
+                                drive.pixelServo.setPosition(1);
+                            })
+                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
+                            .build();
+                    drive.followTrajectorySequence(right);
+
+                    drive.breakFollowing();
+                    break;
+            }
+
 //                case "middle":
 //                    TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
-//                            .forward(4, SampleMecanumDrive.getVelocityConstraint(65, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-//                                    SampleMecanumDrive.getAccelerationConstraint(60))
+//                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
 //                            .addTemporalMarker(() -> {
-//                                drive.pixelServo.setPosition(0.5);
+//                                drive.pixelServo.setPosition(1);
 //                            })
+//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
 //                            .build();
-//                    drive.followTrajectorySequenceAsync(middle);
+//                    drive.followTrajectorySequence(middle);
+//                    drive.breakFollowing();
+//                    drive.breakFollowing();
 //                    break;
 //                case "right":
 //                    TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
-//                            .forward(5, SampleMecanumDrive.getVelocityConstraint(65, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-//                                    SampleMecanumDrive.getAccelerationConstraint(60))
-//                            .turn(Math.toRadians(90))
+//                            .splineTo(new Vector2d(15, -30), Math.toRadians(0))
 //                            .addTemporalMarker(() -> {
-//                                drive.pixelServo.setPosition(0.5);
+//                                drive.pixelServo.setPosition(1);
 //                            })
+//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
 //                            .build();
-//                    drive.followTrajectorySequenceAsync(right);
+//                    drive.followTrajectorySequence(right);
+//                    drive.breakFollowing();
+//                    drive.breakFollowing();
 //                    break;
-            }
+//                case "":
+//                    TrajectorySequence noDetection = drive.trajectorySequenceBuilder(startingPose)
+//                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
+//                            .addTemporalMarker(() -> {
+//                                drive.pixelServo.setPosition(1);
+//                            })
+//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
+//                            .build();
+//                    drive.followTrajectorySequence(noDetection);
+//                    drive.breakFollowing();
+//                    drive.breakFollowing();
+//                    break;
 //            drive.update();
 //            liftUpdate(drive);
         }

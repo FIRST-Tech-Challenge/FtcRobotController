@@ -62,6 +62,7 @@ public class DriveTrain extends OpMode
     private DcMotor liftMotor2 = null;
     private DcMotor intakeMotor = null;
     private Servo liftServo1 = null;
+    private Servo liftServo2 = null;
     private Servo door = null;
     private Servo pixelHolder = null;
     private double lastError = 0;
@@ -88,10 +89,10 @@ public class DriveTrain extends OpMode
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         liftServo1 = hardwareMap.servo.get("lift1");
+        liftServo2 = hardwareMap.servo.get("lift2");
         door = hardwareMap.servo.get("door");
         pixelHolder = hardwareMap.servo.get("pixel");
 
-//        clawServo = hardwareMap.servo.get("claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -235,9 +236,11 @@ public class DriveTrain extends OpMode
 
         if (gamepad2.y) {
             liftServo1.setPosition(0);
+            liftServo2.setPosition(0);
         }
         else if (gamepad2.a) {
             liftServo1.setPosition(1);
+            liftServo2.setPosition(1);
         }
 
         if (gamepad2.left_bumper) {
@@ -260,7 +263,9 @@ public class DriveTrain extends OpMode
         telemetry.addData("Motors", "frontLeft (%.2f), rearLeft (%.2f), frontRight (%.2f), rearRight (%.2f)", frontLeftPower, rearLeftPower, frontRightPower, rearRightPower);
         telemetry.addData("Motor 1", lift1Position);
         telemetry.addData("Motor 2", liftMotor2.getCurrentPosition());
-        telemetry.addData("Servo", liftServo1.getPosition());
+        telemetry.addData("Servo1", liftServo1.getPosition());
+        telemetry.addData("Servo2", liftServo2.getPosition());
+
 
         telemetry.update();
     }
