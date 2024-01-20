@@ -122,6 +122,7 @@ public class BlueAuto extends LinearOpMode{
                             })
                             .build();
                     drive.followTrajectorySequence(left);
+                    drive.breakFollowing();
                     break;
 //                case "middle":
 //                    TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
@@ -147,7 +148,6 @@ public class BlueAuto extends LinearOpMode{
             }
 //            drive.update();
 //            liftUpdate(drive);
-            break;
         }
     }
 
