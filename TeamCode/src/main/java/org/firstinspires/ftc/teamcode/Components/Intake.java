@@ -47,8 +47,6 @@ public class Intake extends RFMotor {
   public Intake() {
     super("intakeMotor", !isTeleop);
     intakeServo = new RFServo("intakeServo", 1.0);
-    super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    super.setDirection(DcMotorSimple.Direction.REVERSE);
     super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
@@ -93,9 +91,8 @@ public class Intake extends RFMotor {
    * surface level
    */
   public void intake() {
-    LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    setRawPower(INTAKE_POWER);
+    setRawPower(-INTAKE_POWER-100);
     IntakeStates.INTAKING.setStateTrue();
   }
 
@@ -138,7 +135,7 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    setRawPower(REVERSE_POWER);
+    setRawPower(- REVERSE_POWER);
     IntakeStates.REVERSING.setStateTrue();
   }
 

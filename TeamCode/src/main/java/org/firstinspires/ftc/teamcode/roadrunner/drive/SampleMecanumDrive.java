@@ -34,6 +34,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -110,7 +111,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private ArrayList<Servo> servos;
 
-    public com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+    public org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive drive;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
@@ -232,7 +233,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft = new Motor(hardwareMap, "motorLeftBack"),
         backRight = new Motor(hardwareMap, "motorRightBack");
 
-        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
+    drive =
+        new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive(
+            frontLeft, frontRight, backLeft, backRight);
+
 //
     }
 
@@ -267,6 +271,19 @@ public class SampleMecanumDrive extends MecanumDrive {
                         .turn(angle)
                         .build()
         );
+    }
+    public void driveRobotCentric(double strafeSpeed, double verticalSpeed, double turnSpeed){
+        double[] buh = drive.driveFieldCentric(strafeSpeed, verticalSpeed, turnSpeed ,0.0);
+        powerSpeed(buh[0], buh[1], buh[2], buh[3]);
+    }
+
+    public void powerSpeed(double frontLeftSpeed, double frontRightSpeed,
+        double backLeftSpeed, double backRightSpeed) {
+        double maxOutput = 1;
+        leftFront.setPower(frontLeftSpeed * maxOutput);
+        rightFront.setPower(frontRightSpeed * maxOutput);
+        leftRear.setPower(backLeftSpeed * maxOutput);
+    rightRear.setPower(backRightSpeed * maxOutput);
     }
 
     public void turn(double angle) {

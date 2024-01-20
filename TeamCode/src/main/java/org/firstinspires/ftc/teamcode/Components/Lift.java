@@ -24,7 +24,7 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 450,
+      RESISTANCE = 550,
       kS = 0.03,
       kV = 3.2786E-4,
       kA = 4E-5,
@@ -56,7 +56,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1540, false),
     MID_SET_LINE(900, false),
-    LOW_SET_LINE(600, false),
+    LOW_SET_LINE(760, false),
     AT_ZERO(0, true);
 
     double position;
@@ -145,13 +145,14 @@ public class Lift extends RFDualMotor {
       }
     }
 
-    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-150)
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-50-getVelocity()*0.5)
       LiftPositionStates.AT_ZERO.setStateTrue();
     else LiftPositionStates.AT_ZERO.state = false;
 
     for (var i : LiftMovingStates.values()) {
       if (i.state
           && abs(super.getTarget() - LiftPositionStates.values()[i.ordinal()].position) > 30) {
+        LOGGER.log("update to state:"+ i.name());
         setPosition(LiftPositionStates.values()[i.ordinal()]);
         break;
       }
@@ -191,7 +192,9 @@ public class Lift extends RFDualMotor {
     if (p_state.equals(LiftPositionStates.AT_ZERO)) {
       if ((Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.getState())
           && (!Arm.ArmTargetStates.DROP.state||!Arm.ArmTargetStates.GRAB.getState())) {
-        super.setPosition(p_state.position, 0);
+        super.setPosition(p_state.position-10, 0);
+        LiftMovingStates.LOW.clearTargets();
+        LiftMovingStates.AT_ZERO.setStateTrue();
 
       } else {
         super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);

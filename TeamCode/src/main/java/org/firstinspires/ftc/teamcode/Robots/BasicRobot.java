@@ -78,6 +78,7 @@ public class BasicRobot{
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();
+        op.telemetry.update();
         for(LynxModule module: op.hardwareMap.getAll(LynxModule.class))
             module.clearBulkCache();
     }
