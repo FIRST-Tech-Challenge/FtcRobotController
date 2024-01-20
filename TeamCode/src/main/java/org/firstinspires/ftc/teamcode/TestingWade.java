@@ -44,6 +44,7 @@ public class TestingWade extends LinearOpMode {
             robot.mecanumBlocking2(-36); // left
             this.sleep(2000);*/
 
+            double poop = 1;
             /*
             robot.mecanumBlockingFixHeading(-24); //2 motors
             this.sleep(2000);
