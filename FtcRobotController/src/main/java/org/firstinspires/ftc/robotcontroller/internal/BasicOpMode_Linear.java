@@ -119,7 +119,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             if(gamepad1.a) {
                 planeLauncher.setPower(0.5f);
-                if(launchertime.time() > 1){
+                if(launchertime.time() > 1.5){
                     planeLoader.setPosition(0.25f);
                 }
             }else{
