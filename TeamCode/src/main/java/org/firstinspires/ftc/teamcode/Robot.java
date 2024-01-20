@@ -1769,8 +1769,6 @@ public class Robot {
             distanceToMove = 0 - lsFront.getCurrentPosition();
             linearSlidesMoveToZeroParallel();
 
-            distanceToMove = 0 - lsFront.getCurrentPosition();
-
             boolean hangingMode = false;
             int TRIGGER_PRESSED = 0; // TODO: test
             int frontFacing = 1;
@@ -1884,6 +1882,14 @@ public class Robot {
                 Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
 
                 trayAngle.setPosition(0.50);
+
+                if (gamepad2.left_stick_y < 0) {
+                    lsFront.setPower(0);
+                    lsBack.setPower(0);
+                    break;
+                }
+
+                distanceToMove = 0 - lsFront.getCurrentPosition();
 
                 if(distanceToMove > -80) {
                     lsFront.setPower(0);
