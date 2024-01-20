@@ -126,6 +126,10 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
         drive.closeClaw();
 
+        propPos = myPipeline.position;
+        telemetry.addData("Position", propPos);
+        telemetry.update();
+
         waitForStart();
 
         long startTime = new Date().getTime();
