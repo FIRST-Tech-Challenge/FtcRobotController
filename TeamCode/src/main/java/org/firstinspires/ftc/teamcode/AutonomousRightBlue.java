@@ -180,21 +180,22 @@ public class AutonomousRightBlue extends AutonomousBase {
             // THe final motion depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT
-                    driveToPosition( -10.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -15.0, 1.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -25.4, 11.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -23.0, 8.0, 143.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -10.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -12.5, 0.5, 67.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -15.0, 1.0, 135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -25.4, 11.0, 135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -23.0, 8.0, 143.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -10.0, -3.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -37.0, -6.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -10.0, -3.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -37.0, -6.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -9.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -16.0, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -30.0, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -21.0, -4.0, -160.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -9.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -16.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -30.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -21.0, -4.0, -160.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
             } // switch
         }
@@ -214,20 +215,22 @@ public class AutonomousRightBlue extends AutonomousBase {
             telemetry.update();
             switch( spikemark ) {
                 case 1 : // LEFT
-                    driveToPosition( -20.0, 6.0, 150.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -18.0, 3.0, 178.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -9.0,  10.0, -130.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -4.0, 20.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -20.0, 4.0, 150.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -19.0, 1.0, 150.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -18.0, 1.0, 178.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -13.0, 4.0, -150.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -9.0,  10.0, -130.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -4.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -20.0, -8.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -8.0, -1.0, -45.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -20.0, -8.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -8.0, -1.0, -45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -8.0, -1.0, -135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -8.0, -1.0, -135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
             } // switch
         }

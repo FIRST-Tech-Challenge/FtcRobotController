@@ -94,7 +94,8 @@ public class HardwarePixelbot
     protected DcMotorEx collectorMotor     = null;
 
     public double  COLLECTOR_MOTOR_POWER = 1.00;  // Speed of the collector motor when we run
-    public double  COLLECTOR_EJECT_POWER = 0.60;  // Speed of the collector motor for autonomous
+//  public double  COLLECTOR_EJECT_POWER = 0.60;  // Speed of the collector motor for autonomous
+    public double  COLLECTOR_EJECT_POWER = 1.00;  // Speed of the collector motor for autonomous
 
     // Viper slide motors (Y power cable to drive both motors from one port; single encoder cable on left motor
     protected DcMotorEx viperMotors = null;
@@ -118,13 +119,13 @@ public class HardwarePixelbot
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
 
-    public double COLLECTOR_SERVO_GROUND = 0.830;
+    public double COLLECTOR_SERVO_GROUND = 0.910;
     public double COLLECTOR_SERVO_STACK2 = 0.780;
     public double COLLECTOR_SERVO_STACK3 = 0.750;
     public double COLLECTOR_SERVO_STACK4 = 0.710;
     public double COLLECTOR_SERVO_STACK5 = 0.680;
-    public double COLLECTOR_SERVO_RAISED = 0.300;  // almost vertical
-    public double COLLECTOR_SERVO_STORED = 0.230;  // past this hits the collector motor
+    public double COLLECTOR_SERVO_RAISED = 0.440;  // almost vertical
+    public double COLLECTOR_SERVO_STORED = 0.330;  // past this hits the collector motor
 
     public double collectorServoSetPoint = COLLECTOR_SERVO_STORED;
 
@@ -314,7 +315,7 @@ public class HardwarePixelbot
         // "OdomRight" = overloaded onto thinnearMotor on Control Hub port 3
         // "OdomLeft"  = overloaded onto CollectorMotor on Expansion Hub port 2
 
-        strafeOdometer = hwMap.get(DcMotorEx.class,"OdomStrafe");  // Expansion Hub port 3
+        strafeOdometer = hwMap.get(DcMotorEx.class,"OdomStrafe");  // Expansion Hub port 3 (encoder only; no motor)
         strafeOdometer.setDirection(DcMotor.Direction.FORWARD);
         strafeOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         strafeOdometer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -1019,8 +1020,10 @@ public class HardwarePixelbot
     public enum PixelScoreAutoActivity {
         IDLE,
         EXTENDING,
+        STABILIZING,
         RELEASING,
-        RETRACTING
+        RETRACTING,
+        RETRACTED
     }
     public PixelScoreAutoActivity pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
     private ElapsedTime pixelScoreAutoTimer = new ElapsedTime();
@@ -1043,20 +1046,23 @@ public class HardwarePixelbot
             case EXTENDING:
                 // We have extended to the desired position
                 if(getPushServoAngle() <= PUSH_SERVO_DROP_ANGLE) {
-                    // Rotate both fingers to release the pixels
-                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
-                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
                     pixelScoreAutoTimer.reset();
-                    pixelScoreAutoState = PixelScoreAutoActivity.RELEASING;
+                    pixelScoreAutoState = PixelScoreAutoActivity.STABILIZING;
                 }
                 // This is a timeout, can't think of any other error than angle is wrong? I think for
                 // now we proceed as if we extended.
                 else if(pixelScoreAutoTimer.milliseconds() > 1000.0) {
                     telemetry.addData("processPixelScoreAuto", "Timed out extending");
                     telemetry.addData("processPixelScoreAuto", "Push: %.2f", getPushServoAngle());
-                    // Rotate both fingers to release the pixels
                     telemetry.update();
                     telemetrySleep();
+                    pixelScoreAutoTimer.reset();
+                    pixelScoreAutoState = PixelScoreAutoActivity.STABILIZING;
+                }
+                break;
+            case STABILIZING: // don't fling the pixels against the backdrop
+                if(pixelScoreAutoTimer.milliseconds() >= 500) {
+                    // Rotate both fingers to release the pixels
                     fingerServo1.setPosition(FINGER1_SERVO_DROP);
                     fingerServo2.setPosition(FINGER2_SERVO_DROP);
                     pixelScoreAutoTimer.reset();
@@ -1066,7 +1072,7 @@ public class HardwarePixelbot
             case RELEASING:
                 // We have extended to the desired position 176 182
                 if((getFingerServo1Angle() >= FINGER1_SERVO_DROP_ANGLE) &&
-                        (getFingerServo2Angle() >= FINGER2_SERVO_DROP_ANGLE)) {
+                   (getFingerServo2Angle() >= FINGER2_SERVO_DROP_ANGLE)) {
                     // Pull back to the safe/stored position
                     pushServo.setPosition(PUSH_SERVO_SAFE);
                     pixelScoreAutoTimer.reset();
@@ -1091,7 +1097,7 @@ public class HardwarePixelbot
                 if(getPushServoAngle() >= PUSH_SERVO_PIXEL_CLEAR_ANGLE) {
                     wristServo.setPosition(WRIST_SERVO_GRAB);
                     pixelScoreAutoTimer.reset();
-                    pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
+                    pixelScoreAutoState = PixelScoreAutoActivity.RETRACTED;
                 }
                 // This is a timeout, can't think of any other error than angle is wrong? I think for
                 // now we proceed as if we extended.
@@ -1101,9 +1107,24 @@ public class HardwarePixelbot
                     // Pull back to the safe/stored position
                     telemetry.update();
                     telemetrySleep();
-                    wristServo.setPosition(WRIST_SERVO_GRAB);
+                    wristServo.setPosition(WRIST_SERVO_GRAB);  // never rotated, but just to be safe!
                     pixelScoreAutoTimer.reset();
-                    pixelScoreAutoState = PixelScoreAutoActivity.IDLE;
+                    pixelScoreAutoState = PixelScoreAutoActivity.RETRACTED;
+                }
+                break;
+            case RETRACTED:
+                // We are storing the scorer to safe position for operating the lift 185 184.5
+                if((getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE)) {
+                    pixelScoreAutoState = pixelScoreAutoState.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we extended.
+                else if(pixelScoreAutoTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processPixelScoreAuto", "Timed out retracted");
+                    telemetry.addData("processPixelScoreAuto", "Push: %.2f", getPushServoAngle());
+                    telemetry.update();
+                    telemetrySleep();
+                    pixelScoreAutoState = pixelScoreAutoState.IDLE;
                 }
                 break;
             case IDLE:
@@ -1112,10 +1133,11 @@ public class HardwarePixelbot
         }
     }
     private void telemetrySleep() {
-        try {
+/*        try {
             sleep(5000);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
+ */
     }
 } /* HardwarePixelbot */

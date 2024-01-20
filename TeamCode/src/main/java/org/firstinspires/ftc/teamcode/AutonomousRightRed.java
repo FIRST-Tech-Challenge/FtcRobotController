@@ -172,29 +172,42 @@ public class AutonomousRightRed extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous( int spikemark ) {
+        double pos_y=0, pos_x=0;
 
-     // Drive forward to spike mark
+        // Drive forward to spike mark
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to Spike Mark");
             telemetry.update();
-            // THe final motion depends on whether it's left/center/right spike (1/2/3)
+            // This movement depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT
-                    driveToPosition( -10.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -15.0, 1.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -25.4, 11.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -23.0, 8.0, 143.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -11.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -16.0, -5.0,41.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -30.5, 6.5, 59.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -25.8, 3.7, 79.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.6, 3.9, 85.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.7, 6.0, 122.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -10.0, -3.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -37.0, -6.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -10.0,  0.0,  0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -20.0, -7.6, 43.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.0, -8.2, 86.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -28.0, -3.5, 94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -37.0, -2.8, 94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -37.0, -5.0, 94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -9.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -16.0, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -30.0, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -21.0, -4.0, -160.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition(  -7.0,  0.0,   0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -10.4, -5.5,  21.5, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -14.5, -12.5, 40.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -18.0, -15.3, 51.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -20.7, -14.0, 56.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -20.7, -14.0, 56.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -25.5, -10.2, 47.3, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -29.4, -6.9, 37.8, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -34.0, -5.0, 11.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -40.9, -8.4, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
             } // switch
         }
@@ -204,31 +217,88 @@ public class AutonomousRightRed extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(2500 );  // 2.5 sec
+            sleep(2000 );  // 2 sec
             robot.collectorMotor.setPower(0.0);
         }
 
-        // Park in back stage  (for now we just head that way... we don't fully park)
+        // Drive toward backdrop in preparation to score the yellow pixel
         if( opModeIsActive() ) {
-            telemetry.addData("Motion", "park in back stage");
+            telemetry.addData("Motion", "move to backdrop");
             telemetry.update();
             switch( spikemark ) {
                 case 1 : // LEFT
-                    driveToPosition( -20.0, 6.0, 150.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU );
-                    driveToPosition( -15.0, -26.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -24.2,   7.3, 140.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -22.4,   4.9, 136.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.7,   7.7, 101.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -32.0, -34.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -32.0;
+                    pos_x = -34.0;
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -20.0, -8.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -15.0, -26.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -35.2, -10.8, 94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.0, -25.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.0, -34.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -26.0;
+                    pos_x = -34.0;
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -18.0, -1.0, -135.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_THRU);
-                    driveToPosition( -15.0, -26.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO);
+                    driveToPosition( -45.2, -8.4, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -45.2, -12.9, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -39.0, -18.0, 45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -33.3, -21.8, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -20.0, -34.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -20.0;
+                    pos_x = -35.0;
                     break;
             } // switch
         }
 
+        // Score the yellow pixel
+        if( opModeIsActive() ) {
+            double desiredDistanceCM;
+            double currentDistanceCM;
+            double driveOffsetInches;
+            telemetry.addData("Motion", "move to backdrop");
+            telemetry.update();
+            switch( spikemark ) {
+                case 1 : desiredDistanceCM = 13.0; break; // LEFT
+                case 2:  desiredDistanceCM = 14.0; break; // CENTER
+                case 3:
+                default: desiredDistanceCM = 15.0; break; // RIGHT
+            } // switch
+            currentDistanceCM = robot.getBackdropRange();
+            driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
+            //telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
+            //telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);
+            //telemetry.update();
+            //sleep(3000);
+            if( Math.abs(driveOffsetInches) < 7.0 ) {
+                pos_x += driveOffsetInches;
+                driveToPosition( pos_y, pos_x, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            }
+            scoreYellowPixel();
+        }
+
+        // Drive to where we can park in the backstage
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "park in back stage");
+            telemetry.update();
+            //Back away from the backdrop 2 inches.
+            pos_x += 2;
+            driveToPosition( pos_y, pos_x, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            //Strafe left to park
+            driveToPosition( -50.0, pos_x, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
+            pos_x -= 6;
+            driveToPosition( -50.0, pos_x, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+        }
     } // mainAutonomous
+
+    /*  HOW TO PARK IN CORNER
+    driveToPosition( -15.0, -26.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+    driveToPosition( -16.6, -24.1, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+    driveToPosition(  -5.1, -32.1, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+    driveToPosition(  -4.0, -37.8, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+    */
 
 } /* AutonomousRightRed */

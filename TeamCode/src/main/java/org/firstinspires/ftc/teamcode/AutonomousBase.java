@@ -217,8 +217,9 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     void scoreYellowPixel() {
         autoGrabPixelsInBin();
-        autoRaiseViperSlide(robot.VIPER_EXTEND_LOW);
+        autoRaiseViperSlide(robot.VIPER_EXTEND_AUTO);
         autoReleaseBothPixels();
+        autoRaiseViperSlide(robot.VIPER_EXTEND_ZERO);
     }
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters

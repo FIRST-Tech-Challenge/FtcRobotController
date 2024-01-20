@@ -172,28 +172,42 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous( int spikemark ) {
-        double drive_power = 0.6;
-        double strafe_power = 0.6;
+        double pos_y=0, pos_x=0;
 
-     // Drive forward to spike mark
+        // Drive forward to spike mark
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to Spike Mark");
             telemetry.update();
-            // THe final motion depends on whether it's left/center/right spike (1/2/3)
+            // This movement depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
-                case 1 : // LEFT
-                    driveToPosition( -14.0, 0.0, 60.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -28.0, 5.0, 135.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
+                case 3 : // RIGHT
+                    driveToPosition( -11.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -16.0, 5.0,-41.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -30.5, -6.5, -59.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -25.8, -3.7, -79.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.6, -3.9, -85.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.7, -6.0, -122.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -30.0, -10.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU);
-                    driveToPosition( -37.0, -10.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
+                    driveToPosition( -10.0,  0.0,  0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -20.0, 7.6, -43.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -24.0, 8.2, -86.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -28.0, 3.5, -94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -37.0, 2.8, -94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -37.0, 5.0, -94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
                     break;
-                case 3:  // RIGHT
+                case 1:  // LEFT
                 default:
-                    driveToPosition( -20.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_THRU );
-                    driveToPosition( -12.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40, DRIVE_TO);
+                    driveToPosition(  -7.0,  0.0,   0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -10.4, 5.5,  -21.5, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -14.5, 12.5, -40.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -18.0, 15.3, -51.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -20.7, 14.0, -56.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -20.7, 14.0, -56.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -25.5, 10.2, -47.3, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -29.4, 6.9, -37.8, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -34.0, 5.0, -11.6, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -40.9, 8.4, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
             } // switch
         }
@@ -203,287 +217,80 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(1600 );  // 1.6 sec
+            sleep(2000 );  // 2 sec
             robot.collectorMotor.setPower(0.0);
         }
 
-        // Park in back stage
+        // Drive toward backdrop in preparation to score the yellow pixel
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "move to backdrop");
+            telemetry.update();
+            switch( spikemark ) {
+                case 3 : // RIGHT
+                    driveToPosition( -24.2,   -7.3, -140.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -22.4,   -4.9, -136.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.7,   -7.7, -101.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -32.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -32.0;
+                    pos_x = 34.0;
+                    break;
+                case 2:  // CENTER
+                    driveToPosition( -35.2, 10.8, -94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.0, 25.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -26.0;
+                    pos_x = 34.0;
+                    break;
+                case 1:  // LEFT
+                default:
+                    driveToPosition( -45.2, 8.4, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -45.2, 12.9, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -39.0, 18.0, -45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -33.3, 21.8, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -20.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -20.0;
+                    pos_x = 35.0;
+                    break;
+            } // switch
+        }
+
+        // Score the yellow pixel
+        if( opModeIsActive() ) {
+            double desiredDistanceCM;
+            double currentDistanceCM;
+            double driveOffsetInches;
+            telemetry.addData("Motion", "move to backdrop");
+            telemetry.update();
+            switch( spikemark ) {
+                case 3 : desiredDistanceCM = 13.0; break; // RIGHT
+                case 2:  desiredDistanceCM = 14.0; break; // CENTER
+                case 1:
+                default: desiredDistanceCM = 15.0; break; // LEFT
+            } // switch
+            currentDistanceCM = robot.getBackdropRange();
+            driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
+            //telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
+            //telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);
+            //telemetry.update();
+            //sleep(3000);
+            if( Math.abs(driveOffsetInches) < 7.0 ) {
+                pos_x -= driveOffsetInches;
+                driveToPosition( pos_y, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            }
+            scoreYellowPixel();
+        }
+
+        // Drive to where we can park in the backstage
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "park in back stage");
             telemetry.update();
-            // FOR NOW, CAN'T PARK FROM RIGHT SIDE
+            //Back away from the backdrop 2 inches.
+            pos_x -= 2;
+            driveToPosition( pos_y, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
+            //Strafe left to park
+            driveToPosition( -50.0, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
+            pos_x += 6;
+            driveToPosition( -50.0, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
         }
-
     } // mainAutonomous
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void moveToJunction( boolean highJunction ) {
-/*
-        // Tilt grabber down from autonomous starting position (vertical) so we're clear
-        // to raise the lift and not hit the front lift motor, but keep it mostly verticle
-        // for a safe driving configuration (in case we run into something)
-        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-
-        // Initial movement is just to steer clear of the ground junction in front of the robot
-        autoYpos=6.0;  autoXpos=4.0;  autoAngle=0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
-
-        // The 2nd movement is to rotate drive train 90deg so we don't entrap the beacon cone
-        // Note that while the drive train rotates 90deg one direction, the turret/lift counter-rotates
-        // the OPPOSITE direction -- meaning it mostly stays pointing straight forward for this part!
-        if( highJunction ) {
-            robot.liftPIDPosInit(robot.LIFT_ANGLE_HIGH_A);
-            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_R);
-        } else {
-            robot.liftPIDPosInit(robot.LIFT_ANGLE_MED_A);
-            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_M_L);
-        }
-        autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_80, TURN_SPEED_80, DRIVE_THRU );
-
-        // Drive most of the way there very fast, and centered in the row of tiles
-        autoYpos=37.0;  autoXpos=4.5;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_THRU );
-
-        // We're close, so tilt grabber down to final scoring position
-        if( highJunction ) {
-            robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H_A);
-        } else {
-            robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_M_A);
-        }
-
-        // Drive the final distance to the high junction pole at a slower/controlled speed
-        if( highJunction ) {
-            autoYpos=50.4;  autoXpos=8.5;
-        } else {
-            autoYpos=50.0;  autoXpos=2.7;
-        }
-
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_TO );
-
-        // Both mechanisms should be finished, but pause here if they haven't (until they do)
-        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
-            performEveryLoop();
-        }
-*/
-    } // moveToJunction
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void scoreCone() {
-/*
-        // Start ejecting the cone
-        intakeTimer.reset();
-        robot.grabberSpinEject();
-        // Wait for sensor to indicate it's clear (or we timeout)
-        while( opModeIsActive() ) {
-            performEveryLoop();
-            // Ensure we eject for at least 300 msec before using sensor (in case sensor fails)
-            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 300);
-            // Also have a max timeout in case sensor fails
-            boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
-            // Is cycle complete?
-            if( bottomSensorClear || maxEjectTimeReached) break;
-        }
-        // Stop the ejector
-        robot.grabberSpinStop();
-        robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
-
-        // Increment the cone we are on
-        pixelNumber++;
-  */
-    } // scoreCone
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void moveToConeStack() {
-/*
-        // Establish targets for turret angle (centered)
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-
-        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
-        autoYpos=50.0;  autoXpos=-7.0;  autoAngle=-90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-
-        // No longer hovering over pole so it's safe to lower to ultrasonic height (don't hook the pole!)
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
-
-        // Drive closer to the 5-stack against the wall
-        autoYpos=49.5;  autoXpos=-13.3;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
-            performEveryLoop();
-        }
-
- */
-    } // moveToConeStack
-
-    /*--------------------------------------------------------------------------------------------*/
-    // Assumes we've already completed the alignment on the 5-stack (rotateToCenterBlueCone or
-    // rotateToCenterRedCone and distanceFromFront so we're ready to actually collect the cone
-    private void collectCone() {
-/*
-        double liftAngle5stack;
-        double collectTimeout = 950.0 - (100.0 * fiveStackHeight); // cone5=450msec; cone1=850msec
-
-        // Lower the collector to the nearly-horizontal collecting position
-        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
-
-        // Determine the correct lift-angle height based on how many cones remain
-        liftAngle5stack = robot.coneStackHeights[fiveStackHeight -1];
-
-        // Lower the lift to the desired height (and ensure we're centered)
-        robot.liftPIDPosInit( liftAngle5stack );
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
-            performEveryLoop();
-        }
-
-        // Start the collector spinning
-        robot.grabberSpinCollect();
-        intakeTimer.reset();
-        if( fiveStackHeight <= 2) {
-            robot.grabberSetTilt(robot.GRABBER_TILT_GRAB);
-        }
-        // start to slowly lower onto cone
-        robot.liftMotorsSetPower( -0.25 );
-        while(robot.topConeState && intakeTimer.milliseconds() <= collectTimeout) {
-            performEveryLoop();
-            // Limit DOWNWARD lift movement even if collector is still lifting cone up to sensor
-            if( robot.liftAngle >= robot.LIFT_ANGLE_MAX ) {
-              robot.liftMotorsSetPower( 0.0 );
-              }
-        }
-        // stop the collector, and halt lift motors (if not already)
-        robot.liftMotorsSetPower( 0.0 );
-        robot.grabberSpinStop();
-
-        // Raise the collector so we don't clip the wall with the cone on the way up
-        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
-
-        // Now reverse the lift to raise off the cone stack
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
-        while( opModeIsActive() && (robot.liftMotorPIDAuto == true) ) {
-            performEveryLoop();
-        }
-        // halt lift motors
-        robot.liftMotorsSetPower( 0.0 );
-
-        // Reduce the remaining cone-count
-        fiveStackHeight--;
-
- */
-    } // collectCone
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void moveToJunctionFromStack( boolean highJunction, boolean keepCone) {
-/*
-        // Perform setup to center turret and raise lift to scoring position
-        if( !keepCone ) {
-            if (highJunction) {
-                autoYpos = 48.4;
-                autoXpos = 8.5;
-                autoAngle = -90.0;    // (inches, inches, degrees)
-                robot.turretPIDPosInit(robot.TURRET_ANGLE_5STACK_L);
-                robot.liftPIDPosInit(robot.LIFT_ANGLE_HIGH_A);
-                robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H_A);
-            } else {
-                autoYpos = 50.0;
-                autoXpos = 2.7;
-                robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_M_L);
-                robot.liftPIDPosInit(robot.LIFT_ANGLE_MED_A);
-                robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_M_A);
-            }
-        }
-
-        // Drive back to tall junction (adjusting lift along the way)
-        // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (-56.5, not -34.5)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-
-        // Re-center turret again (if it shifted while driving)
-        while( opModeIsActive() && (robot.turretMotorPIDAuto == true) ) {
-            performEveryLoop();
-        }
-
-//========== TEST MODE ========
-//      while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-//          performEveryLoop();
-//      }
-//      sleep( 30000 );
-//========== TEST MODE ========
-*/
-    } // moveToTallJunctionFromStack
-
-    /*--------------------------------------------------------------------------------------------*/
-    /* +---+---H---+     H = Tall/High junction pole on RIGHT                                     */
-    /* | 1 | 2 | 3 |                                                                              */
-    /* +---+---+---+                                                                              */
-    /* | 1 | 2 | 3 |                                                                              */
-    /* +---+---+---+                                                                              */
-    /* |   | S |   |     S = Starting floor tile                                                  */
-    /* +---+---+---/                                                                              */
-    private void signalZoneParking( int signalZoneLocation, boolean parkWithCone ) {
-/*
-        // TODO: This code assumes autoYpos, autoXpos, autoAngle carry over from
-        // scoring on the tall poll.  If that changes (ie, we go for a different pole,
-        // or don't complete that operation, then autoYpos and autoXpos will need to
-        // be redefined here to the correct values.
-
-        // Tilt the collector up away from the pole we just scored on
-        robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-
-        // Initialize so that turret rotates back to center as we turn
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-
-        // Determine the angle to turn the drivetrain
-        switch( signalZoneLocation ) {
-            case 2  : autoAngle=-179.9; break; // Turn fully to -180deg (GREEN)
-            default : autoAngle=-90.0;  break; // Remain at -90deg (RED/BLUE)
-        }
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-
-        // Initialize so that lift lowers to driving position (or low-scoring positipn)
-        robot.liftPIDPosInit( (parkWithCone)? robot.LIFT_ANGLE_LOW : robot.LIFT_ANGLE_COLLECT );
-
-        if( signalZoneLocation == 1 ) {  // RED
-            // Drive one tile closer to field wall
-            autoYpos=51.5;  autoXpos=-8.0;  autoAngle=-90.0;    // (inches, inches, degrees)
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_70, TURN_SPEED_60, DRIVE_THRU );
-            // Turn back toward substation
-            autoXpos=-9.0;  autoAngle = -179.9;
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-            // Back away from center line, but stay within Signal Zone 1
-            autoYpos=38.5;  autoXpos=-17.0;
-            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        } // signalZoneLocation 1
-        else if( signalZoneLocation == 3 ) {  // BLUE
-            // Drive forward one tile pointing 90deg
-            autoYpos=51.5;  autoXpos=21.5;  autoAngle=-90.0;    // (inches, inches, degrees)
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_70, TURN_SPEED_60, DRIVE_THRU );
-            // Turn back toward substation
-            autoAngle = -179.9;
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-            // Drive closer to the substation to center in Signal Zone 3
-            autoYpos=38.5;  autoXpos=28.0;
-            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        } // signalZoneLocation 3
-        else { // signalZoneLocation 2  // GREEN
-            // Drive back one tile closer to the substation in Signal Zone 2
-            autoYpos=38.5;  autoXpos=4.0;
-            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        } // signalZoneLocation 2
-
-        // Ensure we complete all lift movement before ending autonomous
-        while( opModeIsActive() && (robot.liftMotorPIDAuto == true) ) {
-            performEveryLoop();
-        }
-
-        // Raise collector straight up (prevents "droop" when power is removed)
-        robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
-*/
-    } // signalZoneParking
-
 } /* AutonomousLeftBlue */
