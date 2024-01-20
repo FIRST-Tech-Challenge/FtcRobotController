@@ -182,106 +182,107 @@ public class tele extends OpMode {
         } else {
             robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.setPower(-gamepad2.right_stick_y);
+        }
 
-            /** Stripper State **/
+        /** Stripper State **/
 
 
-            switch (deploymentState) {
-                case 0:
-                    deploymentState++;
-                    break;
-                case 1:
-                    robot.stripper.setPosition(robot.stripperOpen);
-                    if (getRuntime() > oldTime + .2) {
-                        if (gamepad2.left_trigger > .5) {
-                            deploymentState++;
-                            oldTime = getRuntime();
-                        } else if (gamepad2.left_bumper) {
-                            deploymentState = 1;
-                            oldTime = getRuntime();
-                        }
-                    }
-                    break;
-                case 2:
-                    robot.stripper.setPosition(robot.stripperFirstRelease);
-                    if (getRuntime() > oldTime + .2) {
-                        if (gamepad2.left_trigger > .5) {
-                            deploymentState++;
-                            oldTime = getRuntime();
-                        } else if (gamepad2.left_bumper) {
-                            deploymentState = 1;
-                            oldTime = getRuntime();
-                        }
-                    }
-                    break;
-                case 3:
-                    robot.stripper.setPosition(robot.stripperSecondRelease);
-                    if (getRuntime() > oldTime + .75) {
+        switch (deploymentState) {
+            case 0:
+                deploymentState++;
+                break;
+            case 1:
+                robot.stripper.setPosition(robot.stripperOpen);
+                if (getRuntime() > oldTime + .2) {
+                    if (gamepad2.left_trigger > .5) {
+                        deploymentState++;
+                        oldTime = getRuntime();
+                    } else if (gamepad2.left_bumper) {
                         deploymentState = 1;
+                        oldTime = getRuntime();
                     }
-                    break;
-            }
-
-
-            if (robot.lift.getCurrentPosition() < 650) {
-                deploymentState = 1;
-            }
-
-
-            /** Winch **/
-
-            if (gamepad2.dpad_down) {
-                robot.hook.setPosition(robot.hookDown);
-            }
-
-            if (gamepad2.dpad_left) {
-                robot.hook.setPosition(robot.winchAngleIntakeSide);
-            }
-
-            if (gamepad2.dpad_right) {
-                robot.hook.setPosition(robot.winchAngleDeliverySide);
-            }
-
-            if (robot.winchDownSwitch.getVoltage() < .5) {
-                if (-gamepad2.left_stick_y < 0) {
-                    robot.winch.setPower(0);
-                    robot.winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                } else {
-                    robot.winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    robot.winch.setPower(-gamepad2.left_stick_y);
                 }
+                break;
+            case 2:
+                robot.stripper.setPosition(robot.stripperFirstRelease);
+                if (getRuntime() > oldTime + .2) {
+                    if (gamepad2.left_trigger > .5) {
+                        deploymentState++;
+                        oldTime = getRuntime();
+                    } else if (gamepad2.left_bumper) {
+                        deploymentState = 1;
+                        oldTime = getRuntime();
+                    }
+                }
+                break;
+            case 3:
+                robot.stripper.setPosition(robot.stripperSecondRelease);
+                if (getRuntime() > oldTime + .75) {
+                    deploymentState = 1;
+                }
+                break;
+        }
+
+
+        if (robot.lift.getCurrentPosition() < 650) {
+            deploymentState = 1;
+        }
+
+
+        /** Winch **/
+
+        if (gamepad2.dpad_down) {
+            robot.hook.setPosition(robot.hookDown);
+        }
+
+        if (gamepad2.dpad_left) {
+            robot.hook.setPosition(robot.winchAngleIntakeSide);
+        }
+
+        if (gamepad2.dpad_right) {
+            robot.hook.setPosition(robot.winchAngleDeliverySide);
+        }
+
+        if (robot.winchDownSwitch.getVoltage() < .5) {
+            if (-gamepad2.left_stick_y < 0) {
+                robot.winch.setPower(0);
+                robot.winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             } else {
                 robot.winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.winch.setPower(-gamepad2.left_stick_y);
             }
+        } else {
+            robot.winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.winch.setPower(-gamepad2.left_stick_y);
+        }
 
-            /** Drone Launcher **/
-            if (gamepad2.y && angleTime < (getRuntime() + 1)) {
-                angleTime = getRuntime();
+        /** Drone Launcher **/
+        if (gamepad2.y && (angleTime < (getRuntime() + 2))) {
+            angleTime = getRuntime();
+            launcherAngle++;
+        }
+
+        switch (launcherAngle) {
+            case 0:
                 launcherAngle++;
-            }
+                break;
+            case 1:
+                robot.droneAngle.setPosition(robot.droneAngleDown);
+                break;
+            case 2:
+                robot.droneAngle.setPosition(robot.droneAngleUp);
+                break;
+            case 3:
+                launcherAngle = 1;
+        }
 
-            switch (launcherAngle) {
-                case 0:
-                    launcherAngle++;
-                    break;
-                case 1:
-                    robot.droneAngle.setPosition(robot.droneAngleDown);
-                    break;
-                case 2:
-                    robot.droneAngle.setPosition(robot.droneAngleUp);
-                    break;
-                case 3:
-                    launcherAngle = 1;
-            }
+        if (gamepad2.x && gamepad2.b) {
+            robot.launcherRelease.setPosition(robot.launchOpen);
+        } else {
+            robot.launcherRelease.setPosition(robot.launchClosed);
+        }
 
-            if (gamepad2.x && gamepad2.b) {
-                robot.launcherRelease.setPosition(robot.launchOpen);
-            } else {
-                robot.launcherRelease.setPosition(robot.launchClosed);
-            }
-
-            /** Intake/Transfer **/
+        /** Intake/Transfer **/
 
 //        switch (escapmentFingerPosition) {
 //            case 0:
@@ -331,50 +332,47 @@ public class tele extends OpMode {
 //            }
 
 
-            if (gamepad2.right_trigger > .5 && (!robot.firstPixelDetector.isPressed() || !robot.secondPixelDetector.isPressed())) {
-                robot.transfer.setPower(.7);
-                robot.intake.setPower(gamepad2.right_trigger);
-            } else if (gamepad2.right_bumper) {
-                robot.transfer.setPower(-1);
-                robot.intake.setPower(-1);
-            } else {
-                robot.transfer.setPower(0);
-                robot.intake.setPower(0);
-            }
-
-            if (gamepad1.x) {
-                gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);
-                gamepad2.setLedColor(255, 0, 255, pixlePickerColorTime);
-            }
-
-            if (gamepad1.y) {
-                gamepad1.setLedColor(0, 255, 0, pixlePickerColorTime);
-                gamepad2.setLedColor(0, 255, 0, pixlePickerColorTime);
-            }
-
-            if (gamepad1.b) {
-                gamepad1.setLedColor(249, 100, 0, pixlePickerColorTime);
-                gamepad2.setLedColor(249, 100, 0, pixlePickerColorTime);
-            }
-
-            if (gamepad1.a) {
-                gamepad1.setLedColor(255, 255, 255, pixlePickerColorTime);
-                gamepad2.setLedColor(255, 255, 255, pixlePickerColorTime);
-            }
-
-            if (gamepad2.right_bumper && gamepad1.left_bumper) {
-                gamepad1.runLedEffect(gamepadLaunchSequenceLed);
-                gamepad2.runLedEffect(gamepadLaunchSequenceLed);
-                gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
-                gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
-            }
-
-            telemetry.addData("First Pixel", robot.firstPixelDetector.isPressed());
-            telemetry.addData("Second Pixel", robot.secondPixelDetector.isPressed());
-            telemetry.addData("ldist", robot.leftDistance.getProductID());
-            telemetry.update();
-
+        if (gamepad2.right_trigger > .5) {
+            robot.transfer.setPower(.7);
+            robot.intake.setPower(gamepad2.right_trigger);
+        } else if (gamepad2.right_bumper) {
+            robot.transfer.setPower(-1);
+            robot.intake.setPower(-1);
+        } else {
+            robot.transfer.setPower(0);
+            robot.intake.setPower(0);
         }
 
+        if (gamepad1.x) {
+            gamepad1.setLedColor(255, 0, 255, pixlePickerColorTime);
+            gamepad2.setLedColor(255, 0, 255, pixlePickerColorTime);
+        }
+
+        if (gamepad1.y) {
+            gamepad1.setLedColor(0, 255, 0, pixlePickerColorTime);
+            gamepad2.setLedColor(0, 255, 0, pixlePickerColorTime);
+        }
+
+        if (gamepad1.b) {
+            gamepad1.setLedColor(249, 100, 0, pixlePickerColorTime);
+            gamepad2.setLedColor(249, 100, 0, pixlePickerColorTime);
+        }
+
+        if (gamepad1.a) {
+            gamepad1.setLedColor(255, 255, 255, pixlePickerColorTime);
+            gamepad2.setLedColor(255, 255, 255, pixlePickerColorTime);
+        }
+
+        if (gamepad2.right_bumper && gamepad1.left_bumper) {
+            gamepad1.runLedEffect(gamepadLaunchSequenceLed);
+            gamepad2.runLedEffect(gamepadLaunchSequenceLed);
+            gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
+            gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
+        }
+
+        telemetry.addData("Right Distance", robot.rightDistance.getDistance(DistanceUnit.CM));
+        telemetry.addData("Left Distance", robot.leftDistance.getDistance(DistanceUnit.CM));
+        telemetry.update();
     }
+
 }

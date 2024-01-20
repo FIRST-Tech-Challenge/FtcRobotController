@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,8 +30,8 @@ public class Hardware {
     public Servo launcherRelease = null;
     public Servo droneAngle = null;
 
-    public VCNL4000 rightDistance = null;
-    public VCNL4000 leftDistance = null;
+    public Rev2mDistanceSensor rightDistance = null;
+    public Rev2mDistanceSensor leftDistance = null;
     public TouchSensor firstPixelDetector = null;
     public TouchSensor secondPixelDetector = null;
 
@@ -53,8 +54,8 @@ public class Hardware {
     public double launchOpen = 0;
     public double winchAngleIntakeSide = 0.81;
     public double winchAngleDeliverySide = 0.65;
-    public double droneAngleDown = 0;
-    public double droneAngleUp = 1;
+    public double droneAngleDown = 1;
+    public double droneAngleUp = 0;
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -83,7 +84,8 @@ public class Hardware {
         liftDownSwitch = hwMap.get(AnalogInput.class, "liftSwitch");
         winchDownSwitch = hwMap.get(AnalogInput.class, "winchSwitch");
 
-        leftDistance = hwMap.get(VCNL4000.class, "ldist");
+        leftDistance = hwMap.get(Rev2mDistanceSensor.class, "ldist");
+        rightDistance = hwMap.get(Rev2mDistanceSensor.class, "rdist");
 
         webcam = hwMap.get(WebcamName.class, "Webcam 1");
 
