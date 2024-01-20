@@ -126,8 +126,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
                 }
                 else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
-                        // left
-                        telemetry.addData("position","Left");
+                        // right
+                        telemetry.addData("position","Right");
                         gobbler.driveTrain.leftPos();
                         desiredTag = 1;
                         seen = true;
@@ -149,11 +149,11 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             if (desiredTag == 2) { // Center position
                 servo_Display.setPosition(CENTER_POS);
             }
-            else if (desiredTag == 1) { // Left position
-                servo_Display.setPosition(LEFT_POS);
-            }
-            else { // Right position
+            else if (desiredTag == 1) { // Right position
                 servo_Display.setPosition(RIGHT_POS);
+            }
+            else { // Left position
+                servo_Display.setPosition(LEFT_POS);
             }
 
                 telemetryTfod();
