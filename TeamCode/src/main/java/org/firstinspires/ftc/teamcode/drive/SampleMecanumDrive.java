@@ -21,6 +21,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -76,7 +77,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx liftMotor1;
     public DcMotorEx liftMotor2;
     public Servo liftServo1;
+    public Servo liftServo2;
     public Servo doorServo;
+    public Servo pixelServo;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -121,13 +124,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftServo1 = hardwareMap.servo.get("lift1");
+//        liftServo2 = hardwareMap.servo.get("lift2");
         doorServo = hardwareMap.servo.get("door");
+        pixelServo = hardwareMap.servo.get("pixel");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor1.setDirection(DcMotor.Direction.REVERSE);
+        liftMotor1.setDirection(DcMotor.Direction.FORWARD);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);

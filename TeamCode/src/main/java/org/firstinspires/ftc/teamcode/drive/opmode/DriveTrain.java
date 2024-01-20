@@ -89,7 +89,7 @@ public class DriveTrain extends OpMode
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         liftServo1 = hardwareMap.servo.get("lift1");
         door = hardwareMap.servo.get("door");
-        pixelHolder = hardwareMap.servo.get("pixel-holder");
+        pixelHolder = hardwareMap.servo.get("pixel");
 
 //        clawServo = hardwareMap.servo.get("claw");
 
@@ -162,7 +162,10 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(0.6);
+            intakeMotor.setPower(0.4);
+        }
+        else if (gamepad1.x) {
+            intakeMotor.setPower(-0.4);
         }
 //        else if (gamepad1.left_bumper) {
 //            intakeMotor.setPower(-0.6);
@@ -190,9 +193,6 @@ public class DriveTrain extends OpMode
                 liftMotor2.setPower(0);
             }
         }
-//            liftMotor1.setTargetPosition(0);
-//            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor1.setPower(-1);
         if (gamepad1.y) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
@@ -201,23 +201,6 @@ public class DriveTrain extends OpMode
             liftMotor1.setPower(0);
             liftMotor2.setPower(0);
         }
-        // gamepad 1 controls
-        double power = 0;
-//        if(gamepad1.a) {
-//            //power = pid.PIDControl(1000, liftMotor.getCurrentPosition());
-//            liftMotor1.setPower(power);
-//            liftMotor2.setPower(power);
-//        }
-//        if(gamepad1.x) {
-//            //power = pid.PIDControl(2000, liftMotor.getCurrentPosition());
-//            liftMotor1.setPower(power);
-//            liftMotor2.setPower(power);
-//        }
-//        if(gamepad1.y) {
-//            //power = pid.PIDControl(3000, liftMotor.getCurrentPosition());
-//            liftMotor1.setPower(power);
-//            liftMotor2.setPower(power);
-//        }
 
         // gamepad 2 controls
         if (gamepad2.right_stick_y > 0.8) {
@@ -245,7 +228,7 @@ public class DriveTrain extends OpMode
         } else if (gamepad2.right_stick_y < -0.8) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
-        } else {
+        } else { // counteract gravity
             liftMotor1.setPower(Kg*1.5);
             liftMotor2.setPower(Kg*1.5);
         }

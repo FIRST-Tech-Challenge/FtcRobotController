@@ -26,10 +26,6 @@ import java.util.List;
 public class AUTOBOTSROLLOUT extends LinearOpMode{
 
     //movement
-    private static final double COUNTS_PER_MOTOR_REV = 537.7; //Ticks per rotation for the GoBilda 5202 PLanetary Motor
-    private static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
-    private static final double WHEEL_DIAMETER_INCHES = 3.54331;     // For figuring circumference
-    private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     static final double FEET_PER_METER = 3.28084;
@@ -64,24 +60,21 @@ public class AUTOBOTSROLLOUT extends LinearOpMode{
         waitForStart();
         int targetPosition = 1000;
         while (opModeIsActive()) {
-//            double command = control.update(targetPosition,
-//                    motor.getCurrentPosition());
             TrajectorySequence AUTOBOTSROLLOUT = drive.trajectorySequenceBuilder(startingPose)
-                    .splineTo(new Vector2d(40, -34), Math.toRadians(0))
-                    .UNSTABLE_addTemporalMarkerOffset(3, () -> {
-                        telemetry.addData("Ran", "none");
-                        drive.liftMotor1.setTargetPosition(1000);
-                        drive.liftMotor2.setTargetPosition(1000);
-                        drive.liftServo1.setPosition(1);
-                        sleep(1000);
-                        drive.doorServo.setPosition(0.7);
-                    })
-                    .waitSeconds(1)
+//                    .splineTo(new Vector2d(40, -34), Math.toRadians(0), SampleMecanumDrive.getVelocityConstraint(65, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                            SampleMecanumDrive.getAccelerationConstraint(60))
+                    .forward(20)
+//                    .addTemporalMarker(() -> {
+//                        drive.liftServo1.setPosition(1);
+//                        drive.liftMotor1.setPower(-1);
+//                        drive.liftMotor1.setPower(-1);
+//                    })
+//                    .waitSeconds(1)
                     .build();
             drive.followTrajectorySequence(AUTOBOTSROLLOUT);
-            break;
+            drive.update();
+
         }
-        waitForStart();
     }
 
 //    public void liftUpdate(SampleMecanumDrive drive) {
@@ -106,4 +99,13 @@ public class AUTOBOTSROLLOUT extends LinearOpMode{
 //            drive.liftMotor1.setPower(power);
 //        }
 //    }
+
+    public double returnPower(double reference, double state) {
+        double error = reference - state;
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+
+        double output = (error * 0.03) + (derivative * 0.0002) + 0.05;
+        return output;
+    }
 }
