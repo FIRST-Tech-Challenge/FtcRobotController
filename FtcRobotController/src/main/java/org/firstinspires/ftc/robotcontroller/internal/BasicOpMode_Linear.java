@@ -106,8 +106,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         lift2.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(0.25f);
-        claw1.setPosition(0.75f);
+        claw0.setPosition(0.67f);
+        claw1.setPosition(0.0f);
 
         waitForStart();
         runtime.reset();
@@ -143,11 +143,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 xButtonDelay.reset();
             }
             if(clawO) {
-                claw0.setPosition(1.0f);
-                claw1.setPosition(0.0f);
+                claw0.setPosition(0.0f);
+                claw1.setPosition(0.67f);
             }else{
-                claw0.setPosition(0.25f);
-                claw1.setPosition(0.75f);
+                claw0.setPosition(0.67f);
+                claw1.setPosition(0.0f);
             }
 
             if(gamepad1.dpad_up){
