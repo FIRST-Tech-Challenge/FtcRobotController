@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
@@ -32,6 +33,9 @@ public class CenterStageBackdropBlue extends LinearOpMode {
         PARK,
         STOP
     }
+
+    ElapsedTime depositTime = new ElapsedTime();
+    int resetInt = 0;
 
     SampleMecanumDrive drive;
 
@@ -66,7 +70,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                 .build();
 
         Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
-                .back(10)
+                .back(8)
                 .build();
 
         Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
@@ -78,7 +82,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                 .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, 26), Math.toRadians(180)), Math.toRadians(-60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(48, 22), Math.toRadians(180)), Math.toRadians(-60))
                 .build();
 
 
@@ -179,21 +183,33 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                         Trajectory straight= drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .back(3).build();
                         drive.followTrajectoryAsync(straight);
+
                         currentState=State.YELLOW_DEPOSIT;
                     }
                     break;
                 case YELLOW_DEPOSIT:
+
+                    if(resetInt == 0){
+                        depositTime.reset();
+                        resetInt++;
+                    }
+                    if(resetInt == 1){
                     if (!drive.isBusy()) {
-                        park = drive.trajectoryBuilder(drive.getPoseEstimate(),false)
+
+                        park = drive.trajectoryBuilder(drive.getPoseEstimate(), false)
                                 .back(4)
                                 .build();
                         //april tag alignment
                         //if april tag is aligned drop and
-                        sleep(200);
-                        drive.dropPixel();
-                        sleep(200);
-                        currentState = State.BACK;
-                        drive.followTrajectoryAsync(park);
+                        if (depositTime.milliseconds() > 500) {
+                            drive.dropPixel();
+                        }
+                        if (depositTime.milliseconds() > 700) {
+                            drive.followTrajectoryAsync(park);
+                            currentState = State.BACK;
+
+                        }
+                    }
                     }
                     break;
                 case BACK:
