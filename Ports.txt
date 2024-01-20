@@ -1,0 +1,9 @@
+Naming Convention: Upper, ex. "FrontRight"
+
+Motors:
+Right to Control Hub
+Left to Expansion Hub
+
+Front to 0
+Back to 1
+Slide to 2
