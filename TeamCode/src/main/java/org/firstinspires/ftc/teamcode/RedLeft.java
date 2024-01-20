@@ -168,11 +168,11 @@ public class RedLeft extends LinearOpMode {
         move.driveSeq(-40, 35, -90);
         move.driveSeq(-28, 35, -180);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-28, 31.5, -180);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-4, 31.5, -180);
         move.driveSeq(-4, 27, 90);
         move.driveSeq(-4, -39, 90);
@@ -184,11 +184,11 @@ public class RedLeft extends LinearOpMode {
     }
     private void MiddlePath()throws InterruptedException {
         move.driveSeq(-18,48,0);
-        sleep(1000);
+        sleep(500);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-18, 53, 0);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
         move.driveSeq(-4, 53, 90);
         move.driveSeq(-4, -39, 90);
@@ -200,13 +200,13 @@ public class RedLeft extends LinearOpMode {
     }
     private void RightPath()throws InterruptedException {
         move.driveSeq(-28,31,0);
-        sleep(1000);
+        sleep(500);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-28, 39, 0);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-4, 39, 0);
         move.driveSeq(-4, 36, 90);
         move.driveSeq(-4, -39, 90);

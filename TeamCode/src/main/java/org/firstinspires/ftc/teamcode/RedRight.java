@@ -167,11 +167,11 @@ public class RedRight extends LinearOpMode {
         move.driveSeq(-30,-12,-180);
         move.driveSeq(-30,-2.5,-180);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-30, -8, -180);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-21, -30, -90);
         move.driveToBoard(-21, -40.5, -90);
         move.driveFromBoard(-21, -38, -90);
@@ -180,13 +180,13 @@ public class RedRight extends LinearOpMode {
     }
     private void MiddlePath() throws InterruptedException {
         move.driveSeq(-16.5,-19.5,-180);
-        sleep(1000);
+        sleep(500);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-16.5, -23.5, -180);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-27, -30, -90);
         move.driveToBoard(-27, -39.5, -90);
         move.driveFromBoard(-27, -38, -90);
@@ -195,11 +195,11 @@ public class RedRight extends LinearOpMode {
     }
     private void RightPath() throws InterruptedException {
         move.driveSeq(-27,-24.5,180);
-        sleep(1000);
+        sleep(500);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-27, -28.5, 180);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
         move.driveSeq(-33, -30, -90);
         move.driveToBoard(-33, -39.5, -90);

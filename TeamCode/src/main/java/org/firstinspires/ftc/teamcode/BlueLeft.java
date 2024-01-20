@@ -155,11 +155,11 @@ public class BlueLeft extends LinearOpMode {
         move.driveSeq(-50,31,0);
         move.driveSeq(-29,31,0);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-29,37.5,0);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-35.5, 38, 90);
         move.driveToBoard(-35.5, 45.25, 90);
         move.driveFromBoard(-35.5, 43.25, 90);
@@ -168,11 +168,11 @@ public class BlueLeft extends LinearOpMode {
     }
     private void MiddlePath() throws InterruptedException{
         move.driveSeq(-17,25,0);
-        sleep(1000);
+        sleep(500);
         utils.dumpOpen();
-        sleep(1000);
+        sleep(500);
         move.driveSeq(-17, 35, 0);
-        sleep(1000);
+        sleep(500);
         utils.dumpClose();
         move.driveSeq(-29, 38, 90);
         move.driveToBoard(-29, 45.75, 90);
