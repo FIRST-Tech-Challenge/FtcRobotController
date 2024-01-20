@@ -99,6 +99,21 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
         gobbler.intake.intakeDown(false);
+
+        // Cait's code to make the servo react based on prop location
+        servo_Display.setPosition(DEF_POS); // Default position for the servo
+
+        gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
+
+        if (desiredTag == 2) { // Center position
+            servo_Display.setPosition(CENTER_POS);
+        }
+        else if (desiredTag == 1) { // Right position
+            servo_Display.setPosition(RIGHT_POS);
+        }
+        else { // Left position
+            servo_Display.setPosition(LEFT_POS);
+        }
         //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -151,7 +166,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
              }
 
             // Cait's code to make the servo react based on prop location
-            servo_Display.setPosition(DEF_POS); // Default position for the servo
+           /* servo_Display.setPosition(DEF_POS); // Default position for the servo
 
             gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
 
@@ -164,7 +179,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             else { // Left position
                 servo_Display.setPosition(LEFT_POS);
             }
-
+        */
                 telemetryTfod();
 
 //              Place first pixel
