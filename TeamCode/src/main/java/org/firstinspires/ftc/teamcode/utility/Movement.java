@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
 
-import android.util.Size;
-
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 public class Movement {
 
+    private final VisionSystem visionProcessor;
     public int motor_ticks;
     public static enum Direction {
         FRONT,
@@ -34,45 +36,36 @@ public class Movement {
         LEFT,
         RIGHT
     }
-    private DcMotor lfDrive;
-    private DcMotor rfDrive;
-    private DcMotor lbDrive;
-    private DcMotor rbDrive;
+    private DcMotorEx lfDrive;
+    private DcMotorEx rfDrive;
+    private DcMotorEx lbDrive;
+    private DcMotorEx rbDrive;
     private IMU imu;
-
+    /**
+     * Setup Kinematics and Odometry objects from FTClib
+     */
+    MecanumDriveKinematics kinematics;
+    MecanumDriveOdometry odometry;
+    ElapsedTime odometryTimer;
+    MecanumDriveWheelSpeeds odometrySpeeds;
+    private RevBlinkinLedDriver blinkinLED;
     private Telemetry telemetry;
 
     // Tracks if it's quicker to turn right or left
     double turnError = 0;
 
     double moveStartDirection = 0.0;
-    // Initialize several variables for GoToAprilTag method.
-// Used for managing the AprilTag detection process.
-    private AprilTagProcessor myAprilTagProcessor;
-
-    // Used to manage the video source.
-    private VisionPortal myVisionPortal;
-
-    private VisionProcessor HSVProcessor;
-    private AprilTagProcessor AprilTagProcessor;
-
-    WebcamName frontCam;
-    WebcamName rearCam;
-
     int alignStage = 0;
     double currentX = -2;
     double currentY = 15;
-
+    double tagRange = 15;
+    double tagBearing = 0;
     boolean tagDetected = false;
     boolean aprilTagAligned = false;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
     double currentAngle = 0;
-    // <<< end apriltag variables
-
-    private RevBlinkinLedDriver blinkinLED;
-
 
     /**
      * Pulls in information about the motors that is determined during initialization and makes
@@ -83,42 +76,51 @@ public class Movement {
      * @param leftBackDrive        the back left wheels motor,
      * @param rightBackDrive       the back right wheels motor,
      * @param imu1                 the ControlHub gyro,
-     * @param blink          the BlinkinLED,
-     * @param aprilProc the AprilTag Processor,
-     * @param hsvProc      the Vision Portal,
+     * @param blinkinLED1          the BlinkinLED,
      * @param telemetry1           telemetry for the Drive Station
      */
-    public Movement(DcMotor leftFrontDrive, DcMotor rightFrontDrive,
-                    DcMotor leftBackDrive, DcMotor rightBackDrive, IMU imu1, RevBlinkinLedDriver blink,
-                    Telemetry telemetry1, VisionPortal vp, WebcamName fCam, WebcamName rCam,
-                    VisionProcessor hsvProc, AprilTagProcessor aprilProc){
+    public Movement(DcMotorEx leftFrontDrive, DcMotorEx rightFrontDrive,
+                    DcMotorEx leftBackDrive, DcMotorEx rightBackDrive, IMU imu1,
+                    RevBlinkinLedDriver blinkinLED1,
+                    MecanumDriveOdometry odometry1,
+                    MecanumDriveKinematics kinematics1, ElapsedTime odometryTimer1,
+                    MecanumDriveWheelSpeeds odometrySpeeds1, Telemetry telemetry1,
+                    VisionSystem vProc){
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
         rbDrive = rightBackDrive;
         imu = imu1;
+        blinkinLED = blinkinLED1;
+        kinematics = kinematics1;
+        odometry = odometry1;
+        odometryTimer = odometryTimer1;
+        odometrySpeeds = odometrySpeeds1;
         telemetry = telemetry1;
-        myVisionPortal = vp;
-        frontCam = fCam;
-        rearCam = rCam;
-        HSVProcessor = hsvProc;
-        AprilTagProcessor = aprilProc;
-        blinkinLED = blink;
-
-
+        visionProcessor = vProc;
+        initOdometry();
     }
 
+    public void initOdometry () {
+        // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
+        // in Meters - translated from inches as inches * 2.54 / 100
+        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100), (6 * 2.54 / 100));
+        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100), (6 * 2.54 / 100));
+        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100), -(6 * 2.54 / 100));
+        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100), -(6 * 2.54 / 100));
 
-    public void initIMU () {
-        // Initialize the IMU.
-        // For Tiny - Logo UP; USB BACKWARD
-        // For Rosie - Logo BACKWARD; USB UP
-        // For Gge - Logo UP; USB FORWARD;
-        // Initializes the IMU with non-default settings. To use this block,
-        // plug one of the "new IMU.Parameters" blocks into the parameters socket.
-        // Creates a Parameters object for use with an IMU in a REV Robotics Control Hub or Expansion Hub, specifying the hub's orientation on the robot via the direction that the REV Robotics logo is facing and the direction that the USB ports are facing.
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-        imu.resetYaw();
+        // Create Mecanum Kinematics
+        kinematics = new MecanumDriveKinematics (lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
+
+        // Create Mecanum Odometry
+        odometry = new MecanumDriveOdometry(kinematics, new Rotation2d (0.0));
+
+        odometryTimer = new ElapsedTime();
+        odometryTimer.reset();
+
+    }
+    public MecanumDriveOdometry getOdometry(){
+        return odometry;
     }
 
     /**
@@ -129,19 +131,36 @@ public class Movement {
 
         moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lfDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //lfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
-        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        rfDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //rfDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
-        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lbDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //lbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
-        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        rbDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
     }
+
+    /**
+     * Setup a method to return the wheel speeds from GGE
+     * @return
+     */
+    public MecanumDriveWheelSpeeds GetWheelSpeeds (){
+        MecanumDriveWheelSpeeds speeds = new MecanumDriveWheelSpeeds();
+        // 1 entered as a placeholder for a future constant - fix as needed
+        // Scalar value obtained by measuring 100cm and dividing out observed values untuned
+        speeds.frontLeftMetersPerSecond = (100.0/1270.0) * lfDrive.getVelocity();
+        speeds.frontRightMetersPerSecond = (100.0/1270.0) * rfDrive.getVelocity();
+        speeds.rearLeftMetersPerSecond = (100.0/1270.0) * lbDrive.getVelocity();
+        speeds.rearRightMetersPerSecond = (100.0/1270.0) * rbDrive.getVelocity();
+
+        return speeds;
+    }
+
     /**
      * Stops all drive motors.
      */
@@ -152,7 +171,6 @@ public class Movement {
         lbDrive.setPower(0);
         rbDrive.setPower(0);
     }
-
     /**
      * Moves all wheel motors forward a distance in ticks
      * @param power  the power given to the motors
@@ -344,7 +362,7 @@ public class Movement {
         } else if (tagNumber == 3 || tagNumber == 6) {
             targetX = -0.5;
         }
-        double targetY = 5;
+        double targetY = 10;
         double targetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
@@ -357,13 +375,15 @@ public class Movement {
         currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         // Scan for April Tag detections and update current values if you find one.
-        List<AprilTagDetection> tag = AprilTagProcessor.getDetections();
-        if(tag != null) {
+        List<AprilTagDetection> tag = visionProcessor.getDetections();
+        if (tag != null) {
             for (int i = 0; i < tag.size(); i++) {
                 if (tag.get(i) != null) {
                     if (tag.get(i).id == tagNumber) {
                         currentX = tag.get(i).ftcPose.x;
                         currentY = tag.get(i).ftcPose.y;
+                        tagRange = tag.get(i).ftcPose.range;
+                        tagBearing = tag.get(i).ftcPose.bearing;
                         blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                         tagDetected = true;
                     }
@@ -378,6 +398,8 @@ public class Movement {
         telemetry.addData("Target X: ", targetX);
         telemetry.addData("Current Y: ", currentY);
         telemetry.addData("Target Y: ", targetY);
+        telemetry.addData("Tag Range: ", tagRange);
+        telemetry.addData("Tag Bearing: ", tagBearing);
         telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         telemetry.addData("Target Angle: ", targetAngle);
         telemetry.update();
@@ -406,20 +428,18 @@ public class Movement {
             alignStage = 1;
         }
 
-        // If no tag is detected, creep backwards.
-        if (!tagDetected){
-            axial = -0.10;
-            aprilTagAligned = false;
-        }
+        axial = -0.10;
+        // Assume april tag is not aligned at start.
+        aprilTagAligned = false;
 
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
         if (abs (targetAngle - currentAngle) > 2) {
             yaw = -CalcTurnError(targetAngle, currentAngle) / 45;
-            if (yaw > 0.3){
-                yaw = 0.3;
-            } else if (yaw < -0.3){
-                yaw = -0.3;
+            if (yaw > 0.2){
+                yaw = 0.2;
+            } else if (yaw < -0.2){
+                yaw = -0.2;
             }
         } else {
             yaw = 0;
@@ -429,19 +449,19 @@ public class Movement {
         // If the x distance is > 1 inch off of targetX move left or right accordingly
         // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
-        lateral = (targetX - currentY) / 20;
-        if (targetX - currentX > 1 && lateral < 0.2) {
+        //lateral = (targetX - currentY) / 20;
+        if (targetX - currentX > 1) {
             lateral = 0.2;
-        } else if (targetX - currentX < -1 && lateral > -0.2) {
+        } else if (targetX - currentX < -1) {
             lateral = -0.2;
         }else {
             lateral = 0;
         }
 
         // Back the robot up to the right distance to raise the lift
-        axial = -(currentY - targetY) / 40;
-        if ((currentY > targetY) && axial < -0.20) {
-            axial = -0.20;
+        //axial = -(currentY - targetY) / 40;
+        if (currentY > targetY) {
+            axial = -0.15;
         } else {
             axial = 0;
         }
@@ -465,21 +485,5 @@ public class Movement {
         }
         return aprilTagAligned;
     }
-    public void selectVisionProcessor(VisionProcessorMode vpMode){
-        switch(vpMode){
-            case FRONT_CAMERA_HSV:
-                // todo: need some safeguards
-                while((myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)){
-                myVisionPortal.setActiveCamera(frontCam);
-            }
-            myVisionPortal.setProcessorEnabled(AprilTagProcessor,false);
-            myVisionPortal.setProcessorEnabled(HSVProcessor,true);
-            break;
-            case REAR_CAMERA_APRIL_TAG:
-                myVisionPortal.setActiveCamera(rearCam);
-                myVisionPortal.setProcessorEnabled(AprilTagProcessor,true);
-                myVisionPortal.setProcessorEnabled(HSVProcessor,false);
-                break;
-        }
-    }
+
 }

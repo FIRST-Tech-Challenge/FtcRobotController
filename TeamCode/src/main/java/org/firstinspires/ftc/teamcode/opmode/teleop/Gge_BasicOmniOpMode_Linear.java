@@ -34,6 +34,9 @@ import static java.lang.Math.abs;
 import android.os.SystemClock;
 import android.util.Size;
 
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -53,6 +56,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
+import org.firstinspires.ftc.teamcode.utility.VisionSystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -92,10 +97,10 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightFrontDrive = null;
+    private DcMotorEx rightBackDrive = null;
 
     private DcMotor leftLinearSlide = null;
     private DcMotor rightLinearSlide = null;
@@ -108,51 +113,28 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     Servo conveyor;
 
     private IMU imu;
-    // Used for managing the AprilTag detection process.
-    private AprilTagProcessor myAprilTagProcessor;
-    // Used to manage the video source.
-    private VisionPortal myVisionPortal;
+    MecanumDriveKinematics kinematics;
+    MecanumDriveOdometry odometry;
+    ElapsedTime odometryTimer;
+    MecanumDriveWheelSpeeds odometrySpeeds;
 
     Movement moveTo;
     IntakeMovement intake;
     LinearSlideMovement linearslidemovement;
+    private VisionSystem visionSystem;
 
     @Override
     public void runOpMode() {
 
-        // Build the AprilTag processor
-        // set parameters of AprilTagProcessor, then use Builder to build
-        myAprilTagProcessor = new AprilTagProcessor.Builder()
-                //.setTagLibrary(myAprilTagLibrary)
-                //.setNumThreads(tbd)
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .build();
-
-        // set apriltag resolution decimation factor
-        myAprilTagProcessor.setDecimation(2);
-
-        // Build the vision portal
-        // set parameters,then use vision builder.
-        myVisionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "gge_backup_cam"))
-                .addProcessor(myAprilTagProcessor)
-                .setCameraResolution(new Size(640, 480))
-                //.setCameraResolution(new Size(1280,720))
-                .enableLiveView(false)
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .build();
+        visionSystem = new VisionSystem(hardwareMap, telemetry);
+        visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
 
         leftLinearSlide = hardwareMap.get(DcMotor.class, "left_linear_slide");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "right_linear_slide");
@@ -224,7 +206,12 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         wrist.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
-        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu, blinkinLED, myAprilTagProcessor, myVisionPortal, telemetry);
+        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu,
+                                blinkinLED,
+                                odometry,
+                                kinematics, odometryTimer,
+                                odometrySpeeds, telemetry,
+                                visionSystem);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
