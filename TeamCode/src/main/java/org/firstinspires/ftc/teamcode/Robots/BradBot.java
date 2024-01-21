@@ -78,6 +78,7 @@ public class BradBot extends BasicRobot {
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
     twrist = new Twrist();
     //        ultras = new Ultrasonics();
+    ultras = new Ultrasonics();
     wrist = new Wrist();
     path = new Path();
   }
@@ -202,6 +203,22 @@ public class BradBot extends BasicRobot {
     }
   }
 
+  public boolean checkAlliance() {
+    if (currentPose.getX() > 27) {
+      if (ultras.checkAlliance()) {
+        roadrun.breakFollowing();
+        roadrun.setMotorPowers(0, 0, 0, 0);
+    }
+      return ultras.checkAlliance();
+    }
+    return false;
+  }
+
+
+  public boolean checkMovingCloser() {
+    return ultras.movingCloser();
+  }
+
   /**
    * follows inputted trajectory Logs that this function is called as well as initial and target
    * pose to general surface
@@ -282,6 +299,8 @@ public class BradBot extends BasicRobot {
     boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
     boolean up = gampad.readGamepad(op.gamepad2.dpad_up, "gamepad2_dpad_up", "lift Up");
     boolean down = gampad.readGamepad(op.gamepad2.dpad_down, "gamepad2_dpad_down", "lift down");
+    boolean right2 = gampad.readGamepad(op.gamepad2.dpad_right, "gamepad2_dpad_right", "tilt right");
+    boolean left2 = gampad.readGamepad(op.gamepad2.dpad_left, "gamepad2_dpad_left", "tilt left");
     boolean right =
         gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
@@ -336,6 +355,12 @@ public class BradBot extends BasicRobot {
     }
     if (leftBumper) {
       intake.reverseIntake();
+    }
+    if (left2) {
+      twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
+    }
+    if (right2) {
+      twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
     }
     if (up) {
       lift.iterateUp();
@@ -404,6 +429,7 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
+    ultras.update();
     twrist.update();
     claw.update();
   }
