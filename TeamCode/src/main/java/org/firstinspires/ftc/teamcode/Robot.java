@@ -750,6 +750,73 @@ public class Robot {
         }
     }
 
+    public void alignToBoardFast() {
+        boolean tagVisible = false;
+        boolean aligned = false;
+        List<AprilTagDetection> myAprilTagDetections;
+        double distanceToBoard = 12;
+        int polarity = isRedAlliance ? -1 : 1;
+        double PIXEL_SIZE = 4;
+        int inchesMovedBack = 0;
+        int numberOfDetectionsProcessed = 0;
+        double distanceToMove;
+        double distanceBetweenId = 6;
+        boolean movedToDesired = false;
+
+        while (!aligned) {
+            if (numberOfDetectionsProcessed > 5) {
+                break;
+            } else {
+                numberOfDetectionsProcessed++;
+            }
+
+            myAprilTagDetections = aprilTagProcessor.getDetections();
+            for (AprilTagDetection detection : myAprilTagDetections) {
+                if (detection.metadata != null && movedToDesired == false) {
+                    Log.d("apriltag", "found tag" + detection.id);
+                    distanceToMove = ((wantedAprTagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
+                    Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
+                    mecanumBlocking(distanceToMove - 1, false, 0.3); //-1 to fix too much movement
+                    Log.d("apriltag", "moved");
+                    movedToDesired = true;
+                }
+                telemetry.addLine("....");
+                telemetry.update();
+                if (detection.metadata != null && movedToDesired == true) {
+                    Log.d("vision", "runOpMode: aligned");
+                    Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
+                    distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
+                    aligned = true;
+                    break;
+                }
+            }
+//
+//            if (!tagVisible) { //if tag isnt visible
+//                Log.d("vision", "runOpMode: tag not visible, move back");
+//                straightBlocking(2, true, 0.6); //V IMP: should NOT go back into partner's space
+//                setHeading(90 * polarity, 0.75);
+//                inchesMovedBack = inchesMovedBack + 2;
+//                tagVisible = false;
+//                aligned = false;
+//            }
+//
+//            if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
+//                Log.d("vision", "alignToBoard: apriltag detection timed out");
+//                distanceToBoard = distanceToBoard + inchesMovedBack;
+//                Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
+//                break;
+//            }
+        }
+
+        straightBlocking(distanceToBoard, false, 0.6);
+
+        if (isRedAlliance) {
+            setHeading(-90, 0.75);
+        } else {
+            setHeading(90, 0.75);
+        }
+    }
+
     public void longMoveToBoard(boolean isJuice) {
         int polarity;
         double VERTICAL_TOTAL;
@@ -1364,8 +1431,7 @@ public class Robot {
                 oneButtonOuttake(gamepad1, gamepad2);
             }
 
-
-/*
+        /*
             if (gamepad2.x) {
                 linearSlideFlag = true;
                 targetLinearSlideTicks = 1000 + getCurrentLinearSlideTicks();
