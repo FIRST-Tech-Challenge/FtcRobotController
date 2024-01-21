@@ -32,24 +32,27 @@ public class Intake extends RFMotor {
   double requestTime = 0.0;
 
   private final double INTAKE_POWER = 1.0;
-  private final double REVERSE_POWER = -0.6;
+  private final double REVERSE_POWER = -1.0;
 
   private boolean full = false;
+
+  private boolean stopped = false;
   private double pixelCount = 0;
-  public static double HALF_TICKS_PER_REV = 383.6 / 2;
-  public static double ONE=0.45, TWO=0.57, THREE = 0.6, FOUR = 0.66, FIVE =0.7;
+  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.63, FIVE =0.65, STOP_DELAY = 0.5;
+  double lastTime =0;
+  boolean pixeled = false;
   int height = 1;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
     super("intakeMotor", !isTeleop);
     intakeServo = new RFServo("intakeServo", 1.0);
-    super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    super.setDirection(DcMotorSimple.Direction.REVERSE);
+    super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
-    intakeServo.setPosition(ONE);
+//    intakeServo.setPosition();
     intakeServo.setLastTime(-100);
+    IntakeStates.STOPPED.setStateTrue();
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -61,7 +64,7 @@ public class Intake extends RFMotor {
     INTAKING(false),
     REVERSING(false);
 
-    boolean state;
+    private boolean state;
 
     IntakeStates(boolean p_state) {
       state = p_state;
@@ -88,15 +91,8 @@ public class Intake extends RFMotor {
    * surface level
    */
   public void intake() {
-    LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    if (!IntakeStates.INTAKING.state) {
-      requestTime = time;
-    }
-    if (time - requestTime > 0.1) {
-      setPower(INTAKE_POWER);
-    }
-
+    setRawPower(-INTAKE_POWER-100);
     IntakeStates.INTAKING.setStateTrue();
   }
 
@@ -108,7 +104,23 @@ public class Intake extends RFMotor {
       height = 1;
     }
     if(height==1)
-    intakeServo.setPosition(ONE);
+      intakeServo.setPosition(ONE);
+    if(height==2)
+      intakeServo.setPosition(TWO);if(height==3)
+      intakeServo.setPosition(THREE);if(height==4)
+      intakeServo.setPosition(FOUR);if(height==5)
+      intakeServo.setPosition(FIVE);
+  }
+
+  public void toggleIntakeHeightDown(){
+    if(height!=1){
+      height--;
+    }
+    else{
+      height = 5;
+    }
+    if(height==1)
+      intakeServo.setPosition(ONE);
     if(height==2)
       intakeServo.setPosition(TWO);if(height==3)
       intakeServo.setPosition(THREE);if(height==4)
@@ -123,24 +135,16 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    setPower(REVERSE_POWER);
+    setRawPower(- REVERSE_POWER);
     IntakeStates.REVERSING.setStateTrue();
   }
 
   /** Sets intake power 0, logs that intake is stopped to general and intake surface level */
   public void stopIntake() {
-    double vel = super.getVelocity();
-    //        if(abs(vel)>10) {
-    double pos = super.getCurrentPosition() - 10;
-    double res = (pos) % HALF_TICKS_PER_REV;
-    if (res > HALF_TICKS_PER_REV / 2.0) {
-      res -= HALF_TICKS_PER_REV;
-    }
-    if (abs(res) < 20) {
-      LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " + res);
-      setPower(0);
-    } else {
-    }
+
+      LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " );
+      setRawPower(0);
+
     //        }
     //        LOGGER.log("position" + pos);
     IntakeStates.STOPPED.setStateTrue();
@@ -171,6 +175,24 @@ public class Intake extends RFMotor {
     return count;
   }
 
+  public void setHeight(int height){
+    if(height==1){
+      intakeServo.setPosition(ONE);
+    }
+    else if(height ==2){
+      intakeServo.setPosition(TWO);
+    }
+    else if(height ==3){
+      intakeServo.setPosition(THREE);
+    }
+    else if(height==4){
+      intakeServo.setPosition(FOUR);
+    }
+    else{
+      intakeServo.setPosition(FIVE);
+    }
+  }
+
   /**
    * updates the state machine, log in general and intake surface updates sensor information,
    * triggers following action to reverse/stop intaking
@@ -181,14 +203,26 @@ public class Intake extends RFMotor {
     LOGGER.log("intake power:" + power);
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
-      if(i.state&&i==IntakeStates.INTAKING&&getPower()!=INTAKE_POWER)intake();
+      if(i.state&&i==IntakeStates.INTAKING)intake();
+      if(i.state&&i==IntakeStates.STOPPED)stopIntake();
+      if(i.state&&i==IntakeStates.REVERSING)reverseIntake();
+
     }
-    if (IntakeStates.STOPPED.state) {
-      stopIntake();
+
+    if(Magazine.pixels==2){
+      if(!pixeled){
+        lastTime = time;
+        pixeled=true;
+      }
+      if (time - lastTime > STOP_DELAY && !stopped) {
+        stopIntake();
+        stopped = true;
+      }
     }
-    double pos = super.getCurrentPosition();
-    packet.put("intakePos", pos);
-    packet.put("intakeRevs", pos / HALF_TICKS_PER_REV);
-    packet.put("intakeMod", pos % HALF_TICKS_PER_REV);
+    else{
+      pixeled = false;
+      stopped = false;
+    }
+
   }
 }

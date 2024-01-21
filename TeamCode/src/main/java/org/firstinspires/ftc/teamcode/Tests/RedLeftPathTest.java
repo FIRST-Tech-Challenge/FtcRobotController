@@ -25,7 +25,7 @@ public class RedLeftPathTest extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -63.5, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -60.5, Math.toRadians(-90)));
     Waypoint start =
         new StartWaypoint(
             new com.arcrobotics.ftclib.geometry.Pose2d(
@@ -56,61 +56,101 @@ public class RedLeftPathTest extends LinearOpMode {
     TrajectorySequence tradegy =
         robot
             .roadrun
-            .trajectorySequenceBuilder(new Pose2d(-38.5, -59, Math.toRadians(-90)))
+            .trajectorySequenceBuilder(new Pose2d(-38.5, -60, Math.toRadians(-90)))
             .setReversed(true)
             .lineToLinearHeading(new Pose2d(-55, -32, toRadians(-160)))
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
+            .lineToLinearHeading(new Pose2d(-40, -56.75, toRadians(180)))
             .setReversed(true)
-            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(5, -56), toRadians(10))
             .splineToConstantHeading(new Vector2d(45, -36), toRadians(0))
             .setReversed(false)
-            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
-            .splineToConstantHeading(new Vector2d(-20, -56), toRadians(175))
-            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+            .splineToConstantHeading(new Vector2d(5, -60.75), toRadians(185))
+            .splineToConstantHeading(new Vector2d(-25 -60.75), toRadians(175))
+            .splineToConstantHeading(new Vector2d(-55, -37.5), toRadians(165))
             .setReversed(true)
-            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
-            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
+            .splineToConstantHeading(new Vector2d(-25, -57.75), toRadians(-10))
+            .splineToConstantHeading(new Vector2d(5, -57.75), toRadians(10))
             .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
             .setReversed(false)
-            .splineToConstantHeading(new Vector2d(5, -58), toRadians(185))
-            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
-            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+                .splineToConstantHeading(new Vector2d(5, -60.75), toRadians(185))
+                .splineToConstantHeading(new Vector2d(-25, -60.75), toRadians(175))
+                .splineToConstantHeading(new Vector2d(-55, -37.5), toRadians(165))
             .setReversed(true)
-            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
-            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
-            .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-25, -57.75), toRadians(-10))
+                .splineToConstantHeading(new Vector2d(5, -57.75), toRadians(10))
+                .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
             .setReversed(false)
-            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
-            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
-            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+                .splineToConstantHeading(new Vector2d(5, -60.75), toRadians(185))
+                .splineToConstantHeading(new Vector2d(-25, -60.75), toRadians(175))
+                .splineToConstantHeading(new Vector2d(-55, -37.5), toRadians(165))
             .setReversed(true)
-            .splineToConstantHeading(new Vector2d(-25, -58), toRadians(-10))
-            .splineToConstantHeading(new Vector2d(5, -58), toRadians(10))
-            .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-25, -57.75), toRadians(-10))
+                .splineToConstantHeading(new Vector2d(5, -57.75), toRadians(10))
+                .splineToConstantHeading(new Vector2d(50, -44), toRadians(0))
             .setReversed(false)
-            .splineToConstantHeading(new Vector2d(5, -59), toRadians(185))
-            .splineToConstantHeading(new Vector2d(-20, -58), toRadians(175))
-            .splineToConstantHeading(new Vector2d(-45, -37.5), toRadians(165))
+                .splineToConstantHeading(new Vector2d(0, -60.75), toRadians(185))
+                .splineToConstantHeading(new Vector2d(-25, -60.75), toRadians(175))
+                .splineToConstantHeading(new Vector2d(-55, -37.5), toRadians(165))
             .setReversed(true)
             .build();
     waitForStart();
-    while (opModeIsActive() && !isStopRequested() && !robot.queuer.isFullfilled()) {
-      //            for (int i = 0; i < 6; i++) {
-      //              robot.followPPPath(testPath);
-      //              robot.followPPPath(testPath2);
-      //            }
-      //                  robot.update();
-      //                }
-      robot.followPPPath(dropPath);
-            for (int i = 0; i < 3; i++) {
-              robot.followPPPath(toTruss);
-              robot.followPPPath(toBackdrop);
-              robot.followPPPath(backToTruss);
-            }
-            robot.followPPPath(toTruss);
-            robot.followPPPath(toBackdrop);
-//      robot.followTrajSeq(tradegy);
+    while (opModeIsActive() && !isStopRequested() /*&& !robot.queuer.isFullfilled()*/) {
+      robot.upAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.purpurAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.dropAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+
+      robot.resetAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.intakeAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+      robot.resetAuto();
+      robot.intakeAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+      robot.resetAuto();robot.intakeAuto(1);
+//      robot.queuer.addDelay(2.0);
+
+      robot.grabAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.lowAuto();
+//      robot.queuer.addDelay(2.0);
+
+      robot.drop();
+//      robot.queuer.addDelay(2.0);
+      robot.resetAuto();
+
+
       robot.update();
       }
     robot.stop();

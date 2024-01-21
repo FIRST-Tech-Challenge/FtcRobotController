@@ -31,7 +31,7 @@ public class RFServo implements Servo {
 
     boolean flipped = false;
 
-    double position =0;
+    public double position =0;
 
     private final String rfServoName;
 

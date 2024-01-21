@@ -33,15 +33,14 @@ import java.util.Arrays;
 @Config
 public class RFMotor {
     private final DcMotorEx rfMotor;
-    double kP = 0.009;
-    double kD = 0.00001;
-    double kV = 0.0003;
-    double kA = 0.00004;
-    double kS = 0.15;
+    double kP = 0.000;
+    double kD = 0.00000;
+    double kV = 0.000;
+    double kA = 0.000;
+    double kS = 0.0;
     double MAX_ACCELERATION_UP = 6000;
     double MAX_ACCELERATION_DOWN = 12000;
     double RESISTANCE = 0;
-    double gravity = 0.2;
     double MAX_VELOCITY_UP = 1475 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
     private double MAX_VELOCITY_DOWN = 3500;
     private double relativeDist, direction, peakVelo, J, decelDist;
