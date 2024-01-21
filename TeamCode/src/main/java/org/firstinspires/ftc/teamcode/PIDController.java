@@ -5,6 +5,8 @@ import android.util.Log;
 
 public class PIDController {
 
+    public static final double MMS_IN_INCH = 25.4;
+    public static final int TICKS_PER_REV = 537;
     String name;
     double integral;
     boolean mecanum;
@@ -46,7 +48,6 @@ public class PIDController {
             } else {
                 power = -0.3 + (0.7 * (currentPos / rampUpTicks));
             }
-
             Log.d("new pid", "calculatePID: ramping up, current position is " + currentPos);
             Log.d("new pid", "calculatePID: ramping up, current error is " + currentError);
             Log.d("new pid", "calculatePID: ramping up, power is " + power);
@@ -83,14 +84,14 @@ public class PIDController {
 
     public double convertInchesToTicks (double inches) {
         if (!mecanum) {
-            final double wheelDiaMm = 96;
-            final double wheelCircIn = wheelDiaMm * Math.PI / 25.4;
-            final double IN_TO_TICK = 537 / wheelCircIn;
+            final double wheelDiaMm = 96; // in mms
+            final double wheelCircIn = wheelDiaMm * Math.PI / MMS_IN_INCH;
+            final double IN_TO_TICK = TICKS_PER_REV / wheelCircIn;
 
             if (inches >= 0) {
-                return inches * IN_TO_TICK + 90;
-            } else {
                 return inches * IN_TO_TICK - 90;
+            } else {
+                return inches * IN_TO_TICK + 90;
             }
         } else {
             return inches * 51;

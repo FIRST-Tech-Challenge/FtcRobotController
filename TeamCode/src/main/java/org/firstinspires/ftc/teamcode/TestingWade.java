@@ -21,15 +21,18 @@ public class TestingWade extends LinearOpMode {
         double trayAngle = 0.52;
 
         waitForStart();
-        robot.trayAngle.setPosition(trayAngle);
-        robot.trayToOuttakePos(false);
+        //robot.trayAngle.setPosition(trayAngle);
+        //robot.trayToOuttakePos(false);
 
 
         while (opModeIsActive()) {
+            robot.straightBlocking2(-48);
+
             /*
             robot.stackAttachment.setPosition(0.5);
              */
 
+            /*
             if(gamepad1.a){
                 robot.trayAngle.setPosition(trayAngle += 0.01);
             } else if (gamepad1.b){
@@ -39,12 +42,13 @@ public class TestingWade extends LinearOpMode {
             telemetry.addData("tray angle position servo", trayAngle);
             telemetry.addData("imu", robot.getCurrentHeading());
             Log.d("trayAngle", trayAngle + "tray" + robot.getCurrentHeading() + "heading");
+            */
+
             /*robot.mecanumBlocking2(36); // right
             this.sleep(2000);
             robot.mecanumBlocking2(-36); // left
             this.sleep(2000);*/
 
-            double poop = 1;
             /*
             robot.mecanumBlockingFixHeading(-24); //2 motors
             this.sleep(2000);
@@ -64,8 +68,7 @@ public class TestingWade extends LinearOpMode {
             this.sleep(2000);
             */
 
-            //break;
-            telemetry.update();
+            break;
         }
     }
 }
