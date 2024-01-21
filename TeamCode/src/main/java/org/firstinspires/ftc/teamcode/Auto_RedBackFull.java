@@ -21,17 +21,23 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.update();
         purplePixel();
         turn(-90);
-        drive(tiles(1));
+        drive(tilesToInches(1));
         strafeUntilTagDetection(dir.left, ID);
         // Place yellow pixel
         strafeUntilTagDetection(dir.left, 4);
         turn(-90);
-        drive(tiles(1));
+        drive(tilesToInches(1));
         turn(90);
-        drive(tiles(1));
+        detectTag(6);
+        drive(tilesToInches(-2.1));
+        turn(-90);
+        setSpeed(1000);
+        drive(tilesToInches(1.7));
+        setSpeed(2000);
+        ejectPixel();
 
         //*/
 
-        sleep(1000);  // Pause to display final telemetry message.
+        s(1);  // Pause to display final telemetry message.
     }
 }

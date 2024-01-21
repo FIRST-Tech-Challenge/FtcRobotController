@@ -17,10 +17,10 @@ public class Auto_BlueBackFull extends CSBase {
 
         findPos();
         purplePixel();
-        drive(tiles(-2.1));
+        drive(tilesToInches(-2.1));
         turn(90);
         setSpeed(1000);
-        drive(tiles(1.7));
+        drive(tilesToInches(1.7));
         setSpeed(2000);
         ejectPixel();
 

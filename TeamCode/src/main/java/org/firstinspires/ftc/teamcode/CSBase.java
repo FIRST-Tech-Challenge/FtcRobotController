@@ -42,37 +42,43 @@ public abstract class CSBase extends LinearOpMode {
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     //static final double     VEL_MODIFIER            = 1.12485939258;
-    static final double     b                       = 1.1375;
-    static final double     m                       = 0.889;
+    static final double     B                       = 1.1375;
+    static final double     M                       = 0.889;
     static final double     TURN_SPEED              = 0.5;
     static final boolean    TURN_TYPE               = false;
-    public final double[]   boundaries              = {0, 350};
+    public final double[]   BOUNDARIES              = {0, 350};
     double                  carWashPower            = 1.0;
     spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
-    public static String TFOD_MODEL_ASSET;
+    public static String tfodModelName;
     public AprilTagProcessor tagProcessor;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     public static final String[] LABELS = {
             "prop",
     };
-    IMU.Parameters imuparameters;
+    IMU.Parameters imuParameters;
 
-    /** Color options for the team prop. Options: red, blue, none **/
+    /** Color options for the team prop. Options: r, b, n **/
     public enum color {
         red, blue, none
     }
 
-    /** Strafing directions. Options: left, right **/
+    // Directional axes refer to a three dimentional plane relative to the robot.
+    // Directional axes refer to a three dimentional plane relative to the robot.
+    /** X-axis directions. Options: l, r **/
     public enum dir {
-        left,right
+        left, right
+    }
+    /** Z-axis direcions. Options: f, b **/
+    public enum zDir {
+        front ,back
     }
 
-    /** Spike mark positions for the team prop. Options: left, middle, right **/
+    /** Spike mark positions for the team prop. Options: l, m, r, n **/
     public enum spike {
-        left,middle,right,none
+        left, middle, right, none
     }
 
     /** Initializes all hardware devices on the robot.
@@ -80,9 +86,9 @@ public abstract class CSBase extends LinearOpMode {
      * @param useCam Should the camera be initialized? **/
     public void setup(color teamColor, boolean useCam) {
         if (teamColor == color.red) {
-            TFOD_MODEL_ASSET = "CSTeamPropRed.tflite";
+            tfodModelName = "CSTeamPropRed.tflite";
         } else if (teamColor == color.blue){
-            TFOD_MODEL_ASSET = "CSTeamPropBlue.tflite";
+            tfodModelName = "CSTeamPropBlue.tflite";
         }
         else if (useCam){
             telemetry.addData("", "Team color not specified, will not use team prop detection!");
@@ -90,7 +96,7 @@ public abstract class CSBase extends LinearOpMode {
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
-        imuparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 /*new Orientation(
@@ -103,7 +109,7 @@ public abstract class CSBase extends LinearOpMode {
                         0
                 )*/
         ));
-        if (!imu.initialize(imuparameters)){
+        if (!imu.initialize(imuParameters)){
             telemetry.addData("IMU","Initialization failed");
         }
         try {
@@ -179,9 +185,10 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
 
-    /** Drives using encoder velocity.
-     * @param inches Amount of inches to drive. **/
-    public void encoderDrive(double inches) {
+    /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
+     * @param inches Amount of inches to drive.
+     * @param dir (opt.) Direction to drive if inches is zero.**/
+    public void encoderDrive(double inches, zDir dir) {
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -200,13 +207,29 @@ public abstract class CSBase extends LinearOpMode {
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
             // reset the timeout time and start motion.
-            runtime.reset();
-            lb.setVelocity(VELOCITY * signum(inches));
-            rb.setVelocity(VELOCITY * signum(inches));
-            lf.setVelocity(VELOCITY * signum(inches));
-            rf.setVelocity(VELOCITY * signum(inches));
+            if (inches != 0) {
+                runtime.reset();
+                lb.setVelocity(VELOCITY * signum(inches));
+                rb.setVelocity(VELOCITY * signum(inches));
+                lf.setVelocity(VELOCITY * signum(inches));
+                rf.setVelocity(VELOCITY * signum(inches));
+            }
+            else if (dir == zDir.front){
+                lb.setVelocity(VELOCITY);
+                rb.setVelocity(VELOCITY);
+                lf.setVelocity(VELOCITY);
+                rf.setVelocity(VELOCITY);
+            }
+            else {
+                lb.setVelocity(-VELOCITY);
+                rb.setVelocity(-VELOCITY);
+                lf.setVelocity(-VELOCITY);
+                rf.setVelocity(-VELOCITY);
+            }
 
-            inches = signum(inches) * (abs(inches) + b) / m;
+            if (inches != 0) {
+                inches = signum(inches) * (abs(inches) + B) / M;
+            }
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
@@ -216,33 +239,42 @@ public abstract class CSBase extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() && (runtime.seconds() < duration)) {
+            while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 // Display it for the driver.
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
                 telemetry.update();
             }
+            if (inches != 0) {
+              stopRobot();
 
-            stopRobot();
+                // Turn off RUN_TO_POSITION
+                // Note: Following code is technically redundant since called in stopRobot(), but the function
+                // may be changed, so do not delete.
+                lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            }
 
-            // Turn off RUN_TO_POSITION
-            // Note: Following code is technically redundant since called in stopRobot(), but the function
-            // may be changed, so do not delete.
-            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
             //sleep(250);   // optional pause after each move.
         }
     }
 
+    /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
+     * @param inches Amount of inches to drive.**/
+    public void encoderDrive(double inches){
+        encoderDrive(inches, zDir.front);
+    }
+
     /** Turns the robot a specified number of degrees. Positive values turn right,
-     * negative values turn left.
+     * negative values turn left. A degrees value of zero will cause the robot to turn until manually stopped.
      * @param degrees The amount of degrees to turn.
+     * @param direction (opt.) Direction to turn if degrees is zero.
      */
-    public void turn(double degrees) {
+    public void turn(double degrees, dir direction) {
         sleep(100);
         imu.resetYaw();
         double tolerance = 1;
@@ -261,7 +293,7 @@ public abstract class CSBase extends LinearOpMode {
             if (abs(initialGoalAngle) > 180) {
                 correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
             }
-            while (opModeIsActive() && (difference > tolerance)) {
+            while (opModeIsActive() && (difference > tolerance) && degrees != 0) {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
                 turnModifier = min(1, (difference + 3) / 30);
@@ -277,11 +309,34 @@ public abstract class CSBase extends LinearOpMode {
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
-            stopRobot();
+            /*
+            if (degrees == 0 && direction == dir.right){
+                lb.setPower(-TURN_SPEED);
+                rb.setPower(TURN_SPEED);
+                lf.setPower(-TURN_SPEED);
+                rf.setPower(TURN_SPEED);
+            }
+            else if (degrees == 0 && direction == dir.left){
+                lb.setPower(TURN_SPEED);
+                rb.setPower(-TURN_SPEED);
+                lf.setPower(TURN_SPEED);
+                rf.setPower(-TURN_SPEED);
+            }
+            if (degrees != 0) {
+                stopRobot();
+            }//*/
         }
     }
+    /** Turns the robot a specified number of degrees. Positive values turn right,
+     * negative values turn left. A degrees value of zero will cause the robot to turn until manually stopped.
+     * @param degrees The amount of degrees to turn.
+     */
+    public void turn(double degrees){
+        turn(degrees, dir.right);
+    }
 
-    /** Strafes left or right for a specified number of inches.
+    /** Strafes left or right for a specified number of inches. An inches value of zero will cause the
+     * robot to strafe until manually stopped.
      * @param inches Amount of inches to strafe.
      * @param direction Direction to strafe in.**/
     public void strafe(double inches, dir direction /*double duration*/) {
@@ -311,31 +366,29 @@ public abstract class CSBase extends LinearOpMode {
             rb.setVelocity(-VELOCITY * d);
             lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
             rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
-
-            inches = (abs(inches) + 1.0125) / 0.7155;
+            if (inches != 0) {
+                inches = (abs(inches) + 1.0125) / 0.7155;
+            }
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
 
-            while (opModeIsActive() && (runtime.seconds() < duration)) {
+            while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 telemetry.addData("Strafing until",  duration + " seconds");
                 telemetry.addData("Currently at",  runtime.seconds() + " seconds");
                 telemetry.update();
             }
-
-            stopRobot();
-
-            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            if (inches != 0) {
+                stopRobot();
+                lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            }
 
         }
     }
 
-    /** Strafes left or right until an april tag with the ID specified is detected.
-     * @param direction Direction to strafe in.
-     * @param idOfTag ID of April Tag to detect. **/
     public void strafeUntilTagDetection(dir direction, int idOfTag) {
 
         if (opModeIsActive() && lf != null) {
@@ -389,20 +442,32 @@ public abstract class CSBase extends LinearOpMode {
 
 
     /** Drives the specified number of inches. Negative values will drive backwards.
-     * @param inches Amount of inches to drive. **/
-    public void drive(double inches) {
+     * An inches value of zero will cause the robot to drive until manually stopped.
+     * @param inches Amount of inches to drive.
+     * @param dir (opt.) Direction to drive if inches is zero.**/
+    public void drive(double inches, zDir dir) {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
-        for(int i = 0; i < checks; i++) {
-            encoderDrive(inches / checks);
-            //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        if (inches != 0) {
+            for (int i = 0; i < checks; i++) {
+                encoderDrive(inches / checks);
+                //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            }
+            stopRobot();
+        } else {
+            encoderDrive(0,dir);
         }
-        stopRobot();
+    }
+    /** Drives the specified number of inches. Negative values will drive backwards.
+     * An inches value of zero will cause the robot to drive until manually stopped.
+     * @param inches Amount of inches to drive. **/
+    public void drive(double inches){
+        drive(inches, zDir.front);
     }
 
     /** Converts an amount of tiles on the game board to an amount of inches.
      * @param tiles The value of tiles to be converted. **/
-    public double tiles(double tiles) {
+    public double tilesToInches(double tiles) {
         return tiles * TILE_LENGTH;
     }
 
@@ -468,7 +533,7 @@ public abstract class CSBase extends LinearOpMode {
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
 
-                .setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelAssetName(tfodModelName)
                 .setModelLabels(LABELS)
 
                 //.setIsModelTensorFlow2(true)
@@ -568,12 +633,12 @@ public abstract class CSBase extends LinearOpMode {
         if (x == -1){
             return spike.left;
         }
-        if (x > boundaries[0] && x < boundaries[1]){
+        if (x > BOUNDARIES[0] && x < BOUNDARIES[1]){
             return spike.middle;
         }
-        else if (x >= boundaries[1]){
+        else if (x >= BOUNDARIES[1]){
             return spike.right;
-        } else if (x <= boundaries[0]){
+        } else if (x <= BOUNDARIES[0]){
             return spike.left;
         }
         return spike.none;
