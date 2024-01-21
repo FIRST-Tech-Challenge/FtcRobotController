@@ -21,7 +21,7 @@ public class Outtake implements Subsystem{
     //Constants
     private double syncFactor=1.05;
     private double armReset_Right = 0.5; private double armReset_Left = 0.5186; // + means up and towards intake 0.5, 0.5186
-    public static double armIntake_Right = 0.51923-0.02; public static double armIntake_Left = 0.498335+0.02;
+    public static double armIntake_Right = 0.49923; public static double armIntake_Left = 0.518335;
     //private double armTravel_Right = 0.51263; private double armTravel_Left= 0.505265;//0.51263, 0.505265
     public static double armTravel_Right = 0.512; public static double armTravel_Left= 0.505;//0.51263, 0.505265
     private double armDump_Right = 0.44; private double armDump_Left = 0.57;
@@ -31,10 +31,10 @@ public class Outtake implements Subsystem{
     public static double armTravelDown_RightA = 0.505; public static double armTravelDown_LeftA= 0.515;//0.51263, 0.505265
 
     private double armDumpLow_Right = 0.462; private double armDumpLow_Left = 0.5536;
-    private double armHang_Right = 0.525; private double armHang_Left = 0.492;
+    private double armHang_Right = 0.492; private double armHang_Left = 0.53; //0.525,0.492
 
-    private double dumpResetPos = 0.58;//0.5
-    private double dumpIntakePos= 0.58;
+    private double dumpResetPos = 0.47;//0.5
+    private double dumpIntakePos= 0.59;
     private double dumpTravelPos = 0.40; //0.37; //0.1785;
     private double dumpCarryPos = 0.4; //0.6793;
     private double dumpLiftCarryPos = 0.5;

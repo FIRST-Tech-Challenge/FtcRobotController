@@ -39,7 +39,7 @@ public class DualMotorLift implements Subsystem {
     public Mode mode;
     // Public just to allow tuning through Dashboard
     public static double  UP_VELOCITY = 500; // x inches per 1 second
-    public static double[] LEVEL_HT = {11, 7, 17.0, 29.0}; // in inches, please fine-tune
+    public static double[] LEVEL_HT = {13, 7, 17.0, 29.0}; // in inches, please fine-tune
     public static double[] LEVEL_HT_AUTO = {7, 4, 17.0, 29.0};
     //4 levels: 0 = minimum arm swing height; 1= ground, 2= low, 3= middle, 4= high,
     //0:5.0

@@ -19,8 +19,8 @@ public class Intake implements Subsystem {
     private double baseposr = 0.76715;
     private double baseposl_yield = 0.36+0.25;//+0.4
     private double baseposr_yield = 0.615-0.25;//-0.4
-    private double outtakeposL = 0.814 + 0.035; //0.804
-    private double outtakeposR = 0.1403 - 0.035; //0.1503
+    private double outtakeposL = 0.814 + 0.033; //0.804
+    private double outtakeposR = 0.1403 - 0.033; //0.1503
     //placeholder outtake position, may change depending on outtake
     private double intakeposL = 0.129+0.037;//+0.037
     private double intakeposR = 0.8595-0.037;//-0.037
