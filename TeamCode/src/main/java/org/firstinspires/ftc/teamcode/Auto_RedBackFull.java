@@ -20,12 +20,12 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
         purplePixel();
-        turn(-90);
-        drive(tilesToInches(1));
-        strafeUntilTagDetection(dir.left, ID);
+        turn(90);
+        drive(tilesToInches(1.3));
+        strafeUntilTagDetection(dir.right, ID);
         // Place yellow pixel
-        strafeUntilTagDetection(dir.left, 4);
-        turn(-90);
+        strafeUntilTagDetection(dir.right, 4);
+        turn(90);
         drive(tilesToInches(1));
         turn(90);
         detectTag(6);
