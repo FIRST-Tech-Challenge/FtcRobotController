@@ -88,19 +88,8 @@ public class BlueAuto extends LinearOpMode{
 
         telemetry.setMsTransmissionInterval(50);
 
-//        // first trajectory test
-        Pose2d startingPose = new Pose2d(10, -60, Math.toRadians(90));
-//        drive.setPoseEstimate(startingPose);
-//        TrajectorySequence beginning = drive.trajectorySequenceBuilder(startingPose)
-//                .forward(48.5,
-//                        SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-//                        SampleMecanumDrive.getAccelerationConstraint(45))
-//                .UNSTABLE_addDisplacementMarkerOffset(-48.5, () -> {
-//                    targetPosition = 2500;
-//                })
-//                .strafeRight(30)
-//                .build();
-//        drive.followTrajectorySequenceAsync(beginning);
+        // starting position
+        Pose2d startingPose = new Pose2d(12, 60, Math.toRadians(270));
 
         while (!isStarted() && !isStopRequested()) {
             updateTfod();// Push telemetry to the Driver Station.
@@ -114,11 +103,16 @@ public class BlueAuto extends LinearOpMode{
             drive.setPoseEstimate(startingPose);
             if (detection == "left") {
                 TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(5, -30), Math.toRadians(180))
+                        .splineTo(new Vector2d(16, 30), Math.toRadians(0))
                         .addTemporalMarker(() -> {
                             drive.pixelServo.setPosition(1);
                         })
-                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
+                        .back(8, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .strafeLeft(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .forward(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
                         .build();
                 drive.followTrajectorySequence(left);
                 drive.breakFollowing();
@@ -126,68 +120,32 @@ public class BlueAuto extends LinearOpMode{
             }
             else if (detection == "middle") {
                 TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
-                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
-                            .addTemporalMarker(() -> {
-                                drive.pixelServo.setPosition(1);
-                            })
-                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
-                            .build();
+                        .lineToLinearHeading(new Pose2d(12, 30, Math.toRadians(270)))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .back(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .lineToLinearHeading(new Pose2d(50, 30, Math.toRadians(0)))
+                        .build();
                     drive.followTrajectorySequence(middle);
                     drive.breakFollowing();
                     break;
             }
             else {
                 TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
-                            .splineTo(new Vector2d(15, -30), Math.toRadians(0))
-                            .addTemporalMarker(() -> {
-                                drive.pixelServo.setPosition(1);
-                            })
-                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
-                            .build();
+                        .splineTo(new Vector2d(6, 30), Math.toRadians(-180))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+//                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
+                        .back(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .build();
                     drive.followTrajectorySequence(right);
-
                     drive.breakFollowing();
                     break;
             }
-
-//                case "middle":
-//                    TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
-//                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
-//                            .addTemporalMarker(() -> {
-//                                drive.pixelServo.setPosition(1);
-//                            })
-//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
-//                            .build();
-//                    drive.followTrajectorySequence(middle);
-//                    drive.breakFollowing();
-//                    drive.breakFollowing();
-//                    break;
-//                case "right":
-//                    TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
-//                            .splineTo(new Vector2d(15, -30), Math.toRadians(0))
-//                            .addTemporalMarker(() -> {
-//                                drive.pixelServo.setPosition(1);
-//                            })
-//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
-//                            .build();
-//                    drive.followTrajectorySequence(right);
-//                    drive.breakFollowing();
-//                    drive.breakFollowing();
-//                    break;
-//                case "":
-//                    TrajectorySequence noDetection = drive.trajectorySequenceBuilder(startingPose)
-//                            .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
-//                            .addTemporalMarker(() -> {
-//                                drive.pixelServo.setPosition(1);
-//                            })
-//                            .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
-//                            .build();
-//                    drive.followTrajectorySequence(noDetection);
-//                    drive.breakFollowing();
-//                    drive.breakFollowing();
-//                    break;
-//            drive.update();
-//            liftUpdate(drive);
         }
     }
 
@@ -205,7 +163,7 @@ public class BlueAuto extends LinearOpMode{
 
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableLiveView(true);
+        builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
@@ -246,7 +204,7 @@ public class BlueAuto extends LinearOpMode{
         if (xCoordinate < 200) {
             detection = "left";
         }
-        else if (xCoordinate < 400) {
+        else if (xCoordinate < 500) {
             detection = "middle";
         }
         else {

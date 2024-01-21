@@ -186,13 +186,13 @@ public class DriveTrain extends OpMode
                 liftMotor2.setPower(-0.5);
             }
             else if (lift1Position <= 500) {
-                liftMotor1.setPower(-0.2);
-                liftMotor2.setPower(-0.2);
+                liftMotor1.setPower(-0.3);
+                liftMotor2.setPower(-0.3);
             }
-            else if (lift1Position <= 50) {
-                liftMotor1.setPower(0);
-                liftMotor2.setPower(0);
-            }
+//            else if (lift1Position <= 50) {
+//                liftMotor1.setPower(0);
+//                liftMotor2.setPower(0);
+//            }
         }
         if (gamepad1.y) {
             liftMotor1.setPower(1);

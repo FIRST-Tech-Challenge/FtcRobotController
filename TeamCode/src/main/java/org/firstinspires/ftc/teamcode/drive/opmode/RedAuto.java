@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import android.util.Size;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -15,22 +13,17 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
 import java.util.List;
 
 @Autonomous(name = "RedAuto", group = "Concept")
 public class RedAuto extends LinearOpMode{
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    private static final String TFOD_MODEL_ASSET = "markers.tflite";
-    private static final String[] LABELS = {
-            "blue box", "red box"
-    };
+    private static final String TFOD_MODEL_ASSET = "model.tflite";
+    private static final String[] LABELS = {"box"};
     private TfodProcessor tfod;
 
     /**
@@ -39,10 +32,6 @@ public class RedAuto extends LinearOpMode{
     private VisionPortal visionPortal;
 
     //movement
-    private static final double COUNTS_PER_MOTOR_REV = 537.7; //Ticks per rotation for the GoBilda 5202 PLanetary Motor
-    private static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
-    private static final double WHEEL_DIAMETER_INCHES = 3.54331;     // For figuring circumference
-    private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     static final double FEET_PER_METER = 3.28084;
@@ -71,61 +60,27 @@ public class RedAuto extends LinearOpMode{
     int MIDDLE = 2;
     int RIGHT = 3;
 
+    String detection;
+
     double xCoordinate;
     double yCoordinate;
 
 
     @Override
-    public void runOpMode() {
-
+    public void runOpMode() { // code to run after init
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        double distanceInches = 1;
-        double placeHolderDistance = 1;
-
-        Pose2d startingPose = new Pose2d(-34, -60, Math.toRadians(90));
-        drive.setPoseEstimate(startingPose);
+//        double distanceInches = 1;
+//        double placeHolderDistance = 1;
         initTfod();
 
-        while (!isStarted() && !isStopRequested()) {
-            while(tfod != null){
-                telemetryTfod();// Push telemetry to the Driver Station.
-                telemetry.update();
-            }
-        }
-        waitForStart();
-
-        while (opModeIsActive()) {
-            if (xCoordinate < 225) {
-
-            }
-            else if (xCoordinate < 500) {
-
-            }
-            else {
-
-            }
-
-        }
-        // all of our trajectories
-
-
-        TrajectorySequence beginning = drive.trajectorySequenceBuilder(startingPose)
-                .forward(48.5,
-                        SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(45))
-                .build();
-        drive.followTrajectorySequenceAsync(beginning);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode) {
             }
@@ -133,46 +88,84 @@ public class RedAuto extends LinearOpMode{
 
         telemetry.setMsTransmissionInterval(50);
 
-        // april tag initialization
+        // starting position
+        Pose2d startingPose = new Pose2d(12, -60, Math.toRadians(90));
+
+        while (!isStarted() && !isStopRequested()) {
+            updateTfod();// Push telemetry to the Driver Station.
+            drive.pixelServo.setPosition(0);
+            telemetry.update();
+        }
+
+        camera.stopStreaming();
 
         waitForStart();
+
+        while (opModeIsActive()) {
+            drive.setPoseEstimate(startingPose);
+            if (detection == "left") {
+                TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(5, -30), Math.toRadians(180))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .waitSeconds(1)
+//                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
+                        .back(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .build();
+                drive.followTrajectorySequence(left);
+                drive.breakFollowing();
+                break;
+            }
+            else if (detection == "middle") {
+                TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
+                        .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(0.5);
+                        })
+                        .waitSeconds(1)
+                        .back(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
+                        .build();
+                drive.followTrajectorySequence(middle);
+                drive.breakFollowing();
+                break;
+            }
+            else {
+                TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(16, -30), Math.toRadians(0))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .waitSeconds(1)
+                        .back(8, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .strafeRight(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .forward(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .build();
+                drive.followTrajectorySequence(right);
+                drive.breakFollowing();
+                break;
+            }
+        }
     }
 
-    private void initTfod() {
-
+    private void initTfod() { // create model detector
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
-
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
-
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                .setModelLabels(LABELS)
-                .setIsModelTensorFlow2(true)
-                .setIsModelQuantized(true)
-                .setModelInputSize(300)
-                .setModelAspectRatio(16.0 / 9.0)
-
+                .setModelAssetName("model.tflite")
                 .build();
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
+        builder.setCamera(hardwareMap.get(WebcamName.class, "webcam"));
 
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);
@@ -192,33 +185,63 @@ public class RedAuto extends LinearOpMode{
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.7f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
 
-    }   // end method initTfod()
+    }
 
-    private void telemetryTfod() {
-
+    private void updateTfod() { // updates the model detection and add to telemetry
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
-
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            double x = (recognition.getLeft() + recognition.getRight()) / 2;
+            double y = (recognition.getTop() + recognition.getBottom()) / 2;
             xCoordinate = x;
             yCoordinate = y;
-            telemetry.addData(""," ");
+            telemetry.addData("", " ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Position", "%.0f / %.0f / %s", x, y, detection);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-        }   // end for() loop
+        }
+        if (xCoordinate < 200) {
+            detection = "left";
+        }
+        else if (xCoordinate < 500) {
+            detection = "middle";
+        }
+        else {
+            detection = "right";
+        }
+    }
 
-    }   // end method telemetryTfod()
 
-
+//    public void liftUpdate(SampleMecanumDrive drive) {
+//        currentPosition = drive.liftMotor1.getCurrentPosition();
+//        if (targetPosition == 0){
+//        }
+//        else if (currentPosition < targetPosition && direction == true) {
+//            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
+//            drive.liftMotor1.setPower(power);
+//            drive.liftMotor2.setPower(power);
+//
+//        } else if (currentPosition > targetPosition && direction == false) {
+//            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
+//            drive.liftMotor1.setPower(power);
+//            drive.liftMotor2.setPower(power);
+//
+//        }
+//        else if (currentPosition+10 > targetPosition && direction == true){
+//            drive.liftMotor1.setPower(0.05);
+//            drive.liftMotor2.setPower(0.05);
+//        }
+//        else if (currentPosition+10 < targetPosition && direction == false){
+//            drive.liftMotor1.setPower(0.05);
+//            drive.liftMotor2.setPower(0.05);
+//        }
+//    }
 
 //    public double returnPower(double reference, double state) {
 //        double error = reference - state;
