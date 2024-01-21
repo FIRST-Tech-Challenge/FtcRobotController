@@ -133,11 +133,18 @@ public abstract class AutoBase extends LinearOpMode {
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
         // Pass all needed hardware to the Movement class including the AprilTag detection for refactored GoToAprilTag
-        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu,
-                                blinkinLED,
-                                odometry,
-                                kinematics, odometryTimer,
-                                odometrySpeeds, telemetry, visionSystem);
+        moveTo = new Movement(leftFrontDrive,
+                            rightFrontDrive,
+                            leftBackDrive,
+                            rightBackDrive,
+                            imu,
+                            blinkinLED,
+                            odometry,
+                            kinematics,
+                            odometryTimer,
+                            odometrySpeeds,
+                            telemetry,
+                            visionSystem);
         linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         state = 0;

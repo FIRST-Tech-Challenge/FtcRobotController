@@ -206,12 +206,18 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         wrist.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
-        moveTo = new Movement(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, imu,
-                                blinkinLED,
-                                odometry,
-                                kinematics, odometryTimer,
-                                odometrySpeeds, telemetry,
-                                visionSystem);
+        moveTo = new Movement(leftFrontDrive,
+                            rightFrontDrive,
+                            leftBackDrive,
+                            rightBackDrive,
+                            imu,
+                            blinkinLED,
+                            odometry,
+                            kinematics,
+                            odometryTimer,
+                            odometrySpeeds,
+                            telemetry,
+                            visionSystem);
         linearslidemovement = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
         //drive speed limiter
