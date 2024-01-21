@@ -69,11 +69,7 @@ public abstract class CSBase extends LinearOpMode {
     // Directional axes refer to a three dimentional plane relative to the robot.
     /** X-axis directions. Options: l, r **/
     public enum dir {
-        left, right
-    }
-    /** Z-axis direcions. Options: f, b **/
-    public enum zDir {
-        front ,back
+        left, right, forward, backward
     }
 
     /** Spike mark positions for the team prop. Options: l, m, r, n **/
@@ -188,7 +184,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
      * @param dir (opt.) Direction to drive if inches is zero.**/
-    public void encoderDrive(double inches, zDir dir) {
+    public void encoderDrive(double inches, dir dir) {
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -214,7 +210,7 @@ public abstract class CSBase extends LinearOpMode {
                 lf.setVelocity(VELOCITY * signum(inches));
                 rf.setVelocity(VELOCITY * signum(inches));
             }
-            else if (dir == zDir.front){
+            else if (dir == dir.forward){
                 lb.setVelocity(VELOCITY);
                 rb.setVelocity(VELOCITY);
                 lf.setVelocity(VELOCITY);
@@ -266,7 +262,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.**/
     public void encoderDrive(double inches){
-        encoderDrive(inches, zDir.front);
+        encoderDrive(inches, dir.forward);
     }
 
     /** Turns the robot a specified number of degrees. Positive values turn right,
@@ -275,6 +271,12 @@ public abstract class CSBase extends LinearOpMode {
      * @param direction (opt.) Direction to turn if degrees is zero.
      */
     public void turn(double degrees, dir direction) {
+        double direct;
+        if (direction == dir.left) {
+            direct = -1;
+        } else {
+            direct = 1;
+        }
         sleep(100);
         imu.resetYaw();
         double tolerance = 1;
@@ -297,7 +299,7 @@ public abstract class CSBase extends LinearOpMode {
                 currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
                 turnModifier = min(1, (difference + 3) / 30);
-                turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier;
+                turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier * direct;
                 lb.setPower(-turnPower);
                 rb.setPower(turnPower);
                 lf.setPower(-turnPower);
@@ -309,22 +311,6 @@ public abstract class CSBase extends LinearOpMode {
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
-            /*
-            if (degrees == 0 && direction == dir.right){
-                lb.setPower(-TURN_SPEED);
-                rb.setPower(TURN_SPEED);
-                lf.setPower(-TURN_SPEED);
-                rf.setPower(TURN_SPEED);
-            }
-            else if (degrees == 0 && direction == dir.left){
-                lb.setPower(TURN_SPEED);
-                rb.setPower(-TURN_SPEED);
-                lf.setPower(TURN_SPEED);
-                rf.setPower(-TURN_SPEED);
-            }
-            if (degrees != 0) {
-                stopRobot();
-            }//*/
         }
     }
     /** Turns the robot a specified number of degrees. Positive values turn right,
@@ -445,7 +431,7 @@ public abstract class CSBase extends LinearOpMode {
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
      * @param dir (opt.) Direction to drive if inches is zero.**/
-    public void drive(double inches, zDir dir) {
+    public void drive(double inches, dir dir) {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         if (inches != 0) {
@@ -462,7 +448,7 @@ public abstract class CSBase extends LinearOpMode {
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive. **/
     public void drive(double inches){
-        drive(inches, zDir.front);
+        drive(inches, dir.forward);
     }
 
     /** Converts an amount of tiles on the game board to an amount of inches.
