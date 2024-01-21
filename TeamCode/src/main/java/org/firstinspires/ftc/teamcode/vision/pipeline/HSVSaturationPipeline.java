@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.teamcode.vision.pipeline;
+import android.graphics.Canvas;
+
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProcessor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class HSVSaturationPipeline  implements VisionProcessor {
     public Scalar nonSelectedColor = new Scalar(0, 255, 0); // Green
     public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
 
-    //1280 x 960 camera resolution
-
-    /* WORK NEEDED TO MAKE A CONSTRUCTOR HERE... If the FieldPosition is RED_FIELD_RIGHT or BLUE_FIELD_RIGHT, this needs to switch.
-       Ideally this would be passed from the auto routine (i.e. Auto1_BlueField_Left
-     */
-
-    // FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
     FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
     Rect leftSpike;
     Rect centerSpike;
@@ -29,7 +29,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
     SpikePosition spikePos = SpikePosition.UNKNOWN;
 
     Mat hsvMat = new Mat();
-    Mat destMat = new Mat();
+    Mat processedMat = new Mat();
     Mat detectionMat = new Mat();
 
     double leftSpikeSaturation = 0;
@@ -41,8 +41,14 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
     static double CENTER_SPIKE_SATURATION_BASELINE = 0;
     static double RIGHT_SPIKE_SATURATION_BASELINE =  0;
 
+
     @Override
-    public Mat processFrame(Mat input) {
+    public void init(int width, int height, CameraCalibration calibration) {
+
+    }
+
+    @Override
+    public Object processFrame(Mat frame, long captureTimeNanos) {
         switch(fieldPosition){
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
@@ -65,24 +71,25 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
         }
 
 
-        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
         Core.extractChannel(hsvMat, detectionMat, 1);
-        Imgproc.cvtColor(detectionMat, destMat, Imgproc.COLOR_GRAY2RGB);
+        Imgproc.cvtColor(detectionMat, processedMat, Imgproc.COLOR_GRAY2RGB);
 
-        findRectangle(destMat);
-        drawRectangles(destMat);
+        findRectangle(processedMat);
+        drawRectangles(processedMat);
 
-        return destMat;
+        return(processedMat);
     }
+
 
     SpikePosition findRectangle(Mat input) {
 
-        switch(fieldPosition) {
+        switch(getFieldPosition()) {
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
-                leftSpikeSaturation = getAvgSaturation(hsvMat, leftSpike);
-                centerSpikeSaturation = getAvgSaturation(hsvMat, centerSpike);
-                rightSpikeSaturation = getAvgSaturation(hsvMat, rightSpike);
+                leftSpikeSaturation = getAvgSaturation(input, leftSpike);
+                centerSpikeSaturation = getAvgSaturation(input, centerSpike);
+                rightSpikeSaturation = getAvgSaturation(input, rightSpike);
 
                 if (leftSpikeSaturation > LEFT_SPIKE_SATURATION_BASELINE){
                     spikePos = SpikePosition.LEFT;
@@ -95,9 +102,9 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
                 break;
             case BLUE_FIELD_RIGHT:
             case RED_FIELD_RIGHT:
-                leftSpikeSaturation = getAvgSaturation(hsvMat, leftSpike);
-                centerSpikeSaturation = getAvgSaturation(hsvMat, centerSpike);
-                rightSpikeSaturation = getAvgSaturation(hsvMat, rightSpike);
+                leftSpikeSaturation = getAvgSaturation(input, leftSpike);
+                centerSpikeSaturation = getAvgSaturation(input, centerSpike);
+                rightSpikeSaturation = getAvgSaturation(input, rightSpike);
 
                 if (rightSpikeSaturation > RIGHT_SPIKE_SATURATION_BASELINE){
                     spikePos = SpikePosition.RIGHT;
@@ -114,11 +121,61 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
 
     }
 
-        protected double getAvgSaturation(Mat input, Rect rect) {
+
+    public void drawRectangles(Mat input) {
+        // Only draw relevant field position boxes
+        switch(getFieldPosition()) {
+            case BLUE_FIELD_LEFT:
+            case RED_FIELD_LEFT:
+                Imgproc.rectangle(input, leftSpike, nonSelectedColor);
+                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
+                break;
+            case BLUE_FIELD_RIGHT:
+            case RED_FIELD_RIGHT:
+                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
+                Imgproc.rectangle(input, rightSpike, nonSelectedColor);
+                break;
+            default:
+                // draw a red box over the image because we didn't find a field position
+                Size size = input.size();
+                Imgproc.rectangle(input,new Point(0,0),new Point(size.width,size.height),new Scalar(0, 0, 255));
+        }
+
+        switch (getSpikePos()) {
+            case LEFT:
+                Imgproc.rectangle(input, leftSpike, selectedColor);
+                break;
+            case CENTRE:
+                Imgproc.rectangle(input, centerSpike, selectedColor);
+                break;
+            case RIGHT:
+                Imgproc.rectangle(input, rightSpike, selectedColor);
+                break;
+            case UNKNOWN:
+                // draw a blue box over the image because we didn't find a field position
+                Size size = input.size();
+                Imgproc.rectangle(input,new Point(0,0),new Point(size.width,size.height),new Scalar(255,0, 0));
+        }
+    }
+
+
+    /**
+     * @param canvas
+     * @param onscreenWidth
+     * @param onscreenHeight
+     * @param scaleBmpPxToCanvasPx
+     * @param scaleCanvasDensity
+     * @param userContext
+     */
+    @Override
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+
+    }
+    protected double getAvgSaturation(Mat input, Rect rect) {
         Mat submat = input.submat(rect);
         Scalar color = Core.mean(submat);
         return color.val[1];
-        }
+    }
 
     public double getLeftSpikeSaturation() {
         return leftSpikeSaturation;
@@ -140,42 +197,7 @@ public class HSVSaturationPipeline extends OpenCvPipeline implements VisionProce
         this.fieldPosition = fieldPosition;
     }
 
-    public void drawRectangles(Mat input) {
-        // Only draw relevant field position boxes
-        switch(fieldPosition) {
-            case BLUE_FIELD_LEFT:
-            case RED_FIELD_LEFT:
-                Imgproc.rectangle(input, leftSpike, nonSelectedColor);
-                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
-                break;
-            case BLUE_FIELD_RIGHT:
-            case RED_FIELD_RIGHT:
-                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
-                Imgproc.rectangle(input, rightSpike, nonSelectedColor);
-                break;
-        }
-
-        switch (spikePos) {
-            case LEFT:
-                Imgproc.rectangle(input, leftSpike, selectedColor);
-                break;
-            case CENTRE:
-                Imgproc.rectangle(input, centerSpike, selectedColor);
-                break;
-            case RIGHT:
-                Imgproc.rectangle(input, rightSpike, selectedColor);
-                break;
-        }
-    }
-
-    @Override
-    public void init(int width, int height, CameraCalibration calibration) {
-
-    }
-
-    @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
-        processFrame( frame );
-        return(null);
+    public FieldPosition getFieldPosition(){
+        return fieldPosition;
     }
 }
