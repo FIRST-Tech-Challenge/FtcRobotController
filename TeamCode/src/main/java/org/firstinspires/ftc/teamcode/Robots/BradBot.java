@@ -465,6 +465,7 @@ public class BradBot extends BasicRobot {
       arm.flipTo(DROP);
       wrist.flipTo(Wrist.WristTargetStates.DROP);
       twrist.flipTo(Twrist.twristTargetStates.DROP);
+
     }
     if (intUp) {
       intake.toggleIntakeHeight();

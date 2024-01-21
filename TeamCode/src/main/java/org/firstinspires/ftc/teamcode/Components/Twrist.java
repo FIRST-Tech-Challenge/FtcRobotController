@@ -11,7 +11,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.585, LEFT_TILTY = 0.4, RIGHT_TILTY = 0.7, DROPPY = 0.4, FLIP_TIME=0.3;
+    public static double GRABBY = 0.585, LEFT_TILTY = 0.4, RIGHT_TILTY = 0.7, DROPPY = 0.113, FLIP_TIME=0.3;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
@@ -76,42 +76,40 @@ public class Twrist extends RFServo {
                     LOGGER.log("twrist to GRAB");
                     lastTime = time;
                 }
-                twristTargetStates.GRAB.setStateTrue();
+                twristTargetStates.GRAB.state = true;
             } else if(p_state == twristTargetStates.DROP){
                 if((Arm.ArmStates.DROP.state) && super.getPosition() != DROPPY){
                     super.setPosition(DROPPY);
                     LOGGER.log("twrist to DROP");
                     lastTime = time;
                 }
-                twristTargetStates.DROP.setStateTrue();
+                twristTargetStates.DROP.state = true;
             }
             else if(p_state == twristTargetStates.LEFT_TILT) {
-                op.telemetry.addData("hi", "hi3");
 
                 if((Arm.ArmStates.DROP.state) && super.getPosition() != LEFT_TILTY){
                     super.setPosition(LEFT_TILTY);
                     LOGGER.log("left tilting claw");
                     lastTime = time;
                 }
-                twristTargetStates.LEFT_TILT.setStateTrue();
+                twristTargetStates.LEFT_TILT.state = true;
             }
             else if(p_state == twristTargetStates.RIGHT_TILT) {
-                op.telemetry.addData("hi", "hi4");
 
                 if((Arm.ArmStates.DROP.state) && super.getPosition() != RIGHT_TILTY){
                     super.setPosition(RIGHT_TILTY);
                     LOGGER.log("right tilting claw");
                     lastTime = time;
                 }
-                twristTargetStates.RIGHT_TILT.setStateTrue();
+                twristTargetStates.RIGHT_TILT.state = true;
             }
         }
         p_state.state=true;
     }
     public void update() {
         for (var i : twristStates.values()) {
-            if (super.getPosition() == i.pos && time +0.1> lastTime + FLIP_TIME) i.setStateTrue();
-            twristTargetStates.values()[i.ordinal()].state=false;
+            if (super.getPosition() == i.pos && time> lastTime + FLIP_TIME){ i.setStateTrue();
+            twristTargetStates.values()[i.ordinal()].state=false;}
         }
         for (var i : twristTargetStates.values()) {
             if (i.state && super.getPosition() != i.pos) flipTo(i);
