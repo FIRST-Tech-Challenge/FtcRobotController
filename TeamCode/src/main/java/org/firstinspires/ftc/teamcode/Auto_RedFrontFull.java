@@ -29,7 +29,7 @@ public class Auto_RedFrontFull extends CSBase {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);  // Pause to display final telemetry message.
+        s(1);  // Pause to display final telemetry message.
     }
 
 }

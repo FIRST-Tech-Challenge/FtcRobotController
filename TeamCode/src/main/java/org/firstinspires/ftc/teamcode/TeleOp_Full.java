@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Full", group = "CenterStage")
 public class TeleOp_Full extends CSBase {
@@ -13,7 +14,7 @@ public class TeleOp_Full extends CSBase {
     double lateral = 0.0;
     double yaw = 0.0;
     boolean TS = false;
-    //boolean wasTS = false;
+    boolean wasTS = false;
     final double speedMultiplier = 0.75;
     final double baseTurnSpeed = 2.5;
     double slowdownMultiplier = 0.0;
@@ -152,7 +153,8 @@ public class TeleOp_Full extends CSBase {
             }
         }
 
-        /*if (touchSensor != null) {
+        //*
+        if (touchSensor != null) {
             if (!wasTS) {
                 if (touchSensor.isPressed()) {
                     pixelLiftingMotor.setPower(0);
@@ -164,7 +166,7 @@ public class TeleOp_Full extends CSBase {
             } else if (!touchSensor.isPressed()) {
                 wasTS = false;
             }
-        }*/
+        }//*/
         requestOpModeStop();
     }
     public void addActTelemetry(String message){

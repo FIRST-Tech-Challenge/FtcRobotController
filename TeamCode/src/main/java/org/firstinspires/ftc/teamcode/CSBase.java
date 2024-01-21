@@ -183,8 +183,8 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
-     * @param dir (opt.) Direction to drive if inches is zero.**/
-    public void encoderDrive(double inches, dir dir) {
+     * @param direction (opt.) Direction to drive if inches is zero.**/
+    public void encoderDrive(double inches, dir direction) {
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -210,7 +210,7 @@ public abstract class CSBase extends LinearOpMode {
                 lf.setVelocity(VELOCITY * signum(inches));
                 rf.setVelocity(VELOCITY * signum(inches));
             }
-            else if (dir == dir.forward){
+            else if (direction == dir.forward){
                 lb.setVelocity(VELOCITY);
                 rb.setVelocity(VELOCITY);
                 lf.setVelocity(VELOCITY);
@@ -430,18 +430,18 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives the specified number of inches. Negative values will drive backwards.
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
-     * @param dir (opt.) Direction to drive if inches is zero.**/
-    public void drive(double inches, dir dir) {
+     * @param direction (opt.) Direction to drive if inches is zero.**/
+    public void drive(double inches, dir direction) {
         //double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         if (inches != 0) {
             for (int i = 0; i < checks; i++) {
-                encoderDrive(inches / checks);
+                encoderDrive(inches / checks, direction);
                 //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             }
             stopRobot();
         } else {
-            encoderDrive(0,dir);
+            encoderDrive(0,direction);
         }
     }
     /** Drives the specified number of inches. Negative values will drive backwards.

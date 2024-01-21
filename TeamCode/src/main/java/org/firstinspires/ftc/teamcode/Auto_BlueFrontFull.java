@@ -18,7 +18,7 @@ public class Auto_BlueFrontFull extends CSBase {
         purplePixel();
         drive(-2);
         turn(90);
-        sleep(3);
+        s(3);
         drive(70);
         setSpeed(1000);
         drive(15);
@@ -27,7 +27,7 @@ public class Auto_BlueFrontFull extends CSBase {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);  // Pause to display final telemetry message.
+        s(1);  // Pause to display final telemetry message.
     }
 
 
