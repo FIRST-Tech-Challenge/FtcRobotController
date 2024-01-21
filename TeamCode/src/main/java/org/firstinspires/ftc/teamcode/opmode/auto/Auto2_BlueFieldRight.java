@@ -80,6 +80,9 @@ public class Auto2_BlueFieldRight extends AutoBase {
 
         while (opModeIsActive()) {
 
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
+
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {

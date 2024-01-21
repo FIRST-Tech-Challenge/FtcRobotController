@@ -67,6 +67,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
          * This loop is run continuously
          */
         while (opModeInInit()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
 
             state = 0;
             SpikePosition spikePos = getSpikePosition();

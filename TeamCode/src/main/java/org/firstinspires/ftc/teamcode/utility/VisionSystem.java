@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationProcessor;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -97,18 +98,31 @@ public class VisionSystem {
                 this.currentMode = newMode;
                 break;
             case FRONT_CAMERA_PIXEL_GRAB:
+                // will want to enable the Tensor Flow processor here
                 break;
             case NONE:
+            default:
+                // The processing mode didn't change, the value of this.current mode doesn't change
 
         }
-
 
         return currentMode;
     }
 
-    private void switchCamera(WebcamName frontCam, Telemetry telemetry) {
-        if (visionPortal.getActiveCamera() != frontCam) {
-            visionPortal.setActiveCamera(frontCam);
+    public void stopLiveView()
+    {
+      visionPortal.stopLiveView();
+    }
+
+    public void resumeLiveView(){
+        visionPortal.resumeLiveView();
+    }
+
+
+
+    private void switchCamera(WebcamName desiredWebCam, Telemetry telemetry) {
+        if (visionPortal.getActiveCamera() != desiredWebCam) {
+            visionPortal.setActiveCamera(desiredWebCam);
             while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
                 telemetry.addData("Camera State: ", visionPortal.getCameraState());
                 telemetry.update();

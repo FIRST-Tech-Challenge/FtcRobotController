@@ -77,6 +77,8 @@ public class Auto2_Red53Left extends AutoBase {
         }
 
         while (opModeIsActive()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 

@@ -67,6 +67,12 @@ public abstract class AutoBase extends LinearOpMode {
         visionSystem = new VisionSystem(hardwareMap, telemetry);
         // setting which Vision Processing mode we want here.
         VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.FRONT_CAMERA_GAMEPIECE);
+
+        if(opModeInInit()) {
+            // After INIT has been pressed we will run this part of the code.  During this phase
+            // we want to be able to see a preview of the what the HSVProcessor is seeing
+            visionSystem.resumeLiveView();
+        }
         telemetry.addData("Current VPMode",currentVPMode);
         telemetry.update();
 

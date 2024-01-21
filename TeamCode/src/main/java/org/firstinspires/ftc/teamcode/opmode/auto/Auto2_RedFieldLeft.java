@@ -62,6 +62,9 @@ public class Auto2_RedFieldLeft extends AutoBase {
         setFieldPosition(FieldPosition.RED_FIELD_LEFT);
 
         while (opModeInInit()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
+
             state = 0;
             SpikePosition spikePos = getSpikePosition();
             switch (spikePos) {
