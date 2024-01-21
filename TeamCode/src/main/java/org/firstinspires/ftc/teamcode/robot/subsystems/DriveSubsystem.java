@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,6 +10,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import java.util.List;
 
 public class DriveSubsystem extends SubsystemBase
 {
@@ -20,6 +23,10 @@ public class DriveSubsystem extends SubsystemBase
     public double heading=0;
     public DriveSubsystem(HardwareMap hardwareMap)
     {
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for(LynxModule module : allHubs){
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
