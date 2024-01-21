@@ -28,7 +28,7 @@ public class LongRedAuto extends LinearOpMode {
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
 
-            robot.alignToBoard();
+            robot.alignToBoardFast();
             robot.autoOuttake(false, slideStartingPosition);
             robot.parkBot(true);
 
