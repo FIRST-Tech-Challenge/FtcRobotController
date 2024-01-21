@@ -13,7 +13,7 @@ public class TeleOp_Full extends CSBase {
     double lateral = 0.0;
     double yaw = 0.0;
     boolean TS = false;
-    boolean wasTS = false;
+    //boolean wasTS = false;
     final double speedMultiplier = 0.75;
     final double baseTurnSpeed = 2.5;
     double slowdownMultiplier = 0.0;
