@@ -52,10 +52,12 @@ public class TeleOp_Full extends CSBase {
             }
 
             // Send calculated power to wheels
-            lf.setPower(leftFrontPower);
-            rf.setPower(rightFrontPower);
-            lb.setPower(leftBackPower);
-            rb.setPower(rightBackPower);
+            if (lf != null) {
+                lf.setPower(leftFrontPower);
+                rf.setPower(rightFrontPower);
+                lb.setPower(leftBackPower);
+                rb.setPower(rightBackPower);
+            }
 
             if (pixelLiftingMotor != null) {
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
