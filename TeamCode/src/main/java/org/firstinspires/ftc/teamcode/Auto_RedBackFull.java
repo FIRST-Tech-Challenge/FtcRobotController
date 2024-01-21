@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
-        setup(color.red);
+        color teamColor = color.red;
+        setup(teamColor);
 
         // ---------------------
         // ------Main Code------
@@ -14,37 +15,20 @@ public class Auto_RedBackFull extends CSBase {
 
 
         pos = findPos();
+        int ID = setID(pos, teamColor);
         telemetry.addData("Team Prop X", x);
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
-        s(2);
-        drive(-16);
-        if (pos == spike.left) {
-            turn(-30);
-            drive(-9);
-            drive(9);
-            turn(30);
-        } else if (pos == spike.middle) {
-            drive(-10);
-            drive(10);
-        } else {
-            turn(30);
-            drive(-9);
-            drive(9);
-            turn(-30);
-        }
+        purplePixel();
         turn(-90);
         drive(tiles(1));
+        strafeUntilTagDetection(dir.left, ID);
+        // Place yellow pixel
+        strafeUntilTagDetection(dir.left, 4);
         turn(-90);
         drive(tiles(1));
         turn(90);
-        detectTag(6);
-        drive(tiles(-2.1));
-        turn(-90);
-        setSpeed(1000);
-        drive(tiles(1.7));
-        setSpeed(2000);
-        ejectPixel();
+        drive(tiles(1));
 
         //*/
 

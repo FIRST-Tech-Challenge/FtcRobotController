@@ -563,7 +563,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Uses predefined boundaries to return the spike mark that the team prop is on.
      * @return The spike mark that the team prop is on. **/
     public spike findPos() {
-        sleep(2000);
+        s(2.5);
         double x = detectProp();
         if (x == -1){
             return spike.left;
@@ -579,6 +579,29 @@ public abstract class CSBase extends LinearOpMode {
         return spike.none;
     }
 
+    public int setID(spike location, color teamColor) {
+        int ID;
+        if (teamColor == color.blue) {
+            ID = 0;
+        } else {
+            ID = 3;
+        }
+        switch (location) {
+            case left:
+                ID += 1;
+                break;
+            case middle:
+                ID += 2;
+                break;
+            case right:
+                ID += 3;
+                break;
+            default:
+                break;
+        }
+        return ID;
+    }
+
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
     public void except(Exception e) {
@@ -589,6 +612,28 @@ public abstract class CSBase extends LinearOpMode {
      * @param seconds The amount of seconds to sleep. **/
     public final void s(double seconds) {
         sleep((long) seconds * 1000);
+    }
+
+    /** Place the purple pixel. **/
+    public void purplePixel() {
+        s(2);
+        drive(-16);
+        if (pos == spike.left) {
+            turn(-30);
+            drive(-9);
+            drive(9);
+            turn(30);
+        } else if (pos == spike.middle) {
+            drive(-10);
+            drive(10);
+        } else {
+            turn(30);
+            drive(-9);
+            drive(9);
+            turn(-30);
+        }
+        drive(20);
+        s(.5);
     }
 
 }

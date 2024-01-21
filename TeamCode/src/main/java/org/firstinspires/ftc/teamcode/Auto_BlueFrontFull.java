@@ -15,23 +15,7 @@ public class Auto_BlueFrontFull extends CSBase {
 
 
         findPos();
-        drive(-3);
-        if (pos == spike.left) {
-            turn(-10);
-            drive(-20);
-            drive(20);
-            turn(10);
-            drive(3);
-        } else if (pos == spike.middle) {
-            drive(-20);
-            drive(23);
-        } else {
-            turn(10);
-            drive(-20);
-            drive(20);
-            turn(-10);
-            drive(3);
-        }
+        purplePixel();
         drive(-2);
         turn(90);
         sleep(3);

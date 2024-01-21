@@ -15,24 +15,7 @@ public class Auto_RedFrontFull extends CSBase {
         telemetry.addData("Team Prop X", x);
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
-        s(2);
-        drive(-16);
-        if (pos == spike.left) {
-            turn(-30);
-            drive(-9);
-            drive(9);
-            turn(30);
-        } else if (pos == spike.middle) {
-            drive(-10);
-            drive(10);
-        } else {
-            turn(30);
-            drive(-9);
-            drive(9);
-            turn(-30);
-        }
-        drive(20);
-        s(.5);
+        purplePixel();
         drive(-2);
         turn(-90);
         s(3);
@@ -42,6 +25,7 @@ public class Auto_RedFrontFull extends CSBase {
         drive(15);
         setSpeed(2000);
         ejectPixel();
+        drive(5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
