@@ -700,5 +700,4 @@ public abstract class CSBase extends LinearOpMode {
         drive(20);
         s(.5);
     }
-
 }
