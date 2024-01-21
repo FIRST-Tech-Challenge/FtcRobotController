@@ -202,8 +202,8 @@ public class BlueLeftCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR2);
                         }
-                        currentState = State.IDLE
-                        ;
+                        currentState = State.IDLE;
+
                     }
                     break;
 

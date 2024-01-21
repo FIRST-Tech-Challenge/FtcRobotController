@@ -23,7 +23,7 @@ public class BlueRightCS extends LinearOpMode {
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
+    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight.
     static final Vector2d TrajL0 = new Vector2d(27.3, -1.5);
     static final Vector2d TrajL1 = new Vector2d(3, 0);
     static final Vector2d TrajL2 = new Vector2d(3,75);
@@ -36,7 +36,9 @@ public class BlueRightCS extends LinearOpMode {
     static final Vector2d TrajR1 = new Vector2d(3, 0);
     static final Vector2d TrajR2 = new Vector2d(3,75);
 
-
+    static final Vector2d TrajS0 = new Vector2d(0,0);
+    static final Vector2d TrajS1 = new Vector2d(0,0);
+    static final Vector2d TrajS2 = new Vector2d(0,0);
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -51,7 +53,8 @@ public class BlueRightCS extends LinearOpMode {
         LIFTUP,
         OUTTAKE,
         LIFTDOWN,
-        TOPARK
+        TOPARK,
+        TOSTACK
     }
 
     State currentState = State.IDLE;
@@ -116,6 +119,22 @@ public class BlueRightCS extends LinearOpMode {
                 .lineTo(TrajR2)
                 .build();
 
+        TrajectorySequence trajS0 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS0)
+//                .turn(Math.toRadians(70))
+                .build();
+
+        TrajectorySequence trajS1 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS1)
+//                .turn(Math.toRadians(70))
+                .build();
+
+        TrajectorySequence trajS2 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS2)
+//                .turn(Math.toRadians(70))
+                .build();
+
+
 
         drive.getExpansionHubs().update(getDt());
 
@@ -155,22 +174,6 @@ public class BlueRightCS extends LinearOpMode {
                         detectTimer.reset();
                     }
 
-//                    recog = CSVP.leftDetect(); //numerical value
-//                   // detectCounter++;
-//                    while (detectCounter <= 4) {
-//                        if (recog != 0) {
-//                            if (oldRecog != 0) {
-//                                if (CSVP.leftDetect() == recog) {
-//                                    oldRecog = recog;
-//                                    detectCounter++;
-//                                }
-//                            } else {
-//                                oldRecog = recog;
-//                            }
-//                        } else {
-//                            telemetry.addLine("NO DETECTION");
-//                        }
-//                    }
                     if (waitTimer.milliseconds() > 4000) {
                         currentState =  BlueRightCS.State.FORWARD;
                         CSVP.closeVP();
@@ -238,6 +241,8 @@ public class BlueRightCS extends LinearOpMode {
                     waitTimer.reset();
                     break;
 
+
+
                 case OUTTAKE:
                     if(!drive.isBusy() && waitTimer.milliseconds() > 3000){
                         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
@@ -255,6 +260,10 @@ public class BlueRightCS extends LinearOpMode {
 
                 case TOPARK:
                     //add code to park
+                    break;
+
+                case TOSTACK:
+                    //add code to stack
                     break;
 
                 case IDLE:
