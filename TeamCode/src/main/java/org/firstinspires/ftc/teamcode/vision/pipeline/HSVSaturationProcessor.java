@@ -7,21 +7,17 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class HSVSaturationPipeline  implements VisionProcessor {
+public class HSVSaturationProcessor implements VisionProcessor {
     public Scalar nonSelectedColor = new Scalar(0, 255, 0); // Green
     public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
 
-    FieldPosition fieldPosition = FieldPosition.BLUE_FIELD_LEFT; // setting a default to make EOVSim work
+    FieldPosition fieldPosition = FieldPosition.NOT_ON_FIELD; // setting a default to make EOVSim work
     Rect leftSpike;
     Rect centerSpike;
     Rect rightSpike;
@@ -49,7 +45,7 @@ public class HSVSaturationPipeline  implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        switch(fieldPosition){
+        switch(getFieldPosition()){
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
                 LEFT_SPIKE_SATURATION_BASELINE = 28; // this was 22.21125992063492 at calibration
@@ -71,14 +67,14 @@ public class HSVSaturationPipeline  implements VisionProcessor {
         }
 
 
-        Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
-        Core.extractChannel(hsvMat, detectionMat, 1);
-        Imgproc.cvtColor(detectionMat, processedMat, Imgproc.COLOR_GRAY2RGB);
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2HSV);
+        Core.extractChannel(frame, frame, 1);
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_GRAY2RGB);
 
-        findRectangle(processedMat);
-        drawRectangles(processedMat);
+        findRectangle(frame);
+        drawRectangles(frame);
 
-        return(processedMat);
+        return null;
     }
 
 
@@ -115,10 +111,36 @@ public class HSVSaturationPipeline  implements VisionProcessor {
                     // It is either 3 or we can’t tell
                 }
                 break;
+            case NOT_ON_FIELD:
+            default:
+                spikePos = SpikePosition.UNKNOWN;
+                Rect textRect = new Rect(150, 365, 660, 181);
+                msgOnImage( input,"Bot not on field or no field pos given",textRect);
         }
 
         return spikePos;
 
+    }
+
+    private static void msgOnImage(Mat input, String msg,Rect msgBoxRect) {
+        // Define the font and other text properties
+        int fontFace = Imgproc.FONT_HERSHEY_SIMPLEX;
+        double fontScale = 1.5;
+        Scalar fontColor = new Scalar(255, 255, 255); // White color
+        int thickness = 2;
+
+
+        // Get the size of the text
+        Size textSize = Imgproc.getTextSize(msg, fontFace, fontScale, thickness, new int[]{0});
+
+        // Calculate the position to center the text in the given rectangle
+        Point textPosition = new Point(
+                msgBoxRect.x + (msgBoxRect.width - textSize.width) / 2,
+                msgBoxRect.y + (msgBoxRect.height + textSize.height) / 2
+        );
+
+        // Draw the text on the image
+        Imgproc.putText(input,msg , textPosition, fontFace, fontScale, fontColor, thickness);
     }
 
 
@@ -135,10 +157,9 @@ public class HSVSaturationPipeline  implements VisionProcessor {
                 Imgproc.rectangle(input, centerSpike, nonSelectedColor);
                 Imgproc.rectangle(input, rightSpike, nonSelectedColor);
                 break;
+            case NOT_ON_FIELD:
             default:
-                // draw a red box over the image because we didn't find a field position
-                Size size = input.size();
-                Imgproc.rectangle(input,new Point(0,0),new Point(size.width,size.height),new Scalar(0, 0, 255));
+                msgOnImage(input,"Unknown Field Position or not on field", new Rect(150, 465, 660, 181));
         }
 
         switch (getSpikePos()) {
@@ -152,9 +173,8 @@ public class HSVSaturationPipeline  implements VisionProcessor {
                 Imgproc.rectangle(input, rightSpike, selectedColor);
                 break;
             case UNKNOWN:
-                // draw a blue box over the image because we didn't find a field position
-                Size size = input.size();
-                Imgproc.rectangle(input,new Point(0,0),new Point(size.width,size.height),new Scalar(255,0, 0));
+            default:
+                msgOnImage(input,"Unknown Spike Position", new Rect(150, 565, 660, 181));
         }
     }
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 
 /**

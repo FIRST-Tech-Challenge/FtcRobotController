@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
+import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationProcessor;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -25,7 +25,7 @@ public class VisionSystem {
     private AprilTagProcessor aprilTagProcessor;
 
     // our HSV pipeline that detects custom game pieces.
-    private HSVSaturationPipeline gamePieceProcessor;
+    private HSVSaturationProcessor gamePieceProcessor;
 
     private WebcamName frontCam;
     private WebcamName rearCam;
@@ -59,7 +59,7 @@ public class VisionSystem {
                 .nameForSwitchableCamera(frontCam,rearCam);
 
         // create our HSV processor
-        gamePieceProcessor = new HSVSaturationPipeline();
+        gamePieceProcessor = new HSVSaturationProcessor();
 
         // Todo:  add a pixel tensorflow processor here
 

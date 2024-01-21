@@ -29,14 +29,13 @@
 
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationPipeline;
+import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -65,7 +64,7 @@ public class ConceptDoubleVision extends LinearOpMode {
      */
     private TfodProcessor tfod;
 
-    private HSVSaturationPipeline HSVProcessor;
+    private HSVSaturationProcessor HSVProcessor;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -143,7 +142,7 @@ public class ConceptDoubleVision extends LinearOpMode {
         tfod = new TfodProcessor.Builder()
             .build();
 
-        HSVProcessor = new HSVSaturationPipeline();
+        HSVProcessor = new HSVSaturationProcessor();
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration
