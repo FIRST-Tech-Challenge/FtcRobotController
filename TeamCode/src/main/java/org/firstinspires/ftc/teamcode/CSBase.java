@@ -492,35 +492,36 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Stops all drive train motors on the robot. **/
     public void stopRobot() {
-        // Set target position to avoid an error
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
+        if (lb != null) {
+            // Set target position to avoid an error
+            lb.setTargetPosition(lb.getCurrentPosition());
+            rb.setTargetPosition(rb.getCurrentPosition());
+            lf.setTargetPosition(lf.getCurrentPosition());
+            rf.setTargetPosition(rf.getCurrentPosition());
 
-        // Turn On RUN_TO_POSITION
-        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            // Turn On RUN_TO_POSITION
+            lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        // Stop all motion
-        lb.setTargetPosition(lb.getCurrentPosition());
-        rb.setTargetPosition(rb.getCurrentPosition());
-        lf.setTargetPosition(lf.getCurrentPosition());
-        rf.setTargetPosition(rf.getCurrentPosition());
+            // Stop all motion
+            lb.setTargetPosition(lb.getCurrentPosition());
+            rb.setTargetPosition(rb.getCurrentPosition());
+            lf.setTargetPosition(lf.getCurrentPosition());
+            rf.setTargetPosition(rf.getCurrentPosition());
 
-        lb.setPower(0);
-        rb.setPower(0);
-        lf.setPower(0);
-        rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
 
-        // Turn off RUN_TO_POSITION
-        lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
+            // Turn off RUN_TO_POSITION
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        }
     }
    /** Initializes the TFOD and April Tag processors. **/
     public void initProcessors() {
