@@ -144,6 +144,7 @@ public class BlueLeft extends LinearOpMode {
             currTime = System.currentTimeMillis();
             done = true;
         }
+        webCam.stopStreaming();
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);
         fUtils.writeConfig(hardwareMap.appContext, this);
@@ -161,8 +162,8 @@ public class BlueLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-35.5, 38, 90);
-        move.driveToBoard(-35.5, 45.25, 90);
-        move.driveFromBoard(-35.5, 43.25, 90);
+        move.driveToBoard(-35.5, 44.25, 90);
+        move.driveFromBoard(-35.5, 42.25, 90);
         move.driveSeq(-54, 43.25, 90);
         move.driveSeq(-54, 50, 90);
     }
@@ -175,8 +176,8 @@ public class BlueLeft extends LinearOpMode {
         sleep(500);
         utils.dumpClose();
         move.driveSeq(-29, 38, 90);
-        move.driveToBoard(-29, 45.75, 90);
-        move.driveFromBoard(-29, 43.75, 90);
+        move.driveToBoard(-29, 44.75, 90);
+        move.driveFromBoard(-29, 42.75, 90);
         move.driveSeq(-54, 43.75, 90);
         move.driveSeq(-54, 50, 90);
     }
@@ -189,8 +190,8 @@ public class BlueLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(1000);
         move.driveSeq(-23, 38, 90);
-        move.driveToBoard(-23, 45.75, 90);
-        move.driveFromBoard(-23, 43.75, 90);
+        move.driveToBoard(-23, 44.75, 90);
+        move.driveFromBoard(-23, 42.75, 90);
         move.driveSeq(-54, 43.75, 90);
         move.driveSeq(-54, 50, 90);
     }

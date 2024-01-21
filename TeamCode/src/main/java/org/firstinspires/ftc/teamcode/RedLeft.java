@@ -155,6 +155,7 @@ public class RedLeft extends LinearOpMode {
             currTime = System.currentTimeMillis();
             done = true;
         }
+        webCam.stopStreaming();
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);
         fUtils.writeConfig(hardwareMap.appContext, this);
@@ -177,7 +178,7 @@ public class RedLeft extends LinearOpMode {
         move.driveSeq(-4, 27, 90);
         move.driveSeq(-4, -39, 90);
         move.driveSeq(-23, -39, -90);
-        move.driveToBoard(-23, -48, -90);
+        move.driveToBoard(-23, -49, -90);
         move.driveFromBoard(-23, -46, -90);
         move.driveSeq(-7, -46, -90);
         move.driveSeq(-7, -60, -90);
@@ -193,9 +194,9 @@ public class RedLeft extends LinearOpMode {
         move.driveSeq(-4, 53, 90);
         move.driveSeq(-4, -39, 90);
         move.driveSeq(-26, -39, -90);
-        move.driveToBoard(-26, -48.5,-90);
-        move.driveFromBoard(-26, -46.5, -90);
-        move.driveSeq(-2, -46.5, -90);
+        move.driveToBoard(-26, -47.5,-90);
+        move.driveFromBoard(-26, -45.5, -90);
+        move.driveSeq(-2, -45.5, -90);
         move.driveSeq(-2, -60, -90);
     }
     private void RightPath()throws InterruptedException {
@@ -211,9 +212,9 @@ public class RedLeft extends LinearOpMode {
         move.driveSeq(-4, 36, 90);
         move.driveSeq(-4, -39, 90);
         move.driveSeq(-32, -39, -90);
-        move.driveToBoard(-32, -48.5, -90);
-        move.driveFromBoard(-32, -46.5, -90);
-        move.driveSeq(-4, -46.5, -90);
+        move.driveToBoard(-32, -47.5, -90);
+        move.driveFromBoard(-32, -45.5, -90);
+        move.driveSeq(-4, -45.5, -90);
         move.driveSeq(-4, -60, -90);
     }
 

@@ -156,6 +156,7 @@ public class RedRight extends LinearOpMode {
             currTime = System.currentTimeMillis();
             done = true;
         }
+        webCam.stopStreaming();
         Pose2d pose = drive.getPoseEstimate();
         fUtils.setPose(pose);
         fUtils.writeConfig(hardwareMap.appContext, this);
