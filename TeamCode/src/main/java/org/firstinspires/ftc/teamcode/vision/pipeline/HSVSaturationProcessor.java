@@ -114,8 +114,8 @@ public class HSVSaturationProcessor implements VisionProcessor {
             case NOT_ON_FIELD:
             default:
                 spikePos = SpikePosition.UNKNOWN;
-                Rect textRect = new Rect(150, 365, 660, 181);
-                msgOnImage( input,"Bot not on field or no field pos given",textRect);
+                Rect textRect = new Rect(150, 165, 660, 181);
+                msgOnImage( input,"findRectangles: Bot not on field or no field pos given",textRect);
         }
 
         return spikePos;
@@ -125,7 +125,7 @@ public class HSVSaturationProcessor implements VisionProcessor {
     private static void msgOnImage(Mat input, String msg,Rect msgBoxRect) {
         // Define the font and other text properties
         int fontFace = Imgproc.FONT_HERSHEY_SIMPLEX;
-        double fontScale = 1.5;
+        double fontScale = 1.0;
         Scalar fontColor = new Scalar(255, 255, 255); // White color
         int thickness = 2;
 
@@ -159,7 +159,7 @@ public class HSVSaturationProcessor implements VisionProcessor {
                 break;
             case NOT_ON_FIELD:
             default:
-                msgOnImage(input,"Unknown Field Position or not on field", new Rect(150, 465, 660, 181));
+                msgOnImage(input,"drawRectangles: Unknown Field Position or not on field", new Rect(150, 265, 660, 181));
         }
 
         switch (getSpikePos()) {
@@ -174,7 +174,7 @@ public class HSVSaturationProcessor implements VisionProcessor {
                 break;
             case UNKNOWN:
             default:
-                msgOnImage(input,"Unknown Spike Position", new Rect(150, 565, 660, 181));
+                msgOnImage(input,"drawRectangles: Unknown Spike Position", new Rect(150, 365, 660, 181));
         }
     }
 
