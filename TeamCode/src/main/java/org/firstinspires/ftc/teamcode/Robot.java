@@ -83,10 +83,11 @@ public class Robot {
             clamp = hardwareMap.servo.get("holderClamp");
             hook = hardwareMap.servo.get("linearLocker");
             spikeServo = hardwareMap.servo.get("spikeServo");
-            stackAttachment = hardwareMap.servo.get("stackAttachment");trayAngle = hardwareMap.servo.get("trayAngle");
+            stackAttachment = hardwareMap.servo.get("stackAttachment");
+            trayAngle = hardwareMap.servo.get("trayAngle");
 
             // initialize controllers
-            straightController = new PIDController("straight", 0.003, 0.0000005, 0.4, false);
+            straightController = new PIDController("straight", 0.007, 0.0000005, 0.4, false);
             fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true); //0.01 - 0.0001
             bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
             setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
@@ -275,12 +276,14 @@ public class Robot {
     public void resetDrivetrainEncoders () {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        /*
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        */
     }
 
     public void setUpIntakeOuttake() {
@@ -930,25 +933,37 @@ public class Robot {
                 horizontal7 = HORIZONTAL_TOTAL - 30;
 
                 // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.7); //go left if blue, go right if red
+                if (isRedAlliance) {
+                    mecanumBlocking2(6);
+                } else {
+                    mecanumBlocking2(-6);
+                }
                 setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal2, false, 0.5); //go forward
+                straightBlocking2(-30);
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
-                straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
+                straightBlocking2(10);
                 setHeading(0, 0.7);
-                mecanumBlocking(vertical4, isRedAlliance, 0.7); //move left if red
+                if (isRedAlliance) {
+                    mecanumBlocking2(13);
+                } else {
+                    mecanumBlocking2(-13);
+                }
                 setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal5, false, 0.8); //go forward & around marker
+                straightBlocking2(-1 * horizontal5);
                 setHeading(90 * polarity, 0.7); //turn
                 if (isJuice) {
                     opMode.sleep(10000);
                 }
-                straightBlockingFixHeading(vertical6, false, 0.8);
+                straightBlocking2(-1 * vertical6);
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(horizontal7, !isRedAlliance, 0.7); //mecanum directly in front of board left if blue
+                if (isRedAlliance) {
+                    mecanumBlocking2(-1 * horizontal7);
+                } else {
+                    mecanumBlocking2(horizontal7);
+                }
                 setHeading(90 * polarity, 0.7);
                 break;
             }
@@ -1657,10 +1672,14 @@ public class Robot {
     // positive inches - go forward
     // negative inches - go backward
     public void straightBlocking2(double inches) {
+        resetDrivetrainEncoders();
+        fLeftMecanumController.integral = 0;
+        fLeftMecanumController.lastError = 0;
+        fLeftMecanumController.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
         double power;
-        double ERROR_TOLERANCE_IN_TICKS = 15;
+        double ERROR_TOLERANCE_IN_TICKS = 30;
         int counter = 0;
 
         while (opMode.opModeIsActive() && counter < 3) {
