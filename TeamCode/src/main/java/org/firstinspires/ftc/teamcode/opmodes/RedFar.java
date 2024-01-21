@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.commands.alignBackdrop;
+import org.firstinspires.ftc.teamcode.commands.autoOutDump;
 import org.firstinspires.ftc.teamcode.commands.autoOutPrep;
 import org.firstinspires.ftc.teamcode.commands.dropIntakePreload;
 import org.firstinspires.ftc.teamcode.robot.Subsystem;
@@ -21,21 +23,9 @@ public class RedFar extends LinearOpMode {
     public static boolean parkCenter = false; // Park center of field
     public static boolean IS_RED = true;     // IS_RED side?
     public static boolean ALIGN_RIGHT = false; // Align 1 inch from tile right side
-    public static double POS1_SPL1_X = 23;
-    public static double POS1_SPL1_Y = 24;
-    public static double POS1_DUMP_X = 24;
-    public static double POS1_DUMP_Y = 33;
-
-    public static double POS2_SPL1_X = 37;
-    public static double POS2_SPL1_Y = 15;
-    public static double POS3_SPL1_X = 26;
-    public static double POS3_SPL1_Y = 26;
-    public static double FACE_BACKDROP_HEADERING = Math.toRadians(90);
-    public static double PARK_STRAFE_MIDDLE_TO_CENTER = 28;
-    public static double TAG_DIST = 6;
-    public static double PARK_X_CORNER = 2;
-    public static double PARK_X_CENTER = 50;
-    public static double PARK_Y = 34.5;
+    public static double drivePwr = 0.2;
+    public static double hCoeff = 5;
+    public static double park_y = -80;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,11 +39,13 @@ public class RedFar extends LinearOpMode {
         int elementPos;
 
         // Commands
+        alignBackdrop alignCmd = new alignBackdrop(robot, drivetrain, drivePwr, hCoeff,8, telemetry);
         //Servo init code here
         robot.intake.toBasePos();
         robot.outtake.toIntakePos();
         dropIntakePreload dropIntakePreload = new dropIntakePreload(robot);
-        autoOutPrep outCmd = new autoOutPrep(robot);
+        autoOutPrep outPrep = new autoOutPrep(robot);
+        autoOutDump outDump = new autoOutDump(robot);
 
         NanoClock clock = NanoClock.system();
         double startTime, currentTime;
@@ -87,19 +79,21 @@ public class RedFar extends LinearOpMode {
                             .turn(Math.toRadians(45), 1,0.5)
                             .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
                             .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(31, -85), Math.toRadians(-90)) // go to backdrop
+                            .splineTo(new Vector2d(31, park_y), Math.toRadians(-90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
             //Log.v("AUTODEBUG", "4: dump yellow");
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
             //dump yellow pixel
-            robot.runCommand(outCmd);
+            robot.runCommand(outDump);
             //Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(50, -81))
+                                .lineTo(new Vector2d(50, park_y))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -107,7 +101,7 @@ public class RedFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(-4, -81 ))
+                                .lineTo(new Vector2d(-4, -81))
                                 .build()
                 ));
             }
@@ -126,11 +120,13 @@ public class RedFar extends LinearOpMode {
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
                             .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
                             .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(22, -84), Math.toRadians(-90))
+                            .splineTo(new Vector2d(22, park_y), Math.toRadians(-90))
                             .build()
             ));
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
             //dump yellow pixel
-            robot.runCommand(outCmd);
+            robot.runCommand(outDump);
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
@@ -166,13 +162,15 @@ public class RedFar extends LinearOpMode {
                             .turn(Math.toRadians(45), 1,0.5)
                             .splineTo(new Vector2d(-2, -2), Math.toRadians(-90))
                             .splineTo(new Vector2d(-2, -68), Math.toRadians(-90))
-                            .splineTo(new Vector2d(16, -84), Math.toRadians(-90)) // go to backdrop
+                            .splineTo(new Vector2d(16, park_y), Math.toRadians(-90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
             //Log.v("AUTODEBUG", "4: dump yellow");
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
             //dump yellow pixel
-            robot.runCommand(outCmd);
+            robot.runCommand(outDump);
             //Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){

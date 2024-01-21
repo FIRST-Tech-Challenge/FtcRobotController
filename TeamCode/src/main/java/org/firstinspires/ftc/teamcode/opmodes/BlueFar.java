@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.commands.alignBackdrop;
+import org.firstinspires.ftc.teamcode.commands.autoOutDump;
 import org.firstinspires.ftc.teamcode.commands.autoOutPrep;
 import org.firstinspires.ftc.teamcode.commands.dropIntakePreload;
 import org.firstinspires.ftc.teamcode.robot.Subsystem;
@@ -22,6 +24,10 @@ public class BlueFar extends LinearOpMode {
     public static boolean IS_RED = false;     // IS_RED side?
     public static boolean ALIGN_RIGHT = true; // Align 1 inch from tile right side
 
+    public static double drivePwr = 0.2;
+    public static double hCoeff = 5;
+    public static double park_y = 80;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,10 +42,13 @@ public class BlueFar extends LinearOpMode {
 
         // Commands
         //Servo init code here
+        alignBackdrop alignCmd = new alignBackdrop(robot, drivetrain, drivePwr, hCoeff,8, telemetry);
         robot.intake.toBasePos();
         robot.outtake.toIntakePos();
         dropIntakePreload dropIntakePreload = new dropIntakePreload(robot);
         autoOutPrep outCmd = new autoOutPrep(robot);
+        autoOutPrep outPrep = new autoOutPrep(robot);
+        autoOutDump outDump = new autoOutDump(robot);
 
         NanoClock clock = NanoClock.system();
         double startTime, currentTime;
@@ -72,19 +81,22 @@ public class BlueFar extends LinearOpMode {
                             .turn(Math.toRadians(45), 1,0.5)
                             .splineTo(new Vector2d(0, 2), Math.toRadians(90))
                             .splineTo(new Vector2d(0, 68), Math.toRadians(90))
-                            .splineTo(new Vector2d(20, 84), Math.toRadians(90)) // go to backdrop
+                            .splineTo(new Vector2d(20, park_y), Math.toRadians(90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
+            //dump yellow pixel
+            robot.runCommand(outDump);
             //Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
-            robot.runCommand(outCmd);
             //Log.v("AUTODEBUG", "5: park");
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(44, 81))
+                                .lineTo(new Vector2d(44, park_y))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -92,7 +104,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(0, 81 ))
+                                .lineTo(new Vector2d(0, park_y ))
                                 .build()
                 ));
             }
@@ -111,16 +123,18 @@ public class BlueFar extends LinearOpMode {
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
                             .splineTo(new Vector2d(0, 2), Math.toRadians(90))
                             .splineTo(new Vector2d(0, 68), Math.toRadians(90))
-                            .splineTo(new Vector2d(27, 84), Math.toRadians(90))
+                            .splineTo(new Vector2d(27, park_y), Math.toRadians(90))
                             .build()
             ));
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
             //dump yellow pixel
-            robot.runCommand(outCmd);
+            robot.runCommand(outDump);
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(44, 81))
+                                .lineTo(new Vector2d(44, park_y))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -128,7 +142,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(5, 81 ))
+                                .lineTo(new Vector2d(5, park_y ))
                                 .build()
                 ));
             }
@@ -149,19 +163,21 @@ public class BlueFar extends LinearOpMode {
                     drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
                             .splineTo(new Vector2d(0, 2), Math.toRadians(90))
                             .splineTo(new Vector2d(0, 68), Math.toRadians(90))
-                            .splineTo(new Vector2d(32,  85), Math.toRadians(90)) // go to backdrop
+                            .splineTo(new Vector2d(32,  park_y), Math.toRadians(90)) // go to backdrop
                             //.lineTo(new Vector2d(2, -74))
                             .build()
             ));
             //Log.v("AUTODEBUG", "4: dump yellow");
             //dump yellow pixel
-            robot.runCommand(outCmd);
-            //Log.v("AUTODEBUG", "5: park");
+            robot.runCommand(outPrep);
+            robot.runCommand(alignCmd);
+            //dump yellow pixel
+            robot.runCommand(outDump);
             // Park
             if(parkCenter){
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(44, 81))
+                                .lineTo(new Vector2d(44, park_y))
                                 //.lineTo(new Vector2d(2, 4))
                                 .build()
                 ));
@@ -169,7 +185,7 @@ public class BlueFar extends LinearOpMode {
             else{
                 robot.runCommand(drivetrain.followTrajectorySequence(
                         drivetrain.trajectorySequenceBuilder(drivetrain.getPoseEstimate())
-                                .lineTo(new Vector2d(5, 81 ))
+                                .lineTo(new Vector2d(5, park_y))
                                 .build()
                 ));
             }
