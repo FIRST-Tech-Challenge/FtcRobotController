@@ -2,6 +2,7 @@ package Auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
 public class Middle {
 
     @Config
+    @Disabled
     @Autonomous(name = "Auto - Middle", group = "Auto")
     public class AutoTest extends LinearOpMode {
 
