@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
+import static java.lang.Double.min;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -17,10 +16,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-/**
- * Warren This is the pipeline that is activated when the robot is initializing, it will determine
- * which position the team prop is in
- */
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
   ArrayList<double[]> frameList;
@@ -28,15 +23,15 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
       p1y = 390,
       p2x = 80,
       p2y = 540,
-      p21x = 290,
+      p21x = 320,
       p21y = 390,
       p22x = 460,
-      p22y = 540,
-      p31x = 650,
+      p22y = 530,
+      p31x = 695,
       p31y = 390,
-      p32x = 830,
+      p32x = 860,
       p32y = 540,
-      threshhold = 1.0,
+      threshhold = 0.2,
 
       // h3u and s3u: 71 and 90
       colour = 1,
@@ -65,13 +60,16 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
     Rect ROI2 =
         new Rect( // 130 x 210, 60 x 120
             new Point(p21x, p21y), new Point(p22x, p22y));
-    Rect ROI3 = new Rect(new Point(p31x, p32y), new Point(p32x, p32y));
+    Rect ROI3 = new Rect(new Point(p31x, p31y), new Point(p32x, p32y));
     Mat cone = input.submat(ROI1);
-    double redValue = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    double[] sums = Core.sumElems(cone).val;
+    double redValue = (sums[0]+sums[1]+sums[2]) / ROI1.area() / 255;
     cone = input.submat(ROI2);
-    double redValue2 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    sums = Core.sumElems(cone).val;
+    double redValue2 = (sums[0]+sums[1]+sums[2]) / ROI2.area() / 255;
     cone = input.submat(ROI3);
-    double redValue3 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+    sums = Core.sumElems(cone).val;
+    double redValue3 = (sums[0]+sums[1]+sums[2]) / ROI3.area() / 255;
     frameList.add(new double[] {redValue, redValue2, redValue3});
     if (frameList.size() > 5) {
       frameList.remove(0);
@@ -96,17 +94,18 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
       sums[1] += frameList.get(i)[1];
       sums[2] += frameList.get(i)[2];
     }
-    double diffRatio = abs(sums[1] - sums[0]) / sums[0];
+    double diffRatio  = (sums[2] - sums[1])/min(sums[2],sums[1]);
     packet.put("frameListSize", frameList.size());
     packet.put("cvThresh0", sums[0]);
     packet.put("cvThresh1", sums[1]);
-    packet.put("diffRatio", diffRatio);
-    if (sums[0] < sums[1] && sums[0] < sums[2]) {
-      return 0;
-    } else if (sums[1] < sums[2] && sums[1] < sums[0]) {
-      return 1;
-    } else {
+    packet.put("cvThresh2", sums[2]);
+
+    if (diffRatio>threshhold) {
+      return 3;
+    } else if (diffRatio<-threshhold) {
       return 2;
+    } else {
+      return 1;
     }
   }
 }

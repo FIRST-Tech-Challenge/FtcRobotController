@@ -11,8 +11,8 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
-  public static double GRABBY = 0.27
-          , DROPPY = 0.45, FLIP_TIME=0.1, LOCKY=0.32;
+  public static double GRABBY = 0.26
+          , DROPPY = 0.45, FLIP_TIME=0.1, LOCKY=0.37;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);
@@ -31,7 +31,7 @@ public class Wrist extends RFServo {
       WristStates.LOCK.setStateTrue();
       WristTargetStates.LOCK.setStateTrue();
       WristTargetStates.LOCK.state = false;
-    }
+    } 
     lastTime = -100;
     super.setLastTime(-100);
   }
@@ -76,8 +76,16 @@ public class Wrist extends RFServo {
       }
     }
   }
+  public void purpur(){
+    if (this.getPosition() != 0.2) {
+      this.setPosition(0.2);
+      WristTargetStates.DROP.setStateTrue();
+      WristTargetStates.DROP.state = false;
+      WristStates.GRAB.setStateTrue();
+    }
+  }
   public void flipTo(WristTargetStates p_state){
-    if (!WristStates.values()[p_state.ordinal()].state&& abs(time - lastTime) > FLIP_TIME) {
+    if (abs(time - lastTime) > FLIP_TIME) {
       if (p_state == WristTargetStates.GRAB){
         if ((Arm.ArmStates.HOVER.state
                 || Arm.ArmStates.GRAB.state)
@@ -88,7 +96,8 @@ public class Wrist extends RFServo {
         }
         WristTargetStates.GRAB.state = true;
       } else if(p_state == WristTargetStates.DROP){
-        if((Arm.ArmStates.DROP.state) && super.getPosition() != DROPPY){
+        if ((Arm.ArmStates.DROP.state)
+            && super.getPosition() != DROPPY) {
           super.setPosition(DROPPY);
           LOGGER.log("wrist to DROP");
           lastTime = time;

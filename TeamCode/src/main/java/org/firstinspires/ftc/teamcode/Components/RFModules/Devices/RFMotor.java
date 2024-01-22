@@ -683,7 +683,7 @@ public class RFMotor {
         if(profile==null){
             velocity = rfMotor.getVelocity();
         }
-        return velocity;
+        return rfMotor.getVelocity();
     }
 
     public void setTarget(double p_target) {

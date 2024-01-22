@@ -293,16 +293,14 @@ public class Queuer {
     private void createQueueElement(boolean p_asynchrnous, boolean p_isOptional) {
         int startCondition;
         if (!mustFinish) {
-            startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, p_isOptional);
+            startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, false);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
-            LOGGER.setLogLevel(RFLogger.Severity.INFO);
             LOGGER.log( "event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         } else {
             mustFinish = false;
             startCondition = mustStartCondition;
             p_asynchrnous=false;
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, true));
-            LOGGER.setLogLevel(RFLogger.Severity.INFO);
             LOGGER.log( "event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         }
     }

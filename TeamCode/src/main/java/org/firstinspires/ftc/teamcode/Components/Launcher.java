@@ -23,8 +23,7 @@ public class Launcher extends RFServo {
         LOGGER.log("initializing hardware, setting position to OTHER_POSITION : " +OTHER_POSITION);
         super.setPosition(OTHER_POSITION);
         isLoaded=true;
-        super.setLastTime(-100);
-    }
+        super.setLastTime(-100);    }
 
     /**
      * Shoots the plane, changes state. Logs these two to general surface level

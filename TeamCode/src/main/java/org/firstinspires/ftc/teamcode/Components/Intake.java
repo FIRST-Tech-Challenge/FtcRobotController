@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
+import static java.lang.Math.max;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,11 +39,12 @@ public class Intake extends RFMotor {
   private boolean full = false;
 
   private boolean stopped = false;
-  private double pixelCount = 0;
-  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.63, FIVE =0.65, STOP_DELAY = 0.5;
+  public static double ONE=0.52, TWO=0.57, THREE = 0.6, FOUR = 0.63, FIVE =0.65, STOP_DELAY = 0.5, UPPIES = 0.8, SUPPER_UPIES = 1.0;
   double lastTime =0;
   boolean pixeled = false;
+  boolean pixeled1= false;
   int height = 1;
+  double lastHeightTime=0;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
@@ -51,8 +54,12 @@ public class Intake extends RFMotor {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
 //    intakeServo.setPosition();
+    intakeServo.setFlipTime(0.2);
     intakeServo.setLastTime(-100);
     IntakeStates.STOPPED.setStateTrue();
+    if(!isTeleop){
+      height = 5;
+    }
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -94,6 +101,7 @@ public class Intake extends RFMotor {
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
     setRawPower(-INTAKE_POWER-100);
     IntakeStates.INTAKING.setStateTrue();
+    downy();
   }
 
   public void toggleIntakeHeight(){
@@ -139,11 +147,27 @@ public class Intake extends RFMotor {
     IntakeStates.REVERSING.setStateTrue();
   }
 
+  public void uppies(){
+    if ( IntakeStates.INTAKING.state && this.getPower()==0) {
+      intakeServo.setPosition(UPPIES);
+    }
+  }
+  public void downy(){
+    if(intakeServo.getPosition()==UPPIES){
+      intakeServo.setPosition(ONE);
+    }
+  }
+
+  public void superYuppers(){
+    intakeServo.setPosition(SUPPER_UPIES);
+  }
+
   /** Sets intake power 0, logs that intake is stopped to general and intake surface level */
   public void stopIntake() {
-
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " );
       setRawPower(0);
+      uppies();
+      pixeled1=false;
 
     //        }
     //        LOGGER.log("position" + pos);
@@ -175,6 +199,31 @@ public class Intake extends RFMotor {
     return count;
   }
 
+  public void intakeAutoHeight() {
+    if (BasicRobot.time - lastHeightTime > 3) {
+      setHeight(height);
+      lastHeightTime = BasicRobot.time;
+    }
+    if (BasicRobot.time - lastHeightTime > 1) {
+      height = max(1, height - 1);
+      setHeight(height);
+      lastHeightTime = BasicRobot.time;
+    }
+    if(Magazine.pixels==1&&!pixeled1){
+      pixeled1 = true;
+      height = max(1, height - 1);
+      setHeight(height);
+      lastHeightTime = BasicRobot.time;
+    }
+    if(Magazine.pixels!=2){
+      intake();
+    }
+    else{
+      stopIntake();
+
+    }
+}
+
   public void setHeight(int height){
     if(height==1){
       intakeServo.setPosition(ONE);
@@ -198,6 +247,8 @@ public class Intake extends RFMotor {
    * triggers following action to reverse/stop intaking
    */
   public void update() {
+    LOGGER.log("intake speed:"+ this.getVelocity());
+    packet.put("intakespeed", this.getVelocity());
     double power = this.getPower();
     LOGGER.setLogLevel(RFLogger.Severity.FINEST);
     LOGGER.log("intake power:" + power);
