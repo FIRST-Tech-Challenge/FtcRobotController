@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private final DcMotor LEFT, RIGHT;
+    private final Servo LEFT, RIGHT;
 
     private boolean isOn = false;
+    //private final int
 
-    public IntakeSubsystem(final DcMotor left, final DcMotor right) {
+    public IntakeSubsystem(final Servo left, final Servo right) {
         LEFT = left;
         RIGHT = right;
     }
@@ -22,6 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void switchMotors() {
+        /*
         if (isOn) {
             LEFT.setPower(1);
             RIGHT.setPower(-1);
@@ -29,6 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
             LEFT.setPower(0);
             RIGHT.setPower(0);
         }
+
+         */
     }
 
     @Override
