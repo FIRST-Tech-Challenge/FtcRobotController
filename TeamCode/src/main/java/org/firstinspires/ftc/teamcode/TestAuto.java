@@ -1,20 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.util.Angle;
+import com.qualcomm.hardware.bosch.BNO055IMUNew;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMUImpl;
+import com.qualcomm.robotcore.hardware.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+//import com.qualcomm.hardware.bosch.BNO055IMU;
+//import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 
 @TeleOp(name = "movement test", group = "SA_FTC")
 public class TestAuto extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
-    private BNO055IMUImpl imu;
+    private IMU imu;
 
     private DcMotor frontLeftMotor;
     private DcMotor backLeftMotor;
@@ -26,7 +33,7 @@ public class TestAuto extends LinearOpMode {
 
     private double currentAngle = 0;
 
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     private void setPower(double axial, double lateral, double yaw) {
         double leftFrontPower = axial + lateral + yaw;
@@ -64,7 +71,13 @@ public class TestAuto extends LinearOpMode {
         sleep(100); // Resting
     }
 
-    private void turnRight(double power, double targetAngle) {
+    private void turnRight(double minPower, double maxPower, double targetAngle, double percentage) {
+        double m1 = (maxPower - minPower) / percentage;
+        double m2 = maxPower / -percentage;
+        double p1 = targetAngle * percentage / 100;
+        double p2 = targetAngle * (100 - percentage) / 100;
+
+        double power = 0;
         while(currentAngle < targetAngle) {
             currentAngle = getIntegratedHeading();
 
@@ -73,14 +86,26 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("current angle", currentAngle);
             telemetry.update();
 
+            if (currentAngle < p1){
+                power = m1 * currentAngle + minPower;
+            }
+
+            if (currentAngle > p1 && currentAngle < p2) {
+                power = maxPower;
+            }
+
+            if (currentAngle > p2){
+                power = m2 * currentAngle - m2 * 100;
+            }
+
             setPower(0,0, power);
         }
 
         setPower(0, 0, 0);
-        sleep(100); // Resting
+        sleep(2000); // Resting
     }
 
-    private void turnLeft(double power, double targetAngle) {
+    private void turnLeft(double minPower, double maxPower, double targetAngle, double percentage) {
         while(currentAngle > targetAngle) {
             currentAngle = getIntegratedHeading();
             // for debugging
@@ -89,39 +114,18 @@ public class TestAuto extends LinearOpMode {
                 telemetry.addData("current angle", currentAngle);
                 telemetry.update();
             }
-
             setPower(0,0, -power);
         }
 
         setPower(0, 0, 0);
-        sleep(100); // Resting
-    }
-
-    private void turn(double power, double targetAngle) {
-        boolean shouldTurnClockwise = getShortestDirection(currentAngle, targetAngle);
-
-        if (shouldTurnClockwise) { // Turn clockwise
-            turnLeft(power, targetAngle);
-        } else { // Turn counterclockwise
-            turnRight(power, targetAngle);
-        }
-    }
-
-    // Return true if shortest direction is clockwise, and false if shortest direction is counterclockwise
-    public boolean getShortestDirection(double currentAngle, double targetAngle) {
-        double angleDifference = (targetAngle - currentAngle + 360) % 360;
-        System.out.println(angleDifference);
-
-        if (angleDifference > 180) {
-            return false;
-        } else {
-            return true;
-        }
+        sleep(2000); // Resting
     }
 
     // transform the angles from (180,-179) to (inf, -inf)
     private double getIntegratedHeading() {
-        double currentHeading = imu.getAngularOrientation().firstAngle;
+        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        //double currentHeading = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
+
         double deltaHeading = currentHeading - previousHeading;
 
         if (deltaHeading < -180) {
@@ -137,17 +141,26 @@ public class TestAuto extends LinearOpMode {
     }
 
     private void unitTestTurn() {
-        turnLeft(0.5, -90);
-        turnLeft(0.5, -110);
+        //turnLeft(0.5, -90);
+        //turnLeft(0.5, -110);
 
-        turnRight(0.5, 100);
-        turnLeft(0.5, 75);
+        //turnRight(0.5, 100);
+        //turnLeft(0.5, 75);
 
-        turnLeft(0.5, -90);
-        turnLeft(0.5, -180);
+        //turnLeft(0.5, -90);
+        //turnLeft(0.5, -180);
 
-        turnLeft(0.5, -279);
-        turnRight(0.5, 73);
+        //turnLeft(0.5, -279);
+        //turnRight(0.5, 73);
+
+        //turnLeft(0.5,-155);
+
+        //turnRight(0.5, 90);
+        turnRight(0.5, 180);
+        turnRight(0.5, 270);
+        turnRight(0.5, 360);
+        turnLeft(0.5, 180);
+        turnLeft(0.5, 0);
     }
 
     @Override
@@ -164,15 +177,19 @@ public class TestAuto extends LinearOpMode {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Initialize IMU
-        imu = hardwareMap.get(BNO055IMUImpl.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu = hardwareMap.get(IMU.class, "imu");
 
-        parameters.loggingEnabled = true;   //For debugging
-        parameters.loggingTag = "IMU";      //For debugging
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();  //Figure out why the naive one doesn't have a public constructor
+        RevHubOrientationOnRobot.LogoFacingDirection logo = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usb = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(logo, usb));
+        //parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        //parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+
+        //parameters.loggingEnabled = true;   //For debugging
+        //parameters.loggingTag = "IMU";      //For debugging
+        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();  //Figure out why the naive one doesn't have a public constructor
         imu.initialize(parameters);
+        imu.resetYaw();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -192,7 +209,7 @@ public class TestAuto extends LinearOpMode {
 
             unitTestTurn();
 
-            break;
+            //break;
             //System.out.println(currentAngle);
             //setPowerWithTime(0.5, 0, 0, 1);
         }
