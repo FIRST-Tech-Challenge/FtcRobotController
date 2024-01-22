@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision.pipeline;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
@@ -18,6 +20,7 @@ public class HSVSaturationProcessor implements VisionProcessor {
     public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
 
     FieldPosition fieldPosition = FieldPosition.NOT_ON_FIELD; // setting a default to make EOVSim work
+
     Rect leftSpike;
     Rect centerSpike;
     Rect rightSpike;
@@ -189,8 +192,22 @@ public class HSVSaturationProcessor implements VisionProcessor {
      */
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
+           // just showing how you can use this onDrawFrame to edit the image going to the DriverStation here rather than directly on the processed image
+//            Rect theRect = new Rect(150, 265, 660, 181);
+//            Paint paint = new Paint();
+//            paint.setColor(Color.GREEN);
+//            canvas.drawRect(makeGraphicsRect(theRect,scaleBmpPxToCanvasPx),paint);
     }
+
+    private android.graphics.Rect makeGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {
+        int left = Math.round(rect.x * scaleBmpPxToCanvasPx);
+        int top = Math.round(rect.y * scaleBmpPxToCanvasPx);
+        int right = left + Math.round(rect.width * scaleBmpPxToCanvasPx);
+        int bottom = top + Math.round(rect.height * scaleBmpPxToCanvasPx);
+
+        return new android.graphics.Rect(left, top, right, bottom);
+    }
+
     protected double getAvgSaturation(Mat input, Rect rect) {
         Mat submat = input.submat(rect);
         Scalar color = Core.mean(submat);
@@ -220,4 +237,18 @@ public class HSVSaturationProcessor implements VisionProcessor {
     public FieldPosition getFieldPosition(){
         return fieldPosition;
     }
+
+
+    public Rect getLeftSpikeBox() {
+        return leftSpike;
+    }
+
+    public Rect getCenterSpikeBox() {
+        return centerSpike;
+    }
+
+    public Rect getRightSpikeBox() {
+        return rightSpike;
+    }
+
 }

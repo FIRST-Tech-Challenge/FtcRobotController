@@ -17,6 +17,7 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Rect;
 
 import java.util.List;
 
@@ -118,8 +119,6 @@ public class VisionSystem {
         visionPortal.resumeLiveView();
     }
 
-
-
     private void switchCamera(WebcamName desiredWebCam, Telemetry telemetry) {
         if (visionPortal.getActiveCamera() != desiredWebCam) {
             visionPortal.setActiveCamera(desiredWebCam);
@@ -160,5 +159,9 @@ public class VisionSystem {
 
     public List<AprilTagDetection> getDetections() {
          return aprilTagProcessor.getDetections();
+    }
+
+    public Rect getSpikeBox(SpikePosition selectedSpikeLine) {
+        return new Rect(50,50,50,50); // not real yet
     }
 }
