@@ -1,2 +1,1 @@
-##Wolf Tech
-This repository contains the private team code of North Paulding High School's Wolf Tech robotics team.
+This repository contains the team code for the North Paulding High School's robotics team 16757 Wolf Tech.
