@@ -28,11 +28,11 @@ public class camera_pixel_detection extends OpMode {
     public static int choose_upper_or_lower = 0;
     WebcamName webcamName;
     OpenCvCamera camera;
-    int l_or_u = 1;
-    double[] lowerYvals = new double[]{100, 37, 37};
-    double[] upperYvals = new double[]{165, 125, 200};
-    Scalar lowerY = new Scalar(28, 37, 37);
-    Scalar upperY = new Scalar(52, 125, 200);
+    int l_or_u = 0;
+    double[] lowerYvals = new double[]{0, 145, 150};
+    double[] upperYvals = new double[]{35, 255, 215};
+    Scalar lowerY = new Scalar(0, 145, 150);
+    Scalar upperY = new Scalar(35, 255, 215);
     
 /**    double[] lowerPvals = new double[]{100, 37, 37}; the REAL lowerPvals
 //    double[] upperPvals = new double[]{165, 125, 200}; the REAL upperPvals
@@ -92,18 +92,18 @@ public class camera_pixel_detection extends OpMode {
 
     @Override
     public void init_loop() {
-        telemetry.addData("lowerP: ", lowerY);
-        telemetry.addData("upperP: ", upperY);
+        telemetry.addData("lowerY: ", lowerY);
+        telemetry.addData("upperY: ", upperY);
         telemetry.addData("H_S_V_number ", choose_H_S_V);
         telemetry.addData("lower = 0, upper = 1 ", choose_upper_or_lower);
         telemetry.addLine("a = +1 \n b = -1 \n x = +10 \n y = -10 \n" +
                 " triggers=Choose H or S or V (H=0 S=1 V=2) \n bumpers = upper/lower ");
-        if (gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 1) {
+        if (gamepad1.left_bumper && !lastleft_bumper && choose_upper_or_lower > 0) {
             choose_upper_or_lower -= 1;
         }
         lastleft_bumper = gamepad1.left_bumper;
 
-        if (gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 2) {
+        if (gamepad1.right_bumper && !lastright_bumper && choose_upper_or_lower < 1) {
             choose_upper_or_lower += 1;
         }
         lastright_bumper = gamepad1.right_bumper;

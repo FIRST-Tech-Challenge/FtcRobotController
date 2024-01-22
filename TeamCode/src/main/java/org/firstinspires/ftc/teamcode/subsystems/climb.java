@@ -90,13 +90,15 @@ public class climb {
 
     }
 //    public Command toggleClimb(){
-//        if(isUp){
+
+//        return new RunCommand(()->{
+//          if(isUp){
 //            climb_down();
 //        }else{
 //            climb_up();
 //        }
-//        return new RunCommand(climb_up(), climb_down());
-//    }
+//         });
+//      }
 }
 
 
