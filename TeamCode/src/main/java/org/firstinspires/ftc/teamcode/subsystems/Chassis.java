@@ -36,13 +36,13 @@ public class Chassis implements Subsystem {
     }
 
 //x is front facing, y is
-    public BTCommand drive(DoubleSupplier front, DoubleSupplier theta, DoubleSupplier sideways) {
+    public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
         return new RunCommand(()->{
-            m_telemetry.addData("front",front);
+            m_telemetry.addData("front",frontVel);
             m_telemetry.update();
-            double r = Math.hypot(sideways.getAsDouble(), theta.getAsDouble());
-            double robotAngle = Math.atan2(sideways.getAsDouble(), theta.getAsDouble()) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
-            double rightX = front.getAsDouble();
+            double r = Math.hypot(retaliation.getAsDouble(), sidewayVel.getAsDouble());
+            double robotAngle = Math.atan2(retaliation.getAsDouble(), sidewayVel.getAsDouble()) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
+            double rightX = frontVel.getAsDouble();
             final double v1 = r * Math.cos(robotAngle) + rightX;
             final double v2 = r * Math.sin(robotAngle) - rightX;
             final double v3 = r * Math.sin(robotAngle) + rightX;
