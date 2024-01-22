@@ -88,13 +88,13 @@ public class climb {
         return new FunctionalCommand(init, loop, stopMotors, atGoal, (Subsystem) this);
 
     }
-    public Command toggleClimb(){
-        if(isUp){
-            climb_down();
-        }else{
-            climb_up();
-        }
-    }
+//    public Command toggleClimb(){
+//        if(isUp){
+//            climb_down();
+//        }else{
+//            climb_up();
+//        }
+//    }
 }
 
 
