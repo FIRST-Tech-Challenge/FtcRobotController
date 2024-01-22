@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -32,6 +33,9 @@ public class CenterStageAutonomous_HIGH extends LinearOpMode {
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
 
+    public RoadRunnerSubsystem.Randomizer randomizer;
+    public TrajectoryActionBuilder ToPixel, ToBackdrop;
+
     protected static double starting_pos_error = 1;//inch
 
     protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error,(RR.TileInverted/2),Math.toRadians(180));
@@ -53,65 +57,30 @@ public class CenterStageAutonomous_HIGH extends LinearOpMode {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-                waitForStart();
+        waitForStart();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        randomizer = RoadRunnerSubsystem.Randomizer.CENTER;
+        ToPixel = RR.RobotToBackdrop(randomizer).first;
+        ToBackdrop = RR.RobotToBackdrop(randomizer).second;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
 
         Actions.runBlocking(new SequentialAction(
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                RR.HIGH_HomeToPixel_CENTER.build(), // Change with TO_BACKDROP
+                ToPixel.build(),
+                RR.HIGH_ToStation.build(),
                 ////////////////////////////////////////////////////////////////////////////////////
-
-                new ParallelAction(
-                        new SequentialAction(
-                                new CommandAction(new WaitCommand(6000)),
-                                new CommandAction(
-                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.AUTO)
-                                ),
-                                new CommandGroupBaseAction(new SequentialCommandGroup(
-                                        new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                                        new WaitCommand(80),
-                                        new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-                                ))
-                        ),
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                        RR.HIGH_ToBackdrop_MID.build() // Change with the HOME_TO_PIXEL
-                ////////////////////////////////////////////////////////////////////////////////////
-
-                ),
-
-                new CommandGroupBaseAction(new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_release, outtakeSusystem),
-                        new WaitCommand(2000),
-                        new InstantCommand(outtakeSusystem::wheel_stop, outtakeSusystem)
-                )),
-                new ParallelAction(
-                        RR.RobotBackdropToStation().build(),
-                        new CommandGroupBaseAction(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(500),
-//                                        new ParallelCommandGroup(
-                                                new SequentialCommandGroup(
-                                                        new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                                        new WaitCommand(80),
-                                                        new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                                                ),
-                                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
-//                                        )
-                                )
-                        )
-                ),
-
-                ////////////////////////////////////////////////////////////////////////////////////
-
                 new SequentialAction(
 
-                ////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////
                         RR.RobotStation().first.build(),
                         new CommandAction(
                                 new InstantTelemetry(telemetry, Double.toString(drive.getHeading()))
                         ),
-                ////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////
 
                         new CommandGroupBaseAction(
                                 new ParallelCommandGroup(
@@ -141,22 +110,22 @@ public class CenterStageAutonomous_HIGH extends LinearOpMode {
 
                         new CommandGroupBaseAction(
                                 new SequentialCommandGroup(
-                                    new ParallelCommandGroup(
-                                            new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                                            new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
-                                            new SequentialCommandGroup(
-                                                    new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                                    new WaitCommand(70),
-                                                    new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                                            )
-                                    ),
-                                    new SequentialCommandGroup(
-                                            new ParallelCommandGroup(
-                                                    new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
-                                                    new InstantCommand(outtakeSusystem::wheel_grab)
-                                            ),
-                                            new WaitCommand(4000)
-                                    )
+                                        new ParallelCommandGroup(
+                                                new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
+                                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+                                                new SequentialCommandGroup(
+                                                        new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                                                        new WaitCommand(70),
+                                                        new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+                                                )
+                                        ),
+                                        new SequentialCommandGroup(
+                                                new ParallelCommandGroup(
+                                                        new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
+                                                        new InstantCommand(outtakeSusystem::wheel_grab)
+                                                ),
+                                                new WaitCommand(4000)
+                                        )
                                 )
                         )
                 ),
@@ -175,7 +144,7 @@ public class CenterStageAutonomous_HIGH extends LinearOpMode {
 
                 ////////////////////////////////////////////////////////////////////////////////////
                 RR.RobotStation().second.build(),
-                ////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////
 
                 new ParallelAction(
                         RR.RobotStationToBackdrop().build(),
@@ -193,12 +162,100 @@ public class CenterStageAutonomous_HIGH extends LinearOpMode {
                                 )
                         )
                 ),
-
-                new CommandGroupBaseAction(new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_release, outtakeSusystem),
-                        new WaitCommand(2000),
-                        new InstantCommand(outtakeSusystem::wheel_stop, outtakeSusystem)
-                )),
+//
+//                ////////////////////////////////////////////////////////////////////////////////////
+//                RR.RobotBackdropToStation().build(),
+//                ////////////////////////////////////////////////////////////////////////////////////
+//
+//                new SequentialAction(
+//
+//                        ////////////////////////////////////////////////////////////////////////////////////
+//                        RR.RobotStation().first.build(),
+//                        new CommandAction(
+//                                new InstantTelemetry(telemetry, Double.toString(drive.getHeading()))
+//                        ),
+//                        ////////////////////////////////////////////////////////////////////////////////////
+//
+//                        new CommandGroupBaseAction(
+//                                new ParallelCommandGroup(
+//                                        new InstantCommand(intakeArmSubsystem::midArm, intakeArmSubsystem),
+//                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+//                                        new SequentialCommandGroup(
+//                                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+//                                                new WaitCommand(70),
+//                                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+//                                        )
+//                                )
+//                        )
+//                ),
+//
+//                new ParallelAction(
+//                        RR.RobotStation().second.build(),
+//                        new CommandAction(new InstantCommand(intakeSubsystem::slow_grabbing, intakeSubsystem))
+//                ),
+//
+//                new CommandAction(new InstantCommand(intakeSubsystem::stop, intakeSubsystem)),
+//
+//                new ParallelAction(
+//
+//                        ////////////////////////////////////////////////////////////////////////////////////
+//                        RR.INNER_Station_INNER_SMALL.build(),
+//                        ////////////////////////////////////////////////////////////////////////////////////
+//
+//                        new CommandGroupBaseAction(
+//                                new SequentialCommandGroup(
+//                                        new ParallelCommandGroup(
+//                                                new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
+//                                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+//                                                new SequentialCommandGroup(
+//                                                        new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+//                                                        new WaitCommand(70),
+//                                                        new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+//                                                )
+//                                        ),
+//                                        new SequentialCommandGroup(
+//                                                new ParallelCommandGroup(
+//                                                        new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
+//                                                        new InstantCommand(outtakeSusystem::wheel_grab)
+//                                                ),
+//                                                new WaitCommand(4000)
+//                                        )
+//                                )
+//                        )
+//                ),
+//
+//                ////////////////////////////////////////////////////////////////////////////////////
+//
+//                new CommandGroupBaseAction(
+//                        new SequentialCommandGroup(
+//                                new InstantCommand(outtakeSusystem::wheel_stop),
+//                                new InstantCommand(intakeArmSubsystem::raiseArm),
+//                                new InstantCommand(intakeSubsystem::reverse),
+//                                new WaitCommand(1000),
+//                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
+//                        )
+//                ),
+//
+//                ////////////////////////////////////////////////////////////////////////////////////
+//                RR.RobotStation().second.build(),
+//                ///////////////////////////////////////////////////////////////////////////////////
+//
+//                new ParallelAction(
+//                        RR.RobotStationToBackdrop().build(),
+//                        new SequentialAction(
+//                                new CommandAction(new WaitCommand(2000)),
+//                                new ParallelAction(
+//                                        new CommandAction(
+//                                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOW)
+//                                        ),
+//                                        new CommandGroupBaseAction(new SequentialCommandGroup(
+//                                                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
+//                                                new WaitCommand(80),
+//                                                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
+//                                        ))
+//                                )
+//                        )
+//                ),
 
                 new ParallelAction(
 

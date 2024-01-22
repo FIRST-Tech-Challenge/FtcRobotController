@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -34,6 +35,9 @@ public class CenterStageAutonomous extends LinearOpMode {
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
 
+    public RoadRunnerSubsystem.Randomizer randomizer;
+    public TrajectoryActionBuilder ToPixel, ToBackdrop;
+
     protected static double starting_pos_error = 1;//inch
 
     protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error,(RR.TileInverted/2),Math.toRadians(180));
@@ -55,12 +59,19 @@ public class CenterStageAutonomous extends LinearOpMode {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-                waitForStart();
+        waitForStart();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        ToPixel = RR.RobotToBackdrop(randomizer).first;
+        ToBackdrop = RR.RobotToBackdrop(randomizer).second;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Actions.runBlocking(new SequentialAction(
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                RR.LOW_HomeToPixel_CENTER.build(), // Change with TO_BACKDROP
+                ToPixel.build(),
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 new ParallelAction(
@@ -74,7 +85,7 @@ public class CenterStageAutonomous extends LinearOpMode {
                         )),
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                        RR.LOW_ToBackdrop_MID.build() // Change with the HOME_TO_PIXEL
+                        ToBackdrop.build()
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 ),

@@ -82,6 +82,12 @@ public class RoadRunnerSubsystem {
         HIGH
     }
 
+    enum Randomizer {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
     enum Corridor {
         INNER,
         OUTER
@@ -116,7 +122,7 @@ public class RoadRunnerSubsystem {
 
     //////////////////////////////////////////////////////////////////////////////////
 
-    public RoadRunnerSubsystem(MecanumDrive drive, Alliance alliance, Start start, Corridor corridor_backdropToStation, Corridor corridor_stationToBackdrop, Station station, Parking parking)
+    public RoadRunnerSubsystem(MecanumDrive drive, Alliance alliance,Start start, Corridor corridor_backdropToStation, Corridor corridor_stationToBackdrop, Station station, Parking parking)
     {
         this.driveR = drive;
         this.alliance = alliance;
@@ -228,8 +234,14 @@ public class RoadRunnerSubsystem {
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
                 .strafeToLinearHeading(backdrop_OUTER.component1(), Math.PI/2);
 
-        HIGH_ToStation = driveR.actionBuilder(middle_HIGH)
-                .strafeToLinearHeading(station_OUTER.component1(), Math.PI/2);
+        if (corridor_backdropToStation == Corridor.INNER){
+            HIGH_ToStation = driveR.actionBuilder(middle_HIGH)
+                    .splineToLinearHeading(station_INNER, 0);
+        }else if (corridor_backdropToStation == Corridor.OUTER){
+            HIGH_ToStation = driveR.actionBuilder(middle_HIGH)
+                    .splineToLinearHeading(station_OUTER, 0);
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////////
 
@@ -335,6 +347,33 @@ public class RoadRunnerSubsystem {
     ////////////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
+
+    public Pair<TrajectoryActionBuilder, TrajectoryActionBuilder> RobotToBackdrop(Randomizer randomizer){
+        if (start == Start.LOW){
+            if (randomizer == Randomizer.LEFT) {
+                return new Pair<>(LOW_HomeToPixel_LEFT, LOW_ToBackdrop_INNER);
+            }
+            else if (randomizer == Randomizer.CENTER) {
+                return new Pair<>(LOW_HomeToPixel_CENTER, LOW_ToBackdrop_MID);
+            }
+            else if (randomizer == Randomizer.RIGHT) {
+                return new Pair<>(LOW_HomeToPixel_LEFT, LOW_ToBackdrop_OUTER);
+            }
+        }
+        else if (start == Start.HIGH){
+            if (randomizer == Randomizer.LEFT) {
+                return new Pair<>(HIGH_HomeToPixel_LEFT, HIGH_ToBackdrop_INNER);
+            }
+            else if (randomizer == Randomizer.CENTER) {
+                return new Pair<>(HIGH_HomeToPixel_CENTER, HIGH_ToBackdrop_MID);
+            }
+            else if (randomizer == Randomizer.RIGHT) {
+                return new Pair<>(HIGH_HomeToPixel_LEFT, HIGH_ToBackdrop_OUTER);
+            }
+        }
+
+        return new Pair<>(LOW_HomeToPixel_CENTER, LOW_ToBackdrop_MID);
+    }
 
     public TrajectoryActionBuilder RobotBackdropToStation(){
         if (corridor_backdropToStation == Corridor.INNER){
