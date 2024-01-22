@@ -30,5 +30,11 @@ dependencies {
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.ftclib.ftclib:core:2.0.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+    implementation(name:'navx_ftc-release', ext:'aar')
+}
 
+repositories {
+    flatDir {
+        dirs 'libs', 'C:\\Users\\aksha\\navx-micro\\android\\libs'
+    }
 }

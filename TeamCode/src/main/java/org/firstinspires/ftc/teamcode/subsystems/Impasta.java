@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -9,14 +10,14 @@ import org.firstinspires.ftc.teamcode.subsystems.PID;
 
 public class Impasta {
     // Hardware variables
-    private final IMU imu;
+    private final AHRS imu;
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private PID pid = new PID(0.008, 0, 0);
 
 
     // Constructor for Impasta class
-    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake, IMU imu) {
+    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake, AHRS imu) {
         // Assigning hardware references to local variables
         this.fl = fl;
         this.fr = fr;
@@ -31,17 +32,17 @@ public class Impasta {
         br.setDirection(DcMotor.Direction.REVERSE);
 
 //         Initializing IMU parameters
-        parameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
-                )
-        );
-
-        imu.initialize(parameters);
+//        parameters = new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
+//                )
+//        );
+//
+//        imu.initialize(parameters);
     }
 
-    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, IMU imu) {
+    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, AHRS imu) {
         // Assigning hardware references to local variables
         this.fl = fl;
         this.fr = fr;
@@ -52,19 +53,21 @@ public class Impasta {
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
 
-        parameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
-                )
-        );
-
-        imu.initialize(parameters);
+//        parameters = new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
+//                )
+//        );
+//
+//        imu.initialize(parameters);
     }
 
     // Method to reset IMU yaw angle
     public void reset() {
-        imu.resetYaw();
+//        imu.resetYaw();
+//        imu.close()
+        imu.zeroYaw();
     }
 
     // Method to drive the robot based on gamepad input
@@ -83,7 +86,7 @@ public class Impasta {
     }
 
     public void driveBaseField(double y, double x, double rx) {
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = Math.toRadians(imu.getYaw());
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -97,20 +100,6 @@ public class Impasta {
         double blpwr = (rotY - rotX + rx) / denominator;
         double frpwr = (rotY - rotX - rx) / denominator;
         double brpwr = (rotY + rotX - rx) / denominator;
-
-        fl.setPower(flpwr);
-        bl.setPower(blpwr);
-        fr.setPower(frpwr);
-        br.setPower(brpwr);
-    }
-
-    public void driveBaseAuto(double x) {
-        double denominator = Math.max(Math.abs(0) + Math.abs(x) + Math.abs(0), 1);
-
-        double flpwr = (0 + x + 0) / denominator;
-        double blpwr = (0 - x + 0) / denominator;
-        double frpwr = (0 - x - 0) / denominator;
-        double brpwr = (0 + x - 0) / denominator;
 
         fl.setPower(flpwr);
         bl.setPower(blpwr);

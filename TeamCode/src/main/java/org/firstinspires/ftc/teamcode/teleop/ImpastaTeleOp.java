@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 
 @TeleOp
@@ -15,7 +15,7 @@ public class ImpastaTeleOp extends LinearOpMode {
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Winch, Intake;
     private Servo out1, out2, launchPlane, aimLauncher;
     private CRServo DRV4BL, DRV4BR;
-    private IMU imu;
+    private AHRS imu;
     private double up, down, current;
     Impasta impasta;
 
@@ -42,7 +42,7 @@ public class ImpastaTeleOp extends LinearOpMode {
         out1 = hardwareMap.servo.get("leftOut"); //Outtake
         out2 = hardwareMap.servo.get("rightOut"); //Outtake
 
-        imu = hardwareMap.get(IMU.class, "imu"); //imu ofc
+        imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         // Creating an instance of the Impasta class
         impasta = new Impasta(fl, fr, bl, br, leftSlide, rightSlide, Intake, imu);

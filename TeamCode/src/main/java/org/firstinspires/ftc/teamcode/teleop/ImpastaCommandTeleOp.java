@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,7 +42,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     private SlidesManualCommand manualSlides;
 
     private DcMotorEx m1, m2,  m3, m4;
-    private IMU imu;
+    private AHRS imu;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -74,14 +76,14 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         out = new Outtake(mechanisms, hardwareMap); //DPAD controlled
         winch = new Winch(hardwareMap);
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-        ));
-        imu.initialize(parameters);
-
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        IMU.Parameters parameters = new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+//        ));
+//        imu.initialize(parameters);
+        imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
         //Set up commands
         manualSlides = new SlidesManualCommand(slides, mechanisms);
         resetSlides = new SlidesResetCommand(slides, mechanisms);
