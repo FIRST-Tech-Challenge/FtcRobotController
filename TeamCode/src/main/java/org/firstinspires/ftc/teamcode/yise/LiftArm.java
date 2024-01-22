@@ -12,6 +12,8 @@ public class LiftArm {
     public DcMotor slide, hand;
     public Servo trapdoor;
 
+    public Servo plane;
+
     public HandPosition handPosition;
     public double intakePower = 0;
 
@@ -20,7 +22,9 @@ public class LiftArm {
         DEFAULT,
         AUTO,
         HALF,
-        FULL
+        FULL,
+        ENDGAMEStart,
+        ENDGAMEHOLD
     }
 
     public enum HandPosition{
@@ -35,8 +39,10 @@ public class LiftArm {
         hand = hardwareMap.get(DcMotor.class, "hand");
         slide = hardwareMap.get(DcMotor.class, "slide");
         trapdoor = hardwareMap.get(Servo.class, "trapdoor");
+        plane = hardwareMap.get(Servo.class, "plane");
 
         closeTrapdoor();
+        reloadPlane();
 
         //Set motor directions
         hand.setDirection(DcMotor.Direction.FORWARD);
@@ -64,6 +70,12 @@ public class LiftArm {
                 break;
             case FULL:
                 slide.setTargetPosition(8000);
+                break;
+            case ENDGAMEStart:
+                slide.setTargetPosition(7500);
+                break;
+            case ENDGAMEHOLD:
+                slide.setTargetPosition(1000);
                 break;
         }
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -101,6 +113,12 @@ public class LiftArm {
         trapdoor.setPosition(0.7);
     }
 
+    public void reloadPlane() {
+        plane.setPosition(0);
+    }
+    public void launchPlane() {
+        plane.setPosition(.75);
+    }
 
     public void extend(Distance targetDistance) {
         setArmDistance(targetDistance);
@@ -120,6 +138,12 @@ public class LiftArm {
         }
     }
 
+    public void holdHang() {
+        if (!slide.isBusy()) {
+            slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slide.setPower(0.25);
+        }
+    }
 
     public double getSlidePosition() {
         return slide.getCurrentPosition();
