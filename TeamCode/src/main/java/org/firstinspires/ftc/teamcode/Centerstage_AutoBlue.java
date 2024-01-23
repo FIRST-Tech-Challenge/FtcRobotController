@@ -144,21 +144,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             desiredTag = 3;
         }
 
-        // Cait's code to make the servo react based on prop location
-           /* servo_Display.setPosition(DEF_POS); // Default position for the servo
-
-            gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
-
-            if (desiredTag == 2) { // Center position
-                servo_Display.setPosition(CENTER_POS);
-            }
-            else if (desiredTag == 1) { // Right position
-                servo_Display.setPosition(RIGHT_POS);
-            }
-            else { // Left position
-                servo_Display.setPosition(LEFT_POS);
-            }
-        */
         telemetryTfod();
 
 //              Place first pixel
@@ -185,6 +170,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         else { // Left position
             servo_Display.setPosition(LEFT_POS);
         }
+
         //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -196,7 +182,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (opModeIsActive()) {
             //List<Recognition> currentRecognitions = tfod.getRecognitions();
-            currentRecognitions = tfod.getRecognitions();
+            // Commented out this line of code since it was defined in the section above.
+            //currentRecognitions = tfod.getRecognitions();
             for (Recognition recognition : currentRecognitions) {
                 double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
                 double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
@@ -235,7 +222,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                  gobbler.driveTrain.leftPos();
                  desiredTag = 3;
              }
-
             // Cait's code to make the servo react based on prop location
            /* servo_Display.setPosition(DEF_POS); // Default position for the servo
 
