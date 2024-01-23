@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PID;
 
 public class Impasta {
     // Hardware variables
-    private final AHRS imu;
+    private AHRS imu;
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private PID pid = new PID(0.008, 0, 0);
@@ -42,16 +42,19 @@ public class Impasta {
 //        imu.initialize(parameters);
     }
 
-    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, AHRS imu) {
+    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake) {
         // Assigning hardware references to local variables
         this.fl = fl;
         this.fr = fr;
         this.bl = bl;
         this.br = br;
-        this.imu = imu;
+        this.leftSlide = leftSlide;
+        this.rightSlide = rightSlide;
+        this.Intake = Intake;
 
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
+    }
 
 //        parameters = new IMU.Parameters(
 //                new RevHubOrientationOnRobot(
@@ -61,7 +64,6 @@ public class Impasta {
 //        );
 //
 //        imu.initialize(parameters);
-    }
 
     // Method to reset IMU yaw angle
     public void reset() {

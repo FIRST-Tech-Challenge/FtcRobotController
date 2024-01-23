@@ -22,22 +22,20 @@ public class ImpastaTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initializing motors, servos, and sensors
-        fl = hardwareMap.dcMotor.get("frontLeft"); //Drivebase
-        fr = hardwareMap.dcMotor.get("frontRight"); //Drivebase
-        bl = hardwareMap.dcMotor.get("backLeft"); //Drivebase
-        br = hardwareMap.dcMotor.get("backRight"); //Drivebase
+        fl = hardwareMap.dcMotor.get("leftFront"); //Drivebase
+        fr = hardwareMap.dcMotor.get("rightFront"); //Drivebase
+        bl = hardwareMap.dcMotor.get("leftRear"); //Drivebase
+        br = hardwareMap.dcMotor.get("rightRear"); //Drivebase
 
-        leftSlide = hardwareMap.dcMotor.get("leftSlide"); //Slides
-        rightSlide = hardwareMap.dcMotor.get("rightSlide"); //Slides
+        leftSlide = hardwareMap.dcMotor.get("frontEncoder"); //Slides
+        rightSlide = hardwareMap.dcMotor.get("Right Slide"); //Slides
 
-        Winch = hardwareMap.dcMotor.get("winch"); //Climbing
-        Intake = hardwareMap.dcMotor.get("intake"); //Pixel Intake
+        Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
 
         DRV4BL = hardwareMap.crservo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
         DRV4BR = hardwareMap.crservo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
 
         launchPlane = hardwareMap.servo.get("launcher");
-//        aimLauncher = hardwareMap.servo.get("aL");
 
         out1 = hardwareMap.servo.get("leftOut"); //Outtake
         out2 = hardwareMap.servo.get("rightOut"); //Outtake
@@ -71,6 +69,7 @@ public class ImpastaTeleOp extends LinearOpMode {
             // Resetting IMU yaw angle if left bumper is pressed
             if (gamepad1.left_bumper || gamepad1.right_bumper) {
                 impasta.reset();
+                gamepad1.rumble(2000);
             }
 
             /** gamepad2                                                                                */

@@ -15,7 +15,6 @@ public class ImpastaRobotCentricTeleOp extends LinearOpMode {
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Winch, Intake;
     private Servo out1, out2, launchPlane, aimLauncher;
     private CRServo DRV4BL, DRV4BR;
-    private IMU imu;
     private double up, down, current;
     Impasta impasta;
 
@@ -42,10 +41,8 @@ public class ImpastaRobotCentricTeleOp extends LinearOpMode {
         out1 = hardwareMap.servo.get("OL"); //Outtake
         out2 = hardwareMap.servo.get("OR"); //Outtake
 
-        imu = hardwareMap.get(IMU.class, "imu"); //imu ofc
-
         // Creating an instance of the Impasta class
-        impasta = new Impasta(fl, fr, bl, br, leftSlide, rightSlide, Intake, imu);
+        impasta = new Impasta(fl, fr, bl, br, leftSlide, rightSlide, Intake);
 
         impasta.reset();
         boolean reset = true;
