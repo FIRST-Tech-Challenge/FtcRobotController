@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
@@ -35,11 +37,13 @@ public class DriveCommandOpMode extends CommandOpMode {
     private ArmSubsystem armSubsystem;
     private WristSubsystem wristSubsystem;
     private FingerSubsystem fingerSubsystem;
+    private IntakeSubsystem intakeSubsystem;
 
     private DefaultDrive driveCommand;
     private MoveArmCommand moveArmCommand;
     private MoveWristCommand moveWristCommand;
     private MoveFingerCommand moveFingerCommand;
+    private IntakeCommand intakeCommand;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
@@ -59,6 +63,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
         wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
+        intakeSubsystem = new IntakeSubsystem(RobotHardwareInitializer.initializeIntake(this));
 
         dbp.info("Subsystems built.");
         dbp.send(false);
@@ -93,19 +98,29 @@ public class DriveCommandOpMode extends CommandOpMode {
                     return quantity/2.5d;
                 });
 
+        intakeCommand = new IntakeCommand(intakeSubsystem);
+
         register(driveSubsystem);
         register(armSubsystem);
         register(wristSubsystem);
         register(fingerSubsystem);
+        register(intakeSubsystem);
+
         driveSubsystem.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         wristSubsystem.setDefaultCommand(moveWristCommand);
         fingerSubsystem.setDefaultCommand(moveFingerCommand);
+        intakeSubsystem.setDefaultCommand(intakeCommand);
+
         dbp.info("Subsystems registered.");
         dbp.send(false);
 
         dbp.info("Ready.");
         dbp.send(false);
+
+        waitForStart();
+
+        schedule(intakeCommand);
     }
 
     private void initializeDriveSuppliers() {

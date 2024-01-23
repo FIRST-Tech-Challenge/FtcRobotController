@@ -8,6 +8,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -151,6 +152,21 @@ public class RobotHardwareInitializer {
             Error(e, opMode);
         }
         return arm;
+    }
+
+    public static HashMap<String, CRServo> initializeIntake(final OpMode opMode) {
+        CRServo left = null;
+        CRServo right = null;
+        try {
+            left = opMode.hardwareMap.get(CRServo.class, "intakeLeft");
+            right = opMode.hardwareMap.get(CRServo.class, "intakeRight");
+        } catch (Exception e) {
+            Error(e, opMode);
+        }
+        HashMap<String, CRServo> out = new HashMap<>();
+        out.put("LEFT", left);
+        out.put("RIGHT", right);
+        return out;
     }
 
     @Deprecated

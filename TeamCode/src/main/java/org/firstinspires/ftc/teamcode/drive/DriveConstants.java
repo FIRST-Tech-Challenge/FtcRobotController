@@ -37,7 +37,7 @@ public class DriveConstants {
 
     // kf = 1.18
     // p: 1.1, d: 0.8
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.01, 0, 0.041,
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.14, 0, 0.25,
       getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
