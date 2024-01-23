@@ -12,6 +12,8 @@ public class ElevatorManualCommand extends CommandBase {
     private final DoubleSupplier elevate_speed;
     private Telemetry telemetry;
 
+    private double kg = 0.05;
+
     public ElevatorManualCommand(ElevatorSubsystem elevator, DoubleSupplier elevate_speed, Telemetry telemetry){
         this.elevator = elevator;
         this.elevate_speed = elevate_speed;
@@ -29,7 +31,8 @@ public class ElevatorManualCommand extends CommandBase {
     @Override
     public void execute() {
         telemetry.addData("exec", "");
-        elevator.setPower(elevate_speed.getAsDouble() * elevator.MAX_SPEED + 0.05);
+        kg = elevator.getLevel() == ElevatorSubsystem.Level.LOADING ? 0 : kg;
+        elevator.setPower(elevate_speed.getAsDouble() * elevator.MAX_SPEED + kg);
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.CenterStageRobot;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 
-@TeleOp(name = "Test Simple TeleOP", group = "Final TeleOPs")
+@TeleOp(name = "Romania Bucharest 2024 TeleOP", group = "Final TeleOPs")
 public class CenterStageTeleOp extends CommandOpMode {
     private CenterStageRobot robot;
 
