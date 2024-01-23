@@ -19,6 +19,8 @@ import java.util.Locale;
 public class MotionHardware {
 
     public static boolean DEBUG = false;
+
+    public GlobalConfig globalConfig = null;
     private LinearOpMode myOpMode = null;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftMotor = null;
@@ -65,6 +67,11 @@ public class MotionHardware {
 
     public MotionHardware(LinearOpMode opmode) {
         myOpMode = opmode;
+    }
+    public MotionHardware(LinearOpMode opmode, GlobalConfig globalConfig) {
+        myOpMode = opmode;
+        this.globalConfig = globalConfig;
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,12 +132,17 @@ public class MotionHardware {
         //dropper.setPosition(DROPPER_LOAD_PIXEL);
         runtime.reset();
 
+        // Dropper and Arm/Gripper mode will load a pixel into the grippers
         wrist.setPosition(WRIST_LOAD_PIXEL);
         sleep(3000);
 
         leftGripper.setPosition(LEFT_GRIPPER_CLOSE); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_CLOSE); // Adjust the position value as needed
         sleep(1000);
+
+        if(globalConfig.getActiveDeliveryMode() == GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER) {
+            dropper.setPosition(DROPPER_LOAD_PIXEL);
+        }
         //wrist.setPosition(WRIST_DROP_PIXEL);
 
 
@@ -488,12 +500,18 @@ public class MotionHardware {
     }
 
     public void dropPixel() {
-        wrist.setPosition(WRIST_DROP_PIXEL);
 
-        sleep(700);
+        switch(globalConfig.getActiveDeliveryMode()) {
+            case ARM:
+                wrist.setPosition(WRIST_DROP_PIXEL);
 
-        rightGripper.setPosition(RIGHT_GRIPPER_OPEN);
-        leftGripper.setPosition(LEFT_GRIPPER_OPEN);
+                sleep(700);
+
+                rightGripper.setPosition(RIGHT_GRIPPER_OPEN);
+                leftGripper.setPosition(LEFT_GRIPPER_OPEN);
+            case DROPPER:
+                dropper.setPosition(DROPPER_DROP_PIXEL);
+        }
 
     }
 

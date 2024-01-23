@@ -7,7 +7,7 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.shared.GlobalState.ALLIANCE_POS;
+import org.firstinspires.ftc.teamcode.shared.GlobalConfig.ALLIANCE_POS;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -20,6 +20,8 @@ import java.util.List;
 public class VisionHardware {
 
     public static boolean DEBUG = false;
+
+    public GlobalConfig globalConfig = null;
     private LinearOpMode myOpMode = null;
 
     private ALLIANCE_POS alliancePos = null;
@@ -59,9 +61,15 @@ public class VisionHardware {
 
 
     public VisionHardware(LinearOpMode opmode) { myOpMode = opmode; };
+
     public VisionHardware(LinearOpMode opmode, ALLIANCE_POS alliancePos) {
         myOpMode = opmode;
         this.alliancePos = alliancePos;
+    }
+    public VisionHardware(LinearOpMode opmode, ALLIANCE_POS alliancePos, GlobalConfig globalConfig) {
+        myOpMode = opmode;
+        this.alliancePos = alliancePos;
+        this.globalConfig = globalConfig;
     }
 
     public void init() {
