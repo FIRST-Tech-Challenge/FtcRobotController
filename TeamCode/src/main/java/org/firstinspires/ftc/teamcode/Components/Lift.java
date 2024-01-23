@@ -191,7 +191,7 @@ public class Lift extends RFDualMotor {
   public void setPosition(LiftPositionStates p_state) {
     LOGGER.log("lifting to: " + p_state.name());
     if (p_state.equals(LiftPositionStates.AT_ZERO)) {
-      if ((Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.state)
+      if (!Arm.ArmStates.DROP.state && (Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.state)
           && (!Arm.ArmTargetStates.DROP.state || !Arm.ArmTargetStates.GRAB.getState())) {
         super.setPosition(p_state.position-10, 0);
         LiftMovingStates.LOW.clearTargets();
