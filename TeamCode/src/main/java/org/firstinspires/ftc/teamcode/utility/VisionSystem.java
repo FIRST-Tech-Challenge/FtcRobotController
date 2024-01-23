@@ -18,11 +18,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Rect;
+import org.openftc.easyopencv.OpenCvCameraException;
 
 import java.util.List;
 
 public class VisionSystem {
     private final HardwareMap hardwareMap;
+    private final CameraName switchableCamera;
     protected VisionPortal visionPortal;
     private AprilTagProcessor aprilTagProcessor;
 
@@ -56,7 +58,7 @@ public class VisionSystem {
 
         frontCam = hardwareMap.get(WebcamName.class, "gge_cam");
         rearCam = hardwareMap.get(WebcamName.class, "gge_backup_cam");
-        CameraName switchableCamera = ClassFactory.getInstance()
+        switchableCamera = ClassFactory.getInstance()
                 .getCameraManager()
                 .nameForSwitchableCamera(frontCam,rearCam);
 
