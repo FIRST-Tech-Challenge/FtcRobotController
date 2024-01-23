@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.opmode.AprilTag;
 
-public class AprilTagDetector implements Subsystem {
+public class AprilTagDetector{
     AprilTag tagOp;
     Pose2d pose2d;
     enum idpositions{
@@ -13,11 +13,6 @@ public class AprilTagDetector implements Subsystem {
     }
     public AprilTagDetector(AprilTag tagOp) {
         this.tagOp = tagOp;
-    }
-
-    @Override
-    public void periodic() {
-        Subsystem.super.periodic();
     }
     public Pose2d getTagPose(){
         return tagOp.telemetryAprilTag(pose2d);
