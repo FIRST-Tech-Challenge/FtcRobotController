@@ -62,28 +62,26 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Color options for the team prop. Options: r, b, n **/
     public enum color {
-        red, blue, none
+        r, b, n
     }
 
-    // Directional axes refer to a three dimentional plane relative to the robot.
-    // Directional axes refer to a three dimentional plane relative to the robot.
-    /** X-axis directions. Options: l, r **/
+    /** Directions. Options: l, r, f, b **/
     public enum dir {
-        left, right, forward, backward
+        l, r, f, b
     }
 
     /** Spike mark positions for the team prop. Options: l, m, r, n **/
     public enum spike {
-        left, middle, right, none
+        l, m, r, n
     }
 
     /** Initializes all hardware devices on the robot.
      * @param teamColor The color of the team prop.
      * @param useCam Should the camera be initialized? **/
     public void setup(color teamColor, boolean useCam) {
-        if (teamColor == color.red) {
+        if (teamColor == color.r) {
             tfodModelName = "CSTeamPropRed.tflite";
-        } else if (teamColor == color.blue){
+        } else if (teamColor == color.b){
             tfodModelName = "CSTeamPropBlue.tflite";
         }
         else if (useCam){
@@ -174,10 +172,10 @@ public abstract class CSBase extends LinearOpMode {
      * @param isRed Is the team prop red? **/
     public void setup(boolean isRed){
         if (isRed) {
-            setup(color.red, true);
+            setup(color.r, true);
         }
         else {
-            setup(color.blue, true);
+            setup(color.b, true);
         }
     }
 
@@ -210,13 +208,13 @@ public abstract class CSBase extends LinearOpMode {
                 lf.setVelocity(VELOCITY * signum(inches));
                 rf.setVelocity(VELOCITY * signum(inches));
             }
-            else if (direction == dir.forward){
+            else if (direction == dir.f){
                 lb.setVelocity(VELOCITY);
                 rb.setVelocity(VELOCITY);
                 lf.setVelocity(VELOCITY);
                 rf.setVelocity(VELOCITY);
             }
-            else {
+            else if (direction == dir.b){
                 lb.setVelocity(-VELOCITY);
                 rb.setVelocity(-VELOCITY);
                 lf.setVelocity(-VELOCITY);
@@ -262,7 +260,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.**/
     public void encoderDrive(double inches){
-        encoderDrive(inches, dir.forward);
+        encoderDrive(inches, dir.f);
     }
 
     /** Turns the robot a specified number of degrees. Positive values turn right,
@@ -271,10 +269,10 @@ public abstract class CSBase extends LinearOpMode {
      * @param direction (opt.) Direction to turn if degrees is zero.
      */
     public void turn(double degrees, dir direction) {
-        double direct;
-        if (direction == dir.left) {
+        double direct = 0;
+        if (direction == dir.l) {
             direct = -1;
-        } else {
+        } else if (direction == dir.r){
             direct = 1;
         }
         sleep(100);
@@ -318,7 +316,7 @@ public abstract class CSBase extends LinearOpMode {
      * @param degrees The amount of degrees to turn.
      */
     public void turn(double degrees){
-        turn(degrees, dir.right);
+        turn(degrees, dir.r);
     }
 
     /** Strafes left or right for a specified number of inches. An inches value of zero will cause the
@@ -338,11 +336,11 @@ public abstract class CSBase extends LinearOpMode {
             lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-            double d;
+            double d = 0;
 
-            if (direction == dir.right) {
+            if (direction == dir.r) {
                 d = -1;
-            } else {
+            } else if (direction == dir.l){
                 d = 1;
             }
 
@@ -375,49 +373,8 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
 
-    public void strafeUntilTagDetection(dir direction, int idOfTag) {
+    public void strafe(double inches){ strafe(inches, dir.l); }
 
-        if (opModeIsActive() && lf != null) {
-            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-
-            double d;
-
-            if (direction == dir.right) {
-                d = -1;
-            } else {
-                d = 1;
-            }
-
-
-            runtime.reset();
-            lb.setVelocity(VELOCITY * d);
-            rb.setVelocity(-VELOCITY * d);
-            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
-            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
-
-            while (opModeIsActive() && !detectTag(idOfTag)){
-                telemetry.addData("Currently","Strafing until tag " + idOfTag + " is detected");
-                telemetry.update();
-            }
-
-            stopRobot();
-
-            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        }
-    }
 
     /** Changes the velocity.
      * @param velocity New velocity value.
@@ -448,7 +405,7 @@ public abstract class CSBase extends LinearOpMode {
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive. **/
     public void drive(double inches){
-        drive(inches, dir.forward);
+        drive(inches, dir.f);
     }
 
     /** Converts an amount of tiles on the game board to an amount of inches.
@@ -618,34 +575,34 @@ public abstract class CSBase extends LinearOpMode {
         s(2.5);
         double x = detectProp();
         if (x == -1){
-            return spike.left;
+            return spike.l;
         }
         if (x > BOUNDARIES[0] && x < BOUNDARIES[1]){
-            return spike.middle;
+            return spike.m;
         }
         else if (x >= BOUNDARIES[1]){
-            return spike.right;
+            return spike.r;
         } else if (x <= BOUNDARIES[0]){
-            return spike.left;
+            return spike.l;
         }
-        return spike.none;
+        return spike.n;
     }
 
     public int setID(spike location, color teamColor) {
         int ID;
-        if (teamColor == color.blue) {
+        if (teamColor == color.b) {
             ID = 0;
         } else {
             ID = 3;
         }
         switch (location) {
-            case left:
+            case l:
                 ID += 1;
                 break;
-            case middle:
+            case m:
                 ID += 2;
                 break;
-            case right:
+            case r:
                 ID += 3;
                 break;
             default:
@@ -670,12 +627,12 @@ public abstract class CSBase extends LinearOpMode {
     public void purplePixel() {
         s(2);
         drive(-16);
-        if (pos == spike.left) {
+        if (pos == spike.l) {
             turn(-40);
             drive(-8);
             drive(8);
             turn(40);
-        } else if (pos == spike.middle) {
+        } else if (pos == spike.m) {
             drive(-10);
             drive(10);
         } else {

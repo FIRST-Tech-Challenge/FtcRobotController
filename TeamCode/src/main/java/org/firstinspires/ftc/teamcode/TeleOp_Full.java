@@ -22,7 +22,7 @@ public class TeleOp_Full extends CSBase {
 
     @Override
     public void runOpMode() {
-        setup(color.none, false);
+        setup(color.n, false);
         double carWashPower = 1.0;
         double[] backBounds = {0.3, 0.6};
         if (trayTiltingServo != null) {

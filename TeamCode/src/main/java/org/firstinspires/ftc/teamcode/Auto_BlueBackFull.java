@@ -8,7 +8,7 @@ public class Auto_BlueBackFull extends CSBase {
 
     @Override
     public void runOpMode() {
-        setup(color.blue);
+        setup(color.b);
 
         // ---------------------
         // ------Main Code------

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Auto_RedFrontLimited extends CSBase {
     @Override
     public void runOpMode() {
-        setup(color.red);
+        setup(color.r);
 
         // ---------------------
         // ------Main Code------

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
-        color teamColor = color.red;
+        color teamColor = color.r;
         setup(teamColor);
 
         // ---------------------
@@ -22,9 +22,13 @@ public class Auto_RedBackFull extends CSBase {
         purplePixel();
         turn(90);
         drive(tilesToInches(1.3));
-        strafeUntilTagDetection(dir.right, ID);
+        strafe(0,dir.r);
+        while(!detectTag(ID));
+        stopRobot();
         // Place yellow pixel
-        strafeUntilTagDetection(dir.right, 4);
+        strafe(0,dir.r);
+        while(!detectTag(4));
+        stopRobot();
         turn(90);
         drive(tilesToInches(1));
         turn(90);

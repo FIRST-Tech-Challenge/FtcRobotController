@@ -10,7 +10,9 @@ public class Test_AprilTag extends CSBase {
 
         setup(true);
 
-        strafeUntilTagDetection(dir.left,0);
+        strafe(0,dir.l);
+        while (!detectTag(6));
+        stopRobot();
         drive(-10);
 
     }
