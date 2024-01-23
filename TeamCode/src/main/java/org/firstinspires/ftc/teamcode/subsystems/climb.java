@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -17,12 +16,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.utils.BTCommand;
+import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
 import static org.firstinspires.ftc.teamcode.Constants.Climb.*;
 
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 
 public class climb {
 
@@ -51,6 +53,12 @@ public class climb {
 
     public void stopMotors() {
         climb_motor.set(0);
+    }
+    public BTCommand climb_manual(DoubleSupplier speed){
+        return new RunCommand(()->{
+            climb_motor.set(speed.getAsDouble());
+
+        });
     }
     public Command climb_down(){
         TrapezoidProfile.State goal_down = new TrapezoidProfile.State(0, 0);

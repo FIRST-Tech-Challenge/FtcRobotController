@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -14,40 +16,31 @@ import java.util.function.DoubleSupplier;
 public class arm {
     private HardwareMap map;
     private Telemetry m_telemetry;
-    private MotorEx motor_down;
-    private MotorEx motor_up;
-    private MotorEx motor_upup;
+    private MotorEx motor_first;
+    private MotorEx motor_second;
+    private SimpleServo servo;
    private BTController m_controller;
     public arm(HardwareMap map, Telemetry telemetry){
         this.map=map;
         this.m_telemetry=telemetry;
-        motor_down= new MotorEx(map, "motor_FL");
-        motor_up= new MotorEx(map, "motor_FL");
-        motor_upup= new MotorEx(map, "motor_FL");
+        motor_first = new MotorEx(map, "motor_FL");
+        motor_second = new MotorEx(map, "motor_FL");
+        servo = new SimpleServo(map, "motor_FL", 0, 280) {
+        };
 
     }
 
-    public void setMotors(double up, double down, double upup){
-        motor_down.set(down);
-        motor_up.set(up);
-        motor_upup.set(upup);
+    public void setMotors(double firstSpeed, double secondSpeed, double servoPos){
+        motor_first.set(firstSpeed);
+        motor_second.set(secondSpeed);
+        servo.setPosition(servoPos);
     }
 
-    public BTCommand downArm(DoubleSupplier speed){
+    public BTCommand armMove(DoubleSupplier speedFirst,DoubleSupplier speedSecond,DoubleSupplier posServo){
         return new RunCommand(()->{
-            motor_down.set(speed.getAsDouble());
+            motor_first.set(speedFirst.getAsDouble());
+            setMotors(speedFirst.getAsDouble(),speedSecond.getAsDouble(),posServo.getAsDouble());
         });
     }
 
-    public BTCommand upArm(DoubleSupplier speed){
-        return new RunCommand(()->{
-            motor_up.set(speed.getAsDouble());
-        });
-    }
-
-    public BTCommand upupArm(DoubleSupplier speed){
-        return new RunCommand(()->{
-            motor_upup.set(speed.getAsDouble());
-        });
-    }
 }
