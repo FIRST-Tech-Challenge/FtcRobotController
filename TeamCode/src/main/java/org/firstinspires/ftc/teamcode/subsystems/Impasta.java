@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.kauailabs.navx.ftc.AHRS;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.PID;
 
 public class Impasta {
     // Hardware variables
     private AHRS imu;
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
-    private PID pid = new PID(0.008, 0, 0);
+    private PID pid = new PID(0.5, 0, 0);
 
 
     // Constructor for Impasta class
@@ -115,8 +111,28 @@ public class Impasta {
     }
 
     //Slide Control via power
-    public void slides(double power) {
+    public void setSlidesPower(double power) {
         leftSlide.setPower(-power);
         rightSlide.setPower(power);
     }
+    public double getSlidesPos() {
+        return leftSlide.getCurrentPosition();
+    }
+
+    public void runToPos(double targetPos) {
+        double currentPos = getSlidesPos();
+        int output = pid.update(currentPos, targetPos);
+        leftSlide.setTargetPosition(output);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setTargetPosition(-output);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public boolean atUpper() {
+        return getSlidesPos() > 600;
+    }
+
+    public boolean atLower() {
+        return getSlidesPos() < 5;
+    }
+
 }

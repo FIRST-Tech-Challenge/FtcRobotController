@@ -71,7 +71,7 @@ public class ImpastaTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             /** gamepad1                                                                                */
             // Driving the robot based on gamepad input
-            impasta.driveBaseField(gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
+            impasta.driveBaseField(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
 
             // Controlling intake based on trigger input
             impasta.intake(gamepad1.left_trigger - gamepad1.right_trigger);
@@ -82,15 +82,17 @@ public class ImpastaTeleOp extends LinearOpMode {
                 gamepad1.rumble(2000);
             }
 
-            /** gamepad2                                                                                */
-            // Controlling slides with gamepad input
-            impasta.slides(-gamepad2.left_stick_y);
-            telemetry.addData("PowerForSlides", -gamepad2.left_stick_y);
-
-//            Winch.setPower(gamepad2.left_stick_y);
-            
-            telemetry.addLine("SlidePos: " + -leftSlide.getCurrentPosition());
-            telemetry.update();
+            if (gamepad2.dpad_down && !impasta.atLower()) {
+                impasta.runToPos(0);
+            } else if (gamepad2.dpad_left) {
+                impasta.runToPos(150);
+            } else if (gamepad2.dpad_right) {
+                impasta.runToPos(300);
+            } else if (gamepad2.dpad_up && !impasta.atUpper()) {
+                impasta.runToPos(450);
+            } else {
+                impasta.setSlidesPower(-gamepad2.left_stick_y);
+            }
 
 //            //TODO Test Airplane Aim
             if (gamepad2.triangle) {
@@ -141,20 +143,16 @@ public class ImpastaTeleOp extends LinearOpMode {
 //            telemetry.update();
 
             // Outtake switches between scoring and rest position based on button press //Swap later
-            if (gamepad2.left_trigger > 0.3) {
-                if (leftSensor.getDistance(DistanceUnit.INCH)<=distance) {
-                    gamepad1.rumble(1000);
-                    out1.setPosition(0.75); // left //lower
-                }
+            if (gamepad2.left_trigger > 0.3 || leftSensor.getDistance(DistanceUnit.INCH)<=distance) {
+                gamepad1.rumble(1000);
+                out1.setPosition(0.75); // left //lower
             } else {
                 out1.setPosition(0.55); // left //raise
             }
 
-            if (gamepad2.right_trigger > 0.3) {
-                if (rightSensor.getDistance(DistanceUnit.INCH)<=distance) {
-                    gamepad1.rumble(1000);
-                    out2.setPosition(0.5); // right //lower
-                }
+            if (gamepad2.right_trigger > 0.3 || rightSensor.getDistance(DistanceUnit.INCH)<=distance) {
+                gamepad1.rumble(1000);
+                out2.setPosition(0.5); // right //lower
             } else {
                 out2.setPosition(0.6); // right //raise
             }

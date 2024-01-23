@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsystems.Impasta;
@@ -72,7 +71,7 @@ public class ImpastaRobotCentricTeleOp extends LinearOpMode {
 
             /** gamepad2                                                                                */
             // Controlling slides with gamepad input
-            impasta.slides(-gamepad2.left_stick_y);
+            impasta.setSlidesPower(-gamepad2.left_stick_y);
             telemetry.addData("PowerForSlides", -gamepad2.left_stick_y);
 
             telemetry.addLine("SlidePos: " + -leftSlide.getCurrentPosition());

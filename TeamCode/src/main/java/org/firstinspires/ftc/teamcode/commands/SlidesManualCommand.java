@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.SlideCommands;
+package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -30,7 +30,7 @@ public class SlidesManualCommand extends CommandBase {
         boolean slow = mechanisms.getButton(GamepadKeys.Button.X);
 
         if (mechanisms.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON) && slides.atUpper()) {
-            slides.slidePower((slow) ? slowUp : up);
+            slides.setSlidesPower((slow) ? slowUp : up);
         }
     }
 }

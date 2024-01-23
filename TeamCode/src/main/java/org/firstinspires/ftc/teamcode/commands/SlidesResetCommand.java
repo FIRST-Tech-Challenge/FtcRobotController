@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.SlideCommands;
+package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -20,9 +20,9 @@ public class SlidesResetCommand extends CommandBase {
     @Override
     public void execute() {
         if (mechanisms.getButton(GamepadKeys.Button.DPAD_DOWN)){
-            slides.slidePower(-0.2);
+            slides.setSlidesPower(-0.2);
         } else {
-            slides.end();
+            slides.stop();
         }
     }
 
@@ -33,7 +33,7 @@ public class SlidesResetCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        slides.end();
+        slides.stop();
         slides.resetSlidePos();
     }
 }

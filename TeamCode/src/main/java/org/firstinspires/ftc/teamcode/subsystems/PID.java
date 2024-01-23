@@ -11,9 +11,9 @@ public class PID {
         d = kd;
     }
 
-    public double update(double state, double target) {
+    public int update(double state, double target) {
         double error = target - state;
-        double output = (p * error);
+        int output = Math.toIntExact(Math.round(p * error));
         return output;
     }
 }
