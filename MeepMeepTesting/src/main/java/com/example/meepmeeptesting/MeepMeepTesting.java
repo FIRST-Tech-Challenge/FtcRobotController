@@ -59,6 +59,7 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(homePose_LOW_RED)
+                                .setTangent(-45)
                                 .splineToConstantHeading(new Vector2d((2 * TileInverted * Invert), TileInverted/2), Math.toRadians(0))
                                 .splineTo(leftPixel_LOW, Math.PI/2)
                                 .lineTo(middle_LOW.vec())

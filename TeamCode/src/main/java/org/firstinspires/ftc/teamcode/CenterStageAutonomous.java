@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsys
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.Extra.CommandAction;
 import org.firstinspires.ftc.teamcode.Extra.CommandGroupBaseAction;
 
@@ -34,6 +35,7 @@ public class CenterStageAutonomous extends LinearOpMode {
     protected ElevatorCommand elevatorCommand;
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
+    protected PixelFingerSubsystem pixelFingerSubsystem;
 
     public RoadRunnerSubsystem.Randomizer randomizer;
     public TrajectoryActionBuilder ToPixel, ToBackdrop;
@@ -57,6 +59,7 @@ public class CenterStageAutonomous extends LinearOpMode {
         elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
+        pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,6 +76,7 @@ public class CenterStageAutonomous extends LinearOpMode {
 
                 ////////////////////////////////////////////////////////////////////////////////////
                 ToPixel.build(),
+                new CommandAction(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem)),
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 new ParallelAction(

@@ -32,12 +32,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public double MAX_SPEED = 0.9; // TODO: Speed Value Might Change
 
     public enum Level {
-        LOADING, HANGING, LOW, MID, HIGH;
+        LOADING, HANGING, AUTO, LOW, MID, HIGH
     }
 
     private Level level;
 
-    private int[] levelPositions = {0, 300, 1050, 1650, 1750}; // TODO: Level Values Might Change
+    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750}; // TODO: Level Values Might Change
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
@@ -92,12 +92,14 @@ public class ElevatorSubsystem extends SubsystemBase {
             levelIdx = 0;
         else if (level == Level.HANGING)
             levelIdx = 1;
-        else if (level == Level.LOW)
+        else if (level == Level.AUTO)
             levelIdx = 2;
-        else if (level == Level.MID)
+        else if (level == Level.LOW)
             levelIdx = 3;
-        else if (level == Level.HIGH)
+        else if (level == Level.MID)
             levelIdx = 4;
+        else if (level == Level.HIGH)
+            levelIdx = 5;
 
         motors.setTargetPosition(levelPositions[levelIdx]);
     }
