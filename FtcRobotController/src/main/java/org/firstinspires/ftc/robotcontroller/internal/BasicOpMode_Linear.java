@@ -43,6 +43,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime launchertime = new ElapsedTime();
     private ElapsedTime xButtonDelay = new ElapsedTime();
+    private ElapsedTime startButtonDelay = new ElapsedTime();
 
     private DcMotorEx leftDriveFront = null;
     private DcMotorEx rightDriveFront = null;
@@ -114,6 +115,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
         xButtonDelay.reset();
+        startButtonDelay.reset();
 
         while (opModeIsActive()) {
 
@@ -160,8 +162,9 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 lift2.setPower(0.0f);
             }
 
-            if(gamepad1.start || gamepad2.start){
+            if((gamepad1.start || gamepad2.start) && startButtonDelay.time() > 0.2) {
                 slow = !slow;
+                startButtonDelay.reset();
             }
 
             telemetry.addData("Claw0", claw0.getPosition());

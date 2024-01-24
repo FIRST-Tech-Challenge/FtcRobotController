@@ -60,7 +60,26 @@ public class BlueFront extends LinearOpMode {
             if(runtime.time() < 2) {
                 drive(0, 1, 0);
             } else if (runtime.time() < 4) {
-                drive(0, 0, 0);
+                drive(0, 0, 1);
+                if(color.equals(color.blue())){
+                    pixel.setPosition(0.0);
+                }
+            } else if (runtime.time() < 6) {
+                drive(0, 0, 1);
+                if(color.equals(color.blue())){
+                    pixel.setPosition(0.0);
+                }
+            } else if (runtime.time() < 8) {
+                drive(0, 0, 1);
+                if(color.equals(color.blue())){
+                    pixel.setPosition(0.0);
+                }
+            } else if (runtime.time() < 12) {
+                drive(0, 1, 0);
+            } else if (runtime.time() < 14) {
+                drive(1, 0, 0);
+            } else if (runtime.time() < 16) {
+                drive(0, 1, 0);
             } else {
                 drive(0, 0, 0);
             }
