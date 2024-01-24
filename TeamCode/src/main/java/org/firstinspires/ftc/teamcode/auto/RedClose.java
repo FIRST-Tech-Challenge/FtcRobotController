@@ -42,6 +42,17 @@ public class RedClose extends CommandOpMode {
                 .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
 
+        TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .lineToLinearHeading(new Pose2d(12, -38, Math.toRadians(125)))
+                .back(3)
+                .build();
+
+        TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .lineToLinearHeading(new Pose2d(12, -38, Math.toRadians(35)))
+                .forward(2)
+                .back(5)
+                .build();
+
         TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
                 .forward(34)
                 .strafeLeft(19)

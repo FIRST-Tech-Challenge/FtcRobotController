@@ -35,6 +35,6 @@ dependencies {
 
 repositories {
     flatDir {
-        dirs 'libs', navxPath //'C:\\Users\\micha\\navx-micro\\android\\libs'
+        dirs 'libs', navxPath
     }
 }
