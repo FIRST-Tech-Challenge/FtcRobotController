@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.CenterStageRobot;
+import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 
@@ -50,7 +51,7 @@ public class CenterStageTeleOp extends CommandOpMode {
     public static double TICKS_PER_REV = 145.6;
     public static double MAX_RPM = 1150;
 
-    public static double DEFAULT_SPEED_PERC = 0.6;
+    public static double DEFAULT_SPEED_PERC = 0.75;
     public static double SLOW_SPEED_PERC = 0.3;
     public static double FAST_SPEED_PERC = 1;
 
@@ -102,6 +103,6 @@ public class CenterStageTeleOp extends CommandOpMode {
         RobotConstants.FAST_SPEED_PERC = FAST_SPEED_PERC;
 
 
-        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp);
+        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true);
     }
 }
