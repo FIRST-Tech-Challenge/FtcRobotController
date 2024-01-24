@@ -57,10 +57,10 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // Variables for servo position testing, displaying team prop location
-    static final double RIGHT_POS     =  0.99;     // Maximum rotational position
-    static final double CENTER_POS     =  0.66;     // Middle rotational position
+    static final double RIGHT_POS    =  0.99;     // Maximum rotational position
+    static final double CENTER_POS     =   0.66;     // Middle rotational position
     static final double LEFT_POS     =  0.33;     // Minimum rotational position
-    static final double DEF_POS     =  0.01;     // Minimum rotational position
+    static final double DEF_POS     =  0.01;     // Default rotational position
     Servo servo_Display = null;
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
@@ -99,7 +99,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
-        gobbler.intake.intakeDown(false);
+
+        gobbler.driveTrain.Wait(5.0);
 
         //Name for servo to be used on driver hub
         servo_Display = hardwareMap.get(Servo.class, "servo_display");
@@ -108,7 +109,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         for (Recognition recognition : currentRecognitions) {
             double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
             double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
-
+            servo_Display.setPosition(DEF_POS);
             // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file.
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
@@ -117,7 +118,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 // center
                 telemetry.addData("position","Center");
                 // drives robot to the center position.
-                gobbler.driveTrain.centerPos();
+                //gobbler.driveTrain.centerPos();
                 desiredTag = 2;
                 seen = true;
             }
@@ -128,7 +129,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 // right
                 telemetry.addData("position","Right");
                 // drives robot to the right position.
-                gobbler.driveTrain.rightPos();
+                //gobbler.driveTrain.rightPos();
                 desiredTag = 1;
                 seen = true;
 
@@ -140,26 +141,9 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         if (!seen) {
             telemetry.addData("position","Left");
             // drives robot to the left position.
-            gobbler.driveTrain.leftPos();
+            //gobbler.driveTrain.leftPos();
             desiredTag = 3;
         }
-
-        telemetryTfod();
-
-//              Place first pixel
-        gobbler.driveTrain.Wait(0.5);
-        gobbler.outtake.trapdoor(true, trapdoorToggle);
-        gobbler.driveTrain.Wait(2);
-        gobbler.outtake.trapdoor(true, trapdoorToggle);
-
-        // Push telemetry to the Driver Station.
-        telemetry.update();
-        gobbler.driveTrain.Wait(3.0);
-
-        // Cait's code to make the servo react based on prop location
-        servo_Display.setPosition(DEF_POS); // Default position for the servo
-
-        gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
 
         if (desiredTag == 2) { // Center position
             servo_Display.setPosition(CENTER_POS);
@@ -171,12 +155,10 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             servo_Display.setPosition(LEFT_POS);
         }
 
-        //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-
 
         waitForStart();
 
@@ -222,21 +204,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                  gobbler.driveTrain.leftPos();
                  desiredTag = 3;
              }
-            // Cait's code to make the servo react based on prop location
-           /* servo_Display.setPosition(DEF_POS); // Default position for the servo
 
-            gobbler.driveTrain.Wait(2.0); // Letting the computer wait before switching its position
-
-            if (desiredTag == 2) { // Center position
-                servo_Display.setPosition(CENTER_POS);
-            }
-            else if (desiredTag == 1) { // Right position
-                servo_Display.setPosition(RIGHT_POS);
-            }
-            else { // Left position
-                servo_Display.setPosition(LEFT_POS);
-            }
-        */
                 telemetryTfod();
 
 //              Place first pixel
