@@ -104,6 +104,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         //Name for servo to be used on driver hub
         servo_Display = hardwareMap.get(Servo.class, "servo_display");
+    for (int i = 0; i < 3; i++) {
+
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (Recognition recognition : currentRecognitions) {
@@ -116,7 +118,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
             if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
                 // center
-                telemetry.addData("position","Center");
+                telemetry.addData("position", "Center");
                 // drives robot to the center position.
                 //gobbler.driveTrain.centerPos();
                 desiredTag = 2;
@@ -127,7 +129,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
             else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
                 // right
-                telemetry.addData("position","Right");
+                telemetry.addData("position", "Right");
                 // drives robot to the right position.
                 //gobbler.driveTrain.rightPos();
                 desiredTag = 1;
@@ -139,7 +141,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         // If the team prop is not seen on the center or right, it will assume it is on the left.
         if (!seen) {
-            telemetry.addData("position","Left");
+            telemetry.addData("position", "Left");
             // drives robot to the left position.
             //gobbler.driveTrain.leftPos();
             desiredTag = 3;
@@ -147,14 +149,12 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (desiredTag == 2) { // Center position
             servo_Display.setPosition(CENTER_POS);
-        }
-        else if (desiredTag == 1) { // Right position
+        } else if (desiredTag == 1) { // Right position
             servo_Display.setPosition(RIGHT_POS);
-        }
-        else { // Left position
+        } else { // Left position
             servo_Display.setPosition(LEFT_POS);
         }
-
+    }
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -163,8 +163,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            //List<Recognition> currentRecognitions = tfod.getRecognitions();
-            // Commented out this line of code since it was defined in the section above.
+            List<Recognition> currentRecognitions = tfod.getRecognitions();
+            // Commented out the line of code below since it was defined in the lines above.
             //currentRecognitions = tfod.getRecognitions();
             for (Recognition recognition : currentRecognitions) {
                 double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
