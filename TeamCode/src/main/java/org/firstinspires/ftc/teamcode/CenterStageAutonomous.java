@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -12,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.InstantTelemetry;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
@@ -32,7 +35,13 @@ public class CenterStageAutonomous extends LinearOpMode {
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
 
-    protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2),(RR.TileInverted/2),Math.toRadians(180));
+    public RoadRunnerSubsystem.Randomizer randomizer;
+    public TrajectoryActionBuilder ToPixel, ToBackdrop;
+
+    protected static double starting_pos_error_X = 1;//inch
+    protected static double starting_pos_error_Y = 1;//inch
+
+    protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error_X,0,Math.toRadians(180));
     protected Pose2d homePose_HIGH_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2),(RR.Tile * 1.5),Math.toRadians(180));
 
     @Override
@@ -51,17 +60,24 @@ public class CenterStageAutonomous extends LinearOpMode {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-                waitForStart();
+        waitForStart();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        ToPixel = RR.RobotToBackdrop(randomizer).first;
+        ToBackdrop = RR.RobotToBackdrop(randomizer).second;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         Actions.runBlocking(new SequentialAction(
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                RR.LOW_HomeToPixel_CENTER.build(), // Change with TO_BACKDROP
+                ToPixel.build(),
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 new ParallelAction(
                         new CommandAction(
-                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOW)
+                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.AUTO)
                         ),
                         new CommandGroupBaseAction(new SequentialCommandGroup(
                                 new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
@@ -70,7 +86,7 @@ public class CenterStageAutonomous extends LinearOpMode {
                         )),
 
                 ////////////////////////////////////////////////////////////////////////////////////
-                        RR.LOW_ToBackdrop_MID.build() // Change with the HOME_TO_PIXEL
+                        ToBackdrop.build()
                 ////////////////////////////////////////////////////////////////////////////////////
 
                 ),
@@ -84,12 +100,17 @@ public class CenterStageAutonomous extends LinearOpMode {
                         RR.RobotBackdropToStation().build(),
                         new CommandGroupBaseAction(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                        new WaitCommand(80),
-                                        new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+                                        new WaitCommand(500),
+//                                        new ParallelCommandGroup(
+                                                new SequentialCommandGroup(
+                                                        new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                                                        new WaitCommand(80),
+                                                        new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+                                                ),
+                                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
+//                                        )
                                 )
-                        ),
-                        new CommandAction(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING))
+                        )
                 ),
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +119,9 @@ public class CenterStageAutonomous extends LinearOpMode {
 
                 ////////////////////////////////////////////////////////////////////////////////////
                         RR.RobotStation().first.build(),
+                        new CommandAction(
+                                new InstantTelemetry(telemetry, Double.toString(drive.getHeading()))
+                        ),
                 ////////////////////////////////////////////////////////////////////////////////////
 
                         new CommandGroupBaseAction(
@@ -139,7 +163,7 @@ public class CenterStageAutonomous extends LinearOpMode {
                                     ),
                                     new SequentialCommandGroup(
                                             new ParallelCommandGroup(
-                                                    new InstantCommand(intakeSubsystem::run, intakeSubsystem),
+                                                    new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
                                                     new InstantCommand(outtakeSusystem::wheel_grab)
                                             ),
                                             new WaitCommand(4000)

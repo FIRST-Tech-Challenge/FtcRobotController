@@ -29,15 +29,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     private ElevatorFeedforward feedforward;
     public double feedforwardCalc = 0;
 
-    public double MAX_SPEED = 0.5; // TODO: Speed Value Might Change
+    public double MAX_SPEED = 0.9; // TODO: Speed Value Might Change
 
     public enum Level {
-        LOADING, LOW, MID, HIGH;
+        LOADING, HANGING, LOW, MID, HIGH;
     }
 
     private Level level;
 
-    private int[] levelPositions = {0, 1050, 1650, 1750}; // TODO: Level Values Might Change
+    private int[] levelPositions = {0, 300, 1050, 1650, 1750}; // TODO: Level Values Might Change
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
@@ -90,12 +90,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         if(level == Level.LOADING)
             levelIdx = 0;
-        else if (level == Level.LOW)
+        else if (level == Level.HANGING)
             levelIdx = 1;
-        else if (level == Level.MID)
+        else if (level == Level.LOW)
             levelIdx = 2;
-        else if (level == Level.HIGH)
+        else if (level == Level.MID)
             levelIdx = 3;
+        else if (level == Level.HIGH)
+            levelIdx = 4;
 
         motors.setTargetPosition(levelPositions[levelIdx]);
     }

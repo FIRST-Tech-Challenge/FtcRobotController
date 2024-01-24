@@ -32,6 +32,6 @@ public class ElevatorCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return elevator.atTargetLevel();
+        return targetLevel == ElevatorSubsystem.Level.HANGING ? false : elevator.atTargetLevel();
     }
 }
