@@ -217,7 +217,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(2000 );  // 2 sec
+            sleep(3000 );  // 3 sec
             robot.collectorMotor.setPower(0.0);
         }
 

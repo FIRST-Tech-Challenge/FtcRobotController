@@ -205,7 +205,7 @@ public class AutonomousLeftRed extends AutonomousBase {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(2500 );  // 2.5 sec
+            sleep(3000 );  // 3 sec
             robot.collectorMotor.setPower(0.0);
         }
 
@@ -224,6 +224,7 @@ public class AutonomousLeftRed extends AutonomousBase {
                     driveToPosition( -4.0, -20.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 2:  // CENTER
+                    driveToPosition( -37.0, 10.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -20.0, 8.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -8.0, 1.0, 45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -1.0, -20.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);

@@ -93,9 +93,8 @@ public class HardwarePixelbot
     // Pixel collector/transporter motor
     protected DcMotorEx collectorMotor     = null;
 
-    public double  COLLECTOR_MOTOR_POWER = 1.00;  // Speed of the collector motor when we run
-//  public double  COLLECTOR_EJECT_POWER = 0.60;  // Speed of the collector motor for autonomous
-    public double  COLLECTOR_EJECT_POWER = 1.00;  // Speed of the collector motor for autonomous
+    public double  COLLECTOR_MOTOR_POWER = 0.90;  // Speed of the collector motor when we run
+    public double  COLLECTOR_EJECT_POWER = -0.90;  // Speed of the collector motor for autonomous (asssumes ON TOP!)
 
     // Viper slide motors (Y power cable to drive both motors from one port; single encoder cable on left motor
     protected DcMotorEx viperMotors = null;
