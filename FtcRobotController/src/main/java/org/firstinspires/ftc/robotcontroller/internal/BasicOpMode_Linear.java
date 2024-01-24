@@ -59,6 +59,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private boolean clawO = false;
     private int liftPos = 0;
 
+    boolean slow = false;
+
     private DcMotor lift2 = null;
 
     @Override
@@ -158,6 +160,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 lift2.setPower(0.0f);
             }
 
+            if(gamepad1.start || gamepad2.start){
+                slow = !slow;
+            }
+
             telemetry.addData("Claw0", claw0.getPosition());
             telemetry.addData("Claw1", claw1.getPosition());
             telemetry.update();
@@ -184,9 +190,16 @@ public class BasicOpMode_Linear extends LinearOpMode {
         bl -= gamepad1.right_stick_x;
         br += gamepad1.right_stick_x;
 
-        leftDriveFront.setVelocity(fl * 1000);
-        rightDriveFront.setVelocity(fr * 1000);
-        leftDriveBack.setVelocity(bl * 1000);
-        rightDriveBack.setVelocity(br * 1000);
+        if(!slow) {
+            leftDriveFront.setVelocity(fl * 1000);
+            rightDriveFront.setVelocity(fr * 1000);
+            leftDriveBack.setVelocity(bl * 1000);
+            rightDriveBack.setVelocity(br * 1000);
+        } else {
+            leftDriveFront.setVelocity(fl * 500);
+            rightDriveFront.setVelocity(fr * 500);
+            leftDriveBack.setVelocity(bl * 500);
+            rightDriveBack.setVelocity(br * 500);
+        }
     }
 }
