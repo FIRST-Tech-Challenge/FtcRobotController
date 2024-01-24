@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.MeetCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "AutoBlueLeft")
+@Disabled
 public class AutoBlueLeft extends LinearOpMode{
 
     Hardware robot = new Hardware();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.MeetCode;
 
 //Aman Sulaiman, 23-24 CenterStage
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name = "teleOpBlue")
+@Disabled
 public class teleOpBlue extends LinearOpMode {
     double cascadeMotorPower;
     final double DESIRED_DISTANCE = 9; //  this is how close the camera should get to the target (inches)

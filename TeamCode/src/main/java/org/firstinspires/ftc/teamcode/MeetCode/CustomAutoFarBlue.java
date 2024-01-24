@@ -62,9 +62,10 @@ public class CustomAutoFarBlue extends LinearOpMode {
 
     private static final String TFOD_MODEL_ASSET = "BlueProp.tflite";
 
+
     String position = "";
 
-    final double DESIRED_DISTANCE = 7.5; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 8.5; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -78,7 +79,8 @@ public class CustomAutoFarBlue extends LinearOpMode {
     final double MAX_AUTO_TURN  = 0.5;
 
     private  int DESIRED_TAG_ID = -1;
-
+    private int ticksForCascade = 820;
+    private double DESIRED_STRAFE = 0;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
 
@@ -87,7 +89,10 @@ public class CustomAutoFarBlue extends LinearOpMode {
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
+    private long timeAdd = 0;
+
     String park = "";
+
 
     boolean indicator = false;
     private static final String[] LABELS = {
@@ -115,11 +120,13 @@ public class CustomAutoFarBlue extends LinearOpMode {
 
         initTfod();
         robot.init(hardwareMap);
+        robot.resetEncodersCascade();
+
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.3);
-        robot.wrist.setPosition(.65);
+        robot.wrist.setPosition(1);
         robot.claw.setPosition(0);
 
 
@@ -128,91 +135,49 @@ public class CustomAutoFarBlue extends LinearOpMode {
 
         // Wait for the DS start button to be touched.
         //tfod.setZoom(.5);
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
+
         while (park.equals("")) {
             if (gamepad1.left_bumper) {
                 park = "Left";
             } else if (gamepad1.right_bumper) {
                 park = "Right";
             }
-
+            if (gamepad1.dpad_up) {
+                timeAdd += 1;
+                sleep(150);
+            }
+            else if (gamepad1.dpad_down) {
+                timeAdd -= 1;
+                sleep(150);
+            }
+            telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
+            telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800
+            telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
             telemetry.addData("Park Location", park);
+            telemetry.addData("Time Added: ", timeAdd);
             telemetry.update();
         }
-        waitForStart();
 
+        waitForStart();
+        telemetry.clear();
 
         robot.timer.reset();
         while (robot.timer.seconds() < .75) {
             telemetryTfod();
-
         }
+        robot.encoderStrafeLeft(5);
         if(position.equals("Center")) {
             DESIRED_TAG_ID = 2;
             robot.encoderDrive(30.5);
-            sleep(100);
-            robot.encoderStrafeLeft(3);
-            robot.dropper.setPosition(1);
-            sleep(250);
-            robot.encoderDrive(-4.5);
-            sleep(100);
-            robot.encoderStrafeLeft(60);
-            robot.encoderTurnLeft(21);
-            //robot.squareUp();
             sleep(50);
-            robot.turnOffEncoders();
-            setManualExposure(6, 250);
-            robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
-                aprilTagDetection();
-            }
-            robot.timer.reset();
-            while (robot.timer.seconds() < 1) {
-                robot.cascadeDrive(1302);
-            }
-            robot.arm.setTargetPosition(438);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
-            robot.claw.setPosition(.4);
-            sleep(500);
-            robot.claw.setPosition(0);
-            robot.wrist.setPosition(1);
-            robot.arm.setTargetPosition(0);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
-            sleep(500);
-            robot.cascadeDrive(0);
-
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(30);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(30);
-                robot.encoderDrive(18);
-            }
-
-        }
-        else if(position.equals("Right")){
-            DESIRED_TAG_ID = 3;
-            robot.encoderDrive(28.5);
-            sleep(100);
-            robot.encoderStrafeRight(8);
-            robot.dropper.setPosition(1);
+            robot.encoderStrafeRight(3);
             sleep(250);
-            robot.encoderDrive(-2.5);
-            sleep(100);
-            robot.encoderStrafeLeft(65);
+            robot.dropper.setPosition(1);
+            sleep(500);
+            robot.encoderDrive(-5.5);
+            sleep(4000 + timeAdd * 1000);
+            sleep(50);
+            robot.encoderStrafeLeft(60);
             robot.encoderTurnLeft(23);
             //robot.squareUp();
             sleep(50);
@@ -222,103 +187,179 @@ public class CustomAutoFarBlue extends LinearOpMode {
             while (robot.timer.seconds() < 3.5){
                 aprilTagDetection();
             }
+            telemetry.addData("Distance", desiredTag.ftcPose.range);
+            telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
+            telemetry.update();
+            robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
-            while (robot.timer.seconds() < 1) {
-                robot.cascadeDrive(1302);
-            }
-            robot.arm.setTargetPosition(438);
+//
+            robot.cascadeLock(ticksForCascade);
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+                sleep(100);
+            robot.arm.setTargetPosition(600);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
-            robot.claw.setPosition(.4);
+            robot.arm.setPower(.3);
+            sleep(1000);
+            robot.encoderDrive(4);
+            sleep(750);
+            robot.claw.setPosition(.6);
             sleep(500);
+            robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
+            sleep(1500);
+            while (robot.arm.getCurrentPosition() > 50)
+                sleep(50);
+            robot.cascadeLock(0);
+            sleep(2000);
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(30);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//                robot.encoderStrafeRight(30);
+//                robot.encoderDrive(18);
+//            }
+
+        }
+        else if(position.equals("Right")){
+            DESIRED_TAG_ID = 3;
+            robot.encoderDrive(26);
             sleep(500);
-            robot.cascadeDrive(0);
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(36);
-                robot.encoderDrive(18);
+            robot.encoderStrafeRight(13);
+            sleep(500);
+            robot.dropper.setPosition(1);
+            sleep(500);
+            robot.encoderDrive(-22);
+            sleep(timeAdd * 1000);
+            sleep(2500);
+            robot.encoderStrafeLeft(102);
+            sleep(250);
+            robot.encoderDrive(28);
+            robot.encoderTurnLeft(23.5);
+            //robot.squareUp();
+            sleep(50);
+            robot.turnOffEncoders();
+            setManualExposure(6, 250);
+            robot.timer.reset();
+            while (robot.timer.seconds() < 1.75){
+                aprilTagDetection();
             }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(24);
-                robot.encoderDrive(18);
-            }
+            telemetry.addData("Distance", desiredTag.ftcPose.range);
+            telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
+            telemetry.update();
+            robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            robot.encoderStrafeRight(desiredTag.ftcPose.x + 1);
+            robot.timer.reset();
+            robot.cascadeLock(ticksForCascade);
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+                sleep(100);
+            robot.arm.setTargetPosition(600);
+            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.arm.setPower(.3);
+            sleep(1000);
+            robot.encoderDrive(4);
+            sleep(750);
+            robot.claw.setPosition(.6);
+            sleep(500);
+            robot.encoderDrive(-6);
+            robot.claw.setPosition(0);
+            robot.wrist.setPosition(1);
+            robot.arm.setTargetPosition(0);
+            sleep(1500);
+            while (robot.arm.getCurrentPosition() > 50)
+                sleep(50);
+            robot.cascadeLock(0);
+            sleep(2000);
+
+
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(37);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//                robot.encoderStrafeRight(22);
+//                robot.encoderDrive(18);
+//            }
 
             //23, 9, 1, -.5, 65
 
         }
         else{
             DESIRED_TAG_ID = 1;
-            robot.encoderDrive(26);
-            sleep(100);
-            robot.encoderStrafeLeft(17);
+            robot.encoderDrive(26.5);
+            sleep(500);
+            robot.encoderStrafeLeft(14.25);
+            sleep(500);
             robot.dropper.setPosition(1);
+            sleep(500);
+            robot.encoderDrive(-1.75);
+            sleep(500);
+            robot.encoderStrafeRight(17);
+            sleep(500);
+            robot.encoderDrive(-20.75);
+            sleep(500);
+//            robot.encoderStrafeLeft(80);
+            sleep(timeAdd * 1000);
+            robot.encoderStrafeLeft(92);
             sleep(250);
-            sleep(100);
-            robot.encoderStrafeLeft(47);
-            robot.encoderTurnLeft(21);
+            robot.encoderDrive(17);
+            robot.encoderTurnLeft(23);
             //robot.squareUp();
             sleep(50);
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
+            while (robot.timer.seconds() < 1.75){
                 aprilTagDetection();
             }
+            telemetry.addData("Distance", desiredTag.ftcPose.range);
+            telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
+            telemetry.update();
+            robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
             robot.timer.reset();
-            while (robot.timer.seconds() < 1) {
-                robot.cascadeDrive(1302);
-            }
-            robot.arm.setTargetPosition(438);
+            robot.cascadeLock(ticksForCascade);
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+                sleep(100);
+            robot.arm.setTargetPosition(600);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
-            robot.claw.setPosition(.4);
+            robot.arm.setPower(.3);
+            sleep(1000);
+            robot.encoderDrive(4);
+            sleep(750);
+            robot.claw.setPosition(.6);
             sleep(500);
+            robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.timer.reset();
-            while (robot.arm.getCurrentPosition() - robot.arm.getTargetPosition() != 0 && robot.timer.seconds() < 1) {
-                robot.arm.setPower(.4);
-                robot.cascadeDrive(1302);
-            }
-            sleep(500);
-            robot.cascadeDrive(0);
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(24);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(36);
-                robot.encoderDrive(18);
-            }
+            sleep(1500);
+            while (robot.arm.getCurrentPosition() > 50)
+                sleep(50);
+            robot.cascadeLock(0);
+            sleep(2000);
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(22);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//                robot.encoderStrafeRight(36);
+//                robot.encoderDrive(18);
+//            }
 
             //21.5, 15, 47
         }
 
 
-                // Push telemetry to the Driver Station.
+        // Push telemetry to the Driver Station.
 
 
-                // Save CPU resources; can resume streaming when needed.
+        // Save CPU resources; can resume streaming when needed.
 
-                // Share the CPU.
+        // Share the CPU.
         sleep(20);
 
         // Save more CPU resources when camera is no longer needed.
@@ -334,18 +375,18 @@ public class CustomAutoFarBlue extends LinearOpMode {
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
 
-            // Use setModelAssetName() if the TF Model is built in as an asset.
-            // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-            .setModelAssetName(TFOD_MODEL_ASSET)
-            //.setModelFileName(TFOD_MODEL_FILE)
+                // Use setModelAssetName() if the TF Model is built in as an asset.
+                // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                .setModelAssetName(TFOD_MODEL_ASSET)
+                //.setModelFileName(TFOD_MODEL_FILE)
 
-            .setModelLabels(LABELS)
+                .setModelLabels(LABELS)
 //            .setIsModelTensorFlow2(true)
 //            .setIsModelQuantized(true)
 //            .setModelInputSize(300)
 //            .setModelAspectRatio(16.0 / 9.0)
 
-            .build();
+                .build();
 
         aprilTag = new AprilTagProcessor.Builder().build();
 
@@ -400,6 +441,11 @@ public class CustomAutoFarBlue extends LinearOpMode {
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            telemetry.addData(""," ");
+            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetry.update();
             if(x > 400){
                 position = "Right";
                 break;

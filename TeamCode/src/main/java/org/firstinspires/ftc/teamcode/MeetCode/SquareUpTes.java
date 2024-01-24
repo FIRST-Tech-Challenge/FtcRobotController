@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.MeetCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "Square Up")
+@Disabled
 
 public class SquareUpTes extends LinearOpMode {
     Hardware robot = new Hardware();

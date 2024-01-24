@@ -54,13 +54,13 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auto Blue Close", group = "Concept")
+@Autonomous(name = "Auto Red Far", group = "Concept")
 
-public class CustomAutoCloseBlue extends LinearOpMode {
+public class CustomAutoFarRed extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    private static final String TFOD_MODEL_ASSET = "BlueProp.tflite";
+    private static final String TFOD_MODEL_ASSET = "RedProp.tflite";
 
     String position = "";
 
@@ -69,30 +69,32 @@ public class CustomAutoCloseBlue extends LinearOpMode {
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.02;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.02;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double SPEED_GAIN = 0.02;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN = 0.02;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN = 0.02;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.5;
+    final double MAX_AUTO_STRAFE = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN = 0.5;
 
-    private  int DESIRED_TAG_ID = -1;
+    private int DESIRED_TAG_ID = -1;
 
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
 
-    boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-    double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-    double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-    double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+    boolean targetFound = false;    // Set to true when an AprilTag target is detected
+    double drive = 0;        // Desired forward power/speed (-1 to +1)
+    double strafe = 0;        // Desired strafe power/speed (-1 to +1)
+    double turn = 0;        // Desired turning power/speed (-1 to +1)
     private int ticksForCascade = 820;
     private double DESIRED_STRAFE = 0;
+
+    private long timeAdd = 0;
     String park = "";
 
     boolean indicator = false;
     private static final String[] LABELS = {
-            "BlueProp"
+            "RedProp"
 
     };
     /**
@@ -111,9 +113,6 @@ public class CustomAutoCloseBlue extends LinearOpMode {
     public void runOpMode() {
 
 
-
-
-
         initTfod();
         robot.init(hardwareMap);
         robot.resetEncodersCascade();
@@ -125,9 +124,6 @@ public class CustomAutoCloseBlue extends LinearOpMode {
         robot.claw.setPosition(0);
 
 
-
-
-
         // Wait for the DS start button to be touched.
         //tfod.setZoom(.5);
 
@@ -137,13 +133,24 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             } else if (gamepad1.right_bumper) {
                 park = "Right";
             }
-
+            if (gamepad1.dpad_up) {
+                timeAdd += 1;
+                sleep(150);
+            } else if (gamepad1.dpad_down) {
+                timeAdd -= 1;
+                sleep(150);
+            }
             telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
             telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800
             telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
             telemetry.addData("Park Location", park);
+            telemetry.addData("Time Added: ", timeAdd);
             telemetry.update();
         }
+
+
+
+
 
         waitForStart();
 
@@ -154,15 +161,18 @@ public class CustomAutoCloseBlue extends LinearOpMode {
         }
         robot.encoderStrafeLeft(5);
         if(position.equals("Center")) {
-            DESIRED_TAG_ID = 2;
+            DESIRED_TAG_ID = 5;
             robot.encoderDrive(29.5);
             sleep(50);
             robot.encoderStrafeRight(2);
             robot.dropper.setPosition(1);
             sleep(500);
-            robot.encoderDrive(-6);
-            sleep(50);
-            robot.encoderTurnLeft(23);
+            robot.encoderDrive(-4);
+            sleep(250);
+            sleep(4000 + timeAdd * 1000);
+            robot.encoderStrafeRight(64);
+            sleep(250);
+            robot.encoderTurnRight(23);
             //robot.squareUp();
             sleep(50);
             robot.turnOffEncoders();
@@ -178,6 +188,8 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 //
+
+
             robot.cascadeLock(ticksForCascade);
             while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
                 sleep(100);
@@ -187,9 +199,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             sleep(1000);
             robot.encoderDrive(4);
             sleep(500);
-            robot.claw.setPosition(.47);
-            sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(.6);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -199,35 +209,44 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
+            sleep(2000);
 
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(33);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(27);
-                robot.encoderDrive(18);
-            }
+//            if (park.equals("Left")) {
+//
+//                robot.encoderStrafeLeft(30);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//                robot.encoderStrafeRight(30);
+//                robot.encoderDrive(18);
+//            }
 
         }
         else if(position.equals("Right")){
-            DESIRED_TAG_ID = 3;
+            DESIRED_TAG_ID = 6;
             robot.encoderDrive(26.5);
-            sleep(100);
-            robot.encoderStrafeRight(12);
+            sleep(500);
+            robot.encoderStrafeRight(13);
+            sleep(500);
             robot.dropper.setPosition(1);
-            sleep(250);
+            sleep(500);
             robot.encoderDrive(-2);
-            sleep(100);
-            robot.encoderStrafeLeft(15);
+            sleep(500);
+            robot.encoderStrafeLeft(14);
+            sleep(500);
+            robot.encoderDrive(-20.5);
             sleep(250);
-            robot.encoderTurnLeft(22);
+            sleep(timeAdd * 1000);
+            robot.encoderStrafeRight(92);
+            sleep(250);
+            robot.encoderDrive(17);
+            robot.encoderTurnRight(23);
             //robot.squareUp();
             sleep(50);
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
+            while (robot.timer.seconds() < 1.75){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -246,9 +265,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             sleep(1000);
             robot.encoderDrive(4);
             sleep(500);
-            robot.claw.setPosition(.47);
-            sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(.6);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -258,43 +275,49 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
-
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(34);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(24);
-                robot.encoderDrive(18);
-            }
+            sleep(2000);
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(36);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//
+//
+//                robot.encoderStrafeRight(24);
+//                robot.encoderDrive(18);
+//            }
 
             //23, 9, 1, -.5, 65
 
         }
         else{
-            DESIRED_TAG_ID = 1;
-            robot.encoderDrive(24.5);
-            sleep(100);
-            robot.encoderStrafeLeft(14);
-            sleep(100);
+            DESIRED_TAG_ID = 4;
+            robot.encoderDrive(27);
+            sleep(500);
+            robot.encoderStrafeLeft(14.5);
+            sleep(500);
             robot.dropper.setPosition(1);
             sleep(500);
-            robot.encoderDrive(-7.5);
-            sleep(100);
-            robot.encoderTurnLeft(23);
+            robot.encoderDrive(-23.5);
+            sleep(timeAdd * 1000 + 2500);
+            robot.encoderStrafeRight(102);
+            sleep(500);
+            robot.encoderDrive(30);
+            sleep(250);
+            robot.encoderTurnRight(23);
             //robot.squareUp();
             sleep(50);
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
+            while (robot.timer.seconds() < 1.75){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
             telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
             telemetry.update();
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 2);
+            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
@@ -306,9 +329,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             sleep(1000);
             robot.encoderDrive(4);
             sleep(500);
-            robot.claw.setPosition(.47);
-            sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(.6);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -318,15 +339,16 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
-
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(24);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(34);
-                robot.encoderDrive(18);
-            }
+            sleep(2000);
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(22);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//
+//                robot.encoderStrafeRight(37);
+//                robot.encoderDrive(18);
+//            }
 
             //21.5, 15, 47
         }
