@@ -311,6 +311,7 @@ public abstract class CSBase extends LinearOpMode {
             }
         }
     }
+
     /** Turns the robot a specified number of degrees. Positive values turn right,
      * negative values turn left. A degrees value of zero will cause the robot to turn until manually stopped.
      * @param degrees The amount of degrees to turn.
@@ -344,7 +345,6 @@ public abstract class CSBase extends LinearOpMode {
                 d = 1;
             }
 
-
             runtime.reset();
             lb.setVelocity(VELOCITY * d);
             rb.setVelocity(-VELOCITY * d);
@@ -355,7 +355,6 @@ public abstract class CSBase extends LinearOpMode {
             }
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
-
 
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 telemetry.addData("Strafing until",  duration + " seconds");
@@ -373,8 +372,9 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
 
-    public void strafe(double inches){ strafe(inches, dir.l); }
-
+    public void strafe(double inches){
+        strafe(inches, dir.l);
+    }
 
     /** Changes the velocity.
      * @param velocity New velocity value.
@@ -382,7 +382,6 @@ public abstract class CSBase extends LinearOpMode {
     public void setSpeed(double velocity) {
         VELOCITY = velocity;
     }
-
 
     /** Drives the specified number of inches. Negative values will drive backwards.
      * An inches value of zero will cause the robot to drive until manually stopped.
@@ -401,6 +400,7 @@ public abstract class CSBase extends LinearOpMode {
             encoderDrive(0,direction);
         }
     }
+
     /** Drives the specified number of inches. Negative values will drive backwards.
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive. **/
