@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -137,6 +138,8 @@ public abstract class AutonomousBase extends LinearOpMode {
      */
     protected VisionPortal visionPortalBack;
     protected CenterstageSuperPipeline pipelineBack;
+    protected AprilTagProcessor aprilTag;
+
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
     int pixelNumber = 0;

@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 /**
  * This program implements robot movement based on Gyro heading and encoder counts.
@@ -59,9 +61,13 @@ public class AutonomousRightBlue extends AutonomousBase {
         // This is the line that determined what auto is run.
         // This is right side blue alliance.
         pipelineBack = new CenterstageSuperPipeline(false, false );
+        aprilTag = new AprilTagProcessor.Builder()
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setLensIntrinsics(904.214,904.214,696.3,362.796)
+                .build();
         visionPortalBack = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
-                .addProcessor(pipelineBack)
+                .addProcessors(pipelineBack, aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
 
