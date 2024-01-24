@@ -77,6 +77,11 @@ public class VisionSystem {
                 .build();
 
     }
+
+    public boolean camerasReady(){
+        return( visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING);
+    }
+
     public VisionProcessorMode setVisionProcessingMode(VisionProcessorMode newMode){
 
         // if we go through this switch and are unable to set a new mode, the mode

@@ -65,6 +65,13 @@ public abstract class AutoBase extends LinearOpMode {
         //we can pass in the hardwareMap now that we are in runOpMode
         // this is a well documented technique
         visionSystem = new VisionSystem(hardwareMap, telemetry);
+
+        // wait for the cameras to start streaming before we proceed
+        while(opModeInInit()){
+            if(visionSystem.camerasReady()){
+                break;
+            };
+        }
         // setting which Vision Processing mode we want here.
         VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.FRONT_CAMERA_GAMEPIECE);
 
