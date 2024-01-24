@@ -78,7 +78,7 @@ public class RedClose extends CommandOpMode {
         schedule(new SequentialCommandGroup(
 //                new TrajectorySequenceCommand(drive, propCloseMidRed),
                 new InstantCommand(() -> {
-                        s.goToPosition(Slides.SlidePos.LOW);
+                        s.runToPos(Slides.SlidePos.LOW.position);
                 })
 //                new TrajectorySequenceCommand(drive, scoreCloseMidRed),
 //                new TrajectorySequenceCommand(drive, parkCloseMidRed)

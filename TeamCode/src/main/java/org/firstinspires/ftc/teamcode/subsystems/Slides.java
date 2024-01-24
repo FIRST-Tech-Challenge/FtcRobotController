@@ -52,6 +52,11 @@ public class Slides extends SubsystemBase {
         rMotor.setPower(-power);
     }
 
+    public void setSlidesPower(double power) {
+        lMotor.setPower(power);
+        rMotor.setPower(-power);
+    }
+
     public void stop() {
         setPower(0.1);
     }
@@ -80,10 +85,10 @@ public class Slides extends SubsystemBase {
         return getPos() < 5;
     }
 
-//    public void resetSlidePos() {
-//        lMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        lMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//    }
+    public void resetSlidePos() {
+        lMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
 //    public double getVoltageComp() {
 //        return voltageComp;

@@ -78,7 +78,7 @@ public class BlueClose extends CommandOpMode {
         schedule(new SequentialCommandGroup(
 //                new TrajectorySequenceCommand(drive, propCloseMidBlue),
                 new InstantCommand(() -> {
-                    s.goToPosition(Slides.SlidePos.LOW);
+                    s.runToPos(Slides.SlidePos.LOW.position);
                 })
 //                new TrajectorySequenceCommand(drive, scoreCloseMidBlue),
 //                new TrajectorySequenceCommand(drive, parkCloseMidBlue)
