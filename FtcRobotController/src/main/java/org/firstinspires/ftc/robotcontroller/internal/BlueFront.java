@@ -1,178 +1,73 @@
 package org.firstinspires.ftc.robotcontroller.internal;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
-@Autonomous(name="Blue Front", group="Linear Opmode")
+@Autonomous(name="Blue Front", group="16757 Auto")
 public class BlueFront extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDriveFront = null;
-    private DcMotor rightDriveFront = null;
-    private DcMotor leftDriveBack = null;
-    private DcMotor rightDriveBack = null;
+    private DcMotorEx leftDriveFront = null;
+    private DcMotorEx rightDriveFront = null;
+    private DcMotorEx leftDriveBack = null;
+    private DcMotorEx rightDriveBack = null;
+
+    private Servo claw0 = null;
+    private Servo claw1 = null;
+
+    private Servo pixel = null;
 
     private ColorSensor color = null;
 
-    private IMU imu = null;
-
-    private int spikeMark = 0;
-
-    private int[][] destinations;
-    private int index = 0;
-
-    int posX = 0;
-    int posY = 1;
-
-    int destX = 0;
-    int destY = 0;
-
-    YawPitchRollAngles ypr;
-
-    double rotation;
-
-    double x1 = 0;
-    double y1 = 0;
-    double x2 = 0;
-
     @Override
     public void runOpMode() {
-        leftDriveFront  = hardwareMap.get(DcMotor.class, "left_drive_front");
-        rightDriveFront = hardwareMap.get(DcMotor.class, "right_drive_front");
-        leftDriveBack  = hardwareMap.get(DcMotor.class, "left_drive_back");
-        rightDriveBack = hardwareMap.get(DcMotor.class, "right_drive_back");
+        leftDriveFront  = hardwareMap.get(DcMotorEx.class, "left_drive_front");
+        rightDriveFront = hardwareMap.get(DcMotorEx.class, "right_drive_front");
+        leftDriveBack  = hardwareMap.get(DcMotorEx.class, "left_drive_back");
+        rightDriveBack = hardwareMap.get(DcMotorEx.class, "right_drive_back");
+
+        claw0 = hardwareMap.get(Servo.class, "claw0");
+        claw1 = hardwareMap.get(Servo.class, "claw1");
+
+        pixel = hardwareMap.get(Servo.class, "pixel");
 
         color = hardwareMap.get(ColorSensor.class, "color");
 
-        imu = hardwareMap.get(IMU.class, "imu");
+        leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
         rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
 
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        imu.resetYaw();
-        ypr = imu.getRobotYawPitchRollAngles();
-        rotation = ypr.getYaw(AngleUnit.DEGREES);
+        claw0.setPosition(0.67f);
+        claw1.setPosition(0.0f);
 
-        destinations = new int[][]{{2, 1}, {2, 5}};
+        pixel.setPosition(1.0);
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
-            x1 = 0;
-            y1 = 0;
-            x2 = 0;
-
-            if(index < destinations.length){
-                destX = destinations[index][0];
-                destY = destinations[index][1];
+            if(runtime.time() < 2) {
+                drive(0, 1, 0);
+            } else if (runtime.time() < 4) {
+                drive(0, 0, 0);
+            } else {
+                drive(0, 0, 0);
             }
-
-            if(posX != destX || posY != destY){
-                if(runtime.time() < (Math.abs(destX - posX) + Math.abs(destY - posY)) * 0.9){
-                    if(rotation < 0.1 && rotation > -0.1){
-                        if(destX < posX){
-                            y1 = 1;
-                        }
-                        if(destX > posX){
-                            y1 = -1;
-                        }
-                        if(destY < posY){
-                            x1 = 1;
-                        }
-                        if(destY > posY){
-                            x1 = -1;
-                        }
-                    }
-                    if(rotation < 90.1 && rotation > 89.9){
-                        if(destX < posX){
-                            x1 = 1;
-                        }
-                        if(destX > posX){
-                            x1 = -1;
-                        }
-                        if(destY < posY){
-                            y1 = -1;
-                        }
-                        if(destY > posY){
-                            y1 = 1;
-                        }
-                    }
-                    if(rotation < 180.1 && rotation > 179.9){
-                        if(destX < posX){
-                            y1 = -1;
-                        }
-                        if(destX > posX){
-                            y1 = 1;
-                        }
-                        if(destY < posY){
-                            x1 = -1;
-                        }
-                        if(destY > posY){
-                            x1 = 1;
-                        }
-                    }
-                    if(rotation < 270.1 && rotation > 269.9){
-                        if(destX < posX){
-                            x1 = -1;
-                        }
-                        if(destX > posX){
-                            x1 = 1;
-                        }
-                        if(destY < posY){
-                            y1 = 1;
-                        }
-                        if(destY > posY){
-                            y1 = -1;
-                        }
-                    }
-                }else{
-                    x1 = 0;
-                    y1 = 0;
-                    x2 = 0;
-
-                    posX = destX;
-                    posY = destY;
-
-                    index += 1;
-
-                    runtime.reset();
-                }
-
-                /*if(ypr.getYaw(AngleUnit.DEGREES) < rotation - 0.1){
-                    x2 = 0.01;
-                }
-                if(ypr.getYaw(AngleUnit.DEGREES) > rotation + 0.1){
-                    x2 = -0.01;
-                }*/
-            }
-            //drive();
-
-            telemetry.addData("X1", x1);
-            telemetry.addData("Y1", y1);
-            telemetry.addData("X2", x2);
-            telemetry.addData("DestX", destX);
-            telemetry.addData("DestY", destY);
-            telemetry.addData("PosX", posX);
-            telemetry.addData("PosY", posY);
-            telemetry.addData("Rotation", ypr.getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Color", String.valueOf(color.red()) + ", " + String.valueOf(color.green()) + ", " + String.valueOf(color.blue()));
-            telemetry.update();
         }
     }
 
-    void drive(){
+    void drive(float x1, float y1, float x2){
         double fl = 0.0;
         double fr = 0.0;
         double bl = 0.0;
@@ -193,9 +88,9 @@ public class BlueFront extends LinearOpMode {
         bl -= x2;
         br += x2;
 
-        leftDriveFront.setPower(fl / 2);
-        rightDriveFront.setPower(fr / 2);
-        leftDriveBack.setPower(bl / 2);
-        rightDriveBack.setPower(br / 2);
+        leftDriveFront.setVelocity(fl * 1000);
+        rightDriveFront.setVelocity(fr * 1000);
+        leftDriveBack.setVelocity(bl * 1000);
+        rightDriveBack.setVelocity(br * 1000);
     }
 }
