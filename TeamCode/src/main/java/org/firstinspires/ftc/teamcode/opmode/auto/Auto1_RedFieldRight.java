@@ -65,9 +65,6 @@ public class Auto1_RedFieldRight extends AutoBase {
          */
 
         while (opModeInInit()) {
-            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
-            visionSystem.stopLiveView();
-
             state = 0;
             SpikePosition spikePos = getSpikePosition();
             switch (spikePos) {
@@ -84,6 +81,8 @@ public class Auto1_RedFieldRight extends AutoBase {
             telemetry.update();
         }
         while (opModeIsActive()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 

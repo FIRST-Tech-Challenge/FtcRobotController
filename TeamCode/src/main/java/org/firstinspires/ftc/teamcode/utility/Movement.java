@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.utility;
 
 import static java.lang.Math.abs;
 
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
@@ -30,6 +32,7 @@ public class Movement {
 
     private final VisionSystem visionProcessor;
     public int motor_ticks;
+
     public static enum Direction {
         FRONT,
         BACK,
@@ -62,6 +65,10 @@ public class Movement {
     double tagBearing = 0;
     boolean tagDetected = false;
     boolean aprilTagAligned = false;
+    boolean pose2dAligned = false;
+
+    // Setup PID controllers for Pose2d motion.
+    PIDController yawPID;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
@@ -79,12 +86,17 @@ public class Movement {
      * @param blinkinLED1          the BlinkinLED,
      * @param telemetry1           telemetry for the Drive Station
      */
-    public Movement(DcMotorEx leftFrontDrive, DcMotorEx rightFrontDrive,
-                    DcMotorEx leftBackDrive, DcMotorEx rightBackDrive, IMU imu1,
+    public Movement(DcMotorEx leftFrontDrive,
+                    DcMotorEx rightFrontDrive,
+                    DcMotorEx leftBackDrive,
+                    DcMotorEx rightBackDrive,
+                    IMU imu1,
                     RevBlinkinLedDriver blinkinLED1,
                     MecanumDriveOdometry odometry1,
-                    MecanumDriveKinematics kinematics1, ElapsedTime odometryTimer1,
-                    MecanumDriveWheelSpeeds odometrySpeeds1, Telemetry telemetry1,
+                    MecanumDriveKinematics kinematics1,
+                    ElapsedTime odometryTimer1,
+                    MecanumDriveWheelSpeeds odometrySpeeds1,
+                    Telemetry telemetry1,
                     VisionSystem vProc){
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
@@ -98,35 +110,39 @@ public class Movement {
         odometrySpeeds = odometrySpeeds1;
         telemetry = telemetry1;
         visionProcessor = vProc;
+
         initOdometry();
+        yawPID = new PIDController((1.0/45.0), 0.00, 0.002);
+        yawPID.reset();
     }
 
-    public void initOdometry () {
+    public void initOdometry() {
         // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
         // in Meters - translated from inches as inches * 2.54 / 100
-        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100), (6 * 2.54 / 100));
-        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100), (6 * 2.54 / 100));
-        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100), -(6 * 2.54 / 100));
-        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100), -(6 * 2.54 / 100));
+        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
+        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
+        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
+        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
 
         // Create Mecanum Kinematics
-        kinematics = new MecanumDriveKinematics (lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
+        kinematics = new MecanumDriveKinematics(lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
 
         // Create Mecanum Odometry
-        odometry = new MecanumDriveOdometry(kinematics, new Rotation2d (0.0));
+        odometry = new MecanumDriveOdometry(kinematics, new Rotation2d(0.0));
 
         odometryTimer = new ElapsedTime();
         odometryTimer.reset();
 
     }
-    public MecanumDriveOdometry getOdometry(){
+
+    public MecanumDriveOdometry getOdometry() {
         return odometry;
     }
 
     /**
      * Resets all wheel motor encoder positions to 0
      */
-    private void initMovement(){
+    private void initMovement() {
         motor_ticks = 0;
 
         moveStartDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -143,20 +159,22 @@ public class Movement {
         rbDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         //rbDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
 
+
     }
 
     /**
      * Setup a method to return the wheel speeds from GGE
+     *
      * @return
      */
-    public MecanumDriveWheelSpeeds GetWheelSpeeds (){
+    public MecanumDriveWheelSpeeds GetWheelSpeeds() {
         MecanumDriveWheelSpeeds speeds = new MecanumDriveWheelSpeeds();
         // 1 entered as a placeholder for a future constant - fix as needed
         // Scalar value obtained by measuring 100cm and dividing out observed values untuned
-        speeds.frontLeftMetersPerSecond = (100.0/1270.0) * lfDrive.getVelocity();
-        speeds.frontRightMetersPerSecond = (100.0/1270.0) * rfDrive.getVelocity();
-        speeds.rearLeftMetersPerSecond = (100.0/1270.0) * lbDrive.getVelocity();
-        speeds.rearRightMetersPerSecond = (100.0/1270.0) * rbDrive.getVelocity();
+        speeds.frontLeftMetersPerSecond = (1.0 / 1270.0) * lfDrive.getVelocity();
+        speeds.frontRightMetersPerSecond = (1.0 / 1270.0) * rfDrive.getVelocity();
+        speeds.rearLeftMetersPerSecond = (1.0 / 1270.0) * lbDrive.getVelocity();
+        speeds.rearRightMetersPerSecond = (1.0 / 1270.0) * rbDrive.getVelocity();
 
         return speeds;
     }
@@ -171,11 +189,13 @@ public class Movement {
         lbDrive.setPower(0);
         rbDrive.setPower(0);
     }
+
     /**
      * Moves all wheel motors forward a distance in ticks
-     * @param power  the power given to the motors
+     *
+     * @param power the power given to the motors
      */
-    public void Forward(int ticks, double power){
+    public void Forward(int ticks, double power) {
         initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -190,8 +210,8 @@ public class Movement {
         lbDrive.setPower(power);
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
-        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
-            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+        while (abs(lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30) {
+            if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection) {
                 lfDrive.setPower(power * 1.15);
                 lbDrive.setPower(power * 1.15);
             } else {
@@ -203,9 +223,10 @@ public class Movement {
 
     /**
      * Moves all wheel motors backwards a distance in ticks
-     * @param power  the power given to the motors
+     *
+     * @param power the power given to the motors
      */
-    public void Backwards(int ticks, double power){
+    public void Backwards(int ticks, double power) {
         initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -220,8 +241,8 @@ public class Movement {
         lbDrive.setPower(power);
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
-        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
-            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+        while (abs(lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30) {
+            if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection) {
                 lfDrive.setPower(power * 0.85);
                 lbDrive.setPower(power * 0.85);
             } else {
@@ -234,10 +255,10 @@ public class Movement {
     /**
      * Moves the front right and the back left motor forwards, and the front left and the back right
      * motors backwards in order to move left a distance in ticks
-     * 
-     * @param power  the power given to the motors
+     *
+     * @param power the power given to the motors
      */
-    public void Left(int ticks, double power){
+    public void Left(int ticks, double power) {
         initMovement();
         lfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
@@ -252,8 +273,8 @@ public class Movement {
         lbDrive.setPower(power);
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
-        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
-            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+        while (abs(lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30) {
+            if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection) {
                 lbDrive.setPower(power * 1.15);
                 rbDrive.setPower(power * 1.15);
             } else {
@@ -266,9 +287,10 @@ public class Movement {
     /**
      * Moves the front left and the back right motor forwards, and the front right and the back left
      * motors backwards in order to move left a distance in ticks
-     * @param power  the power given to the motors
+     *
+     * @param power the power given to the motors
      */
-    public void Right(int ticks, double power){
+    public void Right(int ticks, double power) {
         initMovement();
         lfDrive.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
         rfDrive.setTargetPosition(ticks * -1); // Tells the motor that the position it should go to is desiredPosition
@@ -283,8 +305,8 @@ public class Movement {
         lbDrive.setPower(power);
         rbDrive.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
-        while(abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30){
-            if(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection){
+        while (abs(lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) > 30) {
+            if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > moveStartDirection) {
                 lbDrive.setPower(power * 0.85);
                 rbDrive.setPower(power * 0.85);
             } else {
@@ -296,9 +318,10 @@ public class Movement {
 
     /**
      * turns the robot in place a distance in degrees
+     *
      * @param degrees - the distance of the rotation in degrees
      */
-    public void Rotate(double degrees){
+    public void Rotate(double degrees) {
 
         double currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -331,7 +354,7 @@ public class Movement {
         currentDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         turnError = degrees - currentDirection;
         //Closed loop turn.  Stay in the while loop until the desired bering is achieved.
-        while (abs (lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) < 10) {
+        while (abs(lbDrive.getTargetPosition() - lbDrive.getCurrentPosition()) < 10) {
             // continue rotation until at target angle.
             telemetry.addData("Turn Target Direction", lbDrive.getTargetPosition());
             telemetry.addData("Turn Current Direction", lbDrive.getCurrentPosition());
@@ -341,10 +364,11 @@ public class Movement {
 
     /**
      * Calculates the turn error and contains it within 180 and -180
+     *
      * @param desiredDirection - which direction you want to go to
      * @param currentDirection - your current direction
      */
-    public double CalcTurnError(double desiredDirection, double currentDirection){
+    public double CalcTurnError(double desiredDirection, double currentDirection) {
         double turnDiff = desiredDirection - currentDirection;
         if (turnDiff < -180) {
             turnDiff = turnDiff + 360;
@@ -434,11 +458,11 @@ public class Movement {
 
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
-        if (abs (targetAngle - currentAngle) > 2) {
+        if (abs(targetAngle - currentAngle) > 2) {
             yaw = -CalcTurnError(targetAngle, currentAngle) / 45;
-            if (yaw > 0.2){
+            if (yaw > 0.2) {
                 yaw = 0.2;
-            } else if (yaw < -0.2){
+            } else if (yaw < -0.2) {
                 yaw = -0.2;
             }
         } else {
@@ -454,7 +478,7 @@ public class Movement {
             lateral = 0.2;
         } else if (targetX - currentX < -1) {
             lateral = -0.2;
-        }else {
+        } else {
             lateral = 0;
         }
 
@@ -479,11 +503,70 @@ public class Movement {
         rbDrive.setPower(rightBackPower);
 
         // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs (targetX - currentX) < 1 && currentY < targetY && abs (targetAngle - currentAngle) < 2){
+        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 2) {
             aprilTagAligned = true;
             blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
         }
         return aprilTagAligned;
     }
 
+    public boolean GoToPose2d(Pose2d targetPosition) {
+        double targetX = targetPosition.getX(); // desired X
+        double targetY = targetPosition.getY(); // desired Y
+        double targetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
+
+//        currentX = odometry.getPoseMeters().getX();
+//        currentY = odometry.getPoseMeters().getY();
+        targetX = 0;
+        targetY = 0;
+        currentX = 0;
+        currentY = 0;
+        currentAngle = odometry.getPoseMeters().getRotation().getDegrees();
+
+        pose2dAligned = false;
+
+        axial = targetX - currentX;
+        lateral = targetY - currentY;
+
+        // Use a PID controller to dampen the yaw motion on a turn.
+        yaw = yawPID.calculate (CalcTurnError(targetAngle, currentAngle));
+
+//      // Combine the axial, lateral and yaw factors to be powers
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
+
+        // Reorient the stick inputs to field orientation
+        // The current orientation is DirectionNow
+//        double field_axial = axial * Math.cos(Math.toRadians(currentAngle)) - lateral * Math.sin(Math.toRadians(currentAngle));
+//        double field_lateral = axial * Math.sin(Math.toRadians(currentAngle)) + lateral * Math.cos(Math.toRadians(currentAngle));
+
+        // Combine the joystick requests for each axis-motion to determine each wheel's power.
+        // Set up a variable for each drive wheel to save the power level for telemetry.
+//        double leftFrontPower  = field_axial + field_lateral - yaw;
+//        double rightFrontPower = field_axial - field_lateral + yaw;
+//        double leftBackPower   = field_axial - field_lateral - yaw;
+//        double rightBackPower  = field_axial + field_lateral + yaw;
+
+        // Update Telemetry with key data
+        telemetry.addLine(String.format("Pose2D X(Current%5.1f,Target%5.1f)", currentX, targetX));
+        telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.1f)", currentY, targetY));
+        telemetry.addLine(String.format("Pose2D Φ(Current%5.1f,Target%5.1f)", currentAngle, targetAngle));
+        telemetry.addLine(String.format("Motion (Axial%5.1f,Lateral%5.1f,Yaw%5.1f)", axial, lateral, yaw));
+        telemetry.addLine(String.format("Motor Powers(lf:%4.1f,rf:%4.1f,lb%4.1f,rb%4.1f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower));
+        telemetry.update();
+
+        // Apply calculated values to drive motors
+        lfDrive.setPower(leftFrontPower);
+        rfDrive.setPower(rightFrontPower);
+        lbDrive.setPower(leftBackPower);
+        rbDrive.setPower(rightBackPower);
+
+        // Test to see if we are at all three parts of our desired position and we are aligned.
+        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 1) {
+            pose2dAligned = true;
+        }
+        return pose2dAligned;
+    }
 }

@@ -67,9 +67,6 @@ public class Auto1_BlueFieldLeft extends AutoBase {
          * This loop is run continuously
          */
         while (opModeInInit()) {
-            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
-            visionSystem.stopLiveView();
-
             state = 0;
             SpikePosition spikePos = getSpikePosition();
             switch (spikePos) {
@@ -86,6 +83,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             telemetry.update();
         }
         while (opModeIsActive()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -247,12 +246,6 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             }
             // Show the elapsed game time and wheel power.
             displayTelemetry(DirectionNow);
-        }
-
-        // this should happen automagically ... should
-        // we were crashing at the end of auto perhaps this will help
-        if(isStopRequested()){
-            visionSystem.close();
         }
     }
 }

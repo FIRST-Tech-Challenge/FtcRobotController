@@ -127,6 +127,13 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
     public void runOpMode() {
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
+
+        // wait for the cameras to start streaming before we proceed
+        while(opModeInInit()){
+            if(visionSystem.camerasReady()){
+                break;
+            };
+        }
         visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
         // Initialize the hardware variables. Note that the strings used here must correspond
