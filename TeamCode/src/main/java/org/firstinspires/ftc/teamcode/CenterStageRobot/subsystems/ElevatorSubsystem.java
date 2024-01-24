@@ -53,8 +53,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         motors = new MotorGroup(leftMotor, rightMotor);
 
         motors.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        motors.setPositionTolerance(15); // TODO: allowed maximum error value might change
-        motors.setPositionCoefficient(0.01); // TODO: Kp Value might change
+        motors.setPositionTolerance(30); // TODO: allowed maximum error value might change
+        motors.setPositionCoefficient(0.014); // TODO: Kp Value might change
 
         motors.resetEncoder();
 

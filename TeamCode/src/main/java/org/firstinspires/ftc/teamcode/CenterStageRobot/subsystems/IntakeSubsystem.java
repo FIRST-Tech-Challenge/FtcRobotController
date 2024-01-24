@@ -57,6 +57,10 @@ public class IntakeSubsystem extends SubsystemBase {
         motor.set(speed);
     }
 
+    public void run_auto() {
+        motor.set(0.85);
+    }
+
     public void reverse() {
         motor.set(-speed);
     }
@@ -67,6 +71,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void stop() {
         motor.set(0);
+    }
+
+    public void slow_grabbing() {
+        motor.set(0.35);
     }
 
     public boolean isStalled() {
