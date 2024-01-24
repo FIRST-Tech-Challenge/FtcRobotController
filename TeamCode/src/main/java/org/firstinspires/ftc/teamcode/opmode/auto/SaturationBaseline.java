@@ -97,7 +97,6 @@ public class SaturationBaseline extends AutoBase {
             telemetry.addData("RSpikeSaturation", getRightSpikeSaturation());
             telemetry.addData("CSpikeSaturation", getCenterSpikeSaturation());
 
-
             telemetry.update();
         }
         while (opModeIsActive()) {

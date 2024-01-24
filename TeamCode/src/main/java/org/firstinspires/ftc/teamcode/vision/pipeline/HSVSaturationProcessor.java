@@ -16,8 +16,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class HSVSaturationProcessor implements VisionProcessor {
-    public Scalar nonSelectedColor = new Scalar(0, 255, 0); // Green
-    public Scalar selectedColor = new Scalar(0, 0, 255); // Blue
+    public int nonSelectedColor = Color.GREEN; // Green
+    public int selectedColor = Color.BLUE; // Blue
 
     FieldPosition fieldPosition = FieldPosition.NOT_ON_FIELD; // setting a default to make EOVSim work
 
@@ -41,6 +41,7 @@ public class HSVSaturationProcessor implements VisionProcessor {
     static double RIGHT_SPIKE_SATURATION_BASELINE =  0;
 
 
+
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
 
@@ -51,31 +52,32 @@ public class HSVSaturationProcessor implements VisionProcessor {
         switch(getFieldPosition()){
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
-                LEFT_SPIKE_SATURATION_BASELINE = 28; // this was 22.21125992063492 at calibration
-                CENTER_SPIKE_SATURATION_BASELINE = 15; // this was 6.122269404803341 at calibration
+                LEFT_SPIKE_SATURATION_BASELINE = 26; // this was 22.21125992063492 at calibration
+                CENTER_SPIKE_SATURATION_BASELINE = 22; // this was 6.122269404803341 at calibration
                 RIGHT_SPIKE_SATURATION_BASELINE =  0;
-                leftSpike = new Rect(0, 370, 310, 218); //bottom left coords 384, 444.  Changed from x:0, y:330, w:280, h:288 before calibration.
-                centerSpike = new Rect(430, 365, 660, 181); //bottom left coords 1110, 397.  Changed from x:400, y:345, w:650, h:221 before at calibration.
-                rightSpike = new Rect(0, 0, 0, 0);
+                leftSpike = new Rect(1, 144, 195, 200); //bottom left coords 384, 444.  Changed from x:0, y:330, w:280, h:288 before calibration.
+                centerSpike = new Rect(250,150 , 380, 100); //bottom left coords 1110, 397.  Changed from x:400, y:345, w:650, h:221 before at calibration.
+                rightSpike = new Rect(0,0,0,0);
                 break;
             case BLUE_FIELD_RIGHT:
             case RED_FIELD_RIGHT:
                 LEFT_SPIKE_SATURATION_BASELINE = 0;
-                CENTER_SPIKE_SATURATION_BASELINE = 15;
-                RIGHT_SPIKE_SATURATION_BASELINE =  28;
+                CENTER_SPIKE_SATURATION_BASELINE = 20;
+                RIGHT_SPIKE_SATURATION_BASELINE =  20;
                 leftSpike = new Rect(0, 0, 0, 0);
-                centerSpike = new Rect(250, 365, 660, 181); //bottom left coords 1110, 397.  Change from x:428, y:157, w:682, h:221 before calibration.
-                rightSpike = new Rect(960, 370, 310, 221); //bottom left coords 384, 444.  Changed from x:400, y:157, w:180, h:288 before calibration.
+                centerSpike = new Rect(50, 170,380,100); //bottom left coords 1110, 397.  Change from x:428, y:157, w:682, h:221 before calibration.
+                rightSpike = new Rect(490, 180,140,185); //bottom left coords 384, 444.  Changed from x:400, y:157, w:180, h:288 before calibration.
                 break;
         }
 
 
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2HSV);
-        Core.extractChannel(frame, frame, 1);
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_GRAY2RGB);
+        Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
+        Core.extractChannel(hsvMat, detectionMat, 1);
+        Imgproc.cvtColor(detectionMat, processedMat, Imgproc.COLOR_GRAY2RGB);
 
-        findRectangle(frame);
-        drawRectangles(frame);
+
+        findRectangle(processedMat);
+       // drawRectangles(processedMat);
 
         return null;
     }
@@ -147,37 +149,48 @@ public class HSVSaturationProcessor implements VisionProcessor {
     }
 
 
-    public void drawRectangles(Mat input) {
+    public void drawRectangles(Canvas canvas,float scaleBmpPxToCanvasPx) {
+
+        //draw left spike box
+        Paint paint = new Paint();
+        paint.setColor(nonSelectedColor);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+
+        canvas.drawRect(makeGraphicsRect(rightSpike,scaleBmpPxToCanvasPx),paint);
         // Only draw relevant field position boxes
         switch(getFieldPosition()) {
             case BLUE_FIELD_LEFT:
             case RED_FIELD_LEFT:
-                Imgproc.rectangle(input, leftSpike, nonSelectedColor);
-                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
+                canvas.drawRect(makeGraphicsRect(leftSpike,scaleBmpPxToCanvasPx),paint);
+                canvas.drawRect(makeGraphicsRect(centerSpike,scaleBmpPxToCanvasPx),paint);
                 break;
             case BLUE_FIELD_RIGHT:
             case RED_FIELD_RIGHT:
-                Imgproc.rectangle(input, centerSpike, nonSelectedColor);
-                Imgproc.rectangle(input, rightSpike, nonSelectedColor);
+                canvas.drawRect(makeGraphicsRect(centerSpike,scaleBmpPxToCanvasPx),paint);
+                canvas.drawRect(makeGraphicsRect(rightSpike,scaleBmpPxToCanvasPx),paint);
                 break;
             case NOT_ON_FIELD:
             default:
-                msgOnImage(input,"drawRectangles: Unknown Field Position or not on field", new Rect(150, 265, 660, 181));
+               // msgOnImage(input,"drawRectangles: Unknown Field Position or not on field", new Rect(150, 265, 600, 181));// Todo: convert to Canvas rather than opencv
         }
 
+        // draw over the selected box in the selected color
+        paint.setColor(selectedColor);
         switch (getSpikePos()) {
             case LEFT:
-                Imgproc.rectangle(input, leftSpike, selectedColor);
+                canvas.drawRect(makeGraphicsRect(leftSpike,scaleBmpPxToCanvasPx),paint);
                 break;
             case CENTRE:
-                Imgproc.rectangle(input, centerSpike, selectedColor);
+                canvas.drawRect(makeGraphicsRect(centerSpike,scaleBmpPxToCanvasPx),paint);
+
                 break;
             case RIGHT:
-                Imgproc.rectangle(input, rightSpike, selectedColor);
+                canvas.drawRect(makeGraphicsRect(rightSpike,scaleBmpPxToCanvasPx),paint);
                 break;
             case UNKNOWN:
             default:
-                msgOnImage(input,"drawRectangles: Unknown Spike Position", new Rect(150, 365, 660, 181));
+               // msgOnImage(input,"drawRectangles: Unknown Spike Position", new Rect(150, 365, 660, 181));
         }
     }
 
@@ -191,12 +204,17 @@ public class HSVSaturationProcessor implements VisionProcessor {
      * @param userContext
      */
     @Override
-    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-           // just showing how you can use this onDrawFrame to edit the image going to the DriverStation here rather than directly on the processed image
-//            Rect theRect = new Rect(150, 265, 660, 181);
-//            Paint paint = new Paint();
-//            paint.setColor(Color.GREEN);
-//            canvas.drawRect(makeGraphicsRect(theRect,scaleBmpPxToCanvasPx),paint);
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,float scaleBmpPxToCanvasPx , float scaleCanvasDensity, Object userContext) {
+
+        //draw the spike line bounding boxes on the canvas
+        drawRectangles(canvas, scaleBmpPxToCanvasPx);
+//        //draw left spike box
+//        Paint paint = new Paint();
+//        paint.setColor(Color.GREEN);
+//        paint.setStyle(Paint.Style.STROKE);
+//        paint.setStrokeWidth(5);
+//
+//        canvas.drawRect(makeGraphicsRect(rightSpike,scaleBmpPxToCanvasPx),paint);
     }
 
     private android.graphics.Rect makeGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {

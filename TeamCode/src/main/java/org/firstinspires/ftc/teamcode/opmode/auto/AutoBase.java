@@ -27,8 +27,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 public abstract class AutoBase extends LinearOpMode {
 
     // <<<<<<end of configurable parameters >>>>>>>>>>>
-    static final int STREAM_WIDTH = 1280; // modify for your camera
-    static final int STREAM_HEIGHT = 960; // modify for your camera
+
     protected ElapsedTime runtime = new ElapsedTime(); //
     protected DcMotorEx leftFrontDrive = null;
     protected DcMotorEx leftBackDrive = null;
@@ -71,6 +70,8 @@ public abstract class AutoBase extends LinearOpMode {
             if(visionSystem.camerasReady()){
                 break;
             };
+            telemetry.addData("camera state:",visionSystem.camerasReady());
+            telemetry.update();
         }
         // setting which Vision Processing mode we want here.
         VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.FRONT_CAMERA_GAMEPIECE);

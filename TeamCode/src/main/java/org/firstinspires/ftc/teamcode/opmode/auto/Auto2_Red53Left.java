@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
@@ -73,12 +74,18 @@ public class Auto2_Red53Left extends AutoBase {
                     gamepieceLocation = GamePieceLocation.RIGHT;
             }
             telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.addData("LSpikeline",getLeftSpikeSaturation());
+            telemetry.addData("Cspikeline",getCenterSpikeSaturation());
+            telemetry.addData("RSpikeLine",getRightSpikeSaturation());
             telemetry.update();
         }
 
         while (opModeIsActive()) {
             // we don't want any streaming to the Driver Station, waste of processing and bandwidth
             visionSystem.stopLiveView();
+
+            //we don't need the front camera anymore,  now need the rear one with april tags
+            VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCharacteristics;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.vision.pipeline.HSVSaturationProcessor;
@@ -37,6 +38,9 @@ public class VisionSystem {
     private Telemetry telemetry;
 
     private VisionProcessorMode currentMode = VisionProcessorMode.NONE;
+
+    static final int STREAM_WIDTH = 640; // modify for your camera
+    static final int STREAM_HEIGHT = 480; // modify for your camera
     
     public VisionSystem(HardwareMap hMap,Telemetry telemetry){
         this.hardwareMap = hMap;
@@ -57,6 +61,8 @@ public class VisionSystem {
         aprilTagProcessor.setDecimation(3);
 
         frontCam = hardwareMap.get(WebcamName.class, "gge_cam");
+        CameraCharacteristics frontCamCar = frontCam.getCameraCharacteristics();
+        telemetry.addData("camera info",frontCamCar);
         rearCam = hardwareMap.get(WebcamName.class, "gge_backup_cam");
         switchableCamera = ClassFactory.getInstance()
                 .getCameraManager()
@@ -72,8 +78,8 @@ public class VisionSystem {
         visionPortal = new VisionPortal.Builder()
                 .setCamera(switchableCamera)
                 .addProcessors(aprilTagProcessor,gamePieceProcessor) // add all the processors here
-                .setCameraResolution(new Size(640, 480))
-                //.setCameraResolution(new Size(1280,720))
+                //.setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(STREAM_WIDTH,STREAM_HEIGHT))
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
@@ -81,6 +87,8 @@ public class VisionSystem {
     }
 
     public boolean camerasReady(){
+        telemetry.addData("VP camera state:",visionPortal.getCameraState());
+        telemetry.update();
         return( visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING);
     }
 
@@ -127,6 +135,8 @@ public class VisionSystem {
     }
 
     private void switchCamera(WebcamName desiredWebCam, Telemetry telemetry) {
+        while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+        }
         if (visionPortal.getActiveCamera() != desiredWebCam) {
             visionPortal.setActiveCamera(desiredWebCam);
             while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
