@@ -38,9 +38,10 @@ public class CenterStageAutonomous extends LinearOpMode {
     public RoadRunnerSubsystem.Randomizer randomizer;
     public TrajectoryActionBuilder ToPixel, ToBackdrop;
 
-    protected static double starting_pos_error = 1;//inch
+    protected static double starting_pos_error_X = 1;//inch
+    protected static double starting_pos_error_Y = 1;//inch
 
-    protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error,(RR.TileInverted/2),Math.toRadians(180));
+    protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error_X,0,Math.toRadians(180));
     protected Pose2d homePose_HIGH_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2),(RR.Tile * 1.5),Math.toRadians(180));
 
     @Override
