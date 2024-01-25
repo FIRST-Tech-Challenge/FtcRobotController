@@ -12,11 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "movement test", group = "SA_FTC")
 //@Autonomous
-public class TestAuto extends LinearOpMode {
+public class TestAuto1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     private IMU imu;
 
+    //change these values for our motors
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
     private int part = 0;
     private DcMotor frontLeftMotor;
     private DcMotor backLeftMotor;
@@ -68,10 +74,12 @@ public class TestAuto extends LinearOpMode {
     private double calculatePower(double minPower, double maxPower, double startAngle, double targetAngle, double c, double currentPower) {
         double slowDownAngle = targetAngle - c;
 
-        
+
         double accelerationPower = minPower + ((currentAngle - startAngle) / c) * (maxPower - minPower);
         double slowDownPower = (currentAngle - slowDownAngle) * maxPower / c;
         double retPower = 0;
+
+
 
         if (part < 2 && currentAngle < startAngle + c){
             part = 1;
@@ -96,7 +104,9 @@ public class TestAuto extends LinearOpMode {
 
         double startAngle = currentAngle;
         double power = 0;
-        while(currentAngle < targetAngle) {
+
+
+        while (currentAngle < targetAngle) {
             currentAngle = getIntegratedHeading();
 
             // for debugging
@@ -104,12 +114,13 @@ public class TestAuto extends LinearOpMode {
 
             power = calculatePower(minPower, maxPower, startAngle, targetAngle, c, power);
 
-            setPower(0,0, power);
+            setPower(0, 0, power);
         }
 
         setPower(0, 0, -0.15);
-        setPower(0,0,0);
+        setPower(0, 0, 0);
         sleep(2000); // Resting
+
     }
 
     private void turnLeft(double minPower, double maxPower, double targetAngle, double c) {
@@ -117,7 +128,8 @@ public class TestAuto extends LinearOpMode {
         double startAngle = currentAngle;
         double power = 0;
 
-        while(currentAngle > targetAngle) {
+
+        while (currentAngle > targetAngle) {
             currentAngle = getIntegratedHeading();
 
             // for debugging
@@ -125,11 +137,12 @@ public class TestAuto extends LinearOpMode {
 
             power = calculatePower(minPower, maxPower, startAngle, targetAngle, c, power);
 
-            setPower(0,0, -power);
+            setPower(0, 0, -power);
         }
 
         setPower(0, 0, 0);
         sleep(2000); // Resting
+
     }
 
     // transform the angles from (180,-179) to (inf, -inf)
@@ -150,7 +163,7 @@ public class TestAuto extends LinearOpMode {
 
         telemetry.addData("current angle", -integratedHeading);
         telemetry.update();
-        
+
         return -integratedHeading;
     }
 
@@ -177,6 +190,70 @@ public class TestAuto extends LinearOpMode {
         //turnLeft(0.5, 0);
 
         turnRight(0.2, 0.6, 360,35);
+    }
+
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = frontLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = frontRightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            frontLeftMotor.setTargetPosition(newLeftTarget);
+            frontRightMotor.setTargetPosition(newRightTarget);
+            backLeftMotor.setTargetPosition(newLeftTarget);
+            backRightMotor.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            frontLeftMotor.setPower(Math.abs(speed));
+            frontRightMotor.setPower(Math.abs(speed));
+            backRightMotor.setPower(Math.abs(speed));
+            backLeftMotor.setPower(Math.abs(speed));
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (frontLeftMotor.isBusy() && frontRightMotor.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            //frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //sleep(250);   // optional pause after each move.
+        }
     }
 
     @Override
@@ -226,7 +303,7 @@ public class TestAuto extends LinearOpMode {
             telemetry.update();
 
             unitTestTurn();
-            
+
             telemetry.addData("current angle", currentAngle);
             telemetry.update();
 
