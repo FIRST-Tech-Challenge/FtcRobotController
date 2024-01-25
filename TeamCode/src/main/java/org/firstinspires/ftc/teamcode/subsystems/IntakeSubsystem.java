@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Intake;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CRServo LEFT, RIGHT;
@@ -13,9 +14,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private boolean isOn = false;
     //private final int
 
-    public IntakeSubsystem(final HashMap<String, CRServo> INTAKE) {
-        LEFT = INTAKE.get("LEFT");
-        RIGHT = INTAKE.get("RIGHT");
+    public IntakeSubsystem(final HashMap<Intake, CRServo> INTAKE) {
+        this.LEFT = INTAKE.get(Intake.LEFT);
+        this.RIGHT = INTAKE.get(Intake.RIGHT);
     }
 
     public void turnOn() {

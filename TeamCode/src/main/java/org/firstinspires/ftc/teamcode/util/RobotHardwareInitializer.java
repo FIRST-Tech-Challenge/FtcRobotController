@@ -15,7 +15,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotOpMode;
+import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.CRServoTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -45,7 +51,20 @@ public class RobotHardwareInitializer {
         RIGHT_BACK,
         ENCODER_LEFT,
         ENCODER_RIGHT,
-        ENCODER_BACK;
+        ENCODER_BACK
+    }
+
+    public enum Other {
+        ARM,
+        INTAKE,
+        LAUNCHER,
+        FINGER,
+        WRIST
+    }
+
+    public enum Intake {
+        LEFT,
+        RIGHT
     }
 
     public static final String FRONT_LEFT_DRIVE = "fl_drv";
@@ -108,6 +127,33 @@ public class RobotHardwareInitializer {
         return motorMap;
     }
 
+    /** @noinspection rawtypes*/
+    public static HashMap<Other, DynamicTypeValue> initializeAllOtherSystems(final OpMode opMode) {
+        HashMap<Other, DynamicTypeValue> out = new HashMap<>();
+        // Init Arm
+        out.put(Other.ARM, new MotorTypeValue(initializeArm(opMode)));
+
+        // Init Wrist
+        out.put(Other.WRIST, new ServoTypeValue(initializeWrist(opMode)));
+
+        // Init Finger
+        out.put(Other.FINGER, new ServoTypeValue(initializeFinger(opMode)));
+
+        // Init Launcher
+        out.put(Other.LAUNCHER, new ServoTypeValue(initializeLauncher(opMode)));
+
+        // Init Intake
+        HashMap<Intake, CRServo> tmp = initializeIntake(opMode);
+        final CRServo LEFT = tmp.get(Intake.LEFT);
+        final CRServo RIGHT = tmp.get(Intake.RIGHT);
+        CRServo[] tmp2 = new CRServo[2];
+        tmp2[0] = LEFT;
+        tmp2[1] = RIGHT;
+        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp2));
+
+        return out;
+    }
+
     @Deprecated
     public static void initializeDriveMotors(RobotOpMode robot) {
         try {
@@ -154,25 +200,26 @@ public class RobotHardwareInitializer {
         return arm;
     }
 
-    public static HashMap<String, CRServo> initializeIntake(final OpMode opMode) {
+    public static HashMap<Intake, CRServo> initializeIntake(final OpMode opMode) {
         CRServo left = null;
         CRServo right = null;
+
         try {
             left = opMode.hardwareMap.get(CRServo.class, "intakeLeft");
             right = opMode.hardwareMap.get(CRServo.class, "intakeRight");
         } catch (Exception e) {
             Error(e, opMode);
         }
-        HashMap<String, CRServo> out = new HashMap<>();
-        out.put("LEFT", left);
-        out.put("RIGHT", right);
+
+        HashMap<Intake, CRServo> out = new HashMap<>();
+        out.put(Intake.LEFT, left);
+        out.put(Intake.RIGHT, right);
         return out;
     }
 
     public static Servo initializeLauncher(final OpMode opMode) {
         try {
-            Servo servo = opMode.hardwareMap.get(Servo.class, "launcher");
-            return servo;
+            return opMode.hardwareMap.get(Servo.class, "launcher");
         } catch (Exception e) {
             Error(e, opMode);
         }

@@ -54,21 +54,21 @@ public abstract class RobotOpMode extends OpMode {
         RobotHardwareInitializer.beginInitialization(this);
 
         // Initialize the drive motors
-        RobotHardwareInitializer.initializeDriveMotors(this);
+        //RobotHardwareInitializer.initializeDriveMotors(this);
 
         // Initialize the hardware requried for the arm
-        RobotHardwareInitializer.initializeArm(this);
+        //RobotHardwareInitializer.initializeArm(this);
 
         // Initialize the internal IMU
-        RobotHardwareInitializer.initializeIMU(this);
+        //RobotHardwareInitializer.initializeIMU(this);
 
         // Initialize the color sensor (not currently used, but if it is needed in the future,
         // it can be implemented in the config and used as needed)
-        RobotHardwareInitializer.initializeColorSensor(this);
+        //RobotHardwareInitializer.initializeColorSensor(this);
 
         // Initialize the touch sensor (not currently used, but if it is needed in the future,
         // it can be implemented in the config and used as needed)
-        RobotHardwareInitializer.initializeTouchSensor(this);
+        //RobotHardwareInitializer.initializeTouchSensor(this);
 
         RobotHardwareInitializer.endInitialization(this);
 
