@@ -20,7 +20,7 @@ public class SubsystemTest extends LinearOpMode {
 
     boolean canToggleSlowMode = true;
 
-    boolean canToggleHandPosition = true;
+    boolean ALetGo = false;
     boolean Intakepos = true;
     float Default = 0f;
     float DefaultAddition = 0f;
@@ -63,14 +63,6 @@ public class SubsystemTest extends LinearOpMode {
             /**
              * Driving
              */
-
-            if (gamepad1.a) {
-                Default = 1f;
-                DefaultAddition = 2f;
-            } else if (gamepad1.b) {
-                Default = 2f;
-                DefaultAddition = 1f;
-            }
 
             if (Default == 1f){
                 leds.setLed(LedLights.ledStates.RED);
@@ -140,6 +132,25 @@ public class SubsystemTest extends LinearOpMode {
 
             }
 
+            /**
+             * hang
+             */
+            if (gamepad1.a){
+                arm.setArmDistance(LiftArm.Distance.ENDGAMEStart);
+                ALetGo = true;
+            } else if (!gamepad1.a && ALetGo) {
+                arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
+                arm.holdHang();
+            }
+
+            /**
+            * plane launcher
+             */
+            if (gamepad1.right_stick_button){
+                arm.launchPlane();
+            } else if (gamepad1.left_stick_button) {
+                arm.reloadPlane();
+            }
 
             /**
              * Slow mode toggle
