@@ -34,20 +34,21 @@ public class Auto extends LinearOpMode {
     public static Prop location;
 
     public Prop propDetection(TensorflowVision vision) {
+        prop = vision.getPropPosition();
         if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
             if (prop == 2) {
                 location = Prop.RIGHT;
-            } else if (prop == 1) {
-                location = Prop.MIDDLE;
             } else if (prop == 0) {
+                location = Prop.MIDDLE;
+            } else if (prop == 1) {
                 location = Prop.LEFT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
-            if (prop == 2) {
+            if (prop == 0) {
                 location = Prop.RIGHT;
             } else if (prop == 1) {
                 location = Prop.MIDDLE;
-            } else if (prop == 0) {
+            } else if (prop == 2) {
                 location = Prop.LEFT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
@@ -59,61 +60,61 @@ public class Auto extends LinearOpMode {
                 location = Prop.RIGHT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
-            if (prop == 2) {
+            if (prop == 1) {
                 location = Prop.LEFT;
-            } else if (prop == 1) {
-                location = Prop.MIDDLE;
             } else if (prop == 0) {
+                location = Prop.MIDDLE;
+            } else if (prop == 2) {
                 location = Prop.RIGHT;
             }
         }
         return location;
     }
 
-    public TrajectorySequence propPlacment(SampleMecanumDrive drive, Parameters parameters, Pose2d startPose) {
+    public TrajectorySequence propPlacment(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm) {
         double z_coordinate = 0.0;
-        Double x_coordinate = 0.0;
-        Double y_coordinate = 0.0;
+        double x_coordinate = 0.0;
+        double y_coordinate = 0.0;
 
         switch (Parameters.allianceColor) {
             case RED:
                 z_coordinate = -90;
                 if (location == Prop.LEFT) {
-                    y_coordinate = -30.0;
+                    y_coordinate = -36.0;
                 } else if (location == Prop.MIDDLE) {
                     y_coordinate = -24.5;
                 } else if (location == Prop.RIGHT) {
-                    y_coordinate = -30.0;
+                    y_coordinate = -36.0;
                 }
                 break;
             case BLUE:
                 z_coordinate = 90;
                 if (location == Prop.LEFT) {
-                    y_coordinate = 30.0;
+                    y_coordinate = 36.0;
                 } else if (location == Prop.MIDDLE) {
                     y_coordinate = 24.5;
                 } else if (location == Prop.RIGHT) {
-                    y_coordinate = 30.0;
+                    y_coordinate = 36.0;
                 }
         }
 
         switch (Parameters.autoConfig) {
             case INTERIOR:
                 if (location == Prop.LEFT) {
-                    x_coordinate = 22.5;
+                    x_coordinate = 25.5;
                 } else if (location == Prop.MIDDLE) {
                     x_coordinate = 12.0;
                 } else if (location == Prop.RIGHT) {
-                    x_coordinate = 0.5;
+                    x_coordinate = 3.5;
                 }
                 break;
             case EXTERIOR:
                 if (location == Prop.LEFT) {
-                    x_coordinate = -22.5;
+                    x_coordinate = -25.5;
                 } else if (location == Prop.MIDDLE) {
                     x_coordinate = -12.0;
                 } else if (location == Prop.RIGHT) {
-                    x_coordinate = -0.5;
+                    x_coordinate = -3.5;
                 }
         }
 
@@ -121,33 +122,24 @@ public class Auto extends LinearOpMode {
         TrajectorySequence mySequence = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(x_coordinate, y_coordinate, Math.toRadians(z_coordinate)))
                 //drop purple pixel here
+                .waitSeconds(1)
+                .addDisplacementMarker(20, arm::DropPurplePixel)
+                .waitSeconds(1)
                 .build();
 
         return mySequence;
     }
 
-    public TrajectorySequence yellowPixle(SampleMecanumDrive drive, Parameters parameters, Pose2d startPose) {
-        Double x_coordinate = 48.0;
-        Double y_coordinate = 0.0;
-        Double z_coordinate = 0.0;
+    public TrajectorySequence yellowPixle(SampleMecanumDrive drive, Pose2d startPose, LiftArm arm) {
+        double x_coordinate = 46.0;
+        double y_coordinate = 0.0;
+        double z_coordinate = 180.0;
 
-        Double white_x = 0.0;
-        Double white_y = 0.0;
-        Double white_z = 0.0;
+        double white_x = 0.0;
+        double white_y = 0.0;
+        double white_z = 0.0;
 
         if (Parameters.allianceColor == Parameters.Color.RED) {
-            if (location == Prop.LEFT) {
-                y_coordinate = 42.0;
-            } else if (location == Prop.MIDDLE) {
-                y_coordinate = 34.0;
-            } else if (location == Prop.RIGHT) {
-                y_coordinate = 26.0;
-            }
-
-            white_x = -55.0;
-            white_y = -12.0;
-            white_z = 90.0;
-        } else {
             if (location == Prop.RIGHT) {
                 y_coordinate = -42.0;
             } else if (location == Prop.MIDDLE) {
@@ -157,17 +149,29 @@ public class Auto extends LinearOpMode {
             }
 
             white_x = -55.0;
+            white_y = -12.0;
+            white_z = 180.0;
+        } else {
+            if (location == Prop.LEFT) {
+                y_coordinate = 42.0;
+            } else if (location == Prop.MIDDLE) {
+                y_coordinate = 34.0;
+            } else if (location == Prop.RIGHT) {
+                y_coordinate = 26.0;
+            }
+
+            white_x = -55.0;
             white_y = 12.0;
-            white_z = 90.0;
+            white_z = 180.0;
         }
 
         TrajectorySequence backdrop = drive.trajectorySequenceBuilder(startPose)
-                .back(12)
+                .back(-12)
                 .lineToLinearHeading(new Pose2d(x_coordinate, y_coordinate, Math.toRadians(z_coordinate)))
                 .build();
 
         TrajectorySequence whitestack = drive.trajectorySequenceBuilder(startPose)
-                .back(12)
+                .back(-12)
                 .splineTo(new Vector2d(white_x, white_y), Math.toRadians(white_z))
                 .forward(5)
                 .waitSeconds(2) // insert intake here
@@ -198,7 +202,12 @@ public class Auto extends LinearOpMode {
         while (!isStarted()) {
             propDetection(vision);
 
-            telemetry.addData("Prop: ", prop);
+            telemetry.addData("Prop: ", location);
+
+            telemetry.addData("side", Parameters.autoConfig);
+            telemetry.addData("color", Parameters.allianceColor);
+            telemetry.addData("park", Parameters.endingPosition);
+
             telemetry.update();
         }
 
@@ -215,10 +224,14 @@ public class Auto extends LinearOpMode {
         }
 
         if (Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR){
-            startX = 15;
+            startX = 15.4375;
         } else {
-            startX = -40;
+            startX = -39.4375;
         }
+
+        telemetry.addData("color:", Parameters.allianceColor);
+        telemetry.addData("confiq:", Parameters.autoConfig);
+        telemetry.addData("park:", Parameters.endingPosition);
 
         Pose2d startPose = new Pose2d(startX, startY, Math.toRadians(startZ));
         drive.setPoseEstimate(startPose);
@@ -228,15 +241,14 @@ public class Auto extends LinearOpMode {
         //TrajectorySequence dropPixelLeft = drive.trajectorySequenceBuilder(startPose)
         //        .lineToLinearHeading(new Pose2d(-33, 44, Math.toRadians(130)))
         //        .build();
-        TrajectorySequence propPlacment = propPlacment(drive, parameters, startPose);
+        TrajectorySequence sequence1 = propPlacment(drive, startPose, arm);
 
-        TrajectorySequence yellowPixle = yellowPixle(drive, parameters, propPlacment.end());
+        TrajectorySequence sequence2 = yellowPixle(drive, sequence1.end(), arm);
 
 
         //Follow trajectories in order
-        //switch between parking
-        drive.followTrajectorySequence(propPlacment);
-        drive.followTrajectorySequence(yellowPixle);
+        drive.followTrajectorySequence(sequence1);
+        drive.followTrajectorySequence(sequence2);
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }
