@@ -33,23 +33,14 @@ public class MeepMeepTesting {
                                 .build()
                 );
 
-        RoadRunnerBotEntity blueExteriorRight = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity testBot = new DefaultBotBuilder(meepMeep)
                 // 3We set this bot to be blue
                 .setColorScheme(new ColorSchemeBlueDark())
                 .setDimensions(14.125, 16)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-39.4375, 62, Math.toRadians(90)))
-                                .setReversed(true)
-                                .lineToLinearHeading(new Pose2d(-53,53, Math.toRadians(135)))
-                                .lineToLinearHeading(new Pose2d(-42, 43, Math.toRadians(60)))
-                                .lineToLinearHeading(new Pose2d(-30, 12, Math.toRadians(180)))
-                                .lineToLinearHeading(new Pose2d(-55, 12, Math.toRadians(180)))
-                                .back(50)
-                                .splineTo(new Vector2d(48, 30), Math.toRadians(0))
-                                .forward(1)
-                                .splineTo(new Vector2d(-5, 12), Math.toRadians(180))
-                                .forward(50)
+                                .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
                                 .build()
                 );
 
@@ -128,10 +119,11 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
 
                 // Add both of our declared bot entities
-                .addEntity(blueInterior)
+                /*.addEntity(blueInterior)
                 .addEntity(blueExterior)
                 .addEntity(redExterior)
-                .addEntity(redInterior)
+                .addEntity(redInterior)*/
+                .addEntity(testBot)
                 .start();
     }
 }

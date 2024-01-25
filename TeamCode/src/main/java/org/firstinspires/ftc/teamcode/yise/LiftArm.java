@@ -83,12 +83,11 @@ public class LiftArm {
                 break;
         }
         hand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        float startPos = hand.getCurrentPosition();
         float endPos = hand.getTargetPosition();
         if (endPos == 150) {
             hand.setPower(0.25);
         } else if (endPos == 0) {
-            hand.setPower(0.15);
+            hand.setPower(0.35);
         }
     }
 
@@ -103,8 +102,8 @@ public class LiftArm {
 
 
     public void extend(Distance targetDistance) {
-        setArmDistance(targetDistance);
         setHandPosition(HandPosition.OUT);
+        setArmDistance(targetDistance);
     }
 
     public void retract() {
