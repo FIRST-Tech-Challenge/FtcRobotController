@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -42,7 +45,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     private Telemetry telemetry;
     private DoubleSupplier leftY;
 
+    private OuttakeSusystem outtakeSusystem;
+
+    private SequentialCommandGroup openOuttake;
+    private SequentialCommandGroup closeOuttake;
+
     public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY) {
+
         this.leftY = leftY;
         this.telemetry = telemetry;
         leftMotor = new MotorExEx(hm, "slider_left", 383.6, 435);

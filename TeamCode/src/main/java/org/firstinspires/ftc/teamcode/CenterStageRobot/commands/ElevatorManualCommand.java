@@ -12,7 +12,7 @@ public class ElevatorManualCommand extends CommandBase {
     private final DoubleSupplier elevate_speed;
     private Telemetry telemetry;
 
-    private double kg = 0.05;
+    private double kg = 0.08;
 
     public ElevatorManualCommand(ElevatorSubsystem elevator, DoubleSupplier elevate_speed, Telemetry telemetry){
         this.elevator = elevator;

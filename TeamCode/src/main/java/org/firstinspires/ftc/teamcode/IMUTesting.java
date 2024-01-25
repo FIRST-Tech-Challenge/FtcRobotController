@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import org.inventors.ftc.robotbase.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 @TeleOp(name = "IMUTesting", group = "Tests")
+@Disabled
 public class IMUTesting extends LinearOpMode {
     RevIMU imu;
 

@@ -146,18 +146,22 @@ public class CenterStageRobot extends RobotEx {
 
 
         // Outtake
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.8)
-                .whenActive(new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_release),
-                        new WaitCommand(1600),
-                        new InstantCommand(outtakeSusystem::wheel_stop)
-                ));
-
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
-                .whenActive(new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_release),
-                        new WaitCommand(500),
-                        new InstantCommand(outtakeSusystem::wheel_stop)
-                ));
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.8)
+//                .whenActive(new SequentialCommandGroup(
+//                        new InstantCommand(outtakeSusystem::wheel_release),
+//                        new WaitCommand(1400),
+//                        new InstantCommand(outtakeSusystem::wheel_stop)
+//                ));
+//
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
+//                .whenActive(new SequentialCommandGroup(
+//                        new InstantCommand(outtakeSusystem::wheel_release),
+//                        new WaitCommand(700),
+//                        new InstantCommand(outtakeSusystem::wheel_stop)
+//                ));
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.8)
+                .whenActive(new InstantCommand(outtakeSusystem::wheel_release));
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.8)
+                .whenActive(new InstantCommand(outtakeSusystem::wheel_stop));
     }
 }
