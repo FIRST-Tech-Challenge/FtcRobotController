@@ -38,17 +38,17 @@ public class Auto extends LinearOpMode {
         if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
             if (prop == 2) {
                 location = Prop.RIGHT;
-            } else if (prop == 1) {
-                location = Prop.MIDDLE;
             } else if (prop == 0) {
+                location = Prop.MIDDLE;
+            } else if (prop == 1) {
                 location = Prop.LEFT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.INTERIOR) {
-            if (prop == 2) {
+            if (prop == 0) {
                 location = Prop.RIGHT;
             } else if (prop == 1) {
                 location = Prop.MIDDLE;
-            } else if (prop == 0) {
+            } else if (prop == 2) {
                 location = Prop.LEFT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.BLUE && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
@@ -60,11 +60,11 @@ public class Auto extends LinearOpMode {
                 location = Prop.RIGHT;
             }
         } else if (Parameters.allianceColor == Parameters.Color.RED && Parameters.autoConfig == Parameters.AutonomousConfig.EXTERIOR) {
-            if (prop == 2) {
+            if (prop == 1) {
                 location = Prop.LEFT;
-            } else if (prop == 1) {
-                location = Prop.MIDDLE;
             } else if (prop == 0) {
+                location = Prop.MIDDLE;
+            } else if (prop == 2) {
                 location = Prop.RIGHT;
             }
         }
@@ -203,6 +203,11 @@ public class Auto extends LinearOpMode {
             propDetection(vision);
 
             telemetry.addData("Prop: ", location);
+
+            telemetry.addData("side", Parameters.autoConfig);
+            telemetry.addData("color", Parameters.allianceColor);
+            telemetry.addData("park", Parameters.endingPosition);
+
             telemetry.update();
         }
 
