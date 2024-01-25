@@ -13,17 +13,24 @@ public class RoadRunnerAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        TrajectorySequence BlueBottom = drive.trajectorySequenceBuilder(new Pose2d(-37.24, 67.47, Math.toRadians(269.24)))
+                .lineToConstantHeading(new Vector2d(-36.59, 34))
+                .lineToConstantHeading(new Vector2d(16.52, 34))
+                .lineToSplineHeading(new Pose2d(44.37, 34, Math.toRadians(180.00)))
+                .build();
+
         TrajectorySequence testing = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -25.00, Math.toRadians(90.00)))
                 .splineTo(new Vector2d(-36.00, 25.00), Math.toRadians(90.00))
                 .splineTo(new Vector2d(12.00, 25.00), Math.toRadians(-90.00))
                 .splineTo(new Vector2d(12.00, -25.00), Math.toRadians(270.00))
                 .build();
-        drive.setPoseEstimate(testing.start());
+        drive.setPoseEstimate(BlueBottom.start());
 
         waitForStart();
 
         drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
 
-        drive.followTrajectorySequence(testing);
+        drive.followTrajectorySequence(BlueBottom);
     }
 }
