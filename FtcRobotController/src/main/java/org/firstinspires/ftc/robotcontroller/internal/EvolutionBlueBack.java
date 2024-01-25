@@ -68,8 +68,8 @@ public class EvolutionBlueBack extends LinearOpMode {
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(0.67f);
-        claw1.setPosition(0.0f);
+        //claw0.setPosition(0.67f);
+        //claw1.setPosition(0.0f);
 
         network = new WolfNet(12, 8, 2, "Weights0", 0.5);
         network.LoadWeights();

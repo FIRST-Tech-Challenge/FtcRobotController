@@ -109,8 +109,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         lift2.setDirection(DcMotor.Direction.FORWARD);
 
-        claw0.setPosition(0.67f);
-        claw1.setPosition(0.0f);
+        //claw0.setPosition(0.67f);
+        //claw1.setPosition(0.0f);
 
         waitForStart();
         runtime.reset();
