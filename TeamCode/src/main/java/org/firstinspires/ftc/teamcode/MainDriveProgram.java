@@ -188,13 +188,13 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Telemetry data
              */
-            telemetry.addData("Slide: ", arm.getSlidePosition());
+            /*telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
-            telemetry.addData("Hand power: ", arm.hand.getPower());
+            telemetry.addData("Hand power: ", arm.hand.getPower());*/
 
-            telemetry.addData("X: ", rrDrive.getPosition().getX());
+            /*telemetry.addData("X: ", rrDrive.getPosition().getX());
             telemetry.addData("Y: ", rrDrive.getPosition().getY());
-            telemetry.addData("Heading: ", rrDrive.getPosition().getHeading());
+            telemetry.addData("Heading: ", rrDrive.getPosition().getHeading());*/
 
             telemetry.addLine();
 
@@ -209,9 +209,6 @@ public class MainDriveProgram extends LinearOpMode {
             telemetry.addData("Front pixel color: ", colorSensors.getFrontPixelColor());*/
             /*telemetry.addData("Ratio back: ", (colorSensors.getRedColor()[1] + colorSensors.getGreenColor()[1])/colorSensors.getBlueColor()[1]);
             telemetry.addData("Ratio front: ", (colorSensors.getRedColor()[0] + colorSensors.getGreenColor()[0])/colorSensors.getBlueColor()[0]);*/
-
-
-            telemetry.addData("Power: ", arm.hand.getPower());
 
             telemetry.update();
         }

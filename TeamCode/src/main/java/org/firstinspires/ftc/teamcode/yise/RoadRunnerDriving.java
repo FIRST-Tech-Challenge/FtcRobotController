@@ -26,14 +26,6 @@ public class RoadRunnerDriving {
     }
 
 
-    //Coordinates of all truss poles on the field
-    //2D array where each sub-array is a set of coordinates
-    int[][] avoidancePositions = { {0, 70}, {0, 48}, {0, 24}, {0, -24}, {0, -48}, {0, -70}, {-24, 70}, {-25, 48}, {-24, 24}, {-24, -24}, {-24, -48}, {-24, -70} };
-
-    //Distance from the poles before repulsion takes effect
-    int repulsionRadius = 12;
-
-
     //Declare the constructor for the class
     public RoadRunnerDriving(HardwareMap hardwareMap) {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -48,34 +40,11 @@ public class RoadRunnerDriving {
 
     //Drives the robot based on gamepad input
     public void updateMotorsFromStick(Gamepad gamepad) {
-        double repulsionPower = 0;
-
-        //Loop through every obstacle position
-        for (int i = 0; i < avoidancePositions.length; i++) {
-            //Get x and y distance between the robot and every obstacle
-            double xDist = drive.getPoseEstimate().getX() - avoidancePositions[i][0];
-            double yDist = drive.getPoseEstimate().getY() - avoidancePositions[i][1];
-
-            //Get direct distance between the robot and every obstacle
-            double distanceToPoint = Math.sqrt( Math.pow(xDist, 2) + Math.pow(yDist, 2));
-
-            //Check to see if the robot is close enough to the point to be affected by it
-            if (distanceToPoint < repulsionRadius) {
-                //Use the y distance between the robot and the point to create a sort of power gradient that gets weaker the further away the robot is
-                //Ex: Point radius is 12 inches. Robot is 6 inches away from the point. Repulsion power = (12-6)/12 = 0.5
-                repulsionPower = (repulsionRadius - Math.abs(yDist))/repulsionRadius;
-            }
-
-            //If robot is left of the obstacle, flip the repulsion power so the robot navigates away from pole instead of into it :)
-            if (yDist < 0) {
-                repulsionPower = - repulsionPower;
-            }
-        }
 
         //Set drive power based on gamepad inputs multiplied by the speed variable. For the y, also add on the repulsionPower for obstacle avoidance
         drive.setWeightedDrivePower(new Pose2d(
                 -gamepad.left_stick_y * speedMultiplier,
-                (-gamepad.left_stick_x * speedMultiplier) + repulsionPower,
+                -gamepad.left_stick_x * speedMultiplier,
                 -gamepad.right_stick_x * speedMultiplier
         ));
     }
