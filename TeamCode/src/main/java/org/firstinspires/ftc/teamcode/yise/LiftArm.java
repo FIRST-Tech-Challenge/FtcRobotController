@@ -11,6 +11,8 @@ import org.opencv.core.Mat;
 public class LiftArm {
     public DcMotor slide, hand;
     public Servo trapdoor;
+    public Servo PurplePixel;
+
 
     public Servo plane;
 
@@ -40,6 +42,7 @@ public class LiftArm {
         slide = hardwareMap.get(DcMotor.class, "slide");
         trapdoor = hardwareMap.get(Servo.class, "trapdoor");
         plane = hardwareMap.get(Servo.class, "plane");
+        PurplePixel = hardwareMap.get(Servo.class, "purple");
 
         closeTrapdoor();
         reloadPlane();
@@ -95,12 +98,11 @@ public class LiftArm {
                 break;
         }
         hand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        float startPos = hand.getCurrentPosition();
         float endPos = hand.getTargetPosition();
         if (endPos == 150) {
             hand.setPower(0.25);
         } else if (endPos == 0) {
-            hand.setPower(0.15);
+            hand.setPower(0.35);
         }
     }
 
@@ -120,9 +122,17 @@ public class LiftArm {
         plane.setPosition(.75);
     }
 
+    public void PickupPurplePixel() {
+        PurplePixel.setPosition(Servo.MAX_POSITION);
+    }
+    public void DropPurplePixel() {
+        PurplePixel.setPosition(Servo.MIN_POSITION);
+    }
+
+
     public void extend(Distance targetDistance) {
-        setArmDistance(targetDistance);
         setHandPosition(HandPosition.OUT);
+        setArmDistance(targetDistance);
     }
 
     public void retract() {
