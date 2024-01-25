@@ -21,12 +21,17 @@ public class MotionHardwareG2 {
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
-    private Servo intakeFingers = null;
+    private DcMotor rightLeadScrew = null;
+    private DcMotor leftLeadScrew = null;
+    private DcMotor linearExtension = null;
     private Servo intakeWrist = null;
+    private Servo bucketWrist = null;
+    private Servo intakeFingers = null;
     private Servo intakeArmLeft = null;
     private Servo intakeArmRight = null;
-    private DcMotor armMotor = null;
-    private Servo dropper = null;
+    private Servo rightClimb = null;
+    private Servo leftClimb = null;
+    private Servo planeServo = null;
 
     // Variables
 
@@ -35,31 +40,19 @@ public class MotionHardwareG2 {
     public static final double TURN_SPEED = 0.4;
     private static final double MAX_SPEED = 1;
     public static double detectWait = 6.0;
-    public static double wristStart = 0.4;
-    public static double wristRight = 0;
-    public static double wristLeft = 1;
 
-
-    public static double LEFT_GRIPPER_OPEN = 0.0;
-    public static double RIGHT_GRIPPER_OPEN = 0.3;
-    public static double LEFT_GRIPPER_CLOSE = 0.35;
-    public static double RIGHT_GRIPPER_CLOSE = 0.25;
-    public static double WRIST_LOAD_PIXEL = -1;
-    public static double WRIST_DROP_PIXEL = 1;
-    public static double DROPPER_LOAD_PIXEL = 0.48;
-    public static double DROPPER_DROP_PIXEL = -1.0;
 
     public enum Direction {
         RIGHT,
         LEFT
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: goBilda Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.5;    //3.778 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679);
 
+    static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: goBilda Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES = 4;    //3.778 ;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     public MotionHardwareG2(LinearOpMode opmode) {
         myOpMode = opmode;
     }
@@ -72,8 +65,9 @@ public class MotionHardwareG2 {
         frontRightMotor = myOpMode.hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = myOpMode.hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = myOpMode.hardwareMap.get(DcMotor.class, "backRightMotor");
-        armMotor = myOpMode.hardwareMap.get(DcMotor.class, "armMotor");
-
+        rightLeadScrew = myOpMode.hardwareMap.get(DcMotor.class, "rightLeadScrew");
+        leftLeadScrew = myOpMode.hardwareMap.get(DcMotor.class, "leftLeadScrew");
+        linearExtension = myOpMode.hardwareMap.get(DcMotor.class, "linearExtension");
 
         //frontLeftMotor.setDirection(DcMotorEx.Direction.FORWARD);
         //frontRightMotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -83,64 +77,58 @@ public class MotionHardwareG2 {
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        //armMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightLeadScrew.setDirection(DcMotor.Direction.REVERSE);
+        leftLeadScrew.setDirection(DcMotor.Direction.REVERSE);
+        linearExtension.setDirection(DcMotor.Direction.REVERSE);
+
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLeadScrew.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLeadScrew.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLeadScrew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLeadScrew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLeadScrew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLeadScrew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //TODO Once wrist/gripper is fixed move pixel load step to new function
-        leftGripper = myOpMode.hardwareMap.get(Servo.class, "leftGripper");
-        rightGripper = myOpMode.hardwareMap.get(Servo.class, "rightGripper");
-        armMotor = myOpMode.hardwareMap.get(DcMotor.class, "armMotor");
-        wrist = myOpMode.hardwareMap.servo.get("wristServo");
-        dropper = myOpMode.hardwareMap.servo.get("dropperServo");
+        intakeArmLeft = myOpMode.hardwareMap.get(Servo.class, "intakeArmLeft");
+        intakeArmRight = myOpMode.hardwareMap.get(Servo.class, "intakeArmRight");
+        intakeWrist = myOpMode.hardwareMap.get(Servo.class, "intakeWrist");
+        intakeFingers = myOpMode.hardwareMap.get(Servo.class, "intakeFingers");
+        bucketWrist = myOpMode.hardwareMap.get(Servo.class, "bucketWrist");
+        leftClimb = myOpMode.hardwareMap.get(Servo.class, "leftClimb");
+        rightClimb = myOpMode.hardwareMap.get(Servo.class, "rightClimb");
+        planeServo = myOpMode.hardwareMap.get(Servo.class, "planeServo");
 
-        moveArm(.5, 5, 5);
-
-        //wrist.setPosition(WRIST_LOAD_PIXEL);
-
-
-        leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value as needed
-        rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value as needed
-        //dropper.setPosition(DROPPER_LOAD_PIXEL);
         runtime.reset();
-
-        wrist.setPosition(WRIST_LOAD_PIXEL);
         sleep(3000);
-
-        leftGripper.setPosition(LEFT_GRIPPER_CLOSE); // Adjust the position value as needed
-        rightGripper.setPosition(RIGHT_GRIPPER_CLOSE); // Adjust the position value as needed
         sleep(1000);
-        //wrist.setPosition(WRIST_DROP_PIXEL);
 
-
-        //dropper.setPosition(DROPPER_DROP_PIXEL);
-
-
-
-        // Send telemetry message to indicate successful Encoder reset
         myOpMode.telemetry.addData("Starting at",  "%7d %7d %7d %7d",
                 frontLeftMotor.getCurrentPosition(),
                 backLeftMotor.getCurrentPosition(),
                 frontRightMotor.getCurrentPosition(),
                 backRightMotor.getCurrentPosition());
+                rightLeadScrew.getCurrentPosition();
+                leftLeadScrew.getCurrentPosition();
+                linearExtension.getCurrentPosition();
         myOpMode.telemetry.update();
 
 
@@ -344,7 +332,7 @@ public class MotionHardwareG2 {
     // 1 = camera position
     // 2 = pixel drop position
 
-    private void dropProp() {
+   /* private void dropProp() {
         telemetry.addData("Dropping Pixel", "");
         telemetry.update();
         leftGripper.setPosition(0.9); // Adjust the position value as needed
@@ -352,7 +340,7 @@ public class MotionHardwareG2 {
         telemetry.addData("Pixel Dropped", "");
         telemetry.update();
         myOpMode.sleep(1000);
-    }
+    }*/
 
     // Move along an arc to a grid position in inches relative to the robots current position
     //TODO This is an untested function
@@ -482,98 +470,6 @@ public class MotionHardwareG2 {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-    }
-
-    public void dropPixel() {
-        wrist.setPosition(WRIST_DROP_PIXEL);
-
-        sleep(700);
-
-        rightGripper.setPosition(RIGHT_GRIPPER_OPEN);
-        leftGripper.setPosition(LEFT_GRIPPER_OPEN);
-
-    }
-
-    /**
-     * Moves arm provided distance using motor encoders.  Reverse movement is achieved
-     * by passing in a negative distance value.  Motion will stop if:
-     * - The motors reach their target
-     * - Timeout has been exceeded
-     * - opMode is cancelled/stopped
-     *
-     * @param  speed    speed of the motor
-     * @param  distance distance in inches you want the robot to move
-     * @param  timeoutS failsafe time to stop motion if motors are still busy
-     */
-    public void moveArm(double speed, double distance, double timeoutS) {
-
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        int newArmTarget = armMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-
-        armMotor.setTargetPosition(newArmTarget);
-
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        runtime.reset();
-        armMotor.setPower(Math.abs(speed));
-
-        while (myOpMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (armMotor.isBusy())) {
-
-            // Display it for the driver.
-            myOpMode.telemetry.addData("Running to",  " %7d", newArmTarget);
-            myOpMode.telemetry.addData("Currently at",  " at %7d",
-                    armMotor.getCurrentPosition());
-            myOpMode.telemetry.update();
-        }
-
-        armMotor.setPower(0);
-
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        sleep(1000);
-    }
-
-    /**
-     * Moves arm provided distance using motor encoders.  Reverse movement is achieved
-     * by passing in a negative distance value.  Motion will stop if:
-     * - The motors reach their target
-     * - Timeout has been exceeded
-     * - opMode is cancelled/stopped
-     *
-     * @param  speed    speed of the motor
-     * @param  position specific encoder position
-     * @param  timeoutS failsafe time to stop motion if motors are still busy
-     */
-    public void moveArm(double speed, int position, double timeoutS) {
-
-        //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //int newArmTarget = armMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-
-        armMotor.setTargetPosition(position);
-
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        runtime.reset();
-        armMotor.setPower(Math.abs(speed));
-
-        while (myOpMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (armMotor.isBusy())) {
-
-            // Display it for the driver.
-            myOpMode.telemetry.addData("Running to",  " %7d", position);
-            myOpMode.telemetry.addData("Currently at",  " at %7d",
-                    armMotor.getCurrentPosition());
-            myOpMode.telemetry.update();
-        }
-
-        armMotor.setPower(0);
-
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        sleep(1000);
     }
 
 
