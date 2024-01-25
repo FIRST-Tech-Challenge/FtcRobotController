@@ -169,6 +169,16 @@ public class RobotHardwareInitializer {
         return out;
     }
 
+    public static Servo initializeLauncher(final OpMode opMode) {
+        try {
+            Servo servo = opMode.hardwareMap.get(Servo.class, "launcher");
+            return servo;
+        } catch (Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
     @Deprecated
     public static void initializeArm(RobotOpMode robot) {
         try {

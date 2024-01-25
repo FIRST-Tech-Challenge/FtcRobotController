@@ -18,7 +18,7 @@ import java.util.function.DoubleSupplier;
 
 public class DriveSubsystem extends SubsystemBase {
     private final DcMotor lF, rF, lB, rB, eL, eB, eR;
-    private final double INCHES_PER_TICK = 0.0018912d;
+    private final double INCHES_PER_TICK = 0.0018912d; // Come on Carter MAKE IT NOT MAGIC!!!!!!!!!
     public final ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 

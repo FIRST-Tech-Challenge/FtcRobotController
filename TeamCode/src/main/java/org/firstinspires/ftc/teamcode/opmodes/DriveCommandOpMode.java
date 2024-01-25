@@ -13,10 +13,12 @@ import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
+import org.firstinspires.ftc.teamcode.commands.ThrowAirplaneCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
@@ -38,6 +40,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     private WristSubsystem wristSubsystem;
     private FingerSubsystem fingerSubsystem;
     private IntakeSubsystem intakeSubsystem;
+    private LauncherSubsystem launcherSubsystem;
 
     private DefaultDrive driveCommand;
     private MoveArmCommand moveArmCommand;
@@ -64,6 +67,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
         intakeSubsystem = new IntakeSubsystem(RobotHardwareInitializer.initializeIntake(this));
+        launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
 
         dbp.info("Subsystems built.");
         dbp.send(false);
@@ -97,14 +101,16 @@ public class DriveCommandOpMode extends CommandOpMode {
                     }
                     return quantity/2.5d;
                 });
-
         intakeCommand = new IntakeCommand(intakeSubsystem);
+        armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+                .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
 
         register(driveSubsystem);
         register(armSubsystem);
         register(wristSubsystem);
         register(fingerSubsystem);
         register(intakeSubsystem);
+        register(launcherSubsystem);
 
         driveSubsystem.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
@@ -119,7 +125,6 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.send(false);
 
         waitForStart();
-
         schedule(intakeCommand);
     }
 
