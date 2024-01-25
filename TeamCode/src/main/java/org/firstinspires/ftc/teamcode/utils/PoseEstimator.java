@@ -21,6 +21,7 @@ public class PoseEstimator extends HolonomicOdometry {
     }
 
     public void setPoseToCameraPose(Pose2d cameraPose){
+        updatePose();
         robotPose = cameraPose;
     }
 }
