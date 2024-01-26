@@ -107,8 +107,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         gobbler.driveTrain.Wait(5.0);
 
-
-    for (int i = 0; i < 3; i++) {
+//for (int i = 0; i < 3; i++)
+     while (!opModeIsActive()){
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (Recognition recognition : currentRecognitions) {
@@ -162,7 +162,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
 
-        waitForStart();
+        //waitForStart();
 
         if (opModeIsActive()) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
