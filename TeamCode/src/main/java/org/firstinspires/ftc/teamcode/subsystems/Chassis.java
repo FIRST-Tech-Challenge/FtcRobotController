@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-
+import static org.firstinspires.ftc.teamcode.Constants.*;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -27,9 +27,9 @@ public class Chassis implements Subsystem {
     private MotorEx motor_FR;
     private MotorEx motor_BL;
     private MotorEx motor_BR;
-    private Motor encoderLeft;
-    private Motor encoderRight;
-    private Motor encoderCenter;
+    private Motor leftEncoder;
+    private Motor rightEncoder;
+    private Motor horizontalEncoder;
     private Pose2d m_postitionFromTag;
     HolonomicOdometry odometry;
     public Chassis(HardwareMap map, Telemetry telemetry, Supplier<Integer> poseL, Supplier<Integer> poseR){
@@ -39,13 +39,18 @@ public class Chassis implements Subsystem {
         motor_FR = new MotorEx(map, "motor_FR");
         motor_BL = new MotorEx(map, "motor_BL");
         motor_BR = new MotorEx(map, "motor_BR");
-        encoderLeft = new MotorEx(map, "left odometer");
-        encoderRight = new MotorEx(map, "right odometer");
-        encoderCenter = new MotorEx(map, "center odometer");
+        leftEncoder = new MotorEx(map, "encoderLeft");
+        rightEncoder = new MotorEx(map, "encoderRight");
+        horizontalEncoder = new MotorEx(map, "encoderCenter");
+        horizontalEncoder.resetEncoder();
+        leftEncoder.resetEncoder();
+        rightEncoder.resetEncoder();
+
+
          odometry = new HolonomicOdometry(
-                () -> encoderLeft.getCurrentPosition() * Constants.TICKS_TO_CM,
-                () -> encoderRight.getCurrentPosition() * Constants.TICKS_TO_CM,
-                () -> encoderCenter.getCurrentPosition() * Constants.TICKS_TO_CM,
+                () -> metersFormTicks(leftEncoder.getCurrentPosition()) ,
+                () -> metersFormTicks(rightEncoder.getCurrentPosition()),
+                () -> metersFormTicks(horizontalEncoder.getCurrentPosition()),
                 Constants.TRACKWIDTH, Constants.WHEEL_OFFSET);
         time.startTime();
 
@@ -81,12 +86,17 @@ public class Chassis implements Subsystem {
 //            time.reset()
 //
 //        }
-        m_telemetry.addData("pose x: ", odometry.getPose());
-        m_telemetry.addData("pose y: ", odometry.getPose());
+        m_telemetry.addData("gtth x: ", 363645);
+        m_telemetry.addData("pose x: ", odometry.getPose().getX());
+        m_telemetry.addData("pose y: ", odometry.getPose().getY());
+        m_telemetry.update();
     }
 
     @Override
     public void setDefaultCommand(Command defaultCommand) {
         Subsystem.super.setDefaultCommand(defaultCommand);
+    }
+    public double metersFormTicks(int ticks){
+        return (ticks/(double) tickPerRevolution)*(2*odometryWheelRadius*Math.PI);
     }
 }

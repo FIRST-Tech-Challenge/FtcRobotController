@@ -37,6 +37,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 //        m_gamepad1=gamepad1;
 //        m_gamepad2=gamepad2;
 
+    m_chassis.register();
 
 //        bindCommands();
     }
