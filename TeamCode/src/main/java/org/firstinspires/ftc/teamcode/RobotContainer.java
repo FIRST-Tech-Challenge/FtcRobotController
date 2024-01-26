@@ -9,12 +9,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Chassis;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
-import org.firstinspires.ftc.teamcode.subsystems.arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.climb;
 import org.firstinspires.ftc.teamcode.subsystems.plane;
 import org.firstinspires.ftc.teamcode.utils.BTController;
-
-import java.util.function.BooleanSupplier;
 
 // todo: check the time from the start to when I have the cords
 
@@ -24,7 +22,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
      Gripper m_gripper;
      plane m_plane;
      climb m_climb;
-     arm m_arm;
+     Arm m_arm;
 
 
 
