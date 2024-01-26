@@ -366,7 +366,7 @@ public class RoadRunnerSubsystem {
                 return new Pair<>(LOW_HomeToPixel_CENTER, LOW_ToBackdrop_MID);
             }
             else if (randomizer == Randomizer.RIGHT) {
-                return new Pair<>(LOW_HomeToPixel_LEFT, LOW_ToBackdrop_OUTER);
+                return new Pair<>(LOW_HomeToPixel_RIGHT, LOW_ToBackdrop_OUTER);
             }
         }
         else if (start == Start.HIGH){
@@ -377,7 +377,7 @@ public class RoadRunnerSubsystem {
                 return new Pair<>(HIGH_HomeToPixel_CENTER, HIGH_ToBackdrop_MID);
             }
             else if (randomizer == Randomizer.RIGHT) {
-                return new Pair<>(HIGH_HomeToPixel_LEFT, HIGH_ToBackdrop_OUTER);
+                return new Pair<>(HIGH_HomeToPixel_RIGHT, HIGH_ToBackdrop_OUTER);
             }
         }
 
