@@ -1131,6 +1131,156 @@ public class HardwarePixelbot
                 break;
         }
     }
+    public enum LiftMoveActivity {
+        IDLE,
+        LIFTING_SAFE,
+        LIFTING,
+        ROTATING
+    }
+    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
+    private ElapsedTime liftMoveTimer = new ElapsedTime();
+    private int liftMoveTarget;
+    public void startLiftMove(int liftTarget)
+    {
+        // Ensure pre-conditions are met
+        if((pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE)) {
+            // startViperSlideExtension handles lift power vs lower power
+            liftMoveTarget = liftTarget;
+            startViperSlideExtension(liftMoveTarget);
+            liftMoveTimer.reset();
+            liftMoveState = LiftMoveActivity.LIFTING_SAFE;
+        }
+    }
+    public void processLiftMove() {
+        switch(liftMoveState){
+            // Make sure we are over the bin to rotate
+            case LIFTING_SAFE:
+                // We are above the pixel bin and can start rotating
+                if(viperMotorsPos >= VIPER_EXTEND_BIN) {
+                    // This shouldn't happen, but make sure we aren't moving below
+                    // the pixel bin height before starting wrist movement. Moving below
+                    // pixel bin should use the store activity.
+                    if(liftMoveTarget >= VIPER_EXTEND_BIN) {
+                        wristServo.setPosition(WRIST_SERVO_DROP);
+                    }
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.LIFTING;
+                }
+                // This is a timeout, the lift could not get above the bin, we probably
+                // want to stop here.
+                else if(liftMoveTimer.milliseconds() > 2000.0) {
+                    telemetry.addData("processLiftMove", "Timed out lifting safe");
+                    telemetry.addData("processLiftMove", "Lift Target: %.2f Lift Position: %.2f",
+                            liftMoveTarget, viperMotorsPos);
+                    telemetry.update();
+                    telemetrySleep();
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                break;
+            case LIFTING:
+                // We are at our desired height
+                if(!viperMotorAutoMove) {
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.ROTATING;
+                }
+                // This is a timeout, the lift could not get to target, we got above the  bin
+                // so we can do our thing, but not sure why we didn't hit target.
+                else if(liftMoveTimer.milliseconds() > 3000.0) {
+                    telemetry.addData("processLiftMove", "Timed out lifting");
+                    telemetry.addData("processLiftMove", "Lift Target: %.2f Lift Position: %.2f",
+                            liftMoveTarget, viperMotorsPos);
+                    telemetry.update();
+                    telemetrySleep();
+                    liftMoveTimer.reset();
+                    liftMoveState = LiftMoveActivity.ROTATING;
+                }
+                break;
+            case ROTATING:
+                // We have rotated to the desired position
+                if(getWristServoAngle() <= WRIST_SERVO_DROP_ANGLE) {
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                // This is a timeout, can't think of any other error than angle is wrong? I think for
+                // now we proceed as if we rotated.
+                else if(liftMoveTimer.milliseconds() > 1000.0) {
+                    telemetry.addData("processLiftMove", "Timed out rotating");
+                    telemetry.addData("processLiftMove", "Wrist: %.2f", getWristServoAngle());
+                    // Pull back to the safe/stored position
+                    telemetry.update();
+                    telemetrySleep();
+                    liftMoveState = LiftMoveActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+    public enum LiftStoreActivity {
+        IDLE,
+        ROTATING,
+        LOWERING
+    }
+    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
+    private ElapsedTime liftStoreTimer = new ElapsedTime();
+    public void startLiftStore()
+    {
+        // Ensure pre-conditions are met
+        if((pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
+                (pixelGrabState == PixelGrabActivity.IDLE) &&
+                (pixelScoreState == PixelScoreActivity.IDLE) &&
+                (viperMotorsPos >= VIPER_EXTEND_BIN)) {
+            // Rotate wrist to safe position and pull in
+            pushServo.setPosition(PUSH_SERVO_SAFE);
+            wristServo.setPosition(WRIST_SERVO_INIT);
+            // We want the fingers closed, but don't need them close so don't check them.
+            fingerServo1.setPosition(FINGER1_SERVO_DROP);
+            fingerServo2.setPosition(FINGER2_SERVO_DROP);
+            liftStoreTimer.reset();
+            liftStoreState = LiftStoreActivity.ROTATING;
+        }
+    }
+    public void processLiftStore() {
+        switch(liftStoreState){
+            // Make sure the fingers are in a safe position
+            case ROTATING:
+                if((getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) &&
+                        (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
+                    liftStoreState = LiftStoreActivity.LOWERING;
+                    startViperSlideExtension(VIPER_EXTEND_ZERO);
+                    liftStoreTimer.reset();
+                }
+                // This is a timeout, the fingers are not safe, abort.
+                else if(liftStoreTimer.milliseconds() > 1500.0) {
+                    telemetry.addData("processLiftStore", "Timed out rotating");
+                    telemetry.addData("processLiftStore", "Push: %.2f Wrist: %.2f", getPushServoAngle(), getWristServoAngle());
+                    telemetry.update();
+                    telemetrySleep();
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                break;
+            case LOWERING:
+                // We are at our desired height
+                if(!viperMotorAutoMove) {
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                // This is a timeout, the lift could not fully lower.
+                else if(liftStoreTimer.milliseconds() > 3000.0) {
+                    telemetry.addData("processLiftStore", "Timed out lowering");
+                    telemetry.addData("processLiftStore", "Lift Position: %.2f",
+                            viperMotorsPos);
+                    telemetry.update();
+                    telemetrySleep();
+                    liftStoreState = LiftStoreActivity.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
     private void telemetrySleep() {
 /*        try {
             sleep(5000);
