@@ -117,7 +117,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200)
+            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) || xValue > 105 && xValue < 200 && yValue > 145 && yValue < 195)
             if (xValue < 450) {
                 // center
                 telemetry.addData("position", "Center");
@@ -129,8 +129,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            // (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300)
-            else if (xValue > 450) {
+            else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300) {
                 // right
                 telemetry.addData("position", "Right");
                 // drives robot to the right position.
@@ -190,7 +189,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
                 else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
                         // right
-                        telemetry.addData ("position","Right");
+                        telemetry.addData("position","Right");
                         // drives robot to the right position.
                         gobbler.driveTrain.rightPos();
                         desiredTag = 1;
