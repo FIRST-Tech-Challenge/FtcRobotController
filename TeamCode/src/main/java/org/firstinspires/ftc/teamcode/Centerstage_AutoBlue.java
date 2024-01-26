@@ -100,21 +100,23 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
 
-        servo_Display.setPosition(DEF_POS);
-
         gobbler.driveTrain.Wait(5.0);
 
         //Name for servo to be used on driver hub
         servo_Display = hardwareMap.get(Servo.class, "servo_display");
     for (int i = 0; i < 3; i++) {
 
+
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (Recognition recognition : currentRecognitions) {
             double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
             double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
-            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
+            servo_Display.setPosition(DEF_POS);
+            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file.
+
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200 || xValue > 105 && xValue < 200 && yValue > 145 && yValue < 195)
             if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
                 // center
                 telemetry.addData("position", "Center");
@@ -126,7 +128,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300) {
+            else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
                 // right
                 telemetry.addData("position", "Right");
                 // drives robot to the right position.
@@ -186,7 +188,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
                 else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
                         // right
-                        telemetry.addData ("position","Right");
+                        telemetry.addData("position","Right");
                         // drives robot to the right position.
                         gobbler.driveTrain.rightPos();
                         desiredTag = 1;
