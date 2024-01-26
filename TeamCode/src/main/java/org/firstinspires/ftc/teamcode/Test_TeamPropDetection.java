@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class Test_TeamPropDetection extends CSBase {
     public void runOpMode() {
 
-        tfodModelName = "CSTeamPropRed.tflite";
+        tfodModelName = "Prop_Red.tflite";
         initProcessors();
 
         // Wait for the DS start button to be touched.

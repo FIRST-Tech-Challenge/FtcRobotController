@@ -14,7 +14,7 @@ public class Test_DistanceSensor extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "sensor_distance");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
         waitForStart();
 

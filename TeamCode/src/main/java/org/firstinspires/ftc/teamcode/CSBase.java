@@ -20,7 +20,7 @@ public abstract class CSBase extends LinearOpMode {
     public static final boolean USE_WEBCAM = true;
     public TfodProcessor tfod;
     public final ElapsedTime runtime = new ElapsedTime();
-    // All non-primitve datatypes initialze to null on default.
+    // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
     public WebcamName camera;
@@ -80,9 +80,9 @@ public abstract class CSBase extends LinearOpMode {
      * @param useCam Should the camera be initialized? **/
     public void setup(color teamColor, boolean useCam) {
         if (teamColor == color.r) {
-            tfodModelName = "CSTeamPropRed.tflite";
+            tfodModelName = "Prop_Red.tflite";
         } else if (teamColor == color.b){
-            tfodModelName = "CSTeamPropBlue.tflite";
+            tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
             telemetry.addData("", "Team color not specified, will not use team prop detection!");
@@ -93,15 +93,6 @@ public abstract class CSBase extends LinearOpMode {
         imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                /*new Orientation(
-                        AxesReference.INTRINSIC,
-                        AxesOrder.ZYX,
-                        AngleUnit.DEGREES,
-                        0,
-                        0,
-                        0,
-                        0
-                )*/
         ));
         if (!imu.initialize(imuParameters)){
             telemetry.addData("IMU","Initialization failed");
@@ -227,12 +218,6 @@ public abstract class CSBase extends LinearOpMode {
 
             double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 // Display it for the driver.
                 telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
@@ -242,18 +227,7 @@ public abstract class CSBase extends LinearOpMode {
             }
             if (inches != 0) {
               stopRobot();
-
-                // Turn off RUN_TO_POSITION
-                // Note: Following code is technically redundant since called in stopRobot(), but the function
-                // may be changed, so do not delete.
-                lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             }
-
-
-            //sleep(250);   // optional pause after each move.
         }
     }
 
@@ -468,22 +442,11 @@ public abstract class CSBase extends LinearOpMode {
     }
    /** Initializes the TFOD and April Tag processors. **/
     public void initProcessors() {
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
 
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+        tfod = new TfodProcessor.Builder()
 
                 .setModelAssetName(tfodModelName)
                 .setModelLabels(LABELS)
-
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
 
                 .build();
         tagProcessor = new AprilTagProcessor.Builder()
@@ -492,42 +455,26 @@ public abstract class CSBase extends LinearOpMode {
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
                 .build();
-        // Create the vision portal by using a builder.
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
             builder.setCamera(camera);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
 
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
-
         builder.enableLiveView(true);
 
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
         builder.addProcessor(tfod);
         builder.addProcessor(tagProcessor);
 
-        // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
 
         tfod.setMinResultConfidence(0.75f);
 
-        // Disable or re-enable the TFOD processor at any time.
-        //visionPortal.setProcessorEnabled(tfod, true);
 
-    }   // end method initTfod()
+    }
 
 
     /** Returns whether a tag with the specified ID is currently detected.
