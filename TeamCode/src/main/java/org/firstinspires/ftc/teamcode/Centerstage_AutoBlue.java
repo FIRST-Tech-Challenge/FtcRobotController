@@ -116,8 +116,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200 || xValue > 105 && xValue < 200 && yValue > 145 && yValue < 195)
-            if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
+            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) || xValue > 105 && xValue < 200 && yValue > 145 && yValue < 195)
+            if (xValue < 450) {
                 // center
                 telemetry.addData("position", "Center");
                 // drives robot to the center position.
@@ -128,7 +128,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
+            // (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290)
+            else if (xValue > 450) {
                 // right
                 telemetry.addData("position", "Right");
                 // drives robot to the right position.
