@@ -212,7 +212,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     void autoRaiseViperSlide( int targetEncoderCount ) {   // Ex: robot.VIPER_EXTEND_LOW
         // Initiate the automatic movement to the desired lift height
         robot.startViperSlideExtension( targetEncoderCount );
-        while(opModeIsActive() && (robot.viperMotorAutoMove == true)) {
+        while(opModeIsActive() && (robot.viperMotorBusy == true)) {
             performEveryLoop();
             robot.processViperSlideExtension();
         }

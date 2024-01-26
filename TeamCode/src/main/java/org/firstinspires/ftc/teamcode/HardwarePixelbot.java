@@ -104,6 +104,7 @@ public class HardwarePixelbot
     public double       viperMotorsAmps = 0.0;     // current power draw (Amps)
 
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
+    public boolean      viperMotorBusy = false;
     public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
     public double  VIPER_HOLD_POWER  =  0.007; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
@@ -112,7 +113,7 @@ public class HardwarePixelbot
     public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_LOW  = 250;  // Encoder count when raised to lowest possible scoring position (200)
     public int     VIPER_EXTEND_MID  = 325;  // Encoder count when raised to medium scoring height (350)
-    public int     VIPER_EXTEND_HIGH = 500;  // Encoder count when raised to upper scoring height (500)
+    public int     VIPER_EXTEND_HIGH = 450;  // Encoder count when raised to upper scoring height (500)
     public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
@@ -671,6 +672,7 @@ public class HardwarePixelbot
         viperSlideTimer.reset();
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
         viperMotorAutoMove = true;
+        viperMotorBusy = true;
     } // viperSlideExtension
 
     public void processViperSlideExtension()
@@ -678,10 +680,10 @@ public class HardwarePixelbot
         // Has the automatic movement reached its destination?.
         if( viperMotorAutoMove ) {
             if (!viperMotors.isBusy()) {
-                viperMotorAutoMove = false;
+                viperMotorBusy = false;
                 // Timeout reaching destination.
             } else if (viperSlideTimer.milliseconds() > 5000) {
-                viperMotorAutoMove = false;
+                viperMotorBusy = false;
                 telemetry.addData("processViperSlideExtension", "Movement timed out.");
                 telemetry.addData("processViperSlideExtension", "Position: %d", viperMotors.getCurrentPosition());
                 telemetry.update();
@@ -700,7 +702,10 @@ public class HardwarePixelbot
            // the weight of the lift will immediately drop it back down.
            viperMotors.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
            viperMotors.setPower( VIPER_HOLD_POWER );
+            liftMoveState = LiftMoveActivity.IDLE;
+            liftStoreState = LiftStoreActivity.IDLE;
            viperMotorAutoMove = false;
+           viperMotorBusy = false;
         }
     } // abortViperSlideExtension
 
@@ -1177,24 +1182,25 @@ public class HardwarePixelbot
                 // want to stop here.
                 else if(liftMoveTimer.milliseconds() > 2000.0) {
                     telemetry.addData("processLiftMove", "Timed out lifting safe");
-                    telemetry.addData("processLiftMove", "Lift Target: %.2f Lift Position: %.2f",
+                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d",
                             liftMoveTarget, viperMotorsPos);
                     telemetry.update();
                     telemetrySleep();
+                    liftMoveTimer.reset();
                     liftMoveState = LiftMoveActivity.IDLE;
                 }
                 break;
             case LIFTING:
                 // We are at our desired height
-                if(!viperMotorAutoMove) {
+                if(!viperMotorBusy) {
                     liftMoveTimer.reset();
                     liftMoveState = LiftMoveActivity.ROTATING;
                 }
                 // This is a timeout, the lift could not get to target, we got above the  bin
                 // so we can do our thing, but not sure why we didn't hit target.
-                else if(liftMoveTimer.milliseconds() > 3000.0) {
+                else if(liftMoveTimer.milliseconds() > 5000.0) {
                     telemetry.addData("processLiftMove", "Timed out lifting");
-                    telemetry.addData("processLiftMove", "Lift Target: %.2f Lift Position: %.2f",
+                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d",
                             liftMoveTarget, viperMotorsPos);
                     telemetry.update();
                     telemetrySleep();
@@ -1268,13 +1274,13 @@ public class HardwarePixelbot
                 break;
             case LOWERING:
                 // We are at our desired height
-                if(!viperMotorAutoMove) {
+                if(!viperMotorBusy) {
                     liftStoreState = LiftStoreActivity.IDLE;
                 }
                 // This is a timeout, the lift could not fully lower.
-                else if(liftStoreTimer.milliseconds() > 3000.0) {
+                else if(liftStoreTimer.milliseconds() > 5000.0) {
                     telemetry.addData("processLiftStore", "Timed out lowering");
-                    telemetry.addData("processLiftStore", "Lift Position: %.2f",
+                    telemetry.addData("processLiftStore", "Lift Position: %d",
                             viperMotorsPos);
                     telemetry.update();
                     telemetrySleep();
@@ -1287,11 +1293,10 @@ public class HardwarePixelbot
         }
     }
     private void telemetrySleep() {
-/*        try {
-            sleep(5000);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
- */
+//        try {
+//            sleep(5000);
+//        } catch (InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
     }
 } /* HardwarePixelbot */

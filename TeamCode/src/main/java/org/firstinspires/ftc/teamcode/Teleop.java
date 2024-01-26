@@ -179,6 +179,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.processPixelScore();
             robot.processLiftMove();
             robot.processLiftStore();
+            robot.processViperSlideExtension();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
