@@ -163,6 +163,7 @@ public class HardwarePixelbot
     public DigitalChannel rPixelGreen = null;
 
     //====== SERVOS FOR PIXEL FINGERS ====================================================================
+    public boolean scorePixelGo = false;
     public AnalogInput pushServoPos = null;
     public Servo  pushServo = null;
     public double PUSH_SERVO_INIT = 0.470;
@@ -903,6 +904,7 @@ public class HardwarePixelbot
     public enum PixelScoreActivity {
         IDLE,
         EXTENDING,
+        HOLDING,
         RELEASING,
         RETRACTING,
         ROTATING
@@ -930,11 +932,7 @@ public class HardwarePixelbot
                 // We have extended to the desired position
                 if((getPushServoAngle() <= PUSH_SERVO_DROP_ANGLE) &&
                         (getWristServoAngle() <= WRIST_SERVO_DROP_ANGLE)) {
-                    // Rotate both fingers to release the pixels
-                    fingerServo1.setPosition(FINGER1_SERVO_DROP);
-                    fingerServo2.setPosition(FINGER2_SERVO_DROP);
-                    pixelScoreTimer.reset();
-                    pixelScoreState = PixelScoreActivity.RELEASING;
+                    pixelScoreState = PixelScoreActivity.HOLDING;
                 }
                 // This is a timeout, can't think of any other error than angle is wrong? I think for
                 // now we proceed as if we extended.
@@ -944,6 +942,14 @@ public class HardwarePixelbot
                     // Rotate both fingers to release the pixels
                     telemetry.update();
                     telemetrySleep();
+                    pixelScoreState = PixelScoreActivity.HOLDING;
+                }
+                break;
+            case HOLDING:
+                // We have extended to the desired position
+                if(scorePixelGo) {
+                    // Rotate both fingers to release the pixels
+                    scorePixelGo = false;
                     fingerServo1.setPosition(FINGER1_SERVO_DROP);
                     fingerServo2.setPosition(FINGER2_SERVO_DROP);
                     pixelScoreTimer.reset();
@@ -951,7 +957,6 @@ public class HardwarePixelbot
                 }
                 break;
             case RELEASING:
-                // We have extended to the desired position
                 if((getFingerServo1Angle() >= FINGER1_SERVO_DROP_ANGLE) &&
                         (getFingerServo2Angle() >= FINGER2_SERVO_DROP_ANGLE)) {
                     // Pull back to the safe/stored position

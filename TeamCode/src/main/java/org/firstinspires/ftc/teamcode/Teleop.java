@@ -174,10 +174,11 @@ public abstract class Teleop extends LinearOpMode {
             ProcessPixelBinFeedback();
             ProcessFingerControls();
             ProcessLiftControls();
-           //ProcessLiftStateMachine();
             ProcessHangControls();
             robot.processPixelGrab();
             robot.processPixelScore();
+            robot.processLiftMove();
+            robot.processLiftStore();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -456,51 +457,7 @@ public abstract class Teleop extends LinearOpMode {
         } // time to do an update cycle
     } // ProcessPixelBinFeedback
 
-    /*---------------------------------------------------------------------------------*/
-    void ProcessFingerControlsOld() {
-
-        // Grab pixels from storage
-        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button (GRAB)
-        if( gamepad2_square_now && !gamepad2_square_last)
-        {
-            // Wrist should already be in the vertical position, but just make sure
-            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-            // Partially extend the wrist assembly to grab the pixels
-            robot.pushServo.setPosition(robot.PUSH_SERVO_GRAB);
-            sleep(500);
-            // Rotate both fingers to grab the pixels
-            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_GRAB);
-            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_GRAB);
-        } // grab
-
-        // Score Pixels
-        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button (SCORE/DROP)
-        else if( gamepad2_triangle_now && !gamepad2_triangle_last)
-        {
-            // Ensure we're lifted before allowing the operator to command SCORE
-            if( robot.viperMotorsPos > robot.VIPER_EXTEND_BIN ) {
-                // Rotate wrist to the scoring position
-                robot.wristServo.setPosition(robot.WRIST_SERVO_DROP);
-                // Fully extend the wrist assembly toward the backdrop
-                // (we should do these automatically once we're above the top of the bin??)
-                robot.pushServo.setPosition(robot.PUSH_SERVO_DROP);
-                // Wait 1 sec so we don't "fling" the pixel against the backdrop
-                sleep(500 );
-                // Release both pixels (this needs work)
-                robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
-                robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
-                // Wait for servos to actually move/release
-                sleep( 350 );
-                // Pull back to the safe/stored position and rotate back vertical
-                robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);
-                sleep( 150 );
-                robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-            }
-        } // score/drop
-
-    } // ProcessFingerControls
     void ProcessFingerControls() {
-
         // Grab pixels from storage
         // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button (GRAB)
         if( gamepad2_square_now && !gamepad2_square_last)
@@ -513,10 +470,11 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {
             robot.startPixelScore();
+        } else if ( !gamepad2_triangle_now && gamepad2_triangle_last ) {
+            robot.scorePixelGo = true;
         } // score/drop
 
     } // ProcessFingerControls
-
 
     /*---------------------------------------------------------------------------------*/
     void ProcessLiftControls() {
@@ -533,27 +491,22 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Move lift to HIGH-SCORING position
-           robot.startViperSlideExtension( robot.VIPER_EXTEND_HIGH );
+           robot.startLiftMove( robot.VIPER_EXTEND_HIGH );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Move lift to MID-SCORING position
-           robot.startViperSlideExtension( robot.VIPER_EXTEND_MID );
+           robot.startLiftMove( robot.VIPER_EXTEND_MID );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Move lift to LOW-SCORING position
-           robot.startViperSlideExtension( robot.VIPER_EXTEND_LOW );
+           robot.startLiftMove( robot.VIPER_EXTEND_LOW );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Move lift to STORED position
-            robot.pushServo.setPosition(robot.PUSH_SERVO_SAFE);  // double check
-            robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
-            robot.fingerServo1.setPosition(robot.FINGER1_SERVO_DROP);
-            robot.fingerServo2.setPosition(robot.FINGER2_SERVO_DROP);
-            sleep(250);
-            robot.startViperSlideExtension( robot.VIPER_EXTEND_ZERO );
+            robot.startLiftStore(  );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -585,15 +538,6 @@ public abstract class Teleop extends LinearOpMode {
         } // manual_lift_control
 
     }  // ProcessLiftControls
-
-    /*---------------------------------------------------------------------------------*/
-    void ProcessLiftStateMachine() {
-
-        if( liftState != LIFT_STATE_IDLE ) {
-
-        }
-
-    } // ProcessLiftStateMachine
 
     /*---------------------------------------------------------------------------------*/
     void ProcessHangControls() {
