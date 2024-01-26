@@ -28,6 +28,7 @@
  */
 
 package org.firstinspires.ftc.teamcode.opmode;
+
 import android.annotation.SuppressLint;
 import android.util.Size;
 
@@ -35,6 +36,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -44,11 +46,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 
 @TeleOp(name = "AprilTag")
 public class AprilTag extends LinearOpMode {
@@ -67,6 +69,9 @@ public class AprilTag extends LinearOpMode {
 
       //The variable to store our instance of the vision portal.
     private VisionPortal visionPortal;
+    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    private double counter = 0;
+    private int startTime;
 
     @Override
     public void runOpMode() {
@@ -82,22 +87,28 @@ public class AprilTag extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            timer.reset();
+            timer.startTime();
 
+            while (opModeIsActive()) {
+                counter++;
+                telemetry.addData(" hz: ", counter/(timer.now(TimeUnit.SECONDS)-timer.startTime()));
+                telemetry.addData(" timer: ", timer.now(TimeUnit.SECONDS)-timer.startTime());
+                telemetry.addData(" counter ", counter);
                 telemetryAprilTag(position);
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
-                }
+//                if (gamepad1.dpad_down) {
+//                    visionPortal.stopStreaming();
+//                } else if (gamepad1.dpad_up) {
+//                    visionPortal.resumeStreaming();
+//                }
 
                 // Share the CPU.
-                sleep(20);
+//                sleep(20);
             }
         }
 

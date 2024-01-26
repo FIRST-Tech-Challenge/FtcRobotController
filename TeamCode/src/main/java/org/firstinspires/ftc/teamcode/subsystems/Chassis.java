@@ -4,14 +4,16 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -20,29 +22,29 @@ public class Chassis implements Subsystem {
 
     private HardwareMap map;
     ElapsedTime time = new ElapsedTime();
-    private final BTposeEstimator m_poseEstimator;
+    private final BTposeEstimator odometry;
     private Telemetry m_telemetry;
-    private final MotorEx motor_FL;
-    private final MotorEx motor_FR;
-    private final MotorEx motor_BL;
-    private final MotorEx motor_BR;
-    private final MotorEx encoderLeft;
-    private final MotorEx encoderRight;
-    private final MotorEx encoderCenter;
-    private Supplier<Pose2d> m_postitionFromTag;
-//    HolonomicOdometr odometry;
-    public Chassis(HardwareMap map, Telemetry telemetry, Supplier<Pose2d> positionFromTag){
+
+    private MotorEx motor_FL;
+    private MotorEx motor_FR;
+    private MotorEx motor_BL;
+    private MotorEx motor_BR;
+    private Motor encoderLeft;
+    private Motor encoderRight;
+    private Motor encoderCenter;
+    private Pose2d m_postitionFromTag;
+    public Chassis(HardwareMap map, Telemetry telemetry, Supplier<Integer> poseL, Supplier<Integer> poseR){
         this.map=map;
         this.m_telemetry=telemetry;
-        this.m_postitionFromTag = positionFromTag;
         motor_FL = new MotorEx(map, "motor_FL");
         motor_FR = new MotorEx(map, "motor_FR");
         motor_BL = new MotorEx(map, "motor_BL");
         motor_BR = new MotorEx(map, "motor_BR");
         encoderLeft = new MotorEx(map, "left odometer");
         encoderRight = new MotorEx(map, "right odometer");
-        encoderCenter = new MotorEx(map, "right odometer");
-        m_poseEstimator = new BTposeEstimator(
+
+        encoderCenter = new MotorEx(map, "center odometer");
+         odometry = new BTposeEstimator(
                 () -> encoderLeft.getCurrentPosition() * Constants.TICKS_TO_CM,
                 () -> encoderRight.getCurrentPosition() * Constants.TICKS_TO_CM,
                 () -> encoderCenter.getCurrentPosition() * Constants.TICKS_TO_CM,
@@ -70,14 +72,21 @@ public class Chassis implements Subsystem {
             setMotors(v1, v2, v3, v4);
         },this);
     }
+
+
     @Override
     public void periodic() {
-        m_poseEstimator.updatePose();
-        if (Constants.TimeToAprilTagCheck > time.seconds()) {
-            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag.get());
-            time.reset();
-        }
+
+        odometry.updatePose();
+//        if (Constants.TimeToAprilTagCheck > time.seconds()) {
+//            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
+//            time.reset()
+//
+//        }
+        m_telemetry.addData("pose x: ", odometry.getPose());
+        m_telemetry.addData("pose y: ", odometry.getPose());
     }
+
     @Override
     public void setDefaultCommand(Command defaultCommand) {
         Subsystem.super.setDefaultCommand(defaultCommand);

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 @TeleOp(name = "teleOp")
 public class teleOp extends OpMode {
     Telemetry telemetry;
-    RobotContainer robot =new RobotContainer(hardwareMap, telemetry, gamepad1,gamepad2);
+    RobotContainer robot =new RobotContainer(hardwareMap, telemetry);
     AnalogInput input;
     @Override
     public void init() {
