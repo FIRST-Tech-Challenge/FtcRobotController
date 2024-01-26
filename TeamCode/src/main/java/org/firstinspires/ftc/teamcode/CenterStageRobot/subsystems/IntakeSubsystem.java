@@ -36,13 +36,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        telemetry.addData("Amps: ", getCurrent());
-        if(isStalled()) {
-            telemetry.addData("Stalled", "");
-            isStalled = false;
-        } else {
-            telemetry.addData("not Stalled", "");
-        }
+//        telemetry.addData("Amps: ", getCurrent());
+//        if(isStalled()) {
+//            telemetry.addData("Stalled", "");
+//            isStalled = false;
+//        } else {
+//            telemetry.addData("not Stalled", "");
+//        }
 
         if(getCurrent() > ampThreshold && !timer.isTimerOn()) {
             timer.start();

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -22,6 +23,8 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusyste
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.Extra.CommandAction;
 import org.firstinspires.ftc.teamcode.Extra.CommandGroupBaseAction;
+import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
+import org.inventors.ftc.robotbase.hardware.Camera;
 
 import java.util.function.DoubleSupplier;
 
@@ -40,16 +43,19 @@ public class CenterStageAutonomous extends LinearOpMode {
     public RoadRunnerSubsystem.Randomizer randomizer;
     public TrajectoryActionBuilder ToPixel, ToBackdrop;
 
-    protected static double starting_pos_error_X = 1;//inch0
-    protected static double starting_pos_error_Y = 1;//inch
-
+    protected static double starting_pos_error_X = 0;//inch
+    protected static double starting_pos_error_Y = 0;//inch
+    protected static RoadRunnerSubsystem.Alliance alliance = RoadRunnerSubsystem.Alliance.RED;
     protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error_X,0 - (RR.RobotX/2),Math.toRadians(180));
     protected Pose2d homePose_HIGH_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2),(RR.Tile * 1.5),Math.toRadians(180));
+    protected Pose2d homePose_LOW_BLUE = new Pose2d(3 * RR.Tile - (RR.RobotY/2) - starting_pos_error_X, RR.TileInverted + (RR.RobotX/2), Math.toRadians(0));
 
+    protected Camera camera;
+    protected FtcDashboard dashboard;
     @Override
     public void runOpMode() {
         drive = new MecanumDrive(hardwareMap, homePose_LOW_RED);
-        RR = new RoadRunnerSubsystem(drive, RoadRunnerSubsystem.Alliance.RED, RoadRunnerSubsystem.Start.LOW,
+        RR = new RoadRunnerSubsystem(drive, alliance, RoadRunnerSubsystem.Start.LOW,
                 RoadRunnerSubsystem.Corridor.INNER, RoadRunnerSubsystem.Corridor.INNER,
                 RoadRunnerSubsystem.Station.INNER, RoadRunnerSubsystem.Parking.OUTER);
 
@@ -61,11 +67,33 @@ public class CenterStageAutonomous extends LinearOpMode {
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
         pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
+        dashboard = FtcDashboard.getInstance();
+        if (alliance == RoadRunnerSubsystem.Alliance.BLUE) {
+            camera = new Camera(hardwareMap, dashboard, telemetry, TeamPropDetectionPipeline.Alliance.BLUE);
+        } else {
+            camera = new Camera(hardwareMap, dashboard, telemetry, TeamPropDetectionPipeline.Alliance.RED);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         waitForStart();
 
         ////////////////////////////////////////////////////////////////////////////////////////////
+
+        randomizer = RoadRunnerSubsystem.Randomizer.values()[camera.getTeamPropPos()];
+
+        telemetry.addData("Team Prop Position", camera.getTeamPropPos());
+        telemetry.addData("Randomizer", randomizer);
+        telemetry.update();
+
+        if(alliance == RoadRunnerSubsystem.Alliance.BLUE){
+            if (randomizer == RoadRunnerSubsystem.Randomizer.LEFT){
+                randomizer = RoadRunnerSubsystem.Randomizer.RIGHT;
+            }
+            else if (randomizer == RoadRunnerSubsystem.Randomizer.RIGHT){
+                randomizer = RoadRunnerSubsystem.Randomizer.LEFT;
+            }
+        }
 
         ToPixel = RR.RobotToBackdrop(randomizer).first;
         ToBackdrop = RR.RobotToBackdrop(randomizer).second;

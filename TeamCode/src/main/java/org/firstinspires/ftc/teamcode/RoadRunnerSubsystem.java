@@ -9,7 +9,9 @@ import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PosePath;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 
@@ -64,10 +66,10 @@ public class RoadRunnerSubsystem {
     protected static int TileInverted = -24; //inch
     protected static int RobotX = 13; //inch
     protected static int RobotY = 14; //inch
-    protected static double BackdropDistance = 10.5; //inch
-    protected static double BackdropDistance_FIRST = 11; //inch
-    protected static int StationDistance = 9; //inch
-    protected static int StationDistance_SMALL = 5; //inch
+    protected static double BackdropDistance = 6.5; //inch
+    protected static double BackdropDistance_FIRST = 6; //inch
+    protected static int StationDistance = 5; //inch
+    protected static int StationDistance_SMALL = 4; //inch
     protected static int Invert = 1; //false
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -139,8 +141,8 @@ public class RoadRunnerSubsystem {
         //////////// SOS WHEN INVERTED : TRUE -> RIGHT LEFT PIXEL ARE INVERTED /////////////
         ////////////////////////////////////////////////////////////////////////////////////
 
-        Vector2d leftPixel_LOW = new Vector2d(1.25 * TileInverted * Invert - (RobotX/2 * Invert), 0 - (RobotY/2));
-        Vector2d rightPixel_LOW = new Vector2d(1.25 * TileInverted * Invert - (RobotX/2 * Invert), TileInverted + (RobotY/2));
+        Vector2d leftPixel_LOW = new Vector2d(1.5 * TileInverted * Invert - (RobotX/2 * Invert), 2 - (RobotY/2));
+        Vector2d rightPixel_LOW = new Vector2d(1.5 * TileInverted * Invert - (RobotX/2 * Invert), TileInverted + (RobotY/2));
 
         Vector2d leftPixel_HIGH = new Vector2d(1.25 * TileInverted - (RobotX/2), 2 * Tile - (RobotY/2));
         Vector2d rightPixel_HIGH = new Vector2d(1.25 * TileInverted - (RobotX/2), Tile + (RobotY/2));
@@ -165,10 +167,8 @@ public class RoadRunnerSubsystem {
         ////////////////////////////////////////////////////////////////////////////////////
 
         test = driveR.actionBuilder(driveR.pose)
-                .lineToX((2 * TileInverted * Invert) - (RobotY/2 * Invert))
-                .splineTo(leftPixel_LOW, Math.PI/2)
-                .lineToY(middle_LOW.position.y)
-                .turnTo(Math.toRadians(180))
+                .setTangent(45)
+                .splineToLinearHeading(station_INNER, 0)
                 .build();
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ public class RoadRunnerSubsystem {
         LOW_HomeToPixel_LEFT = driveR.actionBuilder(driveR.pose)
                 .setTangent(-45)
                 .splineToConstantHeading(new Vector2d((2 * TileInverted * Invert) - (RobotY/2 * Invert), TileInverted/2), 0)
-                .splineTo(leftPixel_LOW, Math.PI/2)
+                .splineTo(leftPixel_LOW, Math.PI/2 * Invert)
                 .lineToY(middle_LOW.position.y)
                 .turnTo(Math.toRadians(180));
 
@@ -189,7 +189,7 @@ public class RoadRunnerSubsystem {
         LOW_HomeToPixel_RIGHT = driveR.actionBuilder(driveR.pose)
                 .setTangent(-45)
                 .splineToConstantHeading(new Vector2d((2 * TileInverted * Invert) - (RobotY/2 * Invert), TileInverted/2), 0)
-                .splineTo(rightPixel_LOW, -(Math.PI)/2)
+                .splineTo(rightPixel_LOW, -(Math.PI)/2 * Invert)
                 .lineToY(middle_LOW.position.y)
                 .turnTo(Math.toRadians(180));
 
@@ -233,7 +233,7 @@ public class RoadRunnerSubsystem {
 
         HIGH_ToBackdrop_MID = driveR.actionBuilder(middle_HIGH)
                 .strafeTo(station_OUTER.component1())
-                .turnTo(-(Math.PI)/2)
+                .turn(Math.toRadians(-90))
                 .strafeTo(new Vector2d(2.5 * TileInverted * Invert, TileInverted/2))
                 .strafeToLinearHeading(backdrop.component1(), Math.PI/2);
 
@@ -256,10 +256,10 @@ public class RoadRunnerSubsystem {
 
         BackdropToStation_INNER = driveR.actionBuilder(backdrop_MID)
                 .splineToLinearHeading(new Pose2d(station_INNER.position.x, 1.2 * TileInverted, Math.PI/2), Math.PI/2)
-                .strafeTo(station_INNER.component1());
+                .strafeTo(station_INNER.component1(), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-80, 90));
 
         StationToBackdrop_INNER = driveR.actionBuilder(station_INNER)
-                .strafeTo(new Vector2d(station_INNER.position.x, 1.2 * TileInverted))
+                .strafeTo(new Vector2d(station_INNER.position.x, 1.2 * TileInverted), new TranslationalVelConstraint(100), new ProfileAccelConstraint(-80, 90))
                 .strafeTo(backdrop_MID.component1());
 
         BackdropToStation_OUTER = driveR.actionBuilder(backdrop_MID)

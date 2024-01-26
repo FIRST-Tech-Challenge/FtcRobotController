@@ -74,15 +74,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        feedforwardCalc = feedforward.calculate(motors.getVelocity());
-        telemetry.addData("Height", getHeight());
-        telemetry.addData("Stick", leftY.getAsDouble());
-        if (isAuto) {
-            telemetry.addData("Auto", "");
-        } else {
-            telemetry.addData("Manual", "");
-        }
-        telemetry.update();
+////        feedforwardCalc = feedforward.calculate(motors.getVelocity());
+//        telemetry.addData("Height", getHeight());
+//        telemetry.addData("Stick", leftY.getAsDouble());
+//        if (isAuto) {
+//            telemetry.addData("Auto", "");
+//        } else {
+//            telemetry.addData("Manual", "");
+//        }
+//        telemetry.update();
     }
 
     public void run() {
