@@ -1,0 +1,10 @@
+Motors:
+control hub:
+3:frontRight
+2:backRight
+1:slideRight
+
+expansion hub:
+0:frontLeft
+1:backLeft
+2:slideLeft
