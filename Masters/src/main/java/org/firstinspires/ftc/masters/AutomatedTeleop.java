@@ -339,7 +339,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     break;
                 case Transfer:
                     //is there a reason we would ever want to close the claw here?
-                    if (gamepad1.a && outtakeState == OuttakeState.ReadyToTransfer) {
+                    if (gamepad1.a) {
                         clawPosition = ClawPosition.TRANSFER;
                         clawServo.setPosition(CSCons.clawTransfer);
                     }
@@ -429,7 +429,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
                     break;
                 case MoveToTransfer:
-                    if (backSlides.getCurrentPosition()<30){
+                    if (backSlides.getCurrentPosition()<50){
                         outtakeHook.setPosition(CSCons.openHook);
                         outtakeState= OuttakeState.ReadyToTransfer;
                         target =0;
@@ -511,13 +511,16 @@ public class AutomatedTeleop extends LinearOpMode {
                     break;
             }
 
-
+            if (gamepad1.a ) {
+                clawPosition = ClawPosition.TRANSFER;
+                clawServo.setPosition(CSCons.clawTransfer);
+            }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
             telemetry.addData("left x", gamepad1.left_stick_x);
             telemetry.addData("right x", gamepad1.right_stick_x);
             telemetry.addData("Arm", clawArm.getPosition());
-            telemetry.addData("backSlides", target);
+            telemetry.addData("backSlides", backSlides.getCurrentPosition()) ;
             telemetry.addData("intakeSides", intakeSlides.getCurrentPosition());// 1725, 2400,
             telemetry.addData("time", runtime.time());
 //            telemetry.addData("Sensed Red", colorSensor.red());
