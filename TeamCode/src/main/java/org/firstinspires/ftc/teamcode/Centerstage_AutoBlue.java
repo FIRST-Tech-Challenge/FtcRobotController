@@ -105,8 +105,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 if (xValue < borderLine) {
                     // center
                     telemetry.addData("position", "Center");
-                    // drives robot to the center position.
-                    //gobbler.driveTrain.centerPos();
                     desiredTag = 2;
                     seen = true;
                 }
@@ -116,8 +114,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 else if (xValue > borderLine) {  //
                     // right
                     telemetry.addData("position", "Right");
-                    // drives robot to the right position.
-                    //gobbler.driveTrain.rightPos();
                     desiredTag = 1;
                     seen = true;
 
@@ -126,8 +122,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // If the team prop is not seen on the center or right, it will assume it is on the left.
             if (!seen) {
                 telemetry.addData("position", "Left");
-                // drives robot to the left position.
-                //gobbler.driveTrain.leftPos();
                 desiredTag = 3;
             }
 
@@ -139,12 +133,24 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (opModeIsActive()) {
 
+            if (desiredTag == 2) { // drives robot to the center position.
+                gobbler.driveTrain.centerPos();
+            }
+
+            else if (desiredTag == 1) { // drives robot to the right position.
+                gobbler.driveTrain.rightPos();
+            }
+
+            else { // drives robot to the left position.
+                gobbler.driveTrain.leftPos();
+            }
                 // Place first pixel
+            /*
                 gobbler.driveTrain.Wait(0.5);
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
                 gobbler.driveTrain.Wait(2);
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
-
+*/
                 // Push telemetry to the Driver Station.
                 telemetry.update();
                 gobbler.driveTrain.Wait(3.0);
