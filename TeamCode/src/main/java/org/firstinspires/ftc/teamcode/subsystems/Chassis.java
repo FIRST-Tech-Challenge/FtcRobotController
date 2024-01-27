@@ -47,10 +47,10 @@ public class Chassis implements Subsystem {
         register();
         this.map = map;
         this.m_telemetry = telemetry;
-        motor_FL = new MotorEx(map, "motor_FL");
-        motor_FR = new MotorEx(map, "motor_FR");
-        motor_BL = new MotorEx(map, "motor_BL");
-        motor_BR = new MotorEx(map, "motor_BR");
+        motor_FL = new MotorEx(map, "motor_FL");//1
+        motor_FR = new MotorEx(map, "motor_FR");//2
+        motor_BL = new MotorEx(map, "motor_BL");//0
+        motor_BR = new MotorEx(map, "motor_BR");//3
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -65,6 +65,7 @@ public class Chassis implements Subsystem {
                 () -> -metersFormTicks(leftEncoder.getPosition()),
                 () -> metersFormTicks(rightEncoder.getPosition()),
                 () -> metersFormTicks(horizontalEncoder.getCurrentPosition()),
+                () -> gyro.getHeading(),
                 TRACKWIDTH, WHEEL_OFFSET);
     }
 
@@ -109,6 +110,8 @@ public class Chassis implements Subsystem {
 //        }
         m_telemetry.addData("pose x: ", odometry.getPose().getX());
         m_telemetry.addData("pose y: ", odometry.getPose().getY());
+        m_telemetry.addData("pose angle: ", odometry.getPose().getRotation().getDegrees());
+        m_telemetry.addData("gyro angle: ", gyro.getHeading());
         m_telemetry.update();
     }
 

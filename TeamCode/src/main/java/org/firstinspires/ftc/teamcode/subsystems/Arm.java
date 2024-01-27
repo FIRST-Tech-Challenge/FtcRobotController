@@ -24,8 +24,7 @@ public class Arm {
         this.m_telemetry=telemetry;
         this.arm1 = arm1;
         this.arm2 = arm2;
-        servo = new SimpleServo(map, "motor_FL", 0, 280) {
-        };
+        servo = new SimpleServo(map, "armServo", 0, 280);
 
     }
 

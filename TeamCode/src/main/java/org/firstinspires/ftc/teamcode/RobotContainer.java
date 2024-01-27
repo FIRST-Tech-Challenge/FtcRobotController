@@ -27,15 +27,15 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     MotorEx armM1encoderR;
 
     public RobotContainer(HardwareMap map, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
-        armM1encoderR = new MotorEx(map, "ArmM1encoderR");
-        armM2encoderL = new MotorEx(map, "ArmM2encoderL");
+        armM1encoderR = new MotorEx(map, "ArmM1encoderR");//3
+        armM2encoderL = new MotorEx(map, "ArmM2encoderL");//0
         m_controller = new BTController(gamepad1);
 
         //      m_gripper = new Gripper(map,telemetry);
         m_chassis = new Chassis(map, telemetry, armM2encoderL.encoder, armM1encoderR.encoder);
 //        m_plane = new plane(map, telemetry);
 //        m_climb = new climb(map, telemetry);
-        m_arm= new Arm(map, telemetry,armM2encoderL,armM1encoderR);
+//        m_arm= new Arm(map, telemetry,armM2encoderL,armM1encoderR);
 
 
         bindCommands();
