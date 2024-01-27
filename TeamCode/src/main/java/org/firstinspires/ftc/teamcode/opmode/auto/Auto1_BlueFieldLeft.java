@@ -47,7 +47,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
  * Autonomous operation class for 'BlueFieldLeft' scenario.
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
-@Autonomous(name="BlueFieldLeft", group="OpMode",preselectTeleOp = "GGE Drive T2")
+@Autonomous(name="BlueFieldLeft", group="OpMode",preselectTeleOp = "GGE Odometry TeleOp")
 //@Disabled
 public class Auto1_BlueFieldLeft extends AutoBase {
 
@@ -177,7 +177,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Complete the auto by dropping the game piece and going to park
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 //Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -204,7 +204,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -228,7 +228,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
                 // Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward

@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
 
-@Autonomous(name="Blue53Right", group="OpMode",preselectTeleOp = "GGE Drive T2")
+@Autonomous(name="Blue53Right", group="OpMode",preselectTeleOp = "GGE Odometry TeleOp")
 //@Disabled
 public class Auto2_Blue53Right extends AutoBase {
 
