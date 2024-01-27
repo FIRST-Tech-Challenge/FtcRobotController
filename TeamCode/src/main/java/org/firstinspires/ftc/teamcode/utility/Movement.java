@@ -386,7 +386,7 @@ public class Movement {
         } else if (tagNumber == 3 || tagNumber == 6) {
             targetX = -0.5;
         }
-        double targetY = 10;
+        double targetY = 8.5;
         double targetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU

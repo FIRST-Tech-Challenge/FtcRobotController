@@ -192,8 +192,6 @@ public class Auto2_Blue53Right extends AutoBase {
 
             // Complete the auto by dropping the game piece and going to park
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 2) {
-                //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -202,22 +200,20 @@ public class Auto2_Blue53Right extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves left 30 inches
                 moveTo.Left((int) ((26 * ticksPerInch) * 1.04), 0.4);
                 //Move back 6 more inches after the April Tag positioning completes.
                 moveTo.Backwards((int) ((6 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
-                //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -226,22 +222,20 @@ public class Auto2_Blue53Right extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves left 26 inches
                 moveTo.Left((int) ((20 * ticksPerInch) * 1.04), 0.4);
                 // Move back 6 inches
                 moveTo.Backwards((int) ((6 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
-                //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -250,14 +244,14 @@ public class Auto2_Blue53Right extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves left 20 inches
                 moveTo.Left((int) ((15 * ticksPerInch) * 1.04), 0.4);
                 //Move back 6 more inches after the April Tag positioning completes.
