@@ -76,6 +76,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     // Variable that will later be used for placing the second pixel.
     int desiredTag = 0;
 
+
     /**
      * //The variable to store our instance of the TensorFlow Object Detection processor.
      */
@@ -98,7 +99,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             for (Recognition recognition : currentRecognitions) {
                 double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-                double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
                 // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
                 // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
@@ -113,7 +113,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
                 // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                else if (xValue > 450) {
+                else if (xValue > 450) {  //
                     // right
                     telemetry.addData("position", "Right");
                     // drives robot to the right position.
@@ -138,51 +138,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         }
 
         if (opModeIsActive()) {
-            List<Recognition> currentRecognitions = tfod.getRecognitions();
-            // Commented out the line of code below since it was defined in the lines above.
-            //currentRecognitions = tfod.getRecognitions();
-            for (Recognition recognition : currentRecognitions) {
-                double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-                double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
 
-                // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file.
-
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
-                        // center
-                        telemetry.addData("position","Center");
-                        // drives robot to the center position.
-                        gobbler.driveTrain.centerPos();
-                        desiredTag = 2;
-                        seen = true;
-                }
-
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
-                        // right
-                        telemetry.addData("position","Right");
-                        // drives robot to the right position.
-                        gobbler.driveTrain.rightPos();
-                        desiredTag = 1;
-                        seen = true;
-
-                }
-
-            }
-
-            // If the team prop is not seen on the center or right, it will assume it is on the left.
-             if (!seen) {
-                 telemetry.addData("position","Left");
-                 // drives robot to the left position.
-                 gobbler.driveTrain.leftPos();
-                 desiredTag = 3;
-             }
-
-                telemetryTfod();
-
-//              Place first pixel
+                // Place first pixel
                 gobbler.driveTrain.Wait(0.5);
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
                 gobbler.driveTrain.Wait(2);
