@@ -89,9 +89,9 @@ public class PIDController {
             final double IN_TO_TICK = TICKS_PER_REV / wheelCircIn;
 
             if (inches >= 0) {
-                return inches * IN_TO_TICK - 90;
+                return inches * IN_TO_TICK;
             } else {
-                return inches * IN_TO_TICK + 90;
+                return inches * IN_TO_TICK;
             }
         } else {
             return inches * 51;

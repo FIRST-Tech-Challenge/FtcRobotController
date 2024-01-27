@@ -940,10 +940,12 @@ public class Robot {
                 }
                 setHeading(0, 0.7);
                 straightBlocking2(-30);
+                setHeading(0, 0.7);
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
+                /*
                 straightBlocking2(10);
                 setHeading(0, 0.7);
                 if (isRedAlliance) {
@@ -965,6 +967,7 @@ public class Robot {
                     mecanumBlocking2(horizontal7);
                 }
                 setHeading(90 * polarity, 0.7);
+                */
                 break;
             }
         }
@@ -1681,6 +1684,7 @@ public class Robot {
         double power;
         double ERROR_TOLERANCE_IN_TICKS = 30;
         int counter = 0;
+        double finalError = targetPos - currentPos;
 
         while (opMode.opModeIsActive() && counter < 3) {
             if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS) {
@@ -1694,6 +1698,9 @@ public class Robot {
             setMotorPower(power, power, power, power);
         }
 
+        currentPos = fLeft.getCurrentPosition();
+        finalError = targetPos - currentPos;
+        Log.d("new pid", "straightBlocking2: final error is " + finalError);
         setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
