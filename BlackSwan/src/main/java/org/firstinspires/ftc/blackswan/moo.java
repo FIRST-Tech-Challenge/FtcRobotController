@@ -52,14 +52,21 @@ public class moo extends LinearOpMode {
         slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         clawUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+//        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         double servoPosition = 0.5;
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        turnClaw.setPosition(0.3);
+        turnClaw.setPosition(0.47);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
+
+        armQuickPosition = 0;
 
         waitForStart();
 
@@ -76,7 +83,7 @@ public class moo extends LinearOpMode {
             telemetry.addData("claw up", clawUp.getCurrentPosition());
 
             if (armQuickPosition == 0) {
-                target = -100;
+                target = 25;
             } else if (armQuickPosition == 1) {
                 target = 300;
             }
@@ -85,6 +92,8 @@ public class moo extends LinearOpMode {
                 armQuickPosition = 0;
             } else if(gamepad2.dpad_up){
                 armQuickPosition = 1;
+            } else if (gamepad2.dpad_left){
+                turnClaw.setPosition(0.6);
             }
             double drivePower = -gamepad1.left_stick_y*0.8;
             double rotatePower = gamepad1.right_stick_x*0.8;
@@ -145,7 +154,7 @@ public class moo extends LinearOpMode {
 
 
             if (gamepad2.x) {
-                turnClaw.setPosition(0.5);
+                turnClaw.setPosition(0.46);
             }
             if (gamepad2.y) {
                 turnClaw.setPosition(0.3);
