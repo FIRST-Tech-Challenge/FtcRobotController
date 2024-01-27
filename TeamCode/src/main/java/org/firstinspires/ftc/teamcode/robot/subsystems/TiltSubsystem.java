@@ -24,11 +24,28 @@ public class TiltSubsystem extends SubsystemBase
     private double targetAngle = -90;
     //target angle from vertical with positive angles being towards the front of the robot (deposit) and negative towards the back (intake)
 
+<<<<<<< Updated upstream
     private static double KP = 0.004, KI = 0.0, kD = 0.0008;
     private static double KF = 0.3;
     private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
     private static double TOLERANCE = 20;
     private static int VERTICAL_ENCODER_VALUE = 675;
+=======
+<<<<<<< Updated upstream
+    private static double KP = 0.0, KI = 0.0, kD = 0.0, KF = 0.0;
+    private static double TICKS_IN_DEGREE = 700/180.0;
+
+    private static double TOLERANCE = 10;
+
+    private static double VERTICAL_ENCODER_VALUE = 300;
+=======
+    private static double KP = 0.004, KI = 0.0, kD = 0.0008;
+    private static double KF = 0.3;
+    private static double TICKS_IN_DEGREE = (1.75*1425.1)/360.0;
+    private static double TOLERANCE = 150;
+    private static int VERTICAL_ENCODER_VALUE = 675;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     // vertical position of tilt when encoders are reset in the starting position
 
     private PIDController pid = new PIDController(KP, KI, kD);
