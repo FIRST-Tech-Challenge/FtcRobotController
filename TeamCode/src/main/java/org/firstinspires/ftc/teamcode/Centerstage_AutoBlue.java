@@ -75,7 +75,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     // Variable that will later be used for placing the second pixel.
     int desiredTag = 0;
-
+    int borderLine = 450;
 
     /**
      * //The variable to store our instance of the TensorFlow Object Detection processor.
@@ -102,7 +102,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
                 // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                if (xValue < 450) {
+                if (xValue < borderLine) {
                     // center
                     telemetry.addData("position", "Center");
                     // drives robot to the center position.
@@ -113,7 +113,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
                 // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
                 // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                else if (xValue > 450) {  //
+                else if (xValue > borderLine) {  //
                     // right
                     telemetry.addData("position", "Right");
                     // drives robot to the right position.
