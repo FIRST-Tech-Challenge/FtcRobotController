@@ -94,7 +94,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         initTfod();
 
         while (!isStarted() && !isStopRequested()) {
-            seen = false;
+            seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             for (Recognition recognition : currentRecognitions) {
                 double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
