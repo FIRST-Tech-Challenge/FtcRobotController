@@ -126,6 +126,10 @@ public class CenterStageBackdropBlue extends LinearOpMode {
 
         drive.closeClaw();
 
+        propPos = myPipeline.position;
+        telemetry.addData("Position", propPos);
+        telemetry.update();
+
         waitForStart();
 
         drive.closeClaw();
