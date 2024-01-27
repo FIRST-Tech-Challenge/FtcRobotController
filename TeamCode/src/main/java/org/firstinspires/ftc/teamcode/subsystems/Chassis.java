@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -23,6 +25,7 @@ import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
 
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
+import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -30,6 +33,7 @@ import java.util.function.Supplier;
 public class Chassis implements Subsystem {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    private PIDFController m_pidcontroller;
     private double prevTime = 0;
     private Transform2d velocity, prevVelocity, acceleration, prevAcceleration;
     private Pose2d prevPos;
@@ -74,6 +78,7 @@ public class Chassis implements Subsystem {
         time.reset();
         time.startTime();
         prevTime = time.time();
+      m_pidcontroller = new PIDFController(kp,ki,kd,kff);
     }
 
     public void setMotors(double FL, double FR, double BL, double BR) {
@@ -98,7 +103,8 @@ public class Chassis implements Subsystem {
             m_telemetry.update();
             Translation2d vector = new Translation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             Translation2d rotated = vector.rotateBy(Rotation2d.fromDegrees(-gyro.getHeading()));
-            drive(rotated.getY(), rotated.getX(), retaliation.getAsDouble());
+            double fixedRot= m_pidcontroller.calculate(odometry.getPose().getHeading(),retaliation.getAsDouble());
+            drive(rotated.getY(), rotated.getX(), fixedRot);
         }, this);
     }
 
@@ -109,7 +115,7 @@ public class Chassis implements Subsystem {
     @Override
     public void periodic() {
 
-
+        m_pidcontroller.setPIDF(kp,ki,kd,kff);
         odometry.updatePose();
 
         dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
@@ -164,4 +170,5 @@ public class Chassis implements Subsystem {
 
         setMotors(v1, v2, v3, v4);
     }
+
 }

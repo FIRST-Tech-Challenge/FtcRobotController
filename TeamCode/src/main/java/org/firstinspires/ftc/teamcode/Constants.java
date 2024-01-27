@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+
 public class Constants {
     public static final double l1ff = 1;// com distant from axis first arm METERS
     public static final double l2ff = 0.70;// com distant from axis second arm METERS
@@ -17,6 +19,8 @@ public class Constants {
     public static final double motorMaxVolt = 12;
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
+
+
     public static class ChassisConstants {
         public static final double odometryWheelRadius = 0.0176; //meters
         public static final int tickPerRevolution = 8192;
@@ -24,6 +28,13 @@ public class Constants {
         public static final double TRACKWIDTH = 1;
         public static final double WHEEL_OFFSET = 1;
         public static final double TICKS_TO_CM = 38.862;
+        @Config
+        public static class PIDConstants {
+            public static double kp = 0;
+            public static double ki = 0;
+            public static double kd = 0;
+            public static double kff = 0;
+        }
     }
 
 

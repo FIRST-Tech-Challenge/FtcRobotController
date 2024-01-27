@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.teamcode.utils.geometry;
 
-import com.arcrobotics.ftclib.geometry.Twist2d;
-
-/**
- * a heading angle. Look at {@link Vector2d} for information on what
- * some of these methods do.
- */
 public class Pose2d {
     private final Translation2d m_translation;
     private final Rotation2d m_rotation;
