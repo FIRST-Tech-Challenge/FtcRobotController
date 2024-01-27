@@ -129,7 +129,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
             // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300) {
+            // else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300)
+            else if (xValue > 450) {
                 // right
                 telemetry.addData("position", "Right");
                 // drives robot to the right position.
