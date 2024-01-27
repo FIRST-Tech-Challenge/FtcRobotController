@@ -141,8 +141,8 @@ public abstract class AutoBase extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         wrist.setDirection(DcMotor.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
