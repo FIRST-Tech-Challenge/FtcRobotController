@@ -139,6 +139,8 @@ public class ConceptDoubleVision extends LinearOpMode {
         // -----------------------------------------------------------------------------------------
 
         aprilTag = new AprilTagProcessor.Builder()
+                .setDrawCubeProjection(true)
+                .setDrawAxes(true)
             .build();
 
         // -----------------------------------------------------------------------------------------
