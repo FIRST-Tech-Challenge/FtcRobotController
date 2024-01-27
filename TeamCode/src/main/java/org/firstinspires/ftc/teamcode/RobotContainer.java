@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Chassis;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
-import org.firstinspires.ftc.teamcode.subsystems.arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.climb;
 import org.firstinspires.ftc.teamcode.subsystems.plane;
 import org.firstinspires.ftc.teamcode.utils.BTController;
@@ -22,23 +22,23 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     Gripper m_gripper;
     plane m_plane;
     climb m_climb;
-    arm m_arm;
-    MotorEx motorL;
-    MotorEx motorR;
+    Arm m_arm;
+    MotorEx armM2encoderL;
+    MotorEx armM1encoderR;
 
     public RobotContainer(HardwareMap map, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
-        motorR = new MotorEx(map, "encoderRight");
-        motorL = new MotorEx(map, "encoderLeft");
+        armM1encoderR = new MotorEx(map, "ArmM1encoderR");
+        armM2encoderL = new MotorEx(map, "ArmM2encoderL");
         m_controller = new BTController(gamepad1);
 
         //      m_gripper = new Gripper(map,telemetry);
-        m_chassis = new Chassis(map, telemetry, motorL.encoder, motorR.encoder);
+        m_chassis = new Chassis(map, telemetry, armM2encoderL.encoder, armM1encoderR.encoder);
 //        m_plane = new plane(map, telemetry);
 //        m_climb = new climb(map, telemetry);
-//        m_arm= new arm(map, telemetry);
+        m_arm= new Arm(map, telemetry,armM2encoderL,armM1encoderR);
 
 
-//        bindCommands();
+        bindCommands();
     }
 
     //bind commands to trigger

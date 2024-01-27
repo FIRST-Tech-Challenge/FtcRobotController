@@ -18,10 +18,8 @@ public class Constants {
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
     public static class ChassisConstants {
-        public static final double odometryWheelRadius = 0.17; //meters
+        public static final double odometryWheelRadius = 0.0176; //meters
         public static final int tickPerRevolution = 8192;
-
-
         public static final double TimeToAprilTagCheck = 1;
         public static final double TRACKWIDTH = 1;
         public static final double WHEEL_OFFSET = 1;
