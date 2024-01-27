@@ -1,30 +1,44 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import static org.firstinspires.ftc.teamcode.Constants.*;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
-
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
+import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Chassis implements Subsystem {
 
     private HardwareMap map;
+    private  BTposeEstimator odometry;
     private Telemetry m_telemetry;
     private MotorEx motor_FL;
     private MotorEx motor_FR;
     private MotorEx motor_BL;
     private MotorEx motor_BR;
     private RevIMU gyro;
-    public Chassis(HardwareMap map, Telemetry telemetry){
+    private Motor leftEncoder;
+    private Motor rightEncoder;
+    private Motor horizontalEncoder;
+    private Pose2d m_postitionFromTag;
+    public Chassis(HardwareMap map, Telemetry telemetry, Supplier<Integer> poseL, Supplier<Integer> poseR){
         this.map=map;
         this.m_telemetry=telemetry;
         motor_FL = new MotorEx(map, "motor_FL");
@@ -37,6 +51,17 @@ public class Chassis implements Subsystem {
         gyro = new RevIMU(map, "imu");
         gyro.init(parameters);
         gyro.reset();
+        leftEncoder = new MotorEx(map, "encoderLeft");
+        rightEncoder = new MotorEx(map, "encoderRight");
+        horizontalEncoder = new MotorEx(map, "encoderCenter");
+        horizontalEncoder.resetEncoder();
+        leftEncoder.resetEncoder();
+        rightEncoder.resetEncoder();
+         odometry = new BTposeEstimator(
+                () -> metersFormTicks(leftEncoder.getCurrentPosition()) ,
+                () -> metersFormTicks(rightEncoder.getCurrentPosition()),
+                () -> metersFormTicks(horizontalEncoder.getCurrentPosition()),
+                TRACKWIDTH, WHEEL_OFFSET);
     }
     public void setMotors (double FL, double FR, double BL, double BR){
         motor_FR.set(FR);
@@ -68,11 +93,25 @@ public class Chassis implements Subsystem {
     }
     @Override
     public void periodic() {
+
+        odometry.updatePose();
+//        if (Constants.TimeToAprilTagCheck > time.seconds()) {
+//            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
+//            time.reset()
+//
+//        }
+        m_telemetry.addData("gtth x: ", 363645);
+        m_telemetry.addData("pose x: ", odometry.getPose().getX());
+        m_telemetry.addData("pose y: ", odometry.getPose().getY());
+        m_telemetry.update();
     }
 
     @Override
     public void setDefaultCommand(Command defaultCommand) {
         Subsystem.super.setDefaultCommand(defaultCommand);
+    }
+    public double metersFormTicks(int ticks){
+        return (ticks/(double) tickPerRevolution)*(2*odometryWheelRadius*Math.PI);
     }
     private void drive(double frontVel,double sidewayVel,double retaliation) {
         double r = Math.hypot(retaliation, sidewayVel);

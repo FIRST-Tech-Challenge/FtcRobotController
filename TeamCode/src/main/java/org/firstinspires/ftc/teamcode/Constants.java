@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class Constants  {
+public class Constants {
     public static final double l1ff = 1;// com distant from axis first arm METERS
     public static final double l2ff = 0.70;// com distant from axis second arm METERS
     public static final double first_arm_weight = 1.7; // first arm weight KG
@@ -17,6 +17,21 @@ public class Constants  {
     public static final double motorMaxVolt = 12;
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
+    public static class ChassisConstants {
+        public static final double odometryWheelRadius = 0.17; //meters
+        public static final int tickPerRevolution = 8192;
+
+
+        public static final double TimeToAprilTagCheck = 1;
+        public static final double TRACKWIDTH = 1;
+        public static final double WHEEL_OFFSET = 1;
+        public static final double TICKS_TO_CM = 38.862;
+    }
+
+
+
+
+
     final public static double cameraAngle = 0;
     public static class  Climb{
         public static final double climb_max_speed = 0;// todo: this is not calibrated
