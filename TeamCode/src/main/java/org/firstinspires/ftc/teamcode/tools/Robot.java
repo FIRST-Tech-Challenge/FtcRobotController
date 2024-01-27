@@ -101,6 +101,86 @@ public class Robot {
         // Set initial state
         stateMachine.setInitialState(idle);
 
+        // Actions
+        empty = new Actions(new ActionBuilder());
+        //teleop
+        idleToIntakingPixels = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawOpen)
+                .resetTimer(timer)
+                .waitUntil(timer, 150)
+                .startMotor(lift.liftMotor, -1)
+                .waitForTouchSensorPressed(liftTouchDown)
+                .stopMotor(lift.liftMotor)
+                .resetMotorEncoder(lift.liftMotor)
+                .servoRunToPosition(clawPitch, clawPitchIntake)
+                .startMotor(intakeMotor, 0.15));
+
+        intakingToHoldingPixels = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawClose)
+                .stopMotor(intakeMotor)
+                .servoRunToPosition(clawPitch, clawPitchGoDown)
+                .resetTimer(timer)
+                .waitUntil(timer, 150)
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                .stopMotor(lift.liftMotor));
+
+        holdingPixelsToIntakingPixels = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawPitch, clawPitchIntake)
+                .servoRunToPosition(clawGrip, clawOpen)
+                .startMotor(lift.liftMotor, -1)
+                .waitForTouchSensorPressed(liftTouchDown)
+                .stopMotor(lift.liftMotor)
+                .resetMotorEncoder(lift.liftMotor)
+                .startMotor(intakeMotor, 0.15));
+
+        holdingPixelsToIdle = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawOpen));
+
+        idleToHoldingPixels = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawClose)
+                .resetTimer(timer)
+                .waitUntil(timer, 200)
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                .stopMotor(lift.liftMotor));
+
+        holdingPixelsToOutTakingPixels = new Actions(new ActionBuilder()
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
+                .stopMotor(lift.liftMotor)
+                .servoRunToPosition(clawPitch, clawPitchOutTake));
+
+        exitingOutTakeToIdle = new Actions(new ActionBuilder()
+                // Guarantees lift was not manually put below claw movement limit
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
+                .servoRunToPosition(clawYaw, clawYawIntake)
+                .servoRunToPosition(clawPitch, clawPitchGoDown)
+                .startMotor(lift.liftMotor, -1)
+                .waitForTouchSensorPressed(liftTouchDown)
+                .stopMotor(lift.liftMotor)
+                .resetMotorEncoder(lift.liftMotor));
+        //auto
+
+        autoHoldOnePixel = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawCloseOnePixel)
+                .waitUntil(timer, 500)
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
+                .stopMotor(lift.liftMotor));
+
+        autoOutTakeYellow = new Actions(new ActionBuilder()
+                .startMotor(lift.liftMotor, 1)
+                .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding+400)
+                .stopMotor(lift.liftMotor)
+                .servoRunToPosition(clawPitch, clawPitchOutTake));
+
+        autoOutTakeToIdle = new Actions(new ActionBuilder()
+                .servoRunToPosition(clawGrip, clawOpen)
+                .resetTimer(timer)
+                .waitUntil(timer, 300));
+
         // Timer
         timer = new ElapsedTime();
 
@@ -123,12 +203,7 @@ public class Robot {
 
         // adding transitions
         idle.addTransitionTo(holdingPixels, closeClawSupplier,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawCloseOnePixel)
-                        .waitUntil(timer, 500)
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
-                        .stopMotor(lift.liftMotor));
+                autoHoldOnePixel);
 
         // rejecting pixels
 //        holdingPixels.addTransitionTo(idle, openClawSupplier,
@@ -136,18 +211,10 @@ public class Robot {
 //                        .servoRunToPosition(clawGrip, clawOpen));
 
         holdingPixels.addTransitionTo(outTakingPixels, outtakePixelsSupplier,
-                new ActionBuilder()
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding+400)
-                        .stopMotor(lift.liftMotor)
-                        .servoRunToPosition(clawPitch, clawPitchOutTake));
+                autoOutTakeYellow);
 
 
-        outTakingPixels.addTransitionTo(idle, openClawSupplier,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawOpen)
-                        .resetTimer(timer)
-                        .waitUntil(timer, 300)
+        outTakingPixels.addTransitionTo(idle, openClawSupplier, autoOutTakeToIdle
                 );
     }
 
@@ -177,74 +244,30 @@ public class Robot {
 
         // intaking pixels
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawOpen)
-                        .resetTimer(timer)
-                        .waitUntil(timer, 150)
-                        .startMotor(lift.liftMotor, -1)
-                        .waitForTouchSensorPressed(liftTouchDown)
-                        .stopMotor(lift.liftMotor)
-                        .resetMotorEncoder(lift.liftMotor)
-                        .servoRunToPosition(clawPitch, clawPitchIntake)
-                        .startMotor(intakeMotor, 0.15));
+                idleToIntakingPixels);
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawClose)
-                        .stopMotor(intakeMotor)
-                        .servoRunToPosition(clawPitch, clawPitchGoDown)
-                        .resetTimer(timer)
-                        .waitUntil(timer, 150)
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
-                        .stopMotor(lift.liftMotor));
+                intakingToHoldingPixels);
 
         holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
-                new ActionBuilder()
-                        .servoRunToPosition(clawPitch, clawPitchIntake)
-                        .servoRunToPosition(clawGrip, clawOpen)
-                        .startMotor(lift.liftMotor, -1)
-                        .waitForTouchSensorPressed(liftTouchDown)
-                        .stopMotor(lift.liftMotor)
-                        .resetMotorEncoder(lift.liftMotor)
-                        .startMotor(intakeMotor, 0.15));
+                holdingPixelsToIntakingPixels);
 
         // rejecting pixels
         holdingPixels.addTransitionTo(idle, handlerButtonLeftTriggerPressed,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawOpen));
+                holdingPixelsToIdle);
 
         idle.addTransitionTo(holdingPixels, handlerButtonLeftTriggerPressed,
-                new ActionBuilder()
-                        .servoRunToPosition(clawGrip, clawClose)
-                        .resetTimer(timer)
-                        .waitUntil(timer, 200)
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
-                        .stopMotor(lift.liftMotor));
+                idleToHoldingPixels);
 
         holdingPixels.addTransitionTo(outTakingPixels, handlerButtonBPressed,
-                new ActionBuilder()
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
-                        .stopMotor(lift.liftMotor)
-                        .servoRunToPosition(clawPitch, clawPitchOutTake));
+                holdingPixelsToOutTakingPixels);
 
         // in exitingOutTake state, lift cannot be controlled manually
         outTakingPixels.addTransitionTo(exitingOutTake, handlerButtonBPressed,
-                new ActionBuilder());
+                empty);
 
         exitingOutTake.addTransitionTo(idle, alwaysTrue,
-                new ActionBuilder()
-                        // Guarantees lift was not manually put below claw movement limit
-                        .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
-                        .servoRunToPosition(clawYaw, clawYawIntake)
-                        .servoRunToPosition(clawPitch, clawPitchGoDown)
-                        .startMotor(lift.liftMotor, -1)
-                        .waitForTouchSensorPressed(liftTouchDown)
-                        .stopMotor(lift.liftMotor)
-                        .resetMotorEncoder(lift.liftMotor));
+                exitingOutTakeToIdle);
     }
 
 
@@ -257,6 +280,16 @@ public class Robot {
     public StateMachine.State outTakingPixels;
     public StateMachine.State exitingOutTake;
 
+
+    // Actions
+    public Actions empty;
+
+    //TeleOp Actions
+    public Actions idleToIntakingPixels, intakingToHoldingPixels, holdingPixelsToIntakingPixels,
+            holdingPixelsToIdle, idleToHoldingPixels, holdingPixelsToOutTakingPixels, exitingOutTakeToIdle;
+
+    //Autonomous Actions
+    public Actions autoHoldOnePixel, autoOutTakeYellow, autoOutTakeToIdle;
 
     // Motors
 

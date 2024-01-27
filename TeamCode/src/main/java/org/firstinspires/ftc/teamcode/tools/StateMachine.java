@@ -18,24 +18,23 @@ public class StateMachine {
         }
 
         // Method to add a transition to this state
-        public void addTransitionTo(State nextState, BooleanSupplier trigger, ActionBuilder actionBuilder)
+        public void addTransitionTo(State nextState, BooleanSupplier trigger, Actions actions)
         {
-            transitions.add(new Transition(nextState, trigger, actionBuilder.getList()));
+            transitions.add(new Transition(nextState, trigger, actions));
         }
 
         // Inner Transition class representing a possible change from the current state to another
         public class Transition {
             private final BooleanSupplier trigger; // The condition under which this transition will occur
             private final State nextState; // The state to transit=ion to
-            ArrayList<Action> actions; // List of actions to be performed during the transition
-            int currentActionIndex; // Index to keep track of the current action
+            //ArrayList<Action> actions; // List of actions to be performed during the transition
+            private Actions actions;
 
             // Constructor that initializes a transition
-            public Transition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions) {
+            public Transition(State nextState, BooleanSupplier trigger, Actions actions) {
                 this.nextState = nextState;
                 this.trigger = trigger;
                 this.actions = actions;
-                currentActionIndex = 0;
             }
 
             // Method to determine if this transition's condition is met
@@ -45,18 +44,8 @@ public class StateMachine {
 
 
             // Method to determine if all actions for this transition are complete
-
             public boolean isTransitionComplete() {
-
-
-                // Iterate through all actions to see if they are complete
-                for (; currentActionIndex < actions.size(); currentActionIndex++) {
-                    if (!(actions.get(currentActionIndex).evaluate())) {
-                        return false;
-                    }
-                }
-                currentActionIndex = 0; // Reset the action index
-                return true; // All actions are complete
+                return actions.areActionsComplete();
             }
 
             // Method to get the state that this transition leads to
