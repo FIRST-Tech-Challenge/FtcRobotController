@@ -5,12 +5,9 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
@@ -18,6 +15,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
+import org.firstinspires.ftc.teamcode.utils.geometry.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
@@ -30,7 +28,11 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class Chassis implements Subsystem {
-
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    private double prevTime = 0;
+    private Transform2d velocity, prevVelocity, acceleration, prevAcceleration;
+    private Pose2d prevPos;
     private HardwareMap map;
     private BTposeEstimator odometry;
     private Telemetry m_telemetry;
@@ -43,6 +45,7 @@ public class Chassis implements Subsystem {
     private Motor rightEncoder;
     private Motor horizontalEncoder;
     private Pose2d m_postitionFromTag;
+    ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public Chassis(HardwareMap map, Telemetry telemetry, MotorEx.Encoder leftEncoder, MotorEx.Encoder rightEncoder) {
         register();
@@ -68,6 +71,9 @@ public class Chassis implements Subsystem {
                 () -> metersFormTicks(horizontalEncoder.getCurrentPosition()),
                 () -> gyro.getHeading(),
                 TRACKWIDTH, WHEEL_OFFSET);
+        time.reset();
+        time.startTime();
+        prevTime = time.time();
     }
 
     public void setMotors(double FL, double FR, double BL, double BR) {
@@ -102,22 +108,38 @@ public class Chassis implements Subsystem {
 
     @Override
     public void periodic() {
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        dashboardTelemetry.addData("x:", odometry.getPose().getX());
-        dashboardTelemetry.update();
+
         odometry.updatePose();
-//        if (Constants.TimeToAprilTagCheck > time.seconds()) {
-//            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
-//            time.reset()
-//
-//        }
-        m_telemetry.addData("pose x: ", odometry.getPose().getX());
-        m_telemetry.addData("pose y: ", odometry.getPose().getY());
-        m_telemetry.addData("pose angle: ", odometry.getPose().getRotation().getDegrees());
-        m_telemetry.addData("gyro angle: ", gyro.getHeading());
-        m_telemetry.update();
+
+        dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
+        dashboardTelemetry.addData("pose y: ", odometry.getPose().getY());
+        dashboardTelemetry.addData("gyro angle: ", gyro.getHeading());
+        dashboardTelemetry.addData("x:", odometry.getPose().getX());
+        dashboardTelemetry.addData("velocity: ", velocity);
+
+
+        dashboardTelemetry.update();
+    }
+
+    public void calcVA() {
+        if (prevPos == null) {
+            prevPos = odometry.getPose();
+        }
+        if (prevVelocity == null) {
+            prevVelocity = velocity;
+        }
+
+        if (prevAcceleration == null) {
+            prevAcceleration = acceleration;
+        }
+        double dt = time.time() - prevTime;
+        velocity = odometry.getPose().minus(prevPos).times(1 / dt);
+        acceleration = velocity.minus(prevVelocity).times(1 / dt);
+
+        prevPos = odometry.getPose();
+        prevVelocity = velocity;
+        prevAcceleration = acceleration;
     }
 
     @Override
