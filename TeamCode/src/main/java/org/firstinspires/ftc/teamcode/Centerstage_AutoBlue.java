@@ -71,7 +71,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     boolean open = true;
     boolean close = false;
 
-    ElapsedTime trapdoorToggle  = new ElapsedTime();
+    ElapsedTime trapdoorToggle = new ElapsedTime();
 
     // Variable that will later be used for placing the second pixel.
     int desiredTag = 0;
@@ -209,14 +209,14 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         tfod = new TfodProcessor.Builder()
 
             // With the following lines commented out, the default TfodProcessor Builder
-            // will load the default model for the season. To define a custom model to load, 
+            // will load the default model for the season. To define a custom model to load,
             // choose one of the following:
             //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
             //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
             .setModelAssetName(TFOD_MODEL_ASSET)
             //.setModelFileName(TFOD_MODEL_FILE)
 
-            // The following default settings are available to un-comment and edit as needed to 
+            // The following default settings are available to un-comment and edit as needed to
             // set parameters for custom models.
             .setModelLabels(LABELS)
             //.setIsModelTensorFlow2(true)
