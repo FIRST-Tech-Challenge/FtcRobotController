@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode;
-
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+package org.firstinspires.ftc.teamcode.tools;
 
 public class Action {
         private final ActionFunction performAction; // A function that performs the action and returns true if the action is complete
@@ -15,7 +13,7 @@ public class Action {
         // Method to determine if the action is complete based on the BooleanSupplier
         public boolean evaluate() {
             if (msg != null){
-                TelemetryManager.getTelemetry().addLine(msg);
+                Global.telemetry.addLine(msg);
             }
             return performAction.evaluate();
         }

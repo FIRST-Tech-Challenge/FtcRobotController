@@ -4,21 +4,22 @@ package org.firstinspires.ftc.teamcode.tools;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
-import com.google.ar.core.Pose;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.teamcode.autonomous.AutoBase;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 
 @TeleOp
 @Disabled
-public class SetDriveMotors extends OpMode {
+public class SetDriveMotorsBlocking extends OpMode {
 
     public final double DEADZONE_MIN_Y = 0.1;
     public final double DEADZONE_MIN_X = 0.25;
@@ -32,9 +33,9 @@ public class SetDriveMotors extends OpMode {
     private final DcMotor backRightMotor;
     private final DcMotor frontRightMotor;
     private final Gamepad gamepad1;
-    //private final IMU imu;
+    private final IMU imu;
     public double powerValues[] = new double[4];
-    private SampleMecanumDrive drive;
+
 
     protected enum DriveMode{
         FIELD_CENTRIC,
@@ -46,31 +47,31 @@ public class SetDriveMotors extends OpMode {
     static final double BACKDROP_APPROACH_SPEED = -0.25;
 
     //map the motors and run the op mode
-    public SetDriveMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
+    public SetDriveMotorsBlocking(HardwareMap hardwareMap, Gamepad gamepad1) {
         // Initialize SampleMecanumDrive
-        drive = new SampleMecanumDrive(hardwareMap);
+        //drive = new SampleMecanumDrive(hardwareMap);
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        if (AutoDataStorage.comingFromAutonomous){
+        /*if (AutoDataStorage.comingFromAutonomous){
             drive.setPoseEstimate(AutoDataStorage.currentPose);
         }
 
         else {
             //Pose2d rightParkFinalBlueLeft = new Pose2d(-11.5, 50, Math.toRadians(270.00));
             drive.setPoseEstimate(new Pose2d(-11.5, 50, Math.toRadians(270.00)));
-        }
+        }*/
 
         this.gamepad1 = gamepad1;
         // Retrieve the IMU from the hardware map
-        /*imu = hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        imu.resetYaw();*/
+        imu.resetYaw();
         backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
@@ -84,9 +85,8 @@ public class SetDriveMotors extends OpMode {
         // Reverse right side motor directions
         // This may need to be flipped to the left side depending on your motor rotation direction
         //frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         double deadzone = 0.1;
 
@@ -95,17 +95,12 @@ public class SetDriveMotors extends OpMode {
         horizontalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_X, 0.5);
         verticalSlowDeadzone = new DeadzoneSquare(deadzone, DEADZONE_MIN_Y, 0.4);
     }
-    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, double distanceToWallMeters, boolean switchDriveMode, boolean alignToCardinalPoint, boolean resetHeading) {
-
+    public void driveCommands(double horizontal, double vertical, double turn, boolean goFast, boolean switchDriveMode) {
         // Read pose
-        Pose2d poseEstimate = drive.getPoseEstimate();
 
-        if (resetHeading){
-            drive.setPoseEstimate(new Pose2d(poseEstimate.getY(), Math.toRadians(270)));
-        }
 
         //deadzones
-        if (goFast && !isAutoBrake(distanceToWallMeters, poseEstimate)) {
+        if (goFast) {
             horizontal = horizontalFastDeadzone.computePower(horizontal);
             vertical = verticalFastDeadzone.computePower(vertical);
         } else {
@@ -115,20 +110,12 @@ public class SetDriveMotors extends OpMode {
         }
 
         if(switchDriveMode) {
-            driveMode = driveMode==DriveMode.ROBOT_CENTRIC? DriveMode.FIELD_CENTRIC : DriveMode.ROBOT_CENTRIC;
+            driveMode = driveMode== DriveMode.ROBOT_CENTRIC? DriveMode.FIELD_CENTRIC : DriveMode.ROBOT_CENTRIC;
         }
 
         if(driveMode == DriveMode.ROBOT_CENTRIC){
-            /*Global.telemetry.addData("getX: ", poseEstimate.getX());
-            Global.telemetry.addData("getY: ", poseEstimate.getY());
-            Global.telemetry.addData("Distance to wall: ", distanceToWallMeters);*/
 
-            //Driver assistance: takes over if too close to wall
-            if (isAutoBrake(distanceToWallMeters, poseEstimate)){
-                if (vertical < BACKDROP_APPROACH_SPEED) {
-                    vertical = BACKDROP_APPROACH_SPEED;
-                }
-            }
+
             double rotX = horizontal;
             double rotY = vertical;
 
@@ -154,44 +141,27 @@ public class SetDriveMotors extends OpMode {
             backRightMotor.setPower(backRightPower);
         }
         else {
-            Global.telemetry.addData("getX: ", poseEstimate.getX());
-            Global.telemetry.addData("getY: ", poseEstimate.getY());
-            Global.telemetry.addData("Distance to wall: ", distanceToWallMeters);
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            if (isAutoBrake(distanceToWallMeters, poseEstimate)){
-                if (AutoDataStorage.redSide) {
-                    horizontal = Math.min(-BACKDROP_APPROACH_SPEED,  horizontal);
-                }
-                else{
-                    horizontal = Math.max(BACKDROP_APPROACH_SPEED,  horizontal);
-                }
-            }
+            // Rotate the movement direction counter to the bot's rotation
+            double rotX = horizontal * Math.cos(-botHeading) - vertical * Math.sin(-botHeading);
+            double rotY = horizontal * Math.sin(-botHeading) + vertical * Math.cos(-botHeading);
 
-            // Create a vector from the gamepad x/y inputs
-            // Then, rotate that vector by the inverse of that heading
-            Vector2d input = new Vector2d(
-                    vertical,
-                    -horizontal // Note: if the robot has a flipped left / right direction, make this negative
-            ).rotated(-poseEstimate.getHeading());
+            rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-            // If redSide is true, adjust the heading by 180 degrees
-            if (AutoDataStorage.redSide) {
-                input = input.rotated(Math.toRadians(180)); // Rotate by 180 degrees
-            }
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
+            double frontLeftPower = (rotY + rotX + turn) / denominator;
+            double backLeftPower = (rotY - rotX + turn) / denominator;
+            double frontRightPower = (rotY - rotX - turn) / denominator;
+            double backRightPower = (rotY + rotX - turn) / denominator;
 
-            if (alignToCardinalPoint){
-                turn = getAngleToCardinalPoint();
-            }
-
-            // Pass in the rotated input + right stick value for rotation
-            // Rotation is not part of the rotated input thus must be passed in separately
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            input.getX(),
-                            input.getY(),
-                            -turn// Note: if the robot has a flipped turn direction, make this negative
-                    )
-            );
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
         }
     }
 
@@ -201,33 +171,6 @@ public class SetDriveMotors extends OpMode {
                 poseEstimate.getY() > 36 &&
                 ((poseEstimate.getX() > -57 && poseEstimate.getX() < -15) ||
                         (poseEstimate.getX() < 57 && poseEstimate.getX() > 15));
-    }
-
-    public void update() {
-            drive.update();
-    }
-    public double getAngleToCardinalPoint()  {
-        Pose2d poseEstimate = drive.getPoseEstimate();
-
-        // Normalize the heading to the range [0, 2π)
-        double currentHeading = Angle.norm(poseEstimate.getHeading());
-
-        // Calculate the closest cardinal direction in radians
-        double closestCardinalRad = Math.round(currentHeading / (Math.PI / 2)) * (Math.PI / 2);
-
-        // Ensure the closestCardinalRad value is within [0, 2π)
-        closestCardinalRad = Angle.norm(closestCardinalRad);
-
-        Global.telemetry.addData("closestCard: ", Math.toDegrees(closestCardinalRad));
-        Global.telemetry.addData("currHeading: ", Math.toDegrees(currentHeading));
-        // Calculate the difference between current and closest cardinal direction
-
-        // Normalize the difference to be within (-π, π]
-        double difference =  Angle.normDelta(currentHeading - closestCardinalRad);
-
-        // Check if the absolute difference is less than 1 degree (π/180 radians)
-        //return (Math.abs(difference) < Math.PI / 180)? 0 : difference; // Stop adjustment when the difference is minimal
-        return difference; // Stop adjustment when the difference is minimal
     }
 
 

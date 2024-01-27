@@ -1,53 +1,48 @@
-package org.firstinspires.ftc.teamcode;
-
-// imports
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadRunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.teamProp.TeamPropDetection;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.Robot;
 
-
-@Autonomous(name="Autonomous Left Red")
-public class AutoLeftRed extends AutoBase {
+@Autonomous(name="Autonomous Right Blue")
+public class AutoRightBlue extends AutoBase {
     @Override
     public void runAutonomous(Robot robot, SampleMecanumDrive drive, TeamPropDetection.propLocation propLoc) {
-        myLocalizer.setPoseEstimate(c.preStartPoseRedLeft);
-        drive.setPoseEstimate(c.preStartPoseRedLeft); // !!!!!
+        myLocalizer.setPoseEstimate(c.preStartPoseBlueRight);
+        drive.setPoseEstimate(c.preStartPoseBlueRight); // !!!!!
 
         Pose2d teamPropCoordinate;
         if (propLoc == TeamPropDetection.propLocation.LEFT) {
-            teamPropCoordinate = c.leftTeamPropRedLeft;
+            teamPropCoordinate = c.leftTeamPropBlueRight;
         }
         else if (propLoc == TeamPropDetection.propLocation.CENTER) {
-            teamPropCoordinate = c.centerTeamPropRedLeft;
+            teamPropCoordinate = c.centerTeamPropBlueRight;
         }
         else if (propLoc == TeamPropDetection.propLocation.RIGHT) {
-            teamPropCoordinate = c.rightTeamPropRedLeft;
+            teamPropCoordinate = c.rightTeamPropBlueRight;
         }
         else {
-            teamPropCoordinate = c.rightTeamPropRedLeft;
+            teamPropCoordinate = c.rightTeamPropBlueRight;
         }
         // hardware map to get motors and sensors
-        TrajectorySequence dropPropPixelRight = drive.trajectorySequenceBuilder(c.preStartPoseRedLeft)
+        TrajectorySequence dropPropPixelRight = drive.trajectorySequenceBuilder(c.preStartPoseBlueRight)
                 //.lineTo(c.leftTeamProp)
                 //.lineTo(c.centerTeamProp)
-                .lineToLinearHeading(c.startPoseRedLeft)
+                .lineToLinearHeading(c.startPoseBlueRight)
                 .lineToLinearHeading(teamPropCoordinate)
                 .back(3.5)
                 .forward(3)
                 .build();
 
         TrajectorySequence goToBackdrop = drive.trajectorySequenceBuilder(dropPropPixelRight.end())
-                .lineToLinearHeading(c.rightBackdropIntermediateCenter)
-                .lineToLinearHeading(c.rightBackdropLeft, SampleMecanumDrive.getVelocityConstraint(SLOWERVELOCITY, SLOWERANGULARVELOCITY, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(c.leftBackdropIntermediateCenter)
+                .lineToLinearHeading(c.leftBackdropLeft, SampleMecanumDrive.getVelocityConstraint(SLOWERVELOCITY, SLOWERANGULARVELOCITY, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -55,6 +50,7 @@ public class AutoLeftRed extends AutoBase {
         robot.updateSync();
         // Test propLoc here
         drive.followTrajectorySequence(dropPropPixelRight);
+        AutoDataStorage.redSide = false;
 //
 //        robot.outtakePixels = true;
 //        robot.updateSync();

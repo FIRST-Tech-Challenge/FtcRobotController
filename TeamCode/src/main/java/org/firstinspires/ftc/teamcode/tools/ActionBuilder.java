@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tools;
 
 import java.util.ArrayList;
 
@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
 
 public class ActionBuilder {
     // Builder
@@ -105,7 +103,8 @@ public class ActionBuilder {
     }
 
     public ActionBuilder addLine(String text) {
-        ActionFunction function = () -> {TelemetryManager.getTelemetry().addLine(text); TelemetryManager.getTelemetry().update(); return true;};
+        ActionFunction function = () -> {
+            Global.telemetry.addLine(text); Global.telemetry.update(); return true;};
         String name = "";
         return add(name, function);
     }

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+import org.firstinspires.ftc.teamcode.tools.Button;
 
 public class Hanger {
     public final TouchSensor hangerTouchUp;

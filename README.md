@@ -149,7 +149,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
     * [AprilTag Detection Values](https://ftc-docs.firstinspires.org/apriltag-detection-values)
     * [AprilTag Test Images](https://ftc-docs.firstinspires.org/apriltag-test-images)
     * [Camera Calibration](https://ftc-docs.firstinspires.org/camera-calibration)
-* Adds Driver Station support for Logitech Dual org.firstinspires.ftc.teamcode.Action and Sony PS5 DualSense gamepads.
+* Adds Driver Station support for Logitech Dual org.firstinspires.ftc.teamcode.tools.Action and Sony PS5 DualSense gamepads.
     * This **does not** include support for the Sony PS5 DualSense Edge gamepad.
     * Always refer to Game Manual 1 to determine gamepad legality in competition.
 * Adds support for MJPEG payload streaming to UVC driver (external JPEG decompression routine required for use).

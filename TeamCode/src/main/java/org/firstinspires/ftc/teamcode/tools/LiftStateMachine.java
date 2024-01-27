@@ -9,8 +9,8 @@ import java.util.function.BooleanSupplier;
 
 public class LiftStateMachine extends StateMachine {
 
-    /*private State.Transition.org.firstinspires.ftc.teamcode.Action setMotor(DcMotor motor, int position){
-        return new State.Transition.org.firstinspires.ftc.teamcode.Action(()->{motor.setTargetPosition(position);
+    /*private State.Transition.org.firstinspires.ftc.teamcode.tools.Action setMotor(DcMotor motor, int position){
+        return new State.Transition.org.firstinspires.ftc.teamcode.tools.Action(()->{motor.setTargetPosition(position);
             return true;
         });
     }*/

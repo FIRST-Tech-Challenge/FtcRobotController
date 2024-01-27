@@ -71,7 +71,7 @@ public class AprilTagDetection extends LinearOpMode
         double zNew = 0.0;
         numberOfZeroValuesSinceNonZero += 1;
 
-        // Calcaulate average distance to AprilTag
+        // Calculate average distance to AprilTag
         if (!(currentDetections.isEmpty())) {
             numberOfZeroValuesSinceNonZero = 0;
             for (org.openftc.apriltag.AprilTagDetection aprilTag : currentDetections) {
@@ -80,9 +80,9 @@ public class AprilTagDetection extends LinearOpMode
         zNew /= currentDetections.size();
         }
         z = zNew!=0? zNew : (z > 1.0? 0 : z);
-        //if (numberOfZeroValuesSinceNonZero > 30){
-        //    z = 0;
-        //}
+//        if (numberOfZeroValuesSinceNonZero > 30){
+//            z = 0;
+//        }
 
         return z;
     }

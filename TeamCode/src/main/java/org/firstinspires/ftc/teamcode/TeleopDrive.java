@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.aprilTags.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.tools.AutoDataStorage;
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
 import org.firstinspires.ftc.teamcode.tools.Robot;
-import org.firstinspires.ftc.teamcode.tools.TelemetryManager;
+import org.firstinspires.ftc.teamcode.tools.Global;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOpDrive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
-    private SetDriveMotors setDriveMotorsObj;
+    private SetDriveMotors driveMotors;
 
     private boolean isLiftReset = false;
 
@@ -19,15 +22,15 @@ public class TeleopDrive extends LinearOpMode {
     AprilTagDetection aprilTagDetection;
 
     public void Setup(){
-        TelemetryManager.setTelemetry(telemetry);
-        setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
+        Global.telemetry = telemetry;
+        driveMotors = new SetDriveMotors(hardwareMap, gamepad1);
 
         robot = new Robot(hardwareMap, gamepad1, gamepad2, false);
 
         aprilTagDetection = new AprilTagDetection();
         aprilTagDetection.Setup(hardwareMap, telemetry);
 
-        Robot.clawPitch.setPosition(Robot.clawPitchIntake);
+        Robot.clawPitch.setPosition(Robot.clawPitchGoDown); // clawPitchIntake
         Robot.clawYaw.setPosition(Robot.clawYawIntake);
         Robot.clawGrip.setPosition(Robot.clawOpen);
         sleep(1000);
@@ -44,15 +47,7 @@ public class TeleopDrive extends LinearOpMode {
                 }
         }
         }
-
-    }
-
-    public boolean atRest(){
-        return(
-                Math.abs(gamepad1.left_stick_y) < setDriveMotorsObj.DEADZONE_MIN_Y &&
-                        Math.abs(gamepad1.right_stick_y) < setDriveMotorsObj.DEADZONE_MIN_Y &&
-                        Math.abs(gamepad1.left_stick_x) < setDriveMotorsObj.DEADZONE_MIN_X &&
-                        Math.abs(gamepad1.right_stick_x) < setDriveMotorsObj.DEADZONE_MIN_X);
+        AutoDataStorage.comingFromAutonomous = false;
 
     }
 
@@ -61,6 +56,7 @@ public class TeleopDrive extends LinearOpMode {
         Setup();
         waitForStart();
         while(opModeIsActive()){
+
             if(!isLiftReset) {
                 Robot.lift.liftMotor.setPower(-1);
                 if (Robot.liftTouchDown.isPressed()) {
@@ -68,41 +64,69 @@ public class TeleopDrive extends LinearOpMode {
                     isLiftReset = true;
                 }
             }
-//            if(drive.isBusy()&& atRest()){
-//                drive.update();
-//            }
-            telemetry.update();
+
+            Global.telemetry.update();
             double horizontal = gamepad1.left_stick_x;
             double vertical = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             boolean goFast = gamepad1.left_bumper;
             boolean emergencyBrakeOverride = gamepad1.right_bumper;
-//            if (!drive.isBusy() || !atRest()) {
-//                setMotorsObj.driveCommands(hardwareMap, horizontal, vertical, turn, goFast);
-//            }
+            boolean switchDriveMode = gamepad1.b;
+            boolean alignToCardinalPoint = gamepad1.a;
+            boolean resetHeading = gamepad1.y;
 
-            double distanceToWall = aprilTagDetection.GetDistanceAwayFromTheBackdrop();
-            if (emergencyBrakeOverride){
-                // A little bit of a monkey patch, but it works to override, because distance 0 corresponds to "too far to detect"
-                distanceToWall = 0;
+
+            double distanceToWall = 0;
+            if (!emergencyBrakeOverride){
+                // AprilTag detection of positions if costly
+                // Put calculation within if test so it s performed when needed only
+                // thus no calc is in emergency override
+                distanceToWall = aprilTagDetection.GetDistanceAwayFromTheBackdrop();
             }
-            setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast, distanceToWall);
 
+
+            driveMotors.driveCommands(horizontal, vertical, turn, goFast, distanceToWall, switchDriveMode, alignToCardinalPoint, resetHeading);
+            driveMotors.update();
 
             robot.update();
 
             if(robot.currentState()== robot.outTakingPixels){
+
+                //telemetry.addData("Requested position: ", Robot.clawYaw.getPosition());
+
                 if(Robot.handlerDPad_Left.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawLeft);
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightHorizontal);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftHorizontal);
+                    }
                 }
+
                 if(Robot.handlerDPad_Down.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawIntake);
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightSlantedUp);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftSlantedDown);
+                    }
                 }
-                if(Robot.handlerDPad_Right.Pressed()){
-                    Robot.clawYaw.setPosition(Robot.clawYawRight);
+
+                if(Robot.handlerDPad_Up.Pressed()){
+                    if(Robot.handlerRightTrigger.On()){
+                        Robot.clawYaw.setPosition(Robot.clawYawRightSlantedDown);
+                    }
+                    else{
+                        Robot.clawYaw.setPosition(Robot.clawYawLeftSlantedUp);
+
+                    }
                 }
+
                 if(Robot.handlerRightBumper.Pressed()){
                     Robot.clawGrip.setPosition(Robot.clawOpen);
+                }
+                if(Robot.handlerLeftBumper.Pressed()){
+                    Robot.clawGrip.setPosition(Robot.clawClose);
                 }
             }
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tools;
 
+import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,11 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.ActionBuilder;
-import org.firstinspires.ftc.teamcode.Button;
 import org.firstinspires.ftc.teamcode.Hanger;
 import org.firstinspires.ftc.teamcode.Lift;
-import org.firstinspires.ftc.teamcode.OverrideMotor;
 
 import java.util.function.BooleanSupplier;
 
@@ -58,8 +56,9 @@ public class Robot {
 
        // clawGrip.scaleRange(0.02, 0.22);  //old values
         clawGrip.scaleRange(0.05, 0.35);
+        //clawPitch.scaleRange(0.755, 0.950);
         clawPitch.scaleRange(0.755, 0.973);
-        clawYaw.scaleRange(0.125, 0.675);
+        clawYaw.scaleRange(0.0725, 1);
 
         // Touch Sensors
         liftTouchDown = hardwareMap.touchSensor.get("liftTouchDown");
@@ -67,12 +66,19 @@ public class Robot {
         clawOpen = 1;
         clawClose = 0.30;
         clawCloseOnePixel = 0;
-        clawPitchIntake = 1;
+        clawPitchGoDown = 1;
+        clawPitchIntake = 0.894;
         clawPitchOutTake = 0;
 
         clawYawIntake = 0.5;
-        clawYawLeft = 1;
-        clawYawRight = 0;
+        // Slanted is 60 degrees, allows us to drop pixels vertically for mosaics
+        clawYawLeftSlantedUp = 1;
+        clawYawLeftHorizontal = clawYawLeftSlantedUp-0.21;
+        clawYawLeftSlantedDown = clawYawLeftHorizontal-0.21;
+
+        clawYawRightSlantedUp = 0;
+        clawYawRightHorizontal = clawYawRightSlantedUp+0.21;
+        clawYawRightSlantedDown = clawYawRightHorizontal+0.21;
 
 
         stateMachine = new StateMachine();
@@ -119,6 +125,7 @@ public class Robot {
         idle.addTransitionTo(holdingPixels, closeClawSupplier,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawCloseOnePixel)
+                        .waitUntil(timer, 500)
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding)
                         .stopMotor(lift.liftMotor));
@@ -131,7 +138,7 @@ public class Robot {
         holdingPixels.addTransitionTo(outTakingPixels, outtakePixelsSupplier,
                 new ActionBuilder()
                         .startMotor(lift.liftMotor, 1)
-                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin+200)
+                        .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHolding+400)
                         .stopMotor(lift.liftMotor)
                         .servoRunToPosition(clawPitch, clawPitchOutTake));
 
@@ -171,17 +178,36 @@ public class Robot {
         // intaking pixels
         idle.addTransitionTo(intakingPixels, handlerButtonAPressed,
                 new ActionBuilder()
+                        .servoRunToPosition(clawGrip, clawOpen)
+                        .resetTimer(timer)
+                        .waitUntil(timer, 150)
+                        .startMotor(lift.liftMotor, -1)
+                        .waitForTouchSensorPressed(liftTouchDown)
+                        .stopMotor(lift.liftMotor)
+                        .resetMotorEncoder(lift.liftMotor)
+                        .servoRunToPosition(clawPitch, clawPitchIntake)
                         .startMotor(intakeMotor, 0.15));
 
         intakingPixels.addTransitionTo(holdingPixels, handlerButtonAPressed,
                 new ActionBuilder()
                         .servoRunToPosition(clawGrip, clawClose)
+                        .stopMotor(intakeMotor)
+                        .servoRunToPosition(clawPitch, clawPitchGoDown)
                         .resetTimer(timer)
                         .waitUntil(timer, 150)
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderHoldingTeleop)
+                        .stopMotor(lift.liftMotor));
+
+        holdingPixels.addTransitionTo(intakingPixels, handlerButtonAPressed,
+                new ActionBuilder()
+                        .servoRunToPosition(clawPitch, clawPitchIntake)
+                        .servoRunToPosition(clawGrip, clawOpen)
+                        .startMotor(lift.liftMotor, -1)
+                        .waitForTouchSensorPressed(liftTouchDown)
                         .stopMotor(lift.liftMotor)
-                        .stopMotor(intakeMotor));
+                        .resetMotorEncoder(lift.liftMotor)
+                        .startMotor(intakeMotor, 0.15));
 
         // rejecting pixels
         holdingPixels.addTransitionTo(idle, handlerButtonLeftTriggerPressed,
@@ -214,7 +240,7 @@ public class Robot {
                         .startMotor(lift.liftMotor, 1)
                         .waitForMotorAbovePosition(lift.liftMotor, lift.liftEncoderMin)
                         .servoRunToPosition(clawYaw, clawYawIntake)
-                        .servoRunToPosition(clawPitch, clawPitchIntake)
+                        .servoRunToPosition(clawPitch, clawPitchGoDown)
                         .startMotor(lift.liftMotor, -1)
                         .waitForTouchSensorPressed(liftTouchDown)
                         .stopMotor(lift.liftMotor)
@@ -242,8 +268,9 @@ public class Robot {
     // TouchSensors
     public static TouchSensor liftTouchDown;
 
-    public static double clawPitchIntake, clawPitchOutTake;
-    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake, clawYawLeft, clawYawRight;
+    public static double clawPitchGoDown, clawPitchIntake, clawPitchOutTake;
+    public static double clawOpen, clawClose, clawCloseOnePixel, clawYawIntake,
+            clawYawLeftSlantedUp, clawYawLeftHorizontal, clawYawLeftSlantedDown, clawYawRightSlantedUp, clawYawRightHorizontal, clawYawRightSlantedDown;
     int liftOutTake;
 
     public static Button handlerA, handlerB, handlerX, handlerY, handlerLeftBumper,
@@ -276,18 +303,21 @@ public class Robot {
         updateButtons();
 
         // Manages Reject mode on Roomba as an override of its current power and state
-        if(handlerRightTrigger.Pressed()) {
+        if(handlerLeftTrigger.Pressed()) {
             intakeMotor.setOverridePower(-0.4);
-        } else if (handlerRightTrigger.Released()) {
+        } else if (handlerLeftTrigger.Released()) {
             intakeMotor.cancelOverridePower();
         }
         if(handlerX.On()) {
             planeLauncher.setPower(1);
+            sleep(200);
         }
         else{
             planeLauncher.setPower(0);
         }
-        skyHook.update(handlerDPad_Down);
+        if(!(stateMachine.getCurrentState() == outTakingPixels)){
+            skyHook.update(handlerDPad_Down);
+        }
 
 
         stateMachine.updateState();
@@ -295,9 +325,6 @@ public class Robot {
         if(stateMachine.getCurrentState() == outTakingPixels){
             lift.update();
         }
-        //lift.update();
-        TelemetryManager.getTelemetry().addLine(""+lift.liftMotor.getCurrentPosition());
-
     }
 
     public StateMachine.State currentState(){

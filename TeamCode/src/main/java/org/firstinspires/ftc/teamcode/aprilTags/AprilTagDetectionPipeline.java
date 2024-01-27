@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.aprilTags;
 
+import org.firstinspires.ftc.teamcode.tools.Global;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -43,8 +44,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
-    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
 
     Mat cameraMatrix;
@@ -117,20 +116,11 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
 
         // Run AprilTag
         detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
-
-        synchronized (detectionsUpdateSync)
-        {
-            detectionsUpdate = detections;
+        StringBuilder tagIDs = new StringBuilder();
+        for (org.openftc.apriltag.AprilTagDetection aprilTag : detections) {
+            tagIDs.append(aprilTag.id).append(" ");
         }
-
-        // For fun, use OpenCV to draw 6DOF markers on the image.
-        /*for(AprilTagDetection detection : detections)
-        {
-            Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
-            //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
-        }*/
+        //Global.telemetry.addData("Tags: ", tagIDs.toString());
 
         return input;
     }
