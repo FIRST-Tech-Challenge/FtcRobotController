@@ -108,7 +108,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         gobbler.driveTrain.Wait(5.0);
 
 //for (int i = 0; i < 3; i++)
-     while (!opModeIsActive()){
+     while (!isStarted() && !isStopRequested()){
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (Recognition recognition : currentRecognitions) {
@@ -153,7 +153,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             servo_Display.setPosition(CENTER_POS);
         } else if (desiredTag == 1) { // Right position
             servo_Display.setPosition(RIGHT_POS);
-        } else { // Left position
+        } else if (!seen && desiredTag == 3) { // Left position
             servo_Display.setPosition(LEFT_POS);
         }
     }
