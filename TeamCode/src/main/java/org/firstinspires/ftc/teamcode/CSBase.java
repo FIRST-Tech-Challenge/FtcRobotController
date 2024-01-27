@@ -17,15 +17,15 @@ import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
 public abstract class CSBase extends LinearOpMode {
-    public static final boolean USE_WEBCAM = true;
-    public TfodProcessor tfod;
-    public final ElapsedTime runtime = new ElapsedTime();
+    private static final boolean USE_WEBCAM = true;
+    private TfodProcessor tfod;
+    private final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
-    public WebcamName camera;
+    private WebcamName camera;
     public TouchSensor touchSensor;
-    public IMU imu;
+    private IMU imu;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
      - Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -52,10 +52,10 @@ public abstract class CSBase extends LinearOpMode {
     public double x;
     public VisionPortal visionPortal;
     public static String tfodModelName;
-    public AprilTagProcessor tagProcessor;
+    private AprilTagProcessor tagProcessor;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
-    public static final String[] LABELS = {
+    private static final String[] LABELS = {
             "prop",
     };
     IMU.Parameters imuParameters;
@@ -173,7 +173,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
      * @param direction (opt.) Direction to drive if inches is zero.**/
-    public void encoderDrive(double inches, dir direction) {
+    private void encoderDrive(double inches, dir direction) {
         int lfTarget = 0;
         int rfTarget = 0;
 
@@ -233,7 +233,7 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.**/
-    public void encoderDrive(double inches){
+    private void encoderDrive(double inches){
         encoderDrive(inches, dir.f);
     }
 
@@ -337,10 +337,6 @@ public abstract class CSBase extends LinearOpMode {
             }
             if (inches != 0) {
                 stopRobot();
-                lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             }
 
         }
@@ -348,6 +344,41 @@ public abstract class CSBase extends LinearOpMode {
 
     public void strafe(double inches){
         strafe(inches, dir.l);
+    }
+
+    public void startStrafe(dir direction) {
+        if (opModeIsActive() && lf != null) {
+            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+            double d = 0;
+
+            if (direction == dir.r) {
+                d = -1;
+            } else if (direction == dir.l){
+                d = 1;
+            }
+
+            runtime.reset();
+            lb.setVelocity(VELOCITY * d);
+            rb.setVelocity(-VELOCITY * d);
+            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
+            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
+
+            telemetry.addData("Strafing",  "Started");
+            telemetry.update();
+        }
+    }
+
+    public void endStrafe() {
+        stopRobot();
     }
 
     /** Changes the velocity.
@@ -441,7 +472,7 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
-    public void initProcessors() {
+    private void initProcessors() {
 
         tfod = new TfodProcessor.Builder()
 
@@ -491,10 +522,33 @@ public abstract class CSBase extends LinearOpMode {
         return false;
     }
 
+    private AprilTagDetection tagDetections(int id) {
+        int i;
+        for (i = 0; i < tagProcessor.getDetections().size(); i++)
+        {
+            if (tagProcessor.getDetections().get(i).id == id){
+                return tagProcessor.getDetections().get(i);
+            }
+        }
+        return null;
+    }
+
+    public void align(int id) {
+        AprilTagDetection a = tagDetections(id);
+        if (a != null) {
+            while (abs(a.ftcPose.x) > 3 || abs(a.ftcPose.yaw) > 1) {
+                a = tagDetections(id);
+                turn(a.ftcPose.yaw);
+                a = tagDetections(id);
+                strafe(a.ftcPose.x);
+            }
+        }
+    }
+
     /** Detects the team prop and returns its X coordinate relative to the camera.
      * (-1 if none is detected)
      * @return (double) The X coordinate of the team prop. **/
-    public double detectProp() {
+    private double detectProp() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         for (int i = 0; i < 5 && currentRecognitions.size() == 0; i++) {
             sleep(100);

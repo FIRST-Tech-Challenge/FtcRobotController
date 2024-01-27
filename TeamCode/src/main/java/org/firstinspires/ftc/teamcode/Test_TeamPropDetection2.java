@@ -17,7 +17,7 @@ public class Test_TeamPropDetection2 extends CSBase {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                detectProp();
+                //detectProp();
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();

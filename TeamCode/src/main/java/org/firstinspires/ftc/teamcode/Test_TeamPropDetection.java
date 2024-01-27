@@ -51,7 +51,8 @@ public class Test_TeamPropDetection extends CSBase {
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            detectProp();
+            continue;
+            //detectProp();
         }
 
         // Save more CPU resources when camera is no longer needed.
