@@ -38,14 +38,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
-@Autonomous(name="BlueFieldLeft", group="OpMode",preselectTeleOp = "GGE Drive T2")
+@Autonomous(name="BlueFieldLeft", group="OpMode",preselectTeleOp = "GGE Odometry TeleOp")
 //@Disabled
 public class Auto1_BlueFieldLeft extends AutoBase {
 
@@ -79,9 +81,17 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                     gamepieceLocation = GamePieceLocation.RIGHT;
             }
             telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.addData("LSpikeline",getLeftSpikeSaturation());
+            telemetry.addData("Cspikeline",getCenterSpikeSaturation());
+            telemetry.addData("RSpikeLine",getRightSpikeSaturation());
             telemetry.update();
         }
         while (opModeIsActive()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
+
+            //we don't need the front camera anymore,  now need the rear one with april tags
+            VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -149,17 +159,17 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
                 // Align and drive to April Tag.  1 is BLUE side LEFT.
-                if (GoToAprilTag(1) == true) {
+                if (moveTo.GoToAprilTag(1) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
                 // Align and drive to April Tag.  2 is BLUE side CENTER.
-                if (GoToAprilTag(2) == true) {
+                if (moveTo.GoToAprilTag(2) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
                 // Align and drive to April Tag.  3 is BLUE side RIGHT.
-                if (GoToAprilTag(3) == true) {
+                if (moveTo.GoToAprilTag(3) == true) {
                     state = 2;
                 }
             }
@@ -167,7 +177,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Complete the auto by dropping the game piece and going to park
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 //Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -194,7 +204,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
                 //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -218,7 +228,7 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
                 // Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
+                moveTo.Backwards((int) ((2 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward

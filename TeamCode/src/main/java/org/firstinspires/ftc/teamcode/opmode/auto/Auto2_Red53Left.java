@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
@@ -43,7 +44,7 @@ import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
  * Extends 'AutoBase' which contains code common to all Auto OpModes'.
  */
 
-@Autonomous(name="Red53Left", group="OpMode",preselectTeleOp = "GGE Drive T2")
+@Autonomous(name="Red53Left", group="OpMode",preselectTeleOp = "GGE Odometry TeleOp")
 //@Disabled
 public class Auto2_Red53Left extends AutoBase {
 
@@ -73,10 +74,18 @@ public class Auto2_Red53Left extends AutoBase {
                     gamepieceLocation = GamePieceLocation.RIGHT;
             }
             telemetry.addData("GamePiece Spike line", gamepieceLocation);
+            telemetry.addData("LSpikeline",getLeftSpikeSaturation());
+            telemetry.addData("Cspikeline",getCenterSpikeSaturation());
+            telemetry.addData("RSpikeLine",getRightSpikeSaturation());
             telemetry.update();
         }
 
         while (opModeIsActive()) {
+            // we don't want any streaming to the Driver Station, waste of processing and bandwidth
+            visionSystem.stopLiveView();
+
+            //we don't need the front camera anymore,  now need the rear one with april tags
+            VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -165,17 +174,17 @@ public class Auto2_Red53Left extends AutoBase {
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
                 // Align and drive to April Tag.  4 is RED side LEFT.
-                if (GoToAprilTag(4) == true) {
+                if (moveTo.GoToAprilTag(4) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
                 // Align and drive to April Tag.  5 is RED side CENTER.
-                if (GoToAprilTag(5) == true) {
+                if (moveTo.GoToAprilTag(5) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
                 // Align and drive to April Tag.  6 is RED side RIGHT.
-                if (GoToAprilTag(6) == true) {
+                if (moveTo.GoToAprilTag(6) == true) {
                     state = 2;
                 }
             }
