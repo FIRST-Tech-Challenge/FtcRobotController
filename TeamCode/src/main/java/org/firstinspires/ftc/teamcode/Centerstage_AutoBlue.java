@@ -56,13 +56,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    // Variables for servo position testing, displaying team prop location
-    static final double RIGHT_POS    =  0.99;     // Maximum rotational position
-    static final double CENTER_POS     =   0.66;     // Middle rotational position
-    static final double LEFT_POS     =  0.33;     // Minimum rotational position
-    static final double DEF_POS     =  0.01;     // Default rotational position
-    Servo servo_Display = null;
-
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
     private static final String TFOD_MODEL_ASSET = "bluemayhem_v2.tflite";
@@ -100,70 +93,51 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
 
-        //Name for servo to be used on driver hub
-        servo_Display = hardwareMap.get(Servo.class, "servo_display");
-
-        servo_Display.setPosition(DEF_POS);
-
         gobbler.driveTrain.Wait(5.0);
 
-//for (int i = 0; i < 3; i++)
-     while (!isStarted() && !isStopRequested()){
+        while (!isStarted() && !isStopRequested()) {
+            seen = false;
+            List<Recognition> currentRecognitions = tfod.getRecognitions();
+            for (Recognition recognition : currentRecognitions) {
+                double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
+                double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
+                // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
+                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
+                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+                if (xValue < 450) {
+                    // center
+                    telemetry.addData("position", "Center");
+                    // drives robot to the center position.
+                    //gobbler.driveTrain.centerPos();
+                    desiredTag = 2;
+                    seen = true;
+                }
 
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
-        for (Recognition recognition : currentRecognitions) {
-            double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-            double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
-            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
-            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
-            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-            // (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) || xValue > 105 && xValue < 200 && yValue > 145 && yValue < 195)
-            if (xValue < 450) {
-                // center
-                telemetry.addData("position", "Center");
-                // drives robot to the center position.
-                //gobbler.driveTrain.centerPos();
-                desiredTag = 2;
-                seen = true;
+                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
+                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
+                else if (xValue > 450) {
+                    // right
+                    telemetry.addData("position", "Right");
+                    // drives robot to the right position.
+                    //gobbler.driveTrain.rightPos();
+                    desiredTag = 1;
+                    seen = true;
+
+                }
+            }
+            // If the team prop is not seen on the center or right, it will assume it is on the left.
+            if (!seen) {
+                telemetry.addData("position", "Left");
+                // drives robot to the left position.
+                //gobbler.driveTrain.leftPos();
+                desiredTag = 3;
             }
 
-            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-            // else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 300)
-            else if (xValue > 450) {
-                // right
-                telemetry.addData("position", "Right");
-                // drives robot to the right position.
-                //gobbler.driveTrain.rightPos();
-                desiredTag = 1;
-                seen = true;
-
-            }
-
+            // Wait for the DS start button to be touched.
+            telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+            telemetry.addData(">", "Touch Play to start OpMode");
+            telemetry.update();
         }
-
-        // If the team prop is not seen on the center or right, it will assume it is on the left.
-        if (!seen) {
-            telemetry.addData("position", "Left");
-            // drives robot to the left position.
-            //gobbler.driveTrain.leftPos();
-            desiredTag = 3;
-        }
-
-        if (desiredTag == 2) { // Center position
-            servo_Display.setPosition(CENTER_POS);
-        } else if (desiredTag == 1) { // Right position
-            servo_Display.setPosition(RIGHT_POS);
-        } else if (!seen && desiredTag == 3) { // Left position
-            servo_Display.setPosition(LEFT_POS);
-        }
-    }
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-
-        //waitForStart();
 
         if (opModeIsActive()) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
