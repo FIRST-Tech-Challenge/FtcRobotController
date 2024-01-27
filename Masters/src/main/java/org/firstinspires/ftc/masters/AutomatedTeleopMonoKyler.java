@@ -333,6 +333,12 @@ public class AutomatedTeleopMonoKyler extends LinearOpMode {
                     break;
                 case Transfer:
 
+                    if (gamepad1.a) {
+                        clawPosition = ClawPosition.TRANSFER;
+                        clawServo.setPosition(CSCons.clawTransfer);
+                    }
+
+
                     if (gamepad1.dpad_down) {
                         intakeState = IntakeState.MoveToIntake;
                         intakeElapsedTime = new ElapsedTime();
@@ -482,7 +488,10 @@ public class AutomatedTeleopMonoKyler extends LinearOpMode {
                     break;
             }
 
-
+            if (gamepad1.a ) {
+                clawPosition = ClawPosition.TRANSFER;
+                clawServo.setPosition(CSCons.clawTransfer);
+            }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
             telemetry.addData("left x", gamepad1.left_stick_x);
