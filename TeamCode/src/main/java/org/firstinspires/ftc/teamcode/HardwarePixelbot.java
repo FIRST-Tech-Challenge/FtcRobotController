@@ -111,9 +111,9 @@ public class HardwarePixelbot
     public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
     public int     VIPER_EXTEND_AUTO  = 130;  // Encoder count when raised to just above the bin (safe to rotate)
     public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
-    public int     VIPER_EXTEND_LOW  = 250;  // Encoder count when raised to lowest possible scoring position (200)
-    public int     VIPER_EXTEND_MID  = 325;  // Encoder count when raised to medium scoring height (350)
-    public int     VIPER_EXTEND_HIGH = 450;  // Encoder count when raised to upper scoring height (500)
+    public int     VIPER_EXTEND_LOW  = 145;  // Encoder count when raised to lowest possible scoring position
+    public int     VIPER_EXTEND_MID  = 280;  // Encoder count when raised to medium scoring height
+    public int     VIPER_EXTEND_HIGH = 400;  // Encoder count when raised to upper scoring height
     public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
@@ -190,7 +190,7 @@ public class HardwarePixelbot
 	public Servo  fingerServo1 = null;  // TOP (bin) or RIGHT (backdrop)
     public double FINGER1_SERVO_DROP = 0.500;
     final public static double FINGER1_SERVO_DROP_ANGLE = 175.0;
-    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.242; // 0.742
+    public double FINGER1_SERVO_GRAB = FINGER1_SERVO_DROP + 0.262; // 0.762
 
     // Increased the "grabbed" angle to account for pixel variation
     final public static double FINGER1_SERVO_GRAB_ANGLE = 104.0;

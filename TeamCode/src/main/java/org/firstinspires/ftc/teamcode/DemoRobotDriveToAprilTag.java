@@ -91,18 +91,18 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Drive To AprilTag", group = "Demo")
-@Disabled
+//@Disabled
 public class DemoRobotDriveToAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 3.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
     final double SPEED_GAIN  =  0.0100;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
-    final double STRAFE_GAIN =  0.0001;  //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.0001;  //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double STRAFE_GAIN =  0.00005; //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.00005; //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.50;  //  Clip the approach speed to this max value (adjust for your robot)
@@ -121,7 +121,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     //  - Blue Alliance RIGHT  Backdrop  = 3        - Red Alliance RIGHT  Backdrop  = 6
     //  - Blue Alliance 5-stack 2"/50mm  = 9        - Red Alliance 5-stack 2"/50mm  = 8
     //  - Blue Alliance 5-stack 5"/127mm = 10       - Red Alliance 5-stack 5"/127mm = 7
-    private static final int DESIRED_TAG_ID = -1;    // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 2;    // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
@@ -130,7 +130,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  minDrvPwr       = 0.08;     // minimum power needed to drive robot forward
-        double  minStrafePwr    = 0.20;
+        double  minStrafePwr    = 0.26;
         double  minTurnPwr      = 0.17;
         double  driveErr        = 0.0;
         double  strafeErr       = 0.0;
@@ -234,7 +234,8 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                     driveErr  = -minDrvPwr + (rangeError * SPEED_GAIN);
                 }
 
-                if( Math.abs(yawError) < 3.0 ) {  // degrees
+                // only worry about YAW/STRAFE when it's really bad (more than 5deg)
+                if( Math.abs(yawError) < 5.0 ) {  // degrees
                     strafeErr = 0.0;
                 } else if( yawError > 0 ) {
                     strafeErr  = minStrafePwr + (yawError * STRAFE_GAIN);
@@ -243,7 +244,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                     strafeErr = -minStrafePwr + (yawError * STRAFE_GAIN);
                 }
 
-                if( Math.abs(headingError) < 3.0 ) {  // degrees
+                if( Math.abs(headingError) < 2.0 ) {  // degrees
                     turnErr = 0.0;
                 } else if( headingError > 0 ) {
                     turnErr  = minTurnPwr + (headingError * TURN_GAIN);
@@ -251,9 +252,16 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                 else { // rangeError < 0
                     turnErr = -minTurnPwr + (headingError * TURN_GAIN);
                 }
-                drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-                turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                if( Math.abs(strafeErr) >= minStrafePwr ) {
+                    drive  = 0.0;
+                    turn   = 0.0;
+                    strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                } else {
+                    drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                    turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                    strafe = 0.0;
+                }
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
 
@@ -354,7 +362,7 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
                 .build();
 
         // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
+//      VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()

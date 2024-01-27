@@ -582,8 +582,8 @@ public abstract class Teleop extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineDriveSpeed  = 0.50;
-        double fineStrafeSpeed = 0.50;
+        double fineDriveSpeed  = 0.15;
+        double fineStrafeSpeed = 0.18;
         double autoDriveSpeed  = 0.56;
         double fineTurnSpeed   = 0.05;
         boolean dPadMode = true;
