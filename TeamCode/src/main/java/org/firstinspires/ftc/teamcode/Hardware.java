@@ -46,7 +46,7 @@ public class Hardware {
 
     }
 
-    public double stripperFirstRelease = 0.3;
+    public double stripperFirstRelease = 0.35;
     public double stripperSecondRelease = 0.1;
     public double stripperOpen = 0.85;
     public double hookDown = 0;

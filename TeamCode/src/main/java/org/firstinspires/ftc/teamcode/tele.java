@@ -108,6 +108,8 @@ public class tele extends OpMode {
 
     public void loop() {
 
+        robot.escapementFinger.setPosition(-0.1);
+
         if (gamepad1.right_trigger > .5) {
             speedLimit = 50;
         } else {

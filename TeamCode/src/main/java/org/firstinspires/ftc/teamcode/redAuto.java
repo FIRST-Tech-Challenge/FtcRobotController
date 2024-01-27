@@ -94,25 +94,22 @@ public class redAuto extends LinearOpMode {
 
         robot.intake.setPower(1);
 
-        if (8 < robot.rightDistance.getDistance(DistanceUnit.CM) && robot.rightDistance.getDistance(DistanceUnit.CM) < 15) {
-            propPosition = propPositions.RIGHT;
+        drive.followTrajectory(toDetection);
+
+        if ((robot.rightDistance.getDistance(DistanceUnit.CM) > 10.5) && (robot.rightDistance.getDistance(DistanceUnit.CM) < 15)) {
+            propPosition = redAuto.propPositions.RIGHT;
             DESIRED_TAG_ID = 6;
             telemetry.addData("Running:", "Right");
-        } else if (8 < robot.leftDistance.getDistance(DistanceUnit.CM) && robot.leftDistance.getDistance(DistanceUnit.CM) < 15) {
-            propPosition = propPositions.LEFT;
+        } else if ((robot.leftDistance.getDistance(DistanceUnit.CM) > 8) && (robot.leftDistance.getDistance(DistanceUnit.CM) < 15)) {
+            propPosition = redAuto.propPositions.LEFT;
             DESIRED_TAG_ID = 4;
-            telemetry.addData("Running:", "Right");
+            telemetry.addData("Running:", "Left");
         } else {
-            propPosition = propPositions.CENTER;
+            propPosition = redAuto.propPositions.CENTER;
             DESIRED_TAG_ID = 5;
-            telemetry.addData("Running:", "Right");
+            telemetry.addData("Running:", "Center");
         }
         telemetry.update();
-
-        propPosition = propPositions.LEFT;
-        DESIRED_TAG_ID = 4;
-
-        drive.followTrajectory(toDetection);
         switch (propPosition) {
             case CENTER:
                 Trajectory placePixelCenter = drive.trajectoryBuilder(toDetection.end())
