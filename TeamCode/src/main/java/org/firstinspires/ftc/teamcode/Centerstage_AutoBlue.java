@@ -93,8 +93,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
 
-        gobbler.driveTrain.Wait(5.0);
-
         while (!isStarted() && !isStopRequested()) {
             seen = false;
             List<Recognition> currentRecognitions = tfod.getRecognitions();
