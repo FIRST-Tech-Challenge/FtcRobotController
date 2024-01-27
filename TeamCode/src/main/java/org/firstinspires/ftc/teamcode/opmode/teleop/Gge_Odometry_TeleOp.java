@@ -181,15 +181,15 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        leftFrontDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        leftBackDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        rightFrontDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        rightBackDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
+        leftFrontDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        leftBackDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        rightFrontDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        rightBackDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
         // For Lift, PIDF values set to reduce jitter on high lift
-        leftLinearSlide.setVelocityPIDFCoefficients(12, 0.75, 0, 8);
-        rightLinearSlide.setVelocityPIDFCoefficients(12, 0.75, 0, 8);
+        leftLinearSlide.setVelocityPIDFCoefficients(12.0, 0.75, 0.0, 8.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(12.0, 0.75, 0.0, 8.0);
         // For Wrist, PIDF values set to reduce jitter
-        wrist.setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
+        wrist.setVelocityPIDFCoefficients(15.0, 0.2, 0.05, 16.0);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!

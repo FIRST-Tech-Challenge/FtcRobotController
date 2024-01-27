@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.utility;
 import static java.lang.Math.abs;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -69,6 +70,8 @@ public class Movement {
 
     // Setup PID controllers for Pose2d motion.
     PIDController yawPID;
+    PIDController xPID;
+    PIDController yPID;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
@@ -112,8 +115,12 @@ public class Movement {
         visionProcessor = vProc;
 
         initOdometry();
-        yawPID = new PIDController((1.0/45.0), 0.00, 0.002);
+        yawPID = new PIDController((1.0/45.0), 0.0, 0.002);
         yawPID.reset();
+        xPID = new PIDController(1.5, 0.0, 0.02);
+        xPID.reset();
+        yPID = new PIDController(3, 0.0, 0.02);
+        yPID.reset();
     }
 
     public void initOdometry() {
@@ -515,39 +522,39 @@ public class Movement {
         double targetY = targetPosition.getY(); // desired Y
         double targetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
 
-//        currentX = odometry.getPoseMeters().getX();
-//        currentY = odometry.getPoseMeters().getY();
-        targetX = 0;
-        targetY = 0;
-        currentX = 0;
-        currentY = 0;
+        currentX = odometry.getPoseMeters().getX();
+        currentY = odometry.getPoseMeters().getY();
         currentAngle = odometry.getPoseMeters().getRotation().getDegrees();
+
+        double yaw;
+        double fieldX;
+        double fieldY;
 
         pose2dAligned = false;
 
-        axial = targetX - currentX;
-        lateral = targetY - currentY;
+//      Zero out X and y for Yaw isolation example for training
+        targetX = 0;
+        currentX = 0;
+        targetY = 0;
+        currentY = 0;
+//        targetAngle = 0;
+//        currentAngle = 0;
 
-        // Use a PID controller to dampen the yaw motion on a turn.
-        yaw = yawPID.calculate (CalcTurnError(targetAngle, currentAngle));
+        // Since both the current and target X / Y coords are in field coordinates, so will the delta.
+        // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
+        yaw = yawPID.calculate(CalcTurnError(targetAngle, currentAngle));
+        fieldX = xPID.calculate(-(targetX - currentX));
+        fieldY = yPID.calculate(targetY - currentY);
 
-//      // Combine the axial, lateral and yaw factors to be powers
+        // Reorient the field movement requested to robot orientation
+        double axial = fieldX * Math.cos(Math.toRadians(currentAngle)) - fieldY * Math.sin(Math.toRadians(currentAngle));
+        double lateral = fieldX * Math.sin(Math.toRadians(currentAngle)) + fieldY * Math.cos(Math.toRadians(currentAngle));
+
+        // Combine the axial, lateral and yaw factors to be powers
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
         double rightBackPower = axial + lateral - yaw;
-
-        // Reorient the stick inputs to field orientation
-        // The current orientation is DirectionNow
-//        double field_axial = axial * Math.cos(Math.toRadians(currentAngle)) - lateral * Math.sin(Math.toRadians(currentAngle));
-//        double field_lateral = axial * Math.sin(Math.toRadians(currentAngle)) + lateral * Math.cos(Math.toRadians(currentAngle));
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-//        double leftFrontPower  = field_axial + field_lateral - yaw;
-//        double rightFrontPower = field_axial - field_lateral + yaw;
-//        double leftBackPower   = field_axial - field_lateral - yaw;
-//        double rightBackPower  = field_axial + field_lateral + yaw;
 
         // Update Telemetry with key data
         telemetry.addLine(String.format("Pose2D X(Current%5.1f,Target%5.1f)", currentX, targetX));
