@@ -10,8 +10,8 @@ public class CSCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     public static double pixelDetectThreshold = 350;
     public static double clawOpen = 0.4;
-    public static double clawClosed = 0.82;
-    public static double clawTransfer = 0.72;
+    public static double clawClosed = 0.695;
+    public static double clawTransfer = 0.6;
     public static double clawAngleGroundToThree = .94;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .2;

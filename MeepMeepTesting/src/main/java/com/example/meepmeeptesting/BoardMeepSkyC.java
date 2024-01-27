@@ -16,7 +16,9 @@ public class BoardMeepSkyC {
                 .setDimensions(15, 17)
 
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+                                        .lineToSplineHeading(new Pose2d(new Vector2d(6, 34.5), Math.toRadians(305)))
+                                        .splineToLinearHeading(new Pose2d(new Vector2d(46, 30), Math.toRadians(180)), Math.toRadians(-60))
 
                                         .build()
                 );
