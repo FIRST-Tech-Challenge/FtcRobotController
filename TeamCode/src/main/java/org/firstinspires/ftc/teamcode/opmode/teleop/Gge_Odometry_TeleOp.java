@@ -236,9 +236,9 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         odometrySpeeds = moveTo.GetWheelSpeeds();
 
         // target positions
-        double targetX = odometry.getPoseMeters().getX();
+        double targetX = odometry.getPoseMeters().getX() + 0.5;
         double targetY = odometry.getPoseMeters().getY();
-        double targetAngle = odometry.getPoseMeters().getRotation().getDegrees() + 90;
+        double targetAngle = odometry.getPoseMeters().getRotation().getDegrees();
 
         //drive speed limiter
         double powerFactor;

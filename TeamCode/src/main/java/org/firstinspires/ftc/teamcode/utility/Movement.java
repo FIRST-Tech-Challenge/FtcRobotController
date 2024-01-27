@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.utility;
 import static java.lang.Math.abs;
 
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -17,12 +16,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
@@ -70,8 +65,8 @@ public class Movement {
 
     // Setup PID controllers for Pose2d motion.
     PIDController yawPID;
-    PIDController xPID;
-    PIDController yPID;
+    PIDController axialPID;
+    PIDController lateralPID;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
@@ -115,21 +110,21 @@ public class Movement {
         visionProcessor = vProc;
 
         initOdometry();
-        yawPID = new PIDController((1.0/45.0), 0.0, 0.002);
+        yawPID = new PIDController((1.0/45.0), 0.0015, 0.0025);
         yawPID.reset();
-        xPID = new PIDController(1.5, 0.0, 0.02);
-        xPID.reset();
-        yPID = new PIDController(3, 0.0, 0.02);
-        yPID.reset();
+        axialPID = new PIDController(3, 0.0, 0.029);
+        axialPID.reset();
+        lateralPID = new PIDController(8, 0.0, 0.02);
+        lateralPID.reset();
     }
 
     public void initOdometry() {
         // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
         // in Meters - translated from inches as inches * 2.54 / 100
-        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
-        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
-        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
-        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
+        Translation2d lfMotorMeters = new Translation2d(-(10 * 2.54 / 100.0), (10 * 2.54 / 100.0));
+        Translation2d rfMotorMeters = new Translation2d((7.5 * 2.54 / 100.0), (7.5 * 2.54 / 100.0));
+        Translation2d lbMotorMeters = new Translation2d(-(7 * 2.54 / 100.0), -(7 * 2.54 / 100.0));
+        Translation2d rbMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
 
         // Create Mecanum Kinematics
         kinematics = new MecanumDriveKinematics(lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
@@ -533,28 +528,52 @@ public class Movement {
         pose2dAligned = false;
 
 //      Zero out X and y for Yaw isolation example for training
-        targetX = 0;
-        currentX = 0;
-        targetY = 0;
-        currentY = 0;
-//        targetAngle = 0;
+//        targetX = 0;
+//        currentX = 0;
+//        targetY = 0;
+//        currentY = 0;
+        targetAngle = 90;
 //        currentAngle = 0;
 
         // Since both the current and target X / Y coords are in field coordinates, so will the delta.
         // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
         yaw = yawPID.calculate(CalcTurnError(targetAngle, currentAngle));
-        fieldX = xPID.calculate(-(targetX - currentX));
-        fieldY = yPID.calculate(targetY - currentY);
+        fieldX = -(targetX - currentX);
+        fieldY = targetY - currentY;
 
         // Reorient the field movement requested to robot orientation
         double axial = fieldX * Math.cos(Math.toRadians(currentAngle)) - fieldY * Math.sin(Math.toRadians(currentAngle));
         double lateral = fieldX * Math.sin(Math.toRadians(currentAngle)) + fieldY * Math.cos(Math.toRadians(currentAngle));
+
+        if (abs (axial) < 0.05) {
+            axial = 0;
+        }
+        if (abs (lateral) < 0.05) {
+            lateral = 0;
+        }
+
+        axial = axialPID.calculate(axial);
+        lateral = lateralPID.calculate(lateral);
+
 
         // Combine the axial, lateral and yaw factors to be powers
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
         double rightBackPower = axial + lateral - yaw;
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
+        max = Math.max(max, abs(leftBackPower));
+        max = Math.max(max, abs(rightBackPower));
+
+        if (max > 0.8) {
+            leftFrontPower  /= (max*1.2);
+            rightFrontPower /= (max*1.2);
+            leftBackPower   /= (max*1.2);
+            rightBackPower  /= (max*1.2);
+        }
 
         // Update Telemetry with key data
         telemetry.addLine(String.format("Pose2D X(Current%5.1f,Target%5.1f)", currentX, targetX));

@@ -6,3 +6,4 @@ public enum GamePieceLocation {
     RIGHT,
     UNDEFINED
 }
+
