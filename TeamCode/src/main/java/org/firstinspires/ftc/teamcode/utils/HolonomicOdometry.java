@@ -5,12 +5,12 @@ import com.arcrobotics.ftclib.kinematics.Odometry;
 
 import java.util.function.DoubleSupplier;
 
-public class HolonomicOdometry {
+public class HolonomicOdometry   {
 
     private double prevLeftEncoder, prevRightEncoder, prevHorizontalEncoder;
     private Rotation2d previousAngle;
     private double centerWheelOffset;
-    protected Pose2d robotPose;
+    protected Pose2d robotPose = new Pose2d();
 
     public Pose2d getPose() {
         return robotPose;
@@ -36,6 +36,7 @@ public class HolonomicOdometry {
     public HolonomicOdometry(Pose2d initialPose, double trackwidth, double centerWheelOffset) {
         this.m_trackWidth = trackwidth;
         previousAngle = initialPose.getRotation();
+        robotPose=initialPose;
         this.centerWheelOffset = centerWheelOffset;
     }
 

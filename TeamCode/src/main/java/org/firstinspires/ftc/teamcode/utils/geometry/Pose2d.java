@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.utils.geometry;
-
 public class Pose2d {
     private final Translation2d m_translation;
     private final Rotation2d m_rotation;
