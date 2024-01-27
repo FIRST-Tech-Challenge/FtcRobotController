@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.deprecated;
 
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
 
