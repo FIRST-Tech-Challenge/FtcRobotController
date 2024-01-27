@@ -116,7 +116,9 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("pose y: ", odometry.getPose().getY());
         dashboardTelemetry.addData("gyro angle: ", gyro.getHeading());
         dashboardTelemetry.addData("x:", odometry.getPose().getX());
-        dashboardTelemetry.addData("velocity: ", velocity);
+        dashboardTelemetry.addData("Theta velocity : ", velocity.getRotation().getDegrees());
+        dashboardTelemetry.addData("X velocity : ", velocity.getTranslation().getX());
+        dashboardTelemetry.addData("Y velocity : ", velocity.getTranslation().getY());
 
 
         dashboardTelemetry.update();
