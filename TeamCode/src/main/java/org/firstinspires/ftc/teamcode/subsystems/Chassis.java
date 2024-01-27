@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -101,7 +102,11 @@ public class Chassis implements Subsystem {
 
     @Override
     public void periodic() {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+        dashboardTelemetry.addData("x:", odometry.getPose().getX());
+        dashboardTelemetry.update();
         odometry.updatePose();
 //        if (Constants.TimeToAprilTagCheck > time.seconds()) {
 //            m_poseEstimator.setPoseToCameraPose(m_postitionFromTag);
