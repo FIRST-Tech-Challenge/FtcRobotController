@@ -497,6 +497,17 @@ public abstract class CSBase extends LinearOpMode {
         return false;
     }
 
+    private void warningCleanup1() {
+        if (detectTag(1)) {
+            warningCleanup2();
+        }
+    }
+    private void warningCleanup2() {
+        if (!detectTag(1)) {
+            warningCleanup1();
+        }
+    }
+
     /**
      * Detects AprilTag
      * @param id AprilTag ID
