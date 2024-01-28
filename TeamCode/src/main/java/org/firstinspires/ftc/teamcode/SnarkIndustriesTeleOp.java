@@ -130,6 +130,7 @@ public class SnarkIndustriesTeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
+            // TODO: maybe timer for no using drone
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
@@ -201,16 +202,17 @@ public class SnarkIndustriesTeleOp extends LinearOpMode {
             }
 
             // Turn servo if a button is depressed
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 // servo should turn
                 position = 0.5;
+                servo.setPosition(position);
             }
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
 
             // Conveyor Speed Control
             double bottomConveyorSpeed  = -gamepad2.left_stick_y;  // Note: pushing stick forward gives negative value
+            //TODO: *0.6 to lower conveyer speed
             double topConveyorSpeed = -gamepad2.right_stick_y;
             double conveyorFolderSpeed =  0;
             // when you press dpad up/down conveyor folder will go up or down correspondingly
