@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import org.firstinspires.ftc.vision.apriltag.*;
 
-
-//@Autonomous(name = "April Tag Detection", group = "Tests")
-@Disabled
+@Autonomous(name = "April Tag Detection", group = "Tests")
+//@Disabled
 public class Test_AprilTag extends CSBase {
     public void runOpMode() {
-
         setup(true);
 
-        strafe(0,dir.l);
-        while (!detectTag(6));
-        stopRobot();
-        drive(-10);
+        AprilTagDetection a;
+        while (opModeIsActive()) {
+            a = tagDetections(5, 1);
+            telemetry.speak("" + a);
+            telemetry.addData("5", a);
+            telemetry.update();
+        }
 
     }
 }

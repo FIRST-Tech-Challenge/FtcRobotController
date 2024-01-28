@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.*;
 
+import androidx.annotation.Nullable;
+
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 import com.qualcomm.hardware.rev.*;
@@ -495,6 +497,12 @@ public abstract class CSBase extends LinearOpMode {
         return false;
     }
 
+    /**
+     * Detects AprilTag
+     * @param id AprilTag ID
+     * @return AprilTag information
+     */
+    @Nullable
     private AprilTagDetection tagDetections(int id) {
         int i;
         for (i = 0; i < tagProcessor.getDetections().size(); i++)
@@ -506,11 +514,17 @@ public abstract class CSBase extends LinearOpMode {
         return null;
     }
 
-    private AprilTagDetection tagDetections(int id, long seconds) {
-        long nanoseconds = seconds * 1000000000;
+    /** Attempts to detect AprilTag for a specified number of seconds.
+     * @param id AprilTag ID
+     * @param seconds Time in seconds to attempt detection
+     * @return AprilTag information
+     */
+    @Nullable
+    public AprilTagDetection tagDetections(int id, int seconds) {
+        int ms = seconds * 1000;
         AprilTagDetection a = tagDetections(id);
-        long t = System.nanoTime();
-        while (opModeIsActive() && (a != null &&  t - System.nanoTime() < nanoseconds)) {
+        int t = (int) System.currentTimeMillis();
+        while (opModeIsActive() && (a != null &&  t - System.currentTimeMillis() < ms)) {
             a = tagDetections(id);
         }
         return a;
@@ -520,8 +534,10 @@ public abstract class CSBase extends LinearOpMode {
         AprilTagDetection a = tagDetections(id, 1);
             while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 3 || abs(a.ftcPose.yaw) > 1)) {
                 a = tagDetections(id, 1);
+                if (a == null) { return; }
                 turn(a.ftcPose.yaw);
                 a = tagDetections(id, 1);
+                if (a == null) { return; }
                 strafe(a.ftcPose.x);
         }
     }
