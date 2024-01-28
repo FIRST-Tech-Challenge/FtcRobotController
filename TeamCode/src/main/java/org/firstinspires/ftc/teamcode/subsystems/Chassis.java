@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.utils.RunCommand;
 import org.firstinspires.ftc.teamcode.utils.geometry.*;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
+
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
 
@@ -35,7 +36,7 @@ public class Chassis implements Subsystem {
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
     private PIDFController m_pidcontroller;
     private double prevTime = 0;
-    private Transform2d velocity, prevVelocity=new Transform2d(), acceleration, prevAcceleration=new Transform2d();
+    private Transform2d velocity, prevVelocity = new Transform2d(), acceleration, prevAcceleration = new Transform2d();
     private Pose2d prevPos;
     private HardwareMap map;
     private BTposeEstimator odometry;
@@ -79,11 +80,11 @@ public class Chassis implements Subsystem {
                 () -> metersFormTicks(horizontalEncoder.getCurrentPosition()),
                 () -> gyro.getHeading(),
                 TRACKWIDTH, WHEEL_OFFSET);
-        prevPos=odometry.getPose();
+        prevPos = odometry.getPose();
         time.reset();
         time.startTime();
         prevTime = time.time();
-      m_pidcontroller = new PIDFController(kp,ki,kd,kff);
+        m_pidcontroller = new PIDFController(kp, ki, kd, kff);
         register();
 
     }
@@ -95,13 +96,23 @@ public class Chassis implements Subsystem {
         motor_BL.set(BL);
     }
 
+    ElapsedTime driveTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+
+    boolean isFirstTime = true;
     //x is front facing, y is
     public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
         return new RunCommand(() -> {
+            if (isFirstTime == true) {
+                driveTimer.startTime();
+                isFirstTime=false;
+                dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
+                dashboardTelemetry.update();
+            }
             m_telemetry.addData("front", frontVel);
             m_telemetry.update();
             drive(frontVel.getAsDouble(), sidewayVel.getAsDouble(), retaliation.getAsDouble());
         }, this);
+
     }
 
     public BTCommand fieldRelativeDrive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
@@ -123,24 +134,23 @@ public class Chassis implements Subsystem {
 
     @Override
     public void periodic() {
-        m_pidcontroller.setPIDF(kp,ki,kd,kff);
+        m_pidcontroller.setPIDF(kp, ki, kd, kff);
         odometry.updatePose();
         calcVA();
-        if(velocity.getTranslation().getY()>maxVelocityY){
-            maxVelocityY=velocity.getTranslation().getY();
+        if (Math.abs(velocity.getTranslation().getY()) > maxVelocityY) {
+            maxVelocityY = velocity.getTranslation().getY();
         }
-        if(velocity.getTranslation().getX()>maxVelocityX){
-            maxVelocityX=velocity.getTranslation().getX();
+        if (Math.abs(velocity.getTranslation().getX()) > maxVelocityX) {
+            maxVelocityX = velocity.getTranslation().getX();
         }
-        if(acceleration.getTranslation().getX()>maxAccelerationX){
-            maxAccelerationX=acceleration.getTranslation().getX();
+        if (Math.abs(acceleration.getTranslation().getX()) > maxAccelerationX) {
+            maxAccelerationX = acceleration.getTranslation().getX();
         }
-        if(acceleration.getTranslation().getY()>maxAccelerationY){
-            maxAccelerationY=acceleration.getTranslation().getY();
+        if (Math.abs(acceleration.getTranslation().getY()) > maxAccelerationY) {
+            maxAccelerationY = acceleration.getTranslation().getY();
         }
 
 
-        dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
         dashboardTelemetry.addData("pose y: ", odometry.getPose().getY());
         dashboardTelemetry.addData("gyro angle: ", gyro.getHeading());
         dashboardTelemetry.addData("x:", odometry.getPose().getX());
@@ -148,9 +158,11 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("X velocity : ", velocity.getTranslation().getX());
         dashboardTelemetry.addData("X Max velocity : ", maxVelocityX);
         dashboardTelemetry.addData("X MaxAcc : ", maxAccelerationX);
+        dashboardTelemetry.addData("X Acc : ", acceleration.getTranslation().getX());
         dashboardTelemetry.addData("Y velocity : ", velocity.getTranslation().getY());
-        dashboardTelemetry.addData("Y Max velocity : ", maxVelocityY) ;
+        dashboardTelemetry.addData("Y Max velocity : ", maxVelocityY);
         dashboardTelemetry.addData("Y MaxAcc: ", maxAccelerationY);
+        dashboardTelemetry.addData("Y Acc: ", acceleration.getTranslation().getY());
 
 
         dashboardTelemetry.update();
@@ -164,6 +176,8 @@ public class Chassis implements Subsystem {
         prevPos = odometry.getPose();
         prevVelocity = velocity;
         prevAcceleration = acceleration;
+        prevTime = time.time();
+
     }
 
     @Override

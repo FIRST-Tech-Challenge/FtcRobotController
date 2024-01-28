@@ -28,6 +28,8 @@ public class Constants {
         public static final double TRACKWIDTH = 1;
         public static final double WHEEL_OFFSET = 1;
         public static final double TICKS_TO_CM = 38.862;
+        public static final double RobotMaxVelX = 1.63; //m/s
+        public static final double RobotMaxVelY = 0.89; //m/s
         @Config
         public static class PIDConstants {
             public static double kp = 0;
