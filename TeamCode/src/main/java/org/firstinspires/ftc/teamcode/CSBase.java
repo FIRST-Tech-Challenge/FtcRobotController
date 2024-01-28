@@ -347,8 +347,12 @@ public abstract class CSBase extends LinearOpMode {
         sleep(WAIT_TIME);
     }
 
+    /** Strafes right for a specified number of inches. An inches value of zero will cause the
+     * robot to strafe until manually stopped.
+     * @param inches Amount of inches to strafe.
+     */
     public void strafe(double inches){
-        strafe(inches, dir.l);
+        strafe(inches, dir.r);
     }
 
     /** Changes the velocity.
@@ -497,16 +501,7 @@ public abstract class CSBase extends LinearOpMode {
         return false;
     }
 
-    private void warningCleanup1() {
-        if (detectTag(1)) {
-            warningCleanup2();
-        }
-    }
-    private void warningCleanup2() {
-        if (!detectTag(1)) {
-            warningCleanup1();
-        }
-    }
+
 
     /**
      * Detects AprilTag
@@ -514,7 +509,7 @@ public abstract class CSBase extends LinearOpMode {
      * @return AprilTag information
      */
     @Nullable
-    private AprilTagDetection tagDetections(int id) {
+    public AprilTagDetection tagDetections(int id) {
         int i;
         for (i = 0; i < tagProcessor.getDetections().size(); i++)
         {
@@ -531,25 +526,37 @@ public abstract class CSBase extends LinearOpMode {
      * @return AprilTag information
      */
     @Nullable
-    public AprilTagDetection tagDetections(int id, int seconds) {
-        int ms = seconds * 1000;
+    public AprilTagDetection tagDetections(int id, double seconds) {
+        double ms = seconds * 1000;
         AprilTagDetection a = tagDetections(id);
         int t = (int) System.currentTimeMillis();
-        while (opModeIsActive() && (a != null &&  t - System.currentTimeMillis() < ms)) {
+        while (opModeIsActive() && (a == null &&  System.currentTimeMillis() - t < ms)) {
             a = tagDetections(id);
+            if (a != null) {
+                break;
+            }
         }
         return a;
     }
 
+    /** Aligns the robot in front of the AprilTag.
+     * @param id AprilTag ID
+     */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
-            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 3 || abs(a.ftcPose.yaw) > 1)) {
+            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                turn(a.ftcPose.yaw);
+                telemetry.addData("Strafe", a.ftcPose.x);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                strafe(a.ftcPose.x);
+                telemetry.addData("Drive", -a.ftcPose.y + 5);
+                a = tagDetections(id, 1);
+                if (a == null) { return; }
+                if (abs(a.ftcPose.yaw) > 1) {
+                    telemetry.addData("Turn", a.ftcPose.yaw / 2);
+                }
+                telemetry.update();
         }
     }
 
@@ -597,6 +604,11 @@ public abstract class CSBase extends LinearOpMode {
         return spike.n;
     }
 
+    /** mmmnllkp
+     * @param location n
+     * @param teamColor n
+     * @return n
+     */
     public int setID(spike location, color teamColor) {
         int ID;
         if (teamColor == color.b) {
@@ -654,5 +666,19 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
         turn(-180);
         drive(-25);
+    }
+    /** Stupid method that cleans up warnings.*/
+    private void warningCleanup1() {
+        if (detectTag(1)) {
+            warningCleanup2();
+            strafe(5);
+        }
+    }
+
+    /** Stupid method that cleans up warnings.*/
+    private void warningCleanup2() {
+        if (!detectTag(1)) {
+            warningCleanup1();
+        }
     }
 }
