@@ -38,7 +38,7 @@ public abstract class CSBase extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
-    static       double     VELOCITY                = 2000;
+    static       double     velocity                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     //static final double     VEL_MODIFIER            = 1.12485939258;
@@ -53,7 +53,7 @@ public abstract class CSBase extends LinearOpMode {
     public VisionPortal visionPortal;
     public static String tfodModelName;
     private AprilTagProcessor tagProcessor;
-    private int waitTime = 500;
+    private final int WAIT_TIME = 500;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
@@ -195,29 +195,29 @@ public abstract class CSBase extends LinearOpMode {
             // reset the timeout time and start motion.
             if (inches != 0) {
                 runtime.reset();
-                lb.setVelocity(VELOCITY * signum(inches));
-                rb.setVelocity(VELOCITY * signum(inches));
-                lf.setVelocity(VELOCITY * signum(inches));
-                rf.setVelocity(VELOCITY * signum(inches));
+                lb.setVelocity(velocity * signum(inches));
+                rb.setVelocity(velocity * signum(inches));
+                lf.setVelocity(velocity * signum(inches));
+                rf.setVelocity(velocity * signum(inches));
             }
             else if (direction == dir.f){
-                lb.setVelocity(VELOCITY);
-                rb.setVelocity(VELOCITY);
-                lf.setVelocity(VELOCITY);
-                rf.setVelocity(VELOCITY);
+                lb.setVelocity(velocity);
+                rb.setVelocity(velocity);
+                lf.setVelocity(velocity);
+                rf.setVelocity(velocity);
             }
             else if (direction == dir.b){
-                lb.setVelocity(-VELOCITY);
-                rb.setVelocity(-VELOCITY);
-                lf.setVelocity(-VELOCITY);
-                rf.setVelocity(-VELOCITY);
+                lb.setVelocity(-velocity);
+                rb.setVelocity(-velocity);
+                lf.setVelocity(-velocity);
+                rf.setVelocity(-velocity);
             }
 
             if (inches != 0) {
                 inches = signum(inches) * (abs(inches) + B) / M;
             }
 
-            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
+            double duration = abs(inches * COUNTS_PER_INCH / velocity);
 
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 // Display it for the driver.
@@ -284,7 +284,7 @@ public abstract class CSBase extends LinearOpMode {
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
-            sleep(waitTime);
+            sleep(WAIT_TIME);
         }
     }
 
@@ -322,15 +322,15 @@ public abstract class CSBase extends LinearOpMode {
             }
 
             runtime.reset();
-            lb.setVelocity(VELOCITY * d);
-            rb.setVelocity(-VELOCITY * d);
-            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
-            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
+            lb.setVelocity(velocity * d);
+            rb.setVelocity(-velocity * d);
+            lf.setVelocity(-velocity * STRAFE_FRONT_MODIFIER * d);
+            rf.setVelocity(velocity * STRAFE_FRONT_MODIFIER * d);
             if (inches != 0) {
                 inches = (abs(inches) + 1.0125) / 0.7155;
             }
 
-            double duration = abs(inches * COUNTS_PER_INCH / VELOCITY);
+            double duration = abs(inches * COUNTS_PER_INCH / velocity);
 
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 telemetry.addData("Strafing until",  duration + " seconds");
@@ -342,7 +342,7 @@ public abstract class CSBase extends LinearOpMode {
             }
 
         }
-        sleep(waitTime);
+        sleep(WAIT_TIME);
     }
 
     public void strafe(double inches){
@@ -353,7 +353,7 @@ public abstract class CSBase extends LinearOpMode {
      * @param velocity New velocity value.
      */
     public void setSpeed(double velocity) {
-        VELOCITY = velocity;
+        CSBase.velocity = velocity;
     }
 
     /** Drives the specified number of inches. Negative values will drive backwards.
@@ -441,7 +441,7 @@ public abstract class CSBase extends LinearOpMode {
             rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            sleep(waitTime);
+            sleep(WAIT_TIME);
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
