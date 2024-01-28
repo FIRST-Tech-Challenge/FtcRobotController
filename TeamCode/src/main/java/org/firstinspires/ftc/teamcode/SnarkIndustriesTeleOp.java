@@ -211,8 +211,7 @@ public class SnarkIndustriesTeleOp extends LinearOpMode {
             // Set the servo to the new position and pause;
 
             // Conveyor Speed Control
-            double bottomConveyorSpeed  = -gamepad2.left_stick_y;  // Note: pushing stick forward gives negative value
-            //TODO: *0.6 to lower conveyer speed
+            double bottomConveyorSpeed  = -gamepad2.left_stick_y * 0.6;  // Note: pushing stick forward gives negative value
             double topConveyorSpeed = -gamepad2.right_stick_y;
             double conveyorFolderSpeed =  0;
             // when you press dpad up/down conveyor folder will go up or down correspondingly
