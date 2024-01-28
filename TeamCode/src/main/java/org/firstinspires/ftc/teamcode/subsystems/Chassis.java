@@ -49,6 +49,11 @@ public class Chassis implements Subsystem {
     private Motor rightEncoder;
     private Motor horizontalEncoder;
     private Pose2d m_postitionFromTag;
+    private double maxVelocityX = 0;
+    private double maxVelocityY = 0;
+    private double maxAccelerationX = 0;
+    private double maxAccelerationY = 0;
+
     ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public Chassis(HardwareMap map, Telemetry telemetry, MotorEx.Encoder leftEncoder, MotorEx.Encoder rightEncoder) {
@@ -105,10 +110,10 @@ public class Chassis implements Subsystem {
             m_telemetry.update();
             Translation2d vector = new Translation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             Translation2d rotated = vector.rotateBy(Rotation2d.fromDegrees(-gyro.getHeading()));
-            double wantedAngle= new Rotation2d(sidewayVel.getAsDouble(),frontVel.getAsDouble()).getDegrees();
-            double correctPositionVec=m_pidcontroller.calculate(odometry.getPose().getRotation().getDegrees(),wantedAngle);
+            double wantedAngle = new Rotation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble()).getDegrees();
+            double correctPositionVec = m_pidcontroller.calculate(odometry.getPose().getRotation().getDegrees(), wantedAngle);
 
-            drive(rotated.getY(),rotated.getX(),  correctPositionVec+retaliation.getAsDouble());
+            drive(rotated.getY(), rotated.getX(), correctPositionVec + retaliation.getAsDouble());
         }, this);
     }
 
@@ -121,6 +126,18 @@ public class Chassis implements Subsystem {
         m_pidcontroller.setPIDF(kp,ki,kd,kff);
         odometry.updatePose();
         calcVA();
+        if(velocity.getTranslation().getY()>maxVelocityY){
+            maxVelocityY=velocity.getTranslation().getY();
+        }
+        if(velocity.getTranslation().getX()>maxVelocityX){
+            maxVelocityX=velocity.getTranslation().getX();
+        }
+        if(acceleration.getTranslation().getX()>maxAccelerationX){
+            maxAccelerationX=acceleration.getTranslation().getX();
+        }
+        if(acceleration.getTranslation().getY()>maxAccelerationY){
+            maxAccelerationY=acceleration.getTranslation().getY();
+        }
 
 
         dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
@@ -129,7 +146,11 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("x:", odometry.getPose().getX());
         dashboardTelemetry.addData("Theta velocity : ", velocity.getRotation().getDegrees());
         dashboardTelemetry.addData("X velocity : ", velocity.getTranslation().getX());
+        dashboardTelemetry.addData("X Max velocity : ", maxVelocityX);
+        dashboardTelemetry.addData("X MaxAcc : ", maxAccelerationX);
         dashboardTelemetry.addData("Y velocity : ", velocity.getTranslation().getY());
+        dashboardTelemetry.addData("Y Max velocity : ", maxVelocityY) ;
+        dashboardTelemetry.addData("Y MaxAcc: ", maxAccelerationY);
 
 
         dashboardTelemetry.update();
