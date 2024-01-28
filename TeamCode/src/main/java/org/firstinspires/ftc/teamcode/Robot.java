@@ -1274,7 +1274,7 @@ public class Robot {
 
             // both bumper launches drone
             if (gamepad1.right_bumper && gamepad1.left_bumper) {
-                planeLauncher.setPower(-0.1);
+                planeLauncher.setPower(1);
             } else {
                 planeLauncher.setPower(0);
             }
