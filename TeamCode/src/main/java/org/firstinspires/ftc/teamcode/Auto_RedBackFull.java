@@ -19,26 +19,19 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.addData("Team Prop X", x);
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
+        /*
         purplePixel();
-        turn(90);
-        drive(tilesToInches(1.3));
-        strafe(0,dir.r);
-        while(!detectTag(ID));
-        stopRobot();
-        // Place yellow pixel
-        strafe(0,dir.r);
-        while(!detectTag(4));
-        stopRobot();
-        turn(90);
-        drive(tilesToInches(1));
-        turn(90);
-        detectTag(6);
-        drive(tilesToInches(-2.1));
+        drive(2);
         turn(-90);
+        drive(tilesToInches(-1));
+        turn(-90); //*/
+        drive(tilesToInches(-1));
+        turn(90);
         setSpeed(1000);
-        drive(tilesToInches(1.7));
-        setSpeed(2000);
-        ejectPixel();
+        align(ID);
+        drive(-12);
+        strafe(tilesToInches(1), dir.r);
+        drive(-18);
 
         //*/
 

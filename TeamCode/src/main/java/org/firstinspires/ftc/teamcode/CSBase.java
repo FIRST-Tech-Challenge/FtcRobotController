@@ -53,6 +53,7 @@ public abstract class CSBase extends LinearOpMode {
     public VisionPortal visionPortal;
     public static String tfodModelName;
     private AprilTagProcessor tagProcessor;
+    private int waitTime = 500;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
@@ -283,6 +284,7 @@ public abstract class CSBase extends LinearOpMode {
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
+            sleep(waitTime);
         }
     }
 
@@ -340,6 +342,7 @@ public abstract class CSBase extends LinearOpMode {
             }
 
         }
+        sleep(waitTime);
     }
 
     public void strafe(double inches){
@@ -441,6 +444,15 @@ public abstract class CSBase extends LinearOpMode {
     /** Stops all drive train motors on the robot. **/
     public void stopRobot() {
         if (lb != null) {
+            lb.setPower(0);
+            rb.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setVelocity(0);
+            rb.setVelocity(0);
+            lf.setVelocity(0);
+            rf.setVelocity(0);
+
             // Set target position to avoid an error
             lb.setTargetPosition(lb.getCurrentPosition());
             rb.setTargetPosition(rb.getCurrentPosition());
@@ -459,16 +471,12 @@ public abstract class CSBase extends LinearOpMode {
             lf.setTargetPosition(lf.getCurrentPosition());
             rf.setTargetPosition(rf.getCurrentPosition());
 
-            lb.setPower(0);
-            rb.setPower(0);
-            lf.setPower(0);
-            rf.setPower(0);
-
             // Turn off RUN_TO_POSITION
             lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            sleep(waitTime);
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
@@ -533,15 +541,23 @@ public abstract class CSBase extends LinearOpMode {
         return null;
     }
 
-    public void align(int id) {
+    private AprilTagDetection tagDetections(int id, long seconds) {
+        long nanoseconds = seconds * 1000000000;
         AprilTagDetection a = tagDetections(id);
-        if (a != null) {
-            while (abs(a.ftcPose.x) > 3 || abs(a.ftcPose.yaw) > 1) {
-                a = tagDetections(id);
+        long t = System.nanoTime();
+        while (opModeIsActive() && (a != null &&  t - System.nanoTime() < nanoseconds)) {
+            a = tagDetections(id);
+        }
+        return a;
+    }
+
+    public void align(int id) {
+        AprilTagDetection a = tagDetections(id, 1);
+            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 3 || abs(a.ftcPose.yaw) > 1)) {
+                a = tagDetections(id, 1);
                 turn(a.ftcPose.yaw);
-                a = tagDetections(id);
+                a = tagDetections(id, 1);
                 strafe(a.ftcPose.x);
-            }
         }
     }
 
@@ -573,7 +589,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Uses predefined boundaries to return the spike mark that the team prop is on.
      * @return The spike mark that the team prop is on. **/
     public spike findPos() {
-        s(2.5);
+        s(2);
         double x = detectProp();
         if (x == -1){
             return spike.l;
@@ -628,21 +644,23 @@ public abstract class CSBase extends LinearOpMode {
     public void purplePixel() {
         s(2);
         drive(-16);
+        s(.5);
         if (pos == spike.l) {
             turn(-40);
             drive(-8);
             drive(8);
             turn(40);
         } else if (pos == spike.m) {
-            drive(-10);
-            drive(10);
+            drive(-12);
+            drive(12);
         } else {
             turn(40);
             drive(-8);
             drive(8);
             turn(-40);
         }
-        drive(20);
         s(.5);
+        turn(-180);
+        drive(-25);
     }
 }

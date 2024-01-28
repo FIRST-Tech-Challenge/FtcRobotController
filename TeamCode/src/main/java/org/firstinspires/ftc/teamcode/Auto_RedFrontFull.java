@@ -22,10 +22,10 @@ public class Auto_RedFrontFull extends CSBase {
         turn(-90);
         s(3);
         drive(70);
-        startStrafe(dir.l);
-        while(opModeIsActive() && !detectTag(ID)) { continue; }
-        endStrafe();
-        align(ID);
+        // startStrafe(dir.l);
+        // while(opModeIsActive() && !detectTag(ID)) { continue; }
+        // endStrafe();
+        // align(ID);
         setSpeed(1000);
         drive(15);
         setSpeed(2000);
