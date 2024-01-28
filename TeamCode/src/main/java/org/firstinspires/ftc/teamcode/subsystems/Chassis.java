@@ -86,7 +86,7 @@ public class Chassis implements Subsystem {
         prevTime = time.time();
         m_pidcontroller = new PIDFController(kp, ki, kd, kff);
         register();
-
+        dashboardTelemetry.addData("drive: ", 0);
     }
 
     public void setMotors(double FL, double FR, double BL, double BR) {
@@ -103,13 +103,11 @@ public class Chassis implements Subsystem {
     public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
         return new RunCommand(() -> {
             if (isFirstTime == true) {
-                driveTimer.startTime();
+                driveTimer.reset();
                 isFirstTime=false;
-                dashboardTelemetry.addData("pose x: ", odometry.getPose().getX());
-                dashboardTelemetry.update();
+
             }
-            m_telemetry.addData("front", frontVel);
-            m_telemetry.update();
+            dashboardTelemetry.addData("drive: ",driveTimer.time());
             drive(frontVel.getAsDouble(), sidewayVel.getAsDouble(), retaliation.getAsDouble());
         }, this);
 
