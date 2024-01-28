@@ -349,41 +349,6 @@ public abstract class CSBase extends LinearOpMode {
         strafe(inches, dir.l);
     }
 
-    public void startStrafe(dir direction) {
-        if (opModeIsActive() && lf != null) {
-            lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-            lb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rb.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            lf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-            double d = 0;
-
-            if (direction == dir.r) {
-                d = -1;
-            } else if (direction == dir.l){
-                d = 1;
-            }
-
-            runtime.reset();
-            lb.setVelocity(VELOCITY * d);
-            rb.setVelocity(-VELOCITY * d);
-            lf.setVelocity(-VELOCITY * STRAFE_FRONT_MODIFIER * d);
-            rf.setVelocity(VELOCITY * STRAFE_FRONT_MODIFIER * d);
-
-            telemetry.addData("Strafing",  "Started");
-            telemetry.update();
-        }
-    }
-
-    public void endStrafe() {
-        stopRobot();
-    }
-
     /** Changes the velocity.
      * @param velocity New velocity value.
      */
