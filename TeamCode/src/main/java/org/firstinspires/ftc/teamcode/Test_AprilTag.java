@@ -12,7 +12,7 @@ public class Test_AprilTag extends CSBase {
         AprilTagDetection a;
         while (opModeIsActive()) {
             a = tagDetections(5, 1);
-            telemetry.speak("" + a);
+            telemetry.speak(a + "\u200E");
             telemetry.addData("5", a);
             telemetry.update();
         }
