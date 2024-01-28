@@ -55,11 +55,12 @@ public class Movement {
 
     double moveStartDirection = 0.0;
     int alignStage = 0;
-    double currentX = -2;
-    double currentY = 15;
+
     double tagRange = 15;
     double tagBearing = 0;
     boolean tagDetected = false;
+    double aprilTagCurrentX = -2;
+    double aprilTagCurrentY = 15;
     boolean aprilTagAligned = false;
     boolean pose2dAligned = false;
 
@@ -70,7 +71,6 @@ public class Movement {
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
-    double currentAngle = 0;
 
     /**
      * Pulls in information about the motors that is determined during initialization and makes
@@ -112,28 +112,32 @@ public class Movement {
         initOdometry();
         yawPID = new PIDController((1.0/45.0), 0.0015, 0.0025);
         yawPID.reset();
-        axialPID = new PIDController(3, 0.0, 0.029);
+        axialPID = new PIDController(2.5, 0.005, 0.02);
         axialPID.reset();
-        lateralPID = new PIDController(8, 0.0, 0.02);
+        lateralPID = new PIDController(7, 0.005, 0.02);
         lateralPID.reset();
     }
 
     public void initOdometry() {
         // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
         // in Meters - translated from inches as inches * 2.54 / 100
-        Translation2d lfMotorMeters = new Translation2d(-(10 * 2.54 / 100.0), (10 * 2.54 / 100.0));
-        Translation2d rfMotorMeters = new Translation2d((7.5 * 2.54 / 100.0), (7.5 * 2.54 / 100.0));
-        Translation2d lbMotorMeters = new Translation2d(-(7 * 2.54 / 100.0), -(7 * 2.54 / 100.0));
-        Translation2d rbMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
+        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), (3.5 * 2.54 / 100.0));
+        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100.0), (5 * 2.54 / 100.0));
+        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), -(3.5 * 2.54 / 100.0));
+        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100.0), -(5 * 2.54 / 100.0));
 
         // Create Mecanum Kinematics
         kinematics = new MecanumDriveKinematics(lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
 
         // Create Mecanum Odometry
         odometry = new MecanumDriveOdometry(kinematics, new Rotation2d(0.0));
-
         odometryTimer = new ElapsedTime();
         odometryTimer.reset();
+        imu.resetYaw();
+        // Initialize the odometry to the start position of the robot.
+        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
+        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
+                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
     }
 
@@ -381,24 +385,24 @@ public class Movement {
     }
 
     public boolean GoToAprilTag(int tagNumber) {
-        double targetX = 0;
+        double aprilTagTargetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
         if (tagNumber == 1 || tagNumber == 4) {
-            targetX = 0.5;
+            aprilTagTargetX = 0.5;
         } else if (tagNumber == 3 || tagNumber == 6) {
-            targetX = -0.5;
+            aprilTagTargetX = -0.5;
         }
-        double targetY = 8.5;
-        double targetAngle = 0;
+        double aprilTagTargetY = 9;
+        double aprilTagTargetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
         if (tagNumber <= 3) {
-            targetAngle = -90;
+            aprilTagTargetAngle = -90;
         } else if (tagNumber > 3) {
-            targetAngle = 90;
+            aprilTagTargetAngle = 90;
         }
 
-        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double aprilTagCurrentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         // Scan for April Tag detections and update current values if you find one.
         List<AprilTagDetection> tag = visionProcessor.getDetections();
@@ -406,8 +410,8 @@ public class Movement {
             for (int i = 0; i < tag.size(); i++) {
                 if (tag.get(i) != null) {
                     if (tag.get(i).id == tagNumber) {
-                        currentX = tag.get(i).ftcPose.x;
-                        currentY = tag.get(i).ftcPose.y;
+                        aprilTagCurrentX = tag.get(i).ftcPose.x;
+                        aprilTagCurrentY = tag.get(i).ftcPose.y;
                         tagRange = tag.get(i).ftcPose.range;
                         tagBearing = tag.get(i).ftcPose.bearing;
                         blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -420,14 +424,14 @@ public class Movement {
         // Update Telemetry with key data
         telemetry.addData("tags found: ", tag.size());
         telemetry.addData("AlignStage: ", alignStage);
-        telemetry.addData("Current X: ", currentX);
-        telemetry.addData("Target X: ", targetX);
-        telemetry.addData("Current Y: ", currentY);
-        telemetry.addData("Target Y: ", targetY);
+        telemetry.addData("Current X: ", aprilTagCurrentX);
+        telemetry.addData("Target X: ", aprilTagTargetX);
+        telemetry.addData("Current Y: ", aprilTagCurrentY);
+        telemetry.addData("Target Y: ", aprilTagTargetY);
         telemetry.addData("Tag Range: ", tagRange);
         telemetry.addData("Tag Bearing: ", tagBearing);
         telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Target Angle: ", targetAngle);
+        telemetry.addData("Target Angle: ", aprilTagTargetAngle);
         telemetry.update();
 
         // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
@@ -460,8 +464,8 @@ public class Movement {
 
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
-        if (abs(targetAngle - currentAngle) > 2) {
-            yaw = -CalcTurnError(targetAngle, currentAngle) / 45;
+        if (abs(aprilTagTargetAngle - aprilTagCurrentAngle) > 2) {
+            yaw = -CalcTurnError(aprilTagTargetAngle, aprilTagCurrentAngle) / 45;
             if (yaw > 0.2) {
                 yaw = 0.2;
             } else if (yaw < -0.2) {
@@ -476,9 +480,9 @@ public class Movement {
         // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
         //lateral = (targetX - currentY) / 20;
-        if (targetX - currentX > 1) {
+        if (aprilTagTargetX - aprilTagCurrentX > 1) {
             lateral = 0.2;
-        } else if (targetX - currentX < -1) {
+        } else if (aprilTagTargetX - aprilTagCurrentX < -1) {
             lateral = -0.2;
         } else {
             lateral = 0;
@@ -486,7 +490,7 @@ public class Movement {
 
         // Back the robot up to the right distance to raise the lift
         //axial = -(currentY - targetY) / 40;
-        if (currentY > targetY) {
+        if (aprilTagCurrentY > aprilTagTargetY) {
             axial = -0.15;
         } else {
             axial = 0;
@@ -505,7 +509,7 @@ public class Movement {
         rbDrive.setPower(rightBackPower);
 
         // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 2) {
+        if (abs(aprilTagTargetX - aprilTagCurrentX) < 1 && aprilTagCurrentY < aprilTagTargetY && abs(aprilTagTargetAngle - aprilTagCurrentAngle) < 2) {
             aprilTagAligned = true;
             blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
         }
@@ -513,37 +517,31 @@ public class Movement {
     }
 
     public boolean GoToPose2d(Pose2d targetPosition) {
-        double targetX = targetPosition.getX(); // desired X
-        double targetY = targetPosition.getY(); // desired Y
-        double targetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
+        double poseTargetX = targetPosition.getX(); // desired X
+        double poseTargetY = targetPosition.getY(); // desired Y
+        double poseTargetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
 
-        currentX = odometry.getPoseMeters().getX();
-        currentY = odometry.getPoseMeters().getY();
-        currentAngle = odometry.getPoseMeters().getRotation().getDegrees();
-
-        double yaw;
-        double fieldX;
-        double fieldY;
-
-        pose2dAligned = false;
-
-//      Zero out X and y for Yaw isolation example for training
-//        targetX = 0;
-//        currentX = 0;
-//        targetY = 0;
-//        currentY = 0;
-        targetAngle = 90;
-//        currentAngle = 0;
+        double poseCurrentX = odometry.getPoseMeters().getX();
+        double poseCurrentY = odometry.getPoseMeters().getY();
+        double poseCurrentAngle = odometry.getPoseMeters().getRotation().getDegrees();
 
         // Since both the current and target X / Y coords are in field coordinates, so will the delta.
         // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
-        yaw = yawPID.calculate(CalcTurnError(targetAngle, currentAngle));
-        fieldX = -(targetX - currentX);
-        fieldY = targetY - currentY;
+        double yaw = yawPID.calculate(CalcTurnError(poseTargetAngle, poseCurrentAngle));
+        double fieldX = -(poseTargetX - poseCurrentX);;
+        double fieldY = poseTargetY - poseCurrentY;;
 
-        // Reorient the field movement requested to robot orientation
-        double axial = fieldX * Math.cos(Math.toRadians(currentAngle)) - fieldY * Math.sin(Math.toRadians(currentAngle));
-        double lateral = fieldX * Math.sin(Math.toRadians(currentAngle)) + fieldY * Math.cos(Math.toRadians(currentAngle));
+        // Reset the PID / i gain for distances larger than 0.5m
+        if (Math.sqrt((fieldX * fieldX) + (fieldY * fieldY)) > 0.5) {
+            axialPID.reset();
+            lateralPID.reset();
+        }
+
+        pose2dAligned = false;
+
+       // Reorient the field movement requested to robot orientation
+        double axial = fieldX * Math.cos(Math.toRadians(poseCurrentAngle)) - fieldY * Math.sin(Math.toRadians(poseCurrentAngle));
+        double lateral = fieldX * Math.sin(Math.toRadians(poseCurrentAngle)) + fieldY * Math.cos(Math.toRadians(poseCurrentAngle));
 
         if (abs (axial) < 0.05) {
             axial = 0;
@@ -568,18 +566,18 @@ public class Movement {
         max = Math.max(max, abs(leftBackPower));
         max = Math.max(max, abs(rightBackPower));
 
-        if (max > 0.8) {
-            leftFrontPower  /= (max*1.2);
-            rightFrontPower /= (max*1.2);
-            leftBackPower   /= (max*1.2);
-            rightBackPower  /= (max*1.2);
+        if (max > 0.7) {
+            leftFrontPower  /= (max*1.3);
+            rightFrontPower /= (max*1.3);
+            leftBackPower   /= (max*1.3);
+            rightBackPower  /= (max*1.3);
         }
 
         // Update Telemetry with key data
-        telemetry.addLine(String.format("Pose2D X(Current%5.1f,Target%5.1f)", currentX, targetX));
-        telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.1f)", currentY, targetY));
-        telemetry.addLine(String.format("Pose2D Φ(Current%5.1f,Target%5.1f)", currentAngle, targetAngle));
-        telemetry.addLine(String.format("Motion (Axial%5.1f,Lateral%5.1f,Yaw%5.1f)", axial, lateral, yaw));
+        telemetry.addLine(String.format("Pose2D X(Current%5.2f,Target%5.2f)", poseCurrentX, poseTargetX));
+        telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.2f)", poseCurrentY, poseTargetY));
+        telemetry.addLine(String.format("Pose2D Φ(Current%5.2f,Target%5.2f)", poseCurrentAngle, poseTargetAngle));
+        telemetry.addLine(String.format("Motion (Axial%5.2f,Lateral%5.2f,Yaw%5.2f)", axial, lateral, yaw));
         telemetry.addLine(String.format("Motor Powers(lf:%4.1f,rf:%4.1f,lb%4.1f,rb%4.1f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower));
         telemetry.update();
 
@@ -590,7 +588,7 @@ public class Movement {
         rbDrive.setPower(rightBackPower);
 
         // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 1) {
+        if ((abs(poseTargetX - poseCurrentX) < 0.05) && (abs(poseTargetY - poseCurrentY) < 0.05) && abs(poseTargetAngle - poseCurrentAngle) < 3) {
             pose2dAligned = true;
         }
         return pose2dAligned;

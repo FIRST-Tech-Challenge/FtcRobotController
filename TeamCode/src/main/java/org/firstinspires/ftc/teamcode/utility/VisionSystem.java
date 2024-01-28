@@ -58,7 +58,7 @@ public class VisionSystem {
                 .build();
 
         // set apriltag resolution decimation factor
-        aprilTagProcessor.setDecimation(3);
+        aprilTagProcessor.setDecimation(2);
 
         frontCam = hardwareMap.get(WebcamName.class, "gge_cam");
         CameraCharacteristics frontCamCar = frontCam.getCameraCharacteristics();

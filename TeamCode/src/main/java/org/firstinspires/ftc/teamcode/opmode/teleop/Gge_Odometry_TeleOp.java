@@ -174,6 +174,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
         // Adding in PIDF Config values learned from previous testing
         // These may need to be tuned anytime the motor weights or config changes.
+        // These may need to be tuned anytime the motor weights or config changes.
         // Set PIDF values thinking of ...
         // ... P as primary force (set second)
         // ...I as smoothing (set last)
@@ -186,8 +187,8 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         rightFrontDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
         rightBackDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
         // For Lift, PIDF values set to reduce jitter on high lift
-        leftLinearSlide.setVelocityPIDFCoefficients(12.0, 0.75, 0.0, 8.0);
-        rightLinearSlide.setVelocityPIDFCoefficients(12.0, 0.75, 0.0, 8.0);
+        leftLinearSlide.setVelocityPIDFCoefficients(12.0, 0.2, 0.0, 10.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(12.0, 0.2, 0.0, 10.0);
         // For Wrist, PIDF values set to reduce jitter
         wrist.setVelocityPIDFCoefficients(15.0, 0.2, 0.05, 16.0);
 
@@ -235,18 +236,22 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         odometry = moveTo.getOdometry();
         odometrySpeeds = moveTo.GetWheelSpeeds();
 
-        // target positions
-        double targetX = odometry.getPoseMeters().getX() + 0.5;
-        double targetY = odometry.getPoseMeters().getY();
-        double targetAngle = odometry.getPoseMeters().getRotation().getDegrees();
+        // target positions -- for testing, this will be set to the approach point for the blue
+        // backdrop when the robot starts in the blue left position
+        double targetX = 1.0; // 1m from the blue field side
+        double targetY = 2.5; // 2.5m from the audience field side
+        double targetAngle = -90; // initialized as 0.0 degrees from blue field start
+
+//        double targetX = odometry.getPoseMeters().getX() + 0.5;
+//        double targetY = odometry.getPoseMeters().getY();
+//        double targetAngle = odometry.getPoseMeters().getRotation().getDegrees();
 
         //drive speed limiter
         double powerFactor;
-        double basePowerFacter = 0.60;
-        double boostPowerFacter = 0.40;
+        double basePowerFacter = 0.65;
+        double boostPowerFacter = 0.35;
 
         // Set a local variable to accumulate error over time (I gain).
-        double accumulatedError = 0;
         PIDController driveYawPID;
         driveYawPID = new PIDController((1.0/100.0), 0.0004, 0.001);
         driveYawPID.reset();
@@ -273,7 +278,9 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 //Reset Yaw with the back button
                 imu.resetYaw();
                 DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                odometry.resetPosition(new Pose2d(odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY(), new Rotation2d(0.0)), new Rotation2d (Math.toRadians(DirectionNow)));
+                // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
+                odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
+                        new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             }
 
             // Controls the intake
@@ -308,6 +315,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 while (!moveTo.GoToPose2d(new Pose2d(targetX,targetY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
                     // Get the wheel speeds and update the odometry
                     DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                    directionLocked = false;
                     odometrySpeeds = moveTo.GetWheelSpeeds();
                     odometry.updateWithTime(odometryTimer.seconds(),
                             new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
@@ -328,7 +336,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 linearslidemovement.LinearSlidesMiddle();
             } else if (gamepad1.dpad_right) {
                 linearslidemovement.LinearSlidesBottom();
-                while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 5)){
+                while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 10)){
                     // pause to wait for the slide to lower before raising the wrist back up.
                 }
                 intake.FlipUp();
@@ -396,7 +404,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 // if there is rotational input, continuously set the desired angle to the current angle.
                 directionLocked = false;
                 // Reset the accumulated motion error.
-                accumulatedError = 0;
                 driveYawPID.reset();
             }
 
