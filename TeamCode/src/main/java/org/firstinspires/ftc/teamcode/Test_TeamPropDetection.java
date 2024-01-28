@@ -43,7 +43,7 @@ public class Test_TeamPropDetection extends CSBase {
     public void runOpMode() {
 
         tfodModelName = "Prop_Red.tflite";
-        initProcessors();
+        //initProcessors();
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
