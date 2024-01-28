@@ -29,10 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -94,56 +92,23 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
 
-        while (!isStarted() && !isStopRequested()) {
-            seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape
-            List<Recognition> currentRecognitions = tfod.getRecognitions();
-            for (Recognition recognition : currentRecognitions) {
-                double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-                // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                if (xValue < borderLine) {
-                    // center
-                    telemetry.addData("position", "Center");
-                    desiredTag = 2;
-                    seen = true;
-                }
-
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                else if (xValue > borderLine) {  //
-                    // right
-                    telemetry.addData("position", "Right");
-                    desiredTag = 1;
-                    seen = true;
-
-                }
-            }
-            // If the team prop is not seen on the center or right, it will assume it is on the left.
-            if (!seen) {
-                telemetry.addData("position", "Left");
-                desiredTag = 3;
-            }
-
-            // Wait for the DS start button to be touched.
-            telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-            telemetry.addData(">", "Touch Play to start OpMode");
-            telemetry.update();
+        while (WaitingToStart()) {
+            IdentifyTeamPropLocation();
         }
 
         if (opModeIsActive()) {
-
-            if (desiredTag == 2) { // drives robot to the center position.
-                gobbler.driveTrain.centerPos();
-            }
-
-            else if (desiredTag == 1) { // drives robot to the right position.
-                gobbler.driveTrain.rightPos();
-            }
-
-            else { // drives robot to the left position.
-                gobbler.driveTrain.leftPos();
-            }
+            PlaceFirstPixel();
+//            if (desiredTag == 2) { // drives robot to the center position.
+//                gobbler.driveTrain.centerPos();
+//            }
+//
+//            else if (desiredTag == 1) { // drives robot to the right position.
+//                gobbler.driveTrain.rightPos();
+//            }
+//
+//            else { // drives robot to the left position.
+//                gobbler.driveTrain.leftPos();
+//            }
                 // Place first pixel
             /*
                 gobbler.driveTrain.Wait(0.5);
@@ -152,16 +117,53 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
 */
                 // Push telemetry to the Driver Station.
-                telemetry.update();
-                gobbler.driveTrain.Wait(3.0);
-
-             sleep(50);
+//                telemetry.update();
+//                gobbler.driveTrain.Wait(3.0);
+//
+//             sleep(50);
         }
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
+
+    private void IdentifyTeamPropLocation() {
+        seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        for (Recognition recognition : currentRecognitions) {
+            double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
+            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            if (xValue < borderLine) {
+                // center
+                telemetry.addData("position", "Center");
+                desiredTag = 2;
+                seen = true;
+            }
+
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            else if (xValue > borderLine) {  //
+                // right
+                telemetry.addData("position", "Right");
+                desiredTag = 1;
+                seen = true;
+
+            }
+        }
+        // If the team prop is not seen on the center or right, it will assume it is on the left.
+        if (!seen) {
+            telemetry.addData("position", "Left");
+            desiredTag = 3;
+        }
+
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
+    }
 
     /**
      * Initialize the TensorFlow Object Detection processor.
@@ -247,5 +249,13 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    private void PlaceFirstPixel() {
+
+    }
+
+    private boolean WaitingToStart() {
+        return (!isStarted() && !isStopRequested());
+    }
 
 }   // end class
