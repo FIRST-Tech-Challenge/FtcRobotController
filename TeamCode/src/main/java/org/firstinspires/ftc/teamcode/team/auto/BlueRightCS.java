@@ -30,15 +30,17 @@ public class BlueRightCS extends LinearOpMode {
 
     static final Vector2d TrajC0 = new Vector2d(27,.8);
     static final Vector2d TrajC1 = new Vector2d(3, 0);
-    static final Vector2d TrajC2 = new Vector2d(3,75);
+    static final Vector2d TrajC2 = new Vector2d(3,75);//left parking
 
-    static final Vector2d TrajR0 = new Vector2d(20.2,-4.5);
-    static final Vector2d TrajR1 = new Vector2d(3, 0);
-    static final Vector2d TrajR2 = new Vector2d(3,75);
+    static final Vector2d TrajR0 = new Vector2d(20.7,-4.5);
+    static final Vector2d TrajR1 = new Vector2d(50, 3);
+    static final Vector2d TrajR2 = new Vector2d(50,80); //right parking
 
-    static final Vector2d TrajS0 = new Vector2d(0,0);
-    static final Vector2d TrajS1 = new Vector2d(0,0);
-    static final Vector2d TrajS2 = new Vector2d(0,0);
+    static final Vector2d TrajS0 = new Vector2d(23,-20);
+    static final Vector2d TrajS1 = new Vector2d(44,-20);
+    static final Vector2d TrajS2 = new Vector2d(65,-20);
+
+
 
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -62,7 +64,7 @@ public class BlueRightCS extends LinearOpMode {
     Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
 
     CSVP CSVP;
-    int placement = 3;
+    int placement = 3;// default to right
     private static final double MID = 18d;
 
     public void runOpMode() throws InterruptedException {
@@ -152,7 +154,9 @@ public class BlueRightCS extends LinearOpMode {
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
         telemetry.update();
 
-        int recog=0;
+        int recog = 0;
+        int oldrecog = 0;
+        int count = 0;
 
         telemetry.update();
         waitForStart();
@@ -169,16 +173,34 @@ public class BlueRightCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    if (detectTimer.milliseconds() > 200) {
+
+                   if (detectTimer.milliseconds() > 200) {
                         recog = CSVP.leftDetect(); //numerical value
                         detectTimer.reset();
+
+                       if (recog != oldrecog)
+                           count = 1;
+                       else
+                           count++;
+                   }
+
+
+
+                    if (waitTimer.milliseconds() > 4000 || count > 4) {
+                        if (count > 4){
+                            telemetry.addLine("more than 4 detections");
+                            telemetry.addLine("located" + recog+" many times: " +count);
+                        }
+                        else {
+                            telemetry.addLine("more then than 4 seconds");
+                            telemetry.addLine("located" + recog+" many times: " +count);
+
+                        }
+                        currentState =  BlueRightCS.State.IDLE;
+                       // CSVP.closeVP();
+                        placement = 3;
                     }
 
-                    if (waitTimer.milliseconds() > 4000) {
-                        currentState =  BlueRightCS.State.FORWARD;
-                        CSVP.closeVP();
-                        placement = recog;
-                    }
                     break;
 
                 case FORWARD:
