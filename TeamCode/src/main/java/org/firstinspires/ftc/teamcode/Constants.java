@@ -30,7 +30,9 @@ public class Constants {
         public static final double TICKS_TO_CM = 38.862;
         public static final double RobotMaxVelX = 1.63; //m/s
         public static final double RobotMaxVelY = 0.89; //m/s
-        public static final double RobotMaxAccX = 1.47 // m/s
+        public static final double  robotThetaVelocityMax= 180; //degree per sec
+        public static final double  robotThetaAccMax= 180; //degree per sec
+        public static final double RobotMaxAccX = 1.47; // m/s
         @Config
         public static class PIDConstants {
             public static double kp = 0;

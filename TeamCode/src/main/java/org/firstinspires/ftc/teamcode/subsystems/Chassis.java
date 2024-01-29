@@ -52,7 +52,9 @@ public class Chassis implements Subsystem {
     private Pose2d m_postitionFromTag;
     private double maxVelocityX = 0;
     private double maxVelocityY = 0;
+    private double maxVelocityTheta = 0;
     private double maxAccelerationX = 0;
+    private double maxAccelerationTheta = 0;
     private double maxAccelerationY = 0;
 
     ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
@@ -135,33 +137,17 @@ public class Chassis implements Subsystem {
         m_pidcontroller.setPIDF(kp, ki, kd, kff);
         odometry.updatePose();
         calcVA();
-        if (Math.abs(velocity.getTranslation().getY()) > maxVelocityY) {
-            maxVelocityY = velocity.getTranslation().getY();
-        }
-        if (Math.abs(velocity.getTranslation().getX()) > maxVelocityX) {
-            maxVelocityX = velocity.getTranslation().getX();
-        }
-        if (Math.abs(acceleration.getTranslation().getX()) > maxAccelerationX) {
-            maxAccelerationX = acceleration.getTranslation().getX();
-        }
-        if (Math.abs(acceleration.getTranslation().getY()) > maxAccelerationY) {
-            maxAccelerationY = acceleration.getTranslation().getY();
-        }
-
-
         dashboardTelemetry.addData("pose y: ", odometry.getPose().getY());
         dashboardTelemetry.addData("gyro angle: ", gyro.getHeading());
         dashboardTelemetry.addData("x:", odometry.getPose().getX());
+
         dashboardTelemetry.addData("Theta velocity : ", velocity.getRotation().getDegrees());
         dashboardTelemetry.addData("X velocity : ", velocity.getTranslation().getX());
-        dashboardTelemetry.addData("X Max velocity : ", maxVelocityX);
-        dashboardTelemetry.addData("X MaxAcc : ", maxAccelerationX);
-        dashboardTelemetry.addData("X Acc : ", acceleration.getTranslation().getX());
         dashboardTelemetry.addData("Y velocity : ", velocity.getTranslation().getY());
-        dashboardTelemetry.addData("Y Max velocity : ", maxVelocityY);
-        dashboardTelemetry.addData("Y MaxAcc: ", maxAccelerationY);
-        dashboardTelemetry.addData("Y Acc: ", acceleration.getTranslation().getY());
 
+        dashboardTelemetry.addData("X Acc : ", acceleration.getTranslation().getX());
+        dashboardTelemetry.addData("Y Acc: ", acceleration.getTranslation().getY());
+        dashboardTelemetry.addData("Theta Acc : ", acceleration.getRotation().getDegrees());
 
         dashboardTelemetry.update();
     }
@@ -170,6 +156,7 @@ public class Chassis implements Subsystem {
         double dt = time.time() - prevTime;
         velocity = odometry.getPose().minus(prevPos).times(1 / dt);
         acceleration = velocity.minus(prevVelocity).times(1 / dt);
+
 
         prevPos = odometry.getPose();
         prevVelocity = velocity;
