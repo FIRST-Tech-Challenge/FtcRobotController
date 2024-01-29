@@ -64,7 +64,6 @@ public class RobotHardwareInitializer {
         LAUNCHER,
         FINGER,
         WRIST,
-        DISTANCE_SENSOR,
         COLOR_SENSOR
     }
 
@@ -148,12 +147,8 @@ public class RobotHardwareInitializer {
         // Init Launcher
         out.put(Other.LAUNCHER, new ServoTypeValue(initializeLauncher(opMode)));
 
-        // Init Distance Sensor
-        //out.put(Other.DISTANCE_SENSOR, new DistanceSensorTypeValue(initializeDistanceSensor(opMode)));
-
         // Init Color Sensor
         //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
-
 
         // Init Intake
         HashMap<Intake, CRServo> tmp = initializeIntake(opMode);
@@ -280,15 +275,6 @@ public class RobotHardwareInitializer {
     public static ColorSensor initializeColorSensor(final OpMode opMode) {
         try {
             return opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
-        } catch(Exception e) {
-            Error(e, opMode);
-        }
-        return null;
-    }
-
-    public static DistanceSensor initializeDistanceSensor(final OpMode opMode) {
-        try {
-            return opMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
         } catch(Exception e) {
             Error(e, opMode);
         }
