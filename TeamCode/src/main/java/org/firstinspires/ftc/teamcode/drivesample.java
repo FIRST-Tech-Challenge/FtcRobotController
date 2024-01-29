@@ -15,164 +15,82 @@ import java.lang.Math;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-public class drivesample extends LinearOpMode
-{
-    
-    private void wristServo(double pos, Servo s1, Servo s2)
-    {
+public class drivesample extends LinearOpMode {
+
+    private void wristServo(double pos, Servo s1, Servo s2) {
         s1.setPosition(pos);
         s2.setPosition(pos);
     }
-    
-    private void setArmPos(double degrees, Servo arm)
-    {
-		degrees = (degrees + 360) % 360;
+
+    private void setArmPos(double degrees, Servo arm) {
+        degrees = (degrees + 360) % 360;
         // TODO: some algorithm to get the 0-1 value for the servo
         double pos = 0;
         arm.setPosition(pos);
     }
 
-	private void setArmWristPos(double degrees, Servo armWrist1, Servo armWrist2)
-	{
-		degrees = (degrees + 360) % 360;
-		// TODO: some algorithm to get the 0-1 value for the servo
-		double pos = 0;
-		wristServo(pos, armWrist1, armWrist2);
-	}
+    private void setArmWristPos(double degrees, Servo armWrist1, Servo armWrist2) {
+        degrees = (degrees + 360) % 360;
+        // TODO: some algorithm to get the 0-1 value for the servo
+        double pos = 0;
+        wristServo(pos, armWrist1, armWrist2);
+    }
 
-	private void armInverseKinematics(double x, double y, Servo arm, Servo armWrist1, Servo armWrist2)
-	{
-		double armLength1 = 3;
-		double armLength2 = 2;
-		double distance = Math.hypot(x, y);
+    private void armInverseKinematics(double x, double y, Servo arm, Servo armWrist1, Servo armWrist2) {
+        double armLength1 = 3;
+        double armLength2 = 2;
+        double distance = Math.hypot(x, y);
 
-		double phi = Math.atan(y/x);
-		double theta = Math.acos((Math.pow(armLength1, 2) + Math.pow(distance, 2) - Math.pow(armLength2, 2)) / 2 * armLength1 * distance);
-		double alpha = Math.acos((Math.pow(armLength1, 2) + Math.pow(armLength2, 2) - Math.pow(distance, 2)) / 2 * armLength1 * armLength2);
+        double phi = Math.atan(y / x);
+        double theta = Math.acos((Math.pow(armLength1, 2) + Math.pow(distance, 2) - Math.pow(armLength2, 2)) / 2 * armLength1 * distance);
+        double alpha = Math.acos((Math.pow(armLength1, 2) + Math.pow(armLength2, 2) - Math.pow(distance, 2)) / 2 * armLength1 * armLength2);
 
-		setArmPos(phi + theta, arm);
-		setArmWristPos(alpha - 180, armWrist1, armWrist2);
-	}
+        setArmPos(phi + theta, arm);
+        setArmWristPos(alpha - 180, armWrist1, armWrist2);
+    }
 
     RevBlinkinLedDriver lights;
-    @Override
-    public void runOpMode() throws InterruptedException
-    {
-        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FLeft");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BLeft");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FRight");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("BRight");
 
+    @Override
+    public void runOpMode() throws InterruptedException {
+        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeft");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRight");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRight");
+        DcMotor slideR = hardwareMap.dcMotor.get("slideRight");
+        DcMotor slideL = hardwareMap.dcMotor.get("slideLeft");
+
+
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        DcMotor intakeMotor = hardwareMap.dcMotor.get("IntakeSpinner");
-        DcMotor slideL = hardwareMap.dcMotor.get("slideL");
-        DcMotor slideR = hardwareMap.dcMotor.get("slideR");
-
-        Servo IntakeRaiser = hardwareMap.get(Servo.class, "IntakeRaiser");
-        Servo ArmWrist = hardwareMap.get(Servo.class, "ArmWrist");
-        Servo PixelGrabberWrist1 = hardwareMap.get(Servo.class, "PixelGrabberWrist1");
-        Servo PixelGrabberWrist2 = hardwareMap.get(Servo.class, "PixelGrabberWrist2");
-        Servo PixelGrabber = hardwareMap.get(Servo.class, "PixelGrabber");
-        Servo bucket = hardwareMap.get(Servo.class, "bucket");
-        CRServo immasuckyourpenis = hardwareMap.get(CRServo.class, "sucker");
-
+        slideR.setDirection(DcMotorSimple.Direction.FORWARD);
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
-        PixelGrabber.setDirection(Servo.Direction.REVERSE);
-        IntakeRaiser.setPosition(0);
-        ArmWrist.setPosition(0.1);
-        PixelGrabberWrist1.setPosition(0.32);
-        PixelGrabber.setPosition(0);
-
-
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+        imu.resetYaw();
 
         waitForStart();
-        IntakeRaiser.setPosition(0);
-        ArmWrist.setPosition(0);
-        PixelGrabberWrist1.setPosition(0.35);
-        PixelGrabber.setPosition(0);
 
         if (isStopRequested()) return;
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
 
-        //SECOND PLAYER
-            if(gamepad2.right_bumper)
-            {
-                IntakeRaiser.setPosition(0.6);
-                ArmWrist.setPosition(0.2);
-                PixelGrabberWrist1.setPosition(0.2);
-                immasuckyourpenis.setPower(1);
-            }
-            if (gamepad2.dpad_right)
-            {
-                PixelGrabber.setPosition(0.5);
-            }
-            if(gamepad2.dpad_left)
-            {
-                PixelGrabber.setPosition(0);
-            }
-            if(gamepad2.left_bumper)
-            {
-                IntakeRaiser.setPosition(0.58);
-                ArmWrist.setPosition(0.05);
-                PixelGrabberWrist1.setPosition(0.4);
-                immasuckyourpenis.setPower(0);
-            }
-            if (gamepad2.y){
-                ArmWrist.setPosition(1);
-                PixelGrabberWrist1.setPosition(0.9);
-            }
-            if (gamepad2.a){
-                ArmWrist.setPosition(0.1);
-                PixelGrabberWrist1.setPosition(0.4);
+            //SECOND PLAYER
 
-            }
-
-            //ONE PLAYER STUFF
-            if(gamepad1.x)
-            {
-                slideL.setPower(0.1);
-            }
-            if(gamepad1.a)
-            {
-                slideL.setPower(-1);
-            }
-            if(gamepad1.b)
-            {
-                slideL.setPower(0);
-            }
-
-            if(gamepad1.y)
-            {
-                slideL.setPower(1);
-            }
-
-            if(gamepad1.dpad_up)
-            {
-                bucket.setPosition(0.25);
-            }
-
-            if(gamepad1.dpad_down)
-            {
-                bucket.setPosition(0);
-            }
-
+            //FIRST PLAYER
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
-            if (gamepad1.options)
-            {
+            if (gamepad1.options) {
                 imu.resetYaw();
             }
 
@@ -190,9 +108,24 @@ public class drivesample extends LinearOpMode
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-            
-            
 
+            if (gamepad1.y) {
+                slideL.setPower(1);
+                slideR.setPower(1);
+            }
+            if (gamepad1.a) {
+                slideL.setPower(-1);
+                slideR.setPower(-1);
+            }
+            if (gamepad1.b) {
+                slideL.setPower(0);
+                slideR.setPower(0);
+            if (gamepad1.x){
+                slideL.setPower(0.2);
+                slideR.setPower(0.2);
+            }
+
+            }
         }
     }
 }
