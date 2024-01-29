@@ -21,7 +21,8 @@ public class TestingWadeTwo extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            robot.straightBlocking2(30);
+            robot.straightBlocking2(-30);
+            robot.setHeading(0, 1);
 
             break;
         }

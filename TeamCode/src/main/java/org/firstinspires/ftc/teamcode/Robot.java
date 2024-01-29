@@ -87,7 +87,8 @@ public class Robot {
             trayAngle = hardwareMap.servo.get("trayAngle");
 
             // initialize controllers
-            straightController = new PIDController("straight", 0.007, 0.0000005, 0.4, false);
+            //straightController = new PIDController("straight", 0.007, 0.0000005, 0.4, false);
+            straightController = new PIDController("straight", 0.005, 0.0000015, 0.8, false);
             fLeftMecanumController = new PIDController("fl mecanum", 0.005, 0.0000005, 0.4, true); //0.01 - 0.0001
             bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
             setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
@@ -934,18 +935,18 @@ public class Robot {
 
                 // Start moving
                 if (isRedAlliance) {
-                    mecanumBlocking2(6);
+                    mecanumBlocking2(5);
                 } else {
-                    mecanumBlocking2(-6);
+                    mecanumBlocking2(-5);
                 }
                 setHeading(0, 0.7);
-                straightBlocking2(-30);
+                straightBlocking2(-28);
                 setHeading(0, 0.7);
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
-                /*
+
                 straightBlocking2(10);
                 setHeading(0, 0.7);
                 if (isRedAlliance) {
@@ -953,6 +954,7 @@ public class Robot {
                 } else {
                     mecanumBlocking2(-13);
                 }
+                /*
                 setHeading(0, 0.7);
                 straightBlocking2(-1 * horizontal5);
                 setHeading(90 * polarity, 0.7); //turn
@@ -1676,18 +1678,28 @@ public class Robot {
     // negative inches - go backward
     public void straightBlocking2(double inches) {
         resetDrivetrainEncoders();
-        fLeftMecanumController.integral = 0;
-        fLeftMecanumController.lastError = 0;
-        fLeftMecanumController.lastTime = 0;
+        straightController.integral = 0;
+        straightController.lastPos = 0;
+        straightController.lastError = 0;
+        straightController.lastTime = 0;
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
         double power;
-        double ERROR_TOLERANCE_IN_TICKS = 30;
+        double ERROR_TOLERANCE_IN_TICKS = 50;
         int counter = 0;
-        double finalError = targetPos - currentPos;
+        double finalError;
+        double velocity;
 
         while (opMode.opModeIsActive() && counter < 3) {
-            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS) {
+
+            telemetry.addData("currentPos", currentPos);
+            telemetry.addData("targetPos", targetPos);
+            telemetry.update();
+
+            velocity = straightController.getVelocity(currentPos);
+            Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
+
+            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
                 counter++;
             } else { //todo: test this
                 counter = 0;

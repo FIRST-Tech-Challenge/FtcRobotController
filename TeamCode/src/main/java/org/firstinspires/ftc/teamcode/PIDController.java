@@ -11,7 +11,7 @@ public class PIDController {
     double integral;
     boolean mecanum;
     double KP, KI, KD;
-    double lastTime, lastError;
+    double lastTime, lastError, lastPos;
     double TICKS_IN_THIRTY_INCHES = convertInchesToTicks(30);
 
     //todo: make inches to ticks and error tolerance fields
@@ -36,10 +36,6 @@ public class PIDController {
         double averageError = (currentError + lastError) / 2;
         double rampUpTicks = convertInchesToTicks(5);
         double power;
-        double ticksInThirty = convertInchesToTicks(30);
-
-        Log.d("new pid", "calculatePID: ticks in thirty inches " + ticksInThirty);
-        Log.d("new pid", "calculatePID: controller name is " + name);
 
         if (Math.abs(currentPos) < rampUpTicks) {
 
@@ -71,6 +67,7 @@ public class PIDController {
             // set up for next loop
             lastError = currentError;
             lastTime = currentTime;
+            lastPos = currentPos;
 
             Log.d("new pid", "calculatePID: current error is " + currentError);
             Log.d("new pid", "calculatePID: p component is " + (currentError * KP));
@@ -87,14 +84,22 @@ public class PIDController {
             final double wheelDiaMm = 96; // in mms
             final double wheelCircIn = wheelDiaMm * Math.PI / MMS_IN_INCH;
             final double IN_TO_TICK = TICKS_PER_REV / wheelCircIn;
+            final double SLIDING_DISTANCE = 0;
 
             if (inches >= 0) {
-                return inches * IN_TO_TICK;
+                return inches * IN_TO_TICK - SLIDING_DISTANCE;
             } else {
-                return inches * IN_TO_TICK;
+                return inches * IN_TO_TICK + SLIDING_DISTANCE;
             }
         } else {
             return inches * 51;
         }
     }
+
+    public double getVelocity (double currentPos) {
+        double currentTime = SystemClock.elapsedRealtimeNanos() * 0.000001;
+        double velocity = (currentPos - lastPos) / (currentTime - lastTime);
+        return velocity;
+    }
+
 }

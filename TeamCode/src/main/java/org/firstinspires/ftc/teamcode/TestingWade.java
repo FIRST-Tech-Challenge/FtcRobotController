@@ -16,7 +16,7 @@ public class TestingWade extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true);
         robot.setUpDrivetrainMotors();
-        //robot.setUpIntakeOuttake();
+        robot.setUpIntakeOuttake();
 
         //double trayAngle = 0.52;
 
@@ -26,11 +26,9 @@ public class TestingWade extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            robot.straightBlocking2(-30);
+            //robot.straightBlocking2(-30);
 
-            /*
             robot.stackAttachment.setPosition(0.5);
-             */
 
             /*
             if(gamepad1.a){
@@ -68,7 +66,6 @@ public class TestingWade extends LinearOpMode {
             this.sleep(2000);
             */
 
-            break;
         }
     }
 }
