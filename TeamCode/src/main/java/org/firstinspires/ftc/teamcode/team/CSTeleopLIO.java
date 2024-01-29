@@ -20,34 +20,33 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
  *          Left & Right joysticks     -> Mecanum drive
  *          Left-Bumper               -> Decrease robot speed .7x
  *          Right-Bumper              -> Normal robot speed 1x
- *      Lift:
- *          Dpad-up                    -> High
- *          Dpad-down                  -> Ground / Intake
- *          Dpad-right                 -> Medium
- *          Dpad-left                  -> Low
+ *      Intake
+ *          Left-trigger               -> Outtake
+ *          Right-trigger              -> Intake
+ *      OutTake:
+ *
+ *
  *      Drone:
- *          Dpad-Up                    -> Open
- *      Arm:
- *          B-Button (pressed)         -> Left
- *          X-Button (pressed)         -> Right
- *          A-Button (pressed)         -> Middle
- *          Y-Button (pressed)         -> Middle
- *  User 2:
+ *          Left-bumper                -> Launch drone
+ *      Hanging:
+ *
+ *
+ *  *  User 2:
  *      Drive:
  *          Left bumper (pressed)      ->
  *          Right bumper (pressed)     ->
  *      Lift:
- *          Left-trigger               ->
- *          Right-trigger              ->
- *          A-button (pressed)         ->
- *          Y-button (pressed)         ->
- *      Arm:
- *          Dpad-right                 ->
- *          Dpad-down                  ->
- *          Dpad-left                  ->
- *          Dpad-up                    ->
+ *          Dpad-up                    -> High pose
+ *          Dpad-down                  -> Start pose
+ *          Dpad-right                 -> Low pose
+ *          Dpad-left                  -> Mid pose
  *
- * @see UltimateGoalRobot
+ *     outtake:
+ *          Left-trigger               -> Outtake
+ *          Right-trigger              -> Intake
+ *
+ *
+ * @see CenterStageRobot
  */
 
 @TeleOp(name = "CS TeleOp LIO", group = "Main")
@@ -140,7 +139,7 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         }
 
         //Lift
-        //brings the lift down to the starting pose
+        //brings the lift down to the starting pose`
         if (getEnhancedGamepad2().isDpadDownJustPressed()) {
             double lastSetPoint = drive.robot.getLiftSubsystem().getDesiredSetpoint();
             telemetry.addData("Lift State: ", lastSetPoint);
@@ -155,25 +154,23 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
 //                liftdown = true;
 //            }
         }
-        //Brins the lift down to the LOW pose when b is pessed
+        //Brings the lift down to the LOW pose when b is pressed
         if (getEnhancedGamepad2().isDpadRightJustPressed()) {  //&&arm mid
             drive.robot.getLiftSubsystem().extend(LOW);
             liftdown = false;
         }
-        //Brins the lift down to the MID pose when b is pessed
+        //Brings the lift down to the MID pose when b is pressed
         if (getEnhancedGamepad2().isDpadLeftJustPressed()) {  //&&arm mid
             drive.robot.getLiftSubsystem().extend(MID);
             liftdown = false;
         }
-        //Brins the lift down to the LOW pose when b is pessed
+        //Brings the lift down to the LOW pose when b is pressed
         if (getEnhancedGamepad2().isDpadUpJustPressed()) {  //&&arm mid
             drive.robot.getLiftSubsystem().extend(HIGH);
             liftdown = false;
         }
 
-        telemetry.addData("Lift State: ", drive.robot.getLiftSubsystem().getStateMachine().getState());
-        telemetry.addData("Lift SetPoint: ", drive.robot.getLiftSubsystem().getDesiredSetpoint());
-        telemetry.addData("Outtake State: ", drive.robot.getOuttakeSubsystem().getStateMachine().getState());
+
 
         //Outtake
         //This only allows moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
@@ -194,6 +191,10 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
             }
 
         }
+
+        telemetry.addData("Lift State: ", drive.robot.getLiftSubsystem().getStateMachine().getState());
+        telemetry.addData("Lift SetPoint: ", drive.robot.getLiftSubsystem().getDesiredSetpoint());
+        telemetry.addData("Outtake State: ", drive.robot.getOuttakeSubsystem().getStateMachine().getState());
 
 
 //            if (getEnhancedGamepad2().getRight_trigger() > 0) {

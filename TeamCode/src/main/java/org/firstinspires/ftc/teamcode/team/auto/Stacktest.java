@@ -9,10 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team.CSVP;
-import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
 @Autonomous(name = "Stack test", group = "RoarAuto")
@@ -54,7 +52,7 @@ public class Stacktest extends LinearOpMode {
 
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
-        drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
+        drive.robot.getLiftSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 

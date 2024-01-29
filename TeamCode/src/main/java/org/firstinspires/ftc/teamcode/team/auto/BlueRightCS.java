@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.PoseStorage;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
-import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 
 @Autonomous(name = "Blue Right CS", group = "RoarAuto")
@@ -72,7 +71,7 @@ public class BlueRightCS extends LinearOpMode {
 
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
-        drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
+        drive.robot.getLiftSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 
@@ -157,6 +156,9 @@ public class BlueRightCS extends LinearOpMode {
         int recog = 0;
         int oldrecog = 0;
         int count = 0;
+        int total = 0;
+
+        recog = CSVP.leftDetect(); //numerical value
 
         telemetry.update();
         waitForStart();
@@ -174,30 +176,35 @@ public class BlueRightCS extends LinearOpMode {
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
 
-                   if (detectTimer.milliseconds() > 200) {
-                        recog = CSVP.leftDetect(); //numerical value
-                        detectTimer.reset();
+                   if (detectTimer.milliseconds() > 150) {
+                       total++;
+                       recog = CSVP.leftDetect(); //numerical value
+                       detectTimer.reset();
 
-                       if (recog != oldrecog)
+                       if (recog != oldrecog) {
+                           oldrecog = recog;
                            count = 1;
-                       else
+                           //telemetry.addLine("located" + recog);
+                       } else{
                            count++;
+                           //telemetry.addLine("located" + recog + " many times: " + count);
+                   }
                    }
 
-
-
-                    if (waitTimer.milliseconds() > 4000 || count > 4) {
-                        if (count > 4){
-                            telemetry.addLine("more than 4 detections");
-                            telemetry.addLine("located" + recog+" many times: " +count);
-                        }
-                        else {
+                    if (waitTimer.milliseconds() > 4000 ) {
+                        if (count > 4) {
+                            telemetry.addLine("detections: "+total);
+                            telemetry.addLine(" located: " + recog + " many times: " + count);
+                        } else {
                             telemetry.addLine("more then than 4 seconds");
-                            telemetry.addLine("located" + recog+" many times: " +count);
+                            telemetry.addLine("located" + recog + " many times: " + count);
 
                         }
-                        currentState =  BlueRightCS.State.IDLE;
-                       // CSVP.closeVP();
+                        if (count > 4){
+                            currentState = BlueRightCS.State.IDLE;
+                        //CSVP.closeVP();
+                    }
+
                         placement = 3;
                     }
 
