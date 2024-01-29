@@ -248,5 +248,10 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Show the elapsed game time and wheel power.
             displayTelemetry(DirectionNow);
         }
+        if(isStopRequested()){
+            // save our last position so teleop can pick it up as a starting point
+            updateLastPos();
+        }
     }
+
 }
