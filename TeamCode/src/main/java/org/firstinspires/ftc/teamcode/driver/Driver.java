@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
 @Disabled
-@TeleOp(name = "2DriverTeleopDS", group = "TeleOp Driver")
+@TeleOp(name = "Drive", group = "TeleOp Driver")
 public class Driver extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
@@ -157,7 +157,7 @@ public class Driver extends LinearOpMode {
                 rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
             }
             telemetry.update();
-            }
+        }
 
         // Stop the threads when the op mode is no longer active
         if (launcherThread != null) launcherThread.interrupt();

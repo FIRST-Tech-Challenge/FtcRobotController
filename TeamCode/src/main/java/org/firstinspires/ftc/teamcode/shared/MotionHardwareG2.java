@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.shared;
 import static android.os.SystemClock.sleep;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,6 +41,43 @@ public class MotionHardwareG2 {
     public static final double TURN_SPEED = 0.4;
     private static final double MAX_SPEED = 1;
     public static double detectWait = 6.0;
+    public static double PICKUP_POSITION = 0.2;
+    public static double FRONTDROP_POSITION = 0.8; // Placeholder value, adjust as needed
+    public static double DROPOFF_POSITION = 1;
+    public static double PICKUP_POSITION2 = .8;
+
+    // Gripper positions
+    public static double LEFT_SERVO_OPEN = 0.35;
+    public static double LEFT_SERVO_CLOSE = 0.0;
+    public static double RIGHT_SERVO_OPEN = 0.25;
+    public static double RIGHT_SERVO_CLOSE = 0.3;
+
+    //arm encoder values
+    public static int PICKUP_POSITION_ENCODER = 0;
+    public static int DROPOFF_POSITION_ENCODER = -3630;
+
+    //driving scales
+    public static double driveScale = 1; //was .3
+    public static double strafeScale = 1; // was .5
+    public static double rotateScale = .3; // was .3
+
+    // 180 turn constants
+    public static double FAST_ROTATE_SPEED = 1.0;
+    public static long TURN_180_TIME_MS = 333;
+    private boolean isTurning180 = false;
+    // Variable for slowmo state
+    private boolean slowmoActive = false;
+    private boolean slowmoToggle = false; // To track the toggle state
+
+    private long turnStartTime = 0;
+
+
+    private TelemetryPacket packet;
+    public static double Launch_POSITION = 0.8;
+    public static double HOLD_POSITION = 0.3;
+    // Constants for the wider gripper open position
+    public static double LEFT_SERVO_WIDE_OPEN = -0.4; // Adjust as needed
+    public static double RIGHT_SERVO_WIDE_OPEN = 0.5;
 
 
     public enum Direction {
@@ -53,9 +91,7 @@ public class MotionHardwareG2 {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    public MotionHardwareG2(LinearOpMode opmode) {
-        myOpMode = opmode;
-    }
+    public MotionHardwareG2(LinearOpMode opmode) {myOpMode = opmode;}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
