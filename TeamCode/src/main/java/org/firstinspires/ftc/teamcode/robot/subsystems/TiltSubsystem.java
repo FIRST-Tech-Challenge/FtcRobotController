@@ -22,7 +22,8 @@ public class TiltSubsystem extends SubsystemBase
     Telemetry telemetry;
     private static int targetPosition = 0;
 
-    private static double KP = 0.0, KI = 0.0, kD = 0.0, KF = 0.0;
+    private static double KP = 0.004, KI = 0.0, kD = 0.0008,KF =0.3;
+
     private static double TICKS_IN_DEGREE = 700/180.0;
 
     private static double TOLERANCE = 10;
@@ -51,7 +52,7 @@ public class TiltSubsystem extends SubsystemBase
 
     public boolean atTargetPosition()
     {
-        if(abs(tilt_motor.getCurrentPosition()-targetPosition)>TOLERANCE) return false;
+        if(abs(tilt_motor.getCurrentPosition()-targetPosition)>30) return false;
         return true;
     }
 
@@ -60,13 +61,13 @@ public class TiltSubsystem extends SubsystemBase
     public void periodic() {
         double output = 0;
         int currentPos = tilt_motor.getCurrentPosition();
-        if(!atTargetPosition())
+        if((abs(tilt_motor.getCurrentPosition()-targetPosition)<5))
         {
             double pid = this.pid.calculate(currentPos, targetPosition);
             double ff = KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE));
             output = pid + ff;
         }
-        tilt_motor.setVelocity(output);
+        tilt_motor.setPower(output);
         telemetry.addData("ff: ", KF * Math.cos(Math.toRadians((currentPos-VERTICAL_ENCODER_VALUE)/TICKS_IN_DEGREE)));
         telemetry.addData("pid: ", pid.calculate(currentPos, targetPosition));
         callTelemetry();

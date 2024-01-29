@@ -16,7 +16,7 @@ public class ClawSubsystem extends SubsystemBase
     private static final double CLAW_CLOSED = 0.5;
     private static final double CLAW1_CLOSED = 0.32;
 
-    public static final double DETECTION_DISTANCE = 40;
+    public static final double DETECTION_DISTANCE = 27;
 
     private static Servo clawLeft;
     private static Servo clawRight;
