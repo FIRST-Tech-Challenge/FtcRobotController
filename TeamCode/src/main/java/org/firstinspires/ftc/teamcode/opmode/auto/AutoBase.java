@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
@@ -13,8 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
@@ -24,9 +26,9 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
-public abstract class AutoBase extends LinearOpMode {
+import java.util.List;
 
-    // <<<<<<end of configurable parameters >>>>>>>>>>>
+public abstract class AutoBase extends LinearOpMode {
 
     protected ElapsedTime runtime = new ElapsedTime(); //
     protected DcMotorEx leftFrontDrive = null;
@@ -57,6 +59,9 @@ public abstract class AutoBase extends LinearOpMode {
     // Wheel diameter is 100mm
     final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
     protected VisionSystem visionSystem;
+    private static Pose2d lastFieldPos;
+    private static Rotation2d lastFieldRot;
+    private static List<AprilTagLocation> targetAprilTags;
 
     @Override
     public void runOpMode() {
@@ -182,6 +187,11 @@ public abstract class AutoBase extends LinearOpMode {
         telemetry.update();
     }
 
+    protected void updateLastPos(){
+        lastFieldPos = moveTo.getOdometry().getPoseMeters();
+        lastFieldRot = moveTo.getOdometry().getPoseMeters().getRotation();
+    }
+
     protected void setFieldPosition(FieldPosition fPos) {
        visionSystem.setFieldPosition(fPos);
     }
@@ -200,6 +210,19 @@ public abstract class AutoBase extends LinearOpMode {
 
     protected double getRightSpikeSaturation() {
         return visionSystem.getRightSpikeSaturation();
+    }
+
+    protected void setInitFieldPos(Pose2d initPos, Rotation2d initRot, List<AprilTagLocation> aTags){
+        lastFieldPos = initPos;
+        lastFieldRot = initRot;
+        targetAprilTags = aTags;
+    }
+
+    public static Pose2d getLastFieldPos(){
+        return lastFieldPos;
+    }
+    public static Rotation2d getLastRotation(){
+        return lastFieldRot;
     }
 
 }

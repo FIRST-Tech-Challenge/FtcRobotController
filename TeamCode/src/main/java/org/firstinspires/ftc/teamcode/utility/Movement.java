@@ -131,6 +131,8 @@ public class Movement {
 
         // Create Mecanum Odometry
         odometry = new MecanumDriveOdometry(kinematics, new Rotation2d(0.0));
+
+        //Todo: Need to take the position information passed into GGE_Odometry set the starting position
         odometryTimer = new ElapsedTime();
         odometryTimer.reset();
         imu.resetYaw();

@@ -31,8 +31,6 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import static java.lang.Math.abs;
 
-import android.util.Size;
-
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -50,16 +48,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoBase;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -126,9 +121,15 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
     IntakeMovement intake;
     LinearSlideMovement linearslidemovement;
     private VisionSystem visionSystem;
+    private Pose2d initFieldPos;
+    private Rotation2d initRotation;
 
     @Override
     public void runOpMode() {
+
+        // pull in the last recorded location from Autonomous
+        initFieldPos = AutoBase.getLastFieldPos();
+        initRotation = AutoBase.getLastRotation();
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 
