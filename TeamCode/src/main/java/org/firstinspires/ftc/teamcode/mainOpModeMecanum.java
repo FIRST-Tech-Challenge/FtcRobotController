@@ -9,8 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "testDrive (Blocks to Java)")
 public class mainOpModeMecanum extends LinearOpMode {
 
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+    private DcMotor frontLeftMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backRightMotor;
     private Servo plane;
     private DcMotor rollIn;
     private DcMotor dualArm;
@@ -24,37 +26,23 @@ public class mainOpModeMecanum extends LinearOpMode {
      * Describe this function...
      */
     private void run() {
-        int forward;
-        int backward;
-        int left;
-        int right;
+        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double rx = gamepad1.right_stick_x;
 
-        forward = 0;
-        backward = 0;
-        left = 0;
-        right = 0;
-        if (gamepad1.left_stick_y < 0) {
-            forward = 1;
-            backward = 0;
-        } else if (gamepad1.left_stick_y > 0) {
-            forward = 0;
-            backward = 1;
-        } else {
-            forward = 0;
-            backward = 0;
-        }
-        if (gamepad1.right_stick_x > 0) {
-            right = 1;
-            left = 0;
-        } else if (gamepad1.right_stick_x < 0) {
-            right = 0;
-            left = 1;
-        } else {
-            right = 0;
-            left = 0;
-        }
-        leftDrive.setPower(forward * 0.7 - (backward * 0.7 - (right * 0.3 - left * 0.3)));
-        rightDrive.setPower(forward * 0.7 - (backward * 0.7 - (left * 0.3 - right * 0.3)));
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
     }
 
     /**
@@ -62,20 +50,23 @@ public class mainOpModeMecanum extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
-        plane = hardwareMap.get(Servo.class, "plane");
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+        hardwareMap.get(Servo.class, "plane");
         rollIn = hardwareMap.get(DcMotor.class, "rollIn");
         dualArm = hardwareMap.get(DcMotor.class, "dualArm");
         garbageCollector = hardwareMap.get(Servo.class, "garbageCollector");
 
         // Put initialization blocks here.
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         if (opModeIsActive()) {
             // Put run blocks here.
             flag1 = 0;
             prevValue = 0;
-            rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             while (opModeIsActive()) {
                 run();
                 roll();
