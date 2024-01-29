@@ -10,7 +10,7 @@ public class BlueTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // initialize robot class
-        robot = new Robot(hardwareMap, this, telemetry, false, false);
+        robot = new Robot(hardwareMap, this, telemetry, true, false, false);
         robot.initForTeleOp();
 
         waitForStart();

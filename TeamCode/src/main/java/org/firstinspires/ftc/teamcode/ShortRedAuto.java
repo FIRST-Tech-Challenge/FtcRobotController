@@ -12,7 +12,7 @@ public class ShortRedAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false,true, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();

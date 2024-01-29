@@ -84,7 +84,7 @@ public class PIDController {
             final double wheelDiaMm = 96; // in mms
             final double wheelCircIn = wheelDiaMm * Math.PI / MMS_IN_INCH;
             final double IN_TO_TICK = TICKS_PER_REV / wheelCircIn;
-            final double SLIDING_DISTANCE = 0;
+            final double SLIDING_DISTANCE = 40;
 
             if (inches >= 0) {
                 return inches * IN_TO_TICK - SLIDING_DISTANCE;

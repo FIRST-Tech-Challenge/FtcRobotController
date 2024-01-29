@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class AutoRed extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
         robot.setUpDrivetrainMotors();
 //        robot.setUpArmMotor();
 
