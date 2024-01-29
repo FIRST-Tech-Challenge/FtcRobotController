@@ -43,7 +43,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
         double varYpos = 0;
         double varXpos = 0;
 
-        double coudeZero = 0.5;
+        double coudeZero = 0.18;
         double coudeX = coudeZero;
         double brasA = 0;
         double triggergauche = 0;
@@ -60,7 +60,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        posbraszero = bras1.getCurrentPosition();
+
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

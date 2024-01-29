@@ -40,14 +40,14 @@ public class ConduiteUneManette extends LinearOpMode {
         double varYpos = 0;
         double varXpos = 0;
 
-        double coudeZero = 0.5;
+        double coudeZero = 0.91;
         double coudeX = coudeZero;
         int brasA = 0;
         double triggergauche = 0;
         double triggerdroit = 0;
         double varRY = 0;
         double maPosCoude = 0;
-        int posbraszero = 0;
+        int bras0 = 0;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -56,7 +56,6 @@ public class ConduiteUneManette extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        posbraszero = bras1.getCurrentPosition();
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -128,20 +127,30 @@ public class ConduiteUneManette extends LinearOpMode {
             /// Bras + Coude + Main
 
             if (varRY < 0) {
-                tgtBras = varRY/2;
+                tgtBras = varRY/3;
+                bras0 = brasA;
 
+            } else if (varRY > 0) {
+                tgtBras = varRY/3;
+                bras0 = brasA;
             } else {
-                tgtBras = varRY/4;
+                if (brasA > bras0) {
+                    tgtBras = -0.1;
+                } else if (brasA < bras0) {
+                    tgtBras = 0.1;
+                } else {
+                    tgtBras = 0;
+                }
             }
 
             if (triggergauche > 0) {
-                coudeX += 0.002;
-                if (coudeX > 0.75) {
-                    coudeX = 0.75;
+                coudeX += 0.0013;
+                if (coudeX > 0.91) {
+                    coudeX = 0.91;
                 }
             } else if (triggerdroit > 0) {
 
-                coudeX -= 0.002;
+                coudeX -= 0.0013;
                 if (coudeX<0) {
                     coudeX = 0;
                 }
@@ -151,20 +160,9 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (manette2.x) {
                 if (brasA > maPosBras) {
-                    if ((Math.abs(brasA)-Math.abs(maPosBras))<30)
-                    {
-                        tgtBras = -0.2;
-                    } else {
-                        tgtBras = -0.5;
-                    }
-
+                    tgtBras = -0.5;
                 } else if (brasA < maPosBras) {
-                    if ((Math.abs(brasA)-Math.abs(maPosBras))<30)
-                    {
-                        tgtBras = 0.05;
-                    } else {
-                        tgtBras = 0.5;
-                    }
+                    tgtBras = 0.5;
                 } else {
                     tgtBras = 0;
                 }
@@ -180,23 +178,23 @@ public class ConduiteUneManette extends LinearOpMode {
             bras2.setPower(tgtBras);
             coude.setPosition(coudeX);
 
-            if (mainG.getPosition() > 0.50) {
+            if (mainG.getPosition() > 0.10) {
                 while (manette2.a) {
                     mainG.setPosition(0);
                 }}
-            if (mainG.getPosition() < 0.20){
+            if (mainG.getPosition() < 0.2){
                 while (manette2.a) {
-                    mainG.setPosition(0.65);
+                    mainG.setPosition(0.4);
                 }
             }
 
-            if (mainD.getPosition() > 0.50) {
+            if (mainD.getPosition() > 0.6) {
                 while (manette2.b) {
-                    mainD.setPosition(0);
+                    mainD.setPosition(0.45);
                 }}
-            if (mainD.getPosition() < 0.20){
+            if (mainD.getPosition() < 0.5){
                 while (manette2.b) {
-                    mainD.setPosition(0.65);
+                    mainD.setPosition(1);
                 }
             }
 
@@ -206,6 +204,7 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Coude", coudeX);
             telemetry.addData("Bras", brasA);
             telemetry.addData("Postion du bras eng", maPosBras);
+            telemetry.addData("bras0", bras0);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
