@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorManualCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeManualCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
@@ -28,6 +29,8 @@ public class CenterStageRobot extends RobotEx {
     private IntakeSubsystem intakeSubsystem;
     private OuttakeSusystem outtakeSusystem;
     private ElevatorSubsystem elevatorSubsystem;
+
+    private DroneSubsystem droneSubsystem;
 
     //----------------------------------- Initialize Commands ------------------------------------//
 
@@ -52,6 +55,7 @@ public class CenterStageRobot extends RobotEx {
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
         elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY());
+        droneSubsystem = new DroneSubsystem(hardwareMap);
 
 //        CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
@@ -163,5 +167,8 @@ public class CenterStageRobot extends RobotEx {
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_release));
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.8)
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_stop));
+
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
+                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
     }
 }

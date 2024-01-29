@@ -48,8 +48,7 @@ public class CenterStageAutonomous extends LinearOpMode {
     protected static RoadRunnerSubsystem.Alliance alliance = RoadRunnerSubsystem.Alliance.RED;
     protected Pose2d homePose_LOW_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2) + starting_pos_error_X,0 - (RR.RobotX/2),Math.toRadians(180));
     protected Pose2d homePose_HIGH_RED = new Pose2d((3 * RR.TileInverted) + (RR.RobotY/2),(RR.Tile * 1.5),Math.toRadians(180));
-    protected Pose2d homePose_LOW_BLUE = new Pose2d(3 * RR.Tile - (RR.RobotY/2) - starting_pos_error_X, RR.TileInverted + (RR.RobotX/2), Math.toRadians(0));
-
+    protected Pose2d homePose_LOW_BLUE = new Pose2d(3 * RR.Tile - (17/2) - starting_pos_error_X, RR.TileInverted + (12.7/2) + 1, Math.toRadians(0));
     protected Camera camera;
     protected FtcDashboard dashboard;
     @Override
