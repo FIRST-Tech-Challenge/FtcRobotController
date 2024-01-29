@@ -55,15 +55,16 @@ public class Robot {
     private VisionPortal visionPortal;
     boolean isRedAlliance;
     boolean testingOnBert = false;
-
     boolean allowTrayAngle = false;
     PIDController straightController;
     PIDController fLeftMecanumController;
     PIDController bRightMecanumController;
     PIDController setHeadingController;
+    double robotX = 0;
+    double robotY = 0;
 
     //CONSTRUCTOR
-    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red, boolean isAutonomous) {
+    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean isLong, boolean red, boolean isAutonomous) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
@@ -71,6 +72,15 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
         isRedAlliance = red;
+
+        if (isLong) {
+            robotX = 35;
+            robotY = 17;
+        } else if (!isLong) {
+            robotX = 83;
+            robotY = 17;
+        }
+
         if (!testingOnBert) {
             intake = hardwareMap.dcMotor.get("intake");
             lsFront = hardwareMap.dcMotor.get("lsFront");
@@ -319,7 +329,6 @@ public class Robot {
         return currentYaw;
     }
 
-    // todo: change to use pidcontroller class. do we need maxpower?
     public void setHeading(double targetAbsDegrees, double maxPower) {
         if (targetAbsDegrees == 180) {
             setHeading(179.5, maxPower);
@@ -924,55 +933,56 @@ public class Robot {
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
 
-                // Calculate distances
-                vertical1 = 6;
-                horizontal2 = 30;
-                horizontal3 = 10;
-                vertical4 = 13;
-                horizontal5 = HORIZONTAL_TOTAL - horizontal2 + horizontal3;
-                vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL - 30;
-
                 // Start moving
-                if (isRedAlliance) {
-                    mecanumBlocking2(5);
-                } else {
-                    mecanumBlocking2(-5);
-                }
+                straightBlocking2(-29);
                 setHeading(0, 0.7);
-                straightBlocking2(-28);
-                setHeading(0, 0.7);
+                updatePosition(robotX, robotY + 29);
+
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(100);
                 }
 
-                straightBlocking2(10);
+                straightBlocking2(4);
                 setHeading(0, 0.7);
+                updatePosition(robotX, robotY - 4);
+
                 if (isRedAlliance) {
-                    mecanumBlocking2(13);
+                    mecanumBlocking2(13); //todo: mecanum is undershooting by ~1 in
                 } else {
                     mecanumBlocking2(-13);
                 }
-                /*
                 setHeading(0, 0.7);
-                straightBlocking2(-1 * horizontal5);
+                updatePosition(robotX - 13, robotY);
+
+                straightBlocking2(-26.5);
+                updatePosition(robotX, robotY + 26.5);
+
                 setHeading(90 * polarity, 0.7); //turn
-                if (isJuice) {
-                    opMode.sleep(10000);
-                }
-                straightBlocking2(-1 * vertical6);
+                updatePosition(robotX + 8.5, robotY - 8.5);
+
+                straightBlocking2(-89.5);
+                // 9-10sec straightBlockingFixHeading(89.5, false, 1);
                 setHeading(90 * polarity, 0.7);
+                updatePosition(robotX + 89.5, robotY);
+
                 if (isRedAlliance) {
-                    mecanumBlocking2(-1 * horizontal7);
+                    mecanumBlocking2(-24);
                 } else {
-                    mecanumBlocking2(horizontal7);
+                    mecanumBlocking2(24);
                 }
                 setHeading(90 * polarity, 0.7);
-                */
+                updatePosition(robotX, robotY - 24);
+
                 break;
             }
         }
+    }
+
+    public void updatePosition (double newX, double newY) {
+        robotX = newX;
+        robotY = newY;
+        Log.d("bot coordinates", "updatePosition: new robotX is " + robotX + ", new robotY is " + robotY);
     }
 
     public void parkBot(boolean longPath) {
@@ -1708,6 +1718,82 @@ public class Robot {
             currentPos = fLeft.getCurrentPosition();
             power = straightController.calculatePID(currentPos, targetPos);
             setMotorPower(power, power, power, power);
+        }
+
+        currentPos = fLeft.getCurrentPosition();
+        finalError = targetPos - currentPos;
+        Log.d("new pid", "straightBlocking2: final error is " + finalError);
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
+    }
+
+    public void straightBlocking2FixHeading (double inches) {
+        resetDrivetrainEncoders();
+        straightController.integral = 0;
+        straightController.lastPos = 0;
+        straightController.lastError = 0;
+        straightController.lastTime = 0;
+        double currentPos = fLeft.getCurrentPosition();
+        double targetPos = currentPos + straightController.convertInchesToTicks(inches);
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 50;
+        int counter = 0;
+        double finalError;
+        double velocity;
+        double currentHeading;
+        double headingError;
+        double targetHeading = botHeading;
+        double leftPower = 0;
+        double rightPower = 0;
+
+
+        while (opMode.opModeIsActive() && counter < 3) {
+
+            telemetry.addData("currentPos", currentPos);
+            telemetry.addData("targetPos", targetPos);
+            telemetry.update();
+
+            velocity = straightController.getVelocity(currentPos);
+            Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
+
+            if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            currentPos = fLeft.getCurrentPosition();
+            power = straightController.calculatePID(currentPos, targetPos);
+            //get heading & heading error
+
+            currentHeading = getCurrentHeading();
+            headingError = currentHeading - targetHeading;
+
+            //correction based on the current heading
+            if (Math.abs(headingError) > 2) {
+                if (headingError < 0) {
+                    //turn left
+                    if (currentPos < targetPos) {
+                        leftPower = 0.1;
+                        rightPower = 0.5;
+                    } else {
+                        leftPower = -0.5;
+                        rightPower = -0.1;
+                    }
+                } else if (headingError > 0) {
+                    //turn right
+                    if (currentPos < targetPos) {
+                        leftPower = 0.5;
+                        rightPower = 0.1;
+                    } else {
+                        leftPower = -0.1;
+                        rightPower = -0.5;
+                    }
+                }
+                setMotorPower(leftPower, rightPower, leftPower, rightPower);
+            } else {
+                setMotorPower(power, power, power, power);
+            }
         }
 
         currentPos = fLeft.getCurrentPosition();
