@@ -9,14 +9,18 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotOpMode;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.CRServoTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.ColorSensorTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.DistanceSensorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
@@ -59,7 +63,9 @@ public class RobotHardwareInitializer {
         INTAKE,
         LAUNCHER,
         FINGER,
-        WRIST
+        WRIST,
+        DISTANCE_SENSOR,
+        COLOR_SENSOR
     }
 
     public enum Intake {
@@ -141,6 +147,13 @@ public class RobotHardwareInitializer {
 
         // Init Launcher
         out.put(Other.LAUNCHER, new ServoTypeValue(initializeLauncher(opMode)));
+
+        // Init Distance Sensor
+        //out.put(Other.DISTANCE_SENSOR, new DistanceSensorTypeValue(initializeDistanceSensor(opMode)));
+
+        // Init Color Sensor
+        //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
+
 
         // Init Intake
         HashMap<Intake, CRServo> tmp = initializeIntake(opMode);
@@ -258,6 +271,24 @@ public class RobotHardwareInitializer {
             Servo servo = opMode.hardwareMap.get(Servo.class, "finger_servo");
             servo.setDirection(Servo.Direction.FORWARD);
             return servo;
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    public static ColorSensor initializeColorSensor(final OpMode opMode) {
+        try {
+            return opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    public static DistanceSensor initializeDistanceSensor(final OpMode opMode) {
+        try {
+            return opMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
         } catch(Exception e) {
             Error(e, opMode);
         }

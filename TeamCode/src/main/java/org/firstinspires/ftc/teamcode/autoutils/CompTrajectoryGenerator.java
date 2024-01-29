@@ -68,8 +68,9 @@ public class CompTrajectoryGenerator {
         switch (trajectory) {
             case BLUE_BOTTOM:
                 return DRIVE.trajectorySequenceBuilder(new Pose2d(-36.00, 70.00, Math.toRadians(270.00)))
-                    .lineTo(new Vector2d(-32.64, 25.64))
-                    .lineTo(new Vector2d(-36.00, 70.00))
+                    .lineTo(new Vector2d(-36.00, 10.00))
+                    .lineTo(new Vector2d(58.00, 10.00))
+                    .turn(Math.toRadians(-90))
                     .build();
 
             case BLUE_TOP:

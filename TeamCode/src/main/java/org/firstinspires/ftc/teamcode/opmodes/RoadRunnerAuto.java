@@ -8,8 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import static org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator.trajectories.*;
+
+import java.util.HashMap;
 
 @Autonomous
 public class RoadRunnerAuto extends LinearOpMode {
@@ -17,8 +20,11 @@ public class RoadRunnerAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> otherSystems =
+                RobotHardwareInitializer.initializeAllOtherSystems(this);
+
         final CompTrajectoryGenerator CTG = new CompTrajectoryGenerator(drive,
-                RobotHardwareInitializer.initializeAllOtherSystems(this));
+                otherSystems);
 
         waitForStart();
 

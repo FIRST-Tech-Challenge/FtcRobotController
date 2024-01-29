@@ -20,10 +20,10 @@ public class MeepMeepTesting {
                 myBot = new DefaultBotBuilder(meepMeep)
                         // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-37.24, 67.47, Math.toRadians(269.24)))
-                                .lineToConstantHeading(new Vector2d(-36.59, 35.51))
-                                .lineToConstantHeading(new Vector2d(16.52, 35.51))
-                                .lineToSplineHeading(new Pose2d(44.37, 35.51, Math.toRadians(180.00)))
+                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
+                                .lineTo(new Vector2d(-36.00, 10.00))
+                                .lineTo(new Vector2d(58.00, 10.00))
+                                .turn(Math.toRadians(-90))
                                 .build()
                     );
                 break;
