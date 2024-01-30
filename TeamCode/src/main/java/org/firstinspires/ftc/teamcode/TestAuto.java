@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "movement test", group = "SA_FTC")
 //@Autonomous
-public class TestAuto1 extends LinearOpMode {
+public class TestAuto extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     private IMU imu;
@@ -117,7 +117,6 @@ public class TestAuto1 extends LinearOpMode {
             setPower(0, 0, power);
         }
 
-        setPower(0, 0, -0.15);
         setPower(0, 0, 0);
         sleep(2000); // Resting
 
@@ -189,7 +188,7 @@ public class TestAuto1 extends LinearOpMode {
         //turnLeft(0.5, 180);
         //turnLeft(0.5, 0);
 
-        turnRight(0.2, 0.6, 360,35);
+        turnRight(0.3, 0.55, 360, 25);
     }
 
     public void encoderDrive(double speed,
