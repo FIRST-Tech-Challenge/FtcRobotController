@@ -54,7 +54,7 @@ public class LiftPIDTester extends LinearOpMode
     double[]  kTHistory    = new double[LOGSIZE];
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot();
+    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
     boolean aligning = false;
     boolean ranging = false;
     boolean liftFacingFront = false;
@@ -71,7 +71,7 @@ public class LiftPIDTester extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.liftPosRun();
+        robot.liftPIDPosRun(true);
     }
 
     boolean liftMotorLogging = false;
