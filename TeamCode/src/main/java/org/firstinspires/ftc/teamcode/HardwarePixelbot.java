@@ -98,6 +98,11 @@ public class HardwarePixelbot
 
     // Viper slide motors (Y power cable to drive both motors from one port; single encoder cable on left motor
     protected DcMotorEx viperMotors = null;
+
+    // Potential dual motor port solution
+    protected DcMotorEx viperMotor1 = null;
+    protected DcMotorEx viperMotor2 = null;
+    public double viperMotorsSetPwr = 0.0;         // viper motors set power
     public int          viperMotorsPos  = 0;       // current encoder count
     public double       viperMotorsVel  = 0.0;     // encoder counts per second
     public double       viperMotorsPwr  = 0.0;     // current power setting
@@ -115,6 +120,15 @@ public class HardwarePixelbot
     public int     VIPER_EXTEND_MID  = 280;  // Encoder count when raised to medium scoring height
     public int     VIPER_EXTEND_HIGH = 400;  // Encoder count when raised to upper scoring height
     public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
+
+    PIDControllerLift liftPidController;           // PID parameters for the lift motors
+    public double        liftMotorPID_p   = -0.100;  //  Raise p = proportional
+    public double        liftMotorPID_i   =  0.000;  //  Raise i = integral
+    public double        liftMotorPID_d   = -0.007;  //  Raise d = derivative
+    public boolean      liftMotorPIDAuto   = false;   // Automatic movement in progress (PID)
+    public int          liftMotorCycles    = 0;       // Automatic movement cycle count
+    public int          liftMotorWait      = 0;       // Automatic movement wait count (truly there! not just passing thru)
+    public int       liftTarget    = 0;     // Automatic movement target ticks
 
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
@@ -841,6 +855,102 @@ public class HardwarePixelbot
         // Reset the cycle clock for the next pass.
         period.reset();
     } /* waitForTick() */
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void liftMotorsSetPower( double motorPower )
+    {
+        // Are we stopping? (allow that no matter what the current liftAngle or power setting)
+        if( Math.abs(motorPower) <= 0.0001 ) {
+            viperMotorsSetPwr = 0.0;
+        }
+        else {
+            // Limit motor acceleration by clamping how big a change we can do in one cycle
+            viperMotorsSetPwr = restrictDeltaPower( motorPower, viperMotorsSetPwr, 0.333 );
+        }
+        viperMotor1.setPower( viperMotorsSetPwr );
+        viperMotor2.setPower( viperMotorsSetPwr );
+    } // liftMotorsSetPower
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPIDPosInit()                                                                           */
+    /* - newAngle = desired lift angle                                                            */
+    public void liftPIDPosInit( int newPosition )
+    {
+        // 120mm per rotation, 5.8 motor rotations
+        // 1150 rpm motor = 145.1 ticks per rotation
+        // 841 ticks total, but we have listed 580
+        // starting with 580 ticks for 27.4" extension
+        // or 21.17 ticks per inch
+        // Current distance from target (degrees)
+        int ticksToGo = newPosition - viperMotorsPos;
+        double pStaticLift  = 0.007;
+        // Voltage doesn't seem as important on the arm minimum. Probably don't have to do
+        // interpolated voltage. For example 0.13 power was not able to move arm at low voltage
+        // and also could not at fresh battery voltage. 0.131 was able to at low voltage.
+        // pStaticLower 0.130 @ 12.54V
+        // pStaticLift  0.320 @ 12.81V
+//        double pSin = getInterpolatedMinPower();
+
+        liftPidController = new PIDControllerLift( liftMotorPID_p, liftMotorPID_i, liftMotorPID_d,
+                pStaticLift );
+
+        // Are we ALREADY at the specified ticks?
+        // +/- 10 ticks is about +/-0.5" error
+        if( Math.abs(ticksToGo) <= 10 )
+            return;
+
+        liftPidController.reset();
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        liftMotorsSetPower( 0.0 );
+
+        // Establish a new target angle & reset counters
+        liftMotorPIDAuto = true;
+        liftTarget = newPosition;
+        liftMotorCycles = 0;
+        liftMotorWait   = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+//        if( liftMotorLogging ) {
+//            turretMotorLogVbat = readBatteryExpansionHub();
+//            liftMotorLogIndex  = 0;
+//            liftMotorLogEnable = true;
+//            liftMotorTimer.reset();
+//        }
+
+    } // liftPIDPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPIDPosRun()                                                                            */
+    public void liftPIDPosRun( boolean teleopMode )
+    {
+        // Has an automatic movement been initiated?
+        if(liftMotorPIDAuto) {
+            // Keep track of how long we've been doing this
+            liftMotorCycles++;
+            // Current distance from target (angle degrees)
+            int ticksToGo = liftTarget - viperMotorsPos;
+            int ticksToGoAbs = Math.abs(ticksToGo);
+            int waitCycles = (teleopMode) ? 2 : 2;
+            double power = liftPidController.update(liftTarget, viperMotorsPos);
+            liftMotorsSetPower(power);
+            // Have we achieved the target?
+            // (temporarily limit to 16 cycles when verifying any major math changes!)
+//          if( liftMotorCycles >= 16 ) {
+            if( ticksToGoAbs <= 10 ) {
+                liftMotorsSetPower( 0.0 );
+                if( ++liftMotorWait >= waitCycles ) {
+                    liftMotorPIDAuto = false;
+//                    writeLiftLog();
+                }
+            }
+            // No, still not within tolerance of desired target
+            else {
+                // Reset the wait count back to zero
+                liftMotorWait = 0;
+            }
+        } // liftMotorPIDAuto
+    } // liftPIDPosRun
 
     // Functions to have the scorer grab the pixels from the storage bins
     public enum PixelGrabActivity {
