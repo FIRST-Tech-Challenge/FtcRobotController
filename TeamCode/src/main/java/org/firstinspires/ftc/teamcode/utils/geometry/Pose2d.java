@@ -12,6 +12,10 @@ public class Pose2d {
         m_translation = new Translation2d();
     }
 
+    public com.arcrobotics.ftclib.geometry.Pose2d toFTCLibP(){
+        return new com.arcrobotics.ftclib.geometry.Pose2d(m_translation.getX(),m_translation.getY());
+    }
+
     /**
      * Constructs a pose with the specified translation and rotation.
      *

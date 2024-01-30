@@ -21,12 +21,16 @@ public class Rotation2d {
     /**
      * Constructs a Rotation2d with a default angle of 0 degrees.
      */
+
+
     public Rotation2d() {
         m_value = 0.0;
         m_cos = 1.0;
         m_sin = 0.0;
     }
-
+    public com.arcrobotics.ftclib.geometry.Rotation2d toFTCLIbR(){
+        return new com.arcrobotics.ftclib.geometry.Rotation2d(m_value);
+    }
     /**
      * Constructs a Rotation2d with the given radian value.
      * The x and y don't have to be normalized.
