@@ -1,17 +1,25 @@
 package org.firstinspires.ftc.teamcode.utils;
+import org.firstinspires.ftc.teamcode.utils.geometry.*;
 
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Twist2d;
 import com.arcrobotics.ftclib.kinematics.Odometry;
 
 import java.util.function.DoubleSupplier;
 
-public class HolonomicOdometry extends Odometry {
+public class HolonomicOdometry   {
 
     private double prevLeftEncoder, prevRightEncoder, prevHorizontalEncoder;
     private Rotation2d previousAngle;
     private double centerWheelOffset;
+    protected Pose2d robotPose = new Pose2d();
+
+    public Pose2d getPose() {
+        return robotPose;
+    }
+
+    /**
+     * The trackwidth of the odometers
+     */
+    protected double m_trackWidth;
 
     // the suppliers
     DoubleSupplier m_left, m_right, m_horizontal, m_gyro;
@@ -26,8 +34,9 @@ public class HolonomicOdometry extends Odometry {
     }
 
     public HolonomicOdometry(Pose2d initialPose, double trackwidth, double centerWheelOffset) {
-        super(initialPose, trackwidth);
+        this.m_trackWidth = trackwidth;
         previousAngle = initialPose.getRotation();
+        robotPose=initialPose;
         this.centerWheelOffset = centerWheelOffset;
     }
 
@@ -38,13 +47,11 @@ public class HolonomicOdometry extends Odometry {
     /**
      * This handles all the calculations for you.
      */
-    @Override
     public void updatePose() {
         update(m_left.getAsDouble(), m_right.getAsDouble(), m_horizontal.getAsDouble(), m_gyro.getAsDouble());
     }
 
-    @Override
-    public void updatePose(Pose2d pose) {
+    public void setPose(Pose2d pose) {
         previousAngle = pose.getRotation();
         robotPose = pose;
 
