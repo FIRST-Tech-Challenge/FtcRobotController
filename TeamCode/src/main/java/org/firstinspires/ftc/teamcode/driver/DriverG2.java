@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
 @Disabled
-@TeleOp(name = "2DriverTeleopDS", group = "TeleOp Driver")
+@TeleOp(name = "2D3riverTeleopDS", group = "TeleOp Driver")
 public class DriverG2 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
