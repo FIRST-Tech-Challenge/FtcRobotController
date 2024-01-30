@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.driver;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+<<<<<<< HEAD
 @TeleOp(name="BreeeastDrive", group="TeleOp Driver")
+=======
+@TeleOp(name="BeastDrive2", group="TeleOp Driver")
+>>>>>>> 29f30dff3840657a6841c76f6503c465498ecca4
 @Config
 public class BeastDriver extends OpMode {
 
