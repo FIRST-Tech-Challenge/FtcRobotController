@@ -45,29 +45,32 @@ public class CVMaster {
     webcam =
         OpenCvCameraFactory.getInstance()
             .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
-   observeSpike();
     isStreaming = true;
   }
 
-  public void setRed(boolean p_isRed) {
+  public void setRight(boolean p_isRed) {
     isRed = p_isRed;
   }
 
   /** observes spike logs that spike is being observed general surface log */
   public void observeSpike() {
-    if (isRed&&!isBlue) {
+    if (!isRed && !isBlue) {
       openSleevi = new RedSpikeObserverPipeline();
       webcam.setPipeline(openSleevi);
-    } else if(isRed&&isBlue){
-      openSleeviy = new BlueSpikeObserverPipeline();
-      webcam.setPipeline(openSleeviy);
-    }else if(!isRed&&isBlue){
-      openSleevey = new BlueRightSpikeObserverPipeline();
-      webcam.setPipeline(openSleevey);
     }
-    else {
+    else if(isRed && !isBlue) {
       openSleeve = new RedRightSpikeObserverPipeline();
       webcam.setPipeline(openSleeve);
+    }
+    else if(!isRed && isBlue){
+      openSleeviy = new BlueSpikeObserverPipeline();
+      webcam.setPipeline(openSleeviy);
+
+    }
+    else{
+      openSleevey = new BlueRightSpikeObserverPipeline();
+      webcam.setPipeline(openSleevey);
+
     }
     isObservingPole = true;
     webcam.openCameraDeviceAsync(
@@ -121,11 +124,16 @@ public class CVMaster {
    *
    * @return position from spike pipeline
    */
+  public void setBlue(boolean blue){
+    isBlue = blue;
+  }
   public int getPosition() {
 
     int pos = 0;
-    if (isRed) pos = openSleevi.getPosition();
-    else pos = openSleeve.getPosition();
+    if (!isRed&&!isBlue) pos = openSleevi.getPosition();
+    else if(isRed && !isBlue)pos = openSleeve.getPosition();
+    else if(!isRed && isBlue) pos = openSleeviy.getPosition();
+    else pos = openSleevey.getPosition();
     packet.put("cvPosition", pos);
     return pos;
   }

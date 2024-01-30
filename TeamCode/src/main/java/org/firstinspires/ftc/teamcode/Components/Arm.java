@@ -107,13 +107,20 @@ public class Arm extends RFServo {
     ArmStates.DROP.state = true;
     ArmTargetStates.DROP.state = false;
     ArmStates.GRAB.state = false;
-    super.setPosition(0.14);
+    super.setPosition(0.12);
     LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
     lastTime = time;
   }
 
   public void flipTo(ArmStates p_state) {
     flipTo(p_state, 0);
+  }
+  public void arm(){
+    ArmTargetStates.HOVER.state = true;
+    super.setPosition(0.78);
+    super.position=HOVER_POS;
+    LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
+    lastTime = time;
   }
   public void flipTo(ArmStates p_state, double offset) {
     if (time - lastTime > FLIP_TIME) {
@@ -134,7 +141,7 @@ public class Arm extends RFServo {
             LOGGER.log(RFLogger.Severity.INFO, "flipping to DROP");
             lastTime = time;
           } else {
-            Lift.LiftMovingStates.LOW.state = true;
+//            Lift.LiftMovingStates.LOW.state = true;
           }
         } else if(super.getPosition() != HOVER_POS){
           if (!Lift.LiftPositionStates.AT_ZERO.state || ArmStates.GRAB.getState()) {
@@ -150,7 +157,7 @@ public class Arm extends RFServo {
             lastTime = time;
           }
           if (Lift.LiftPositionStates.AT_ZERO.state) {
-            Lift.LiftMovingStates.LOW.state = true;
+//            Lift.LiftMovingStates.LOW.state = true;
           }
         }
       }
@@ -191,14 +198,14 @@ public class Arm extends RFServo {
               "Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
         }
       }
-      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.8){
+      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.2){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
     }
     for (var i : ArmTargetStates.values()) {
-      if (i.state && super.getTarget() != i.pos) {
+      if (i.state && position != i.pos) {
         flipTo(ArmStates.values()[i.ordinal()]);
       }
     }

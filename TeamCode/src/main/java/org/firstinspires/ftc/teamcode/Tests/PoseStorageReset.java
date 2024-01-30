@@ -7,12 +7,15 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 /**
  * Warren Zhou
  * 6/22
  * reset static pose storage variable
  */
+@Disabled
+
 @Autonomous(name= "PoseStorageReset")
 public class PoseStorageReset extends LinearOpMode {
     public void runOpMode() {

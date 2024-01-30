@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import static java.lang.Double.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
@@ -24,19 +25,20 @@ import java.util.ArrayList;
 @Config
 public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
+    ArrayList<Integer> pos;
     public static double p1x = 0,
             p1y = 390,
             p2x = 80,
             p2y = 540,
-            p21x = 290,
-            p21y = 390,
-            p22x = 460,
-            p22y = 540,
-            p31x = 650,
-            p31y = 390,
-            p32x = 830,
+            p21x = 340,
+            p21y = 410,
+            p22x = 440,
+            p22y = 510,
+            p31x = 715,
+            p31y = 410,
+            p32x = 840,
             p32y = 540,
-            threshhold = 1.0,
+            threshhold = 0.2,
 
     // h3u and s3u: 71 and 90
     colour = 1,
@@ -47,7 +49,7 @@ public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
 
     /** This will construct the pipeline */
     public RedRightSpikeObserverPipeline() {
-        frameList = new ArrayList<>();
+        frameList = new ArrayList<>(); pos = new ArrayList<>();
     }
 
     /**
@@ -69,9 +71,9 @@ public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
         Mat cone = input.submat(ROI1);
         double redValue = Core.sumElems(cone).val[0] / ROI1.area() / 255;
         cone = input.submat(ROI2);
-        double redValue2 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+        double redValue2 = Core.sumElems(cone).val[0] / ROI2.area() / 255;
         cone = input.submat(ROI3);
-        double redValue3 = Core.sumElems(cone).val[0] / ROI1.area() / 255;
+        double redValue3 = Core.sumElems(cone).val[0] / ROI3.area() / 255;
         frameList.add(new double[] {redValue, redValue2, redValue3});
         if (frameList.size() > 5) {
             frameList.remove(0);
@@ -91,21 +93,48 @@ public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
      */
     public int getPosition() {
         double[] sums = {0, 0, 0};
-        for (int i = 0; i < frameList.size() - 1; i++) {
-            sums[0] += frameList.get(i)[0];
-            sums[1] += frameList.get(i)[1];
-            sums[2] += frameList.get(i)[2];
+        for (int i = 0; i < Double.min(frameList.size() - 1,1); i++) {
+            sums[0] += frameList.get(0)[0];
+            sums[1] += frameList.get(0)[1];
+            sums[2] += frameList.get(0)[2];
         }
+        double diffRatio  = (sums[2] - sums[1])/ Double.min(sums[2],sums[1]);
         packet.put("frameListSize", frameList.size());
         packet.put("cvThresh0", sums[0]);
         packet.put("cvThresh1", sums[1]);
         packet.put("cvThresh2", sums[2]);
+        if(diffRatio>threshhold){
+            pos.add(1);
+        }
+        else if(diffRatio<-threshhold){
+            pos.add(2);
+        }
+        else{
+            pos.add(0);
+        }
+        if(pos.size()>5){
+            pos.remove(0);
+        }
+        double[] counters = new double[3];
+        for(int i=0;i<pos.size();i++){
+            if(pos.get(i)==0){
+                counters[0]+=.5;
+            }
+            if(pos.get(i)==1){
+                counters[1]+=1;
+            }
+            if(pos.get(i)==2){
+                counters[2]+=2;
+            }
+        }
 
-        if (sums[0] < sums[1] && sums[0] < sums[2]) {
+        if(counters[0]>max(counters[1],counters[2])){
             return 0;
-        } else if (sums[1] < sums[2] && sums[1] < sums[0]) {
+        }
+        else if(counters[1]>max(counters[2],counters[0])){
             return 1;
-        } else {
+        }
+        else{
             return 2;
         }
     }

@@ -11,8 +11,8 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
-  public static double GRABBY = 0.22
-          , DROPPY = 0.42, FLIP_TIME=0.1, LOCKY=0.3;
+  public static double GRABBY = 0.37
+          , DROPPY = .55, FLIP_TIME=0.3, LOCKY=0.4;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);
@@ -77,8 +77,19 @@ public class Wrist extends RFServo {
     }
   }
   public void purpur(){
-    if (this.getPosition() != 0.2) {
-      this.setPosition(0.2);
+    if (this.getPosition() != 0.3) {
+      super.setLastTime(0);
+      this.setPosition(0.3);
+      WristTargetStates.DROP.setStateTrue();
+      WristTargetStates.DROP.state = false;
+      WristStates.GRAB.setStateTrue();
+    }
+  }
+
+  public void wristGrab(){
+    if(this.getPosition() != GRABBY){
+      super.setLastTime(0);
+      super.setPosition(GRABBY);
       WristTargetStates.DROP.setStateTrue();
       WristTargetStates.DROP.state = false;
       WristStates.GRAB.setStateTrue();
@@ -96,8 +107,7 @@ public class Wrist extends RFServo {
         }
         WristTargetStates.GRAB.state = true;
       } else if(p_state == WristTargetStates.DROP){
-        if ((Arm.ArmStates.DROP.state)
-            && super.getPosition() != DROPPY) {
+        if (Arm.ArmStates.DROP.state && super.getPosition() != DROPPY) {
           super.setPosition(DROPPY);
           LOGGER.log("wrist to DROP");
           lastTime = time;

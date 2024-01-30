@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 @Config
 @Autonomous(name = "Crash")
-@Disabled
-
 
 public class Crash extends LinearOpMode {
     public void runOpMode() {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import static java.lang.Double.max;
 import static java.lang.Double.min;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,19 +20,20 @@ import java.util.ArrayList;
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
   ArrayList<double[]> frameList;
+  ArrayList<Integer> pos;
   public static double p1x = 0,
       p1y = 390,
       p2x = 80,
       p2y = 540,
-      p21x = 320,
-      p21y = 390,
-      p22x = 460,
+      p21x = 90,
+      p21y = 440,
+      p22x = 180,
       p22y = 530,
-      p31x = 695,
-      p31y = 390,
-      p32x = 860,
-      p32y = 540,
-      threshhold = 0.2,
+      p31x = 550,
+      p31y = 420,
+      p32x = 640,
+      p32y = 520,
+      threshhold = 0.3,
 
       // h3u and s3u: 71 and 90
       colour = 1,
@@ -43,6 +45,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
   /** This will construct the pipeline */
   public RedSpikeObserverPipeline() {
     frameList = new ArrayList<>();
+    pos = new ArrayList<>();
   }
 
   /**
@@ -88,24 +91,50 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
    * @return spike's location
    */
   public int getPosition() {
-    double[] sums = {0, 0, 0};
-    for (int i = 0; i < frameList.size() - 1; i++) {
-      sums[0] += frameList.get(i)[0];
-      sums[1] += frameList.get(i)[1];
-      sums[2] += frameList.get(i)[2];
-    }
-    double diffRatio  = (sums[2] - sums[1])/min(sums[2],sums[1]);
-    packet.put("frameListSize", frameList.size());
-    packet.put("cvThresh0", sums[0]);
-    packet.put("cvThresh1", sums[1]);
-    packet.put("cvThresh2", sums[2]);
+      double[] sums = {0, 0, 0};
+        for (int i = 0; i < min(frameList.size() - 1,1); i++) {
+      sums[0] += frameList.get(0)[0];
+      sums[1] += frameList.get(0)[1];
+      sums[2] += frameList.get(0)[2];
+        }
+      double diffRatio  = (sums[2] - sums[1])/ Double.min(sums[2],sums[1]);
+      packet.put("frameListSize", frameList.size());
+      packet.put("cvThresh0", sums[0]);
+      packet.put("cvThresh1", sums[1]);
+      packet.put("cvThresh2", sums[2]);
+      if(diffRatio>threshhold){
+        pos.add(2);
+      }
+      else if(diffRatio<-threshhold){
+        pos.add(1);
+      }
+      else{
+        pos.add(0);
+      }
+      if(pos.size()>5){
+        pos.remove(0);
+      }
+      double[] counters = new double[3];
+      for(int i=0;i<pos.size();i++){
+        if(pos.get(i)==0){
+          counters[0]+=.5;
+        }
+        if(pos.get(i)==1){
+          counters[1]+=1;
+        }
+        if(pos.get(i)==2){
+          counters[2]+=2;
+        }
+      }
 
-    if (diffRatio>threshhold) {
-      return 3;
-    } else if (diffRatio<-threshhold) {
-      return 2;
-    } else {
-      return 1;
+      if(counters[0]>max(counters[1],counters[2])){
+        return 0;
+      }
+      else if(counters[1]>max(counters[2],counters[0])){
+        return 1;
+      }
+      else{
+        return 2;
+      }
     }
-  }
 }

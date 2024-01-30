@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.io.File;
@@ -14,6 +15,8 @@ import java.io.IOException;
  * 6/22
  * reset log file that stores log index, maybe deprecatd
  */
+@Disabled
+
 @Autonomous(name= "LogReset")
 public class LogReset extends LinearOpMode {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");

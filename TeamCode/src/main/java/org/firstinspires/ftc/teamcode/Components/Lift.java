@@ -25,12 +25,12 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 550,
+      RESISTANCE = 600,
       kS = 0.03,
       kV = 3.2786E-4,
       kA = 4E-5,
       MAX_UP_VELO = 3000,
-      MAX_DOWN_VELO = -2280,
+      MAX_DOWN_VELO = -1080,
       MAX_ACCEL = 10000,
       MAX_DECEL = -66974,
       kP = 0,
@@ -48,16 +48,13 @@ public class Lift extends RFDualMotor {
     lastPower = 0;
     lastManualTime = -100;
     target = 0;
-//    if (!isTeleop) {
-      super.resetPosition();
-//    }
   }
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
     HIGH_SET_LINE(1540, false),
-    MID_SET_LINE(900, false),
-    LOW_SET_LINE(820, false),
+    MID_SET_LINE(1200, false),
+    LOW_SET_LINE(750, false),
     AT_ZERO(0, true);
 
     double position;
@@ -146,7 +143,7 @@ public class Lift extends RFDualMotor {
       }
     }
 
-    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-50-getVelocity()*0.5)
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-50-getVelocity()*0.7)
       LiftPositionStates.AT_ZERO.setStateTrue();
     else LiftPositionStates.AT_ZERO.state = false;
 
@@ -158,16 +155,16 @@ public class Lift extends RFDualMotor {
         break;
       }
     }
-    if (isTeleop) {
       if (time - lastManualTime > MANUAL_TIME) {
-        setPosition(super.getTarget(), 0);
+        if(super.getCurrentPosition()<10 && super.getTarget()<10){
+          super.setRawPower(-0.2);
+        } else {
+          setPosition(super.getTarget(), 0);
+        }
       } else {
         setTarget(super.getCurrentPosition());
         LiftMovingStates.LOW.clearTargets();
       }
-    } else {
-      setPosition(super.getTarget());
-    }
     LOGGER.log(RFLogger.Severity.FINE, "currentPos: " + super.getCurrentPosition());
     packet.put("liftPos", super.getCurrentPosition());
   }
@@ -223,7 +220,7 @@ public class Lift extends RFDualMotor {
    *     level. Updates LiftMovingStates state machine.
    */
   public void manualExtend(double p_power) {
-    super.setPower(p_power);
+    super.setPower(p_power*=.4);
     lastManualTime = time;
     if (p_power != lastPower) {
       LOGGER.setLogLevel(RFLogger.Severity.INFO);

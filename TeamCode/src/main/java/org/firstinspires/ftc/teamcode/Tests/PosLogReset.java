@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.io.File;
@@ -15,6 +16,8 @@ import java.io.IOException;
  * 6/22
  * reset log file that stores position data
  */
+@Disabled
+
 @Autonomous(name= "PosLogReset")
 public class PosLogReset extends LinearOpMode {
     @SuppressLint("SdCardPath")

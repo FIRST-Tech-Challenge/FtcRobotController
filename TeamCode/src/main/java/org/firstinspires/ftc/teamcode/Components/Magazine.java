@@ -135,9 +135,6 @@ public class Magazine {
         if(colorSensor2.getDist()<1) pixels++;
     }
     public void updateBlinkin(){
-        pixels=0;
-        if(!ColorStates.GREEN.getTrue().equals("NONE"))pixels++;
-        if(!ColorStates2.GREEN.getTrue().equals("NONE"))pixels++;
         if(time%3<1 && colored!=0){
             if(pixels==0)
                 blinkin.red();

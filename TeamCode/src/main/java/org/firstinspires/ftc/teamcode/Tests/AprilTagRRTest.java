@@ -28,6 +28,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * 9/6/23
  * Odom localizer 8 24x24 squares
  */
+@Disabled
+
 @Autonomous(name = "AprilTagRRTest")
 public class AprilTagRRTest extends LinearOpMode {
     Queuer queuer;

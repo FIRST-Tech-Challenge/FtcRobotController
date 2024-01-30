@@ -25,7 +25,7 @@ public class wristTest extends RFServoTest{
      * Calls autoLoop() function from RFServoTest (see RFServoTest class).
      */
     public void runOpMode() {
-        initialize("wristServo", FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
+        initialize("twristServo", FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
         waitForStart();
         double[] pussitions = {FLAT, HOLD, FLIP, DROP};
         while (opModeIsActive()) {
