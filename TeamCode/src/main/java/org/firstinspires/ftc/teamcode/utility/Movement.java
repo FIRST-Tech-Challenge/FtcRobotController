@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 /**refor
  * This class contains methods to control drive base movement
@@ -375,6 +376,7 @@ public class Movement {
      *
      * @param desiredDirection - which direction you want to go to
      * @param currentDirection - your current direction
+     * @return turnDiff - a value within 180 and -180 equiv to the delta of the two passed params
      */
     public double CalcTurnError(double desiredDirection, double currentDirection) {
         double turnDiff = desiredDirection - currentDirection;
@@ -384,6 +386,50 @@ public class Movement {
             turnDiff = turnDiff - 360;
         }
         return turnDiff;
+    }
+
+    /**
+     * Normalize motor powers to ensure that passed values fall within a proportional range between
+     * a max value (specified or 1.0) and a min value aligned to the lowest useful power.
+     * @param lfPower - any double representing the proportionate power for the left front motor
+     * @param rfPower - any double representing the proportionate power for the right front motor
+     * @param lbPower - any double representing the proportionate power for the left back motor
+     * @param rbPower - any double representing the proportionate power for the right back motor
+     */
+    public void setNormalizedPowers (double lfPower, double rfPower, double lbPower, double rbPower){
+        // Set minimum effective motor powers (i.e. the lowest value to cause motion in the robot) ...
+        // ... and maximum effective powers (i.e. the highest power applied with minimal wheel slip)
+        double minEffectivePower = 0.2;
+        double maxEffectivePower = 0.8;
+
+        // work out the max of passed values
+        double max = Math.max (Math.max (abs(lfPower), abs(rfPower)), Math.max (abs(lbPower), abs(rbPower)));
+
+        // normalize values to a range between 0 and 1
+        if (max > 1.0) {
+            lfPower /= max;
+            rfPower /= max;
+            lbPower /= max;
+            rbPower /= max;
+        }
+
+        // zero values that are "dead zone" trivial (i.e. < 0.05)
+        // this step will in effect remove any outliers that cause jitter when otherwise
+        // moderately high values grouped with an extremely low value
+        // also...
+        // normalize once more to a range between minEffectivePower and maxEffectivePower
+        // this is the equiv of changing the function from y = x to y = mx + b where
+        // the new slope m = (maxEffectivePower - min EffectivePower) and b = (minEffectivePower)
+        lfPower = (abs (lfPower) <= 0.05) ? 0.0 : lfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+        rfPower = (abs (rfPower) <= 0.05) ? 0.0 : rfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+        lbPower = (abs (lbPower) <= 0.05) ? 0.0 : lbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+        rbPower = (abs (rbPower) <= 0.05) ? 0.0 : rbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+
+        // Apply calculated values to drive motors
+        lfDrive.setPower (lfPower);
+        rfDrive.setPower (rfPower);
+        lbDrive.setPower (lbPower);
+        rbDrive.setPower (rbPower);
     }
 
     public boolean GoToAprilTag(AprilTagLocation tagNumber) {
@@ -452,13 +498,13 @@ public class Movement {
             // Refactor this to the Movement class to make a method to switch motors to run
             // on a defined power level.
             lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             // Set default to BRAKE mode for control
             lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //
             alignStage = 1;
@@ -537,8 +583,8 @@ public class Movement {
         double fieldX = -(poseTargetX - poseCurrentX);;
         double fieldY = poseTargetY - poseCurrentY;;
 
-        // Reset the PID / i gain for distances larger than 0.5m
-        if (Math.sqrt((fieldX * fieldX) + (fieldY * fieldY)) > 0.5) {
+        // Reset the PID / i gain for distances larger than 1m
+        if (Math.sqrt((fieldX * fieldX) + (fieldY * fieldY)) > 1) {
             axialPID.reset();
             lateralPID.reset();
         }
@@ -549,16 +595,8 @@ public class Movement {
         double axial = fieldX * Math.cos(Math.toRadians(poseCurrentAngle)) - fieldY * Math.sin(Math.toRadians(poseCurrentAngle));
         double lateral = fieldX * Math.sin(Math.toRadians(poseCurrentAngle)) + fieldY * Math.cos(Math.toRadians(poseCurrentAngle));
 
-        if (abs (axial) < 0.05) {
-            axial = 0;
-        }
-        if (abs (lateral) < 0.05) {
-            lateral = 0;
-        }
-
         axial = axialPID.calculate(axial);
         lateral = lateralPID.calculate(lateral);
-
 
         // Combine the axial, lateral and yaw factors to be powers
         double leftFrontPower = axial + lateral + yaw;
@@ -566,19 +604,28 @@ public class Movement {
         double leftBackPower = axial - lateral + yaw;
         double rightBackPower = axial + lateral - yaw;
 
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
-        max = Math.max(max, abs(leftBackPower));
-        max = Math.max(max, abs(rightBackPower));
+        // Apply normalized calculated values to drive motors.
+        setNormalizedPowers(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
-        if (max > 0.7) {
-            leftFrontPower  /= (max*1.3);
-            rightFrontPower /= (max*1.3);
-            leftBackPower   /= (max*1.3);
-            rightBackPower  /= (max*1.3);
-        }
-
+//        // Normalize the values so no wheel power exceeds 100%
+//        // This ensures that the robot maintains the desired motion.
+//        double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
+//        max = Math.max(max, abs(leftBackPower));
+//        max = Math.max(max, abs(rightBackPower));
+//
+//        if (max > 0.7) {
+//            leftFrontPower  /= (max*1.3);
+//            rightFrontPower /= (max*1.3);
+//            leftBackPower   /= (max*1.3);
+//            rightBackPower  /= (max*1.3);
+//        }
+//
+//        // Apply calculated values to drive motors
+//        lfDrive.setPower(leftFrontPower);
+//        rfDrive.setPower(rightFrontPower);
+//        lbDrive.setPower(leftBackPower);
+//        rbDrive.setPower(rightBackPower);
+//
         // Update Telemetry with key data
         telemetry.addLine(String.format("Pose2D X(Current%5.2f,Target%5.2f)", poseCurrentX, poseTargetX));
         telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.2f)", poseCurrentY, poseTargetY));
@@ -586,12 +633,6 @@ public class Movement {
         telemetry.addLine(String.format("Motion (Axial%5.2f,Lateral%5.2f,Yaw%5.2f)", axial, lateral, yaw));
         telemetry.addLine(String.format("Motor Powers(lf:%4.1f,rf:%4.1f,lb%4.1f,rb%4.1f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower));
         telemetry.update();
-
-        // Apply calculated values to drive motors
-        lfDrive.setPower(leftFrontPower);
-        rfDrive.setPower(rightFrontPower);
-        lbDrive.setPower(leftBackPower);
-        rbDrive.setPower(rightBackPower);
 
         // Test to see if we are at all three parts of our desired position and we are aligned.
         if ((abs(poseTargetX - poseCurrentX) < 0.05) && (abs(poseTargetY - poseCurrentY) < 0.05) && abs(poseTargetAngle - poseCurrentAngle) < 3) {

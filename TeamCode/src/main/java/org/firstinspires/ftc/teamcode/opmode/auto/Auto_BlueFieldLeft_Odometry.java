@@ -66,18 +66,10 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
         // this is setting the initial field coordinates
         // need to set the AprilTagTargets
         targetAprilTags = new ArrayList<>(Arrays.asList(AprilTagLocation.BLUE_LEFT,
-                AprilTagLocation.BLUE_CENTRE,
-                AprilTagLocation.BLUE_RIGHT));
+                                                        AprilTagLocation.BLUE_CENTRE,
+                                                        AprilTagLocation.BLUE_RIGHT));
         lastFieldPos = new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
         odometry.resetPosition(lastFieldPos,lastFieldPos.getRotation());
-
-        //Iniitalize the odometry
-        odometry = moveTo.getOdometry();
-        odometrySpeeds = moveTo.GetWheelSpeeds();
-        double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
-        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
-                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
         /**
          * This loop is run continuously
@@ -99,32 +91,31 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
             telemetry.addData("LSpikeline",getLeftSpikeSaturation());
             telemetry.addData("Cspikeline",getCenterSpikeSaturation());
             telemetry.addData("RSpikeLine",getRightSpikeSaturation());
-            telemetry.addData("Odometry X", odometry.getPoseMeters().getX());
-            telemetry.addData("Odometry Y", odometry.getPoseMeters().getY());
-            telemetry.addData("Odometry Angle", odometry.getPoseMeters().getRotation().getDegrees());
             telemetry.update();
         }
         while (opModeIsActive()) {
             // we don't want any streaming to the Driver Station, waste of processing and bandwidth
             visionSystem.stopLiveView();
 
+            updateOdometry();
+
             //we don't need the front camera anymore,  now need the rear one with april tags
             VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
             // Update IMU and Odometry
-            DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             odometrySpeeds = moveTo.GetWheelSpeeds();
             odometry.updateWithTime(odometryTimer.seconds(),
                     new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
 
-            telemetry.addData("GamePiece Location: ", gamepieceLocation);
-            telemetry.addData("Auto State Now: ", state);
-            telemetry.addData("Odometry (X, Y, Angle)", "%4.2f, %4.2f, %4.2f",
-                    odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY(),
-                    odometry.getPoseMeters().getRotation().getDegrees());
-            telemetry.update();
+            // Save our position so TeleOp can pick it up as a starting point
+            updateLastPos();
+
+            // Show key stats, useful for the driver and debugging.
+            displayTelemetry(DirectionNow);
 
             if (gamepieceLocation == GamePieceLocation.LEFT) {
+                // Start of Auto when the game piece is on the LEFT spike mark.
                 if (state == 0){
                     // Start by securing the loaded pixel  - always pause after servo claw motions.
                     intake.ClawClosed();
@@ -137,7 +128,6 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                 } else if (state == 2){
                     // Move the claw down
                     intake.FlipDown();
-                    sleep (250);
                     state = 3;
                 } else if (state == 3) {
                     if (moveTo.GoToPose2d(new Pose2d(0.8, 2.5, new Rotation2d(Math.toRadians(0.0))))) {
@@ -149,7 +139,6 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     sleep (250);
                     // Move the claw up
                     intake.FlipUp();
-                    sleep (250);
                     state = 5;
                 } else if (state == 5) {
                     if (moveTo.GoToPose2d(new Pose2d(1.0, 2.85, new Rotation2d(Math.toRadians(-90.0))))) {
@@ -171,6 +160,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     conveyor.setPosition(0.5);
                     state = 8;
                 } else if (state == 8) {
+                    // Move forward 4 inches (to pre park position)
                     if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 9;
                     }
@@ -181,111 +171,148 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     sleep(1000);
                     // Finish all autos with the wrist up
                     intake.FlipUp();
-                    sleep(250);
                     state = 10;
                 } else if (state == 10) {
-                    // Moves to park
-                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.6, new Rotation2d(Math.toRadians(-90.0))))) {
-                        state = 11;
+                    // Moves to park, end auto with state = 99.
+                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 99;
+                    }
+                }
+            } else if (gamepieceLocation == GamePieceLocation.CENTER) {
+                // Start of Auto when the game piece is on the CENTER spike mark.
+                if (state == 0){
+                    // Start by securing the loaded pixel  - always pause after servo claw motions.
+                    intake.ClawClosed();
+                    sleep (250);
+                    state = 1;
+                } else if (state == 1){
+                    // move forward 18 inches
+                    if (moveTo.GoToPose2d(new Pose2d(0.6, 2.4, new Rotation2d(Math.toRadians(0.0))))) {
+                        state = 2;
+                    }
+                } else if (state == 2){
+                    // Move the claw down
+                    intake.FlipDown();
+                    state = 3;
+                } else if (state == 3){
+                    // move forward 4 inches
+                    if (moveTo.GoToPose2d(new Pose2d(0.8, 2.4, new Rotation2d(Math.toRadians(0.0))))) {
+                        state = 4;
+                    }
+                } else if (state == 4){
+                    // Open the claw  - always pause after servo claw motions.
+                    intake.ClawOpen();
+                    sleep (250);
+                    // Move the claw up
+                    intake.FlipUp();
+                    state = 5;
+                } else if (state == 5){
+                    // Rotate 90 degrees
+                    if (moveTo.GoToPose2d(new Pose2d(0.8, 2.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 6;
+                    }
+                } else if (state == 6){
+                    // Align and drive to April Tag.  2 is BLUE side CENTER.
+                    if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE)) {
+                        state = 7;
+                    }
+                } else if (state == 7) {
+                    // Move the linear slide to the low scoring position
+                    linearSlideMove.LinearSlidesLow();
+                    // Moves the conveyor forward
+                    conveyor.setPosition(0);
+                    // Runs the conveyor for 4 seconds
+                    sleep(4000);
+                    // Stops the conveyor
+                    conveyor.setPosition(0.5);
+                    state = 8;
+                } else if (state == 8){
+                    // Move forward 4 inches (to pre park position)
+                    if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 9;
+                    }
+                } else if (state == 9) {
+                    // Moves the linear slide to the bottom position
+                    linearSlideMove.LinearSlidesBottom();
+                    // Pause to ensure the lift rest on the bottom
+                    sleep(1000);
+                    // Finish all autos with the wrist up
+                    intake.FlipUp();
+                    state = 10;
+                } else if (state == 10) {
+                    // Moves to park, end auto with state = 99.
+                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 99;
+                    }
+                }
+            } else if (gamepieceLocation == GamePieceLocation.RIGHT) {
+                // Start of Auto when the game piece is on the RIGHT spike mark.
+                if (state == 0){
+                    // Start by securing the loaded pixel  - always pause after servo claw motions.
+                    intake.ClawClosed();
+                    sleep (250);
+                    state = 1;
+                } else if (state == 1){
+                    // move forward 25 inches
+                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.4, new Rotation2d(Math.toRadians(0.0))))) {
+                        state = 2;
+                    }
+                } else if (state == 2){
+                    // Rotate 90 degrees
+                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 3;
+                    }
+                } else if (state == 3){
+                    // Move the claw down
+                    intake.FlipDown();
+                    state = 4;
+                } else if (state == 4){
+                    // move forward 4 inches
+                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.3, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 5;
+                    }
+                } else if (state == 5){
+                    // Open the claw  - always pause after servo claw motions.
+                    intake.ClawOpen();
+                    sleep (250);
+                    // Move the claw up
+                    intake.FlipUp();
+                    state = 6;
+                } else if (state == 6){
+                    // Align and drive to April Tag.  2 is BLUE side CENTER.
+                    if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_RIGHT)) {
+                        state = 7;
+                    }
+                } else if (state == 7) {
+                    // Move the linear slide to the low scoring position
+                    linearSlideMove.LinearSlidesLow();
+                    // Moves the conveyor forward
+                    conveyor.setPosition(0);
+                    // Runs the conveyor for 4 seconds
+                    sleep(4000);
+                    // Stops the conveyor
+                    conveyor.setPosition(0.5);
+                    state = 8;
+                } else if (state == 8){
+                    // Move forward 4 inches (to pre park position)
+                    if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 9;
+                    }
+                } else if (state == 9) {
+                    // Moves the linear slide to the bottom position
+                    linearSlideMove.LinearSlidesBottom();
+                    // Pause to ensure the lift rest on the bottom
+                    sleep(1000);
+                    // Finish all autos with the wrist up
+                    intake.FlipUp();
+                    state = 10;
+                } else if (state == 10) {
+                    // Moves to park, end auto with state = 99.
+                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                        state = 99;
                     }
                 }
             }
-
-            if (gamepieceLocation == GamePieceLocation.CENTER && state == 0) {
-                // Start by securing the loaded pixel - always pause after servo claw motions.
-                intake.ClawClosed();
-                sleep (250);
-                // move forward 18 inches
-                moveTo.Forward((int) ((18 * ticksPerInch) * 0.94), 0.25); // Calculated ticks by distance * 94% (from last year)
-                // Move the claw down
-                intake.FlipDown();
-                // Move forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Open the claw  - always pause after servo claw motions.
-                intake.ClawOpen();
-                sleep (250);
-                // Move the claw up
-                intake.FlipUp();
-                // Rotate 90 degrees
-                moveTo.Rotate(90);
-                sleep(700);
-                state = 1;
-            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 0) {
-                // Start by securing the loaded pixel - always pause after servo claw motions.
-                intake.ClawClosed();
-                sleep (250);
-                moveTo.Forward((int) ((25 * ticksPerInch) * 0.94), 0.25);
-                moveTo.Rotate(90);
-                sleep(700);
-                intake.FlipDown();
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Deposit the preloaded claw - always pause after servo claw motions.
-                intake.ClawOpen();
-                sleep(250);
-                intake.FlipUp();
-                state = 1;
-            }
-
-            if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
-                // Align and drive to April Tag.  2 is BLUE side CENTER.
-                if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) == true) {
-                    state = 2;
-                }
-            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
-                // Align and drive to April Tag.  3 is BLUE side RIGHT.
-                if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_RIGHT) == true) {
-                    state = 2;
-                }
-            }
-
-            // Complete the auto by dropping the game piece and going to park
-            if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
-                // Move the linear slide to the low scoring position
-                linearSlideMove.LinearSlidesLow();
-                // Moves the conveyor forward
-                conveyor.setPosition(0);
-                // Runs the conveyor for 4 seconds
-                sleep(4000);
-                // Stops the conveyor
-                conveyor.setPosition(0.5);
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Moves the linear slide to the bottom position
-                linearSlideMove.LinearSlidesBottom();
-                // Pause to ensure the lift rest on the bottom
-                sleep(500);
-                // Finish all autos with the wrist up
-                intake.FlipUp();
-                // Moves right 26 inches
-                moveTo.Right((int) ((24 * ticksPerInch) * 1.04), 0.4);
-                // Backward 6 inches
-                moveTo.Backwards((int) ((10 * ticksPerInch) * 0.94), 0.25);
-                state = 3;
-            } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
-                // Move the linear slide to the low scoring position
-                linearSlideMove.LinearSlidesLow();
-                // Moves the conveyor forward
-                conveyor.setPosition(0);
-                // Runs the conveyor for 4 seconds
-                sleep(4000);
-                // Stops the conveyor
-                conveyor.setPosition(0.5);
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
-                // Moves the linear slide to the bottom position
-                linearSlideMove.LinearSlidesBottom();
-                // Pause to ensure the lift rest on the bottom
-                sleep(500);
-                // Finish all autos with the wrist up
-                intake.FlipUp();
-                // Moves right 32 inches
-                moveTo.Right((int) ((32 * ticksPerInch) * 1.04), 0.4);
-                // Backward 10 inches
-                moveTo.Backwards((int) ((10 * ticksPerInch) * 0.94), 0.25);
-                state = 3;
-            }
-            // Show the elapsed game time and wheel power.
-            displayTelemetry(DirectionNow);
         }
     }
 }

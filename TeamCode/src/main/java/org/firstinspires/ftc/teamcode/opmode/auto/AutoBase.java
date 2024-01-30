@@ -180,13 +180,11 @@ public abstract class AutoBase extends LinearOpMode {
     protected void displayTelemetry(double DirectionNow) {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
-        telemetry.addData("Target Position", leftFrontDrive.getTargetPosition());
-        telemetry.addData("Left Front Pos", leftFrontDrive.getCurrentPosition());
-        telemetry.addData("Right Front Pos", rightFrontDrive.getCurrentPosition());
-        telemetry.addData("Left Back Pos", leftBackDrive.getCurrentPosition());
-        telemetry.addData("Right Back Pos", rightBackDrive.getCurrentPosition());
-        telemetry.addData("state", state);
-        telemetry.addData("location", gamepieceLocation);
+        telemetry.addData("GamePiece Location: ", gamepieceLocation);
+        telemetry.addData("Auto State Now: ", state);
+        telemetry.addData("Odometry (X, Y, Angle)", "%4.2f, %4.2f, %4.2f",
+                odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY(),
+                odometry.getPoseMeters().getRotation().getDegrees());
         telemetry.addData("*******updating pos********",lastFieldPos);
         telemetry.update();
     }
