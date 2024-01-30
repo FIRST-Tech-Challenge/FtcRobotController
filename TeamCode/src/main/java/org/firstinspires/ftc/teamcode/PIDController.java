@@ -51,6 +51,7 @@ public class PIDController {
             // set up for next loop
             lastError = currentError;
             lastTime = currentTime;
+            lastPos = currentPos;
 
         } else {
             if (Math.abs(currentError) < TICKS_IN_THIRTY_INCHES) {
