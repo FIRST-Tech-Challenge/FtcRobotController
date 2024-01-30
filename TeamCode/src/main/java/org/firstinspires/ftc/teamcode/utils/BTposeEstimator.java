@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.utils;
 import org.firstinspires.ftc.teamcode.utils.geometry.*;
 
 
-import org.firstinspires.ftc.teamcode.utils.HolonomicOdometry;
-
-
 import java.util.function.DoubleSupplier;
 
 public class BTposeEstimator extends HolonomicOdometry {
@@ -14,7 +11,7 @@ public class BTposeEstimator extends HolonomicOdometry {
         super(leftEncoder, rightEncoder, horizontalEncoder, gyroAngle, trackWidth, centerWheelOffset);
     }
 
-    public void setPoseToCameraPose(Pose2d cameraPose){
+    public void setPoseToCameraPose(BTPose2d cameraPose){
         updatePose();
         robotPose = cameraPose;
 

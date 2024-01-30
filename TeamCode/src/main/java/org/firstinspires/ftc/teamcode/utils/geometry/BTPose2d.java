@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode.utils.geometry;
-public class Pose2d {
-    private final Translation2d m_translation;
-    private final Rotation2d m_rotation;
+
+import com.arcrobotics.ftclib.geometry.Pose2d;
+
+public class BTPose2d extends Pose2d {
+    private final BTTranslation2d m_translation;
+    private final BTRotation2d m_rotation;
 
     /**
      * Constructs a pose at the origin facing toward the positive X axis.
      * (Translation2d{0, 0} and Rotation{0})
      */
-    public Pose2d() {
-        m_rotation = new Rotation2d();
-        m_translation = new Translation2d();
+    public BTPose2d() {
+        m_rotation = new BTRotation2d();
+        m_translation = new BTTranslation2d();
     }
 
-    public com.arcrobotics.ftclib.geometry.Pose2d toFTCLibP(){
-        return new com.arcrobotics.ftclib.geometry.Pose2d(m_translation.getX(),m_translation.getY());
-    }
 
     /**
      * Constructs a pose with the specified translation and rotation.
@@ -22,7 +22,7 @@ public class Pose2d {
      * @param translation The translational component of the pose.
      * @param rotation    The rotational component of the pose.
      */
-    public Pose2d(Translation2d translation, Rotation2d rotation) {
+    public BTPose2d(BTTranslation2d translation, BTRotation2d rotation) {
         m_translation = translation;
         m_rotation = rotation;
     }
@@ -36,8 +36,8 @@ public class Pose2d {
      * @param rotation The rotational component of the pose.
      */
     @SuppressWarnings("ParameterName")
-    public Pose2d(double x, double y, Rotation2d rotation) {
-        m_translation = new Translation2d(x, y);
+    public BTPose2d(double x, double y, BTRotation2d rotation) {
+        m_translation = new BTTranslation2d(x, y);
         m_rotation = rotation;
     }
 
@@ -53,7 +53,7 @@ public class Pose2d {
      * @param other The transform to transform the pose by.
      * @return The transformed pose.
      */
-    public Pose2d plus(Transform2d other) {
+    public BTPose2d plus(BTTransform2d other) {
         return transformBy(other);
     }
 
@@ -63,9 +63,9 @@ public class Pose2d {
      * @param other The initial pose of the transformation.
      * @return The transform that maps the other pose to the current pose.
      */
-    public Transform2d minus(Pose2d other) {
-        final Pose2d pose = this.relativeTo(other);
-        return new Transform2d(pose.getTranslation(), pose.getRotation());
+    public BTTransform2d minus(BTPose2d other) {
+        final BTPose2d pose = this.relativeTo(other);
+        return new BTTransform2d(pose.getTranslation(), pose.getRotation());
     }
 
     /**
@@ -73,7 +73,7 @@ public class Pose2d {
      *
      * @return The translational component of the pose.
      */
-    public Translation2d getTranslation() {
+    public BTTranslation2d getTranslation() {
         return m_translation;
     }
 
@@ -82,7 +82,7 @@ public class Pose2d {
      *
      * @return The rotational component of the pose.
      */
-    public Rotation2d getRotation() {
+    public BTRotation2d getRotation() {
         return m_rotation;
     }
 
@@ -93,8 +93,8 @@ public class Pose2d {
      * @param other The transform to transform the pose by.
      * @return The transformed pose.
      */
-    public Pose2d transformBy(Transform2d other) {
-        return new Pose2d(m_translation.plus(other.getTranslation().rotateBy(m_rotation)),
+    public BTPose2d transformBy(BTTransform2d other) {
+        return new BTPose2d(m_translation.plus(other.getTranslation().rotateBy(m_rotation)),
                 m_rotation.plus(other.getRotation()));
     }
 
@@ -109,20 +109,20 @@ public class Pose2d {
      *              the current pose will be converted into.
      * @return The current pose relative to the new origin pose.
      */
-    public Pose2d relativeTo(Pose2d other) {
-        Transform2d transform = new Transform2d(other, this);
-        return new Pose2d(transform.getTranslation(), transform.getRotation());
+    public BTPose2d relativeTo(BTPose2d other) {
+        BTTransform2d transform = new BTTransform2d(other, this);
+        return new BTPose2d(transform.getTranslation(), transform.getRotation());
     }
 
     /**
-     * @return the x value from the {@link Translation2d}
+     * @return the x value from the {@link BTTranslation2d}
      */
     public double getX() {
         return m_translation.getX();
     }
 
     /**
-     * @return the y value from the {@link Translation2d}
+     * @return the y value from the {@link BTTranslation2d}
      */
     public double getY() {
         return m_translation.getY();
@@ -150,7 +150,7 @@ public class Pose2d {
      * @return The new pose of the robot.
      */
     @SuppressWarnings("LocalVariableName")
-    public Pose2d exp(Twist2d twist) {
+    public BTPose2d exp(BTTwist2d twist) {
         double dx = twist.dx;
         double dy = twist.dy;
         double dtheta = twist.dtheta;
@@ -167,8 +167,8 @@ public class Pose2d {
             s = sinTheta / dtheta;
             c = (1 - cosTheta) / dtheta;
         }
-        Transform2d transform = new Transform2d(new Translation2d(dx * s - dy * c, dx * c + dy * s),
-                new Rotation2d(cosTheta, sinTheta));
+        BTTransform2d transform = new BTTransform2d(new BTTranslation2d(dx * s - dy * c, dx * c + dy * s),
+                new BTRotation2d(cosTheta, sinTheta));
 
         return this.plus(transform);
     }
@@ -180,8 +180,8 @@ public class Pose2d {
      * @param end The end pose for the transformation.
      * @return The twist that maps this to end.
      */
-    public Twist2d log(Pose2d end) {
-        final Pose2d transform = end.relativeTo(this);
+    public BTTwist2d log(BTPose2d end) {
+        final BTPose2d transform = end.relativeTo(this);
         final double dtheta = transform.getRotation().getRadians();
         final double halfDtheta = dtheta / 2.0;
 
@@ -194,11 +194,11 @@ public class Pose2d {
             halfThetaByTanOfHalfDtheta = -(halfDtheta * transform.getRotation().getSin()) / cosMinusOne;
         }
 
-        Translation2d translationPart = transform.getTranslation().rotateBy(
-                new Rotation2d(halfThetaByTanOfHalfDtheta, -halfDtheta)
+        BTTranslation2d translationPart = transform.getTranslation().rotateBy(
+                new BTRotation2d(halfThetaByTanOfHalfDtheta, -halfDtheta)
         ).times(Math.hypot(halfThetaByTanOfHalfDtheta, halfDtheta));
 
-        return new Twist2d(translationPart.getX(), translationPart.getY(), dtheta);
+        return new BTTwist2d(translationPart.getX(), translationPart.getY(), dtheta);
     }
 
     @Override
@@ -214,15 +214,15 @@ public class Pose2d {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Pose2d) {
-            return ((Pose2d) obj).m_translation.equals(m_translation)
-                    && ((Pose2d) obj).m_rotation.equals(m_rotation);
+        if (obj instanceof BTPose2d) {
+            return ((BTPose2d) obj).m_translation.equals(m_translation)
+                    && ((BTPose2d) obj).m_rotation.equals(m_rotation);
         }
         return false;
     }
 
-    public Pose2d rotate(double deltaTheta) {
-        return new Pose2d(m_translation, new Rotation2d(getHeading() + deltaTheta));
+    public BTPose2d rotate(double deltaTheta) {
+        return new BTPose2d(m_translation, new BTRotation2d(getHeading() + deltaTheta));
     }
 
     public double getHeading() {

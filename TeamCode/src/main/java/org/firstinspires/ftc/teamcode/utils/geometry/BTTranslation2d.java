@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.utils.geometry;
 
-public class Translation2d {
+import com.arcrobotics.ftclib.geometry.Translation2d;
+
+public class BTTranslation2d extends Translation2d {
     private final double m_x;
     private final double m_y;
 
     /**
      * Constructs a Translation2d with X and Y components equal to zero.
      */
-    public Translation2d() {
+    public BTTranslation2d() {
         this(0.0, 0.0);
     }
 
@@ -18,7 +20,7 @@ public class Translation2d {
      * @param x The x component of the translation.
      * @param y The y component of the translation.
      */
-    public Translation2d(double x, double y) {
+    public BTTranslation2d(double x, double y) {
         m_x = x;
         m_y = y;
     }
@@ -32,7 +34,7 @@ public class Translation2d {
      * @param other The translation to compute the distance to.
      * @return The distance between the two translations.
      */
-    public double getDistance(Translation2d other) {
+    public double getDistance(BTTranslation2d other) {
         return Math.hypot(other.m_x - m_x, other.m_y - m_y);
     }
 
@@ -77,8 +79,8 @@ public class Translation2d {
      * @param other The rotation to rotate the translation by.
      * @return The new rotated translation.
      */
-    public Translation2d rotateBy(Rotation2d other) {
-        return new Translation2d(
+    public BTTranslation2d rotateBy(BTRotation2d other) {
+        return new BTTranslation2d(
                 m_x * other.getCos() - m_y * other.getSin(),
                 m_x * other.getSin() + m_y * other.getCos()
         );
@@ -94,8 +96,8 @@ public class Translation2d {
      * @param other The translation to add.
      * @return The sum of the translations.
      */
-    public Translation2d plus(Translation2d other) {
-        return new Translation2d(m_x + other.m_x, m_y + other.m_y);
+    public BTTranslation2d plus(BTTranslation2d other) {
+        return new BTTranslation2d(m_x + other.m_x, m_y + other.m_y);
     }
 
     /**
@@ -108,8 +110,8 @@ public class Translation2d {
      * @param other The translation to subtract.
      * @return The difference between the two translations.
      */
-    public Translation2d minus(Translation2d other) {
-        return new Translation2d(m_x - other.m_x, m_y - other.m_y);
+    public BTTranslation2d minus(BTTranslation2d other) {
+        return new BTTranslation2d(m_x - other.m_x, m_y - other.m_y);
     }
 
     /**
@@ -119,8 +121,8 @@ public class Translation2d {
      *
      * @return The inverse of the current translation.
      */
-    public Translation2d unaryMinus() {
-        return new Translation2d(-m_x, -m_y);
+    public BTTranslation2d unaryMinus() {
+        return new BTTranslation2d(-m_x, -m_y);
     }
 
     /**
@@ -131,8 +133,8 @@ public class Translation2d {
      * @param scalar The scalar to multiply by.
      * @return The scaled translation.
      */
-    public Translation2d times(double scalar) {
-        return new Translation2d(m_x * scalar, m_y * scalar);
+    public BTTranslation2d times(double scalar) {
+        return new BTTranslation2d(m_x * scalar, m_y * scalar);
     }
 
     /**
@@ -143,8 +145,8 @@ public class Translation2d {
      * @param scalar The scalar to multiply by.
      * @return The reference to the new mutated object.
      */
-    public Translation2d div(double scalar) {
-        return new Translation2d(m_x / scalar, m_y / scalar);
+    public BTTranslation2d div(double scalar) {
+        return new BTTranslation2d(m_x / scalar, m_y / scalar);
     }
 
     @Override
@@ -160,9 +162,9 @@ public class Translation2d {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Translation2d) {
-            return Math.abs(((Translation2d) obj).m_x - m_x) < 1E-9
-                    && Math.abs(((Translation2d) obj).m_y - m_y) < 1E-9;
+        if (obj instanceof BTTranslation2d) {
+            return Math.abs(((BTTranslation2d) obj).m_x - m_x) < 1E-9
+                    && Math.abs(((BTTranslation2d) obj).m_y - m_y) < 1E-9;
         }
         return false;
     }

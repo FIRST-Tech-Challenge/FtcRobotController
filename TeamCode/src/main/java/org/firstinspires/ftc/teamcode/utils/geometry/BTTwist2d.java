@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode.utils.geometry;
  *
  * <p>A Twist can be used to represent a difference between two poses.
  */
-public class Twist2d {
+public class BTTwist2d {
     /**
      * Linear "dx" component.
      */
@@ -23,7 +23,7 @@ public class Twist2d {
      */
     public double dtheta;
 
-    public Twist2d() {
+    public BTTwist2d() {
     }
 
     /**
@@ -33,7 +33,7 @@ public class Twist2d {
      * @param dy     Change in y direction relative to robot.
      * @param dtheta Change in angle relative to robot.
      */
-    public Twist2d(double dx, double dy, double dtheta) {
+    public BTTwist2d(double dx, double dy, double dtheta) {
         this.dx = dx;
         this.dy = dy;
         this.dtheta = dtheta;
@@ -52,10 +52,10 @@ public class Twist2d {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Twist2d) {
-            return Math.abs(((Twist2d) obj).dx - dx) < 1E-9
-                    && Math.abs(((Twist2d) obj).dy - dy) < 1E-9
-                    && Math.abs(((Twist2d) obj).dtheta - dtheta) < 1E-9;
+        if (obj instanceof BTTwist2d) {
+            return Math.abs(((BTTwist2d) obj).dx - dx) < 1E-9
+                    && Math.abs(((BTTwist2d) obj).dy - dy) < 1E-9
+                    && Math.abs(((BTTwist2d) obj).dtheta - dtheta) < 1E-9;
         }
         return false;
     }
