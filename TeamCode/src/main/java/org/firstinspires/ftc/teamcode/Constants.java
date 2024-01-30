@@ -47,12 +47,12 @@ public class Constants {
         public static final BTTranslation2d BRW = new BTTranslation2d(0.145,-0.137 );
         public static final BTTranslation2d FLW = new BTTranslation2d(-0.145,0.137);
         public static final BTTranslation2d BLW = new BTTranslation2d(-0.145,-0.137);
-        public static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ffks,ffkv,ffka);
+        public static SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ffks,ffkv,ffka);
         @Config
         public static class ChassisFeedForward{
-            public static final double ffks = 0;
-            public static final double ffkv = 0;
-            public static final double ffka = 0;
+            public static double ffks = 0;
+            public static double ffkv = 0;
+            public static double ffka = 0;
         }
 
         public static final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(FLW,FRW,BLW,BRW);

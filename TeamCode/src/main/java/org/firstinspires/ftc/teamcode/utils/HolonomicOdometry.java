@@ -14,6 +14,7 @@ public class HolonomicOdometry   {
         return robotPose;
     }
 
+
     /**
      * The trackwidth of the odometers
      */
@@ -83,4 +84,11 @@ public class HolonomicOdometry   {
         robotPose = new BTPose2d(newPose.getTranslation(), angle);
     }
 
+    public void reset(BTPose2d btPose2d) {
+        previousAngle=BTRotation2d.fromDegrees(0);
+        prevLeftEncoder=0;
+        prevRightEncoder=0;
+        prevHorizontalEncoder=0;
+        robotPose=btPose2d;
+    }
 }

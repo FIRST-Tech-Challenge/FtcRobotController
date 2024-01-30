@@ -49,6 +49,9 @@ public class Chassis implements Subsystem {
     private double maxAccelerationX = 0;
     private double maxAccelerationTheta = 0;
     private double maxAccelerationY = 0;
+    private Motor.Encoder m_leftEncoder;
+    private Motor.Encoder m_rightEncoder;
+
 
     ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
@@ -66,9 +69,11 @@ public class Chassis implements Subsystem {
         gyro.init(parameters);
         gyro.reset();
         horizontalEncoder = new MotorEx(map, "encoderCenter");
+        m_leftEncoder = leftEncoder;
+        m_rightEncoder = rightEncoder;
         horizontalEncoder.resetEncoder();
-        leftEncoder.reset();
-        rightEncoder.reset();
+        m_leftEncoder.reset();
+        m_rightEncoder.reset();
         odometry = new BTposeEstimator(
                 () -> -metersFormTicks(leftEncoder.getPosition()),
                 () -> metersFormTicks(rightEncoder.getPosition()),
@@ -84,6 +89,14 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("drive: ", 0);
     }
 
+    public void resetOdmetry(Pose2d rst){
+        odometry.reset(new BTPose2d(rst));
+        horizontalEncoder.resetEncoder();
+        m_leftEncoder.reset();
+        m_rightEncoder.reset();
+        gyro.reset();
+
+    }
     public void setMotors(double FL, double FR, double BL, double BR) {
         motor_FR.set(FR+feedForward.calculate(FR));
         motor_FL.set(FL+feedForward.calculate(FL));
@@ -98,7 +111,7 @@ public class Chassis implements Subsystem {
     //x is front facing, y is
     public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
         return new RunCommand(() -> {
-            if (isFirstTime == true) {
+            if (isFirstTime) {
                 driveTimer.reset();
                 isFirstTime = false;
 
@@ -144,6 +157,7 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("Theta Acc : ", acceleration.getRotation().getDegrees());
 
         dashboardTelemetry.update();
+
     }
 
     public void calcVA() {

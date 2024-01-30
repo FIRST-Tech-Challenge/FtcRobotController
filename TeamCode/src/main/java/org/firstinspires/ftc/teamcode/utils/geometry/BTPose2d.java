@@ -14,6 +14,10 @@ public class BTPose2d extends Pose2d {
         m_rotation = new BTRotation2d();
         m_translation = new BTTranslation2d();
     }
+    public BTPose2d(Pose2d pose2d){
+        m_rotation=BTRotation2d.fromDegrees(pose2d.getRotation().getDegrees());
+        m_translation=new BTTranslation2d(pose2d.getX(),pose2d.getY());
+    }
 
 
     /**
