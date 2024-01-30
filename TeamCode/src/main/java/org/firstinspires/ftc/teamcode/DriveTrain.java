@@ -94,8 +94,6 @@ public class DriveTrain {
             leftBackDrive.setPower(-leftBackPower/2);
             rightBackDrive.setPower(-rightBackPower/2);
         }
-
-
     }
 
     public void moveForward(int howMuch, double speed) {
@@ -147,10 +145,10 @@ public class DriveTrain {
 
     public void moveBackward(int howMuch, double speed) {
         // "howMuch" is in inches. A negative howMuch moves backward.
-
         if (howMuch > 0) {
             howMuch *= -1;
         }
+
         // Fetch Drive positions:
         lfPos = leftFrontDrive.getCurrentPosition();
         rfPos = rightFrontDrive.getCurrentPosition();
@@ -371,9 +369,7 @@ public class DriveTrain {
         // Wait for move to complete:
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
-
         }
-
 
         // Stop all motion:
         leftFrontDrive.setPower(0);
@@ -424,7 +420,6 @@ public class DriveTrain {
         // Wait for move to complete:
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
-
         }
 
         // Stop all motion:
@@ -476,9 +471,7 @@ public class DriveTrain {
         // Wait for move to complete:
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
-
         }
-
 
         // Stop all motion:
         leftFrontDrive.setPower(0);
@@ -529,9 +522,7 @@ public class DriveTrain {
         // Wait for move to complete:
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
-
         }
-
 
         // Stop all motion:
         leftFrontDrive.setPower(0);
@@ -542,6 +533,9 @@ public class DriveTrain {
 
     public void turnClockwise(int whatAngle, double speed) {
         // "whatAngle" is in degrees. A negative whatAngle turns counterclockwise.
+        if (whatAngle < 0) {
+            whatAngle = Math.abs(whatAngle);
+        }
 
         // Fetch motor positions:
         lfPos = leftFrontDrive.getCurrentPosition();
@@ -568,7 +562,39 @@ public class DriveTrain {
         // Wait for move to complete:
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+        }
+    }
 
+    public void turnCounterClockwise(int whatAngle, double speed) {
+        // "whatAngle" is in degrees. A negative whatAngle turns counterclockwise.
+        if (whatAngle > 0) {
+            whatAngle *= -1;
+        }
+        // Fetch motor positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += whatAngle * clicksPerDeg;
+        rfPos -= whatAngle * clicksPerDeg;
+        lrPos += whatAngle * clicksPerDeg;
+        rrPos -= whatAngle * clicksPerDeg;
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
         }
     }
 
@@ -579,7 +605,6 @@ public class DriveTrain {
         Wait(.5);
         moveForward(3, 0.5);
         Wait(.5);
-
     }
 
     public void centerPos() {
