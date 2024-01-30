@@ -28,7 +28,6 @@ public class BeastOp1 extends OpMode {
     private final double dropoffPosition = .2;
     private final double outSlide = .33;
     private final double inSlide = .82;
-
     // MOtors and stuff
     private DcMotor armMotor;
     private DcMotor frontLeftMotor;

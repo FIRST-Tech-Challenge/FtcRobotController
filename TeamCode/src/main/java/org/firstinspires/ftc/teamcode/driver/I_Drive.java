@@ -35,6 +35,10 @@ public class I_Drive extends LinearOpMode {
     private Servo rightClimb = null;
     private Servo leftClimb = null;
     private Servo planeServo = null;
+    private final double pickupPosition = .65;
+    private final double dropoffPosition = .2;
+    private final double outSlide = .33;
+    private final double inSlide = .82;
 
     // Variables
 
@@ -72,6 +76,8 @@ public class I_Drive extends LinearOpMode {
     private boolean slowmoToggle = false; // To track the toggle state
 
     private long turnStartTime = 0;
+    private boolean intServoState = false;
+    private boolean intServoReverse = false;
 
 
     private TelemetryPacket packet;
@@ -193,13 +199,7 @@ public class I_Drive extends LinearOpMode {
 
             @Override
             public void run() {
-                while (!Thread.interrupted()) {
-
-
-
-
-                }
-
+                while (!Thread.interrupted()) {}
             }
         });
     }
@@ -209,12 +209,7 @@ public class I_Drive extends LinearOpMode {
         climbThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!Thread.interrupted()) {
-
-
-
-
-                }
+                while (!Thread.interrupted()) {}
             }
         });
     }
@@ -225,13 +220,7 @@ public class I_Drive extends LinearOpMode {
 
             @Override
             public void run() {
-                while (!Thread.interrupted()) {
-
-
-
-
-                }
-
+                while (!Thread.interrupted()) {}
             }
         });
     }
@@ -241,13 +230,7 @@ public class I_Drive extends LinearOpMode {
         deliveryThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!Thread.interrupted()) {
-
-
-
-
-                }
-
+                while (!Thread.interrupted()){}
             }
         });
     }
