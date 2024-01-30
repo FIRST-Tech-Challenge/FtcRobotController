@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="BeastDrive", group="TeleOp Driver")
+@TeleOp(name="BreeeastDrive", group="TeleOp Driver")
 @Config
 public class BeastDriver extends OpMode {
 
