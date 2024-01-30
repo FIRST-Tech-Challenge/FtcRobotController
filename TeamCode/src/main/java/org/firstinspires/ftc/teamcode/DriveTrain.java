@@ -587,6 +587,10 @@ public class DriveTrain {
         Wait(.5);
         strafeRight(5,0.5);
         Wait(.5);
+        moveBackward(10, 0.5);
+        Wait(.5);
+        turnClockwise(-90, 0.5);
+        Wait(.5);
     }
 
     public void leftPos() {
