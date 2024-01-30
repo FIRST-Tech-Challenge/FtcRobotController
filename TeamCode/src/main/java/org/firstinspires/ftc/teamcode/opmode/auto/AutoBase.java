@@ -59,9 +59,10 @@ public abstract class AutoBase extends LinearOpMode {
     // Wheel diameter is 100mm
     final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
     protected VisionSystem visionSystem;
-    private static Pose2d lastFieldPos;
-    private static Rotation2d lastFieldRot;
-    private static List<AprilTagLocation> targetAprilTags;
+    protected static Pose2d lastFieldPos;
+
+    protected double DirectionNow;
+    protected static List<AprilTagLocation> targetAprilTags;
 
     @Override
     public void runOpMode() {
@@ -166,6 +167,8 @@ public abstract class AutoBase extends LinearOpMode {
                             visionSystem);
         linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
+        // getting the initialized odometry object
+        odometry = moveTo.getOdometry();
         state = 0;
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -184,12 +187,19 @@ public abstract class AutoBase extends LinearOpMode {
         telemetry.addData("Right Back Pos", rightBackDrive.getCurrentPosition());
         telemetry.addData("state", state);
         telemetry.addData("location", gamepieceLocation);
+        telemetry.addData("*******updating pos********",lastFieldPos);
         telemetry.update();
+    }
+
+    protected void updateOdometry() {
+        DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        odometrySpeeds = moveTo.GetWheelSpeeds();
+        odometry.updateWithTime(odometryTimer.seconds(),
+                new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
     }
 
     protected void updateLastPos(){
         lastFieldPos = moveTo.getOdometry().getPoseMeters();
-        lastFieldRot = moveTo.getOdometry().getPoseMeters().getRotation();
     }
 
     protected void setFieldPosition(FieldPosition fPos) {
@@ -212,17 +222,13 @@ public abstract class AutoBase extends LinearOpMode {
         return visionSystem.getRightSpikeSaturation();
     }
 
-    protected void setInitFieldPos(Pose2d initPos, Rotation2d initRot, List<AprilTagLocation> aTags){
+    protected void setInitFieldPos(Pose2d initPos, List<AprilTagLocation> aTags){
         lastFieldPos = initPos;
-        lastFieldRot = initRot;
         targetAprilTags = aTags;
     }
 
     public static Pose2d getLastFieldPos(){
         return lastFieldPos;
-    }
-    public static Rotation2d getLastRotation(){
-        return lastFieldRot;
     }
 
 }

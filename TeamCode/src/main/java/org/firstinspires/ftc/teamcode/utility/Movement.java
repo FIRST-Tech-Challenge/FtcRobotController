@@ -137,9 +137,9 @@ public class Movement {
         odometryTimer.reset();
         imu.resetYaw();
         // Initialize the odometry to the start position of the robot.
-        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
-        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
-                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
+//        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
+//        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
+//                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
     }
 
@@ -386,21 +386,25 @@ public class Movement {
         return turnDiff;
     }
 
-    public boolean GoToAprilTag(int tagNumber) {
+    public boolean GoToAprilTag(AprilTagLocation tagNumber) {
         double aprilTagTargetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
-        if (tagNumber == 1 || tagNumber == 4) {
+        if (tagNumber == AprilTagLocation.BLUE_LEFT || tagNumber == AprilTagLocation.RED_LEFT) {
             aprilTagTargetX = 0.5;
-        } else if (tagNumber == 3 || tagNumber == 6) {
+        } else if (tagNumber == AprilTagLocation.BLUE_RIGHT || tagNumber == AprilTagLocation.RED_RIGHT) {
             aprilTagTargetX = -0.5;
         }
         double aprilTagTargetY = 9;
         double aprilTagTargetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
-        if (tagNumber <= 3) {
+        if (tagNumber == AprilTagLocation.BLUE_LEFT ||
+            tagNumber == AprilTagLocation.BLUE_CENTRE ||
+             tagNumber == AprilTagLocation.BLUE_RIGHT) {
             aprilTagTargetAngle = -90;
-        } else if (tagNumber > 3) {
+        } else if (tagNumber == AprilTagLocation.RED_LEFT ||
+                    tagNumber == AprilTagLocation.RED_CENTRE ||
+                    tagNumber == AprilTagLocation.RED_RIGHT) {
             aprilTagTargetAngle = 90;
         }
 
@@ -411,7 +415,7 @@ public class Movement {
         if (tag != null) {
             for (int i = 0; i < tag.size(); i++) {
                 if (tag.get(i) != null) {
-                    if (tag.get(i).id == tagNumber) {
+                    if (tag.get(i).id == tagNumber.ordinal()) {
                         aprilTagCurrentX = tag.get(i).ftcPose.x;
                         aprilTagCurrentY = tag.get(i).ftcPose.y;
                         tagRange = tag.get(i).ftcPose.range;

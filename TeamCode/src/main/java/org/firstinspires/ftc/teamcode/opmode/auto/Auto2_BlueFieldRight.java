@@ -31,15 +31,21 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static android.os.SystemClock.sleep;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
@@ -61,6 +67,16 @@ public class Auto2_BlueFieldRight extends AutoBase {
         super.runOpMode();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.BLUE_FIELD_RIGHT);
+
+        // this is setting the initial field coordinates
+        // need to set the AprilTagTargets
+        targetAprilTags = new ArrayList<>(Arrays.asList(AprilTagLocation.BLUE_LEFT,
+                AprilTagLocation.BLUE_CENTRE,
+                AprilTagLocation.BLUE_RIGHT));
+        // todo: set proper initial position
+        lastFieldPos = new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        odometry.resetPosition(lastFieldPos,lastFieldPos.getRotation());
+
 
         while (opModeInInit()) {
             state = 0;
@@ -86,6 +102,7 @@ public class Auto2_BlueFieldRight extends AutoBase {
             // we don't want any streaming to the Driver Station, waste of processing and bandwidth
             visionSystem.stopLiveView();
 
+            updateOdometry();
             //we don't need the front camera anymore,  now need the rear one with april tags
             VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 

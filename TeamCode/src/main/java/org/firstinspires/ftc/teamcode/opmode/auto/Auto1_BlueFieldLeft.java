@@ -38,12 +38,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 import org.firstinspires.ftc.vision.VisionPortal;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
@@ -52,6 +56,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 @Autonomous(name="BlueFieldLeft", group="OpMode",preselectTeleOp = "GGE Odometry TeleOp")
 //@Disabled
 public class Auto1_BlueFieldLeft extends AutoBase {
+
+
 
     /**
      * Runs once and initializes the autonomous program.
@@ -64,7 +70,13 @@ public class Auto1_BlueFieldLeft extends AutoBase {
         super.runOpMode();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.BLUE_FIELD_LEFT);
-
+        // this is setting the initial field coordinates
+        // need to set the AprilTagTargets
+        targetAprilTags = new ArrayList<>(Arrays.asList(AprilTagLocation.BLUE_LEFT,
+                                                        AprilTagLocation.BLUE_CENTRE,
+                                                        AprilTagLocation.BLUE_RIGHT));
+        lastFieldPos = new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        odometry.resetPosition(lastFieldPos,lastFieldPos.getRotation());
 
         /**
          * This loop is run continuously
@@ -91,6 +103,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
         while (opModeIsActive()) {
             // we don't want any streaming to the Driver Station, waste of processing and bandwidth
             visionSystem.stopLiveView();
+
+            updateOdometry();
 
             //we don't need the front camera anymore,  now need the rear one with april tags
             VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
@@ -161,17 +175,17 @@ public class Auto1_BlueFieldLeft extends AutoBase {
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
                 // Align and drive to April Tag.  1 is BLUE side LEFT.
-                if (moveTo.GoToAprilTag(1) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_LEFT) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
                 // Align and drive to April Tag.  2 is BLUE side CENTER.
-                if (moveTo.GoToAprilTag(2) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
                 // Align and drive to April Tag.  3 is BLUE side RIGHT.
-                if (moveTo.GoToAprilTag(3) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) == true) {
                     state = 2;
                 }
             }
@@ -242,18 +256,20 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                 // Finish all autos with the wrist up
                 intake.FlipUp();
                 // Moves right 32 inches
-                moveTo.Right((int) ((32 * ticksPerInch) * 1.04), 0.4);
+                moveTo.Right((int) ((19 * ticksPerInch) * 1.04), 0.4);
                 // Backward 10 inches
                 moveTo.Backwards((int) ((10 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             }
             // Show the elapsed game time and wheel power.
             displayTelemetry(DirectionNow);
-        }
-        if(isStopRequested()){
+
             // save our last position so teleop can pick it up as a starting point
             updateLastPos();
         }
+
     }
+
+
 
 }

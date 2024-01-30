@@ -50,6 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.opmode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
@@ -122,14 +123,12 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
     LinearSlideMovement linearslidemovement;
     private VisionSystem visionSystem;
     private Pose2d initFieldPos;
-    private Rotation2d initRotation;
 
     @Override
     public void runOpMode() {
 
         // pull in the last recorded location from Autonomous
         initFieldPos = AutoBase.getLastFieldPos();
-        initRotation = AutoBase.getLastRotation();
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 
@@ -174,7 +173,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         double autoDriveTimeOk;
 
         // Adding in PIDF Config values learned from previous testing
-        // These may need to be tuned anytime the motor weights or config changes.
         // These may need to be tuned anytime the motor weights or config changes.
         // Set PIDF values thinking of ...
         // ... P as primary force (set second)
@@ -236,6 +234,8 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         //Iniitalize the odometry
         odometry = moveTo.getOdometry();
         odometrySpeeds = moveTo.GetWheelSpeeds();
+        // The initFieldPos is retrieved from the last AutoBase Pose2d recorded
+        odometry.resetPosition(initFieldPos,initFieldPos.getRotation());
 
         // target positions -- for testing, this will be set to the approach point for the blue
         // backdrop when the robot starts in the blue left position
@@ -268,7 +268,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-
             DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             // Get the wheel speeds and update the odometry
             odometrySpeeds = moveTo.GetWheelSpeeds();
@@ -279,9 +278,11 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 //Reset Yaw with the back button
                 imu.resetYaw();
                 DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
-                odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
-                        new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
+
+
+//                // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
+//                odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
+//                        new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             }
 
             // Controls the intake
@@ -303,8 +304,8 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                while (!moveTo.GoToAprilTag(1) && gamepad1.x){
-                    telemetry.addData ("Targeting April Tag: ", 1);
+                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_LEFT) && gamepad1.x){
+                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_LEFT);
                     telemetry.update();
                 }
             } else if (gamepad1.y) {
@@ -325,8 +326,8 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 }
 
             } else if (gamepad1.b) {
-                while (!moveTo.GoToAprilTag(3) && gamepad1.b){
-                    telemetry.addData ("Targeting April Tag: ", 3);
+                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_RIGHT) && gamepad1.b){
+                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_RIGHT);
                     telemetry.update();
                 }
             }
