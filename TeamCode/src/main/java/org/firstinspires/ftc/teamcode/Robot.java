@@ -961,14 +961,10 @@ public class Robot {
                 setHeading(90 * polarity, 0.7); //turn
                 updatePosition(robotX + 8.5, robotY - 8.5);
 
-                opMode.sleep(5000);
-
                 straightBlocking2FixHeading(-89.5);
                 // 9-10sec straightBlockingFixHeading(89.5, false, 1);
                 setHeading(90 * polarity, 0.7);
                 updatePosition(robotX + 89.5, robotY);
-
-                opMode.sleep(5000);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-24);
@@ -1774,24 +1770,24 @@ public class Robot {
             headingError = currentHeading - targetHeading;
 
             //correction based on the current heading
-            if (Math.abs(headingError) > 1) {
+            if (Math.abs(headingError) > 0.5) {
                 if (headingError < 0) {
                     //turn left
                     if (currentPos < targetPos) {
-                        leftPower = 0.1;
-                        rightPower = 0.5;
+                        leftPower = 0.2;
+                        rightPower = 0.4;
                     } else {
-                        leftPower = -0.5;
-                        rightPower = -0.1;
+                        leftPower = -0.4;
+                        rightPower = -0.2;
                     }
                 } else if (headingError > 0) {
                     //turn right
                     if (currentPos < targetPos) {
-                        leftPower = 0.5;
-                        rightPower = 0.1;
+                        leftPower = 0.4;
+                        rightPower = 0.2;
                     } else {
-                        leftPower = -0.1;
-                        rightPower = -0.5;
+                        leftPower = -0.2;
+                        rightPower = -0.4;
                     }
                 }
                 Log.d("fixHeading", "straightBlocking2FixHeading: power is " + power);
