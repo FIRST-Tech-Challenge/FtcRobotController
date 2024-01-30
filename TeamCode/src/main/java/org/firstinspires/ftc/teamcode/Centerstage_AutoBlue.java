@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -48,15 +49,15 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Auto Position Object Detection", group = "Concept")
+@Autonomous(name = "Auto Position Object Detection", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue extends LinearOpMode {
-
+    Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "bluemayhem_v3.tflite";
+    private static final String TFOD_MODEL_ASSET = "bluemayhem_v2.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
@@ -69,10 +70,11 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     boolean open = true;
     boolean close = false;
 
-    ElapsedTime trapdoorToggle  = new ElapsedTime();
+    ElapsedTime trapdoorToggle = new ElapsedTime();
 
     // Variable that will later be used for placing the second pixel.
     int desiredTag = 0;
+    int borderLine = 450;
 
     /**
      * //The variable to store our instance of the TensorFlow Object Detection processor.
@@ -87,79 +89,59 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Gobbler gobbler = new Gobbler(hardwareMap);
+
+        gobbler = new Gobbler(hardwareMap);
         initTfod();
-        gobbler.intake.intakeDown(false);
-        //robot.outtake.launchDrone(0.0);
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
 
-
-        waitForStart();
+        while (WaitingToStart()) {
+            IdentifyTeamPropLocation();
+        }
 
         if (opModeIsActive()) {
-            List<Recognition> currentRecognitions = tfod.getRecognitions();
-            for (Recognition recognition : currentRecognitions) {
-                double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-                double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
-
-                // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file.
-
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
-                if (xValue > 110 && xValue < 205 && yValue > 150 && yValue < 200) {
-                        // center
-                        telemetry.addData("position","Center");
-                        // drives robot to the center position.
-                        gobbler.driveTrain.centerPos();
-                        desiredTag = 2;
-                        seen = true;
-                }
-
-                // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
-                else if (xValue > 450 && xValue < 660 && yValue > 220 && yValue < 290) {
-                        // right
-                        telemetry.addData("position","Right");
-                        // drives robot to the right position.
-                        gobbler.driveTrain.rightPos();
-                        desiredTag = 1;
-                        seen = true;
-
-                }
-
-            }
-
-            // If the team prop is not seen on the center or right, it will assume it is on the left.
-             if (!seen) {
-                 telemetry.addData("position","Left");
-                 // drives robot to the left position.
-                 gobbler.driveTrain.leftPos();
-                 desiredTag = 3;
-             }
-                telemetryTfod();
-
-//              Place first pixel
-                gobbler.driveTrain.Wait(0.5);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
-                gobbler.driveTrain.Wait(2);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
-
-                // Push telemetry to the Driver Station.
-                telemetry.update();
-                gobbler.driveTrain.Wait(3.0);
-
-
-             sleep(50);
-
+            PlaceFirstPixel();
         }
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
+
+    private void IdentifyTeamPropLocation() {
+        seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        for (Recognition recognition : currentRecognitions) {
+            double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
+            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            if (xValue < borderLine) {
+                // center
+                telemetry.addData("position", "Center");
+                desiredTag = 2;
+                seen = true;
+            }
+
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            else if (xValue > borderLine) {  //
+                // right
+                telemetry.addData("position", "Right");
+                desiredTag = 1;
+                seen = true;
+
+            }
+        }
+        // If the team prop is not seen on the center or right, it will assume it is on the left.
+        if (!seen) {
+            telemetry.addData("position", "Left");
+            desiredTag = 3;
+        }
+
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
+    }
 
     /**
      * Initialize the TensorFlow Object Detection processor.
@@ -170,14 +152,14 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         tfod = new TfodProcessor.Builder()
 
             // With the following lines commented out, the default TfodProcessor Builder
-            // will load the default model for the season. To define a custom model to load, 
+            // will load the default model for the season. To define a custom model to load,
             // choose one of the following:
             //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
             //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
             .setModelAssetName(TFOD_MODEL_ASSET)
             //.setModelFileName(TFOD_MODEL_FILE)
 
-            // The following default settings are available to un-comment and edit as needed to 
+            // The following default settings are available to un-comment and edit as needed to
             // set parameters for custom models.
             .setModelLabels(LABELS)
             //.setIsModelTensorFlow2(true)
@@ -245,5 +227,35 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    private void PlaceFirstPixel() {
+            //if (desiredTag == 2) { // drives robot to the center position.
+                gobbler.driveTrain.centerPos();
+            //}
+//
+//            else if (desiredTag == 1) { // drives robot to the right position.
+//                gobbler.driveTrain.rightPos();
+//            }
+//
+//            else { // drives robot to the left position.
+//                gobbler.driveTrain.leftPos();
+//            }
+            // Place first pixel
+            /*
+                gobbler.driveTrain.Wait(0.5);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
+                gobbler.driveTrain.Wait(2);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
+*/
+            // Push telemetry to the Driver Station.
+//                telemetry.update();
+//                gobbler.driveTrain.Wait(3.0);
+//
+//             sleep(50);
+    }
+
+    private boolean WaitingToStart() {
+        return (!isStarted() && !isStopRequested());
+    }
 
 }   // end class
