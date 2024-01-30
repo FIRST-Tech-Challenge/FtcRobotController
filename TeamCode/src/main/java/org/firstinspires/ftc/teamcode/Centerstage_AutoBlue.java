@@ -52,7 +52,7 @@ import java.util.List;
 @Autonomous(name = "Auto Position Object Detection", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue extends LinearOpMode {
-
+    Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
@@ -90,7 +90,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Gobbler gobbler = new Gobbler(hardwareMap);
+        gobbler = new Gobbler(hardwareMap);
         initTfod();
 
         while (WaitingToStart()) {
@@ -99,29 +99,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (opModeIsActive()) {
             PlaceFirstPixel();
-//            if (desiredTag == 2) { // drives robot to the center position.
-//                gobbler.driveTrain.centerPos();
-//            }
-//
-//            else if (desiredTag == 1) { // drives robot to the right position.
-//                gobbler.driveTrain.rightPos();
-//            }
-//
-//            else { // drives robot to the left position.
-//                gobbler.driveTrain.leftPos();
-//            }
-                // Place first pixel
-            /*
-                gobbler.driveTrain.Wait(0.5);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
-                gobbler.driveTrain.Wait(2);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
-*/
-                // Push telemetry to the Driver Station.
-//                telemetry.update();
-//                gobbler.driveTrain.Wait(3.0);
-//
-//             sleep(50);
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -252,7 +229,29 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     }   // end method telemetryTfod()
 
     private void PlaceFirstPixel() {
-
+            //if (desiredTag == 2) { // drives robot to the center position.
+                gobbler.driveTrain.centerPos();
+            //}
+//
+//            else if (desiredTag == 1) { // drives robot to the right position.
+//                gobbler.driveTrain.rightPos();
+//            }
+//
+//            else { // drives robot to the left position.
+//                gobbler.driveTrain.leftPos();
+//            }
+            // Place first pixel
+            /*
+                gobbler.driveTrain.Wait(0.5);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
+                gobbler.driveTrain.Wait(2);
+                gobbler.outtake.trapdoor(true, trapdoorToggle);
+*/
+            // Push telemetry to the Driver Station.
+//                telemetry.update();
+//                gobbler.driveTrain.Wait(3.0);
+//
+//             sleep(50);
     }
 
     private boolean WaitingToStart() {
