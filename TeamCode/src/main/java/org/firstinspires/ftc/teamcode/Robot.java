@@ -955,16 +955,20 @@ public class Robot {
                 setHeading(0, 0.7);
                 updatePosition(robotX - 13, robotY);
 
-                straightBlocking2(-26.5);
-                updatePosition(robotX, robotY + 26.5);
+                straightBlocking2(-24.5); //todo: update locations, originally -26.5
+                updatePosition(robotX, robotY + 24.5);
 
                 setHeading(90 * polarity, 0.7); //turn
                 updatePosition(robotX + 8.5, robotY - 8.5);
 
-                straightBlocking2(-89.5);
+                opMode.sleep(5000);
+
+                straightBlocking2FixHeading(-89.5);
                 // 9-10sec straightBlockingFixHeading(89.5, false, 1);
                 setHeading(90 * polarity, 0.7);
                 updatePosition(robotX + 89.5, robotY);
+
+                opMode.sleep(5000);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-24);
@@ -1706,6 +1710,9 @@ public class Robot {
             telemetry.addData("targetPos", targetPos);
             telemetry.update();
 
+            currentPos = fLeft.getCurrentPosition();
+            power = straightController.calculatePID(currentPos, targetPos);
+
             velocity = straightController.getVelocity(currentPos);
             Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
 
@@ -1715,8 +1722,6 @@ public class Robot {
                 counter = 0;
             }
 
-            currentPos = fLeft.getCurrentPosition();
-            power = straightController.calculatePID(currentPos, targetPos);
             setMotorPower(power, power, power, power);
         }
 
@@ -1746,12 +1751,15 @@ public class Robot {
         double leftPower = 0;
         double rightPower = 0;
 
-
         while (opMode.opModeIsActive() && counter < 3) {
 
             telemetry.addData("currentPos", currentPos);
             telemetry.addData("targetPos", targetPos);
             telemetry.update();
+
+            currentPos = fLeft.getCurrentPosition();
+            power = straightController.calculatePID(currentPos, targetPos);
+            //get heading & heading error
 
             velocity = straightController.getVelocity(currentPos);
             Log.d("new pid", "straightBlocking2: velocity is  " + velocity);
@@ -1762,15 +1770,11 @@ public class Robot {
                 counter = 0;
             }
 
-            currentPos = fLeft.getCurrentPosition();
-            power = straightController.calculatePID(currentPos, targetPos);
-            //get heading & heading error
-
             currentHeading = getCurrentHeading();
             headingError = currentHeading - targetHeading;
 
             //correction based on the current heading
-            if (Math.abs(headingError) > 2) {
+            if (Math.abs(headingError) > 1) {
                 if (headingError < 0) {
                     //turn left
                     if (currentPos < targetPos) {
@@ -1790,6 +1794,10 @@ public class Robot {
                         rightPower = -0.5;
                     }
                 }
+                Log.d("fixHeading", "straightBlocking2FixHeading: power is " + power);
+                Log.d("fixHeading", "straightBlocking2FixHeading: leftpower is " + leftPower);
+                Log.d("fixHeading", "straightBlocking2FixHeading: rightpower is " + rightPower);
+                Log.d("fixHeading", "straightBlocking2FixHeading: headingerror is " + headingError);
                 setMotorPower(leftPower, rightPower, leftPower, rightPower);
             } else {
                 setMotorPower(power, power, power, power);
