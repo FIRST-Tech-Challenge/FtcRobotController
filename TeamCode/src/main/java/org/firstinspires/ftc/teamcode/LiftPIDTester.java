@@ -173,9 +173,9 @@ public class LiftPIDTester extends LinearOpMode
             performEveryLoop();
 //          robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
             // Execute the automatic turret movement code
-            telemetry.addData("pSinLift", robot.liftPidController.pFactor);
-            telemetry.addData("pStaticLift", robot.liftPidController.iFactor);
-            telemetry.addData("kpLift", robot.liftPidController.pFactor);
+            telemetry.addData("pFactor", robot.liftPidController.pFactor);
+            telemetry.addData("iFactor", robot.liftPidController.iFactor);
+            telemetry.addData("dFactor", robot.liftPidController.dFactor);
             while(robot.liftMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }
