@@ -34,7 +34,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(3, 0, 2,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
@@ -45,9 +45,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 3.77953; // in /1.9685
+    public static double WHEEL_RADIUS = 1.88976; // in /1.9685 3.77953
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16.1417; //was 11.565; 12.125     12.23
+    public static double TRACK_WIDTH =  27.43; //was 16.1417
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -88,9 +88,9 @@ public class DriveConstants {
 
      */
 
-    public static double MAX_VEL = 172.1693; //50.2159081254; //60.97645986651227 //30 //47.63799337395328
+    public static double MAX_VEL = 69.3312760581005; //172.1693  Voltage Compensated kF: 14.561945470080301
     public static double MAX_ACCEL = 30; //30 //60.97645986651227
-    public static double MAX_ANG_VEL = Math.toRadians(419.7309445395141);//Math.toRadians(385.5653877320003);      //Math.toRadians(180) //381.3868452014835
+    public static double MAX_ANG_VEL = Math.toRadians(264.96137378046694); //was 419.7309445395141
     public static double MAX_ANG_ACCEL = Math.toRadians(180);//Math.toRadians(285.19949387755105);
 
 

@@ -14,8 +14,8 @@ public class HangStateMachine extends SimpleState<HangStateMachine.State> {
 
     public enum State implements Namable {
         IDLE("Idle", 0d),
-        INTAKE("Clockwise", -1d),
-        OUTTAKE("CounterClockwise", 1d);
+        UP("Clockwise", -1d),
+        DOWN("CounterClockwise", 1d);
 
         private final String name;
         private final double power;

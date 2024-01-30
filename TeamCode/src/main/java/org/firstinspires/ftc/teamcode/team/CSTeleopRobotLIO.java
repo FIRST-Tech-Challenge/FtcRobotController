@@ -13,15 +13,17 @@ import java.util.Arrays;
  *         Back Left Wheel   -> LR
  *         Front Right Wheel -> RF
  *         Back Right Wheel  -> RR
- *      Elevator
- *         Left Motor -> Elev Left
- *         Right Motor -> Elev Right
+ *
+ *      lift
+ *          lift Motor ->  Lift
+ *
  *     Arm
  *         Arm Servo  -> Arm
+ *
  *      Claw
  *          Gripper -> Claw
+ *
  * Misc. sensors naming convention:
-
  */
 public abstract class CSTeleopRobotLIO extends Robot {
     private TimeProfiler matchRuntime;
@@ -56,15 +58,18 @@ public abstract class CSTeleopRobotLIO extends Robot {
         drive.robot.getDroneSubsystem().update(getDt());
         drive.robot.getOuttakeSubsystem().update(getDt());
         drive.robot.getLiftSubsystem().update(getDt());
+        drive.robot.getHangSubsystem().update(getDt());
     }
 
     @Override
     public void stop() {
         super.stop();
         drive.getExpansionHubs().stop();
-        drive.robot.getLiftSubsystem().stop();
+        drive.robot.getIntakeSubsystem().stop();
         drive.robot.getDroneSubsystem().stop();
         drive.robot.getOuttakeSubsystem().stop();
+        drive.robot.getLiftSubsystem().stop();
+        drive.robot.getHangSubsystem().stop();
     }
 
     public TimeProfiler getMatchRuntime() {

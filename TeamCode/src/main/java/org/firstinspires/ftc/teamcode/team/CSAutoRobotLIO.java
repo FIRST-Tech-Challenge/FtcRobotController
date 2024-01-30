@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.lib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubMotor;
 import org.firstinspires.ftc.teamcode.revextension2.ExpansionHubServo;
+import org.firstinspires.ftc.teamcode.team.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.team.subsystems.Drive;
@@ -45,6 +46,7 @@ public class CSAutoRobotLIO {
     private OuttakeSubsystem outtakeSubsystem;
     private DroneSubsystem droneSubsystem;
     private IntakeSubsystem intakeSubsystem;
+    private HangSubsystem HangSubsystem;
     private RevMotor[] motors;
     private RevServo[] servos;
 
@@ -56,8 +58,10 @@ public class CSAutoRobotLIO {
 //        );
 
         setMotors(new RevMotor[] {
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Lift")), false, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 1.503937), //38.2mm diameter
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Intake")), false, false, false, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION())
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Lift")), true, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 1.503937), //38.2mm diameter
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Intake")), true, false, false, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION()),
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Hang")), false, false, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION())
+
         });
 
         setServos(new RevServo[] {
@@ -67,8 +71,11 @@ public class CSAutoRobotLIO {
 
         setLiftSubsystem(new LiftSubsystem(getMotors()[0]));
         setIntakeSubsystem(new IntakeSubsystem(getMotors()[1]));
+        setHangSubsystem(new HangSubsystem(getMotors()[2]));
+
         setOuttakeSubsystem(new OuttakeSubsystem(getServos()[0]));
         setDroneSubsystem(new DroneSubsystem(getServos()[1]));
+
         setMatchRuntime(new TimeProfiler(false));
     }
     public RevMotor[] getMotors() {
@@ -123,8 +130,17 @@ public class CSAutoRobotLIO {
         return intakeSubsystem;
     }
 
+
     public void setIntakeSubsystem(IntakeSubsystem intakeSubsystem){
         this.intakeSubsystem = intakeSubsystem;
+    }
+
+    public HangSubsystem getHangSubsystem() {
+        return HangSubsystem;
+    }
+
+    public void setHangSubsystem(HangSubsystem HangSubsystem){
+        this.HangSubsystem = HangSubsystem;
     }
 
     public OuttakeSubsystem getOuttakeSubsystem() {

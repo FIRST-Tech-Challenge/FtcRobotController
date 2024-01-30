@@ -46,7 +46,7 @@ public class HangSubsystem implements ISubsystem<HangStateMachine, HangStateMach
 
     @Override
     public String getName() {
-        return "Flywheel Subsystem";
+        return "Hang Subsystem";
     }
 
     private static void setHangStateMachine(HangStateMachine HangSM) {

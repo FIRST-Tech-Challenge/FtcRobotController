@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.team.auto.CSBaseLIO;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.HangStateMachine;
 
 
 /*
@@ -15,26 +16,28 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
  * so only tele-operated controls need to be defined here.
  *
  * The controls for this robot are:
- *  User 1:
+ *
+ *  User 1: (Ronnie)
  *      Drive:
  *          Left & Right joysticks     -> Mecanum drive
- *          Left-Bumper               -> Decrease robot speed .7x
- *          Right-Bumper              -> Normal robot speed 1x
- *      Intake
+ *          Left-Bumper                -> Decrease robot speed .7x
+ *          Right-Bumper               -> Normal robot speed 1x
+ *
+ *      Intake:
  *          Left-trigger               -> Outtake
  *          Right-trigger              -> Intake
+ *
  *      OutTake:
  *
  *
  *      Drone:
  *          Left-bumper                -> Launch drone
- *      Hanging:
  *
  *
- *  *  User 2:
- *      Drive:
- *          Left bumper (pressed)      ->
- *          Right bumper (pressed)     ->
+ *
+ *
+ *   User 2: (Richie & Khallie)
+ *
  *      Lift:
  *          Dpad-up                    -> High pose
  *          Dpad-down                  -> Start pose
@@ -42,8 +45,19 @@ import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
  *          Dpad-left                  -> Mid pose
  *
  *     outtake:
- *          Left-trigger               -> Outtake
- *          Right-trigger              -> Intake
+ *          Left-trigger               -> PICKUP
+ *          Right-trigger              -> PRERELEASE
+ *          Right-Bumper               -> RELEASE
+ *
+ *      Drone:
+ *          left-bumper                -> open
+ *
+ *      Hanging:
+ *          y-button                   -> hanging goes up
+ *          a-button                   -> hanging goes down
+ *          b-button                   -> STOP
+ *
+ *
  *
  *
  * @see CenterStageRobot
@@ -55,9 +69,9 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
     private double currentTime = 0; // keep track of current time
     private double speedMultiplier = 0.7;
     //these are based on LiftTest
-    private static final double HIGH = 26d;
-    private static final double MID = 18d;
-    private static final double LOW = 10d;
+    private static final double HIGH = 8d;
+    private static final double MID = 5d;
+    private static final double LOW = 3d;
     private boolean liftdown = true;
     private boolean intakeOn = false;
 
@@ -133,7 +147,7 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         //Gamepad 2
 
         //Drone
-        telemetry.addData("Drone State: ", drive.robot.getDroneSubsystem().getStateMachine().getState());
+       telemetry.addData("Drone State: ", drive.robot.getDroneSubsystem().getStateMachine().getState());
         if (getEnhancedGamepad2().isLeftBumperJustPressed()) {
             drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
         }
@@ -146,14 +160,8 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
             drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             drive.robot.getLiftSubsystem().retract();
             liftdown = true;
-//            if (lastSetPoint == LOW) {
-//                drive.robot.getLiftSubsystem().retract();
-//                liftdown = true;
-//            } else if ((lastSetPoint == HIGH || lastSetPoint == MID)) {
-//                drive.robot.getLiftSubsystem().retract();
-//                liftdown = true;
-//            }
         }
+
         //Brings the lift down to the LOW pose when b is pressed
         if (getEnhancedGamepad2().isDpadRightJustPressed()) {  //&&arm mid
             drive.robot.getLiftSubsystem().extend(LOW);
@@ -170,12 +178,19 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
             liftdown = false;
         }
 
+        //Hang
+        if(getEnhancedGamepad2().isyLast()){
+            drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.UP);
+        }
 
+        if(getEnhancedGamepad2().isaLast()){
+            drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.DOWN);
+        }
 
         //Outtake
         //This only allows moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
         //This also brings the lift down to the ground state when Outtake is Released
-        if (!liftdown) {
+       if (!liftdown) {
             if (getEnhancedGamepad2().getRight_trigger() > 0) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PRERELEASE);
             }

@@ -12,6 +12,9 @@ import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.HangStateMachine;
+
 
 @Autonomous(name = "Stack test", group = "RoarAuto")
 //right justified
@@ -52,7 +55,9 @@ public class Stacktest extends LinearOpMode {
 
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
-        drive.robot.getLiftSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
+        drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
+        drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
+
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 

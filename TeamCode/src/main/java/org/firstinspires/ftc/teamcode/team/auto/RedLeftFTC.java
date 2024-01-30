@@ -13,6 +13,9 @@ import org.firstinspires.ftc.teamcode.team.CSVP;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.HangStateMachine;
+import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
+
 
 @Disabled
 @Autonomous(name = "Red Left Pixel", group = "Pixel")
@@ -77,7 +80,8 @@ public class RedLeftFTC extends LinearOpMode {
 
         drive = new CSBaseLIO(hardwareMap);
         drive.setPoseEstimate(startPose);
-        drive.robot.getLiftSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
+        drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
+        drive.robot.getLiftSubsystem().getStateMachine().updateState(LiftStateMachine.State.IDLE);
         drive.robot.getDroneSubsystem().getStateMachine().updateState(DroneStateMachine.State.OPEN);
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.FORWARD);
         //drive.robot.getCappingArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.REST);
