@@ -71,7 +71,6 @@ import java.util.function.DoubleSupplier;
 
 public class TheBestTeleopKnownToMankind extends CommandOpMode
 {
-
     DriveSubsystem driveSubsystem;
     @Override
     public void initialize()
@@ -115,10 +114,6 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 new ClawCloseCommand(clawSubsystem));
         //reset heading
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
-
-        //overrides
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->tiltSubsystem.moreTilt()));
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(()->tiltSubsystem.lessTilt()));
 
         //deposit
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(

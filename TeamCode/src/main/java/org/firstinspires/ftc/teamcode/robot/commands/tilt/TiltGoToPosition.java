@@ -22,7 +22,7 @@ public class TiltGoToPosition extends CommandBase
     {
         tiltSubsystem = subsystem;
         this.targetAngle = targetAngle;
-       // addRequirements(tiltSubsystem);
+        addRequirements(tiltSubsystem);
     }
 
     @Override
@@ -34,15 +34,6 @@ public class TiltGoToPosition extends CommandBase
     @Override
     public boolean isFinished()
     {
-<<<<<<< Updated upstream
-        return true;
-        //tiltSubsystem.atTargetPosition();
-=======
-<<<<<<< Updated upstream
-=======
-        //return true;
->>>>>>> Stashed changes
         return tiltSubsystem.atTargetPosition();
->>>>>>> Stashed changes
     }
 }
