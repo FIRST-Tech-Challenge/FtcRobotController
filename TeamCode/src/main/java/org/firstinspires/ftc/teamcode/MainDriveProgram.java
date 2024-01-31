@@ -42,6 +42,9 @@ public class MainDriveProgram extends LinearOpMode {
 
         AprilTagDetector aprilTagDetector = new AprilTagDetector(hardwareMap);
 
+        boolean armOut = false;
+        boolean trapdoorMoving = false;
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -54,7 +57,6 @@ public class MainDriveProgram extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
 
 
             if (!inEndGame && getRuntime() > 90) {
@@ -98,7 +100,6 @@ public class MainDriveProgram extends LinearOpMode {
             }
 
 
-
             /**
              * Intake
              */
@@ -125,15 +126,14 @@ public class MainDriveProgram extends LinearOpMode {
             }
 
 
-
             /**
              * Arm slides
              */
             //If driver input extend the slides to different legnths
-            if (gamepad2.dpad_up){
+            if (gamepad2.dpad_up) {
                 arm.extend(LiftArm.Distance.FULL);
                 arm.holdArm();
-            } else if (gamepad2.dpad_right){
+            } else if (gamepad2.dpad_right) {
                 arm.extend(LiftArm.Distance.HALF);
                 arm.holdArm();
             } else if (gamepad2.dpad_left) {
@@ -144,23 +144,43 @@ public class MainDriveProgram extends LinearOpMode {
             }
 
 
-
             /**
              * Trapdoor
              */
             if (gamepad2.right_bumper) {
                 arm.openTrapdoor();
+            } else if (gamepad2.left_bumper && !trapdoorMoving) {
+                trapdoorMoving = true;
+                arm.openTrapdoor();
+                sleep(50);
+                arm.closeTrapdoor();
             } else {
                 arm.closeTrapdoor();
             }
 
+            if (!gamepad2.left_bumper) {
+                trapdoorMoving = false;
+            }
+
+            /**
+             * Hang
+             */
+            if (gamepad1.a && gamepad1.x){
+                arm.setArmDistance(LiftArm.Distance.ENDGAMESTART);
+                armOut = true;
+            } else if (!gamepad1.a && armOut) {
+                arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
+                arm.holdHang();
+            }
 
 
             /**
              * Airplane
              */
             if (gamepad2.x && gamepad2.a) {
-                //Release airplane servo
+                arm.launchPlane();
+            } else {
+                arm.reloadPlane();
             }
 
             /**
@@ -188,6 +208,7 @@ public class MainDriveProgram extends LinearOpMode {
             /**
              * Telemetry data
              */
+            telemetry.addData("Servo: ", arm.plane.getPosition());
             /*telemetry.addData("Slide: ", arm.getSlidePosition());
             telemetry.addData("Arm pos: ", arm.getHandPosition());
             telemetry.addData("Hand power: ", arm.hand.getPower());*/

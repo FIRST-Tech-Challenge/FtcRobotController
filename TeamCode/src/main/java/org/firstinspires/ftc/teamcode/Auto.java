@@ -123,7 +123,7 @@ public class Auto extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(x_coordinate, y_coordinate, Math.toRadians(z_coordinate)))
                 //drop purple pixel here
                 .waitSeconds(1)
-                .addDisplacementMarker(20, arm::DropPurplePixel)
+                .addDisplacementMarker(20, arm::dropPurplePixel)
                 .waitSeconds(1)
                 .build();
 

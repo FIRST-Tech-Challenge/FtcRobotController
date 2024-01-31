@@ -4,11 +4,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TensorflowVision {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -50,12 +53,8 @@ public class TensorflowVision {
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hw.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
+
+        builder.setCamera(hw.get(WebcamName.class, "Webcam 1"));
 
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
@@ -83,9 +82,47 @@ public class TensorflowVision {
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
 
+        // Wait for the camera to be open
+        /*if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            while ( (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                //
+            }
+        }
+
+        // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
+        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+        }
+
+        exposureControl.setExposure(80, TimeUnit.MILLISECONDS);
+
+        // Set Gain.
+        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        gainControl.setGain(255);*/
+
     }
 
     public int getPropPosition() {
+
+        // Wait for the camera to be open
+        /*if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            while ( (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                //
+            }
+        }*/
+
+        // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
+        /*ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+        }
+
+        exposureControl.setExposure(100, TimeUnit.MILLISECONDS);
+
+        // Set Gain.
+        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        gainControl.setGain(255);*/
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
 

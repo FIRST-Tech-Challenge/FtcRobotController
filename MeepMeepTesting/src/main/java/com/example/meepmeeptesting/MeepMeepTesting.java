@@ -19,12 +19,10 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.38)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-39.4375, 62, Math.toRadians(90)))
-                                .waitSeconds(3)
                                 .setReversed(true)
                                 .lineToLinearHeading(new Pose2d(-41, 37, Math.toRadians(90)))
                                 .strafeLeft(10)
                                 .splineTo(new Vector2d(-50, 12), Math.toRadians(-90))
-                                .forward(5)
                                 .back(50)
                                 .splineTo(new Vector2d(48, 36), Math.toRadians(0))
                                 .forward(1)
@@ -119,11 +117,11 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
 
                 // Add both of our declared bot entities
-                /*.addEntity(blueInterior)
+                .addEntity(blueInterior)
                 .addEntity(blueExterior)
                 .addEntity(redExterior)
-                .addEntity(redInterior)*/
-                .addEntity(testBot)
+                .addEntity(redInterior)
+                //.addEntity(testBot)
                 .start();
     }
 }

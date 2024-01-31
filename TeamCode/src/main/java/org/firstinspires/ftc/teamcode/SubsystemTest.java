@@ -136,7 +136,7 @@ public class SubsystemTest extends LinearOpMode {
              * hang
              */
             if (gamepad1.a){
-                arm.setArmDistance(LiftArm.Distance.ENDGAMEStart);
+                arm.setArmDistance(LiftArm.Distance.ENDGAMESTART);
                 ALetGo = true;
             } else if (!gamepad1.a && ALetGo) {
                 arm.setArmDistance(LiftArm.Distance.ENDGAMEHOLD);
