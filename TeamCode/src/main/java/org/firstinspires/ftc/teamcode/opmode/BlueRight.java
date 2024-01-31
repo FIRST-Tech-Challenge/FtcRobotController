@@ -31,7 +31,6 @@ public class BlueRight extends OpMode {
     public void start() {
         resetRuntime();
         State state = State.INITIAL;
-
     }
 
     @Override

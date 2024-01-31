@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.mechanism;
 
 
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
-
 
 
 public class ProgrammingBoard {
@@ -19,7 +16,7 @@ public class ProgrammingBoard {
     private static DcMotor intakeMotor;
     private static DcMotor armMotor;
 
-    private static Servo panServo;
+    private static Servo clawServo;
 
     // Defines the motors.
 
@@ -40,10 +37,10 @@ public class ProgrammingBoard {
         // Sets the mode. *See official FTC guide for more options.
 
         leftFrontMotor_0.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor_1.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor_2.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor_3.setDirection(DcMotor.Direction.FORWARD);
-        // Sets the direction.
+        leftBackMotor_1.setDirection(DcMotor.Direction.FORWARD);
+        rightBackMotor_2.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor_3.setDirection(DcMotor.Direction.REVERSE);
+        // Sets the direction. You might have to change this if hardware team screws up. `-`
 
         intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,7 +50,7 @@ public class ProgrammingBoard {
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        panServo = hwMap.get(Servo.class, "panServo");
+        clawServo = hwMap.get(Servo.class, "clawServo");
 
     }
 
@@ -63,6 +60,7 @@ public class ProgrammingBoard {
         rightBackMotor_2.setPower(rightBackPower);
         rightFrontMotor_3.setPower(rightFrontPower);
         // Method allows for other classes to set the speed of each motor.
+        // If hardware team mixes up the cord (as always), comment out the above commands to see which one is which.
     }
 
     public void setIntakePower(double intakePower){
@@ -71,7 +69,7 @@ public class ProgrammingBoard {
 
     public void setArmPower(double armPower) {armMotor.setPower(armPower);}
 
-    public void setPanAngle (double panAngle) {panServo.setPosition(panAngle);}
+    public void setClawServo (double clawAngle) {clawServo.setPosition(clawAngle);}
 
 
 

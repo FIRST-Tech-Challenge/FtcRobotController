@@ -10,10 +10,12 @@ public class Traction {
         // Function takes in desired directions as parameters.
 
         double leftFrontPower  = axial + lateral + yaw;
+        double leftBackPower   = axial + lateral - yaw;
         double rightFrontPower = axial - lateral - yaw;
-        double rightBackPower  = axial + lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
+        double rightBackPower  = axial - lateral + yaw;
         // Calculates necessary motor speeds.
+        // These calculations are dependent on this orientation:      \ /
+        // Look up a mecanum diagram to see how this works.           / \
 
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(rightBackPower));
