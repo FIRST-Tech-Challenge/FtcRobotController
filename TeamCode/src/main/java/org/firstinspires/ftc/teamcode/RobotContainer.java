@@ -4,10 +4,12 @@ import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.*;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auto.FollowPath;
 import org.firstinspires.ftc.teamcode.subsystems.Chassis;
@@ -15,7 +17,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.climb;
 import org.firstinspires.ftc.teamcode.subsystems.plane;
+import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.BTController;
+import org.firstinspires.ftc.teamcode.utils.RunCommand;
 import org.firstinspires.ftc.teamcode.utils.TrajectoryFactory;
 
 
@@ -55,7 +59,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         () -> -m_controller.left_trigger.getAsDouble() + m_controller.right_trigger.getAsDouble()),
                 true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
 
-        m_controller.assignCommand(new FollowPath(
+        Supplier< BTCommand> fp2=()->new FollowPath(
                 TrajectoryFactory.t1,
                 ()-> m_chassis.getPosition(),
                 PIDx, PIDy, PIDt,
@@ -63,7 +67,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                 m_chassis::chassisSpeedDrive,
                 kinematics,
                 pose2d -> m_chassis.resetOdmetry(pose2d),
-                m_chassis), false, BUTTON_UP).whenInactive(m_chassis.stopMotor());
+                m_chassis);
+        m_controller.assignCommand(new InstantCommand(()->fp2.get().andThen(m_chassis.stopMotor()).schedule()), false, BUTTON_UP).whenInactive(m_chassis.stopMotor());
 //        m_controller.assignCommand(m_climb.climb_manual(m_controller.right_y), true, RIGHT_Y).whenInactive(m_climb.climb_manual(()->0));
 
 //        m_controller.assignCommand(m_gripper.toggleGripper(),false,BUTTON_RIGHT);

@@ -87,6 +87,10 @@ public class Chassis implements Subsystem {
         m_pidcontroller = new PIDFController(kp, ki, kd, kff);
         register();
         dashboardTelemetry.addData("drive: ", 0);
+        dashboardTelemetry.addData("frontVelocityAuto", 0);
+        dashboardTelemetry.addData("sideVelocityAuto", 0);
+        dashboardTelemetry.addData("OmegaSpeedAuto", 0);
+
     }
 
     public void resetOdmetry(Pose2d rst){
@@ -95,6 +99,7 @@ public class Chassis implements Subsystem {
         m_leftEncoder.reset();
         m_rightEncoder.reset();
         gyro.reset();
+        odometry.reset(new BTPose2d(rst));
 
     }
     public void setMotors(double FL, double FR, double BL, double BR) {
@@ -106,7 +111,7 @@ public class Chassis implements Subsystem {
 
     ElapsedTime driveTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    boolean isFirstTime = true;
+     public boolean isFirstTime = true;
 
     //x is front facing, y is
     public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
@@ -128,10 +133,8 @@ public class Chassis implements Subsystem {
             m_telemetry.update();
             BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
-            double wantedAngle = new BTRotation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble()).getDegrees();
-            double correctPositionVec = m_pidcontroller.calculate(odometry.getPose().getRotation().getDegrees(), wantedAngle);
 
-            drive(rotated.getY(), rotated.getX(), correctPositionVec + retaliation.getAsDouble());
+            drive(rotated.getY(), rotated.getX(),  retaliation.getAsDouble());
         }, this);
     }
 
@@ -185,6 +188,9 @@ public class Chassis implements Subsystem {
     public void chassisSpeedDrive(ChassisSpeeds chassisSpeeds){
 
         drive(chassisSpeeds.vyMetersPerSecond,chassisSpeeds.vxMetersPerSecond,chassisSpeeds.omegaRadiansPerSecond);
+        dashboardTelemetry.addData("frontVelocityAuto", chassisSpeeds.vxMetersPerSecond);
+        dashboardTelemetry.addData("sideVelocityAuto", chassisSpeeds.vyMetersPerSecond);
+        dashboardTelemetry.addData("OmegaSpeedAuto", chassisSpeeds.omegaRadiansPerSecond);
     }
     private void drive(double frontVel, double sidewayVel, double retaliation) {
 

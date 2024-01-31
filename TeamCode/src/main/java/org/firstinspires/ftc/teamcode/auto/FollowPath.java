@@ -12,7 +12,6 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
@@ -77,16 +76,17 @@ public class FollowPath extends BTCommand {
         m_kinematics = kinematics;
         this.m_resetOdometry= resetOdometry;
         addRequirements(requirments);
-        dashboard.addData("desired X velocity", 0);
-        dashboard.addData("desired Y velocity", 0);
-        dashboard.addData("desired Th velocity", 0);
-        dashboard.addData("followPath time", 0);
+        dashboard.addData("DfrontVelocity: ", 0);
+        dashboard.addData("DsideVelocity: ", 0);
+        dashboard.addData("DomegaVelocity: ", 0);
+        dashboard.addData("followPath time", m_timer.time());
+
     }
 
     @Override
     public void initialize() {
         m_timer.reset();
-        dashboard.addData("followPath time", m_timer.time());
+
 
         //        m_controller.m_thetaController.setConstraints(
 //                new TrapezoidProfile.Constraints(
@@ -101,7 +101,14 @@ public class FollowPath extends BTCommand {
 //        );
         m_resetOdometry.accept(m_trajectory.sample(0).poseMeters);
         Constants.ChassisConstants.feedForward= new SimpleMotorFeedforward(ffks,ffkv,ffka);
+        m_controller.reset();
+        m_resetOdometry.accept(m_trajectory.sample(0).poseMeters);
+
+
     }
+
+
+
 
     @Override
     public void execute() {
@@ -109,13 +116,17 @@ public class FollowPath extends BTCommand {
         dashboard.addData("followPath time", curTime);
 
         Trajectory.State desiredState = m_trajectory.sample(curTime);
-        if (m_desiredRotation.get() == null) {
+        dashboard.addData("state velocity", desiredState.velocityMetersPerSecond);
+        if (m_desiredRotation.get() == null){
             ChassisSpeeds targetChassisSpeeds =
                     m_controller.calculate(m_pose.get(), desiredState, m_trajectory.getStates().get(m_trajectory.getStates().size() - 1).poseMeters.getRotation());
             m_outputChassisSpeeds.accept(targetChassisSpeeds);
-            dashboard.addData("desired front velocity", targetChassisSpeeds.vyMetersPerSecond);
-            dashboard.addData("desired side velocity", targetChassisSpeeds.vxMetersPerSecond);
-            dashboard.addData("desired Th velocity", targetChassisSpeeds.omegaRadiansPerSecond);
+            dashboard.addData("DfrontVelocity: ", targetChassisSpeeds.vyMetersPerSecond);
+            dashboard.addData("DsideVelocity: ", targetChassisSpeeds.vxMetersPerSecond);
+            dashboard.addData("DomegaVelocity: ", targetChassisSpeeds.omegaRadiansPerSecond);
+            dashboard.update();
+
+
 
         } else {
             ChassisSpeeds targetChassisSpeeds =

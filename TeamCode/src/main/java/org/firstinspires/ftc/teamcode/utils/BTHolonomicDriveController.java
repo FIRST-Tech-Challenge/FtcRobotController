@@ -31,9 +31,9 @@ public class BTHolonomicDriveController {
 
     private final PIDController m_xController;
     private final PIDController m_yController;
-    private ProfiledPIDController m_thetaController;
+    private final ProfiledPIDController m_thetaController;
 
-    private boolean m_firstRun = true;
+    public boolean m_firstRun = true;
 
     /**
      * Constructs a holonomic drive controller.
@@ -42,6 +42,8 @@ public class BTHolonomicDriveController {
      * @param yController A PID Controller to respond to error in the field-relative y direction.
      * @param thetaController A profiled PID controller to respond to error in angle.
      */
+
+
     public BTHolonomicDriveController(
             PIDController xController, PIDController yController, ProfiledPIDController thetaController) {
         m_xController = xController;
@@ -142,4 +144,12 @@ public class BTHolonomicDriveController {
     public void setEnabled(boolean enabled) {
         m_enabled = enabled;
     }
+    public void reset(){
+        m_firstRun = true;
+        m_xController.reset();
+        m_yController.reset();
+
+    }
+
+
 }
