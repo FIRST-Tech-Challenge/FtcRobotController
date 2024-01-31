@@ -57,7 +57,7 @@ public class BradBot extends BasicRobot {
   boolean purped = false;
   boolean pathFin = false;
   boolean gapped = false;
-  double startIntake = -100;
+//  double startIntake = -100;
 //  Preloader preloader;
   public SampleMecanumDrive roadrun;
   Twrist twrist;
@@ -300,11 +300,11 @@ public class BradBot extends BasicRobot {
 
   public void intakeAuto(int height) {
     if (queuer.queue(true, Intake.IntakeStates.STOPPED.getState()&&Magazine.pixels==2)) {
-      if(!queuer.isExecuted()){
-        startIntake = BasicRobot.time;
-      }
+//      if(!queuer.isExecuted()){
+//        startIntake = BasicRobot.time;
+//      }
       if (currentPose.getX()<-30) {
-        intake.intakeAutoHeight();
+        intake.intakeAutoHeight(height);
       }
     }
   }

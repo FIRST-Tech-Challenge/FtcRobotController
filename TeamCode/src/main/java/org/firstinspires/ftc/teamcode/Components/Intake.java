@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -40,8 +41,9 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = false;
-  public static double ONE=0.57, TWO=0.6, THREE = 0.62, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
+  public static double ONE=0.59, TWO=0.61, THREE = 0.64, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
   double lastTime =0;
+  double reverseTime = -100;
   boolean pixeled = false;
   boolean pixeled1= false;
   int height = 5;
@@ -66,6 +68,8 @@ public class Intake extends RFMotor {
       height = 5;
     }
     lastHeightTime=-5;
+
+    reverseTime=-100;
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -207,28 +211,31 @@ public class Intake extends RFMotor {
     return count;
   }
 
-  public void intakeAutoHeight() {
+  public void intakeAutoHeight(int p_height) {
     if( IntakeStates.STOPPED.getState()){
       startIntakeTime=BasicRobot.time;
       storPixel=Magazine.pixels;
+      height = p_height;
     }
     if(BasicRobot.time - startIntakeTime>8){
       stopIntake();
     }
 
     if (BasicRobot.time - lastHeightTime > 5) {
+      height = p_height;
       setHeight(height);
       lastHeightTime = BasicRobot.time;
     }
     if (BasicRobot.time - lastHeightTime > 4) {
       height--;
-      if(height<=3){
-        height = 5;
+      if(height<=p_height-2){
+        height = p_height;
       }
+      height=max(height,1);
       setHeight(height);
       lastHeightTime = BasicRobot.time;
     }
-    if(Magazine.pixels==1&&storPixel==0){
+    if(Magazine.pixels==1&&storPixel==0&&BasicRobot.time - lastHeightTime > 1){
       height = max(1, height - 1);
       setHeight(height);
       lastHeightTime = BasicRobot.time;
@@ -284,13 +291,17 @@ public class Intake extends RFMotor {
         pixeled=true;
       }
       if (time - lastTime > STOP_DELAY && !stopped) {
-        stopIntake();
+        reverseIntake();
+        reverseTime = time;
         stopped = true;
       }
     }
     else{
       pixeled = false;
       stopped = false;
+    }
+    if(stopped&& time-reverseTime>0.5){
+      stopIntake();
     }
 
   }
