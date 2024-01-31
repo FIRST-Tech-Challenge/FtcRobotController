@@ -129,6 +129,10 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
         // pull in the last recorded location from Autonomous
         initFieldPos = AutoBase.getLastFieldPos();
+        if(initFieldPos == null){
+            // auto hasn't been run let's put in a default value
+           initFieldPos =  new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        }
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 
@@ -338,10 +342,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 linearslidemovement.LinearSlidesMiddle();
             } else if (gamepad1.dpad_right) {
                 linearslidemovement.LinearSlidesBottom();
-                while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 10)){
-                    // pause to wait for the slide to lower before raising the wrist back up.
-                }
-                intake.FlipUp();
             } else if (gamepad1.dpad_up) {
                 linearslidemovement.LinearSlidesTop();
             }

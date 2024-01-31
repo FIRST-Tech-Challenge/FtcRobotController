@@ -112,7 +112,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
             updateLastPos();
 
             // Show key stats, useful for the driver and debugging.
-            displayTelemetry(DirectionNow);
+            //displayTelemetry(DirectionNow);
 
             if (gamepieceLocation == GamePieceLocation.LEFT) {
                 // Start of Auto when the game piece is on the LEFT spike mark.
@@ -161,7 +161,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 8;
                 } else if (state == 8) {
                     // Move forward 4 inches (to pre park position)
-                    if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.75, 3.0, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 9;
                     }
                 } else if (state == 9) {
@@ -174,7 +174,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 10;
                 } else if (state == 10) {
                     // Moves to park, end auto with state = 99.
-                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.0, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 99;
                     }
                 }
@@ -228,7 +228,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 8;
                 } else if (state == 8){
                     // Move forward 4 inches (to pre park position)
-                    if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.75, 3.0, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 9;
                     }
                 } else if (state == 9) {
@@ -241,7 +241,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 10;
                 } else if (state == 10) {
                     // Moves to park, end auto with state = 99.
-                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.0, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 99;
                     }
                 }
@@ -254,12 +254,12 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 1;
                 } else if (state == 1){
                     // move forward 25 inches
-                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.4, new Rotation2d(Math.toRadians(0.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.9, 2.4, new Rotation2d(Math.toRadians(0.0))))) {
                         state = 2;
                     }
                 } else if (state == 2){
                     // Rotate 90 degrees
-                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.9, 2.4, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 3;
                     }
                 } else if (state == 3){
@@ -268,7 +268,7 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 4;
                 } else if (state == 4){
                     // move forward 4 inches
-                    if (moveTo.GoToPose2d(new Pose2d(0.88, 2.3, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.9, 2.30, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 5;
                     }
                 } else if (state == 5){
@@ -295,20 +295,16 @@ public class Auto_BlueFieldLeft_Odometry extends AutoBase {
                     state = 8;
                 } else if (state == 8){
                     // Move forward 4 inches (to pre park position)
-                    if (moveTo.GoToPose2d(new Pose2d(0.8, 3.4, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.5, 2.9, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 9;
                     }
                 } else if (state == 9) {
                     // Moves the linear slide to the bottom position
                     linearSlideMove.LinearSlidesBottom();
-                    // Pause to ensure the lift rest on the bottom
-                    sleep(1000);
-                    // Finish all autos with the wrist up
-                    intake.FlipUp();
                     state = 10;
                 } else if (state == 10) {
                     // Moves to park, end auto with state = 99.
-                    if (moveTo.GoToPose2d(new Pose2d(0.4, 3.5, new Rotation2d(Math.toRadians(-90.0))))) {
+                    if (moveTo.GoToPose2d(new Pose2d(0.2, 3.2, new Rotation2d(Math.toRadians(-90.0))))) {
                         state = 99;
                     }
                 }

@@ -36,6 +36,7 @@ public class Movement {
         LEFT,
         RIGHT
     }
+
     private DcMotorEx lfDrive;
     private DcMotorEx rfDrive;
     private DcMotorEx lbDrive;
@@ -77,13 +78,13 @@ public class Movement {
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
      *
-     * @param leftFrontDrive       the front left wheels motor,
-     * @param rightFrontDrive      the front right wheels motor,
-     * @param leftBackDrive        the back left wheels motor,
-     * @param rightBackDrive       the back right wheels motor,
-     * @param imu1                 the ControlHub gyro,
-     * @param blinkinLED1          the BlinkinLED,
-     * @param telemetry1           telemetry for the Drive Station
+     * @param leftFrontDrive  the front left wheels motor,
+     * @param rightFrontDrive the front right wheels motor,
+     * @param leftBackDrive   the back left wheels motor,
+     * @param rightBackDrive  the back right wheels motor,
+     * @param imu1            the ControlHub gyro,
+     * @param blinkinLED1     the BlinkinLED,
+     * @param telemetry1      telemetry for the Drive Station
      */
     public Movement(DcMotorEx leftFrontDrive,
                     DcMotorEx rightFrontDrive,
@@ -96,7 +97,7 @@ public class Movement {
                     ElapsedTime odometryTimer1,
                     MecanumDriveWheelSpeeds odometrySpeeds1,
                     Telemetry telemetry1,
-                    VisionSystem vProc){
+                    VisionSystem vProc) {
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
@@ -111,21 +112,21 @@ public class Movement {
         visionProcessor = vProc;
 
         initOdometry();
-        yawPID = new PIDController((1.0/45.0), 0.0015, 0.0025);
+        yawPID = new PIDController((1.0 / 45.0), 0.0015, 0.003);
         yawPID.reset();
-        axialPID = new PIDController(2.5, 0.005, 0.02);
+        axialPID = new PIDController(0.75, 0.00001, 0.05);
         axialPID.reset();
-        lateralPID = new PIDController(7, 0.005, 0.02);
+        lateralPID = new PIDController(8.0, 0.00001, 0.02);
         lateralPID.reset();
     }
 
     public void initOdometry() {
         // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
         // in Meters - translated from inches as inches * 2.54 / 100
-        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), (3.5 * 2.54 / 100.0));
-        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100.0), (5 * 2.54 / 100.0));
-        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), -(3.5 * 2.54 / 100.0));
-        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100.0), -(5 * 2.54 / 100.0));
+        Translation2d lfMotorMeters = new Translation2d(-(5.5 * 2.54 / 100.0), (5.5 * 2.54 / 100.0));
+        Translation2d rfMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), (5.5 * 2.54 / 100.0));
+        Translation2d lbMotorMeters = new Translation2d(-(5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
+        Translation2d rbMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
 
         // Create Mecanum Kinematics
         kinematics = new MecanumDriveKinematics(lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
@@ -137,7 +138,7 @@ public class Movement {
         odometryTimer = new ElapsedTime();
         odometryTimer.reset();
         imu.resetYaw();
-        // Initialize the odometry to the start position of the robot.
+//        // Initialize the odometry to the start position of the robot.
 //        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
 //        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
 //                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
@@ -391,22 +392,24 @@ public class Movement {
     /**
      * Normalize motor powers to ensure that passed values fall within a proportional range between
      * a max value (specified or 1.0) and a min value aligned to the lowest useful power.
+     *
      * @param lfPower - any double representing the proportionate power for the left front motor
      * @param rfPower - any double representing the proportionate power for the right front motor
      * @param lbPower - any double representing the proportionate power for the left back motor
      * @param rbPower - any double representing the proportionate power for the right back motor
      */
-    public void setNormalizedPowers (double lfPower, double rfPower, double lbPower, double rbPower){
+    public void setNormalizedPowers(double lfPower, double rfPower, double lbPower, double rbPower) {
         // Set minimum effective motor powers (i.e. the lowest value to cause motion in the robot) ...
         // ... and maximum effective powers (i.e. the highest power applied with minimal wheel slip)
-        double minEffectivePower = 0.2;
-        double maxEffectivePower = 0.8;
+//        double minEffectivePower = 0.10;
+//        double maxEffectivePower = 0.70;
+        double deadZoneMin = 0.05;
 
         // work out the max of passed values
-        double max = Math.max (Math.max (abs(lfPower), abs(rfPower)), Math.max (abs(lbPower), abs(rbPower)));
+        double max = Math.max(Math.max(abs(lfPower), abs(rfPower)), Math.max(abs(lbPower), abs(rbPower)));
 
         // normalize values to a range between 0 and 1
-        if (max > 1.0) {
+        if (max > 1) {
             lfPower /= max;
             rfPower /= max;
             lbPower /= max;
@@ -420,16 +423,22 @@ public class Movement {
         // normalize once more to a range between minEffectivePower and maxEffectivePower
         // this is the equiv of changing the function from y = x to y = mx + b where
         // the new slope m = (maxEffectivePower - min EffectivePower) and b = (minEffectivePower)
-        lfPower = (abs (lfPower) <= 0.05) ? 0.0 : lfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
-        rfPower = (abs (rfPower) <= 0.05) ? 0.0 : rfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
-        lbPower = (abs (lbPower) <= 0.05) ? 0.0 : lbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
-        rbPower = (abs (rbPower) <= 0.05) ? 0.0 : rbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+//        lfPower = (abs(lfPower) <= deadZoneMin) ? 0.0 : lfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+//        rfPower = (abs(rfPower) <= deadZoneMin) ? 0.0 : rfPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+//        lbPower = (abs(lbPower) <= deadZoneMin) ? 0.0 : lbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+//        rbPower = (abs(rbPower) <= deadZoneMin) ? 0.0 : rbPower * (maxEffectivePower - minEffectivePower) + minEffectivePower;
+
+        // If powers are less than the deadZoneMin, set them to 0, otherwise keep them as they are.
+        if (abs(lfPower) <= deadZoneMin) {lfPower = 0.0;}
+        if (abs(rfPower) <= deadZoneMin) {rfPower = 0.0;}
+        if (abs(lbPower) <= deadZoneMin) {lbPower = 0.0;}
+        if (abs(rbPower) <= deadZoneMin) {rbPower = 0.0;}
 
         // Apply calculated values to drive motors
-        lfDrive.setPower (lfPower);
-        rfDrive.setPower (rfPower);
-        lbDrive.setPower (lbPower);
-        rbDrive.setPower (rbPower);
+        lfDrive.setPower(lfPower);
+        rfDrive.setPower(rfPower);
+        lbDrive.setPower(lbPower);
+        rbDrive.setPower(rbPower);
     }
 
     public boolean GoToAprilTag(AprilTagLocation tagNumber) {
@@ -445,12 +454,12 @@ public class Movement {
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
         if (tagNumber == AprilTagLocation.BLUE_LEFT ||
-            tagNumber == AprilTagLocation.BLUE_CENTRE ||
-             tagNumber == AprilTagLocation.BLUE_RIGHT) {
+                tagNumber == AprilTagLocation.BLUE_CENTRE ||
+                tagNumber == AprilTagLocation.BLUE_RIGHT) {
             aprilTagTargetAngle = -90;
         } else if (tagNumber == AprilTagLocation.RED_LEFT ||
-                    tagNumber == AprilTagLocation.RED_CENTRE ||
-                    tagNumber == AprilTagLocation.RED_RIGHT) {
+                tagNumber == AprilTagLocation.RED_CENTRE ||
+                tagNumber == AprilTagLocation.RED_RIGHT) {
             aprilTagTargetAngle = 90;
         }
 
@@ -572,6 +581,7 @@ public class Movement {
         double poseTargetX = targetPosition.getX(); // desired X
         double poseTargetY = targetPosition.getY(); // desired Y
         double poseTargetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
+        pose2dAligned = false;
 
         double poseCurrentX = odometry.getPoseMeters().getX();
         double poseCurrentY = odometry.getPoseMeters().getY();
@@ -580,18 +590,12 @@ public class Movement {
         // Since both the current and target X / Y coords are in field coordinates, so will the delta.
         // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
         double yaw = yawPID.calculate(CalcTurnError(poseTargetAngle, poseCurrentAngle));
-        double fieldX = -(poseTargetX - poseCurrentX);;
-        double fieldY = poseTargetY - poseCurrentY;;
+        double fieldX = -(poseTargetX - poseCurrentX);
+        ;
+        double fieldY = poseTargetY - poseCurrentY;
+        ;
 
-        // Reset the PID / i gain for distances larger than 1m
-        if (Math.sqrt((fieldX * fieldX) + (fieldY * fieldY)) > 1) {
-            axialPID.reset();
-            lateralPID.reset();
-        }
-
-        pose2dAligned = false;
-
-       // Reorient the field movement requested to robot orientation
+        // Reorient the field movement requested to robot orientation
         double axial = fieldX * Math.cos(Math.toRadians(poseCurrentAngle)) - fieldY * Math.sin(Math.toRadians(poseCurrentAngle));
         double lateral = fieldX * Math.sin(Math.toRadians(poseCurrentAngle)) + fieldY * Math.cos(Math.toRadians(poseCurrentAngle));
 
@@ -607,25 +611,6 @@ public class Movement {
         // Apply normalized calculated values to drive motors.
         setNormalizedPowers(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
-//        // Normalize the values so no wheel power exceeds 100%
-//        // This ensures that the robot maintains the desired motion.
-//        double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
-//        max = Math.max(max, abs(leftBackPower));
-//        max = Math.max(max, abs(rightBackPower));
-//
-//        if (max > 0.7) {
-//            leftFrontPower  /= (max*1.3);
-//            rightFrontPower /= (max*1.3);
-//            leftBackPower   /= (max*1.3);
-//            rightBackPower  /= (max*1.3);
-//        }
-//
-//        // Apply calculated values to drive motors
-//        lfDrive.setPower(leftFrontPower);
-//        rfDrive.setPower(rightFrontPower);
-//        lbDrive.setPower(leftBackPower);
-//        rbDrive.setPower(rightBackPower);
-//
         // Update Telemetry with key data
         telemetry.addLine(String.format("Pose2D X(Current%5.2f,Target%5.2f)", poseCurrentX, poseTargetX));
         telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.2f)", poseCurrentY, poseTargetY));
@@ -637,7 +622,39 @@ public class Movement {
         // Test to see if we are at all three parts of our desired position and we are aligned.
         if ((abs(poseTargetX - poseCurrentX) < 0.05) && (abs(poseTargetY - poseCurrentY) < 0.05) && abs(poseTargetAngle - poseCurrentAngle) < 3) {
             pose2dAligned = true;
+            // Stop motors to make the next command safe.
+            StopMotors();
         }
         return pose2dAligned;
     }
 }
+
+//    // this is used to update odometry positions while we are moving around the field.
+//    // if the apriltag comes up with detections,  update the pos
+//    Pose2d getAprilTagPos(){
+
+//        // get apriltag detections
+//        List<AprilTagDetection> tags = visionProcessor.getDetections();
+//        if (tags != null) {
+//            tags.forEach((tag)->                     new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES))), odometrySpeeds);
+//                        odometry.resetPosition(new Pose2d(tag.ftcPose.x,tag.ftcPose.y,imu.;
+//                 )
+//
+//            }
+//            for (int i = 0; i < tag.size(); i++) {
+//                if (tag.get(i) != null) {
+//                    if (tag.get(i).id == tagNumber.ordinal()) {
+//                        aprilTagCurrentX = tag.get(i).ftcPose.x;
+//                        aprilTagCurrentY = tag.get(i).ftcPose.y;
+//                        tagRange = tag.get(i).ftcPose.range;
+//                        tagBearing = tag.get(i).ftcPose.bearing;
+//                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//                        tagDetected = true;
+//                    }
+//                }
+//            }
+//        }
+        // if there is a detection calc/get our position
+        // return the last position and the time it was recorded using odometry timer
+//    }
+//}
