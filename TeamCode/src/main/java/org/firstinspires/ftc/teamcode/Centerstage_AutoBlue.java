@@ -29,20 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 
 import java.util.List;
 
@@ -53,27 +49,10 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Position Object Detection", group = "Concept")
+@Autonomous(name = "Position Object Detection", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
-    // this is only used for Android Studio when using models in Assets.
-    //private static final String TFOD_MODEL_ASSET = "centerstage_bluemayhem.tflite";
-    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
-    // this is used when uploading models directly to the RC using the model upload interface.
-   // private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
-    // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
-            "Blue Mayhem",
-    };
-
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
-    private TfodProcessor tfod;
-    boolean seen = false;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -88,101 +67,45 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     boolean targetFound = false;
 
+    // Do we have the second camera needed to correct the robot positioning relative to the
+    // backboard to score a second pixel in autonomy mode
+    private static final boolean hasSecondCamera = false;
+
+    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+
+    Gobbler gobbler = null;
+
+    ElapsedTime runtimeTimer = null;
+
     @Override
     public void runOpMode() {
 
+        runtimeTimer = new ElapsedTime();
+        runtimeTimer.startTime();
+
         initAprilTag();
 
+        gobbler = new Gobbler(hardwareMap);
 
-        Gobbler gobbler = new Gobbler(hardwareMap);
         //initTfod();
-        gobbler.intake.intakeDown(false);
-        //robot.outtake.launchDrone(0.0);
+        gobbler.intake.intakeDown(false); // TODO: 1/30/24 We can remove this since we are not using a servo to push down the lift anymore.
+        //robot.outtake.launchDrone(0.0); TODO This was intended to reset the drone launcher servo, we can move the servo manually.
         // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
 
+        // Here we need to store an appropriate value in DESIRED_TAG_ID
 
         waitForStart();
 
-        while (opModeIsActive()) {
-
-            targetFound = false;
-            desiredTag = null;
-
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-
-                    // **DESIRED TAG IS DETERMINED BY FIRST PIXEL CODE**
-
-
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-
-                        gobbler.driveTrain.moveForward(1,0.5);
-
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                    }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                }
-            }
-
-
-//            List<Recognition> currentRecognitions = tfod.getRecognitions();
-//            for (Recognition recognition : currentRecognitions) {
-//                double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
-//                double yValue = (recognition.getTop() + recognition.getBottom()) / 2;
-//
-//
-//                if (xValue > 300 && xValue < 530 && yValue > 110 && yValue < 140) {
-//                        // center
-//                        telemetry.addData("position","Center");
-//                        gobbler.driveTrain.centerPos();
-//                        seen = true;
-//
-//                }
-//                else if (xValue > 65 && xValue < 150 && yValue > 135 && yValue < 225) {
-//                        // left
-//                        telemetry.addData("position","Left");
-//                        gobbler.driveTrain.leftPos();
-//                        seen = true;
-//                }
-//
-//            }
-
-
-
-
-//             if (!seen) {
-//                 telemetry.addData("position","Left");
-//                 gobbler.driveTrain.rightPos();
-//             }
-//                //telemetryTfod();
-//
-//                // Push telemetry to the Driver Station.
-//                telemetry.update();
-//
-//                // Save CPU resources; can resume streaming when needed.
-////                if (gamepad1.dpad_down) {
-////                    visionPortal.stopStreaming();
-////                } else if (gamepad1.dpad_up) {
-////                    visionPortal.resumeStreaming();
-////                }
-
-
-             sleep(50);
-
+        if (opModeIsActive()) {
+            PlaceSecondPixel();
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -190,94 +113,58 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     }   // end runOpMode()
 
-    /**
-     * Initialize the TensorFlow Object Detection processor.
-     */
-//    private void initTfod() {
-//
-//        // Create the TensorFlow processor by using a builder.
-//        tfod = new TfodProcessor.Builder()
-//
-//            // With the following lines commented out, the default TfodProcessor Builder
-//            // will load the default model for the season. To define a custom model to load,
-//            // choose one of the following:
-//            //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-//            //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-//           // .setModelAssetName(TFOD_MODEL_ASSET)
-//            //.setModelFileName(TFOD_MODEL_FILE)
-//
-//            // The following default settings are available to un-comment and edit as needed to
-//            // set parameters for custom models.
-//            .setModelLabels(LABELS)
-//            //.setIsModelTensorFlow2(true)
-//            //.setIsModelQuantized(true)
-//            //.setModelInputSize(300)
-//            //.setModelAspectRatio(16.0 / 9.0)
-//
-//            .build();
-//
-//        // Create the vision portal by using a builder.
-//        VisionPortal.Builder builder = new VisionPortal.Builder();
-//
-//        // Set the camera (webcam vs. built-in RC phone camera).
-//        if (USE_WEBCAM) {
-//            builder.setCamera(hardwareMap.get(WebcamName.class, "Cam1"));
-//        } else {
-//            builder.setCamera(BuiltinCameraDirection.BACK);
-//        }
-//
-//        // Choose a camera resolution. Not all cameras support all resolutions.
-//        //builder.setCameraResolution(new Size(640, 480));
-//
-//        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-//        //builder.enableLiveView(true);
-//
-//        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-//        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-//
-//        // Choose whether or not LiveView stops if no processors are enabled.
-//        // If set "true", monitor shows solid orange screen if no processors enabled.
-//        // If set "false", monitor shows camera view without annotations.
-//        //builder.setAutoStopLiveView(false);
-//
-//        // Set and enable the processor.
-//        builder.addProcessor(tfod);
-//
-//        // Build the Vision Portal, using the above settings.
-//        visionPortal = builder.build();
-//
-//        // Set confidence threshold for TFOD recognitions, at any time.
-//        //tfod.setMinResultConfidence(0.75f);
-//
-//        // Disable or re-enable the TFOD processor at any time.
-//        //visionPortal.setProcessorEnabled(tfod, true);
-//
-//    }   // end method initTfod()
-//
-//    /**
-//     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-//     */
-//    private void telemetryTfod() {
-//
-//        List<Recognition> currentRecognitions = tfod.getRecognitions();
-//        telemetry.addData("# Objects Detected", currentRecognitions.size());
-//
-//        // Step through the list of recognitions and display info for each one.
-//        for (Recognition recognition : currentRecognitions) {
-//            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-//            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-//
-//            telemetry.addData(""," ");
-//            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-//            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-//            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-//        }   // end for() loop
-//
-//    }   // end method telemetryTfod()
+    private void PlaceSecondPixel() {
+        // Want to avoid a scenario wherein the camera doesn't recognize the april tag on the first
+        // few frames, but is capable of identifying the april tag positions in subsequent frames.
+        runtimeTimer.reset();
+        while (runtimeTimer.time() < 0.5) {
+            LocateTargetAprilTag();
+        }
 
-    private void initAprilTag() {
+        if (targetFound) {
+            driveToTarget();
+            placePixelOnBackboard();
+        }
+    }
+
+    private void LocateTargetAprilTag() {
+        targetFound = false;
+        desiredTag = null;
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Look to see if we have size info on this tag.
+            if (detection.metadata != null) {
+                //  Check to see if we want to track towards this tag.
+
+                // **DESIRED TAG IS DETERMINED BY FIRST PIXEL CODE**
+
+
+                if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                    // Yes, we want to use this tag.
+                    targetFound = true;
+                    desiredTag = detection;
+
+                    //gobbler.driveTrain.moveForward(1,0.5);
+
+                    break;  // don't look any further.
+                } else {
+                    // This tag is in the library, but we do not want to track it right now.
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                }
+            } else {
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        }
+    }
+
+    private void initAprilTag() { // TODO: 1/30/24 Once we implement tensorflow, we'll need to edit this for double vision.
+        // TODO: 1/30/24 If we DO end up using two cameras, there is a way to see both cameras on the driver station.
         // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag = new AprilTagProcessor.Builder()
+                // TODO: 1/30/24 add the bounding boxes and axis
+                .build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
@@ -294,7 +181,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                     .setCamera(hardwareMap.get(WebcamName.class, "Cam1"))
                     .addProcessor(aprilTag)
                     .build();
-        } else {
+        } else { // TODO: 1/30/24 Maybe we can remove this? We are not planning on using a phone as a camera (i hope).
             visionPortal = new VisionPortal.Builder()
                     .setCamera(BuiltinCameraDirection.BACK)
                     .addProcessor(aprilTag)
@@ -302,4 +189,88 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         }
     }
 
+    private void driveToTarget() {
+        // First, we want to move the robot to a known location with the april tag still visible
+        // to the camera.  Once there, we need to move the robot assuming the camera will no longer
+        // see the april tag.  As a consequence, we want the second leg of the trip to be as simple
+        // as possible.  To that extent, we'll position the robot in such a way that it will only
+        // need to drive forward.
+
+        driveToIntermediatePosition();
+        driveToFinalPosition();
+
+        if (hasSecondCamera) {
+            fineTunePositioning();
+        }
+    }
+
+    // Once we implement RoadRunner, this function will likely not be needed as RoadRunner should
+    // be able to accurately and smoothly take us from whatever initial position we have to the
+    // desired final position.
+    private void driveToIntermediatePosition() {
+        // Need to travel from current location to a predetermined intermediate location so that
+        // we can accurately drive the robot up to the backboard without keeping the april tag
+        // in sight the entire time.
+
+        // What is our desired intermediate position? This can and should be independent of which
+        // april tag we're moving toward.  Probably needs to be determined through testing, but a
+        // reasonable approximation could be calculated from the geometry of the field/robot.
+        double desiredDistance = 20.0;
+        double desiredHeading = 20.0;
+        double desiredYaw = 20.0;
+
+        while (opModeIsActive()) {
+            LocateTargetAprilTag();
+            // if the camera didn't detect the desired tag in the previous cycle, give it a chance
+            // to try again.
+            // Might want to build in some mechanism to prevent getting stuck here, such as only
+            // spending a certain amount of time here.
+            if (desiredTag == null) {
+                continue;
+            }
+
+            double rangeError = desiredTag.ftcPose.range - desiredDistance;
+            double headingError = desiredTag.ftcPose.bearing - desiredHeading;
+            double yawError = desiredTag.ftcPose.yaw - desiredYaw;
+
+            double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+            if (!errorIsAcceptable(rangeError, headingError, yawError)) {
+
+                gobbler.driveTrain.drive(drive, strafe, turn, true, runtimeTimer);
+            }
+            else {
+                telemetry.addData("Made it to the intermediate position", "Hooray!");
+                telemetry.update();
+                break;
+            }
+        }
+    }
+
+    private boolean errorIsAcceptable(double rangeError, double headingError, double yawError) {
+        double epsilon = 0.1;
+        return ((Math.abs(rangeError) <= epsilon) && (Math.abs(headingError) < epsilon) && (Math.abs(yawError) < epsilon));
+    }
+
+    private void driveToFinalPosition() {
+        // If using an intermediate position, we'll need to put in the (simple) controls to drive
+        // the robot the last leg to in front of the backboard, in position to score a pixel
+
+        // If using RoadRunner, can just directly put in a RR path to go from current position to
+        // the desired final position in front of the backboard
+    }
+
+    private void fineTunePositioning() {
+        // If we have the second camera ready for viewing the april tag when we're up against the
+        // backboard, we can put a similar loop in here to make finer adjustments to the robot
+        // position before attempting to score a pixel on the backboard.
+    }
+
+    // Once we're in position, execute code to put the pixel on the backboard
+    // Probably just a combination of moving the lift and mailbox.
+    private void placePixelOnBackboard() {
+
+    }
 }   // end class
