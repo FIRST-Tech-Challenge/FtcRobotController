@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.commands.extension.ExtensionGoToPosition;
 
 @Config
 public class ExtensionSubsystem extends SubsystemBase
@@ -28,7 +29,7 @@ public class ExtensionSubsystem extends SubsystemBase
 
     public static double TOLERANCE_PID = 10;
     // tolerance where pid is calculated in ticks
-    public static double ACCEPTABLE_POSITION_TOLERANCE = 50;
+    public static double ACCEPTABLE_POSITION_TOLERANCE = 20;
     // acceptable position tolerance is the tolerance for the position to be considered "at position"
 
     private PIDFController pidf;
@@ -81,7 +82,7 @@ public class ExtensionSubsystem extends SubsystemBase
      */
     public void manualControl(double joystick)
     {
-        if(extension.getCurrentPosition()>UNEXTENDED_POSITION)extension.set(joystick);
+        if(extension.getCurrentPosition()>UNEXTENDED_POSITION&&extension.getCurrentPosition()<ExtensionGoToPosition.ONE_STAGE_EXTENSION)extension.set(joystick);
     }
 
     public void periodic()

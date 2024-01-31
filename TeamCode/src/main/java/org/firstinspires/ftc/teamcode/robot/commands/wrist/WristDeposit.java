@@ -13,7 +13,7 @@ public class WristDeposit extends CommandBase {
     Timing.Timer timer;
     public WristDeposit(WristSubsystem subsystem)
     {
-        this.timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
+        //this.timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
         wristSubsystem = subsystem;
         addRequirements(wristSubsystem);
     }
@@ -26,6 +26,6 @@ public class WristDeposit extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return timer.done();
+        return true;
     }
 }

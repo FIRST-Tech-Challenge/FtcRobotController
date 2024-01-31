@@ -26,8 +26,8 @@ public class ClawSubsystem extends SubsystemBase
     public ClawSubsystem(final HardwareMap hMap) {
         clawLeft = hMap.get(Servo.class, "claw1");
         clawRight = hMap.get(Servo.class, "claw");
-        //leftDist = hMap.get(DistanceSensor.class, "leftDist");
-        //rightDist = hMap.get(DistanceSensor.class, "rightDist");
+        leftDist = hMap.get(DistanceSensor.class, "leftDist");
+        rightDist = hMap.get(DistanceSensor.class, "rightDist");
     }
 
     public void openBoth() {
@@ -48,8 +48,8 @@ public class ClawSubsystem extends SubsystemBase
         clawRight.setPosition(CLAW_CLOSED);
     }
 
-//    public boolean pixelDetected()
-//    {
-//        return (leftDist.getDistance(MM)<DETECTION_DISTANCE);
-//    }
+    public boolean pixelDetected()
+    {
+        return (leftDist.getDistance(MM)<DETECTION_DISTANCE);
+    }
 }

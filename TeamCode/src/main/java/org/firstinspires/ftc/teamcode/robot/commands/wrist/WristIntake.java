@@ -13,7 +13,7 @@ public class WristIntake extends CommandBase
     Timing.Timer timer;
     public WristIntake(WristSubsystem subsystem)
     {
-        this.timer = new Timing.Timer(800, TimeUnit.MILLISECONDS);
+//        this.timer = new Timing.Timer(800, TimeUnit.MILLISECONDS);
         wristSubsystem = subsystem;
         addRequirements(wristSubsystem);
     }
@@ -26,6 +26,6 @@ public class WristIntake extends CommandBase
 
     @Override
     public boolean isFinished() {
-        return timer.done();
+        return true;
     }
 }

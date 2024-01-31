@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class DriveSubsystem extends SubsystemBase
     private final DcMotor rightRear;
     private final DcMotor leftFront;
     private final DcMotor leftRear;
+    private boolean reset=false;
+    private double offset;
 
     public DriveSubsystem(HardwareMap hardwareMap)
     {
@@ -41,17 +44,22 @@ public class DriveSubsystem extends SubsystemBase
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    /* // TODO: Owen, if you need to reset Imu for some reason, keep the heading in the subsystem and calculate the offset
+    public double heading(){
+        if(reset){
+            return normalizeRadians(RobotContainer.getImuAbsoluteOrientation()-offset);
+        }return RobotContainer.getImuAbsoluteOrientation();
+    }
     public void resetIMU() {
-        imu.resetYaw();
-    }*/
+       reset=true;
+       offset=RobotContainer.getImuAbsoluteOrientation();
+    }
 
     public void runRobotCentric(double y,double x,double rx, double topSpeed) {
         run(y,x,rx, 0, topSpeed);
     }
 
     public void runFeildCentric(double y,double x,double rx, double topSpeed) {
-        run(y,x,rx, RobotContainer.getImuAbsoluteOrientation(), topSpeed);
+        run(y,x,rx, heading(), topSpeed);
     }
 
     private void run(double y,double x,double rx, double botHeading, double topSpeed)
