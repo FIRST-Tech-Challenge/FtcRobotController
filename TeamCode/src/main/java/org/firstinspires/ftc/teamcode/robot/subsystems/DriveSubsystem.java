@@ -10,32 +10,19 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
 import java.util.List;
 
 public class DriveSubsystem extends SubsystemBase
 {
-    public final DcMotor rightFront;
-    public final DcMotor rightRear;
-    public final DcMotor leftFront;
-    public final DcMotor leftRear;
-    public final IMU imu;
-    public double heading=0;
+    private final DcMotor rightFront;
+    private final DcMotor rightRear;
+    private final DcMotor leftFront;
+    private final DcMotor leftRear;
+
     public DriveSubsystem(HardwareMap hardwareMap)
     {
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        for(LynxModule module : allHubs){
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-        imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-
-
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -54,22 +41,21 @@ public class DriveSubsystem extends SubsystemBase
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /* // TODO: Owen, if you need to reset Imu for some reason, keep the heading in the subsystem and calculate the offset
     public void resetIMU() {
         imu.resetYaw();
-    }
+    }*/
 
     public void runRobotCentric(double y,double x,double rx, double topSpeed) {
         run(y,x,rx, 0, topSpeed);
     }
 
     public void runFeildCentric(double y,double x,double rx, double topSpeed) {
-        heading= imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        run(y,x,rx, heading, topSpeed);
+        run(y,x,rx, RobotContainer.getImuAbsoluteOrientation(), topSpeed);
     }
 
     private void run(double y,double x,double rx, double botHeading, double topSpeed)
     {
-
         x = x * 1.1; // Counteract imperfect strafing
 
         y=y*y*y;

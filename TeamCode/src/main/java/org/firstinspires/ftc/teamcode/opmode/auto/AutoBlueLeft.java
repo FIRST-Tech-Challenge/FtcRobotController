@@ -10,7 +10,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
 import org.firstinspires.ftc.teamcode.ftcLib_DLC.AutoUtil;
 import org.firstinspires.ftc.teamcode.opmode.auto.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawCloseCommand;
@@ -32,7 +32,7 @@ public class AutoBlueLeft extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
         AutoUtil util = new AutoUtil();
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        AutoMecanumDrive drive = new AutoMecanumDrive(hardwareMap);
 
         ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap);
         TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);

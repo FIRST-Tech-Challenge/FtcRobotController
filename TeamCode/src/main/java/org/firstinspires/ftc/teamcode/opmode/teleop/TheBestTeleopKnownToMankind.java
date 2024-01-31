@@ -47,6 +47,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 //import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ftcLib_DLC.TriggerAnalogButton;
+import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawCloseCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawOpenCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.drivetrain.DriveFieldCentric;
@@ -81,11 +82,12 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap);
-        TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);
-        WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
-        PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
-      driveSubsystem = new DriveSubsystem(hardwareMap);
+        ClawSubsystem clawSubsystem = RobotContainer.getClawSubsystem();
+        TiltSubsystem tiltSubsystem = RobotContainer.getTiltSubsystem();
+        WristSubsystem wristSubsystem = RobotContainer.getWristSubsystem();
+        PlaneLauncherSubsystem planeLauncherSubsystem = RobotContainer.getPlaneLauncherSubsystem();
+        ExtensionSubsystem extensionSubsystem = RobotContainer.getExtensionSubsystem();
+        driveSubsystem = RobotContainer.getDriveSubsystem();
      // tiltSubsystem.init();
       //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
@@ -102,8 +104,9 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 () -> driverTrigger.get()));
 
         //manual extension by default unless another command using it runs
-//        extensionSubsystem.setDefaultCommand(
-//                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
+        extensionSubsystem.setDefaultCommand(
+                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
+
 
         //claw
         TriggerAnalogButton clawTrigger =
@@ -112,12 +115,12 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 new ClawOpenCommand(clawSubsystem, ClawOpenCommand.Side.BOTH));
         clawTrigger.whenReleased(
                 new ClawCloseCommand(clawSubsystem));
-        //reset heading
-        driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
+        //TODO: reset heading
+        //driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
         //deposit
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new ParallelCommandGroup(
+                new SequentialCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
 
@@ -125,19 +128,22 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
-                  //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                        //new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
         //stow
         operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
-                        //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                        new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristStow(wristSubsystem)));
 
         //plane launcher
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .and(operator.getGamepadButton(GamepadKeys.Button.A))
                 .whenActive(new LaunchPlane(planeLauncherSubsystem));
+
+        //operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+
 
         // should be able to get interrupted by ExtensionGoToPosition
         //CommandScheduler.getInstance().schedule(true,extendoManualCommand);
@@ -147,9 +153,10 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
     @Override
     public void run()
     {
-        telemetry.addData("heading", driveSubsystem.heading);
         super.run();
-        telemetry.update();
+        // TODO: Owen, put that shit in the drivesubsystem periodic telemetry if you need it
+        /*telemetry.addData("heading", driveSubsystem.heading);
+        telemetry.update();*/
     }
 }
 

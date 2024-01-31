@@ -53,14 +53,6 @@ public class TiltSubsystem extends SubsystemBase
         tilt_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void reInit()
-    {
-        tilt_motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        tilt_motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        tilt_motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        tilt_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
     public void setTargetAngle(double targetAngle)
     {
         this.targetAngle = targetAngle;
