@@ -230,7 +230,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
     private void PlaceFirstPixel() {
             //if (desiredTag == 2) { // drives robot to the center position.
-                gobbler.driveTrain.centerPos();
+                //gobbler.driveTrain.centerPos();
             //}
 //
 //            else if (desiredTag == 1) { // drives robot to the right position.
@@ -241,17 +241,21 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 //                gobbler.driveTrain.leftPos();
 //            }
             // Place first pixel
-            /*
-                gobbler.driveTrain.Wait(0.5);
+
+                //gobbler.driveTrain.Wait(0.5);
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
+                gobbler.driveTrain.Wait(1.0);
+                gobbler.outtake.driveLift(-0.5);
+                gobbler.driveTrain.Wait(1.0);
+                gobbler.outtake.driveLift(0.0);
                 gobbler.driveTrain.Wait(2);
                 gobbler.outtake.trapdoor(true, trapdoorToggle);
-*/
+
             // Push telemetry to the Driver Station.
-//                telemetry.update();
-//                gobbler.driveTrain.Wait(3.0);
-//
-//             sleep(50);
+                telemetry.update();
+                gobbler.driveTrain.Wait(3.0);
+
+             sleep(50);
     }
 
     private boolean WaitingToStart() {
