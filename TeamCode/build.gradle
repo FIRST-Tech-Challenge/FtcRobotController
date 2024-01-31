@@ -42,5 +42,5 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.1.1'
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation 'org.openftc:apriltag:2.0.0'
-    implementation 'com.github.theinventors-ftc:InventorsFtcLib:e3a6d8d'
+    implementation 'com.github.theinventors-ftc:InventorsFtcLib:0.1.1'
 }
