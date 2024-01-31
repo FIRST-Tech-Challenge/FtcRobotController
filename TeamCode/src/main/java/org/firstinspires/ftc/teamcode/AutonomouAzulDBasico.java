@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="AutonomoAzulD" , group="Linear Opmode")
-public class AutonomoAzulD extends LinearOpMode {
+@Autonomous(name="AutonomouAzulDBasico" , group="Linear Opmode")
+public class AutonomouAzulDBasico extends LinearOpMode {
 
     private DcMotor motorEf = null;
     private DcMotor motorEt = null;
