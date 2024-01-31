@@ -77,11 +77,17 @@ public class FollowPath extends BTCommand {
         m_kinematics = kinematics;
         this.m_resetOdometry= resetOdometry;
         addRequirements(requirments);
+        dashboard.addData("desired X velocity", 0);
+        dashboard.addData("desired Y velocity", 0);
+        dashboard.addData("desired Th velocity", 0);
+        dashboard.addData("followPath time", 0);
     }
 
     @Override
     public void initialize() {
         m_timer.reset();
+        dashboard.addData("followPath time", m_timer.time());
+
         //        m_controller.m_thetaController.setConstraints(
 //                new TrapezoidProfile.Constraints(
 //                        in.get("maxV"),
@@ -100,11 +106,16 @@ public class FollowPath extends BTCommand {
     @Override
     public void execute() {
         double curTime = m_timer.time();
+        dashboard.addData("followPath time", curTime);
+
         Trajectory.State desiredState = m_trajectory.sample(curTime);
         if (m_desiredRotation.get() == null) {
             ChassisSpeeds targetChassisSpeeds =
                     m_controller.calculate(m_pose.get(), desiredState, m_trajectory.getStates().get(m_trajectory.getStates().size() - 1).poseMeters.getRotation());
             m_outputChassisSpeeds.accept(targetChassisSpeeds);
+            dashboard.addData("desired front velocity", targetChassisSpeeds.vyMetersPerSecond);
+            dashboard.addData("desired side velocity", targetChassisSpeeds.vxMetersPerSecond);
+            dashboard.addData("desired Th velocity", targetChassisSpeeds.omegaRadiansPerSecond);
 
         } else {
             ChassisSpeeds targetChassisSpeeds =
