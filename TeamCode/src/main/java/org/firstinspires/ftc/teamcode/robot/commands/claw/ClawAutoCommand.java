@@ -20,13 +20,13 @@ public class ClawAutoCommand extends CommandBase
 
     @Override
     public void initialize() {
-        clawSubsystem.open();
+        clawSubsystem.openBoth();
     }
 
-    @Override
-    public boolean isFinished() {
-        return clawSubsystem.pixelDetected();
-    }
+//    @Override
+//    public boolean isFinished() {
+//        return clawSubsystem.pixelDetected();
+//    }
 
     @Override
     public void end(boolean interrupted)

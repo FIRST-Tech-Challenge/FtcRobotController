@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,7 +26,10 @@ public class ExtensionSubsystem extends SubsystemBase
 
     private static double kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0;
 
-    public static double TOLERANCE = 10;
+    public static double TOLERANCE_PID = 10;
+    // tolerance where pid is calculated in ticks
+    public static double ACCEPTABLE_POSITION_TOLERANCE = 50;
+    // acceptable position tolerance is the tolerance for the position to be considered "at position"
 
     private PIDFController pidf;
 
@@ -36,7 +40,7 @@ public class ExtensionSubsystem extends SubsystemBase
     public ExtensionSubsystem(HardwareMap hMap, Telemetry telemetry)
     {
         pidf = new PIDFController(kP, kI, kD, kF);
-        pidf.setTolerance(TOLERANCE);
+        pidf.setTolerance(TOLERANCE_PID);
         extension_top =  new Motor(hMap, "extension_motor_1");
         extension_bottom =  new Motor(hMap, "extension_motor_2");
         extension = new MotorGroup(extension_top, extension_bottom);
@@ -46,6 +50,10 @@ public class ExtensionSubsystem extends SubsystemBase
         extension.resetEncoder(); // RESET_ENCODERS
         extension.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         extension.setRunMode(Motor.RunMode.RawPower);
+    }
+
+    public static int getCurrentPosition() {
+        return extension.getCurrentPosition();
     }
 
     /**
@@ -59,10 +67,11 @@ public class ExtensionSubsystem extends SubsystemBase
         if(!atTargetPosition())extension.set(pidf.calculate(extension.getCurrentPosition(), targetPosition));
         else extension.set(0);
     }
-
+    // TODO: potential problem with not tracking the position of the
+    //  extension whenever the motor isn't actively trying to go to a spot
     public boolean atTargetPosition ()
     {
-        return pidf.atSetPoint();
+        return abs(pidf.getSetPoint() - extension.getCurrentPosition()) < ACCEPTABLE_POSITION_TOLERANCE;
     }
 
     /**

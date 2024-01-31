@@ -33,25 +33,32 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //import org.firstinspires.ftc.teamcode.Drivercontrol.drive.Feildcentricdrive;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ftcLib_DLC.TriggerAnalogButton;
+import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawCloseCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.claw.ClawOpenCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.drivetrain.DriveFieldCentric;
+import org.firstinspires.ftc.teamcode.robot.commands.drivetrain.ResetIMU;
 import org.firstinspires.ftc.teamcode.robot.commands.extension.ExtensionGoToPosition;
 import org.firstinspires.ftc.teamcode.robot.commands.extension.ExtensionJoystick;
 import org.firstinspires.ftc.teamcode.robot.commands.plane_launcher.LaunchPlane;
 import org.firstinspires.ftc.teamcode.robot.commands.tilt.TiltGoToPosition;
 import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristDeposit;
 import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristIntake;
+import org.firstinspires.ftc.teamcode.robot.commands.wrist.WristStow;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ExtensionSubsystem;
@@ -65,24 +72,28 @@ import java.util.function.DoubleSupplier;
 
 public class TheBestTeleopKnownToMankind extends CommandOpMode
 {
+    DriveSubsystem driveSubsystem;
     @Override
     public void initialize()
     {
+
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx operator = new GamepadEx(gamepad2);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap);
-        TiltSubsystem tiltSubsystem = new TiltSubsystem(hardwareMap, telemetry);
-        WristSubsystem wristSubsystem = new WristSubsystem(hardwareMap);
-        PlaneLauncherSubsystem planeLauncherSubsystem = new PlaneLauncherSubsystem(hardwareMap);
-        DriveSubsystem driveSubsystem = new DriveSubsystem(hardwareMap);
+        ClawSubsystem clawSubsystem = RobotContainer.getClawSubsystem();
+        TiltSubsystem tiltSubsystem = RobotContainer.getTiltSubsystem();
+        WristSubsystem wristSubsystem = RobotContainer.getWristSubsystem();
+        PlaneLauncherSubsystem planeLauncherSubsystem = RobotContainer.getPlaneLauncherSubsystem();
+        ExtensionSubsystem extensionSubsystem = RobotContainer.getExtensionSubsystem();
+        driveSubsystem = RobotContainer.getDriveSubsystem();
+     // tiltSubsystem.init();
       //  ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
 
         //driver
         TriggerAnalogButton driverTrigger =
-                new TriggerAnalogButton(operator, GamepadKeys.Trigger.LEFT_TRIGGER,0.9);
+                new TriggerAnalogButton(driver,GamepadKeys.Trigger.LEFT_TRIGGER,0.7);
 
         driveSubsystem.setDefaultCommand(
                 new DriveFieldCentric(
@@ -93,44 +104,59 @@ public class TheBestTeleopKnownToMankind extends CommandOpMode
                 () -> driverTrigger.get()));
 
         //manual extension by default unless another command using it runs
-//        extensionSubsystem.setDefaultCommand(
-//                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
+        extensionSubsystem.setDefaultCommand(
+                new ExtensionJoystick(extensionSubsystem, () -> operator.getLeftY()));
+
 
         //claw
         TriggerAnalogButton clawTrigger =
                 new TriggerAnalogButton(operator, GamepadKeys.Trigger.RIGHT_TRIGGER,0.9);
+        clawTrigger.whenPressed(
+                new ClawOpenCommand(clawSubsystem, ClawOpenCommand.Side.BOTH));
         clawTrigger.whenReleased(
                 new ClawCloseCommand(clawSubsystem));
-        clawTrigger.whenPressed(
-                new ClawOpenCommand(clawSubsystem));
+        //TODO: reset heading
+        //driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()->driveSubsystem.resetIMU()));
 
         //deposit
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new SequentialCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_DEPOSIT),
                         new WristDeposit(wristSubsystem)));
 
         //intake
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
-                  //      new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                        //new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
                         new WristIntake(wristSubsystem)));
+        //stow
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new ParallelCommandGroup(
+                        new TiltGoToPosition(tiltSubsystem, TiltGoToPosition.TELEOP_INTAKE),
+                        new ExtensionGoToPosition(extensionSubsystem, ExtensionGoToPosition.STOW_POSITION),
+                        new WristStow(wristSubsystem)));
 
         //plane launcher
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .and(operator.getGamepadButton(GamepadKeys.Button.A))
                 .whenActive(new LaunchPlane(planeLauncherSubsystem));
 
+        //operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+
+
         // should be able to get interrupted by ExtensionGoToPosition
         //CommandScheduler.getInstance().schedule(true,extendoManualCommand);
+
     }
 
     @Override
     public void run()
     {
         super.run();
-        telemetry.update();
+        // TODO: Owen, put that shit in the drivesubsystem periodic telemetry if you need it
+        /*telemetry.addData("heading", driveSubsystem.heading);
+        telemetry.update();*/
     }
 }
 

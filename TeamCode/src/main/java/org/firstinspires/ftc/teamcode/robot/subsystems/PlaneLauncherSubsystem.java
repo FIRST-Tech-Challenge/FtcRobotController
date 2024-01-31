@@ -13,7 +13,7 @@ public class PlaneLauncherSubsystem extends SubsystemBase
     private static Servo planeServo;
 
     public PlaneLauncherSubsystem(final HardwareMap hMap) {
-        planeServo = hMap.get(Servo.class, "plane_launcher_servo");
+        planeServo = hMap.get(Servo.class, "plane");
         planeServo.setPosition(PLANE_CLOSE);
     }
 

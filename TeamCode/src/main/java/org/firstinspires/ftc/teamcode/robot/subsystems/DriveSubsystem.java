@@ -4,37 +4,25 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 
 import java.util.List;
 
 public class DriveSubsystem extends SubsystemBase
 {
-    public final DcMotor rightFront;
-    public final DcMotor rightRear;
-    public final DcMotor leftFront;
-    public final DcMotor leftRear;
-    public final IMU imu;
+    private final DcMotor rightFront;
+    private final DcMotor rightRear;
+    private final DcMotor leftFront;
+    private final DcMotor leftRear;
 
     public DriveSubsystem(HardwareMap hardwareMap)
     {
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-        imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -44,6 +32,8 @@ public class DriveSubsystem extends SubsystemBase
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -51,22 +41,21 @@ public class DriveSubsystem extends SubsystemBase
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /* // TODO: Owen, if you need to reset Imu for some reason, keep the heading in the subsystem and calculate the offset
     public void resetIMU() {
         imu.resetYaw();
-    }
+    }*/
 
     public void runRobotCentric(double y,double x,double rx, double topSpeed) {
         run(y,x,rx, 0, topSpeed);
     }
 
     public void runFeildCentric(double y,double x,double rx, double topSpeed) {
-        double heading= imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        run(y,x,rx, heading, topSpeed);
+        run(y,x,rx, RobotContainer.getImuAbsoluteOrientation(), topSpeed);
     }
 
     private void run(double y,double x,double rx, double botHeading, double topSpeed)
     {
-        y = -y; // Remember, this is reversed!
         x = x * 1.1; // Counteract imperfect strafing
 
         y=y*y*y;
