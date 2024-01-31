@@ -11,11 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-<<<<<<< HEAD
 @TeleOp(name="BreeeastDrive", group="TeleOp Driver")
-=======
-@TeleOp(name="BeastDrive2", group="TeleOp Driver")
->>>>>>> 29f30dff3840657a6841c76f6503c465498ecca4
 @Config
 public class BeastDriver extends OpMode {
 

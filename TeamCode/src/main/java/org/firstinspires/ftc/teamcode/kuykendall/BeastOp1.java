@@ -37,7 +37,7 @@ public class BeastOp1 extends OpMode {
     private DcMotor backLeftMotor;
     public static double driveScale = 1; //was .3
     public static double strafeScale = 1; // was .5
-    public static double rotateScale = .3; // was .3
+    public static double rotateScale = .6; // was .3
 
     // State variables
     private boolean intServoState = false;
@@ -88,20 +88,20 @@ public class BeastOp1 extends OpMode {
         // Introduce separate scales for forward and backward driving
         double forwardDriveScale = 1; // Set this to your desired scale for forward motion (was.5)
         double backwardDriveScale = 1; // Set this to your desired scale for backward motion (was.3)
-        double strafe = gamepad1.left_stick_x * strafeScale;
-        double rotate = gamepad1.right_stick_x * rotateScale;
+        double strafe = -gamepad2.left_stick_x * strafeScale;
+        double rotate = -gamepad2.right_stick_x * rotateScale;
 
         // Toggle slowmo on dpad_up press
-        if (gamepad1.left_stick_button && !slowmoToggle) {
+        if (gamepad2.left_stick_button && !slowmoToggle) {
             slowmoActive = !slowmoActive;
             slowmoToggle = true;
-        } else if (!gamepad1.left_stick_button) {
+        } else if (!gamepad2.left_stick_button) {
             slowmoToggle = false;
         }
 
         double speedModifier = slowmoActive ? 0.25 : 1.0; // Reduce speed to 1/4 if slowmo is active
         // Drivetrain logic
-        double rawDrive = -gamepad1.left_stick_y;
+        double rawDrive = gamepad2.left_stick_y;
         double drive;
         if (rawDrive > 0) { // Forward
             drive = rawDrive * forwardDriveScale;
