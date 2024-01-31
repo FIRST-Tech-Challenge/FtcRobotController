@@ -31,7 +31,7 @@ public class AutonomoAzulD extends LinearOpMode {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setTargetPosition(target);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(1);
+        motor.setPower(0.8);
     }
 
 
@@ -45,26 +45,11 @@ public class AutonomoAzulD extends LinearOpMode {
         motorDf = hardwareMap.get(DcMotor.class, "df");
         motorDt = hardwareMap.get(DcMotor.class, "dt");
 
-        setupMotor(motorEf, DcMotorSimple.Direction.FORWARD);
-        setupMotor(motorEt, DcMotorSimple.Direction.FORWARD);
-        setupMotor(motorDf, DcMotorSimple.Direction.REVERSE);
-        setupMotor(motorDt, DcMotorSimple.Direction.REVERSE);
+        setupMotor(motorEf, DcMotorSimple.Direction.FORWARD);  //PORTA 0 EXPANSION HUB
+        setupMotor(motorEt, DcMotorSimple.Direction.FORWARD);  //PORTA 3 EXPANSION HUB
+        setupMotor(motorDf, DcMotorSimple.Direction.REVERSE);  //PORTA 3 CONTROL HUB
+        setupMotor(motorDt, DcMotorSimple.Direction.REVERSE);  //PORTA 0 CONTROL HUB
 
-//        motorEf.setDirection(DcMotor.Direction.FORWARD);
-//        motorEt.setDirection(DcMotor.Direction.REVERSE);
-//        motorDf.setDirection(DcMotor.Direction.FORWARD);
-//        motorDt.setDirection(DcMotor.Direction.FORWARD);
-
-
-//        motorEf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        motorEt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        motorDf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        motorDt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-//        motorEf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorEt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorDf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorDt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         telemetry.addData("Mode", "waiting for start");
         telemetry.update();
@@ -74,33 +59,10 @@ public class AutonomoAzulD extends LinearOpMode {
         if (opModeIsActive()) {
 
             //andar até passagem
-            motorEf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorEt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorDf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorDt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            motorEf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            motorEt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorDf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorDt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            int esquerdaTarget = (int) (50 * COUNTS_PER_MM);
-            //int direitaTarget = (int) (5000 * COUNTS_PER_MM);
-
-            motorEf.setTargetPosition(esquerdaTarget);
-//            motorEt.setTargetPosition(esquerdaTarget);
-//            motorDf.setTargetPosition(direitaTarget);
-//            motorDt.setTargetPosition(direitaTarget);
-
-            motorEf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            motorEt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            motorDf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            motorDt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            motorEf.setPower(1);
-//            motorEt.setPower(0.4);
-//            motorDf.setPower(0.4);
-//            motorDt.setPower(0.4);
+            motorMove(motorEf, 50);
+            motorMove(motorEt, 50);
+            motorMove(motorDf, 50);
+            motorMove(motorDt, 50);
 
 
             while (opModeIsActive() && motorEf.isBusy())  { // while (opModeIsActive() && (motorEf.isBusy() && motorDt.isBusy() && motorDf.isBusy() && motorEt.isBusy())) {
