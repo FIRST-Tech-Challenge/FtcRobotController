@@ -599,11 +599,9 @@ public class DriveTrain {
     }
 
     public void rightPos() {
-        moveForward(24, 0.5);
+        moveBackward(12, 0.5);
         Wait(.5);
-        turnClockwise(-102, 0.5);
-        Wait(.5);
-        moveForward(3, 0.5);
+        strafeLeft(13,0.5);
         Wait(.5);
     }
 
@@ -619,11 +617,9 @@ public class DriveTrain {
     }
 
     public void leftPos() {
-        moveForward(24, 0.5);
+        moveBackward(12, 0.5);
         Wait(.5);
-        turnClockwise(90, 0.5);
-        Wait(.5);
-        moveForward(3, 0.5);
+        strafeRight(13,0.5);
         Wait(.5);
     }
 
