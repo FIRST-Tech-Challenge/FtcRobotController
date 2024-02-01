@@ -120,7 +120,10 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         while (runtimeTimer.time() < 0.5) {
             LocateTargetAprilTag();
         }
+        // How do we want to handle potentially needing to wait for our alliance partner to
+        // place their pixel on the backboard before we can?
 
+        // What do we want to do if we don't identify the target?
         if (targetFound) {
             driveToTarget();
             placePixelOnBackboard();
@@ -242,7 +245,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
                 gobbler.driveTrain.drive(drive, strafe, turn, true, runtimeTimer);
             }
             else {
-                telemetry.addData("Made it to the intermediate position", "Hooray!");
+                telemetry.addData("Made it to the intermediate position", "");
                 telemetry.update();
                 break;
             }
