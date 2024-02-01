@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autoutils;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -25,6 +27,9 @@ public class CompTrajectoryGenerator {
     public final TrajectorySequence RED_BOTTOM;
     public final TrajectorySequence RED_TOP;
 
+    /**
+     * The public enum that stores the current valid trajectories
+     */
     public enum trajectories {
         BLUE_BOTTOM,
         BLUE_TOP,
@@ -32,18 +37,29 @@ public class CompTrajectoryGenerator {
         RED_TOP
     }
 
-    public CompTrajectoryGenerator(SampleMecanumDrive drive, final HashMap<Other, DynamicTypeValue> other) {
+    /**
+     * Generates pre-made sequences to be used in autonomous mode
+     * @param drive The pre-initialized SampleMecanumDrive class to be used
+     * @param other The hashmap of all the other robot parts (Hand, Arm, Intake, etc.)
+     * @author Carter Rommelfanger
+     */
+    public CompTrajectoryGenerator(SampleMecanumDrive drive,
+                                   final HashMap<Other, DynamicTypeValue> other,
+                                   final boolean park_left) {
         DRIVE = drive;
 
-        final boolean PARK_LEFT = false;
-
-        this.BLUE_BOTTOM = generateFieldTrajectory(trajectories.BLUE_BOTTOM, other, PARK_LEFT);
-        this.BLUE_TOP = generateFieldTrajectory(trajectories.BLUE_TOP, other, PARK_LEFT);
-        this.RED_BOTTOM = generateFieldTrajectory(trajectories.RED_BOTTOM, other, PARK_LEFT);
-        this.RED_TOP = generateFieldTrajectory(trajectories.RED_TOP, other, PARK_LEFT);
+        this.BLUE_BOTTOM = generateFieldTrajectory(trajectories.BLUE_BOTTOM, other, park_left);
+        this.BLUE_TOP = generateFieldTrajectory(trajectories.BLUE_TOP, other, park_left);
+        this.RED_BOTTOM = generateFieldTrajectory(trajectories.RED_BOTTOM, other, park_left);
+        this.RED_TOP = generateFieldTrajectory(trajectories.RED_TOP, other, park_left);
     }
 
-    public void setStartingPosition(trajectories trajectory) {
+    /**
+     * Sets the pose estimate of the current mecanum drive to the inputted trajectory
+     * @param trajectory The trajectory to set the pose estimate to
+     * @author Carter Rommelfanger
+     */
+    public void setStartingPosition(@NonNull trajectories trajectory) {
         Pose2d pose;
         switch (trajectory) {
             case BLUE_BOTTOM:
@@ -69,6 +85,16 @@ public class CompTrajectoryGenerator {
         DRIVE.setPoseEstimate(pose);
     }
 
+    /**
+     * Initializes a pre-made field trajectory based off the given trajectory enum
+     * @param trajectory The trajectory to initialize
+     * @param other The hashmap of all the other robot parts (Hand, Arm, Intake, etc.)
+     * @param PARK_LEFT Whether to have the trajectory sequence return the sequence for
+     *                  parking on the left or right side of the field
+     * @return The initialized trajectory if the given trajectory name exists,
+     *         otherwise returns null\
+     * @author Carter Rommelfanger
+     */
     public TrajectorySequence generateFieldTrajectory(final trajectories trajectory,
                                                              final HashMap<Other, DynamicTypeValue> other,
                                                       final boolean PARK_LEFT) {
