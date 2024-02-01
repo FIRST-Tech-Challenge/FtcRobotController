@@ -19,6 +19,9 @@ public class Centerstage_TeleOp extends LinearOpMode {
         ElapsedTime trapToggleTime = new ElapsedTime();
         ElapsedTime directionToggleTime = new ElapsedTime();
 
+//        gobbler.outtake.resetLiftEncoders();
+        gobbler.outtake.closeMailbox();
+
         telemetry.addData("Status", "Waiting for Start");
         telemetry.update();
 
@@ -54,13 +57,14 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftBackDrive.getPower(),
                     gobbler.driveTrain.rightBackDrive.getPower());
-            telemetry.addData("Intake and Conveyor Motors", "%4.2f, %4.2f",
-                   gobbler.intake.intakeMotor.getPower(),
-                   gobbler.intake.conveyorMotor.getPower());
-            telemetry.addData("Stage Motor",
-                    gobbler.outtake.stageMotor.getPower());
+            telemetry.addData("Intake",
+                   gobbler.intake.intakeMotor.getPower());
+            telemetry.addData("Lift Motor",
+                    gobbler.outtake.liftMotor.getPower());
+            telemetry.addData("Lift Motor Encoder",
+                    gobbler.outtake.getLiftMotorPos());
             telemetry.addData("Trapdoor Status",
-                   String.valueOf(gobbler.outtake.trapToggle));
+                   String.valueOf(gobbler.outtake.mailboxOpen));
             telemetry.addData("Drone Status",
                     String.valueOf(gobbler.planeHang.droneToggle));
             telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
