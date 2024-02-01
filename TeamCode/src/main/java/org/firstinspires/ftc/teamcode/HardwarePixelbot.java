@@ -113,14 +113,34 @@ public class HardwarePixelbot
     public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
     public double  VIPER_HOLD_POWER  =  0.007; // Motor power used to HOLD viper slide at current height
     public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
-    public int     VIPER_EXTEND_ZERO = 0;    // Encoder count when fully retracted (may need to be adjustable??)
-    public int     VIPER_EXTEND_AUTO  = 130;  // Encoder count when raised to just above the bin (safe to rotate)
-    public int     VIPER_EXTEND_BIN  = 140;  // Encoder count when raised to just above the bin (safe to rotate)
-    public int     VIPER_EXTEND_LOW  = 145;  // Encoder count when raised to lowest possible scoring position
-    public int     VIPER_EXTEND_MID  = 280;  // Encoder count when raised to medium scoring height
-    public int     VIPER_EXTEND_HIGH = 400;  // Encoder count when raised to upper scoring height
-    public int     VIPER_EXTEND_FULL = 580;  // Encoder count when fully extended (never exceed this count!)
-
+    /*
+    // Encoder counts for 1620 RPM lift motors theoretical max 5.8 rev * 103.76 ticks/rev = 601.8
+    public int     VIPER_EXTEND_ZERO = 0;    // 1620 Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_AUTO = 130;  // 1620 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_BIN  = 140;  // 1620 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_LOW  = 145;  // 1620 Encoder count when raised to lowest possible scoring position
+    public int     VIPER_EXTEND_MID  = 280;  // 1620 Encoder count when raised to medium scoring height
+    public int     VIPER_EXTEND_HIGH = 400;  // 1620 Encoder count when raised to upper scoring height
+    public int     VIPER_EXTEND_FULL = 580;  // 1620 Encoder count when fully extended (never exceed this count!)
+    */
+    /*
+    // Encoder counts for 1150 RPM lift motors theoretical max 5.8 rev * 145.09 ticks/rev = 841.5
+    public int     VIPER_EXTEND_ZERO = 0;    // 1150 Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_AUTO = 182;  // 1150 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_BIN  = 196;  // 1150 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_LOW  = 203;  // 1150 Encoder count when raised to lowest possible scoring position
+    public int     VIPER_EXTEND_MID  = 392;  // 1150 Encoder count when raised to medium scoring height
+    public int     VIPER_EXTEND_HIGH = 559;  // 1150 Encoder count when raised to upper scoring height
+    public int     VIPER_EXTEND_FULL = 811;  // 1150 Encoder count when fully extended (never exceed this count!)
+     */
+    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3
+    public int     VIPER_EXTEND_ZERO = 0;    // 435 Encoder count when fully retracted (may need to be adjustable??)
+    public int     VIPER_EXTEND_AUTO = 482;  // 435 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_BIN  = 519;  // 435 Encoder count when raised to just above the bin (safe to rotate)
+    public int     VIPER_EXTEND_LOW  = 537;  // 435 Encoder count when raised to lowest possible scoring position
+    public int     VIPER_EXTEND_MID  = 1038; // 435 Encoder count when raised to medium scoring height
+    public int     VIPER_EXTEND_HIGH = 1482; // 435 Encoder count when raised to upper scoring height
+    public int     VIPER_EXTEND_FULL = 2149; // 435 Encoder count when fully extended (never exceed this count!)
     PIDControllerLift liftPidController;           // PID parameters for the lift motors
     public double        liftMotorPID_p   = -0.100;  //  Raise p = proportional
     public double        liftMotorPID_i   =  0.000;  //  Raise i = integral
@@ -1152,7 +1172,7 @@ public class HardwarePixelbot
         if((pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
                 (pixelGrabState == PixelGrabActivity.IDLE) &&
                 (pixelScoreState == PixelScoreActivity.IDLE) &&
-                (viperMotorsPos >= (VIPER_EXTEND_AUTO - 10))) {
+                (viperMotorsPos >= (VIPER_EXTEND_AUTO - 30))) {
             // Fully extend the wrist assembly toward the backdrop
             // (we should do these automatically once we're above the top of the bin??)
             pushServo.setPosition(PUSH_SERVO_DROP);
