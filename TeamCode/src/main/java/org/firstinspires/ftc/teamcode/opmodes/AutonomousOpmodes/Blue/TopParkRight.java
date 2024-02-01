@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes.AutonomousOpmodes.Red;
+package org.firstinspires.ftc.teamcode.opmodes.AutonomousOpmodes.Blue;
 
-import static org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator.trajectories.RED_BOTTOM;
+import static org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator.trajectories.BLUE_TOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
 
-@Autonomous(name="Red Bottom - Park Left", group = "Red", preselectTeleOp = "RealestDriverOpMode")
-public class BottomParkLeft extends LinearOpMode {
+@Autonomous(name = "Blue Top - Park Right", group = "Blue", preselectTeleOp = "RealestDriverOpMode")
+public class TopParkRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -22,12 +22,12 @@ public class BottomParkLeft extends LinearOpMode {
                 RobotHardwareInitializer.initializeAllOtherSystems(this);
 
         final CompTrajectoryGenerator CTG = new CompTrajectoryGenerator(drive,
-                otherSystems, true);
+                otherSystems, false);
 
         waitForStart();
 
-        CTG.setStartingPosition(RED_BOTTOM);
+        CTG.setStartingPosition(BLUE_TOP);
 
-        drive.followTrajectorySequence(CTG.RED_BOTTOM);
+        drive.followTrajectorySequence(CTG.BLUE_TOP);
     }
 }

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
 
-@Autonomous(name="Red Bottom - Park Left", group = "Red", preselectTeleOp = "RealestDriverOpMode")
-public class BottomParkLeft extends LinearOpMode {
+@Autonomous(name = "Red Bottom - Park Right", group = "Red", preselectTeleOp = "RealestDriverOpMode")
+public class BottomParkRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -22,7 +22,7 @@ public class BottomParkLeft extends LinearOpMode {
                 RobotHardwareInitializer.initializeAllOtherSystems(this);
 
         final CompTrajectoryGenerator CTG = new CompTrajectoryGenerator(drive,
-                otherSystems, true);
+                otherSystems, false);
 
         waitForStart();
 

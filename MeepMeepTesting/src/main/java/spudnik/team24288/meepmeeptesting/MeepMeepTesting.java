@@ -5,8 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
-import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
-import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 public class MeepMeepTesting {
     final static String SEQUENCE = "RedBottom";
@@ -39,8 +37,9 @@ public class MeepMeepTesting {
             case "RedBottom":
                 myBot = new DefaultBotBuilder(meepMeep)
                         .setConstraints(60, 25, Math.toRadians(180), Math.toRadians(180), 15)
-                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12.00, -70.00, Math.toRadians(90)))
-                                .lineTo(new Vector2d(60, -70.00))
+                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36,  -70, Math.toRadians(90.00)))
+                                .lineTo(new Vector2d(-36.00, -10.00))
+                                .lineTo(new Vector2d(58.00, -23.00))
                                 .build()
                 );
                 break;
@@ -62,7 +61,6 @@ public class MeepMeepTesting {
                         );
                 break;
         }
-
 
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
