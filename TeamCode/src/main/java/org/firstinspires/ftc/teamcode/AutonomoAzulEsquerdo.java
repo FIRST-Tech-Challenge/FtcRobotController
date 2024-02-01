@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@Autonomous(name="AutonomoAzulD" , group="Linear Opmode")
+@Autonomous(name="AutonomoAzulEsquerdo" , group="Linear Opmode")
 public class AutonomoAzulEsquerdo extends LinearOpMode {
 
     class Linear {
@@ -185,7 +185,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
             TeamRobot robot = new TeamRobot(chassi, linear);
 
             //andar até passagem
-            robot.move("left", 2336);
+            robot.move("left", 1460);
 
 
 //            motorMove(motorEf, 2921);

@@ -5,12 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import java.sql.Array;
-import java.util.ArrayList;
 
-
-@Autonomous(name="AutonomoAzulD" , group="Linear Opmode")
-public class AutonomoAzulD extends LinearOpMode {
+@Autonomous(name="AutonomoAzulDireito" , group="Linear Opmode")
+public class AutonomoAzulDireito extends LinearOpMode {
 
     class Linear {
         public Linear() {
@@ -188,6 +185,7 @@ public class AutonomoAzulD extends LinearOpMode {
             TeamRobot robot = new TeamRobot(chassi, linear);
 
             //andar até passagem
+            robot.move("forward", 292);
             robot.move("left", 2336);
 
 
