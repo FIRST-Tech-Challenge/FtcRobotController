@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import java.util.HashMap;
 
-@Autonomous(name="AutonomoAzulDireito" , group="Linear Opmode")
+
+@Autonomous(name = "AutonomoAzulDireito", group = "Linear Opmode")
 public class AutonomoAzulEsquerdo extends LinearOpMode {
 
     class Linear {
@@ -17,52 +19,49 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
 
     class Chassi {
         DcMotor[] motors;
+        private final HashMap<String, DcMotorSimple.Direction> directionEnumMap = new HashMap() {{
+            put("forward", DcMotorSimple.Direction.FORWARD);
+            put("backward", DcMotorSimple.Direction.FORWARD);
+        }};
+
         public Chassi(DcMotor[] motors) {
             this.motors = motors;
         }
 
+        private void applyChassiMotorDirections(
+                int distance, String ...directions) {
+//                String esquerdaFrente,
+//                String direitaFrente,
+//                String esquerdaTras,
+//                String direitaTras) {
+//            String directionKeys[] = {esquerdaFrente, direitaFrente, esquerdaTras, direitaTras};
+            String directionKeys[] = directions;
+            for (int i = 0; i < this.motors.length; i++) {
+                DcMotor motor = this.motors[i];
+                DcMotorSimple.Direction direction = this.directionEnumMap.get(directionKeys[i]);
+                setupMotor(motor, direction);
+                motorMove(motor, distance);
+            }
+        }
+
         public void moveForward(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
-            motorMove(this.motors[0], distance);  // motorEf
-            motorMove(this.motors[1], distance);  // motorEt
-            motorMove(this.motors[2], distance);  // motorDf
-            motorMove(this.motors[3], distance);  // motorDt
+            String directions[] = {"forward", "reverse", "forward", "reverse"};
+            this.applyChassiMotorDirections(distance, directions[0], directions[1], directions[2], directions[3]);
         }
 
         public void moveBackward(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDt
-            motorMove(this.motors[0], distance);  // motorEf
-            motorMove(this.motors[1], distance);  // motorEt
-            motorMove(this.motors[2], distance);  // motorDf
-            motorMove(this.motors[3], distance);  // motorDt
+            String directions[] = {"reverse", "forward", "reverse", "forward"};
+            this.applyChassiMotorDirections(distance, directions[0], directions[1], directions[2], directions[3]);
         }
 
         public void moveLeft(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDt
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDf
-            motorMove(this.motors[0], distance);  // motorEf
-            motorMove(this.motors[1], distance);  // motorEt
-            motorMove(this.motors[2], distance);  // motorDf
-            motorMove(this.motors[3], distance);  // motorDt
+            String directions[] = {"reverse", "forward", "forward", "reverse"};
+            this.applyChassiMotorDirections(distance, directions[0], directions[1], directions[2], directions[3]);
         }
 
         public void moveRight(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
-            motorMove(this.motors[0], distance);  // motorEf
-            motorMove(this.motors[1], distance);  // motorEt
-            motorMove(this.motors[2], distance);  // motorDf
-            motorMove(this.motors[3], distance);  // motorDt
+            String directions[] = {"forward", "reverse", "reverse", "forward"};
+            this.applyChassiMotorDirections(distance, directions[0], directions[1], directions[2], directions[3]);
         }
 
         public void turnLeft(int angle) {
@@ -93,6 +92,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
     class TeamRobot {
         Chassi chassi;
         Linear linear;
+
         public TeamRobot(Chassi chassi, Linear linear) {
             this.chassi = chassi;
             this.linear = linear;
@@ -132,7 +132,6 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
         }
 
 
-
     }
 
 
@@ -141,12 +140,12 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
     private DcMotor motorDf = null;
     private DcMotor motorDt = null;
 
-    static final double     COUNTS_PER_MOTOR_REV    = 28.0;
-    static final double     DRIVE_GEAR_REDUCTION    = 30.4;
-    static final double     WHEEL_CIRCUMFERENCE_MM  = 90.0 * 3.14;
-    static final double     COUNTS_PER_WHEEL_REV    = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    static final double     COUNTS_PER_MM           = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE_MM;
-    static final int     TATAMI_SIDE_SIZE           = 584;
+    static final double COUNTS_PER_MOTOR_REV = 28.0;
+    static final double DRIVE_GEAR_REDUCTION = 30.4;
+    static final double WHEEL_CIRCUMFERENCE_MM = 90.0 * 3.14;
+    static final double COUNTS_PER_WHEEL_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    static final double COUNTS_PER_MM = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE_MM;
+    static final int TATAMI_SIDE_SIZE = 584;
 
     public static void setupMotor(DcMotor motor, DcMotor.Direction direction) {
         motor.setDirection(direction);
@@ -173,7 +172,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
         motorDf = hardwareMap.get(DcMotor.class, "df");  //PORTA 3 CONTROL HUB
         motorDt = hardwareMap.get(DcMotor.class, "dt");  //PORTA 0 CONTROL HUB
 
-        DcMotor tractionMotors[] = {motorEf, motorEt, motorDf, motorDt};
+        DcMotor tractionMotors[] = {motorEf, motorDf, motorEt, motorDt};
 
         telemetry.addData("Mode", "waiting for start");
         telemetry.update();
@@ -188,11 +187,11 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
 
             //andar até passagem
             //Lado do Tatame = 584
-            robot.move("forward", TATAMI_SIDE_SIZE * (1/4));  //mover 1/4 do tatame
+            robot.move("forward", TATAMI_SIDE_SIZE * (1 / 4));  //mover 1/4 do tatame
             robot.move("left", TATAMI_SIDE_SIZE * 2);
 
 
-            while (opModeIsActive() && motorEf.isBusy())  { // while (opModeIsActive() && (motorEf.isBusy() && motorDt.isBusy() && motorDf.isBusy() && motorEt.isBusy())) {
+            while (opModeIsActive() && motorEf.isBusy()) { // while (opModeIsActive() && (motorEf.isBusy() && motorDt.isBusy() && motorDf.isBusy() && motorEt.isBusy())) {
 //                telemetry.addData("motorDf:", motorDf.getCurrentPosition());
 //                telemetry.addData("motorDt:", motorDt.getCurrentPosition());
                 telemetry.addData("motorEf:", motorEf.getCurrentPosition());
