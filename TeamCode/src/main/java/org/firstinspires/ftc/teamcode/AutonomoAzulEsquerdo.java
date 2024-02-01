@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.HashMap;
 
 
-@Autonomous(name = "AutonomoAzulDireito", group = "Linear Opmode")
+@Autonomous(name = "AutonomoAzulEsquerdo", group = "Linear Opmode")
 public class AutonomoAzulEsquerdo extends LinearOpMode {
 
     class Linear {
@@ -19,9 +19,9 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
 
     class Chassi {
         DcMotor[] motors;
-        private final HashMap<String, DcMotorSimple.Direction> directionEnumMap = new HashMap() {{
-            put("forward", DcMotorSimple.Direction.FORWARD);
-            put("backward", DcMotorSimple.Direction.FORWARD);
+        private final HashMap<String, DcMotor.Direction> directionEnumMap = new HashMap() {{
+            put("forward", DcMotor.Direction.FORWARD);
+            put("backward", DcMotor.Direction.FORWARD);
         }};
 
         public Chassi(DcMotor[] motors) {
@@ -38,7 +38,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
             String directionKeys[] = directions;
             for (int i = 0; i < this.motors.length; i++) {
                 DcMotor motor = this.motors[i];
-                DcMotorSimple.Direction direction = this.directionEnumMap.get(directionKeys[i]);
+                DcMotor.Direction direction = this.directionEnumMap.get(directionKeys[i]);
                 setupMotor(motor, direction);
                 motorMove(motor, distance);
             }
@@ -65,10 +65,10 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
         }
 
         public void turnLeft(int angle) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.FORWARD);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.FORWARD);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.FORWARD);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.FORWARD);  // motorDt
             // Calcular quanto as rodas têm que se mover para que o Robô atinja certo ângulo
             motorMove(this.motors[0], angle);  // motorEf
             motorMove(this.motors[1], angle);  // motorEt
@@ -77,10 +77,10 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
         }
 
         public void turnRight(int angle) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.REVERSE);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.REVERSE);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.REVERSE);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.REVERSE);  // motorDt
             // Calcular quanto as rodas têm que se mover para que o Robô atinja certo ângulo
             motorMove(this.motors[0], angle);  // motorEf
             motorMove(this.motors[1], angle);  // motorEt
@@ -188,7 +188,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
             //andar até passagem
             //Lado do Tatame = 584
             robot.move("forward", TATAMI_SIDE_SIZE * (1 / 4));  //mover 1/4 do tatame
-            robot.move("left", TATAMI_SIDE_SIZE * 2);
+//            robot.move("left", TATAMI_SIDE_SIZE * 2);
 
 
             while (opModeIsActive() && motorEf.isBusy()) { // while (opModeIsActive() && (motorEf.isBusy() && motorDt.isBusy() && motorDf.isBusy() && motorEt.isBusy())) {

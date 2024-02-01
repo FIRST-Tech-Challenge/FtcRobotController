@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @Autonomous(name="AutonomoAzulDireito" , group="Linear Opmode")
@@ -22,10 +22,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void moveForward(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.REVERSE);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.FORWARD);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.REVERSE);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.FORWARD);  // motorDt
             motorMove(this.motors[0], distance);  // motorEf
             motorMove(this.motors[1], distance);  // motorEt
             motorMove(this.motors[2], distance);  // motorDf
@@ -33,10 +33,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void moveBackward(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.FORWARD);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.REVERSE);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.FORWARD);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.REVERSE);  // motorDt
             motorMove(this.motors[0], distance);  // motorEf
             motorMove(this.motors[1], distance);  // motorEt
             motorMove(this.motors[2], distance);  // motorDf
@@ -44,10 +44,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void moveLeft(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDt
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDf
+            setupMotor(this.motors[0], DcMotor.Direction.REVERSE);  // motorEt
+            setupMotor(this.motors[1], DcMotor.Direction.FORWARD);  // motorEf
+            setupMotor(this.motors[2], DcMotor.Direction.FORWARD);  // motorDt
+            setupMotor(this.motors[3], DcMotor.Direction.REVERSE);  // motorDf
             motorMove(this.motors[0], distance);  // motorEf
             motorMove(this.motors[1], distance);  // motorEt
             motorMove(this.motors[2], distance);  // motorDf
@@ -55,10 +55,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void moveRight(int distance) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.FORWARD);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.REVERSE);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.REVERSE);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.FORWARD);  // motorDt
             motorMove(this.motors[0], distance);  // motorEf
             motorMove(this.motors[1], distance);  // motorEt
             motorMove(this.motors[2], distance);  // motorDf
@@ -66,10 +66,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void turnLeft(int angle) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.FORWARD);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.FORWARD);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.FORWARD);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.FORWARD);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.FORWARD);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.FORWARD);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.FORWARD);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.FORWARD);  // motorDt
             // Calcular quanto as rodas têm que se mover para que o Robô atinja certo ângulo
             motorMove(this.motors[0], angle);  // motorEf
             motorMove(this.motors[1], angle);  // motorEt
@@ -78,10 +78,10 @@ public class AutonomoAzulDireito extends LinearOpMode {
         }
 
         public void turnRight(int angle) {
-            setupMotor(this.motors[0], DcMotorSimple.Direction.REVERSE);  // motorEf
-            setupMotor(this.motors[1], DcMotorSimple.Direction.REVERSE);  // motorEt
-            setupMotor(this.motors[2], DcMotorSimple.Direction.REVERSE);  // motorDf
-            setupMotor(this.motors[3], DcMotorSimple.Direction.REVERSE);  // motorDt
+            setupMotor(this.motors[0], DcMotor.Direction.REVERSE);  // motorEf
+            setupMotor(this.motors[1], DcMotor.Direction.REVERSE);  // motorEt
+            setupMotor(this.motors[2], DcMotor.Direction.REVERSE);  // motorDf
+            setupMotor(this.motors[3], DcMotor.Direction.REVERSE);  // motorDt
             // Calcular quanto as rodas têm que se mover para que o Robô atinja certo ângulo
             motorMove(this.motors[0], angle);  // motorEf
             motorMove(this.motors[1], angle);  // motorEt

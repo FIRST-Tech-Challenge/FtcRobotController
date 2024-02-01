@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@Autonomous(name="AutonomoAzulEsquerdo" , group="Linear Opmode")
+@Autonomous(name="AutonomoVermelhoEsquerda" , group="Linear Opmode")
 public class AutonomoVermelhoEsquerda extends LinearOpMode {
 
     class Linear {
