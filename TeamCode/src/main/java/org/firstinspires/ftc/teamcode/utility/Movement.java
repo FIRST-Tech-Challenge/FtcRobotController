@@ -60,6 +60,7 @@ public class Movement {
 
     double tagRange = 15;
     double tagBearing = 0;
+    double tagYaw = 0;
     boolean tagDetected = false;
     double aprilTagCurrentX = -2;
     double aprilTagCurrentY = 15;
@@ -464,17 +465,31 @@ public class Movement {
         }
 
         double aprilTagCurrentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double tagID = 0.0;
+        double fieldXOffset = 0.0;
+        double fieldYOffset = 0.0;
+        double tagFieldX = 0.0;
+        double tagFieldY = 0.0;
+        double robotFieldXinches = 0.0;
+        double robotFieldYinches = 0.0;
+        double robotFieldXmeters = 0.0;
+        double robotFieldYmeters = 0.0;
 
         // Scan for April Tag detections and update current values if you find one.
         List<AprilTagDetection> tag = visionProcessor.getDetections();
         if (tag != null) {
             for (int i = 0; i < tag.size(); i++) {
                 if (tag.get(i) != null) {
-                    if (tag.get(i).id == tagNumber.ordinal()) {
+                    if (tag.get(i).id == tagNumber.TagNum()) {
+                        tagID = tag.get(i).id;
                         aprilTagCurrentX = tag.get(i).ftcPose.x;
                         aprilTagCurrentY = tag.get(i).ftcPose.y;
                         tagRange = tag.get(i).ftcPose.range;
                         tagBearing = tag.get(i).ftcPose.bearing;
+                        tagYaw = tag.get(i).ftcPose.yaw;
+                        tagFieldX = tag.get(i).metadata.fieldPosition.get(0);
+                        tagFieldY = tag.get(i).metadata.fieldPosition.get(1);
+
                         blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                         tagDetected = true;
                     }
@@ -482,98 +497,125 @@ public class Movement {
             }
         }
 
+        // Calculate the field X Offset given that the angle
+        fieldXOffset = -(Math.sin (Math.toRadians (tagBearing - tagYaw)) * tagRange);
+        fieldYOffset = Math.cos (Math.toRadians (tagBearing - tagYaw)) * tagRange;
+
+        //
+        robotFieldXinches = (72-tagFieldY-fieldXOffset);
+        robotFieldYinches = (72+tagFieldX-fieldYOffset);
+        robotFieldXmeters = ((robotFieldXinches*2.54)/100);
+        robotFieldYmeters = ((robotFieldYinches*2.54)/100);
+
         // Update Telemetry with key data
         telemetry.addData("tags found: ", tag.size());
         telemetry.addData("AlignStage: ", alignStage);
-        telemetry.addData("Current X: ", aprilTagCurrentX);
-        telemetry.addData("Target X: ", aprilTagTargetX);
-        telemetry.addData("Current Y: ", aprilTagCurrentY);
-        telemetry.addData("Target Y: ", aprilTagTargetY);
-        telemetry.addData("Tag Range: ", tagRange);
-        telemetry.addData("Tag Bearing: ", tagBearing);
-        telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Target Angle: ", aprilTagTargetAngle);
+        telemetry.addData("Tag ID: ", tagID);
+
+        telemetry.addData("X Offset: ", fieldXOffset);
+        telemetry.addData("Y Offset: ", fieldYOffset);
+        telemetry.addData("Tag Field X: ", tagFieldX);
+        telemetry.addData("Tag Field Y: ", tagFieldY);
+        telemetry.addData("Robot Field x inches", robotFieldXinches);
+        telemetry.addData("Robot Field y inches", robotFieldYinches);
+        telemetry.addData("Robot Field x meters", robotFieldXmeters);
+        telemetry.addData("Robot Field y meters", robotFieldYmeters);
+
+        telemetry.addData("Pose X: ", aprilTagCurrentX);
+//        telemetry.addData("Target X: ", aprilTagTargetX);
+        telemetry.addData("Pose Y: ", aprilTagCurrentY);
+//        telemetry.addData("Target Y: ", aprilTagTargetY);
+        telemetry.addData("Pose Range: ", tagRange);
+        telemetry.addData("Pose Bearing: ", tagBearing);
+        telemetry.addData("Pose Yaw: ", tagYaw);
+
+
+
+
+
+        telemetry.addData("Current IMU Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+//        telemetry.addData("Target Angle: ", aprilTagTargetAngle);
         telemetry.update();
 
-        // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
-        // the motion needed to get to the April Tag.
-        // axial from drive is gamepad1.left_stick_y;
-        // lateral from drive is -gamepad1.left_stick_x;
-        // yaw from drive is -gamepad1.right_stick_x;
-
-        // Stage 0 - Ensure that motor powers are zeroed and switch to RUN_USING_ENCODER mode.
-        if (alignStage == 0) {
-            // Motors will need to be in RUN_USING_ENCODER for this vs. RUN_TO_POSITION mode
-            // Refactor this to the Movement class to make a method to switch motors to run
-            // on a defined power level.
-            lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            // Set default to BRAKE mode for control
-            lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            //
-            alignStage = 1;
-        }
-
-        axial = -0.10;
-        // Assume april tag is not aligned at start.
-        aprilTagAligned = false;
-
-        // Square up the robot to the backdrop (from targetAngle above)
-        // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
-        if (abs(aprilTagTargetAngle - aprilTagCurrentAngle) > 2) {
-            yaw = -CalcTurnError(aprilTagTargetAngle, aprilTagCurrentAngle) / 45;
-            if (yaw > 0.2) {
-                yaw = 0.2;
-            } else if (yaw < -0.2) {
-                yaw = -0.2;
-            }
-        } else {
-            yaw = 0;
-        }
+//        // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
+//        // the motion needed to get to the April Tag.
+//        // axial from drive is gamepad1.left_stick_y;
+//        // lateral from drive is -gamepad1.left_stick_x;
+//        // yaw from drive is -gamepad1.right_stick_x;
+//
+//        // Stage 0 - Ensure that motor powers are zeroed and switch to RUN_USING_ENCODER mode.
+//        if (alignStage == 0) {
+//            // Motors will need to be in RUN_USING_ENCODER for this vs. RUN_TO_POSITION mode
+//            // Refactor this to the Movement class to make a method to switch motors to run
+//            // on a defined power level.
+//            lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            // Set default to BRAKE mode for control
+//            lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            //
+//            alignStage = 1;
+//        }
+//
+//        axial = -0.10;
+//        // Assume april tag is not aligned at start.
+//        aprilTagAligned = false;
+//
+//        // Square up the robot to the backdrop (from targetAngle above)
+//        // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
+//        if (abs(aprilTagTargetAngle - aprilTagCurrentAngle) > 2) {
+//            yaw = -CalcTurnError(aprilTagTargetAngle, aprilTagCurrentAngle) / 45;
+//            if (yaw > 0.2) {
+//                yaw = 0.2;
+//            } else if (yaw < -0.2) {
+//                yaw = -0.2;
+//            }
+//        } else {
+//            yaw = 0;
+//        }
 
         // Slide laterally to correct for X or right motion
         // If the x distance is > 1 inch off of targetX move left or right accordingly
         // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
         //lateral = (targetX - currentY) / 20;
-        if (aprilTagTargetX - aprilTagCurrentX > 1) {
-            lateral = 0.2;
-        } else if (aprilTagTargetX - aprilTagCurrentX < -1) {
-            lateral = -0.2;
-        } else {
-            lateral = 0;
-        }
+//        if (aprilTagTargetX - aprilTagCurrentX > 1) {
+//            lateral = 0.2;
+//        } else if (aprilTagTargetX - aprilTagCurrentX < -1) {
+//            lateral = -0.2;
+//        } else {
+//            lateral = 0;
+//        }
+//
+//        // Back the robot up to the right distance to raise the lift
+//        //axial = -(currentY - targetY) / 40;
+//        if (aprilTagCurrentY > aprilTagTargetY) {
+//            axial = -0.15;
+//        } else {
+//            axial = 0;
+//        }
 
-        // Back the robot up to the right distance to raise the lift
-        //axial = -(currentY - targetY) / 40;
-        if (aprilTagCurrentY > aprilTagTargetY) {
-            axial = -0.15;
-        } else {
-            axial = 0;
-        }
+//        // Combine the axial, lateral and yaw factors to be powers
+//        double leftFrontPower = axial + lateral + yaw;
+//        double rightFrontPower = axial - lateral - yaw;
+//        double leftBackPower = axial - lateral + yaw;
+//        double rightBackPower = axial + lateral - yaw;
+//
+//        // Apply calculated values to drive motors
+//        lfDrive.setPower(leftFrontPower);
+//        rfDrive.setPower(rightFrontPower);
+//        lbDrive.setPower(leftBackPower);
+//        rbDrive.setPower(rightBackPower);
 
-        // Combine the axial, lateral and yaw factors to be powers
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
-
-        // Apply calculated values to drive motors
-        lfDrive.setPower(leftFrontPower);
-        rfDrive.setPower(rightFrontPower);
-        lbDrive.setPower(leftBackPower);
-        rbDrive.setPower(rightBackPower);
-
-        // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs(aprilTagTargetX - aprilTagCurrentX) < 1 && aprilTagCurrentY < aprilTagTargetY && abs(aprilTagTargetAngle - aprilTagCurrentAngle) < 2) {
-            aprilTagAligned = true;
-            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
-        }
+//        // Test to see if we are at all three parts of our desired position and we are aligned.
+//        if (abs(aprilTagTargetX - aprilTagCurrentX) < 1 && aprilTagCurrentY < aprilTagTargetY && abs(aprilTagTargetAngle - aprilTagCurrentAngle) < 2) {
+//            aprilTagAligned = true;
+//            blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+//        }
         return aprilTagAligned;
     }
 

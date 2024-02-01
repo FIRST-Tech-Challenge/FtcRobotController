@@ -309,30 +309,30 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
             if (gamepad1.x) {
                 while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_LEFT) && gamepad1.x){
-                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_LEFT);
-                    telemetry.update();
+//                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_LEFT);
+//                    telemetry.update();
                 }
             } else if (gamepad1.y) {
-//                while (!moveTo.GoToAprilTag(2) && gamepad1.y){
+                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
 //                    telemetry.addData ("Targeting April Tag: ", 2);
+//                    telemetry.update();
+                }
+
+//                while (!moveTo.GoToPose2d(new Pose2d(targetX,targetY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
+//                    // Get the wheel speeds and update the odometry
+//                    DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+//                    directionLocked = false;
+//                    odometrySpeeds = moveTo.GetWheelSpeeds();
+//                    odometry.updateWithTime(odometryTimer.seconds(),
+//                            new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
+//                    telemetry.addData ("go to pos: ", "running");
 //                    telemetry.update();
 //                }
 
-                while (!moveTo.GoToPose2d(new Pose2d(targetX,targetY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
-                    // Get the wheel speeds and update the odometry
-                    DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                    directionLocked = false;
-                    odometrySpeeds = moveTo.GetWheelSpeeds();
-                    odometry.updateWithTime(odometryTimer.seconds(),
-                            new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
-                    telemetry.addData ("go to pos: ", "running");
-                    telemetry.update();
-                }
-
             } else if (gamepad1.b) {
                 while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_RIGHT) && gamepad1.b){
-                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_RIGHT);
-                    telemetry.update();
+//                    telemetry.addData ("Targeting April Tag: ", AprilTagLocation.BLUE_RIGHT);
+//                    telemetry.update();
                 }
             }
 

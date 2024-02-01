@@ -7,7 +7,11 @@ public enum AprilTagLocation {
     RED_LEFT(4),
     RED_CENTRE(5),
     RED_RIGHT(6);
-
+    int tagVal;
     AprilTagLocation(int i) {
+        tagVal = i;
+    }
+    public int TagNum(){
+        return tagVal;
     }
 }
