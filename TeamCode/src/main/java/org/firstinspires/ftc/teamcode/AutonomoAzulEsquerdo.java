@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ public class AutonomoAzulEsquerdo extends LinearOpMode {
         DcMotor[] motors;
         private final HashMap<String, DcMotor.Direction> directionEnumMap = new HashMap() {{
             put("forward", DcMotor.Direction.FORWARD);
-            put("backward", DcMotor.Direction.FORWARD);
+            put("backward", DcMotor.Direction.REVERSE);
         }};
 
         public Chassi(DcMotor[] motors) {
