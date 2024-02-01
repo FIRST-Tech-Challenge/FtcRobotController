@@ -619,6 +619,100 @@ public class Movement {
         return aprilTagAligned;
     }
 
+    public boolean RobotPosFromAprilTag(AprilTagLocation tagNumber) {
+        double aprilTagTargetX = 0;
+        // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
+        if (tagNumber == AprilTagLocation.BLUE_LEFT || tagNumber == AprilTagLocation.RED_LEFT) {
+            aprilTagTargetX = 0.5;
+        } else if (tagNumber == AprilTagLocation.BLUE_RIGHT || tagNumber == AprilTagLocation.RED_RIGHT) {
+            aprilTagTargetX = -0.5;
+        }
+        double aprilTagTargetY = 9;
+        double aprilTagTargetAngle = 0;
+
+        // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
+        if (tagNumber == AprilTagLocation.BLUE_LEFT ||
+                tagNumber == AprilTagLocation.BLUE_CENTRE ||
+                tagNumber == AprilTagLocation.BLUE_RIGHT) {
+            aprilTagTargetAngle = -90;
+        } else if (tagNumber == AprilTagLocation.RED_LEFT ||
+                tagNumber == AprilTagLocation.RED_CENTRE ||
+                tagNumber == AprilTagLocation.RED_RIGHT) {
+            aprilTagTargetAngle = 90;
+        }
+
+        double aprilTagCurrentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double tagID = 0.0;
+        double fieldXOffset = 0.0;
+        double fieldYOffset = 0.0;
+        double tagFieldX = 0.0;
+        double tagFieldY = 0.0;
+        double robotFieldXinches = 0.0;
+        double robotFieldYinches = 0.0;
+        double robotFieldXmeters = 0.0;
+        double robotFieldYmeters = 0.0;
+        String tagName = null;
+
+        // Scan for April Tag detections and update current values if you find one.
+        List<AprilTagDetection> tag = visionProcessor.getDetections();
+        if (tag != null) {
+            for (int i = 0; i < tag.size(); i++) {
+                if (tag.get(i) != null) {
+                    if (tag.get(i).id == tagNumber.TagNum()) {
+                        tagID = tag.get(i).id;
+                        aprilTagCurrentX = tag.get(i).ftcPose.x;
+                        aprilTagCurrentY = tag.get(i).ftcPose.y;
+                        tagRange = tag.get(i).ftcPose.range;
+                        tagBearing = tag.get(i).ftcPose.bearing;
+                        tagYaw = tag.get(i).ftcPose.yaw;
+                        tagFieldX = tag.get(i).metadata.fieldPosition.get(0);
+                        tagFieldY = tag.get(i).metadata.fieldPosition.get(1);
+
+                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                        tagDetected = true;
+                    }
+                }
+            }
+        }
+
+        // Calculate the field X Offset given that the angle
+        fieldXOffset = -(Math.sin (Math.toRadians (tagBearing - tagYaw)) * tagRange);
+        fieldYOffset = Math.cos (Math.toRadians (tagBearing - tagYaw)) * tagRange;
+
+        //calculate the robots field position and convert to meters
+        robotFieldXinches = (72-tagFieldY-fieldXOffset);
+        robotFieldYinches = (72+tagFieldX-fieldYOffset);
+        robotFieldXmeters = ((robotFieldXinches*2.54)/100);
+        robotFieldYmeters = ((robotFieldYinches*2.54)/100);
+
+        // Update Telemetry with key data
+        telemetry.addData("tags found: ", tag.size());
+        telemetry.addData("AlignStage: ", alignStage);
+        telemetry.addData("Tag ID: ", tagID);
+
+        telemetry.addData("X Offset: ", fieldXOffset);
+        telemetry.addData("Y Offset: ", fieldYOffset);
+        telemetry.addData("Tag Field X: ", tagFieldX);
+        telemetry.addData("Tag Field Y: ", tagFieldY);
+        telemetry.addData("Robot Field x inches", robotFieldXinches);
+        telemetry.addData("Robot Field y inches", robotFieldYinches);
+        telemetry.addData("Robot Field x meters", robotFieldXmeters);
+        telemetry.addData("Robot Field y meters", robotFieldYmeters);
+
+        telemetry.addData("Pose X: ", aprilTagCurrentX);
+        telemetry.addData("Pose Y: ", aprilTagCurrentY);
+        telemetry.addData("Pose Range: ", tagRange);
+        telemetry.addData("Pose Bearing: ", tagBearing);
+        telemetry.addData("Pose Yaw: ", tagYaw);
+
+        telemetry.addData("tagName", tagName);
+
+        telemetry.addData("Current IMU Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        telemetry.update();
+
+        return aprilTagAligned;
+    }
+
     public boolean GoToPose2d(Pose2d targetPosition) {
         double poseTargetX = targetPosition.getX(); // desired X
         double poseTargetY = targetPosition.getY(); // desired Y

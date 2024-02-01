@@ -272,6 +272,22 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if(visionSystem.getDetections() != null){
+                for (AprilTagLocation item: AprilTagLocation.values()){
+                    for (int i = 0; i < visionSystem.getDetections().size(); i++) {
+                        if (visionSystem.getDetections().get(i) != null) {
+                            if (visionSystem.getDetections().get(i).id == item.TagNum()) {
+                                    moveTo.RobotPosFromAprilTag(item);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            telemetry.addData("",visionSystem.getDetections());
+            telemetry.addData("apriltag location list", AprilTagLocation.values());
+
             DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             // Get the wheel speeds and update the odometry
             odometrySpeeds = moveTo.GetWheelSpeeds();
@@ -313,10 +329,14 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 //                    telemetry.update();
                 }
             } else if (gamepad1.y) {
-                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
-//                    telemetry.addData ("Targeting April Tag: ", 2);
-//                    telemetry.update();
+                while (!moveTo.RobotPosFromAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
+////                    telemetry.addData ("Targeting April Tag: ", 2);
+////                    telemetry.update();
                 }
+//                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
+////                    telemetry.addData ("Targeting April Tag: ", 2);
+////                    telemetry.update();
+//                }
 
 //                while (!moveTo.GoToPose2d(new Pose2d(targetX,targetY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
 //                    // Get the wheel speeds and update the odometry
@@ -461,4 +481,5 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
             telemetry.addData("Yaw Correction", JavaUtil.formatNumber(yaw, 2));
             telemetry.update();
         }
-    }}
+    }
+}
