@@ -1187,6 +1187,16 @@ public class Robot {
     public void closeHook() {
         hook.setPosition(0.27);
     }
+    public double getHeadingRelativeToBoard() {
+        double absoluteHeading = getCurrentHeading();
+        double relativeHeading;
+        if (isRedAlliance) {
+            relativeHeading = absoluteHeading + 90;
+        } else {
+            relativeHeading = absoluteHeading - 90;
+        }
+        return relativeHeading;
+    }
 
     public void initForTeleOp() {
         // initialize robot class
@@ -1194,6 +1204,8 @@ public class Robot {
         setUpIntakeOuttake();
         //planeLauncher = hardwareMap.servo.get("planeLauncher");
         planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
+        planeLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        planeLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         stackAttachment = hardwareMap.servo.get("stackAttachment");
 
         openHook();
@@ -1205,16 +1217,6 @@ public class Robot {
         moveLinearSlideByTicksBlocking(0);
     }
 
-    public double getHeadingRelativeToBoard() {
-        double absoluteHeading = getCurrentHeading();
-        double relativeHeading;
-        if (isRedAlliance) {
-            relativeHeading = absoluteHeading + 90;
-        } else {
-            relativeHeading = absoluteHeading - 90;
-        }
-        return relativeHeading;
-    }
 
     public void teleOpWhileLoop(Gamepad gamepad1, Gamepad gamepad2) {
 
@@ -1254,6 +1256,14 @@ public class Robot {
 
         boolean linearSlideFlag = false;
 
+        double targetVelocity = (500/0.25);
+        double planeLauncherPower = 0.5;
+        double planeLauncherTicks = planeLauncher.getCurrentPosition();
+        boolean wasPressed = false;
+        ElapsedTime timeSincePressed = new ElapsedTime();
+        double timeSincePressedRounded = Math.round(timeSincePressed.time());
+        timeSincePressed.reset();
+
         while (opMode.opModeIsActive()) {
 
             if(lsFront.getCurrentPosition() > 857) {
@@ -1287,13 +1297,27 @@ public class Robot {
                 slowMode = false;
             }
 
+            /** DELETE COMMENT LATER
+             *
+             *
+             *
+             *
+             *
+             */
+
             // both bumper launches drone
             if (gamepad1.right_bumper && gamepad1.left_bumper) {
-                planeLauncher.setPower(1);
+                planeLauncher.setPower(planeLauncherPower);
+                if (gamepad1.right_bumper && gamepad1.left_bumper && !wasPressed) {
+                    timeSincePressed.reset();
+                    if ((planeLauncherTicks/timeSincePressedRounded) >= targetVelocity) {
+                        planeLauncherPower += 0.05;
+                    }
+                }
             } else {
                 planeLauncher.setPower(0);
             }
-
+            wasPressed = true;
 
             //setting forward and mecanum based on where the front is
             straight = gamepad1.left_stick_y * frontFacing * -1;
