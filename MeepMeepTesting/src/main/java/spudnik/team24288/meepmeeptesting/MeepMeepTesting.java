@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 public class MeepMeepTesting {
-    final static String SEQUENCE = "BlueBottom";
+    final static String SEQUENCE = "RedBottom";
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
@@ -27,13 +27,20 @@ public class MeepMeepTesting {
                                 .build()
                     );
                 break;
+            case "BlueTop":
+                myBot = new DefaultBotBuilder(meepMeep)
+                        // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                        .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(270)))
+                                .lineTo(new Vector2d(60, 70))
+                                .build()
+                        );
+                break;
             case "RedBottom":
                 myBot = new DefaultBotBuilder(meepMeep)
-                        .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-35.46, -68.29, Math.toRadians(448.94)))
-                                .splineTo(new Vector2d(-36.05, -24.72), Math.toRadians(90.77))
-                                .splineTo(new Vector2d(24.00, -11.00), Math.toRadians(376.96))
-                                .lineToSplineHeading(new Pose2d(53.05, -36.05, Math.toRadians(181.45)))
+                        .setConstraints(60, 25, Math.toRadians(180), Math.toRadians(180), 15)
+                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12.00, -70.00, Math.toRadians(90)))
+                                .lineTo(new Vector2d(60, -70.00))
                                 .build()
                 );
                 break;

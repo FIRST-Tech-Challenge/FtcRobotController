@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 import java.util.HashMap;
 
+@Deprecated
 public class PredefinedAutomation {
     private final DriveSubsystem driveSubsystem;
     private final ArmSubsystem armSubsystem;

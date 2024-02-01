@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+@Disabled
+@Deprecated
 @Autonomous(name = "Testing")
 public class TestingStuff extends RobotOpMode {
     public float MINIMUM_TRIGGER_PRESS = 0.2f;

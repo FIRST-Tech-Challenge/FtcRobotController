@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.*;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
 
+@Deprecated
+@Disabled
 @TeleOp
 public class RobotCommandMode extends CommandOpMode {
     GamepadEx driverOp = new GamepadEx(gamepad1);

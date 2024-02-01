@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
@@ -18,6 +19,8 @@ import java.util.HashMap;
 
 import static org.firstinspires.ftc.teamcode.util.PredefinedAutomation.commands.*;
 
+@Deprecated
+@Disabled
 @Autonomous(name = "AutoCommandMode")
 public class AutoCommandMode extends CommandOpMode {
     // private AutonomousAwareness AA;

@@ -6,11 +6,13 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.AutonomousAwareness;
 
+@Deprecated
 @Config
 public class AutoRobotOpMode {
 
@@ -106,6 +108,8 @@ public class AutoRobotOpMode {
 
     public static RobotMovement[] movements;
 
+    @Deprecated
+    @Disabled
     @Autonomous(name = "AutoRobotOpMode")
     public static class AutonomousRobotOpMode extends RobotOpMode {
         private static boolean debugRunInitPath = true;

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+@Deprecated
+@Disabled
 public abstract class RobotOpMode extends OpMode {
 
     /**

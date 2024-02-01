@@ -28,8 +28,8 @@ public class RoadRunnerAuto extends LinearOpMode {
 
         waitForStart();
 
-        CTG.setStartingPosition(BLUE_BOTTOM);
+        CTG.setStartingPosition(RED_TOP);
 
-        drive.followTrajectorySequence(CTG.BLUE_BOTTOM);
+        drive.followTrajectorySequence(CTG.RED_TOP);
     }
 }

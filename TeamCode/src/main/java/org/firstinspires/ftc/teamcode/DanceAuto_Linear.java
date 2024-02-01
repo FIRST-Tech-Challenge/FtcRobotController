@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Deprecated
+@Disabled
 @Autonomous(name="Robot: Dance Baby Dance!", group="Robot")
 public class DanceAuto_Linear extends LinearOpMode {
     /* Declare OpMode members. */

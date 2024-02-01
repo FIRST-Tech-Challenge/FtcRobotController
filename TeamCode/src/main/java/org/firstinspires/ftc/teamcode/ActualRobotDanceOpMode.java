@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.ActualRobotDanceOpMode.STATE_OF_ROBOT.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import java.util.concurrent.TimeUnit;
 
+
+@Disabled
+@Deprecated
 @Autonomous(name = "REAL_DANCE_TIME")
 public class ActualRobotDanceOpMode extends RobotOpMode {
 

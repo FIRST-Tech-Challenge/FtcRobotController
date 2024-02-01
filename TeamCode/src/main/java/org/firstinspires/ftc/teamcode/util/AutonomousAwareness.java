@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.Arrays;
 
+@Deprecated
 public class AutonomousAwareness {
     /** Width of the track */
     static final double TRACK_WIDTH = 13.7;
