@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@Autonomous(name="AutonomoAzulDireito" , group="Linear Opmode")
-public class AutonomoAzulDireito extends LinearOpMode {
+@Autonomous(name="AutonomoAzulEsquerdo" , group="Linear Opmode")
+public class AutonomoVermelhoDireita extends LinearOpMode {
 
     class Linear {
         public Linear() {
@@ -147,7 +147,6 @@ public class AutonomoAzulDireito extends LinearOpMode {
     static final double     COUNTS_PER_WHEEL_REV    = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
     static final double     COUNTS_PER_MM           = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE_MM;
     static final int     TATAMI_SIDE_SIZE           = 584;
-
     public static void setupMotor(DcMotor motor, DcMotor.Direction direction) {
         motor.setDirection(direction);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -187,8 +186,14 @@ public class AutonomoAzulDireito extends LinearOpMode {
             TeamRobot robot = new TeamRobot(chassi, linear);
 
             //andar até passagem
-            robot.move("forward", (TATAMI_SIDE_SIZE * (1/4)));  //mover 1/4 do tatame
-            robot.move("left", TATAMI_SIDE_SIZE * 4);
+            robot.move("forward", TATAMI_SIDE_SIZE * (1/4));
+            robot.move("left",  TATAMI_SIDE_SIZE * 2);
+
+
+//            motorMove(motorEf, 2921);
+//            motorMove(motorEt, 50);
+//            motorMove(motorDf, 50);
+//            motorMove(motorDt, 50);
 
 
             while (opModeIsActive() && motorEf.isBusy())  { // while (opModeIsActive() && (motorEf.isBusy() && motorDt.isBusy() && motorDf.isBusy() && motorEt.isBusy())) {
