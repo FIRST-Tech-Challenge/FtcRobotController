@@ -19,6 +19,8 @@ public class Constants {
     public static final double motorMaxVolt = 12;
     public static final double vMax = -1;//placeholder value
     public static final double vMin = -1;//placeholder value
+    public static final double armMax = 1; // placeholder, not real
+    public static final double armMin = 0; // placeholder, not real
 
 
     public static class ChassisConstants {
