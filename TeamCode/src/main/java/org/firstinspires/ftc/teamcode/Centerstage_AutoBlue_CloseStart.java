@@ -48,7 +48,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auto Position Object Detection", group = "Concept")
+@Autonomous(name = "Blue Close Start", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
     Gobbler gobbler = null;
