@@ -31,7 +31,8 @@ import java.util.function.DoubleSupplier;
 public class DriveCommandOpMode extends CommandOpMode {
 
     private GamepadEx driverController, armerController;
-    private final GamepadKeys.Button slowdownButton = GamepadKeys.Button.A;
+    private final GamepadKeys.Button slowdownButton = GamepadKeys.Button.RIGHT_BUMPER;
+    private final GamepadKeys.Button slowdownButton2 = GamepadKeys.Button.LEFT_BUMPER;
 
     private DoubleSupplier slowdownMultiplier, forwardBack, leftRight, rotation;
 
@@ -129,7 +130,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     }
 
     private void initializeDriveSuppliers() {
-        slowdownMultiplier = () -> 1d / (driverController.getButton(slowdownButton) ? 1d : 2d);
+        slowdownMultiplier = () -> 1d / ((driverController.getButton(slowdownButton) || driverController.getButton(slowdownButton2)) ? 2d : 1d);
         rotation = () -> driverController.getRightX() * slowdownMultiplier.getAsDouble();
 
         forwardBack = () -> {
