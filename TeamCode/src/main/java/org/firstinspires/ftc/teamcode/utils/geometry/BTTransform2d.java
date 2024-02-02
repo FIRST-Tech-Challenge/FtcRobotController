@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.utils.geometry;
 
+import com.arcrobotics.ftclib.geometry.Transform2d;
+
 /**
  * Represents a transformation for a Pose2d.
  */
-public class Transform2d {
-    private final Translation2d m_translation;
-    private final Rotation2d m_rotation;
+public class BTTransform2d extends Transform2d {
+    private final BTTranslation2d m_translation;
+    private final BTRotation2d m_rotation;
 
     /**
      * Constructs the transform that maps the initial pose to the final pose.
@@ -13,7 +15,7 @@ public class Transform2d {
      * @param initial The initial pose for the transformation.
      * @param last    The final pose for the transformation.
      */
-    public Transform2d(Pose2d initial, Pose2d last) {
+    public BTTransform2d(BTPose2d initial, BTPose2d last) {
         // We are rotating the difference between the translations
         // using a clockwise rotation matrix. This transforms the global
         // delta into a local delta (relative to the initial pose).
@@ -29,7 +31,7 @@ public class Transform2d {
      * @param translation Translational component of the transform.
      * @param rotation    Rotational component of the transform.
      */
-    public Transform2d(Translation2d translation, Rotation2d rotation) {
+    public BTTransform2d(BTTranslation2d translation, BTRotation2d rotation) {
         m_translation = translation;
         m_rotation = rotation;
     }
@@ -37,13 +39,13 @@ public class Transform2d {
     /**
      * Constructs the identity transform -- maps an initial pose to itself.
      */
-    public Transform2d() {
-        m_translation = new Translation2d();
-        m_rotation = new Rotation2d();
+    public BTTransform2d() {
+        m_translation = new BTTranslation2d();
+        m_rotation = new BTRotation2d();
     }
 
-    public Transform2d(double x, double y, Rotation2d rotation2d) {
-        this.m_translation = new Translation2d(x,y);
+    public BTTransform2d(double x, double y, BTRotation2d rotation2d) {
+        this.m_translation = new BTTranslation2d(x,y);
         this.m_rotation = rotation2d;
     }
 
@@ -53,8 +55,8 @@ public class Transform2d {
      * @param scalar The scalar.
      * @return The scaled Transform2d.
      */
-    public Transform2d times(double scalar) {
-        return new Transform2d(m_translation.times(scalar), m_rotation.times(scalar));
+    public BTTransform2d times(double scalar) {
+        return new BTTransform2d(m_translation.times(scalar), m_rotation.times(scalar));
     }
 
     /**
@@ -62,7 +64,7 @@ public class Transform2d {
      *
      * @return The translational component of the transform.
      */
-    public Translation2d getTranslation() {
+    public BTTranslation2d getTranslation() {
         return m_translation;
     }
 
@@ -71,7 +73,7 @@ public class Transform2d {
      *
      * @return Reference to the rotational component of the transform.
      */
-    public Rotation2d getRotation() {
+    public BTRotation2d getRotation() {
         return m_rotation;
     }
 
@@ -88,9 +90,9 @@ public class Transform2d {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Transform2d) {
-            return ((Transform2d) obj).m_translation.equals(m_translation)
-                    && ((Transform2d) obj).m_rotation.equals(m_rotation);
+        if (obj instanceof BTTransform2d) {
+            return ((BTTransform2d) obj).m_translation.equals(m_translation)
+                    && ((BTTransform2d) obj).m_rotation.equals(m_rotation);
         }
         return false;
     }
@@ -100,15 +102,15 @@ public class Transform2d {
      *
      * @return The inverted transformation.
      */
-    public Transform2d inverse() {
+    public BTTransform2d inverse() {
         // We are rotating the difference between the translations
         // using a clockwise rotation matrix. This transforms the global
         // delta into a local delta (relative to the initial pose).
-        return new Transform2d(getTranslation().unaryMinus().rotateBy(getRotation().unaryMinus()),
+        return new BTTransform2d(getTranslation().unaryMinus().rotateBy(getRotation().unaryMinus()),
                 getRotation().unaryMinus());
     }
-    public Transform2d minus(Transform2d other) {
-      return new Transform2d(this.m_translation.getX()-other.m_translation.getX(),
+    public BTTransform2d minus(BTTransform2d other) {
+      return new BTTransform2d(this.m_translation.getX()-other.m_translation.getX(),
               this.m_translation.getY()-other.m_translation.getY(),
               this.m_rotation.minus(other.m_rotation));
     }

@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode.utils;
 import org.firstinspires.ftc.teamcode.utils.geometry.*;
 
-import com.arcrobotics.ftclib.kinematics.Odometry;
-
 import java.util.function.DoubleSupplier;
 
 public class HolonomicOdometry   {
 
     private double prevLeftEncoder, prevRightEncoder, prevHorizontalEncoder;
-    private Rotation2d previousAngle;
+    private BTRotation2d previousAngle;
     private double centerWheelOffset;
-    protected Pose2d robotPose = new Pose2d();
+    protected BTPose2d robotPose = new BTPose2d();
 
-    public Pose2d getPose() {
+    public BTPose2d getPose() {
         return robotPose;
     }
+
 
     /**
      * The trackwidth of the odometers
@@ -33,7 +32,7 @@ public class HolonomicOdometry   {
         m_gyro = gyroAngle;
     }
 
-    public HolonomicOdometry(Pose2d initialPose, double trackwidth, double centerWheelOffset) {
+    public HolonomicOdometry(BTPose2d initialPose, double trackwidth, double centerWheelOffset) {
         this.m_trackWidth = trackwidth;
         previousAngle = initialPose.getRotation();
         robotPose=initialPose;
@@ -41,7 +40,7 @@ public class HolonomicOdometry   {
     }
 
     public HolonomicOdometry(double trackwidth, double centerWheelOffset) {
-        this(new Pose2d(), trackwidth, centerWheelOffset);
+        this(new BTPose2d(), trackwidth, centerWheelOffset);
     }
 
     /**
@@ -51,7 +50,7 @@ public class HolonomicOdometry   {
         update(m_left.getAsDouble(), m_right.getAsDouble(), m_horizontal.getAsDouble(), m_gyro.getAsDouble());
     }
 
-    public void setPose(Pose2d pose) {
+    public void setPose(BTPose2d pose) {
         previousAngle = pose.getRotation();
         robotPose = pose;
 
@@ -65,7 +64,7 @@ public class HolonomicOdometry   {
         double deltaRightEncoder = rightEncoderPos - prevRightEncoder;
         double deltaHorizontalEncoder = horizontalEncoderPos - prevHorizontalEncoder;
 
-        Rotation2d angle = Rotation2d.fromDegrees(gyroAngle);
+        BTRotation2d angle = BTRotation2d.fromDegrees(gyroAngle);
 
         prevLeftEncoder = leftEncoderPos;
         prevRightEncoder = rightEncoderPos;
@@ -76,13 +75,20 @@ public class HolonomicOdometry   {
         double dx = (deltaLeftEncoder + deltaRightEncoder) / 2;
         double dy = deltaHorizontalEncoder - (centerWheelOffset * dw);
 
-        Twist2d twist2d = new Twist2d(dx, dy, dw);
+        BTTwist2d twist2d = new BTTwist2d(dx, dy, dw);
 
-        Pose2d newPose = robotPose.exp(twist2d);
+        BTPose2d newPose = robotPose.exp(twist2d);
 
         previousAngle = angle;
 
-        robotPose = new Pose2d(newPose.getTranslation(), angle);
+        robotPose = new BTPose2d(newPose.getTranslation(), angle);
     }
 
+    public void reset(BTPose2d btPose2d) {
+        previousAngle=BTRotation2d.fromDegrees(0);
+        prevLeftEncoder=0;
+        prevRightEncoder=0;
+        prevHorizontalEncoder=0;
+        robotPose=btPose2d;
+    }
 }

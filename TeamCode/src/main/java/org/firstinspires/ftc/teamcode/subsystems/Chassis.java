@@ -1,20 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.Constants.*;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
@@ -22,22 +18,19 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
 import org.firstinspires.ftc.teamcode.utils.geometry.*;
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.utils.BTposeEstimator;
 
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class Chassis implements Subsystem {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
     private PIDFController m_pidcontroller;
     private double prevTime = 0;
-    private Transform2d velocity, prevVelocity = new Transform2d(), acceleration, prevAcceleration = new Transform2d();
-    private Pose2d prevPos;
+    private BTTransform2d velocity, prevVelocity = new BTTransform2d(), acceleration, prevAcceleration = new BTTransform2d();
+    private BTPose2d prevPos;
     private HardwareMap map;
     private BTposeEstimator odometry;
     private Telemetry m_telemetry;
@@ -49,13 +42,16 @@ public class Chassis implements Subsystem {
     private Motor leftEncoder;
     private Motor rightEncoder;
     private Motor horizontalEncoder;
-    private Pose2d m_postitionFromTag;
+    private BTPose2d m_postitionFromTag;
     private double maxVelocityX = 0;
     private double maxVelocityY = 0;
     private double maxVelocityTheta = 0;
     private double maxAccelerationX = 0;
     private double maxAccelerationTheta = 0;
     private double maxAccelerationY = 0;
+    private Motor.Encoder m_leftEncoder;
+    private Motor.Encoder m_rightEncoder;
+
 
     ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
@@ -73,9 +69,11 @@ public class Chassis implements Subsystem {
         gyro.init(parameters);
         gyro.reset();
         horizontalEncoder = new MotorEx(map, "encoderCenter");
+        m_leftEncoder = leftEncoder;
+        m_rightEncoder = rightEncoder;
         horizontalEncoder.resetEncoder();
-        leftEncoder.reset();
-        rightEncoder.reset();
+        m_leftEncoder.reset();
+        m_rightEncoder.reset();
         odometry = new BTposeEstimator(
                 () -> -metersFormTicks(leftEncoder.getPosition()),
                 () -> metersFormTicks(rightEncoder.getPosition()),
@@ -89,8 +87,21 @@ public class Chassis implements Subsystem {
         m_pidcontroller = new PIDFController(kp, ki, kd, kff);
         register();
         dashboardTelemetry.addData("drive: ", 0);
+        dashboardTelemetry.addData("frontVelocityAuto", 0);
+        dashboardTelemetry.addData("sideVelocityAuto", 0);
+        dashboardTelemetry.addData("OmegaSpeedAuto", 0);
+
     }
 
+    public void resetOdmetry(Pose2d rst){
+        odometry.reset(new BTPose2d(rst));
+        horizontalEncoder.resetEncoder();
+        m_leftEncoder.reset();
+        m_rightEncoder.reset();
+        gyro.reset();
+        odometry.reset(new BTPose2d(rst));
+
+    }
     public void setMotors(double FL, double FR, double BL, double BR) {
         motor_FR.set(FR);
         motor_FL.set(FL);
@@ -100,16 +111,17 @@ public class Chassis implements Subsystem {
 
     ElapsedTime driveTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    boolean isFirstTime = true;
+     public boolean isFirstTime = true;
+
     //x is front facing, y is
     public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
         return new RunCommand(() -> {
-            if (isFirstTime == true) {
+            if (isFirstTime) {
                 driveTimer.reset();
-                isFirstTime=false;
+                isFirstTime = false;
 
             }
-            dashboardTelemetry.addData("drive: ",driveTimer.time());
+            dashboardTelemetry.addData("drive: ", driveTimer.time());
             drive(frontVel.getAsDouble(), sidewayVel.getAsDouble(), retaliation.getAsDouble());
         }, this);
 
@@ -119,12 +131,10 @@ public class Chassis implements Subsystem {
         return new RunCommand(() -> {
             m_telemetry.addData("front", frontVel);
             m_telemetry.update();
-            Translation2d vector = new Translation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
-            Translation2d rotated = vector.rotateBy(Rotation2d.fromDegrees(-gyro.getHeading()));
-            double wantedAngle = new Rotation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble()).getDegrees();
-            double correctPositionVec = m_pidcontroller.calculate(odometry.getPose().getRotation().getDegrees(), wantedAngle);
+            BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
+            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
 
-            drive(rotated.getY(), rotated.getX(), correctPositionVec + retaliation.getAsDouble());
+            drive(rotated.getY(), rotated.getX(),  retaliation.getAsDouble());
         }, this);
     }
 
@@ -150,6 +160,7 @@ public class Chassis implements Subsystem {
         dashboardTelemetry.addData("Theta Acc : ", acceleration.getRotation().getDegrees());
 
         dashboardTelemetry.update();
+
     }
 
     public void calcVA() {
@@ -174,7 +185,22 @@ public class Chassis implements Subsystem {
         return (ticks / (double) tickPerRevolution) * (2 * odometryWheelRadius * Math.PI);
     }
 
+    public void chassisSpeedDrive(ChassisSpeeds chassisSpeeds){
+        //adjust the velocities to fit between +-1 (the input of the motor)
+        chassisSpeeds.vxMetersPerSecond/=maxVelocityX;
+        chassisSpeeds.vyMetersPerSecond/=maxVelocityY;
+        chassisSpeeds.omegaRadiansPerSecond/=maxVelocityTheta;
+
+        double velAfterFF=chassisSpeeds.vxMetersPerSecond+feedForward.calculate(chassisSpeeds.vxMetersPerSecond);
+
+        drive(chassisSpeeds.vyMetersPerSecond,velAfterFF,chassisSpeeds.omegaRadiansPerSecond);
+        dashboardTelemetry.addData("frontVelocityAuto", velAfterFF);
+        dashboardTelemetry.addData("sideVelocityAuto", chassisSpeeds.vyMetersPerSecond);
+        dashboardTelemetry.addData("OmegaSpeedAuto", chassisSpeeds.omegaRadiansPerSecond);
+    }
     private void drive(double frontVel, double sidewayVel, double retaliation) {
+
+        dashboardTelemetry.addData("front vel in drive",frontVel);
         double r = Math.hypot(retaliation, sidewayVel);
         double robotAngle = Math.atan2(retaliation, sidewayVel) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
         double rightX = frontVel;
@@ -185,4 +211,9 @@ public class Chassis implements Subsystem {
         setMotors(v1, v2, v3, v4);
     }
 
+    public Pose2d getPosition() {
+        return odometry.getPose();
+    }
 }
+
+
