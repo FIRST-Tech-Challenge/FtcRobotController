@@ -109,64 +109,66 @@ public class CompTrajectoryGenerator {
         switch (trajectory) {
             case BLUE_BOTTOM:
                 if (!PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36.00, 70.00, Math.toRadians(270.00)))
+                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36.00, 10.00))
-                        .lineTo(new Vector2d(58.00, 23.00))
+                        .lineTo(new Vector2d(-36, 10))
+                        .lineTo(new Vector2d(58, 23))
                         .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36.00, 70.00, Math.toRadians(0)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(0)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36.00, 66.00))
-                        .lineTo(new Vector2d(50.00, 66.00))
+                        .lineTo(new Vector2d(-36, 66))
+                        .lineTo(new Vector2d(50, 66))
                         .build();
 
             case BLUE_TOP:
                 if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12.00, 70.00, Math.toRadians(266.91)))
+                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(270)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(60, 70))
+                        .lineTo(new Vector2d(12, 66))
+                        .lineTo(new Vector2d(60, 66))
                         .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(12.00, 70.00, Math.toRadians(266.91)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(270)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(12.00, 20))
+                        .lineTo(new Vector2d(12, 20))
                         .lineTo(new Vector2d(60, 20))
                         .build();
 
             case RED_BOTTOM:
                 if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12.00, -70.00, Math.toRadians(93.09)))
+                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, -70, Math.toRadians(90)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36.00, -10.00))
-                        .lineTo(new Vector2d(58.00, -23.00))
+                        .lineTo(new Vector2d(-36, -10))
+                        .lineTo(new Vector2d(58, -10))
                         .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(12.00, -70.00, Math.toRadians(93.09)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, -70, Math.toRadians(90)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36.00, -66))
-                        .lineTo(new Vector2d(50.00, -66.00))
+                        .lineTo(new Vector2d(-36, -66))
+                        .lineTo(new Vector2d(50, -66))
                         .build();
 
             case RED_TOP:
                 if (PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(16,  -70.00, Math.toRadians(90.00)))
+                    return DRIVE.trajectorySequenceBuilder(new Pose2d(12,  -70, Math.toRadians(90)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36.00, -25.00))
-                        .lineTo(new Vector2d(-36.00, -70.00))
+                        .lineTo(new Vector2d(12, -15))
+                        .lineTo(new Vector2d(60, -15))
                         .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(16, -70.00, Math.toRadians(90.00)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, -70, Math.toRadians(0)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(60, -70))
+                        .lineTo(new Vector2d(12, -66))
+                        .lineTo(new Vector2d(60, -66))
                         .build();
 
             default:

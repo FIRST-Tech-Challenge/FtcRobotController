@@ -7,9 +7,11 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
-    final static String SEQUENCE = "RedBottom";
+    final static String SEQUENCE = "RedTop";
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
+
+
 
         RoadRunnerBotEntity myBot;
 
@@ -30,7 +32,8 @@ public class MeepMeepTesting {
                         // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12, 70, Math.toRadians(270)))
-                                .lineTo(new Vector2d(60, 70))
+                                .lineTo(new Vector2d(12, 66))
+                                .lineTo(new Vector2d(60, 66))
                                 .build()
                         );
                 break;
@@ -38,10 +41,20 @@ public class MeepMeepTesting {
                 myBot = new DefaultBotBuilder(meepMeep)
                         .setConstraints(60, 25, Math.toRadians(180), Math.toRadians(180), 15)
                         .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-36,  -70, Math.toRadians(90.00)))
-                                .lineTo(new Vector2d(-36.00, -10.00))
-                                .lineTo(new Vector2d(58.00, -23.00))
+                                .lineTo(new Vector2d(-36.00, -66))
+                                .lineTo(new Vector2d(50.00, -66.00))
                                 .build()
                 );
+                break;
+
+            case "RedTop":
+                myBot = new DefaultBotBuilder(meepMeep)
+                        .setConstraints(60, 25, Math.toRadians(180), Math.toRadians(180), 15)
+                        .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12,  -70, Math.toRadians(0)))
+                                .lineTo(new Vector2d(12, -66))
+                                .lineTo(new Vector2d(60, -66))
+                                .build()
+                        );
                 break;
             default:
                 myBot = new DefaultBotBuilder(meepMeep)
