@@ -899,37 +899,45 @@ public class Robot {
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
                 Log.d("vision", "path: Outer Spike");
 
-                // Calculate distances
-                vertical1 = 11;
-                horizontal2 = 20;
-                horizontal3 = 12;
-                vertical4 = 9; //adjust for left
-                horizontal5 = HORIZONTAL_TOTAL - horizontal2 + horizontal3;
-                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL - 35;
+                if (isRedAlliance) {
+                    mecanumBlocking2(21);
+                } else {
+                    mecanumBlocking2(-21);
+                }
+                setHeading(0, 0.7);
 
-                // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
-                setHeading(0, 0.6);
-                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
+                straightBlocking2(-31);
+                setHeading(90 * polarity, 0.7);
+
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
-                    opMode.sleep(100);
+                    opMode.sleep(200);
                 }
-                straightBlockingFixHeading(horizontal3, true, 1); //move back FAST
-                setHeading(0, 0.7);
-                mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
-                setHeading(0, 0.7);
-                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
-                setHeading(90 * polarity, 0.7); //turn
-                if (isJuice) {
-                    opMode.sleep(10000);
+
+                straightBlocking(1, false, 0.7);
+                setHeading(90 * polarity, 0.7);
+                straightBlocking(4, true, 0.7);
+                setHeading(90 * polarity, 0.7);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(18);
+                } else {
+                    mecanumBlocking2(-18);
                 }
-                straightBlockingFixHeading(vertical6, false, 0.7);
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
+
+                straightBlocking2FixHeading(-98);
                 setHeading(90 * polarity, 0.7);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-24);
+                } else {
+                    mecanumBlocking2(24);
+                }
+                setHeading(90 * polarity, 0.7);
+
                 break;
+
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
 
@@ -962,7 +970,6 @@ public class Robot {
                 updatePosition(robotX + 8.5, robotY - 8.5);
 
                 straightBlocking2FixHeading(-89.5);
-                // 9-10sec straightBlockingFixHeading(89.5, false, 1);
                 setHeading(90 * polarity, 0.7);
                 updatePosition(robotX + 89.5, robotY);
 
