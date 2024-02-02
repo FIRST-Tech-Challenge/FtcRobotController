@@ -866,35 +866,54 @@ public class Robot {
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "path: Inner Spike");
-                // calculate distances
-                vertical1 = 2;
-                horizontal2 = 20;
-                horizontal5 = HORIZONTAL_TOTAL - horizontal2;
-                vertical6 = VERTICAL_TOTAL + vertical1;
-                horizontal7 = HORIZONTAL_TOTAL - 27;
 
-                // move!
-                straightBlockingFixHeading(horizontal2, false, 0.7); //go forward FAST
-                setHeading(45 * polarity, 0.25); //turn right
-                straightBlockingFixHeading(7, false, 0.25); //forward
+                // P1: (35, 17)
+
+                straightBlocking2(-31);
+
+                // P2: (35, 48)
+
+                setHeading(90 * polarity, 0.7);
+
+                // P3: (43.5, 39.5)
+
+                straightBlocking2(-3);
+                setHeading(90 * polarity, 0.7);
+
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
-                    opMode.sleep(100);
+                    opMode.sleep(200);
                 }
-                straightBlockingFixHeading(7, true, 0.7); //dropoff, back
-                setHeading(0, 0.7); //turn back
-                mecanumBlocking(vertical1, isRedAlliance, 0.7);
-                straightBlockingFixHeading(horizontal5, false, 0.7); //go forward & around marker
-                setHeading(90 * polarity, 0.7); //turn
-                if (isJuice) {
-                    opMode.sleep(10000);
+
+                straightBlocking2(3);
+
+                // P3: (43.5, 39.5)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(20.5);
+                } else {
+                    mecanumBlocking2(-20.5);
                 }
-                straightBlockingFixHeading(vertical6, false, 0.7);
-                //moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
+
+                // P4: (43.5, 60)
+
+                straightBlocking2FixHeading(-76.5);
                 setHeading(90 * polarity, 0.7);
+
+                // P5: (120, 60)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-24);
+                } else {
+                    mecanumBlocking2(24);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P6: (120, 36)
+
                 break;
+
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
                 Log.d("vision", "path: Outer Spike");
@@ -941,37 +960,48 @@ public class Robot {
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
 
-                // Start moving
-                straightBlocking2(-29);
+                // P1: (35, 17)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(15);
+                } else {
+                    mecanumBlocking2(-15);
+                }
                 setHeading(0, 0.7);
-                updatePosition(robotX, robotY + 29);
+
+                // P2: (20, 17)
+
+                straightBlocking2(-39.5);
+
+                // P3: (20, 56.5)
+
+                setHeading(90 * polarity, 0.7);
+
+                // P4: (28.5, 48)
 
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
-                    opMode.sleep(100);
+                    opMode.sleep(200);
                 }
 
-                straightBlocking2(4);
-                setHeading(0, 0.7);
-                updatePosition(robotX, robotY - 4);
+                straightBlocking(2, true, 0.7);
+
+                //P5: (26.5, 48)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(13); //todo: mecanum is undershooting by ~1 in
+                    mecanumBlocking2(12);
                 } else {
-                    mecanumBlocking2(-13);
+                    mecanumBlocking2(-12);
                 }
-                setHeading(0, 0.7);
-                updatePosition(robotX - 13, robotY);
 
-                straightBlocking2(-24.5); //todo: update locations, originally -26.5
-                updatePosition(robotX, robotY + 24.5);
-
-                setHeading(90 * polarity, 0.7); //turn
-                updatePosition(robotX + 8.5, robotY - 8.5);
-
-                straightBlocking2FixHeading(-89.5);
                 setHeading(90 * polarity, 0.7);
-                updatePosition(robotX + 89.5, robotY);
+
+                // P6: (26.5, 60)
+
+                straightBlocking2FixHeading(-93.5);
+                setHeading(90 * polarity, 0.7);
+
+                // P7: (120, 60)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-24);
@@ -979,9 +1009,11 @@ public class Robot {
                     mecanumBlocking2(24);
                 }
                 setHeading(90 * polarity, 0.7);
-                updatePosition(robotX, robotY - 24);
+
+                // P8: (120, 36)
 
                 break;
+
             }
         }
     }
