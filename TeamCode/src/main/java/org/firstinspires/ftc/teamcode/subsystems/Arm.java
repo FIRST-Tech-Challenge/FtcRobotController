@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.lynx.LynxAnalogInputController;
@@ -15,14 +17,16 @@ import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
 import java.util.function.DoubleSupplier;
 
-public class Arm {
+public class Arm extends Subsystem {
     private HardwareMap map;
-    private AnalogInput potentiometer;
+    private AnalogInput potentiometer1;
+    private AnalogInput potentiometer2;
     private Telemetry m_telemetry;
     private MotorEx arm1;
     private MotorEx arm2;
     private SimpleServo servo;
    private BTController m_controller;
+   private FtcDashboard dashboard;
     public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2, AnalogInput potentiometer) {
         this.map = map;
         this.m_telemetry = telemetry;
@@ -30,18 +34,15 @@ public class Arm {
         this.arm2 = arm2;
         this.potentiometer=potentiometer;
         servo = new SimpleServo(map, "armServo", 0, 280);
+        register();
+        dashboard = Telemetry.
+
     }
 
     public void setMotors(double firstSpeed, double secondSpeed, double servoPos){
-        if (potentiometer.getVoltage() < Constants.armMax && potentiometer.getVoltage() > Constants.armMin) {
             arm1.set(firstSpeed);
             arm2.set(secondSpeed);
             servo.setPosition(servoPos);
-        }else {
-            arm1.set(0);
-            arm2.set(0);
-            servo.setPosition(0);
-        }
     }
 
     public BTCommand armMoveManual(DoubleSupplier speedFirst, DoubleSupplier speedSecond, DoubleSupplier posServo){
@@ -51,4 +52,8 @@ public class Arm {
         });
     }
 
+    @Override
+    public void periodic() {
+
+    }
 }
