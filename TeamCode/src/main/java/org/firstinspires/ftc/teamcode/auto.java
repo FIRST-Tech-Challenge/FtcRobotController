@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 @TeleOp(name = "testDrive (Blocks to Java)")
-public class mainOpModeMecanum extends LinearOpMode {
+public class auto extends LinearOpMode {
 
     private DcMotor frontLeftMotor;
     private DcMotor backLeftMotor;
@@ -17,6 +19,7 @@ public class mainOpModeMecanum extends LinearOpMode {
     private DcMotor rollIn;
     private DcMotor dualArm;
     private Servo garbageCollector;
+    private DistanceSensor distance;
 
     int flag2;
     int flag1;
@@ -25,11 +28,7 @@ public class mainOpModeMecanum extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void run() {
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
-
+    private void run(double y, double x, double rx) {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
@@ -38,7 +37,7 @@ public class mainOpModeMecanum extends LinearOpMode {
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
-        
+
         frontLeftMotor.setPower(frontLeftPower);
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
@@ -58,6 +57,7 @@ public class mainOpModeMecanum extends LinearOpMode {
         rollIn = hardwareMap.get(DcMotor.class, "rollIn");
         dualArm = hardwareMap.get(DcMotor.class, "dualArm");
         garbageCollector = hardwareMap.get(Servo.class, "garbageCollector");
+        distance = hardwareMap.get(DistanceSensor.class, "Distance");
 
         // Put initialization blocks here.
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
