@@ -48,7 +48,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auto Position Object Detection", group = "Concept")
+@Autonomous(name = "Blue Close Start", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
     Gobbler gobbler = null;
@@ -228,33 +228,36 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
     }   // end method telemetryTfod()
 
     private void PlaceFirstPixel() {
-            //if (desiredTag == 2) { // drives robot to the center position.
-                //gobbler.driveTrain.centerPos();
-            //}
-//
-//            else if (desiredTag == 1) { // drives robot to the right position.
-//                gobbler.driveTrain.rightPos();
-//            }
-//
-//            else { // drives robot to the left position.
-//                gobbler.driveTrain.leftPos();
-//            }
-            // Place first pixel
+            if (desiredTag == 2) { // drives robot to the center position.
+                gobbler.driveTrain.centerPos();
+            }
 
-                //gobbler.driveTrain.Wait(0.5);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
-                gobbler.driveTrain.Wait(1.0);
-                gobbler.outtake.driveLift(-0.5);
-                gobbler.driveTrain.Wait(1.0);
-                gobbler.outtake.driveLift(0.0);
-                gobbler.driveTrain.Wait(2);
-                gobbler.outtake.trapdoor(true, trapdoorToggle);
+            else if (desiredTag == 1) { // drives robot to the right position.
+                gobbler.driveTrain.rightPos();
+            }
 
-            // Push telemetry to the Driver Station.
+            else { // drives robot to the left position.
+                gobbler.driveTrain.leftPos();
+            }
+             //Place first pixel
+
+        PlacePixelOnTape();
+
+        // Push telemetry to the Driver Station.
                 telemetry.update();
                 gobbler.driveTrain.Wait(3.0);
 
              sleep(50);
+    }
+
+    private void PlacePixelOnTape() {
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(-0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
     }
 
     private boolean WaitingToStart() {
