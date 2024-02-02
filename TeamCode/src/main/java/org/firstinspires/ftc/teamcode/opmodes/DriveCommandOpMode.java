@@ -87,7 +87,8 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
                 () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0) -
-                        (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0));
+                        (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0) +
+                        armerController.getLeftX());
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
@@ -108,9 +109,9 @@ public class DriveCommandOpMode extends CommandOpMode {
         intakeCommand = new IntakeCommand(intakeSubsystem);
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
-        armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+        /*armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new ZeroWristCommand(wristSubsystem, () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0)
-                        - (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0), () -> 0));
+                        - (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0), () -> 0));*/
 
         register(driveSubsystem);
         register(armSubsystem);

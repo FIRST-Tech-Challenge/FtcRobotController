@@ -24,6 +24,6 @@ public class MoveWristCommand extends CommandBase {
 
     @Override
     public void execute() {
-        subsystem.moveWrist(frontward.getAsDouble(), backward.getAsDouble());
+        subsystem.moveWrist(Math.min(1d, Math.max(-1d, frontward.getAsDouble())), Math.min(1d, Math.max(-1d, backward.getAsDouble())));
     }
 }
