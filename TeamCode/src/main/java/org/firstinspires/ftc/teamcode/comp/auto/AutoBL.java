@@ -70,20 +70,22 @@ public class AutoBL extends LinearOpMode {
                     robot.moveRobot(.5, -30.75, 10);
                     //Turn left
 
-                    robot.turnRobot(Direction.LEFT, 14, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 14, .5, 10);
+                    robot.moveRobot(.5, -5, 10);
+                    robot.dropPixel();
+                    robot.moveRobot(.5, 5, 10);
                     robot.turnRobot(Direction.LEFT, 15, .5, 10);
                     //Move to line
-                    robot.moveRobot(.5, 8, 5);
+                    robot.moveRobot(.5, 30.75, 5);
                     //Drop pixel
-                    robot.dropPixel();
                     //Move awayn from line
                     robot.moveRobot(.5, -9, 5);
                     //Turn to park
-                    robot.turnRobot(Direction.RIGHT, 19, 5, 10);
+                    //robot.turnRobot(Direction.RIGHT, 19, 5, 10);
                     //Park
-                    robot.moveRobot(.5, 45, 10);
-                    robot.turnRobot(Direction.RIGHT, 14, 5, 10);
-                    robot.moveRobot(.5, 13, 5);
+                    //robot.moveRobot(.5, 45, 10);
+                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
+                    //robot.moveRobot(.5, 13, 5);
                     break;
 
             }
