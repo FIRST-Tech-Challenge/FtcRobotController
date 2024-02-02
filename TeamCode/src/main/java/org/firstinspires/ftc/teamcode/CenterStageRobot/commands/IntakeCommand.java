@@ -17,7 +17,7 @@ public class IntakeCommand extends CommandBase {
         this.intakeSubsystem = intakeSubsystem;
         this.intakeArmSubsystem = intakeArmSubsystem;
         this.outtakeSusystem = outtakeSusystem;
-        addRequirements(intakeSubsystem, intakeArmSubsystem, outtakeSusystem);
+        addRequirements(this.intakeSubsystem, this.intakeArmSubsystem, this.outtakeSusystem);
 
         this.state = state;
     }

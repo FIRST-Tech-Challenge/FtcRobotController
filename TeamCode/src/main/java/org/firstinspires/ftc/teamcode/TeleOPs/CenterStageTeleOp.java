@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOPs;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,7 @@ import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 
 @TeleOp(name = "Romania Bucharest 2024 TeleOP", group = "Final TeleOPs")
+@Config
 public class CenterStageTeleOp extends CommandOpMode {
     private CenterStageRobot robot;
 
@@ -29,16 +31,16 @@ public class CenterStageTeleOp extends CommandOpMode {
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
-    public static double frontLeftKS = 0;
+    public static double frontLeftKS = 100;
     public static double frontLeftKV = 1;
     public static double frontLeftKA = 0;
-    public static double frontRightKS = 0;
+    public static double frontRightKS = 120;
     public static double frontRightKV = 1;
     public static double frontRightKA = 0;
-    public static double rearLeftKS = 0;
+    public static double rearLeftKS = 180;
     public static double rearLeftKV = 1;
     public static double rearLeftKA = 0;
-    public static double rearRightKS = 0;
+    public static double rearRightKS = 185;
     public static double rearRightKV = 1;
     public static double rearRightKA = 0;
 
@@ -103,6 +105,6 @@ public class CenterStageTeleOp extends CommandOpMode {
         RobotConstants.FAST_SPEED_PERC = FAST_SPEED_PERC;
 
 
-        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true);
+        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true, true);
     }
 }

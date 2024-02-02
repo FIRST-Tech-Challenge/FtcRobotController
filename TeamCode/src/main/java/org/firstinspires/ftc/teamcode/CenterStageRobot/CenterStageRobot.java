@@ -34,14 +34,38 @@ public class CenterStageRobot extends RobotEx {
 
     //----------------------------------- Initialize Commands ------------------------------------//
 
-    public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                            GamepadExEx toolOp) {
-        super(hm, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false);
+    public SequentialCommandGroup openOuttake() {
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
+                new WaitCommand(80),
+                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
+        );
+    }
+
+    public SequentialCommandGroup closeOuttake() {
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                new WaitCommand(80),
+                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+        );
+    }
+
+    public SequentialCommandGroup openExtremeOuttake() {
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::go_extreme_first, outtakeSusystem),
+                new WaitCommand(70),
+                new InstantCommand(outtakeSusystem::go_extreme_second, outtakeSusystem)
+        );
     }
 
     public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                            GamepadExEx toolOp, OpModeType opModeType, boolean camera) {
-        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera);
+                            GamepadExEx toolOp) {
+        super(hm, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
+    }
+
+    public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
+                            GamepadExEx toolOp, OpModeType opModeType, boolean camera, boolean distance_sensor) {
+        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera, distance_sensor);
     }
 
     @Override
@@ -69,27 +93,10 @@ public class CenterStageRobot extends RobotEx {
 
 
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(
-                        new SequentialCommandGroup(
-                                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                                new WaitCommand(80),
-                                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-                        ),
-                        new SequentialCommandGroup(
-                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                new WaitCommand(80),
-                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                        )
-                );
+                .toggleWhenPressed(openOuttake(), closeOuttake());
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
-                        .whenPressed(
-                                new SequentialCommandGroup(
-                                        new InstantCommand(outtakeSusystem::go_extreme_first, outtakeSusystem),
-                                        new WaitCommand(70),
-                                        new InstantCommand(outtakeSusystem::go_extreme_second, outtakeSusystem)
-                                )
-                        );
+                        .whenPressed(openExtremeOuttake());
 
         toolOp.getGamepadButton(GamepadKeys.Button.A)
                 .toggleWhenPressed(
@@ -107,18 +114,7 @@ public class CenterStageRobot extends RobotEx {
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HANGING));
 
         CommandScheduler.getInstance().registerSubsystem(elevatorSubsystem);
-        elevatorSubsystem.setDefaultCommand(new ElevatorManualCommand(elevatorSubsystem, toolOp::getLeftY, telemetry));
-
-
-//        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .toggleWhenPressed(
-//                        new InstantCommand(intakeSubsystem::run, intakeSubsystem),
-//                        new SequentialCommandGroup(
-//                                new InstantCommand(intakeSubsystem::reverse, intakeSubsystem),
-//                                new WaitCommand(1000),
-//                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
-//                        )
-//                );
+        elevatorSubsystem.setDefaultCommand(new ElevatorManualCommand(elevatorSubsystem, toolOp::getLeftY));
 
         //Intake
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -127,11 +123,7 @@ public class CenterStageRobot extends RobotEx {
                                 new ParallelCommandGroup(
                                         new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
                                         new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
-                                        new SequentialCommandGroup(
-                                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                                new WaitCommand(70),
-                                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                                        )
+                                        closeOuttake()
                                 ),
                                 new ParallelCommandGroup(
                                         new InstantCommand(intakeSubsystem::run, intakeSubsystem),

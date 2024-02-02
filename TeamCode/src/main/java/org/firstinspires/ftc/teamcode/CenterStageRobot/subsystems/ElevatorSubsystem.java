@@ -17,11 +17,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
     public boolean isAuto = true;
-    private final MotorExEx leftMotor;
-    private final MotorExEx rightMotor;
+    public final MotorExEx leftMotor;
+    public final MotorExEx rightMotor;
     private final MotorGroup motors;
 
     private boolean isAutoEnabled = true;
@@ -44,11 +45,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
-
-    private OuttakeSusystem outtakeSusystem;
-
-    private SequentialCommandGroup openOuttake;
-    private SequentialCommandGroup closeOuttake;
 
     public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY) {
 
@@ -83,6 +79,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 //            telemetry.addData("Manual", "");
 //        }
 //        telemetry.update();
+        if(getHeight() > 600) {
+//            openOuttake.get().schedule();
+        } else {
+//            closeOuttake.get().schedule();
+        }
     }
 
     public void run() {

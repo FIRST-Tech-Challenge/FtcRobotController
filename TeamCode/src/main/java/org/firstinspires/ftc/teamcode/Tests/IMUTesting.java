@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import org.inventors.ftc.robotbase.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
