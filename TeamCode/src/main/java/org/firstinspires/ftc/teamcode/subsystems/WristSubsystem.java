@@ -28,4 +28,8 @@ public class WristSubsystem extends SubsystemBase {
         wrist.setPosition(power);
     }
 
+    public double getServoPosition() {
+        return wrist.getPosition();
+    }
+
 }

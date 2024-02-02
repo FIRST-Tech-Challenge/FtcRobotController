@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.commands.ThrowAirplaneCommand;
+import org.firstinspires.ftc.teamcode.commands.ZeroWristCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
@@ -46,6 +47,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DefaultDrive driveCommand;
     private MoveArmCommand moveArmCommand;
     private MoveWristCommand moveWristCommand;
+    private ZeroWristCommand zeroWristCommand;
     private MoveFingerCommand moveFingerCommand;
     private IntakeCommand intakeCommand;
 
@@ -106,6 +108,9 @@ public class DriveCommandOpMode extends CommandOpMode {
         intakeCommand = new IntakeCommand(intakeSubsystem);
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
+        armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+                new ZeroWristCommand(wristSubsystem, () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0)
+                        - (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0), () -> 0));
 
         register(driveSubsystem);
         register(armSubsystem);
@@ -131,7 +136,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     }
 
     private void initializeDriveSuppliers() {
-        slowdownMultiplier = () -> 1d / ((driverController.getButton(slowdownButton) || driverController.getButton(slowdownButton2)) ? 1d : 2d);
+        slowdownMultiplier = () -> 1d / ((driverController.getButton(slowdownButton) || driverController.getButton(slowdownButton2) || driverController.getButton(GamepadKeys.Button.A)) ? 1d : 2d);
         rotation = () -> driverController.getRightX() * slowdownMultiplier.getAsDouble();
 
         forwardBack = () -> {
