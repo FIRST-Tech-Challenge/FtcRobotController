@@ -28,43 +28,49 @@
  */
 
 package org.firstinspires.ftc.teamcode.opmode;
+
 import android.annotation.SuppressLint;
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-
-@TeleOp(name = "AprilTag")
 public class AprilTag extends LinearOpMode {
     private int     myExposure  ;
-    private int     minExposure ;
-    private int     maxExposure ;
-    private int     myGain      ;
-    private int     minGain ;
-    private int     maxGain ;
+    double distancefromwall;
+    Rotation2d rotation;
+    Pose2d position;
+    private int     minExposure;
+    private int     maxExposure;
+    private int     myGain;
+    private int     minGain;
+    private int     maxGain;
     private DistanceUnit distance;
     // The variable to store our instance of the AprilTag processor.
     private AprilTagProcessor aprilTag;
 
       //The variable to store our instance of the vision portal.
     private VisionPortal visionPortal;
+    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    private double counter = 0;
+    private int startTime;
 
     @Override
     public void runOpMode() {
@@ -80,22 +86,28 @@ public class AprilTag extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            timer.reset();
+            timer.startTime();
 
-                telemetryAprilTag();
+            while (opModeIsActive()) {
+                counter++;
+                telemetry.addData(" hz: ", counter/(timer.now(TimeUnit.SECONDS)-timer.startTime()));
+                telemetry.addData(" timer: ", timer.now(TimeUnit.SECONDS)-timer.startTime());
+                telemetry.addData(" counter ", counter);
+                telemetryAprilTag(position);
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
-                }
+//                if (gamepad1.dpad_down) {
+//                    visionPortal.stopStreaming();
+//                } else if (gamepad1.dpad_up) {
+//                    visionPortal.resumeStreaming();
+//                }
 
                 // Share the CPU.
-                sleep(20);
+//                sleep(20);
             }
         }
 
@@ -135,7 +147,7 @@ public class AprilTag extends LinearOpMode {
 
 
     @SuppressLint("DefaultLocale")
-    private void telemetryAprilTag() {
+    public Pose2d telemetryAprilTag(Pose2d position) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
@@ -144,12 +156,15 @@ public class AprilTag extends LinearOpMode {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
 //                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-//                telemetry.addLine(String.format("XYZ %6.3f %6.3f %6.3f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                rotation = new Rotation2d(detection.ftcPose.bearing);
+                distancefromwall = Math.sin(detection.ftcPose.bearing+Math.toRadians(Constants.cameraAngle))*(detection.ftcPose.range-0.035);
+                position = new Pose2d(detection.ftcPose.x,detection.ftcPose.y,rotation);
+                telemetry.addLine(String.format("XYZ %6.3f %6.3f %6.3f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
 //                telemetry.addLine(String.format("PRY %6.3f %6.3f %6.3f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
 //                telemetry.addLine(String.format("RBE %6.3f %6.3f %6.3f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 telemetry.addData("range from tag", detection.ftcPose.range-0.035);
                 telemetry.addData("angle from tag", detection.ftcPose.bearing);
-                telemetry.addData("distance from wall", Math.sin(detection.ftcPose.bearing+Math.toRadians(Constants.cameraAngle))*(detection.ftcPose.range-0.035));
+                telemetry.addData("distance from wall", distancefromwall);
 //            } else {
 //                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
 //                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
@@ -160,7 +175,7 @@ public class AprilTag extends LinearOpMode {
 //        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
 //        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
 //        telemetry.addLine("RBE = Range, Bearing & Elevation");
-
+        return position;
     }   // end method telemetryAprilTag()
     private void getCameraSetting() {
         // Ensure Vision Portal has been setup.
@@ -184,7 +199,6 @@ public class AprilTag extends LinearOpMode {
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             minExposure = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
             maxExposure = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
-
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             minGain = gainControl.getMinGain();
             maxGain = gainControl.getMaxGain();

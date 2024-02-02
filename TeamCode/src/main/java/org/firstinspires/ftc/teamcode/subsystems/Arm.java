@@ -14,42 +14,65 @@ import org.firstinspires.ftc.teamcode.utils.BTController;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
 import org.firstinspires.ftc.teamcode.utils.Util;
 
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.lynx.LynxAnalogInputController;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.utils.BTCommand;
+import org.firstinspires.ftc.teamcode.utils.BTController;
+import org.firstinspires.ftc.teamcode.utils.RunCommand;
+
 import java.util.function.DoubleSupplier;
 
-public class Arm {
-    private Translation2d point
-    private Translation2d current_desired_point;
-    private double desired_second_joint_angle
-    private double desired_first_joint_angle
+public class Arm implements Subsystem {
     private HardwareMap map;
+    private AnalogInput potentiometer1;
+    private AnalogInput potentiometer2;
     private Telemetry m_telemetry;
-    private MotorEx motor_first;
-    private MotorEx motor_second;
+    private MotorEx arm1;
+    private MotorEx arm2;
     private SimpleServo servo;
    private BTController m_controller;
-    public Arm(HardwareMap map, Telemetry telemetry){
-        this.map=map;
-        this.m_telemetry=telemetry;
-        motor_first = new MotorEx(map, "motor_FL");
-        motor_second = new MotorEx(map, "motor_FL");
-        servo = new SimpleServo(map, "motor_FL", 0, 280) {
-        };
+   private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
+    public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2) {
+        this.map = map;
+        this.m_telemetry = telemetry;
+        this.arm1 = arm1;
+        this.arm2 = arm2;
+        potentiometer1= map.get(AnalogInput.class,"pt1");//port 3
+        potentiometer2= map.get(AnalogInput.class,"pt2");//port 1
+        servo = new SimpleServo(map, "armServo", 0, 280);
+        register();
 
     }
 
     public void setMotors(double firstSpeed, double secondSpeed, double servoPos){
-        motor_first.set(firstSpeed);
-        motor_second.set(secondSpeed);
-        servo.setPosition(servoPos);
+                  arm1.set(firstSpeed);
+            arm2.set(secondSpeed);
+            servo.setPosition(servoPos);
     }
 
-    public BTCommand armMove(DoubleSupplier speedFirst,DoubleSupplier speedSecond,DoubleSupplier posServo){
+    public BTCommand armMoveManual(DoubleSupplier speedFirst, DoubleSupplier speedSecond, DoubleSupplier posServo){
         return new RunCommand(()->{
-            motor_first.set(speedFirst.getAsDouble());
+            arm1.set(speedFirst.getAsDouble());
             setMotors(speedFirst.getAsDouble(),speedSecond.getAsDouble(),posServo.getAsDouble());
         });
-
     }
+
+    @Override
+    public void periodic() {
+    dashboard.addData("potent1:", potentiometer1.getVoltage());
+    dashboard.addData("potent2:", potentiometer2.getVoltage());
+    dashboard.update();
+    }
+        
     private double calculateFeedForwardFirstJoint(double first_joint_angle){
 
         return  (resistance * (
@@ -104,4 +127,5 @@ public class Arm {
                         }
                     }
                 }
+
 }
