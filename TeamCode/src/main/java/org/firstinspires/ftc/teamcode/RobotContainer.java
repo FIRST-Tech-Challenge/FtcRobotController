@@ -35,7 +35,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_chassis = new Chassis(map, telemetry, armM2encoderL.encoder, armM1encoderR.encoder);
 //        m_plane = new plane(map, telemetry);
 //        m_climb = new climb(map, telemetry);
-//        m_arm= new Arm(map, telemetry,armM2encoderL,armM1encoderR);
+        m_arm= new Arm(map, telemetry,armM2encoderL,armM1encoderR);
 
 
         bindCommands();
