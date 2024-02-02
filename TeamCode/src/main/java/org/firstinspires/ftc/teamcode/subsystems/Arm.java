@@ -32,8 +32,8 @@ public class Arm implements Subsystem {
         this.m_telemetry = telemetry;
         this.arm1 = arm1;
         this.arm2 = arm2;
-        potentiometer1= map.get(AnalogInput.class,"potentiometer1");//port 3
-        potentiometer2= map.get(AnalogInput.class,"potentiometer2");//port 1
+        potentiometer1= map.get(AnalogInput.class,"pt1");//port 3
+        potentiometer2= map.get(AnalogInput.class,"pt2");//port 1
         servo = new SimpleServo(map, "armServo", 0, 280);
         register();
 
