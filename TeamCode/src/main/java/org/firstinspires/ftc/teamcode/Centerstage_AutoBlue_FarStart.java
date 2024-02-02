@@ -50,7 +50,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous(name = "Blue Far Start", group = "Concept")
-@Disabled
+//@Disabled
 public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
     Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
