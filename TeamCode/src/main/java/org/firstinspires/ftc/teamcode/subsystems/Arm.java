@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.ProfiledPIDCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -17,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Constants.*;
 import org.firstinspires.ftc.teamcode.utils.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.BTController;
 import org.firstinspires.ftc.teamcode.utils.RunCommand;
+import org.firstinspires.ftc.teamcode.utils.PID.*;
 
 import java.util.function.DoubleSupplier;
 
@@ -30,7 +30,8 @@ public class Arm implements Subsystem {
     private SimpleServo servo;
     private BTController m_controller;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    private ProfiledPID m_pid1
+    private ProfiledPIDController m_pid1;
+    private ProfiledPIDController m_pid2;
 
     public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2) {
         this.map = map;

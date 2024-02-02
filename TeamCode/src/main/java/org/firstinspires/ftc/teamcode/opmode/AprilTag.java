@@ -52,7 +52,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "AprilTag")
 public class AprilTag extends LinearOpMode {
     private int     myExposure  ;
     double distancefromwall;

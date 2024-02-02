@@ -8,12 +8,14 @@ package org.firstinspires.ftc.teamcode.utils.geometry;
 /*----------------------------------------------------------------------------*/
 
 
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+
 /**
  * A rotation in a 2d coordinate frame represented a point on the unit circle
  * (cosine and sine).
  */
 
-public class Rotation2d {
+public class BTRotation2d extends Rotation2d {
     private final double m_value;
     private final double m_cos;
     private final double m_sin;
@@ -21,19 +23,23 @@ public class Rotation2d {
     /**
      * Constructs a Rotation2d with a default angle of 0 degrees.
      */
-    public Rotation2d() {
+
+
+    public BTRotation2d() {
         m_value = 0.0;
         m_cos = 1.0;
         m_sin = 0.0;
     }
-
+    public com.arcrobotics.ftclib.geometry.Rotation2d toFTCLIbR(){
+        return new com.arcrobotics.ftclib.geometry.Rotation2d(m_value);
+    }
     /**
      * Constructs a Rotation2d with the given radian value.
      * The x and y don't have to be normalized.
      *
      * @param value The value of the angle in radians.
      */
-    public Rotation2d(double value) {
+    public BTRotation2d(double value) {
         while (value > Math.PI) value -= 2 * Math.PI;
         while (value < -Math.PI) value += 2 * Math.PI;
         m_value = value;
@@ -49,7 +55,7 @@ public class Rotation2d {
      * @param y The y component or sine of the rotation.
      */
     @SuppressWarnings("ParameterName")
-    public Rotation2d(double x, double y) {
+    public BTRotation2d(double x, double y) {
         double magnitude = Math.hypot(x, y);
         if (magnitude > 1e-6) {
             m_sin = y / magnitude;
@@ -67,8 +73,8 @@ public class Rotation2d {
      * @param degrees The value of the angle in degrees.
      * @return The rotation object with the desired angle value.
      */
-    public static Rotation2d fromDegrees(double degrees) {
-        return new Rotation2d(Math.toRadians(degrees));
+    public static BTRotation2d fromDegrees(double degrees) {
+        return new BTRotation2d(Math.toRadians(degrees));
     }
 
     /**
@@ -81,7 +87,7 @@ public class Rotation2d {
      * @param other The rotation to add.
      * @return The sum of the two rotations.
      */
-    public Rotation2d plus(Rotation2d other) {
+    public BTRotation2d plus(BTRotation2d other) {
         return rotateBy(other);
     }
 
@@ -95,7 +101,7 @@ public class Rotation2d {
      * @param other The rotation to subtract.
      * @return The difference between the two rotations.
      */
-    public Rotation2d minus(Rotation2d other) {
+    public BTRotation2d minus(BTRotation2d other) {
         return rotateBy(other.unaryMinus());
     }
 
@@ -105,8 +111,8 @@ public class Rotation2d {
      *
      * @return The inverse of the current rotation.
      */
-    public Rotation2d unaryMinus() {
-        return new Rotation2d(-m_value);
+    public BTRotation2d unaryMinus() {
+        return new BTRotation2d(-m_value);
     }
 
     /**
@@ -115,8 +121,8 @@ public class Rotation2d {
      * @param scalar The scalar.
      * @return The new scaled Rotation2d.
      */
-    public Rotation2d times(double scalar) {
-        return new Rotation2d(m_value * scalar);
+    public BTRotation2d times(double scalar) {
+        return new BTRotation2d(m_value * scalar);
     }
 
     /**
@@ -130,8 +136,8 @@ public class Rotation2d {
      * @param other The rotation to rotate by.
      * @return The new rotated Rotation2d.
      */
-    public Rotation2d rotateBy(Rotation2d other) {
-        return new Rotation2d(
+    public BTRotation2d rotateBy(BTRotation2d other) {
+        return new BTRotation2d(
                 m_cos * other.m_cos - m_sin * other.m_sin,
                 m_cos * other.m_sin + m_sin * other.m_cos
         );
@@ -195,8 +201,8 @@ public class Rotation2d {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Rotation2d) {
-            return Math.abs(((Rotation2d) obj).m_value - m_value) < 1E-9;
+        if (obj instanceof BTRotation2d) {
+            return Math.abs(((BTRotation2d) obj).m_value - m_value) < 1E-9;
         }
         return false;
     }
