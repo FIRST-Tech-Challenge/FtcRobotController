@@ -111,8 +111,8 @@ public class HardwarePixelbot
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public boolean      viperMotorBusy = false;
     public double  VIPER_RAISE_POWER =  1.000; // Motor power used to RAISE viper slide
-    public double  VIPER_HOLD_POWER  =  0.007; // Motor power used to HOLD viper slide at current height
-    public double  VIPER_LOWER_POWER = -0.250; // Motor power used to LOWER viper slide
+    public double  VIPER_HOLD_POWER  =  0.001; // Motor power used to HOLD viper slide at current height
+    public double  VIPER_LOWER_POWER = -0.500; // Motor power used to LOWER viper slide
     /*
     // Encoder counts for 1620 RPM lift motors theoretical max 5.8 rev * 103.76 ticks/rev = 601.8
     public int     VIPER_EXTEND_ZERO = 0;    // 1620 Encoder count when fully retracted (may need to be adjustable??)

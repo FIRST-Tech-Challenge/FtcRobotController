@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -88,8 +91,16 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean     alignToFront    = true;  // Use front facing camera or back facing
     boolean     redAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
-    int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
-    int         fiveStackCycles = 5;     // How many we want to attempt to collect/score? (adjustable during init)
+    int         initMenuSelected = 1;    // start on the first entry
+    int         initMenuMax      = 5;    // we have 5 total entries
+
+    int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both Backdrop & Audience sides
+    int         trussDelaySec    = 0;     // 2: wait [seconds] under the truss -- applies only to Audience side
+
+    boolean     audienceYellow   = true;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
+    boolean     audiencePark     = true;  // 4: park in Backstage from audience side (true=park; false=stop under truss)
+    int         fiveStackCycles = 0;      // 5: number of white pixels to score from 5-stack (only Audience side for now)
+    int         fiveStackHeight = 5;      // Remaining pixels on 5-stack (always starts at 5); Dictates collector height
     ElapsedTime autonomousTimer = new ElapsedTime();
 
     // Instrumentation for optimizing ABORT times
@@ -145,22 +156,173 @@ public abstract class AutonomousBase extends LinearOpMode {
     int pixelNumber = 0;
 
     /*---------------------------------------------------------------------------------*/
-    void captureGamepad1Buttons() {
-        gamepad1_circle_last   = gamepad1_circle_now;      gamepad1_circle_now   = gamepad1.circle;
-        gamepad1_cross_last    = gamepad1_cross_now;       gamepad1_cross_now    = gamepad1.cross;
-        gamepad1_l_bumper_last = gamepad1_l_bumper_now;    gamepad1_l_bumper_now = gamepad1.left_bumper;
-        gamepad1_r_bumper_last = gamepad1_r_bumper_now;    gamepad1_r_bumper_now = gamepad1.right_bumper;
+    protected void captureGamepad1Buttons() {
+        gamepad1_circle_last     = gamepad1_circle_now;      gamepad1_circle_now     = gamepad1.circle;
+        gamepad1_cross_last      = gamepad1_cross_now;       gamepad1_cross_now      = gamepad1.cross;
+        gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
+        gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
         gamepad1_dpad_up_last    = gamepad1_dpad_up_now;     gamepad1_dpad_up_now    = gamepad1.dpad_up;
         gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
         gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
     } // captureGamepad1Buttons
 
+    protected void processAutonomousInitMenu() {
+        boolean nextEntry = (gamepad1_dpad_down_now  && !gamepad1_dpad_down_last);
+        boolean prevEntry = (gamepad1_dpad_up_now    && !gamepad1_dpad_up_last);
+        boolean nextValue = (gamepad1_dpad_right_now && !gamepad1_dpad_right_last);
+        boolean prevValue = (gamepad1_dpad_left_now  && !gamepad1_dpad_left_last);
+
+        // Force RED alliance?
+        if( gamepad1_circle_now && !gamepad1_circle_last ) {
+            redAlliance = true;  // gamepad circle is colored RED
+            forceAlliance = true;
+        }
+        // Force BLUE alliance?
+        else if( gamepad1_cross_now && !gamepad1_cross_last ) {
+            redAlliance = false;   // gamepad cross is colored BLUE
+            forceAlliance = true;
+        }
+        // If we've not FORCED a red/blue alliance, report real-time detection
+        if( !forceAlliance ) {
+            redAlliance = pipelineBack.redAlliance;
+        }
+        telemetry.addData("STARTING", "%s", (pipelineBack.leftSide)? "LEFT" : "RIGHT");
+
+        telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
+                ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
+
+        // If vision pipeline disagrees with forced alliance setting, report it
+        if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
+            telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
+
+        telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
+                ") L:"   + pipelineBack.avg1   +
+                " C:"    + pipelineBack.avg2   +
+                " R:"    + pipelineBack.avg3   +
+                " Zone:" + pipelineBack.spikeMark );
+
+        // Shift DOWN one menu entry?
+        if( nextEntry ) {
+            initMenuSelected++;
+            if (initMenuSelected > initMenuMax) {
+                initMenuSelected = 1;
+            }
+        } // next
+
+        // Shift UP one menu entry?
+        if( prevEntry ) {
+            initMenuSelected--;
+            if (initMenuSelected < 1) {
+                initMenuSelected = initMenuMax;
+            }
+        } // prev
+
+        switch( initMenuSelected ) {
+            case 1 : // START DELAY [sec]
+                if( nextValue ) {
+                    if (startDelaySec < 9) {
+                        startDelaySec++;
+                    }
+                } // next
+
+                if( prevValue ) {
+                    if (startDelaySec > 0) {
+                        startDelaySec--;
+                    }
+                } // prev
+                break;
+            case 2 : // TRUSS DELAY [sec]
+                if( nextValue ) {
+                    if (trussDelaySec < 9) {
+                        trussDelaySec++;
+                    }
+                } // next
+
+                if( prevValue ) {
+                    if (trussDelaySec > 0) {
+                        trussDelaySec--;
+                    }
+                } // prev
+                break;
+            case 3 : // SCORE YELLOW PIXEL FROM AUDIENCE SIDE?
+                if( nextValue || prevValue) {
+                    audienceYellow   = !audienceYellow;
+                } // next
+                break;
+            case 4 : // PARK IN BACKSTAGE WHEN STARTING ON AUDIENCE SIDE? (or just sit under truss)
+                if( nextValue || prevValue) {
+                    audiencePark   = !audiencePark;
+                } // next
+                break;
+            case 5 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
+                if( nextValue ) {
+                    if (fiveStackCycles < 1) {
+                        fiveStackCycles++;
+                    }
+                } // next
+
+                if( prevValue ) {
+                    if (fiveStackCycles > 0) {
+                        fiveStackCycles--;
+                    }
+                } // prev
+                break;
+            default : // recover from bad state
+                initMenuSelected = 1;
+                break;
+        } // switch()
+
+        // Update our telemetry
+        telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
+        telemetry.addData("Truss Delay", "%d sec %s", trussDelaySec, ((initMenuSelected==2)? "<-":"  ") );
+        telemetry.addData("Audience Yellow", "%s %s", (audienceYellow)? "Yes" : "No",
+                ((initMenuSelected==3)? "<-":"  "));
+        telemetry.addData("Audience Park","%s %s", (audiencePark)? "Yes" : "No",
+                ((initMenuSelected==4)? "<-":"  "));
+        telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==5)? "<-":"  ") );
+        telemetry.update();
+    } // processAutonomousInitMenu
+
     /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
     } // performEveryLoop
+
+    protected void setWebcamManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortalBack == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortalBack.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortalBack.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    } // setWebcamManualExposure
 
     // Create a time stamped folder in
     public void createAutoStorageFolder( boolean isRed, boolean isLeft ) {

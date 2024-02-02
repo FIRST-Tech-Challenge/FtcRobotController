@@ -70,48 +70,15 @@ public class AutonomousRightBlue extends AutonomousBase {
                 .addProcessors(pipelineBack, aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
+        //
+        setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
-            telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
-                    ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
-            // If vision pipeline disagrees with forced alliance setting, report it
-            if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
-               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
-            telemetry.addData("STARTING", "%s", "RIGHT");
-            telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
-                                          ") L:"   + pipelineBack.avg1   +
-                                          " C:"    + pipelineBack.avg2   + 
-                                          " R:"    + pipelineBack.avg3   +
-                                          " Zone:" + pipelineBack.spikeMark );
-            telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
-            telemetry.addLine("   use LEFT/RIGHT bumpers to modify");
-            telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
-            // Force RED alliance?
-            if( gamepad1_circle_now && !gamepad1_circle_last ) {
-                redAlliance = true;  // gamepad circle is colored RED
-                forceAlliance = true;
-            }
-            // Force BLUE alliance?
-            else if( gamepad1_cross_now && !gamepad1_cross_last ) {
-                redAlliance = false;   // gamepad cross is colored BLUE
-                forceAlliance = true;
-            }
-            // If we've not FORCED a red/blue alliance, report real-time detection
-            if( !forceAlliance ) {
-                redAlliance = pipelineBack.redAlliance;
-            }
-            // Change number of 5-stack to attempt?
-            if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last ) {
-              fiveStackCycles -= 1;
-              if( fiveStackCycles < 0 ) fiveStackCycles=0;              
-            }
-            else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last ) {
-              fiveStackCycles += 1;
-              if( fiveStackCycles > 2 ) fiveStackCycles=2;
-            }
+            // Do we need to change any of the other autonomous options?
+            processAutonomousInitMenu();
             // Pause briefly before looping
             idle();
         } // !isStarted
