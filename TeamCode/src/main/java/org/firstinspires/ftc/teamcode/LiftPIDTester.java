@@ -25,6 +25,7 @@ import static java.lang.Math.abs;
 
 import android.os.Environment;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,7 +43,7 @@ import java.util.Locale;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Lift-Test", group="Skunkworks")
-//@Disabled
+@Disabled
 public class LiftPIDTester extends LinearOpMode
 {
     final int LOGSIZE = 12;

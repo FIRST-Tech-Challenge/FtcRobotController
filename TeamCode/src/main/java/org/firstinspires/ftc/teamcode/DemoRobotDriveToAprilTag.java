@@ -97,17 +97,6 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 3.0; //  this is how close the camera should get to the target (inches)
 
-    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-    //  applied to the drive motors to correct the error.
-    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.0100;  //  Forward Speed Control "Gain". eg: Ramp up to 75% power at a 25 inch error.   (0.75 / 25.0)
-    final double STRAFE_GAIN =  0.00005; //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.00005; //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
-    final double MAX_AUTO_SPEED = 0.75;  //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.50;  //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.30;  //  Clip the turn speed to this max value (adjust for your robot)
-
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
     private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
@@ -124,20 +113,15 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
     private static final int DESIRED_TAG_ID = 2;    // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    private AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
+
+    double  aprilDriveFwd    = 0.0;      // Desired forward power/speed (-1 to +1)
+    double  aprilDriveStrafe = 0.0;      // Desired strafe power/speed (-1 to +1)
+    double  aprilDriveTurn   = 0.0;      // Desired turning power/speed (-1 to +1)
 
     @Override public void runOpMode()
     {
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  minDrvPwr       = 0.08;     // minimum power needed to drive robot forward
-        double  minStrafePwr    = 0.26;
-        double  minTurnPwr      = 0.17;
-        double  driveErr        = 0.0;
-        double  strafeErr       = 0.0;
-        double  turnErr         = 0.0;
-        double  drive           = 0.0;      // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0.0;      // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0.0;      // Desired turning power/speed (-1 to +1)
+        boolean targetVisible    = false;    // Set to true when an AprilTag target is detected
 
         boolean hasRumbled = false;
         Gamepad.RumbleEffect meowRumbleEffect1;
@@ -175,116 +159,157 @@ public class DemoRobotDriveToAprilTag extends LinearOpMode
 
         while (opModeIsActive())
         {
-            targetFound = false;
-            desiredTag  = null;
-
-            // Step through the list of detected tags and look for a matching tag
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                    }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                }
-            }
-
+            // Does AprilTag processor detect our desired tag? (-1 for ANY tag)
+            // (when true, detectionData holds the results)
+            targetVisible = processAprilTagDetections( DESIRED_TAG_ID );
+            
             // Tell the driver what we see, and what to do.
-            if (targetFound) {
+            if (targetVisible) {
                 if(!hasRumbled) {
                     gamepad1.runRumbleEffect(meowRumbleEffect1);
                     hasRumbled = true;
                 }
                 telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
-                telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                telemetry.addData("Target", "ID %d (%s)", detectionData.id, detectionData.metadata.name);
+                telemetry.addData("Range",  "%5.1f inches", detectionData.ftcPose.range);
+                telemetry.addData("Bearing","%3.0f degrees", detectionData.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.0f degrees", detectionData.ftcPose.yaw);
             } else {
                 hasRumbled = false;
                 telemetry.addData(">","Drive using joysticks to find valid target\n");
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-            if (gamepad1.left_bumper && targetFound) {
+            if (gamepad1.left_bumper && targetVisible) {
 
-                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError   = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double  yawError     = -desiredTag.ftcPose.yaw;
-                double  headingError = desiredTag.ftcPose.bearing;
-                telemetry.addData("Error","Drive %.2f, Strafe %.2f, Turn %.2f", rangeError, yawError, headingError);
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                if( Math.abs(rangeError) < 0.3 ) {    // inches
-                    driveErr = 0.0;
-                } else if( rangeError > 0 ) {
-                    driveErr  = minDrvPwr + (rangeError * SPEED_GAIN);
-                }
-                else { // rangeError < 0
-                    driveErr  = -minDrvPwr + (rangeError * SPEED_GAIN);
-                }
-
-                // only worry about YAW/STRAFE when it's really bad (more than 5deg)
-                if( Math.abs(yawError) < 5.0 ) {  // degrees
-                    strafeErr = 0.0;
-                } else if( yawError > 0 ) {
-                    strafeErr  = minStrafePwr + (yawError * STRAFE_GAIN);
-                }
-                else { // rangeError < 0
-                    strafeErr = -minStrafePwr + (yawError * STRAFE_GAIN);
-                }
-
-                if( Math.abs(headingError) < 2.0 ) {  // degrees
-                    turnErr = 0.0;
-                } else if( headingError > 0 ) {
-                    turnErr  = minTurnPwr + (headingError * TURN_GAIN);
-                }
-                else { // rangeError < 0
-                    turnErr = -minTurnPwr + (headingError * TURN_GAIN);
-                }
-                if( Math.abs(strafeErr) >= minStrafePwr ) {
-                    drive  = 0.0;
-                    turn   = 0.0;
-                    strafe = Range.clip( strafeErr, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                } else {
-                    drive  = Range.clip( driveErr, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                    turn   = Range.clip( turnErr, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                    strafe = 0.0;
-                }
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                // Convert AprilTag pose data (range,yaw,bearing) in detectionData into
+                // motor powers (aprilDriveFwd, aprilDriveStrafe, aprilDriveTurn)
+                processAprilTagCorrections( DESIRED_DISTANCE );
+                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", aprilDriveFwd, aprilDriveStrafe, aprilDriveTurn);
             } else {
-
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
-                turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                if( Math.abs(drive)  < 0.03 ) drive  = 0.0;
-                if( Math.abs(strafe) < 0.03 ) strafe = 0.0;
-                if( Math.abs(turn)   < 0.05 ) turn   = 0.0;
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                aprilDriveFwd    = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+                aprilDriveStrafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
+                aprilDriveTurn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+                if( Math.abs(aprilDriveFwd)    < 0.03 ) aprilDriveFwd    = 0.0;
+                if( Math.abs(aprilDriveStrafe) < 0.03 ) aprilDriveStrafe = 0.0;
+                if( Math.abs(aprilDriveTurn)   < 0.05 ) aprilDriveTurn   = 0.0;
+                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", aprilDriveFwd, aprilDriveStrafe, aprilDriveTurn);
             }
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
             if( rearFacingWebcam ) {
-                moveRobot(-drive, -strafe, -turn);
+                moveRobot(-aprilDriveFwd, -aprilDriveStrafe, -aprilDriveTurn);
             } else {
-                moveRobot(drive, strafe, turn);
+                moveRobot(aprilDriveFwd, aprilDriveStrafe, aprilDriveTurn);
             }
             sleep(10);
         }
-    }
+    } //  runOpMode()
+    
+    /*---------------------------------------------------------------------------------*/
+     boolean processAprilTagDetections( int desiredAprilTagID ) {
+        boolean successfulDetection = false;
+
+        // discard any prior detection data
+        detectionData  = null;
+
+        // Step through the list of detected tags and look for a matching tag
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Look to see if we have size info on this tag.
+            if (detection.metadata != null) {
+                //  Check to see if we want to track towards this tag.
+                if ((desiredAprilTagID < 0) || (detection.id == desiredAprilTagID)) {
+                    // Yes, we want to use this tag.
+                    successfulDetection = true;
+                    detectionData = detection;
+                    break;  // don't look any further.
+                } else {
+                    // This tag is in the library, but we do not want to track it right now.
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                }
+            } else {
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        } // for()
+
+     return successfulDetection;
+
+     } // processAprilTagDetections
+
+    /*------------------------------------------------------------------------------------------*/
+    /* Where do we need to move to achieve the desired offset distance (zero yaw/heading error) */
+     void processAprilTagCorrections( double desiredDistance ) {
+        
+        //  Set the GAIN constants to control the relationship between the measured position error, and how much power is applied
+        //  to the drive motors to correct the error.  Smaller gains provide smoother control; larger produce more aggressive response.
+        //    Drive = Error * Gain    
+        final double SPEED_GAIN      =  0.0100;  //  Forward Speed Control
+        final double STRAFE_GAIN     =  0.00005; //  Strafe Speed Control
+        final double TURN_GAIN       =  0.00005; //  Turn Control
+
+        final double MAX_AUTO_SPEED  = 0.75;     //  Clip the approach speed to this max value
+        final double MAX_AUTO_STRAFE = 0.50;     //  Clip the approach speed to this max value
+        final double MAX_AUTO_TURN   = 0.30;     //  Clip the turn speed to this max value
+         
+        final double minPwrDrive     = 0.08;     // minimum power needed to drive robot forward
+        final double minPwrStrafe    = 0.26;
+        final double minPwrTurn      = 0.17;
+
+        double  errorPwrDrive, errorPwrStrafe, errorPwrTurn;
+
+        double  errorInchesRange    = (detectionData.ftcPose.range - desiredDistance);
+        double  errorDegreesYaw     = -detectionData.ftcPose.yaw;
+        double  errorDegreesHeading = detectionData.ftcPose.bearing;
+        telemetry.addData("Error","Drive %.2f in, Strafe %.2f deg, Turn %.2f deg", errorInchesRange, errorDegreesYaw, errorDegreesHeading);
+
+        // Convert the current range error in INCHES to MOTOR POWERS
+        if( Math.abs(errorInchesRange) < 0.3 ) {    // Within 0.3" is considered DONE
+            errorPwrDrive = 0.0;
+        } else if( errorInchesRange > 0 ) {
+            errorPwrDrive  = minPwrDrive + (errorInchesRange * SPEED_GAIN);
+        }
+        else { // errorInchesRange < 0
+            errorPwrDrive  = -minPwrDrive + (errorInchesRange * SPEED_GAIN);
+        }
+
+        // Only correct for YAW/STRAFE when it's really bad (more than 5deg)
+        if( Math.abs(errorDegreesYaw) < 5.0 ) {  // degrees
+            errorPwrStrafe = 0.0;
+        } else if( errorDegreesYaw > 0 ) {
+            errorPwrStrafe  = minPwrStrafe + (errorDegreesYaw * STRAFE_GAIN);
+        }
+        else { // errorDegreesYaw < 0
+            errorPwrStrafe = -minPwrStrafe + (errorDegreesYaw * STRAFE_GAIN);
+        }
+
+        // Convert the current heading error in DEGREES to MOTOR POWER
+        if( Math.abs(errorDegreesHeading) < 2.0 ) {  // degrees
+            errorPwrTurn = 0.0;
+        } else if( errorDegreesHeading > 0 ) {
+            errorPwrTurn  = minPwrTurn + (errorDegreesHeading * TURN_GAIN);
+        }
+        else { // errorDegreesHeading < 0
+            errorPwrTurn = -minPwrTurn + (errorDegreesHeading * TURN_GAIN);
+        }
+        
+        // Correct for any large STRAFE error (to better center on the AprilTag)
+        // Do this with no FORWARD/TURN correction that would affect our minPower
+        if( Math.abs(errorPwrStrafe) >= minPwrStrafe ) {
+            aprilDriveFwd    = 0.0;
+            aprilDriveTurn   = 0.0;
+            aprilDriveStrafe = Range.clip( errorPwrStrafe, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+        } else {
+            aprilDriveFwd    = Range.clip( errorPwrDrive, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            aprilDriveTurn   = Range.clip( errorPwrTurn,  -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            aprilDriveStrafe = 0.0;
+        }
+         
+     } // processAprilTagCorrections
 
     /**
      * Move robot according to desired axes motions

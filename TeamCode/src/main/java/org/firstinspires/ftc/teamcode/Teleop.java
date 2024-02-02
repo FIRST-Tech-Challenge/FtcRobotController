@@ -147,9 +147,9 @@ public abstract class Teleop extends LinearOpMode {
 
         setAllianceSpecificBehavior();
 
-        // Initialize the Apriltag Detection process
-        initAprilTag();
-        setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+        // Initialize the Apriltag Detection process (driveToAprilTag during Teleop!)
+//      initAprilTag();
+//      setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
        // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -169,7 +169,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.readBulkData();
             globalCoordinatePositionUpdate();
 
-           //ProcessAprilTagControls();
+          //ProcessAprilTagControls();
             ProcessCollectorControls();
             ProcessPixelBinFeedback();
             ProcessFingerControls();
@@ -562,8 +562,12 @@ public abstract class Teleop extends LinearOpMode {
               robot.thinnearMotor.setPower( +1.00 );   // test with 20% before using 100%
               thinnearTweaked = true;
            } else { // notify driver that full retraction has been achieved
-              robot.thinnearMotor.setPower( 0.0 );
               gamepad1.runRumbleEffect( rumblePixelBinSingle );
+              // it's crucial that we be able to FULLY retract the lift, so allow
+              // operator to exceed what the magnetic limit switch indicates as "bottom"
+              // but do it at a LOWER POWER so we don't accidentally bend the lead screw.
+              robot.thinnearMotor.setPower( +0.20 );
+              thinnearTweaked = true;
            }
         } // cross
 
@@ -923,7 +927,7 @@ public abstract class Teleop extends LinearOpMode {
                 .build();
 
         // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
+//      VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
