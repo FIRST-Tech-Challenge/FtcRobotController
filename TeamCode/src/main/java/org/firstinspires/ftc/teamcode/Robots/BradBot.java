@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.apache.commons.math3.util.FastMath.PI;
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.floor;
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
@@ -14,6 +15,9 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -23,6 +27,8 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.types.PathType;
+import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
+import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Arm;
@@ -174,6 +180,7 @@ public class BradBot extends BasicRobot {
         claw.moveTwo(false);
       }
       Claw.clawStates.CLOSE.setStateTrue();
+      gapped = false;
 
       LOGGER.log("dropping claw " + servo);
     }
@@ -209,7 +216,7 @@ public class BradBot extends BasicRobot {
 
   public void lowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-      if (currentPose.getX() > 12) {
+      if (currentPose.getX() > 10) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
         arm.flipTo(DROP);
@@ -304,7 +311,26 @@ public class BradBot extends BasicRobot {
 //        startIntake = BasicRobot.time;
 //      }
       if (currentPose.getX()<-30) {
-        intake.intakeAutoHeight(height);
+        if(intake.intakeAutoHeight(height)){
+
+        } else if (!intake.intakePath()) {
+          Path back = new Path();
+          back.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+          back.add(new EndWaypoint(currentPose.getX()+cos(currentPose.getHeading())*-2, currentPose.getY()+sin(currentPose.getHeading())*-2,currentPose.getHeading(),
+                  0.3,0.1,3, 1,toRadians(3)));
+
+          loopPPPath(back, true);
+          intake.stopIntake();
+          intake.setIntakePath(true);
+        }
+        if(intake.intakePath()){
+          loopPPPath(new Path(), false);
+          if(time - intake.getIntakePathTIme()>1.0){
+            intake.intake();
+            intake.setHeight(1);
+          }
+        }
+
       }
     }
   }
@@ -330,6 +356,7 @@ public class BradBot extends BasicRobot {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
+        gapped = false;
 //      }
     }
   }
@@ -401,6 +428,9 @@ public class BradBot extends BasicRobot {
     boolean equals = false;
     if (path.size() > 1 ) {
       equals = path.get(1).getPose().equals(p_path.get(1).getPose());
+      if(equals){
+        equals=path.get(path.size()-1).getPose().equals(p_path.get(path.size()-1).getPose());
+      }
     }
     if (queuer.queue(
             false,
@@ -439,6 +469,27 @@ public class BradBot extends BasicRobot {
       pathFin = true;
     }
   }
+  public void loopPPPath(Path p_path, boolean change){
+    if (change){ path = p_path;
+        path.setPathType(PathType.WAYPOINT_ORDERING_CONTROLLED);
+        path.init();
+        pathFin = false;
+    }
+      double[] speeds =
+              path.loop(currentPose.getX(), currentPose.getY(), -currentPose.getHeading());
+      packet.put("xSpeed", speeds[0]);
+      packet.put("ySpeed", speeds[1]);
+      packet.put("aSpeed", speeds[2]);
+      packet.put("timedOUt", path.timedOut());
+      packet.put("isFinished", path.isFinished());
+      var powers =
+              MecanumKinematics.robotToWheelVelocities(
+                              new Pose2d(speeds[0], speeds[1], speeds[2]), 10, 12, 1.2)
+                      .toArray();
+      roadrun.setMotorPowers(
+              (double) powers[0], (double) powers[1], (double) powers[2], (double) powers[3]);
+
+    }
   public void setBlue(boolean blue){
     cv.setBlue(blue);
   }

@@ -23,60 +23,28 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class RedLeftAut extends LinearOpMode {
   int bark = 1;
-  public static double x1 = -40,
-      y1 = -38,
-      h1 = -180,
-      v1 = 0.5,
-      w1 = 0.1,
-      fR1 = 6,
-      bf1 = 2,
-      x2 = -55.5,
-      y2 = -37,
-      h2 = -180,
-      v2 = 0.4,
-      w2 = 0.1,
-      fR2 = 6,
-      bf2 = 1,
-      x3 = -53.5,
-      y3 = -38,
-      h3 = -190,
-      v3 = 0.5,
-      w3 = 0.4,
-      fR3 = 4,
-      bf3 = 1,
-      xx1 = 10,
-      yy1 = -59,
-      hh1 = -160,
-      vv1 = 1.0,
-      ww1 = 0.4,
-      ffR1 = 9,
-      xx2 = -30,
-      yy2 = -59,
-      hh2 = -185,
-      vv2 = 1.0,
-      ww2 = 0.4,
-      ffR2 = 9,
-      xx3 = -50,
-      yy3 = -41,
-      hh3 = -210,
-      vv3 = 1.0,
-      ww3 = 0.4,
-      ffR3 = 9;
+  public static double x1 = -39, y1 = -36, h1 = -180, v1 = 0.5, w1 = 0.1, fR1 = 6,bf1 = 2,
+      x2 = -54.5, y2 = -35, h2 = -180, v2 = 0.35, w2 = 0.1, fR2 = 4, bf2 = 1,
+      x3 = -54.5, y3 = -36, h3 = -190, v3 = 0.35, w3 = 0.1, fR3 = 2, bf3 = 1,
+      xx1 = 9, yy1 = -58, hh1 = -160, vv1 = 1.0, ww1 = 0.2, ffR1 = 8,
+      xx2 = -29, yy2 = -58, hh2 = -185, vv2 = 1.0, ww2 = 0.2, ffR2 = 6,
+      xx3 = -51, yy3 = -42, hh3 = -210, vv3 = 0.9, ww3 = 0.2, ffR3 = 4;
 
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-40.5, -61, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(-39.5, -60, Math.toRadians(-90)));
     Path[] toSpike = new Path[3];
     Waypoint start =
         new StartWaypoint(
-            new com.arcrobotics.ftclib.geometry.Pose2d(-40.5, -62, new Rotation2d(toRadians(-90))));
+            new com.arcrobotics.ftclib.geometry.Pose2d(-39.5, -59, new Rotation2d(toRadians(-90))));
     toSpike[0] = new Path(start);
-    toSpike[0].add(new EndWaypoint(-50, -39, toRadians(-120), 0.4, 0.2, 5, 2, toRadians(5)));
+    toSpike[0].add(new GeneralWaypoint(-41, -50, toRadians(-70), 0.4, 0.3, 5));
+    toSpike[0].add(new EndWaypoint(-42, -36, toRadians(-70), 0.4, 0.2,5, 1, toRadians(10)));
     toSpike[1] = new Path(start);
-    toSpike[1].add(new EndWaypoint(-40, -43, toRadians(-91), 0.6, 0, 5, 2, toRadians(10)));
+    toSpike[1].add(new EndWaypoint(-39, -41, toRadians(-91), 0.6, 0, 5, 2, toRadians(10)));
     toSpike[2] = new Path(start);
-    toSpike[2].add(new GeneralWaypoint(-40, -48, toRadians(-90), 0.4, 0.3, 5));
+    toSpike[2].add(new GeneralWaypoint(-39, -46, toRadians(-90), 0.4, 0.3, 5));
     toSpike[2].add(new EndWaypoint(x1, y1, toRadians(h1), v1, w1, fR1, bf1, toRadians(10)));
     Path[] spikeToBackdrop = new Path[3];
     robot.dropServo(1);
@@ -90,7 +58,6 @@ public class RedLeftAut extends LinearOpMode {
       packet.put("pix", bark);
       robot.update();
     }
-    bark = 1;
     while (!isStopRequested() && opModeIsActive()) {
       robot.queuer.queue(false, true);
       robot.upAuto();
@@ -114,23 +81,23 @@ public class RedLeftAut extends LinearOpMode {
       //            if(bark==1){
       double y = 0, yy = 0;
       if (bark == 0) {
-        y = -25;
-        yy = -30;
+        y = -29;
+        yy = -31;
       }
       if (bark == 1) {
-        y = -31;
-        yy = -36;
+        y = -36;
+        yy = -39;
       }
       if (bark == 2) {
-        y = -35;
-        yy = -40;
+        y = -42;
+        yy = -43;
       }
 
       stackToBack.add(new StartWaypoint(new Translation2d(x2 + 2, y2)));
-      stackToBack.add(new GeneralWaypoint(-34, -59, toRadians(-220), 1.0, 0.4, 10));
-      stackToBack.add(new GeneralWaypoint(15, -59, toRadians(-180), 1.0, 0.4, 9));
-      stackToBack.add(new GeneralWaypoint(35, yy, toRadians(-160), 1.0, 0.4, 9));
-      stackToBack.add(new EndWaypoint(44.5, y, toRadians(-180), .4, .15, 9, 3, toRadians(10)));
+      stackToBack.add(new GeneralWaypoint(-33, -56.5, toRadians(-220), 1.0, 0.4, 8));
+      stackToBack.add(new GeneralWaypoint(16, -56.5, toRadians(-180), 1.0, 0.4, 7));
+      stackToBack.add(new GeneralWaypoint(39, yy, toRadians(-160), 1.0, 0.4, 8));
+      stackToBack.add(new EndWaypoint(44.5, y, toRadians(-180), .35, .12, 5, 3, toRadians(10)));
       //            }
       robot.followPPPath(stackToBack);
       robot.grabAuto();
@@ -157,15 +124,15 @@ public class RedLeftAut extends LinearOpMode {
         robot.queuer.addDelay(1.5);
         robot.intakeAuto(4-2*i);
         robot.queuer.waitForFinish();
+        robot.grabAuto();
         Path stackToBack2 = new Path();
         stackToBack2.add(
             new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-        stackToBack2.add(new GeneralWaypoint(-34, -59, toRadians(-220), 1.0, 0.4, 10));
-        stackToBack2.add(new GeneralWaypoint(15, -59, toRadians(-180), 1.0, 0.4, 9));
-        stackToBack2.add(new GeneralWaypoint(35, -40, toRadians(-170), 0.9, 0.4, 6));
-        stackToBack2.add(new EndWaypoint(45, -33, toRadians(-178), .5, .4, 6, 2, toRadians(10)));
+        stackToBack2.add(new GeneralWaypoint(-33, -55.5, toRadians(-220), 1.0, 0.4, 8));
+        stackToBack2.add(new GeneralWaypoint(16, -55.5, toRadians(-180), 1.0, 0.4, 6));
+        stackToBack2.add(new GeneralWaypoint(39, -40, toRadians(-170), 0.9, 0.4, 6));
+        stackToBack2.add(new EndWaypoint(46, -35, toRadians(-178), .5, .4, 6, 2, toRadians(10)));
         robot.followPPPath(stackToBack2);
-        robot.grabAuto();
         robot.lowAuto();
         robot.drop();
       }

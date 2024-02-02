@@ -50,7 +50,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     public static double wheelrad2 = 1;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 12.403*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 12.3151*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = -5.8*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
 
     private double[] lastTicks = {0,0,0};

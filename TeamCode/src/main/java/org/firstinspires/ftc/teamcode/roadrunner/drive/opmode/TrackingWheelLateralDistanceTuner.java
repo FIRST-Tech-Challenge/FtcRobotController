@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,6 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.Robots.BradBot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 
@@ -74,17 +77,12 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BasicRobot robot = new BasicRobot(this , false);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        BasicRobot robot = new BasicRobot(this,true);
+        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        drive.setPoseEstimate(new Pose2d(0,0,0));
 
-
-        if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
-            RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
-                    + "drive class. Ensure that \"setLocalizer(new StandardTrackingWheelLocalizer"
-                    + "(hardwareMap));\" is called in SampleMecanumDrive.java");
-        }
 
         telemetry.addLine("Prior to beginning the routine, please read the directions "
                 + "located in the comments of the opmode file.");
@@ -108,10 +106,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         while (!isStopRequested() && !tuningFinished) {
             Pose2d vel = new Pose2d(0, 0, -gamepad1.right_stick_x);
             drive.setDrivePower(vel);
-
-            drive.update();
-
-            double heading = drive.getPoseEstimate().getHeading();
+            double heading = currentPose.getHeading();
             double deltaHeading = heading - lastHeading;
 
             headingAccumulator += Angle.normDelta(deltaHeading);
@@ -124,8 +119,8 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
             telemetry.addLine("Press Y/△ to conclude routine");
             telemetry.update();
             drive.update();
-
-            if (gamepad1.y||op.gamepad1.b)
+            robot.update();
+            if (gamepad1.y)
                 tuningFinished = true;
         }
 

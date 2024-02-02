@@ -41,14 +41,18 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = false;
-  public static double ONE=0.59, TWO=0.61, THREE = 0.64, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
+  public static double ONE=0.58, TWO=0.61, THREE = 0.64, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
   boolean pixeled1= false;
+
+  boolean intakePath = false;
   int height = 5;
 
   double startIntakeTime = -100;
+
+  double intakePathTIme = -100;
   double lastHeightTime=-5;
 
   /** initializes all the hardware, logs that hardware has been initialized */
@@ -211,7 +215,10 @@ public class Intake extends RFMotor {
     return count;
   }
 
-  public void intakeAutoHeight(int p_height) {
+  public boolean intakeAutoHeight(int p_height) {
+    if(height == p_height-2){
+      return false;
+    }
     if( IntakeStates.STOPPED.getState()){
       startIntakeTime=BasicRobot.time;
       storPixel=Magazine.pixels;
@@ -226,10 +233,10 @@ public class Intake extends RFMotor {
       setHeight(height);
       lastHeightTime = BasicRobot.time;
     }
-    if (BasicRobot.time - lastHeightTime > 4) {
+    if (BasicRobot.time - lastHeightTime > 2) {
       height--;
       if(height<=p_height-2){
-        height = p_height;
+        return false;
       }
       height=max(height,1);
       setHeight(height);
@@ -237,6 +244,9 @@ public class Intake extends RFMotor {
     }
     if(Magazine.pixels==1&&storPixel==0&&BasicRobot.time - lastHeightTime > 1){
       height = max(1, height - 1);
+      if(height<=p_height-2){
+        return false;
+      }
       setHeight(height);
       lastHeightTime = BasicRobot.time;
     }
@@ -244,10 +254,21 @@ public class Intake extends RFMotor {
       intake();
     }
     storPixel=Magazine.pixels;
+    return true;
+  }
+  public void setIntakePath(boolean p_intakePath){
+    intakePath = p_intakePath;
+    intakePathTIme=time;
   }
 
+  public double getIntakePathTIme(){
+    return intakePathTIme;
+  }
+
+
+
   public void setHeight(int height){
-    if(height==1&&isTeleop){
+    if(height==1){
       intakeServo.setPosition(ONE);
     }
     else if(height ==2){
@@ -262,6 +283,9 @@ public class Intake extends RFMotor {
     else{
       intakeServo.setPosition(FIVE);
     }
+  }
+  public boolean intakePath(){
+    return intakePath;
   }
 
   /**
@@ -302,6 +326,7 @@ public class Intake extends RFMotor {
     }
     if(stopped&& time-reverseTime>0.5){
       stopIntake();
+      intakePath=false;
     }
 
   }

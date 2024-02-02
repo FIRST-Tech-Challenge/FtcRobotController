@@ -56,10 +56,10 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -2.75, UPSAMPLE_THRESHOLD = 14, NUMBER_OF_SAMPLES = 10;
-  public static int EXPOSURE_MS = 2, GAIN = 45;
+  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 10, NUMBER_OF_SAMPLES = 10;
+  public static int EXPOSURE_MS = 4, GAIN = 45;
   public static double FOCAL_LENGTH = 820;
-  public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
+  public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
   boolean tuned = false;
   private AprilTagProcessor aprilTag;
   public RFVisionPortal visionPortal;
@@ -198,7 +198,7 @@ public class RFAprilCam {
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
                   -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
-          if (poseFtc.range < UPSAMPLE_THRESHOLD && camPose.vec().distTo(currentPose.vec())<10) {
+          if (poseFtc.range < UPSAMPLE_THRESHOLD /*&& camPose.vec().distTo(currentPose.vec())<5*/) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }

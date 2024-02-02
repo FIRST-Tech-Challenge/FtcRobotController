@@ -103,13 +103,13 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
       packet.put("cvThresh1", sums[1]);
       packet.put("cvThresh2", sums[2]);
       if(diffRatio>threshhold){
-        pos.add(2);
+        pos.add(0);
       }
       else if(diffRatio<-threshhold){
         pos.add(1);
       }
       else{
-        pos.add(0);
+        pos.add(2);
       }
       if(pos.size()>5){
         pos.remove(0);
