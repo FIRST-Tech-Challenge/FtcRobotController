@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.ChassisFeedForward.*;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
 
@@ -14,8 +15,8 @@ import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
 
 public class Constants {
-    public static final double l1ff = 1;// com distant from axis first arm METERS
-    public static final double l2ff = 0.70;// com distant from axis second arm METERS
+    public static final double l1 = 1;// com distant from axis first arm METERS
+    public static final double l2 = 0.70;// com distant from axis second arm METERS
     public static final double first_arm_weight = 1.7; // first arm weight KG
     public static final double second_arm_weight = 1.3; // second arm weight with gripper KG
     public static final double g = 9.806;
