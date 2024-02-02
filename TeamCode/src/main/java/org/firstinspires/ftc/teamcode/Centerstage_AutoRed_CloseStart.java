@@ -50,7 +50,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous(name = "Red Close Start", group = "Concept")
-@Disabled
+//@Disabled
 public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
     Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -230,6 +230,19 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
 
     private void PlaceFirstPixel() {
 
+        gobbler.driveTrain.centerBlueFarRedClose();
+
+
+    }
+
+    private void PlacePixelOnTape() {
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(-0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
     }
 
     private boolean WaitingToStart() {

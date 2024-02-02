@@ -618,6 +618,17 @@ public class DriveTrain {
         Wait(.5);
     }
 
+    public void centerBlueFarRedClose() {
+        moveBackward(12, 0.5);
+        Wait(.5);
+        strafeLeft(13,0.5);
+        Wait(.5);
+        moveBackward(16, 0.5);
+        Wait(.5);
+        turnClockwise(-90, 0.5);
+        Wait(.5);
+    }
+
     public void leftPos() {
         moveBackward(14, 0.5);
         Wait(.5);
