@@ -21,6 +21,15 @@ public class MotionHardwareRuiming {
     public Servo rightInt;
     public Servo leftInt;
 
+    // Variables for sequence control
+    public int sequenceStep = 0;
+    public long stepStartTime;
+    public final long stepDuration = 1000; // Duration for each step, in milliseconds
+
+    // Constants for arm position limits
+    private static final double MAX_EXTENSION_INCHES = 5.0;
+    private static final double MIN_EXTENSION_INCHES = 0.0;
+
     // Encoder Constants
     static final double COUNTS_PER_MOTOR_REV = 537.7;
     static final double SPOOL_DIAMETER_MM = 33.401;
@@ -64,9 +73,12 @@ public class MotionHardwareRuiming {
         leftInt.setPosition(0.35); // Pickup position
     }
 
-    // Method to set the arm's position
+    // setArmPosition method
     public void setArmPosition(double speed, double positionInches, double timeoutS, ElapsedTime runtime, Telemetry telemetry, BooleanSupplier opModeIsActive) {
-        int newArmTarget;
+        int newArmTarget; // Ensure that this variable is declared within the method
+
+        // Ensure position is within limits
+        positionInches = Math.max(MIN_EXTENSION_INCHES, Math.min(MAX_EXTENSION_INCHES, positionInches));
 
         // Ensure that the opmode is still active
         if (opModeIsActive.getAsBoolean()) {

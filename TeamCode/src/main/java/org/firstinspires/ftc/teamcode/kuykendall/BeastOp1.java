@@ -16,6 +16,9 @@ public class BeastOp1 extends LinearOpMode {
     private final double dropoffPosition = .2;
     private static final int PICKUP_POSITION = 0;
     private static final int DROPOFF_POSITION = 50;
+    // Modify these constants to represent inches within the 0 to 5 range
+    private static final double PICKUP_POSITION_INCHES = 2.0; // Example value
+    private static final double DROPOFF_POSITION_INCHES = 4.0; // Example value
     private final double outSlide = .37;
     private final double inSlide = .82;
 
@@ -39,6 +42,8 @@ public class BeastOp1 extends LinearOpMode {
             controlDrive();
             controlArm();
             controlServos();
+            controlWristAndIntake(); // Control wrist and intake based on the sequence
+            controlContinuousServo(); // Control the continuous servo
             updateTelemetry();
         }
     }
@@ -82,9 +87,9 @@ public class BeastOp1 extends LinearOpMode {
 
     private void controlArm() {
         if (gamepad1.a) {
-            robot.setArmPosition(1.0, PICKUP_POSITION, 5.0, runtime, telemetry, this::opModeIsActive);
+            robot.setArmPosition(1.0, PICKUP_POSITION_INCHES, 5.0, runtime, telemetry, this::opModeIsActive);
         } else if (gamepad1.y) {
-            robot.setArmPosition(1.0, DROPOFF_POSITION, 5.0, runtime, telemetry, this::opModeIsActive);
+            robot.setArmPosition(1.0, DROPOFF_POSITION_INCHES, 5.0, runtime, telemetry, this::opModeIsActive);
         }
 
         if (gamepad1.dpad_left) {
@@ -100,6 +105,58 @@ public class BeastOp1 extends LinearOpMode {
             robot.bucketServo.setPosition(inSlide);
         } else if (gamepad1.left_bumper) {
             robot.bucketServo.setPosition(outSlide);
+        }
+    }
+    private void controlWristAndIntake() {
+        // Check the current step in the sequence
+        switch (robot.sequenceStep) {
+            case 0:
+                // Normal operation, waiting for Y button press on gamepad2
+                if (gamepad2.y) {
+                    // Move wrist first
+                    robot.wristServo.setPosition(.8); // Adjust to your wrist up position
+
+                    // Move to next step and record time
+                    robot.sequenceStep = 1;
+                    robot.stepStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case 1:
+                // Check if delay has passed
+                if (System.currentTimeMillis() - robot.stepStartTime >= robot.stepDuration) {
+                    // Move delivery to up position
+                    robot.rightInt.setPosition(pickupPosition);
+                    robot.leftInt.setPosition(1.0 - pickupPosition);
+
+                    // Reset sequence step to 0 for normal operation
+                    robot.sequenceStep = 0;
+                }
+                break;
+
+            // Add other cases here if necessary
+
+            default:
+                // Handle default case
+                break;
+        }
+
+        // New function to move delivery down then wrist down on 'A' button press on gamepad2
+        if (gamepad2.a) {
+            robot.rightInt.setPosition(dropoffPosition);
+            robot.leftInt.setPosition(1.0 - dropoffPosition);
+            robot.wristServo.setPosition(0.4); // Wrist down position
+        }
+    }
+
+    private void controlContinuousServo() {
+        // Updated logic for continuous servo control
+        if (gamepad1.x) {
+            robot.intServo.setPower(2.0); // Spin forward
+        } else if (gamepad1.b) {
+            robot.intServo.setPower(-2.0); // Spin backward
+        } else {
+            robot.intServo.setPower(0); // Stop spinning
         }
     }
 
