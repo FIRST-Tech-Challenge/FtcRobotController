@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utils.RunCommand;
 
 import java.util.function.DoubleSupplier;
 
-public class Arm extends Subsystem {
+public class Arm implements Subsystem {
     private HardwareMap map;
     private AnalogInput potentiometer1;
     private AnalogInput potentiometer2;
@@ -26,16 +26,16 @@ public class Arm extends Subsystem {
     private MotorEx arm2;
     private SimpleServo servo;
    private BTController m_controller;
-   private FtcDashboard dashboard;
-    public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2, AnalogInput potentiometer) {
+   private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
+    public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2) {
         this.map = map;
         this.m_telemetry = telemetry;
         this.arm1 = arm1;
         this.arm2 = arm2;
-        this.potentiometer=potentiometer;
+        potentiometer1= map.get(AnalogInput.class,"potentiometer1");//port 3
+        potentiometer2= map.get(AnalogInput.class,"potentiometer2");//port 1
         servo = new SimpleServo(map, "armServo", 0, 280);
         register();
-        dashboard = Telemetry.
 
     }
 
@@ -54,6 +54,8 @@ public class Arm extends Subsystem {
 
     @Override
     public void periodic() {
-
+    dashboard.addData("potent1:", potentiometer1.getVoltage());
+    dashboard.addData("potent2:", potentiometer2.getVoltage());
+    dashboard.update();
     }
 }
