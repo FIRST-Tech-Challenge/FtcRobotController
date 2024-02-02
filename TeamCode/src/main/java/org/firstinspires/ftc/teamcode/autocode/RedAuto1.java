@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
-
 import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
+
+import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "RedAuto1")
 
-public class RedAuto1 extends PlaceLinePixel{
+public class RedAuto1 extends PlaceLinePixel {
 
     @Override
 
@@ -43,7 +43,7 @@ public class RedAuto1 extends PlaceLinePixel{
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(3);
+                TimeUnit.SECONDS.sleep(4);
                 telemetryTfod();
                 telemetry.update();
 
@@ -69,6 +69,8 @@ public class RedAuto1 extends PlaceLinePixel{
                 } else if (Location3 == true) {
                     BoardPixel3();
                 }
+
+                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.autocode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import java.util.concurrent.TimeUnit;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
+import java.util.concurrent.TimeUnit;
+
 @Autonomous(name = "BlueAuto1")
 
-public class BlueAuto1 extends PlaceLinePixel{
+public class BlueAuto1 extends PlaceLinePixel {
 
     @Override
 
@@ -20,6 +20,10 @@ public class BlueAuto1 extends PlaceLinePixel{
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        armRotate = hardwareMap.get(DcMotor.class, "armRotate");
+        armBrace = hardwareMap.get(DcMotor.class, "armBrace");
+        armExt = hardwareMap.get(DcMotor.class, "armExt");
+        linearGripper = hardwareMap.get(Servo.class, "linearGripper");
 
         try {
 
@@ -28,6 +32,7 @@ public class BlueAuto1 extends PlaceLinePixel{
             waitForStart();
 
             if (opModeIsActive()) {
+                linearGripper.setPosition(.7);
                 TimeUnit.MILLISECONDS.sleep(250);
 
                 RobotMoveFarward();
@@ -36,10 +41,11 @@ public class BlueAuto1 extends PlaceLinePixel{
                 RobotStop();
                 TimeUnit.MILLISECONDS.sleep(250);
 
-                TimeUnit.SECONDS.sleep(5);
+                armUp();
+
+                TimeUnit.SECONDS.sleep(4);
                 telemetryTfod();
                 telemetry.update();
-                TimeUnit.SECONDS.sleep(1);
 
                 if (Location1 == true) {
                     PixelLocation1();
@@ -47,7 +53,24 @@ public class BlueAuto1 extends PlaceLinePixel{
                     PixelLocation2();
                 } else if (Location3 == true) {
                     PixelLocation3();
+                } else {
+                    Location2 = true;
+                    PixelLocation2();
                 }
+
+                TimeUnit.MILLISECONDS.sleep(500);
+
+                BlueLocation1();
+
+                if (Location1 == true) {
+                    BoardPixel1();
+                } else if (Location2 == true) {
+                    BoardPixel2();
+                } else if (Location3 == true) {
+                    BoardPixel3();
+                }
+
+                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

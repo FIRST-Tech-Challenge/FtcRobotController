@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
-
 import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
+
+import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "AutoTest", group = "Tests")
 @Disabled
 
-public class AutoTest extends PlaceLinePixel{
+public class AutoTest extends PlaceLinePixel {
 
     @Override
 
