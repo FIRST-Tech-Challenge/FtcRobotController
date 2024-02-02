@@ -50,7 +50,7 @@ public class Constants {
         public static SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ffks,ffkv,ffka);
         @Config
         public static class ChassisFeedForward{
-            public static double ffks = 0;
+            public static double ffks = 0.12    ;
             public static double ffkv = 0;
             public static double ffka = 0;
         }

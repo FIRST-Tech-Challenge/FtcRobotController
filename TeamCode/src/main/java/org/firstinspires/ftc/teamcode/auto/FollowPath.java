@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.ChassisFeedForward.*;
+import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.feedForward;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -100,7 +101,7 @@ public class FollowPath extends BTCommand {
 //                in.get("kD")
 //        );
         m_resetOdometry.accept(m_trajectory.sample(0).poseMeters);
-        Constants.ChassisConstants.feedForward= new SimpleMotorFeedforward(ffks,ffkv,ffka);
+        feedForward= new SimpleMotorFeedforward(ffks,ffkv,ffka);
         m_controller.reset();
         m_resetOdometry.accept(m_trajectory.sample(0).poseMeters);
 

@@ -103,10 +103,10 @@ public class Chassis implements Subsystem {
 
     }
     public void setMotors(double FL, double FR, double BL, double BR) {
-        motor_FR.set(FR+feedForward.calculate(FR));
-        motor_FL.set(FL+feedForward.calculate(FL));
-        motor_BR.set(BR+feedForward.calculate(BR));
-        motor_BL.set(BL+feedForward.calculate(BL));
+        motor_FR.set(FR);
+        motor_FL.set(FL);
+        motor_BR.set(BR);
+        motor_BL.set(BL);
     }
 
     ElapsedTime driveTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
@@ -186,14 +186,21 @@ public class Chassis implements Subsystem {
     }
 
     public void chassisSpeedDrive(ChassisSpeeds chassisSpeeds){
+        //adjust the velocities to fit between +-1 (the input of the motor)
+        chassisSpeeds.vxMetersPerSecond/=maxVelocityX;
+        chassisSpeeds.vyMetersPerSecond/=maxVelocityY;
+        chassisSpeeds.omegaRadiansPerSecond/=maxVelocityTheta;
 
-        drive(chassisSpeeds.vyMetersPerSecond,chassisSpeeds.vxMetersPerSecond,chassisSpeeds.omegaRadiansPerSecond);
-        dashboardTelemetry.addData("frontVelocityAuto", chassisSpeeds.vxMetersPerSecond);
+        double velAfterFF=chassisSpeeds.vxMetersPerSecond+feedForward.calculate(chassisSpeeds.vxMetersPerSecond);
+
+        drive(chassisSpeeds.vyMetersPerSecond,velAfterFF,chassisSpeeds.omegaRadiansPerSecond);
+        dashboardTelemetry.addData("frontVelocityAuto", velAfterFF);
         dashboardTelemetry.addData("sideVelocityAuto", chassisSpeeds.vyMetersPerSecond);
         dashboardTelemetry.addData("OmegaSpeedAuto", chassisSpeeds.omegaRadiansPerSecond);
     }
     private void drive(double frontVel, double sidewayVel, double retaliation) {
 
+        dashboardTelemetry.addData("front vel in drive",frontVel);
         double r = Math.hypot(retaliation, sidewayVel);
         double robotAngle = Math.atan2(retaliation, sidewayVel) - Math.PI / 4;//shifts by 90 degrees so that 0 is to the right
         double rightX = frontVel;

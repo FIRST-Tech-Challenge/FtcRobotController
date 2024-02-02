@@ -58,7 +58,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         m_controller.left_x,
                         () -> -m_controller.left_trigger.getAsDouble() + m_controller.right_trigger.getAsDouble()),
                 true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
-
+        m_controller.assignCommand(m_chassis.drive(()->ChassisFeedForward.ffks,()->0,()->0),true,BUTTON_UP).whenInactive(m_chassis.stopMotor());
         Supplier< BTCommand> fp2=()->new FollowPath(
                 TrajectoryFactory.t1,
                 ()-> m_chassis.getPosition(),
@@ -68,7 +68,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                 kinematics,
                 pose2d -> m_chassis.resetOdmetry(pose2d),
                 m_chassis);
-        m_controller.assignCommand(new InstantCommand(()->fp2.get().andThen(m_chassis.stopMotor()).schedule()), false, BUTTON_UP).whenInactive(m_chassis.stopMotor());
+        m_controller.assignCommand(new InstantCommand(()->fp2.get()), false, BUTTON_DOWN).whenInactive(m_chassis.stopMotor());
 //        m_controller.assignCommand(m_climb.climb_manual(m_controller.right_y), true, RIGHT_Y).whenInactive(m_climb.climb_manual(()->0));
 
 //        m_controller.assignCommand(m_gripper.toggleGripper(),false,BUTTON_RIGHT);

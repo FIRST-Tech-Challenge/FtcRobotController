@@ -5,6 +5,8 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
+import com.arcrobotics.ftclib.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import com.arcrobotics.ftclib.trajectory.constraint.TrajectoryConstraint;
 import com.sun.tools.javac.util.List;
 
 import org.firstinspires.ftc.teamcode.Constants;
