@@ -227,9 +227,37 @@ public class Centerstage_AutoRed_FarStart extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
-
     private void PlaceFirstPixel() {
-        
+        if (desiredTag == 2) { // drives robot to the center position.
+            gobbler.driveTrain.centerPos();
+        }
+
+        else if (desiredTag == 1) { // drives robot to the right position.
+            gobbler.driveTrain.rightPos();
+        }
+
+        else { // drives robot to the left position.
+            gobbler.driveTrain.leftPos();
+        }
+        //Place first pixel
+
+        PlacePixelOnTape();
+
+        // Push telemetry to the Driver Station.
+        telemetry.update();
+        gobbler.driveTrain.Wait(3.0);
+
+        sleep(50);
+    }
+
+    private void PlacePixelOnTape() {
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(-0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
     }
 
     private boolean WaitingToStart() {
