@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Locale;
 
 public class MotionHardwareG2 {
+    public GlobalConfig globalConfig = null;
 
     public static boolean DEBUG = false;
     private LinearOpMode myOpMode = null;
@@ -92,8 +93,14 @@ public class MotionHardwareG2 {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     ////////////////////////////////////////////////////////////////////////////////////////////////
     public MotionHardwareG2(LinearOpMode opmode) {myOpMode = opmode;}
+    public MotionHardwareG2(LinearOpMode opmode, GlobalConfig globalConfig) {
+        myOpMode = opmode;
+        this.globalConfig = globalConfig;
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void init() {
 
@@ -141,6 +148,8 @@ public class MotionHardwareG2 {
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLeadScrew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftLeadScrew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(globalConfig.getActiveDeliveryMode() == GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER) {
+       }
         linearExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //TODO Once wrist/gripper is fixed move pixel load step to new function
