@@ -50,20 +50,20 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Autonomous(name = "Red Far Start", group = "Concept")
-@Disabled
+//@Disabled
 public class Centerstage_AutoRed_FarStart extends LinearOpMode {
     Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "bluemayhem_v3.tflite";
+    private static final String TFOD_MODEL_ASSET = "redmayhem_v2.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "Blue Mayhem",
+            "Red Mayhem",
     };
 
     // Open and close booleans (just to make code easier to read)
