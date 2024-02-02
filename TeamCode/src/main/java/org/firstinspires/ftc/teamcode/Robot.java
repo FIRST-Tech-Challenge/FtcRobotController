@@ -40,6 +40,7 @@ public class Robot {
     Servo clamp;
     Servo hook;
     DcMotor planeLauncher;
+    Servo planeLauncherServo;
     Servo spikeServo;
     Servo trayAngle;
     IMU imu;
@@ -1241,7 +1242,7 @@ public class Robot {
         // initialize robot class
         setUpDrivetrainMotors();
         setUpIntakeOuttake();
-        //planeLauncher = hardwareMap.servo.get("planeLauncher");
+        planeLauncherServo = hardwareMap.servo.get("planeLauncherServo");
         planeLauncher = hardwareMap.dcMotor.get("planeLauncher");
         planeLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         planeLauncher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -1252,6 +1253,7 @@ public class Robot {
         trayToIntakePos(true);
         opMode.sleep(100);
         planeLauncher.setPower(0);
+        planeLauncherServo.setPosition(0.8);
         //planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
     }
@@ -1297,7 +1299,9 @@ public class Robot {
 
         double targetVelocity = (500/0.25);
         double planeLauncherPower = 0.5;
-        double planeLauncherTicks = planeLauncher.getCurrentPosition();
+        double planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
+        double planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
+        final long KONSTANT_TIME_GAP = 125;
         boolean wasPressed = false;
         ElapsedTime timeSincePressed = new ElapsedTime();
         double timeSincePressedRounded = Math.round(timeSincePressed.time());
@@ -1347,14 +1351,28 @@ public class Robot {
             // both bumper launches drone
             if (gamepad1.right_bumper && gamepad1.left_bumper) {
                 planeLauncher.setPower(planeLauncherPower);
-                if (gamepad1.right_bumper && gamepad1.left_bumper && !wasPressed) {
-                    timeSincePressed.reset();
-                    if ((planeLauncherTicks/timeSincePressedRounded) >= targetVelocity) {
-                        planeLauncherPower += 0.05;
-                    }
+
+                timeSincePressed.reset();
+                planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
+
+                opMode.sleep(KONSTANT_TIME_GAP);
+
+                planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
+                planeLauncherTicksAfterSleep = planeLauncherTicksBeforeSleep - planeLauncherTicksAfterSleep;
+
+                if (Math.abs(planeLauncherTicksAfterSleep/KONSTANT_TIME_GAP/1000) < targetVelocity) {
+                    planeLauncherPower += 0.05;
+                } else if(Math.abs(planeLauncherTicksAfterSleep/timeSincePressedRounded) >= targetVelocity ||
+                        planeLauncherPower >= 1
+                        )
+                {
+                    //launch
+                    planeLauncherServo.setPosition(0.45);
                 }
             } else {
                 planeLauncher.setPower(0);
+                //not launch
+                planeLauncherServo.setPosition(0.8);
             }
             wasPressed = true;
 
