@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.lynx.LynxAnalogInputController;
@@ -70,6 +71,9 @@ public class Arm implements Subsystem {
         servo.setPosition(servoPos);
 
     }
+
+
+
 
 
     public BTCommand armMoveManual(DoubleSupplier speedFirst, DoubleSupplier speedSecond, DoubleSupplier posServo) {
