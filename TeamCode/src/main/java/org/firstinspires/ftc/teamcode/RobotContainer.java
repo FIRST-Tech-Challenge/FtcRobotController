@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.BTController;
 public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     Chassis m_chassis;
     BTController m_controller;
+    BTController m_controller2;
     Gripper m_gripper;
     plane m_plane;
     climb m_climb;
@@ -51,6 +52,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         m_controller.left_x,
                         () -> -m_controller.left_trigger.getAsDouble() + m_controller.right_trigger.getAsDouble()),
                 true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
+        m_controller2.assignCommand(m_arm.armMoveManual(), )
         m_controller.assignCommand(m_chassis.drive(() -> 0, () -> 0, () -> 1), true, BUTTON_UP).whenInactive(m_chassis.stopMotor());
 //        m_controller.assignCommand(m_climb.climb_manual(m_controller.right_y), true, RIGHT_Y).whenInactive(m_climb.climb_manual(()->0));
 
