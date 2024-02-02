@@ -84,7 +84,8 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getButton(GamepadKeys.Button.LEFT_BUMPER),
                 () -> armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
-                () -> armerController.getLeftX());
+                () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0) -
+                        (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0));
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
@@ -130,7 +131,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     }
 
     private void initializeDriveSuppliers() {
-        slowdownMultiplier = () -> 1d / ((driverController.getButton(slowdownButton) || driverController.getButton(slowdownButton2)) ? 2d : 1d);
+        slowdownMultiplier = () -> 1d / ((driverController.getButton(slowdownButton) || driverController.getButton(slowdownButton2)) ? 1d : 2d);
         rotation = () -> driverController.getRightX() * slowdownMultiplier.getAsDouble();
 
         forwardBack = () -> {
