@@ -164,25 +164,19 @@ public class Robot {
 
     public void autoOuttake(boolean lowOuttake, double startingPosition) {
 
+        // move linear slide up
+        if (lowOuttake) {
+            moveLinearSlideByTicksBlocking(startingPosition + 1500);
+        } else {
+            moveLinearSlideByTicksBlocking(startingPosition + 1700);
+        }
+
         openClamp(true, true); // drop pixel
         opMode.sleep(100);
 
-        // move linear slide up
-        if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(startingPosition + 1900); //2010
-        } else {
-            moveLinearSlideByTicksBlocking(startingPosition + 2100); //2200
-        }
-
-        //opMode.sleep(100);
         straightBlocking(4, true, 0.7); //move back 2
-        /*
-        if (isRedAlliance) {
-            setHeading(-90, 0.7);
-        } else {
-            setHeading(90, 0.7);
-        }
-        */
+
+        setServoPosBlocking(trayAngle, 0.5);
         trayToIntakePos(true); //intake pos
         moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
@@ -808,22 +802,6 @@ public class Robot {
                     break;
                 }
             }
-//
-//            if (!tagVisible) { //if tag isnt visible
-//                Log.d("vision", "runOpMode: tag not visible, move back");
-//                straightBlocking(2, true, 0.6); //V IMP: should NOT go back into partner's space
-//                setHeading(90 * polarity, 0.75);
-//                inchesMovedBack = inchesMovedBack + 2;
-//                tagVisible = false;
-//                aligned = false;
-//            }
-//
-//            if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
-//                Log.d("vision", "alignToBoard: apriltag detection timed out");
-//                distanceToBoard = distanceToBoard + inchesMovedBack;
-//                Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
-//                break;
-//            }
         }
 
         straightBlocking(distanceToBoard, false, 0.6);
@@ -2125,6 +2103,118 @@ public class Robot {
         } else {
             lsFront.setPower(0);
             lsBack.setPower(0);
+        }
+
+    }
+
+    public void boardToMiddle () {
+
+        int polarity;
+        if (isRedAlliance) {
+            polarity = -1;
+        } else {
+            polarity = 1;
+        }
+
+        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+            // inner spike
+            if (isRedAlliance) {
+                mecanumBlocking2(29);
+            } else {
+                mecanumBlocking2(-29);
+            }
+
+        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+            || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+            // outer spike
+
+            if (isRedAlliance) {
+                mecanumBlocking2(21);
+            } else {
+                mecanumBlocking2(-21);
+            }
+
+        } else {
+            // center spike
+
+            if (isRedAlliance) {
+                mecanumBlocking2(26);
+            } else {
+                mecanumBlocking2(-26);
+            }
+
+        }
+
+        setHeading(90 * polarity, 0.7);
+
+    }
+
+    public void middleToStack () {
+
+        stackAttachmentOut();
+        intake.setPower(-1);
+        openClamp(true, false);
+        straightBlocking2FixHeading(104);
+        straightBlocking(5, true, 0.5);
+        opMode.sleep(300);
+
+        straightBlocking(3, false, 0.5);
+        opMode.sleep(100);
+        stackAttachmentIn();
+        opMode.sleep(500);
+        straightBlocking(7, true, 0.5);
+        opMode.sleep(300);
+
+        straightBlocking(3, false, 0.5);
+        opMode.sleep(100);
+
+        closeClamp(true);
+        straightBlocking(3, false, 0.5);
+        intake.setPower(1);
+    }
+
+    public void hailMaryyyyyy () {
+
+        int polarity;
+        if (isRedAlliance) {
+            polarity = -1;
+        } else {
+            polarity = 1;
+        }
+
+        straightBlocking(5, false, 0.6);
+        intake.setPower(0);
+        straightBlocking2FixHeading(-86);
+
+        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+            // inner spike
+            if (isRedAlliance) {
+                mecanumBlocking2(-29);
+            } else {
+                mecanumBlocking2(29);
+            }
+
+        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+                || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+            // outer spike
+
+            if (isRedAlliance) {
+                mecanumBlocking2(-21);
+            } else {
+                mecanumBlocking2(21);
+            }
+
+        } else {
+            // center spike
+
+            if (isRedAlliance) {
+                mecanumBlocking2(-26);
+            } else {
+                mecanumBlocking2(26);
+            }
+
         }
 
     }
