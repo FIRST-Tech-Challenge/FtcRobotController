@@ -86,7 +86,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
         PropFindBlue.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
-        Pose2d startPose = new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
         State currentState;
