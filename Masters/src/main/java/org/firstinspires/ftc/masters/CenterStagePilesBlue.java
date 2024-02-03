@@ -30,7 +30,8 @@ public class CenterStagePilesBlue extends LinearOpMode {
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
 
     enum State {
-        PURPLE_DEPOSIT_PATH,
+        PURPLE_DEPOSIT_PATH1,
+        PURPLE_DEPOSIT_PATH2,
         PURPLE_DEPOSIT,
 
         UNTURN,
@@ -92,12 +93,10 @@ public class CenterStagePilesBlue extends LinearOpMode {
         State currentState;
 
         Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(240)))
+                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
                 .build();
 
         Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
                 .lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
                 .build();
 
@@ -149,14 +148,9 @@ public class CenterStagePilesBlue extends LinearOpMode {
             telemetry.addData("Position", propPos);
         }
 
-        currentState = State.PURPLE_DEPOSIT_PATH;
-        if (propPos == PropFindBlue.pos.LEFT) {
-            drive.followTrajectoryAsync(purpleDepositPathL);
-        } else if (propPos == PropFindBlue.pos.RIGHT) {
-            drive.followTrajectoryAsync(purpleDepositPathR);
-        } else {
-            drive.followTrajectoryAsync(purpleDepositPathC);
-        }
+        currentState = State.PURPLE_DEPOSIT_PATH1;
+
+        drive.followTrajectoryAsync(purpleDepositPathC);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -165,7 +159,18 @@ public class CenterStagePilesBlue extends LinearOpMode {
             telemetry.addData("current state", currentState.name());
 
             switch (currentState) {
-                case PURPLE_DEPOSIT_PATH:
+                case PURPLE_DEPOSIT_PATH1:
+                    if (!drive.isBusy()) {
+                        currentState = State.PURPLE_DEPOSIT_PATH2;
+                        if (propPos == PropFindBlue.pos.LEFT) {
+                            drive.followTrajectoryAsync(purpleDepositPathL);
+                        } else if (propPos == PropFindBlue.pos.RIGHT) {
+                            drive.followTrajectoryAsync(purpleDepositPathR);
+                        }
+
+                    }
+                    break;
+                case PURPLE_DEPOSIT_PATH2:
                     if (!drive.isBusy()) {
                         currentState = State.PURPLE_DEPOSIT;
 
