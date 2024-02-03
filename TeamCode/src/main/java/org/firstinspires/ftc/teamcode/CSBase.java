@@ -18,10 +18,11 @@ import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
 import java.util.*;
 
+/** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
-    private final ElapsedTime runtime = new ElapsedTime();
+    private static final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
@@ -49,13 +50,13 @@ public abstract class CSBase extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
     static final boolean    TURN_TYPE               = false;
     public final double[]   BOUNDARIES              = {0, 350};
-    double                  carWashPower            = 1.0;
+    static final double     CAR_WASH_POWER          = 1.0;
     spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
     public static String tfodModelName;
     private AprilTagProcessor tagProcessor;
-    private final int WAIT_TIME = 500;
+    private static final int WAIT_TIME = 500;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
@@ -399,7 +400,7 @@ public abstract class CSBase extends LinearOpMode {
             telemetry.addData("Car Wash", "Ejecting Pixel");
             telemetry.update();
             int t = (int) runtime.milliseconds() + 1000;
-            carWashMotor.setPower(carWashPower);
+            carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
                 if (!(t > ((int) runtime.milliseconds()))) {
                     break;
@@ -666,19 +667,5 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
         turn(-180);
         drive(-25);
-    }
-    /** Stupid method that cleans up warnings.*/
-    private void warningCleanup1() {
-        if (detectTag(1)) {
-            warningCleanup2();
-            strafe(5);
-        }
-    }
-
-    /** Stupid method that cleans up warnings.*/
-    private void warningCleanup2() {
-        if (!detectTag(1)) {
-            warningCleanup1();
-        }
     }
 }
