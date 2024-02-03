@@ -508,9 +508,9 @@ public abstract class CSBase extends LinearOpMode {
     @Nullable
     public AprilTagDetection tagDetections(int id, double timeout) {
         double ms = timeout * 1000;
-        AprilTagDetection a = tagDetections(id);
+        AprilTagDetection a;
         int t = (int) runtime.milliseconds() + (int) ms;
-        while (opModeIsActive() && a == null && (runtime.milliseconds() < t)) {
+        while (opModeIsActive() && (runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
                 return a;
