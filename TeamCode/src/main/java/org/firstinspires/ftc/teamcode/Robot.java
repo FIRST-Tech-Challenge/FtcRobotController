@@ -1308,11 +1308,14 @@ public class Robot {
 
         boolean linearSlideFlag = false;
 
-        double targetVelocity = (500/0.25);
+        final long KONSTANT_TIME_GAP = 100;
+        double launcherSpeed = 0.5;
+        //max power = 2800ticks/sec
+        double targetVelocity = ((2800/(1000/KONSTANT_TIME_GAP)*launcherSpeed));
+        double currentVelocity;
         double planeLauncherPower = 0.5;
         double planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
         double planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
-        final long KONSTANT_TIME_GAP = 125;
         boolean wasPressed = false;
         ElapsedTime timeSincePressed = new ElapsedTime();
         double timeSincePressedRounded = Math.round(timeSincePressed.time());
@@ -1370,15 +1373,19 @@ public class Robot {
 
                 planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
                 planeLauncherTicksAfterSleep = planeLauncherTicksBeforeSleep - planeLauncherTicksAfterSleep;
+                currentVelocity = Math.abs(planeLauncherTicksAfterSleep/KONSTANT_TIME_GAP/1000);
 
-                if (Math.abs(planeLauncherTicksAfterSleep/KONSTANT_TIME_GAP/1000) < targetVelocity) {
-                    planeLauncherPower += 0.05;
-                } else if(Math.abs(planeLauncherTicksAfterSleep/timeSincePressedRounded) >= targetVelocity ||
-                        planeLauncherPower >= 1
-                        )
-                {
+                if (currentVelocity < targetVelocity) {
+                    planeLauncherPower -= 0.05;
+
+                    Log.d("drone", "current velocity: " + currentVelocity + "target velocity: " + targetVelocity);
+                    telemetry.addData("currentVelocity: ", currentVelocity);
+                    telemetry.addData("targetVelocity: ", currentVelocity);
+
+                } else if(currentVelocity >= targetVelocity || planeLauncherPower >= 1){
                     //launch
                     planeLauncherServo.setPosition(0.45);
+                    Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
                 }
             } else {
                 planeLauncher.setPower(0);
