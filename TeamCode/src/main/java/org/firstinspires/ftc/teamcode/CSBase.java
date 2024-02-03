@@ -486,28 +486,9 @@ public abstract class CSBase extends LinearOpMode {
 
     }
 
-
     /** Returns whether a tag with the specified ID is currently detected.
      * @param id ID of tag to detect.
-     * @return (boolean) Was the tag detected? **/
-    public boolean detectTag(int id){
-        int i;
-        for (i = 0; i < tagProcessor.getDetections().size(); i++)
-        {
-            if (tagProcessor.getDetections().get(i).id == id){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-    /**
-     * Detects AprilTag
-     * @param id AprilTag ID
-     * @return AprilTag information
-     */
+     * @return Information about the tag detected. **/
     @Nullable
     public AprilTagDetection tagDetections(int id) {
         int i;
@@ -529,8 +510,8 @@ public abstract class CSBase extends LinearOpMode {
     public AprilTagDetection tagDetections(int id, double seconds) {
         double ms = seconds * 1000;
         AprilTagDetection a = tagDetections(id);
-        int t = (int) System.currentTimeMillis();
-        while (opModeIsActive() && (a == null &&  System.currentTimeMillis() - t < ms)) {
+        int t = (int) runtime.milliseconds() + (int) ms;
+        while (opModeIsActive() && (a == null && runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
                 break;
