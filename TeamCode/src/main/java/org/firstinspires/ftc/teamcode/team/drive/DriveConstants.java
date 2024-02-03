@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team.states.drive;
+package org.firstinspires.ftc.teamcode.team.drive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -34,8 +34,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(3, 0, 2,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    /*can be edited*/public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(5,0,4, 14); //2 0 3 14
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -47,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.88976; // in /1.9685 3.77953
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH =  27.43; //was 16.1417
+    public static double TRACK_WIDTH = 16.72; //was 16.1417    27.43 26.38
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -56,7 +55,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 1 / rpmToVelocity(MAX_RPM); //0.01482; //0.017
-    public static double kA = 0.0045; //0.002;
+    public static double kA = 0; //0.002; //was 0.0045
     public static double kStatic = 0; //0.01;
 
     /*
@@ -88,10 +87,10 @@ public class DriveConstants {
 
      */
 
-    public static double MAX_VEL = 69.3312760581005; //172.1693  Voltage Compensated kF: 14.561945470080301
-    public static double MAX_ACCEL = 30; //30 //60.97645986651227
-    public static double MAX_ANG_VEL = Math.toRadians(264.96137378046694); //was 419.7309445395141
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);//Math.toRadians(285.19949387755105);
+    public static double MAX_VEL = 74.0921365; //172.1693  Voltage Compensated kF: 13.96842784 //calculated value 86.0843412
+    public static double MAX_ACCEL = 30; //30 //60.97645986651227// can be edited //76.45064909866794 (recent)
+    public static double MAX_ANG_VEL = Math.toRadians(274.6648880099999); //was 419.7309445395141 292.572579064203
+    public static double MAX_ANG_ACCEL = Math.toRadians(179.999848);//was 285.19949387755105 292.572579064203
 
 
     public static double encoderTicksToInches(double ticks) {

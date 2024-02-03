@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.team.auto.CSBaseLIO;
+import org.firstinspires.ftc.teamcode.team.PoseStorage;
+import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.DroneStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.IntakeStateMachine;
@@ -69,11 +71,13 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
     private double currentTime = 0; // keep track of current time
     private double speedMultiplier = 0.7;
     //these are based on LiftTest
-    private static final double HIGH = 8d;
-    private static final double MID = 5d;
-    private static final double LOW = 3d;
+    private static final double HIGH = 26d;
+    private static final double MID = 8d;
+    private static final double LOW = 10d;
     private boolean liftdown = true;
     private boolean intakeOn = false;
+
+
 
 //    private boolean armMid = true;
 
@@ -90,6 +94,8 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         super.init();
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
+
+        drive.setPoseEstimate(PoseStorage.currentPose);  //Added to start of TeleOp with how Auto ended
     }
 
     @Override
@@ -119,6 +125,11 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         }
         if (getEnhancedGamepad1().isRightBumperJustPressed()) {
             speedMultiplier = 1.0;
+        }
+
+        if (getEnhancedGamepad1().isxJustPressed()) {
+            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.OUTTAKE);
+            intakeOn = true;
         }
 
         //Intake
@@ -187,20 +198,21 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
             drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.DOWN);
         }
 
+        if(getEnhancedGamepad2().isbLast()){
+            drive.robot.getHangSubsystem().getStateMachine().updateState(HangStateMachine.State.IDLE);
+        }
+
+
         //Outtake
         //This only allows moving the Outtake only when the Lift has moved up and is no longer in Ground or Intake Position
         //This also brings the lift down to the ground state when Outtake is Released
        if (!liftdown) {
             if (getEnhancedGamepad2().getRight_trigger() > 0) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PRERELEASE);
+                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
             }
             if (getEnhancedGamepad2().getLeft_trigger() > 0) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             }
-            if (getEnhancedGamepad2().isRightBumperJustPressed()) {
-                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-            }
-
             if (liftdown) {
                 drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
             }
@@ -211,38 +223,6 @@ public class CSTeleopLIO extends CSTeleopRobotLIO {
         telemetry.addData("Lift SetPoint: ", drive.robot.getLiftSubsystem().getDesiredSetpoint());
         telemetry.addData("Outtake State: ", drive.robot.getOuttakeSubsystem().getStateMachine().getState());
 
-
-//            if (getEnhancedGamepad2().getRight_trigger() > 0) {
-//                drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-//            }
-//        }
-
-//        if(getEnhancedGamepad2().isaJustPressed()){
-//            drive.robot.getElevSubsystem().getStateMachine().updateState(ElevStateMachine.State.RETRACT);
-//            liftdown = true;
-//            stopintake = false;
-//            getIntakeMotorSubsystem().getStateMachine().updateState(IntakeStateMachine.State.INTAKE);
-//            telemetry.addLine("a pressed lift up: " + drive.robot.getElevSubsystem().getStateMachine().getState());
-//        }
-//
-//        if(getEnhancedGamepad2().isyJustPressed()){
-//            if (drive.robot.getCappingArmSubsystem().getStateMachine().getState() == CappingArmStateMachine.State.TOP) {
-//                drive.robot.getElevSubsystem().getStateMachine().updateState(ElevStateMachine.State.EXTENDTOP);
-//                stopintake = true;
-//                liftdown = false;
-//            }
-//
-//            telemetry.addLine("y pressed lift down: " + drive.robot.getElevSubsystem().getStateMachine().getState());
-//        }
-//        if((atGroundJunction()||!liftdown) && !armMid && drive.robot.getClawSubsystem().getState() == ClawStateMachine.State.OPEN){
-//            if(atGroundJunction()){
-//                drive.robot.getLiftSubsystem().extend(LOW);
-//                liftdown = false;
-//            }
-//            drive.robot.getArmSubsystem().getStateMachine().updateState(ArmStateMachine.State.INIT);
-//            armMid = true;
-//            drive.robot.getLiftSubsystem().retract();
-//        }
             updateTelemetry(telemetry);
             currentTime = getRuntime();
         }

@@ -14,9 +14,10 @@ public class IntakeStateMachine extends SimpleState<IntakeStateMachine.State> {
 
     public enum State implements Namable {
         IDLE("Idle", 0d),
-        INTAKE("Intake", -0.60d),
-        OUTTAKE("Outtake", 0.55d),
-        DROP("Drop", 0.35d); //was .3d
+        INTAKE("Intake", -0.80d),
+        OUTTAKE("Outtake", 0.75d),
+        DROP("Drop", 0.35d), //was .3d
+        FASTDROP("fastDrop", 0.55d);
 
         private final String name;
         private final double power;

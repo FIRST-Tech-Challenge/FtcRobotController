@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.team.states.drive.opmode;
+package org.firstinspires.ftc.teamcode.team.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.team.states.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.team.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
 
 /*

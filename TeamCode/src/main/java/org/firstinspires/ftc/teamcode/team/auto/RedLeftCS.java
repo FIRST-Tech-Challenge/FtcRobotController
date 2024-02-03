@@ -25,15 +25,15 @@ public class RedLeftCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(25.7,0);
-    static final Vector2d TrajL1 = new Vector2d(3, 0);
+    static final Vector2d TrajL0 = new Vector2d(-33.325, -36.91); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL1 = new Vector2d(-3, 0);
     static final Vector2d TrajL2 = new Vector2d(3,-75);
 
-    static final Vector2d TrajC0 = new Vector2d(26,.8);
+    static final Vector2d TrajC0 = new Vector2d(-36.875, -53.5); //Goes to place the pixel on spike mark
     static final Vector2d TrajC1 = new Vector2d(3, 0);
     static final Vector2d TrajC2 = new Vector2d(3,-75);
 
-    static final Vector2d TrajR0 = new Vector2d(23.8,-3.5);
+    static final Vector2d TrajR0 = new Vector2d(-42.27, -42.595); //Goes to place the pixel on spike mark
     static final Vector2d TrajR1 = new Vector2d(3, 0);
     static final Vector2d TrajR2 = new Vector2d(3,-75);
 
@@ -55,11 +55,11 @@ public class RedLeftCS extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
+    Pose2d startPose = new Pose2d(-39.125, -63.5, Math.toRadians(90));
 
     CSVP CSVP;
     int placement = 3;
-    private static final double MID = 18d;
+    private static final double HIGH = 26d;
 
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
@@ -71,46 +71,47 @@ public class RedLeftCS extends LinearOpMode {
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 
-        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajL0)
                 .turn(Math.toRadians(48))
                 .build();
 
-        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end()) //Comes Back and Turns towards the backboard
                 .lineTo(TrajL1)
                 .turn(Math.toRadians(-48))
                 .build();
 
-        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end()) //Parks to the Left of the backboard
                 .turn(Math.toRadians(-90))
                 .lineTo(TrajL2)
                 .build();
 
-        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajC0)
                 .build();
 
-        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
+        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end()) //Comes Back and Turns towards the backboard
                 .lineTo(TrajC1)
                 .build();
 
-        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
+        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end()) //Parks to the Left of the backboard
                 .turn(Math.toRadians(-90))
                 .lineTo(TrajC2)
                 .build();
 
-        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajR0)
                 .turn(Math.toRadians(-51))
                 .build();
 
-        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
+        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end()) //Comes Back and Turns towards the backboard
                 .turn(Math.toRadians(51))
                 .lineTo(TrajR1)
+                .turn(Math.toRadians(-51))
                 .build();
 
-        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
-                .turn(Math.toRadians(-90))
+        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end()) //Parks to the Left of the backboard
+                .turn(Math.toRadians(90))
                 .lineTo(TrajR2)
                 .build();
 
@@ -215,7 +216,7 @@ public class RedLeftCS extends LinearOpMode {
 
                 case LIFTUP:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().extend(MID);
+                    drive.robot.getLiftSubsystem().extend(HIGH);
                     currentState = State.OUTTAKE;
                     waitTimer.reset();
                     break;

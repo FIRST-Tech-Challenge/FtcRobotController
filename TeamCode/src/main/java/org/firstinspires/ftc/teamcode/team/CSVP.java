@@ -87,7 +87,7 @@ public class CSVP {
         return location;
     }
 
-    /*public int rightDetect(){
+    public int rightDetect(){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         // Step through the list of recognitions and display info for each one.
         int location = 1; //preset to left
@@ -99,10 +99,10 @@ public class CSVP {
             double centerX = recognition.getImageWidth()/2;
 
             if(recognition.getConfidence() >= 0.70d) {
-                if (x < 370 ) {
+                if (x > centerX ) {
                     location = 3; //right
                 }
-                if (x > 370 ) {
+                if (x < centerX +30 ) {
                     location = 2; //center
                 }
             }
@@ -111,7 +111,7 @@ public class CSVP {
         }   // end for() loop
         //return 0+"null , null;
         return location;
-    }*/
+    }
 
     /**
      * Initialize the TensorFlow Object Detection engine.

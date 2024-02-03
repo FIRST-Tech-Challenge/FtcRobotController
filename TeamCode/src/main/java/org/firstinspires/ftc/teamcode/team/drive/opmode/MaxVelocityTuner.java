@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team.states.drive.opmode;
+package org.firstinspires.ftc.teamcode.team.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team.states.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.team.states.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.team.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.team.drive.SampleMecanumDrive;
 
 import java.util.Objects;
 
@@ -26,7 +26,7 @@ import java.util.Objects;
 @Config
 @Autonomous(group = "drive")
 public class MaxVelocityTuner extends LinearOpMode {
-    public static double RUNTIME = 2.0;
+    public static double RUNTIME = 1.6;
 
     private ElapsedTime timer;
     private double maxVelocity = 0.0;

@@ -24,22 +24,24 @@ public class BlueRightCS extends LinearOpMode {
     private static double dt;
     private static TimeProfiler updateRuntime;
 
+    //Pose2d startPose = new Pose2d(-36.875, -63.5, Math.toRadians(360));
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight.
-    static final Vector2d TrajL0 = new Vector2d(27.3, -1.5);
-    static final Vector2d TrajL1 = new Vector2d(3, 0);
-    static final Vector2d TrajL2 = new Vector2d(3,75);
+    static final Vector2d TrajL0 = new Vector2d(-34.325, 42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL0S = new Vector2d(-33.325, 42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL1 = new Vector2d(-45, 60);           //Goes Back to start Pose
+    static final Vector2d TrajL2 = new Vector2d(3,75);           //turns left to face the backstage goes straight to park
 
-    static final Vector2d TrajC0 = new Vector2d(27,.8);
-    static final Vector2d TrajC1 = new Vector2d(3, 0);
-    static final Vector2d TrajC2 = new Vector2d(3,75);//left parking
+    static final Vector2d TrajC0 = new Vector2d(-36.01, 37); //Goes to place the pixel on spike mark
+    static final Vector2d TrajC1 = new Vector2d(-39.125, 60);   //
+    static final Vector2d TrajC2 = new Vector2d(48, -61);        //
 
-    static final Vector2d TrajR0 = new Vector2d(20.7,-4.5);
-    static final Vector2d TrajR1 = new Vector2d(50, 3);
-    static final Vector2d TrajR2 = new Vector2d(50,80); //right parking
+    static final Vector2d TrajR0 = new Vector2d(-42.27, 42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajR1 = new Vector2d(-39.125, 60);          //
+    static final Vector2d TrajR2 = new Vector2d(50,80);          //
 
-    static final Vector2d TrajS0 = new Vector2d(23,-20);
-    static final Vector2d TrajS1 = new Vector2d(44,-20);
-    static final Vector2d TrajS2 = new Vector2d(65,-20);
+    static final Vector2d TrajS0 = new Vector2d(0,0);            //
+    static final Vector2d TrajS1 = new Vector2d(0,0);            //
+    static final Vector2d TrajS2 = new Vector2d(0,0);            //
 
 
 
@@ -62,11 +64,11 @@ public class BlueRightCS extends LinearOpMode {
 
     State currentState = State.IDLE;
 
-    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
+    Pose2d startPose = new Pose2d(-39.125, 63.5, Math.toRadians(270));
 
     CSVP CSVP;
     int placement = 3;// default to right
-    private static final double MID = 18d;
+    private static final double HIGH = 26d;
 
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
@@ -78,48 +80,50 @@ public class BlueRightCS extends LinearOpMode {
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 
-        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajL0)
-                .turn(Math.toRadians(70))
+                .turn(Math.toRadians(38))
+                .lineTo(TrajL0S)
                 .build();
 
-        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
-                .turn(Math.toRadians(-70))
+
+        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end()) //Turns to normal % comes Back to start Pose
                 .lineTo(TrajL1)
+                .turn(Math.toRadians(-38))
                 .build();
 
-        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end()) //Turns towards the backboard & parks Right of the backboard
                 .turn(Math.toRadians(90))
                 .lineTo(TrajL2)
                 .build();
 
-        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
-                .turn(Math.toRadians(8))
+        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajC0)
                 .build();
 
-        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
+        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end()) //Comes Back and Turns towards the backboard
                 .lineTo(TrajC1)
-                .turn(Math.toRadians(-8))
+                .turn(Math.toRadians(89))
                 .build();
 
-        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
-                .turn(Math.toRadians(90))
+        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end()) //Goes to the Left of the back board turn around 180
+                .turn(Math.toRadians(180))
                 .lineTo(TrajC2)
                 .build();
 
-        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(TrajR0)
-                .turn(Math.toRadians(-47))
+        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
+                .strafeTo(TrajR0)
+                .turn(Math.toRadians(-22))
+                // .lineTo(TrajR0)
                 .build();
 
-        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
-                .turn(Math.toRadians(47))
+        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end()) //Comes Back and Turns towards the backboard
+                .turn(Math.toRadians(22))
                 .lineTo(TrajR1)
                 .build();
 
-        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
-                .turn(Math.toRadians(90))
+        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end()) //Parks to the Right of the backboard
+              //  .turn(Math.toRadians(90))
                 .lineTo(TrajR2)
                 .build();
 
@@ -161,7 +165,7 @@ public class BlueRightCS extends LinearOpMode {
         int count = 0;
         int total = 0;
 
-        recog = CSVP.leftDetect(); //numerical value
+        recog = CSVP.rightDetect(); //numerical value
 
         telemetry.update();
         waitForStart();
@@ -181,7 +185,7 @@ public class BlueRightCS extends LinearOpMode {
 
                    if (detectTimer.milliseconds() > 150) {
                        total++;
-                       recog = CSVP.leftDetect(); //numerical value
+                       recog = CSVP.rightDetect(); //numerical value
                        detectTimer.reset();
 
                        if (recog != oldrecog) {
@@ -204,11 +208,11 @@ public class BlueRightCS extends LinearOpMode {
 
                         }
                         if (count > 4){
-                            currentState = BlueRightCS.State.IDLE;
+                            currentState = BlueRightCS.State.FORWARD;
                         //CSVP.closeVP();
                     }
 
-                        placement = 3;
+                        placement = recog;
                     }
 
                     break;
@@ -230,15 +234,22 @@ public class BlueRightCS extends LinearOpMode {
 
                 case DROP:
                     if(!drive.isBusy()){
-                        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
-                        currentState = State.MOVEBACK;
-                        waitTimer.reset();
+                        if(recog!=1) {
+                            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
+                            currentState = State.MOVEBACK;
+                            waitTimer.reset();
+                        }//for if
+                        else{//when left
+                            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.FASTDROP);
+                            currentState = State.MOVEBACK;
+                            waitTimer.reset();
+                        }//for else
                     }
                     break;
 
                 case MOVEBACK:
-                    //give it 2 seconds to drop before moving back
-                    if(waitTimer.milliseconds() >= 1000) {
+                    //give it .5 seconds to drop before moving back
+                    if(waitTimer.milliseconds() >= 500) {
                         //stop the intake first
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
                         if (placement == 1) {
@@ -248,7 +259,7 @@ public class BlueRightCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR1);
                         }
-                        currentState = State.TOSTAGE;
+                        currentState = State.IDLE;
                         waitTimer.reset();
                     }
                     break;
@@ -268,7 +279,7 @@ public class BlueRightCS extends LinearOpMode {
 
                 case LIFTUP:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().extend(MID);
+                    drive.robot.getLiftSubsystem().extend(HIGH);
                     currentState = State.OUTTAKE;
                     waitTimer.reset();
                     break;
@@ -276,15 +287,16 @@ public class BlueRightCS extends LinearOpMode {
 
 
                 case OUTTAKE:
-                    if(!drive.isBusy() && waitTimer.milliseconds() > 3000){
+                    if(!drive.isBusy() && waitTimer.milliseconds() > 1000){
                         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-                        currentState = State.OUTTAKE;
+                        currentState = State.LIFTDOWN;
                         waitTimer.reset();
                     }
                     break;
 
                 case LIFTDOWN:
                     //lift up at the same time without waiting
+                    drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
                     drive.robot.getLiftSubsystem().retract();
                     currentState = State.IDLE;
                     waitTimer.reset();
@@ -292,6 +304,11 @@ public class BlueRightCS extends LinearOpMode {
 
                 case TOPARK:
                     //add code to park
+                    if(!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(trajL2);
+                    }
+                    currentState = State.IDLE;
+
                     break;
 
                 case TOSTACK:
@@ -299,7 +316,6 @@ public class BlueRightCS extends LinearOpMode {
                     break;
 
                 case IDLE:
-
                     PoseStorage.currentPose = drive.getPoseEstimate();
                     break;
             }

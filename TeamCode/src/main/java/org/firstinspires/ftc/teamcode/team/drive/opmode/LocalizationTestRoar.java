@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team.states.drive.opmode;
+package org.firstinspires.ftc.teamcode.team.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * This is a copy of the Localization file
  * The robot goes half the speed of the Localization test
  */
-import org.firstinspires.ftc.teamcode.team.states.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.team.drive.SampleMecanumDrive;
 
 @TeleOp(name = "LocalizationTestRoar", group = "drive")
 public class LocalizationTestRoar extends LinearOpMode {

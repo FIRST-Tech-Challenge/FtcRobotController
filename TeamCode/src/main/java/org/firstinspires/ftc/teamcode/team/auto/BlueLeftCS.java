@@ -25,15 +25,15 @@ public class BlueLeftCS extends LinearOpMode {
     private static TimeProfiler updateRuntime;
 
     //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight
-    static final Vector2d TrajL0 = new Vector2d(24.4,-1);
-    static final Vector2d TrajL1 = new Vector2d(10, 0);
+    static final Vector2d TrajL0 = new Vector2d(12.525,-1); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL1 = new Vector2d(10, 0);     //Goes to backstage
     static final Vector2d TrajL2 = new Vector2d(10,37);
 
-    static final Vector2d TrajC0 = new Vector2d(25.5,-1.9);
-    static final Vector2d TrajC1 = new Vector2d(10, 0);
+    static final Vector2d TrajC0 = new Vector2d(13,-1.9); //Goes to place the pixel on spike mark
+    static final Vector2d TrajC1 = new Vector2d(10, 0);     //Turns Right and goes back word to drop a pixel on backboard
     static final Vector2d TrajC2 = new Vector2d(10,37);
 
-    static final Vector2d TrajR0 = new Vector2d(23.3, -3.1);
+    static final Vector2d TrajR0 = new Vector2d(23.3, -3.1); //Goes to place the pixel on spike mark
     static final Vector2d TrajR1 = new Vector2d(10,0);
     static final Vector2d TrajR2 = new Vector2d(10, 37);
 
@@ -55,11 +55,11 @@ public class BlueLeftCS extends LinearOpMode {
 
     State currentState = State.IDLE;
     //Old x,y = 23,63
-    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(360));
+    Pose2d startPose = new Pose2d(15.125, 63.5, Math.toRadians(270));
 
     CSVP CSVP;
     int placement = 0;
-    private static final double MID = 18d;
+    private static final double HIGH = 26d;
 
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
@@ -70,7 +70,7 @@ public class BlueLeftCS extends LinearOpMode {
         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
 
-        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajL0)
                 .turn(Math.toRadians(48))
                 .build();
@@ -84,20 +84,20 @@ public class BlueLeftCS extends LinearOpMode {
                 .lineTo(TrajL2)
                 .build();
 
-        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajC0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajC0)
                 .build();
 
-        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
-                .lineTo(TrajC1)
+        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end()) //Outtake points to backboard and robot goes backwords to place
                 .turn(Math.toRadians(-90))
+                .lineTo(TrajC1)
                 .build();
 
         TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
                 .lineTo(TrajC2)
                 .build();
 
-        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajR0)
                 .turn(Math.toRadians(-60))
                 .build();
@@ -210,7 +210,7 @@ public class BlueLeftCS extends LinearOpMode {
 
                 case LIFTUP:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().extend(MID);
+                    drive.robot.getLiftSubsystem().extend(HIGH);
                     currentState = State.OUTTAKE;
                     waitTimer.reset();
                     break;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team.states.drive;
+package org.firstinspires.ftc.teamcode.team.drive;
 
 import androidx.annotation.NonNull;
 
@@ -32,12 +32,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.94882; //was 0.6889764; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 12.3125; // in; distance between the left and right wheels //was 5.4621
+    public static double LATERAL_DISTANCE = 12.8; // in; distance between the left and right wheels //was Actual:12.3125  //SHOULD BE RIGHT
     public static double FORWARD_OFFSET = -7.625; //was -0.5; // in; offset of the lateral wheel //-5.5
 
     private Encoder leftEncoder, rightEncoder, backEncoder;
 
-    public static double X_MULTIPLIER = 0.957; //0.982
+    public static double X_MULTIPLIER = 0.984; //0.982 1.05596620908 0.957//1.06849301725//1.05596620908
     public static double Y_MULTIPLIER = 0.9759464675; //0.9825
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {

@@ -60,7 +60,7 @@ public class CSAutoRobotLIO {
         setMotors(new RevMotor[] {
                 new RevMotor((ExpansionHubMotor)(hardwareMap.get("Lift")), true, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 1.503937), //38.2mm diameter
                 new RevMotor((ExpansionHubMotor)(hardwareMap.get("Intake")), true, false, false, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION()),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Hang")), false, false, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION())
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Hang")), false, false, false, false, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION())
 
         });
 
