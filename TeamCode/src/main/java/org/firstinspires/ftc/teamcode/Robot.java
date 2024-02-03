@@ -174,11 +174,13 @@ public class Robot {
 
         //opMode.sleep(100);
         straightBlocking(4, true, 0.7); //move back 2
+        /*
         if (isRedAlliance) {
             setHeading(-90, 0.7);
         } else {
             setHeading(90, 0.7);
         }
+        */
         trayToIntakePos(true); //intake pos
         moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
@@ -1323,7 +1325,7 @@ public class Robot {
 
         while (opMode.opModeIsActive()) {
 
-            if(lsFront.getCurrentPosition() > 857) {
+            if (lsFront.getCurrentPosition() > 857) {
                 lsStayUpAddPower = 0.1;
             } else if (lsFront.getCurrentPosition() < 856) {
                 lsStayUpAddPower = 0;

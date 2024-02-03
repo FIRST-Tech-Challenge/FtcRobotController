@@ -21,15 +21,22 @@ public class LongRedAuto extends LinearOpMode {
             robot.detectMarkerPosition();
             robot.longMoveToBoard(false);
 
-            //slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
+            robot.closeClamp(false);
+            robot.openHook();
+            robot.setServoPosBlocking(robot.spikeServo, 0.5);
+            sleep(100);
+
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
             // move linear slide up
-            //robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
+            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
 
-            //robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
 
-            //robot.alignToBoardFast();
-            //robot.autoOuttake(false, slideStartingPosition);
+            robot.markerPos = MarkerDetector.MARKER_POSITION.CENTER;
+            robot.wantedAprTagId = 5;
+            robot.alignToBoardFast();
+            robot.autoOuttake(false, slideStartingPosition);
             //robot.parkBot(true);
 
             break;
