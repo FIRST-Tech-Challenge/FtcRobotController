@@ -172,7 +172,7 @@ public class BradBot extends BasicRobot {
     cv.observeSpike();
   }
   public void dropAuto(int servo) {
-    if (queuer.queue(false, queuer.isExecuted())) {
+    if (queuer.queue(false, queuer.isNextExecuted())) {
       //      if (!queuer.isExecuted()) {
       if (servo == 1) {
         claw.moveOne(false);
@@ -216,7 +216,7 @@ public class BradBot extends BasicRobot {
 
   public void lowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-      if (currentPose.getX() > 10) {
+      if (currentPose.getX() > 9) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
         arm.flipTo(DROP);
@@ -235,7 +235,6 @@ public class BradBot extends BasicRobot {
         true, Claw.clawStates.GRAB.getState() && Arm.ArmTargetStates.HOVER.getState())) {
       if (Magazine.pixels == 2
           && !GRAB.state
-          && !Arm.ArmTargetStates.HOVER.getState()
           && lift.getCurrentPosition() < 10
           && Intake.IntakeStates.STOPPED.getState()
           && !gapped) {
@@ -250,10 +249,10 @@ public class BradBot extends BasicRobot {
           && lift.getCurrentPosition() < 20) {
         claw.flipTo(Claw.clawTargetStates.GRAB);
       }
+      if(Claw.clawStates.GRAB.getState()){
+        arm.flipTo(HOVER);
       }
-  }
-  public void drop(int servo){
-
+      }
   }
   public void grabAuto(int servo) {
     if (queuer.queue(false, Claw.clawStates.GRAB.getState())) {
@@ -306,32 +305,32 @@ public class BradBot extends BasicRobot {
   }
 
   public void intakeAuto(int height) {
-    if (queuer.queue(true, Intake.IntakeStates.STOPPED.getState()&&Magazine.pixels==2)) {
+    if (queuer.queue(true, Magazine.pixels==2)) {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
-      if (currentPose.getX()<-30) {
+      if (currentPose.getX()<-49 || intake.intakePath()) {
         if(intake.intakeAutoHeight(height)){
 
         } else if (!intake.intakePath()) {
           Path back = new Path();
           back.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-          back.add(new EndWaypoint(currentPose.getX()+cos(currentPose.getHeading())*-2, currentPose.getY()+sin(currentPose.getHeading())*-2,currentPose.getHeading(),
-                  0.3,0.1,3, 1,toRadians(3)));
+          back.add(new EndWaypoint(currentPose.getX()+cos(currentPose.getHeading())*-3.5, currentPose.getY()+sin(currentPose.getHeading())*-3.5,currentPose.getHeading(),
+                  0.3,0.1,4, 1,toRadians(3)));
 
           loopPPPath(back, true);
           intake.stopIntake();
           intake.setIntakePath(true);
         }
         if(intake.intakePath()){
-          loopPPPath(new Path(), false);
-          if(time - intake.getIntakePathTIme()>1.0){
+          if(time - intake.getIntakePathTIme()>0.6){
             intake.intake();
             intake.setHeight(1);
           }
         }
-
       }
+      loopPPPath(new Path(), false);
+
     }
   }
 
@@ -351,7 +350,7 @@ public class BradBot extends BasicRobot {
   }
 
   public void drop() {
-    if (queuer.queue(false, Claw.clawStates.CLOSE.getState())) {
+    if (queuer.queue(false, queuer.isNextExecuted())) {
 //      if (!queuer.isExecuted()) {
         claw.moveTwo(false);
         claw.moveOne(false);
@@ -441,6 +440,9 @@ public class BradBot extends BasicRobot {
         path.setPathType(PathType.WAYPOINT_ORDERING_CONTROLLED);
         path.init();
         pathFin = false;
+      }
+      if(queuer.isExecuted()&&!equals){
+        queuer.done();
       }
       double[] speeds =
               path.loop(currentPose.getX(), currentPose.getY(), -currentPose.getHeading());
