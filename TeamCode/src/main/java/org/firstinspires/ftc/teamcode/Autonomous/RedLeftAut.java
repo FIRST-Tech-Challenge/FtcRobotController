@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class RedLeftAut extends LinearOpMode {
   int bark = 1;
-  public static double x1 = -39, y1 = -36, h1 = -180, v1 = 0.5, w1 = 0.1, fR1 = 6,bf1 = 2,
+  public static double x1 = -37, y1 = -36, h1 = -180, v1 = 0.5, w1 = 0.1, fR1 = 6,bf1 = 2,
       x2 = -54.5, y2 = -35, h2 = -180, v2 = 0.35, w2 = 0.1, fR2 = 4, bf2 = 1,
       x3 = -54.5, y3 = -36, h3 = -190, v3 = 0.35, w3 = 0.1, fR3 = 2, bf3 = 1,
       xx1 = 9, yy1 = -58, hh1 = -160, vv1 = 1.0, ww1 = 0.2, ffR1 = 8,
@@ -39,11 +39,11 @@ public class RedLeftAut extends LinearOpMode {
             new com.arcrobotics.ftclib.geometry.Pose2d(-38, -60, new Rotation2d(toRadians(-90))));
     toSpike[0] = new Path(start);
     toSpike[0].add(new GeneralWaypoint(-40, -50, toRadians(-70), 0.4, 0.3, 5));
-    toSpike[0].add(new EndWaypoint(-40, -36, toRadians(-70), 0.4, 0.2,5, 1, toRadians(10)));
+    toSpike[0].add(new EndWaypoint(-41, -36, toRadians(-70), 0.4, 0.2,5, 1, toRadians(10)));
     toSpike[1] = new Path(start);
     toSpike[1].add(new EndWaypoint(-39, -41, toRadians(-91), 0.6, 0, 5, 2, toRadians(10)));
     toSpike[2] = new Path(start);
-    toSpike[2].add(new GeneralWaypoint(-36, -46, toRadians(-90), 0.4, 0.3, 5));
+    toSpike[2].add(new GeneralWaypoint(-38, -46, toRadians(-90), 0.4, 0.3, 5));
     toSpike[2].add(new EndWaypoint(x1, y1, toRadians(h1), v1, w1, fR1, bf1, toRadians(10)));
     Path[] spikeToBackdrop = new Path[3];
     Path[] preToStack = new Path[3];
@@ -68,36 +68,38 @@ public class RedLeftAut extends LinearOpMode {
       robot.followPPPath(toSpike[bark]);
       robot.queuer.addDelay(0.9);
       robot.dropAuto(0);
+      robot.queuer.addDelay(0.5);
+      robot.resetAuto();
 
       if (bark == 0) {
         preToStack[0] = new Path();
         preToStack[0].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         preToStack[0].add(new GeneralWaypoint(-33, -58.5, toRadians(-200), 1.0, 0.3, 8));
-        preToStack[0].add(new GeneralWaypoint(16, -58.5, toRadians(-180), 1.0, 0.3, 6));
-        preToStack[0].add(new GeneralWaypoint(39, -31, toRadians(-170), 0.9, 0.3, 6));
+        preToStack[0].add(new GeneralWaypoint(16, -58.5, toRadians(-185), 1.0, 0.3, 6));
+        preToStack[0].add(new GeneralWaypoint(39, -31, toRadians(-180), 0.9, 0.3, 6));
         preToStack[0].add(
-                new EndWaypoint(42, -28, toRadians(-179), 0.5, 0.1, 5, 3, toRadians(10)));
+                new EndWaypoint(42, -28, toRadians(-179), 0.5, 0.3, 5, 3, toRadians(10)));
       }
       if (bark == 1) {
         preToStack[1] = new Path();
         preToStack[1].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         preToStack[1].add(new GeneralWaypoint(-33, -58.5, toRadians(-200), 1.0, 0.3, 8));
-        preToStack[1].add(new GeneralWaypoint(16, -58.5, toRadians(-180), 1.0, 0.3, 6));
-        preToStack[1].add(new GeneralWaypoint(39, -40, toRadians(-170), 0.9, 0.3, 6));
+        preToStack[1].add(new GeneralWaypoint(16, -58.5, toRadians(-185), 1.0, 0.3, 6));
+        preToStack[1].add(new GeneralWaypoint(39, -37, toRadians(-180), 0.9, 0.3, 6));
         preToStack[1].add(
-                new EndWaypoint(42, -36, toRadians(-179), .5, 0.2, 5, 3, toRadians(5)));
+                new EndWaypoint(42, -34, toRadians(-179), .5, 0.3, 6, 3, toRadians(5)));
       }
       if (bark ==2){
         preToStack[2] = new Path();
         preToStack[2].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-        preToStack[2].add(new GeneralWaypoint(-33, -58.5, toRadians(-200), 1.0, 0.3, 8));
+        preToStack[2].add(new GeneralWaypoint(-35, -58.5, toRadians(-200), 1.0, 0.3, 8));
         preToStack[2].add(new GeneralWaypoint(16, -58.5, toRadians(-180), 1.0, 0.3, 6));
         preToStack[2].add(new GeneralWaypoint(39, -45, toRadians(-170), 0.9, 0.3, 6));
         preToStack[2].add(
-                new EndWaypoint(42, -42, toRadians(-179), .5, 0.3, 6, 3, toRadians(5)));
+                new EndWaypoint(42, -42, toRadians(-165), .5, 0.3, 6, 3, toRadians(5)));
       }
 
 
