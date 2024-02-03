@@ -62,7 +62,7 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo outtakeRotation;
     Servo outtakeMovement;
 
-    TouchSensor touchSensor;
+    TouchSensor touchBucket;
 
     boolean clawClosed = true;
     boolean hookEngaged = false;
@@ -75,6 +75,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
     int backSlidesTargetPos = 0;
     int presetBackSlidesTargetPos = 0;
+    double bucketMovedBy = 0;
     boolean outtakeGoingToTransfer;
     double outtakeRotationTarget;
 
@@ -163,7 +164,7 @@ public class AutomatedTeleop extends LinearOpMode {
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
-        touchSensor = hardwareMap.touchSensor.get("touch");
+        touchBucket = hardwareMap.touchSensor.get("touchBucket");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
 
@@ -396,6 +397,10 @@ public class AutomatedTeleop extends LinearOpMode {
             }
             switch (outtakeState){
                 case ReadyToTransfer:
+//                    if (!touchBucket.isPressed()){
+//                        bucketMovedBy = bucketMovedBy + .01;
+//                        outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+//                    }
                     if (gamepad2.x && hookPosition==HookPosition.CLOSED){ // if press x and hook is closed, open hook
                         if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
                             outtakeElapsedTime = new ElapsedTime();
@@ -537,6 +542,7 @@ public class AutomatedTeleop extends LinearOpMode {
             telemetry.addData("back right", rightRearMotor.getCurrentPosition());
             telemetry.addData("front left", leftFrontMotor.getCurrentPosition());
             telemetry.addData("front right", rightFrontMotor.getCurrentPosition());
+            telemetry.addData("TOUCH:", touchBucket.isPressed());
             telemetry.update();
 
             telemetry.update();
