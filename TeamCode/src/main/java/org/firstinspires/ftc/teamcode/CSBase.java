@@ -486,7 +486,7 @@ public abstract class CSBase extends LinearOpMode {
 
     }
 
-    /** Returns whether a tag with the specified ID is currently detected.
+    /** Returns information about a tag with the specified ID if it is currently detected.
      * @param id ID of tag to detect.
      * @return Information about the tag detected. **/
     @Nullable
@@ -501,27 +501,26 @@ public abstract class CSBase extends LinearOpMode {
         return null;
     }
 
-    /** Attempts to detect AprilTag for a specified number of seconds.
-     * @param id AprilTag ID
-     * @param seconds Time in seconds to attempt detection
-     * @return AprilTag information
-     */
+    /** Returns information about a tag with the specified ID if it is detected within a designated timeout period.
+     * @param id ID of tag to detect.
+     * @param timeout Detection timeout (seconds).
+     * @return Information about the tag detected. **/
     @Nullable
-    public AprilTagDetection tagDetections(int id, double seconds) {
-        double ms = seconds * 1000;
+    public AprilTagDetection tagDetections(int id, double timeout) {
+        double ms = timeout * 1000;
         AprilTagDetection a = tagDetections(id);
         int t = (int) runtime.milliseconds() + (int) ms;
-        while (opModeIsActive() && (a == null && runtime.milliseconds() < t)) {
+        while (opModeIsActive() && a == null && (runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
-                break;
+                return a;
             }
         }
-        return a;
+        return null;
     }
 
     /** Aligns the robot in front of the AprilTag.
-     * @param id AprilTag ID
+     * @param id ID of tag to align with.
      */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
