@@ -18,7 +18,12 @@ public class MeepMeepPilesBlue {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
                                         .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
+                                        //.lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
                                         .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
+
+                                        .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
+                                        .back(65)
+                                        .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))
                                         .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)

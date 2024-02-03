@@ -94,17 +94,19 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         State currentState;
 
-        Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
-                .build();
-
-        Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
-                .build();
-
         Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
                 .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
                 .build();
+
+        Trajectory purpleDepositPathL = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
+                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
+                .build();
+
+        Trajectory purpleDepositPathR = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
+                .lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
+                .build();
+
+
 
         Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
                 .back(.5)
@@ -114,17 +116,17 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
                 .build();
 
-        Trajectory yellowDepositPath2 = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+        Trajectory yellowDepositPath2 = drive.trajectoryBuilder(yellowDepositPath1.end(),false)
                 .back(65)
                 .build();
 
-        Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+        Trajectory yellowDepositPathC = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
 
-        Trajectory yellowDepositPathL = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+        Trajectory yellowDepositPathL = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
 
-        Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+        Trajectory yellowDepositPathR = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory park;
