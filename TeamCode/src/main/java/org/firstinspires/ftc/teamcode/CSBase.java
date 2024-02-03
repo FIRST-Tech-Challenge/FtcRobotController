@@ -41,7 +41,7 @@ public abstract class CSBase extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
-    static       double     velocity                = 2000;
+                 double     velocity                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     //static final double     VEL_MODIFIER            = 1.12485939258;
@@ -49,12 +49,12 @@ public abstract class CSBase extends LinearOpMode {
     static final double     M                       = 0.889;
     static final double     TURN_SPEED              = 0.5;
     static final boolean    TURN_TYPE               = false;
-    public final double[]   BOUNDARIES              = {0, 350};
+    static final double[]   BOUNDARIES              = {0, 350};
     static final double     CAR_WASH_POWER          = 1.0;
     spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
-    public static String tfodModelName;
+    public String tfodModelName;
     private AprilTagProcessor tagProcessor;
     private static final int WAIT_TIME = 500;
 
@@ -62,7 +62,10 @@ public abstract class CSBase extends LinearOpMode {
     private static final String[] LABELS = {
             "prop",
     };
-    IMU.Parameters imuParameters;
+    static final IMU.Parameters IMU_PARAMETERS = new IMU.Parameters(new RevHubOrientationOnRobot(
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+    ));
 
     /** Color options for the team prop. Options: r, b, n **/
     public enum color {
@@ -94,11 +97,7 @@ public abstract class CSBase extends LinearOpMode {
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
-        imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-        ));
-        if (!imu.initialize(imuParameters)){
+        if (!imu.initialize(IMU_PARAMETERS)){
             telemetry.addData("IMU","Initialization failed");
         }
         try {
@@ -357,10 +356,10 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Changes the velocity.
-     * @param velocity New velocity value.
+     * @param speed New velocity value.
      */
-    public void setSpeed(double velocity) {
-        CSBase.velocity = velocity;
+    public void setSpeed(double speed) {
+        velocity = speed;
     }
 
     /** Drives the specified number of inches. Negative values will drive backwards.
