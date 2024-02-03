@@ -16,9 +16,7 @@ import org.firstinspires.ftc.teamcode.team.states.OuttakeStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.LiftStateMachine;
 import org.firstinspires.ftc.teamcode.team.states.HangStateMachine;
 
-
-
-@Autonomous(name = "Red Right  CS", group = "RoarAuto")
+@Autonomous(name = "Red Right CS", group = "RoarAuto")
 //right justified
 public class RedRightCS extends LinearOpMode {
     CSBaseLIO drive;
@@ -26,20 +24,29 @@ public class RedRightCS extends LinearOpMode {
     private static double dt;
     private static TimeProfiler updateRuntime;
 
-    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight     Values Need Changing
-    static final Vector2d TrajL0 = new Vector2d(33.325, -36.91);  //Goes to place the pixel on spike mark
-    static final Vector2d TrajL1 = new Vector2d(3, 0);            //Goes back to start pose
-    static final Vector2d TrajL2 = new Vector2d(10,-37);
+    //Pose2d startPose = new Pose2d(-36.875, -63.5, Math.toRadians(360));
+    //Traj0 is spikeLeft, Traj1 is spikeCenter, Traj2 is spikeRight.
+    static final Vector2d TrajL0 = new Vector2d(34.325, -42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL0S = new Vector2d(33.325, -42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajL1 = new Vector2d(45, -60);           //Goes Back to start Pose
+    static final Vector2d TrajL2 = new Vector2d(3,-75);           //turns left to face the backstage goes straight to park
 
-    static final Vector2d TrajC0 = new Vector2d(37.01,-34.865);  //Goes to place the pixel on spike mark
-    static final Vector2d TrajC1 = new Vector2d(36.875, 61);    //Turns Right and goes back word to drop a pixel on backboard Also works for left
-    static final Vector2d TrajC2 = new Vector2d(0,-37);         //Goes to backboard to place pixel
-    static final Vector2d TrajC3 = new Vector2d(0,-37);         //Strafes to the left(middle of field) to park This works for EveryOne
+    static final Vector2d TrajC0 = new Vector2d(36.01, -37); //Goes to place the pixel on spike mark
+    static final Vector2d TrajC1 = new Vector2d(39.125, -60);   //
+    static final Vector2d TrajC2 = new Vector2d(48, -61);        //
 
-    static final Vector2d TrajR0 = new Vector2d(24.4,-1);       //Goes to place the pixel on spike mark
-    static final Vector2d TrajR1 = new Vector2d(35,0);          // Turns and goes to backstage
-    static final Vector2d TrajR2 = new Vector2d(35, -39);       // Not used rn
+    static final Vector2d TrajR0 = new Vector2d(42.27, -42.595); //Goes to place the pixel on spike mark
+    static final Vector2d TrajR1 = new Vector2d(39.125, -60);          //
+    static final Vector2d TrajR2 = new Vector2d(50,-80);          //
+
+    static final Vector2d TrajS0 = new Vector2d(0,0);            //
+    static final Vector2d TrajS1 = new Vector2d(0,0);            //
+    static final Vector2d TrajS2 = new Vector2d(0,0);            //
+
+
+
     ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime detectTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum State {
         IDLE,
@@ -51,7 +58,8 @@ public class RedRightCS extends LinearOpMode {
         LIFTUP,
         OUTTAKE,
         LIFTDOWN,
-        TOPARK
+        TOPARK,
+        TOSTACK
     }
 
     State currentState = State.IDLE;
@@ -59,8 +67,8 @@ public class RedRightCS extends LinearOpMode {
     Pose2d startPose = new Pose2d(15.125, -63.5, Math.toRadians(90));
 
     CSVP CSVP;
-    int placement = 3;
-    private static final double High = 26d;
+    int placement = 3;// default to right
+    private static final double HIGH = 26d;
 
     public void runOpMode() throws InterruptedException {
         setUpdateRuntime(new TimeProfiler(false));
@@ -74,15 +82,18 @@ public class RedRightCS extends LinearOpMode {
 
         TrajectorySequence trajL0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
                 .lineTo(TrajL0)
-                .turn(Math.toRadians(45))
+                .turn(Math.toRadians(38))
+                .lineTo(TrajL0S)
                 .build();
 
-        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end())
+
+        TrajectorySequence trajL1 = drive.trajectorySequenceBuilder(trajL0.end()) //Turns to normal % comes Back to start Pose
                 .lineTo(TrajL1)
-                .turn(Math.toRadians(-45))
+                .turn(Math.toRadians(-38))
                 .build();
 
-        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end())
+        TrajectorySequence trajL2 = drive.trajectorySequenceBuilder(trajL1.end()) //Turns towards the backboard & parks Right of the backboard
+                .turn(Math.toRadians(90))
                 .lineTo(TrajL2)
                 .build();
 
@@ -90,32 +101,48 @@ public class RedRightCS extends LinearOpMode {
                 .lineTo(TrajC0)
                 .build();
 
-        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end())
-                .turn(Math.toRadians(-90))
+        TrajectorySequence trajC1 = drive.trajectorySequenceBuilder(trajC0.end()) //Comes Back and Turns towards the backboard
                 .lineTo(TrajC1)
+                .turn(Math.toRadians(89))
                 .build();
 
-        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end())
+        TrajectorySequence trajC2 = drive.trajectorySequenceBuilder(trajC1.end()) //Goes to the Left of the back board turn around 180
+                .turn(Math.toRadians(180))
                 .lineTo(TrajC2)
                 .build();
 
-        TrajectorySequence trajC3 = drive.trajectorySequenceBuilder(trajC2.end())
-                .lineTo(TrajC3)
-                .build();
-
         TrajectorySequence trajR0 = drive.trajectorySequenceBuilder(startPose) //Start pose to spike mark
-                .lineTo(TrajR0)
-                .turn(Math.toRadians(-49))
+                .strafeTo(TrajR0)
+                .turn(Math.toRadians(-22))
+                // .lineTo(TrajR0)
                 .build();
 
-        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end())
-                .turn(Math.toRadians(49))
+        TrajectorySequence trajR1 = drive.trajectorySequenceBuilder(trajR0.end()) //Comes Back and Turns towards the backboard
+                .turn(Math.toRadians(22))
                 .lineTo(TrajR1)
                 .build();
 
-        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end())
+        TrajectorySequence trajR2 = drive.trajectorySequenceBuilder(trajR1.end()) //Parks to the Right of the backboard
+                //  .turn(Math.toRadians(90))
                 .lineTo(TrajR2)
                 .build();
+
+        TrajectorySequence trajS0 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS0)
+//                .turn(Math.toRadians(70))
+                .build();
+
+        TrajectorySequence trajS1 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS1)
+//                .turn(Math.toRadians(70))
+                .build();
+
+        TrajectorySequence trajS2 = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(TrajS2)
+//                .turn(Math.toRadians(70))
+                .build();
+
+
 
         drive.getExpansionHubs().update(getDt());
 
@@ -133,11 +160,16 @@ public class RedRightCS extends LinearOpMode {
         telemetry.addData("Initialize Time Seconds", (t2 - t1));
         telemetry.update();
 
+        int recog = 0;
+        int oldrecog = 0;
+        int count = 0;
+        int total = 0;
 
-        int recog;
+        recog = CSVP.rightDetect(); //numerical value
 
         telemetry.update();
         waitForStart();
+        waitTimer.reset();
 
         if (isStopRequested()) return;
         currentState = State.WAIT0;
@@ -150,19 +182,46 @@ public class RedRightCS extends LinearOpMode {
 
                 case WAIT0:
                     telemetry.addLine("in the wait0 state");
-                    recog = CSVP.rightDetect(); //numerical value
 
-                    if (waitTimer.milliseconds() > 4000) {
-                        currentState = RedRightCS.State.FORWARD;
-                        CSVP.closeVP();
+                    if (detectTimer.milliseconds() > 150) {
+                        total++;
+                        recog = CSVP.rightDetect(); //numerical value
+                        detectTimer.reset();
+
+                        if (recog != oldrecog) {
+                            oldrecog = recog;
+                            count = 1;
+                            //telemetry.addLine("located" + recog);
+                        } else{
+                            count++;
+                            //telemetry.addLine("located" + recog + " many times: " + count);
+                        }
+                    }
+
+                    if (waitTimer.milliseconds() > 4000 ) {
+                        if (count > 4) {
+                            telemetry.addLine("detections: "+total);
+                            telemetry.addLine(" located: " + recog + " many times: " + count);
+                        } else {
+                            telemetry.addLine("more then than 4 seconds");
+                            telemetry.addLine("located" + recog + " many times: " + count);
+
+                        }
+                        if (count > 4){
+                            currentState = RedRightCS.State.FORWARD;
+                            //CSVP.closeVP();
+                        }
+
                         placement = recog;
                     }
+
                     break;
 
                 case FORWARD:
                     if (placement == 1) {
                         telemetry.addLine("Left");
                         drive.followTrajectorySequenceAsync(trajL0);
+
                     } else if (placement == 2) {
                         telemetry.addLine("Center");
                         drive.followTrajectorySequenceAsync(trajC0);
@@ -175,14 +234,21 @@ public class RedRightCS extends LinearOpMode {
 
                 case DROP:
                     if(!drive.isBusy()){
-                        drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
-                        currentState = State.MOVEBACK;
-                        waitTimer.reset();
+                        if(recog!=1) {
+                            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.DROP);
+                            currentState = State.MOVEBACK;
+                            waitTimer.reset();
+                        }//for if
+                        else{//when left
+                            drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.FASTDROP);
+                            currentState = State.MOVEBACK;
+                            waitTimer.reset();
+                        }//for else
                     }
                     break;
 
                 case MOVEBACK:
-                    //give it 2 seconds to drop before moving back
+                    //give it .5 seconds to drop before moving back
                     if(waitTimer.milliseconds() >= 500) {
                         //stop the intake first
                         drive.robot.getIntakeSubsystem().getStateMachine().updateState(IntakeStateMachine.State.IDLE);
@@ -192,7 +258,6 @@ public class RedRightCS extends LinearOpMode {
                             drive.followTrajectorySequenceAsync(trajC1);
                         } else {
                             drive.followTrajectorySequenceAsync(trajR1);
-
                         }
                         currentState = State.IDLE;
                         waitTimer.reset();
@@ -208,33 +273,46 @@ public class RedRightCS extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(trajR2);
                         }
-                        currentState = State.LIFTUP;
+                        currentState = State.IDLE;
                     }
                     break;
 
                 case LIFTUP:
                     //lift up at the same time without waiting
-                    drive.robot.getLiftSubsystem().extend(High);
+                    drive.robot.getLiftSubsystem().extend(HIGH);
                     currentState = State.OUTTAKE;
                     waitTimer.reset();
                     break;
 
+
+
                 case OUTTAKE:
-                    if(!drive.isBusy() && waitTimer.milliseconds() > 3000){
+                    if(!drive.isBusy() && waitTimer.milliseconds() > 1000){
                         drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.RELEASE);
-                        currentState = State.OUTTAKE;
+                        currentState = State.LIFTDOWN;
                         waitTimer.reset();
                     }
                     break;
 
                 case LIFTDOWN:
                     //lift up at the same time without waiting
+                    drive.robot.getOuttakeSubsystem().getStateMachine().updateState(OuttakeStateMachine.State.PICKUP);
                     drive.robot.getLiftSubsystem().retract();
                     currentState = State.IDLE;
                     waitTimer.reset();
                     break;
 
                 case TOPARK:
+                    //add code to park
+                    if(!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(trajL2);
+                    }
+                    currentState = State.IDLE;
+
+                    break;
+
+                case TOSTACK:
+                    //add code to stack
                     break;
 
                 case IDLE:
