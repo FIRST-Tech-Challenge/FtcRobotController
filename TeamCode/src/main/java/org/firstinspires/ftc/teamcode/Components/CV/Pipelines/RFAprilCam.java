@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 10, NUMBER_OF_SAMPLES = 10;
+  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 5, NUMBER_OF_SAMPLES = 20;
   public static int EXPOSURE_MS = 4, GAIN = 45;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;

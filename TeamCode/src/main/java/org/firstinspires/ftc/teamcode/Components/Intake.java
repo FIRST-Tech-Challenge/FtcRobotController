@@ -324,7 +324,7 @@ public class Intake extends RFMotor {
       pixeled = false;
       stopped = false;
     }
-    if(stopped&& time-reverseTime>0.5){
+    if(stopped&& time-reverseTime>1.0){
       stopIntake();
       intakePath=false;
     }
