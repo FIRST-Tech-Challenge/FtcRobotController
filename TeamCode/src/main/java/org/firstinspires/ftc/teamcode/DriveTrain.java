@@ -646,7 +646,7 @@ public class DriveTrain {
     public void leftBlueFarRedClose() {
         moveBackward(20, 0.5);
         Wait(.5);
-        turnClockwise(92, 0.5);
+        turnCounterClockwise(92, 0.5);
         Wait(.5);
         moveBackward(3, 0.5);
         Wait(.5);
