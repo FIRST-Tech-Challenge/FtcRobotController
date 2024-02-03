@@ -1022,8 +1022,6 @@ public class Robot {
 
                 // P8: (120, 35)
 
-                // Measured P8: (124, 39)
-
                 break;
 
             }
@@ -1587,7 +1585,7 @@ public class Robot {
     }
 
     public void stackAttachmentOut() {
-        stackAttachment.setPosition(0.8);
+        stackAttachment.setPosition(0.7);
     }
 
     public void stackAttachmentIn() {
@@ -2130,5 +2128,4 @@ public class Robot {
         }
 
     }
-
 }
