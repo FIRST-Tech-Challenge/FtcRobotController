@@ -1,3 +1,4 @@
+Naming scheme: camelCase, ex. "frontRight"
 Motors:
 control hub:
 3:frontRight
