@@ -33,8 +33,6 @@ public class LongRedAuto extends LinearOpMode {
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
 
-            robot.markerPos = MarkerDetector.MARKER_POSITION.CENTER;
-            robot.wantedAprTagId = 5;
             robot.alignToBoardFast();
             robot.autoOuttake(false, slideStartingPosition);
             //robot.parkBot(true);

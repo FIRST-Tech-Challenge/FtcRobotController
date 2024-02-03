@@ -887,16 +887,12 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                opMode.sleep(5000);
-
                 // P4: (43.5, 60)
 
                 straightBlocking2FixHeading(-76.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (120, 60)
-
-                opMode.sleep(5000);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-30);
