@@ -37,6 +37,8 @@ public class CenterStagePilesBlue extends LinearOpMode {
         UNTURN,
         BACKUP_FROM_SPIKES,
 
+        YELLOW_DEPOSIT_PATH1,
+        YELLOW_DEPOSIT_PATH2,
         YELLOW_DEPOSIT_PATH,
         YELLOW_DEPOSIT_STRAIGHT,
         YELLOW_DEPOSIT,
@@ -108,21 +110,22 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .back(.5)
                 .build();
 
-        Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
+        Trajectory yellowDepositPath1 = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
                 .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
+                .build();
+
+        Trajectory yellowDepositPath2 = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
                 .back(65)
+                .build();
+
+        Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory yellowDepositPathL = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
-                .back(65)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
-                .back(65)
                 .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
-
 
         Trajectory park;
 
@@ -187,6 +190,18 @@ public class CenterStagePilesBlue extends LinearOpMode {
                     break;
                 case BACKUP_FROM_SPIKES:
                     if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(yellowDepositPath1);
+                        currentState = State.YELLOW_DEPOSIT_PATH1;
+                    }
+                    break;
+                case YELLOW_DEPOSIT_PATH1:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(yellowDepositPath2);
+                        currentState = State.YELLOW_DEPOSIT_PATH2;
+                    }
+                    break;
+                case YELLOW_DEPOSIT_PATH2:
+                    if (!drive.isBusy()) {
                         if (propPos == PropFindBlue.pos.LEFT){
                             drive.followTrajectoryAsync(yellowDepositPathL);
                         } else if (propPos == PropFindBlue.pos.RIGHT){
@@ -201,9 +216,8 @@ public class CenterStagePilesBlue extends LinearOpMode {
 //                        target= CSCons.OuttakePosition.LOW.getTarget();
 //                        drive.intakeToTransfer();
 //                        drive.outtakeToBackdrop();
-                     }
+                    }
                     break;
-
                 case YELLOW_DEPOSIT_PATH:
                     if (!drive.isBusy() ) {
                         currentState = State.YELLOW_DEPOSIT_STRAIGHT;
