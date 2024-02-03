@@ -17,6 +17,7 @@ public class ProgrammingBoard {
     private static DcMotor armMotor;
 
     private static Servo clawServo;
+    private static Servo wristServo;
 
     // Defines the motors.
 
@@ -51,6 +52,7 @@ public class ProgrammingBoard {
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         clawServo = hwMap.get(Servo.class, "clawServo");
+        wristServo = hwMap.get(Servo.class, "wristServo");
 
     }
 
@@ -70,6 +72,8 @@ public class ProgrammingBoard {
     public void setArmPower(double armPower) {armMotor.setPower(armPower);}
 
     public void setClawServo (double clawAngle) {clawServo.setPosition(clawAngle);}
+
+    public void setWristServo (double wristAngle) {wristServo.setPosition(wristAngle);}
 
 
 

@@ -71,7 +71,21 @@ public class CompetitionCode extends OpMode {
 // Set arm and intake power based off variables defined above.
         Board.setIntakePower(intakePower);
         Board.setArmPower(armPower);
-        Board.setClawServo(1);
+
+        if (gamepad1.x) {
+            Board.setClawServo(-1);
+            telemetry.addLine("x pressed");
+        } else if (gamepad1.b) {
+            Board.setClawServo(0);
+            telemetry.addLine("b pressed");
+        }
+
+        if (gamepad1.dpad_up) {
+            Board.setWristServo(1);
+        } else if (gamepad1.dpad_down) {
+            Board.setWristServo(0);
+        }
+
         // Servo supposedly measured where 1 unit = 180 degrees
 
 // This function sends the game pad inputs to the Traction class.
