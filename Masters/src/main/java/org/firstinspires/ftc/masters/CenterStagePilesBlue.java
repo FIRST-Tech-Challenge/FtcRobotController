@@ -113,7 +113,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         Trajectory yellowDepositPath1 = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-35, 8, Math.toRadians(180)))
                 .build();
 
         Trajectory yellowDepositPath2 = drive.trajectoryBuilder(yellowDepositPath1.end(),false)
