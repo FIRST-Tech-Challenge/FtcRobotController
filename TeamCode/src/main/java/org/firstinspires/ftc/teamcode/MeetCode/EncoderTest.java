@@ -62,31 +62,8 @@ public class EncoderTest extends LinearOpMode {
 ////        sleep(1000);
         int i = 0;
         while (opModeIsActive()) {
-            if (i == 0) {
-                telemetry.addData("Cascade power: ", robot.cascadeMotorLeft.getPower());
-                telemetry.update();
-                robot.cascadeLock(850);
-                while (robot.cascadeMotorLeft.getCurrentPosition() < 830)
-                    sleep(100);
-                robot.arm.setTargetPosition(585);
-                robot.arm.setMode(RUN_TO_POSITION);
-                robot.arm.setPower(0.3);
-                sleep(1000);
-                robot.claw.setPosition(0.6);
-                sleep(2000);
-                robot.claw.setPosition(0);
-                robot.arm.setTargetPosition(0);
-//                robot.arm.setMode(RUN_TO_POSITION);
-//                robot.arm.setPower(0.3);
-                i++;
 
-//                robot.turnOffEncodersCascade();
-            }
-            telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
-            telemetry.addData("Wrist: ", robot.wrist.getPosition());
-        telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800
-        telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
-        telemetry.update();
+
 
         }
 //        robot.resetEncodersCascade();

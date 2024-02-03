@@ -86,7 +86,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
     double  drive           = 0;        // Desired forward power/speed (-1 to +1)
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
-    private int ticksForCascade = 820;
+    private int ticksForCascade = 920;
     private double DESIRED_STRAFE = 0;
     String park = "";
 
@@ -121,7 +121,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.3);
-        robot.wrist.setPosition(1);
+        robot.wrist.setPosition(0.675);
         robot.claw.setPosition(0);
 
 
@@ -179,17 +179,19 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             robot.timer.reset();
 //
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
+            sleep(500);
+            robot.encoderDrive(3.5);
             sleep(500);
             robot.claw.setPosition(.47);
             sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -234,21 +236,23 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
             telemetry.update();
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
+            robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
+            sleep(500);
+            robot.encoderDrive(3.5);
             sleep(500);
             robot.claw.setPosition(.47);
             sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -294,21 +298,23 @@ public class CustomAutoCloseBlue extends LinearOpMode {
             telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
             telemetry.update();
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 2);
+            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
+            sleep(500);
+            robot.encoderDrive(3.5);
             sleep(500);
             robot.claw.setPosition(.47);
             sleep(500);
-            robot.claw.setPosition(0.5);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);

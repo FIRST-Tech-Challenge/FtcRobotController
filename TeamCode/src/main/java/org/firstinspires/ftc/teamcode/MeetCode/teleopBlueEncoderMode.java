@@ -19,7 +19,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+//speed up everything
+//faster when driving regularly, slower when picking up and dropping pixel
+//
 
 @TeleOp(name = "encoderBlueTeleop")
 public class teleopBlueEncoderMode extends LinearOpMode {
@@ -92,7 +94,7 @@ public class teleopBlueEncoderMode extends LinearOpMode {
                     desiredTag = detection;
                     break;  // don't look any further.
                 } else {
-//                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
             }
             cascadeMotorPower = Range.clip(cascadeMotorPower, -.1, .8);
@@ -188,9 +190,19 @@ public class teleopBlueEncoderMode extends LinearOpMode {
             else if (gamepad2.dpad_down) {
                 robot.wrist.setPosition(.385);
             }
-//
+//            if (gamepad2.left_trigger > .3) {
+//                robot.wrist.setPosition(robot.wrist.getPosition() - 0.01);
+//                sleep(200);
+//            }
+//            else if (gamepad2.right_trigger > .3) {
+//                robot.wrist.setPosition(robot.wrist.getPosition() + 0.01);
+//                sleep(200);
+//            }
             else if (gamepad1.dpad_up) {
                 robot.launch.setPosition(1);
+            }
+            else if (gamepad2.dpad_left) {
+                robot.wrist.setPosition(.485);
             }
             else if (gamepad1.dpad_right) {
                 robot.dropper.setPosition(.3);

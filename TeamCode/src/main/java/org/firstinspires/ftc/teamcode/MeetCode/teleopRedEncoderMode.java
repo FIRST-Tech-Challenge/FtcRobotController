@@ -20,7 +20,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
+//speed up everything
+//faster when driving regularly, slower when picking up and dropping pixel
+//make the cascade go up when driving and get rid of the bug with the encoders and the claw/wrist
 @TeleOp(name = "encoderRedTeleop")
 public class teleopRedEncoderMode extends LinearOpMode {
     double cascadeMotorPower;
@@ -125,6 +127,9 @@ public class teleopRedEncoderMode extends LinearOpMode {
                 drive = gamepad1.left_stick_y / 1;  // Reduce drive rate to 50%.
                 strafe = gamepad1.left_stick_x / 1;  // Reduce strafe rate to 50%.
                 turn = -gamepad1.right_stick_x / 1.5;  // Reduce turn rate to 33%.
+//                if (robot.wrist.getPosition() == .385) {
+//                    drive = gamepad1.left_stick_x
+//                }
 //                telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             }
 
@@ -188,14 +193,14 @@ public class teleopRedEncoderMode extends LinearOpMode {
             else if (gamepad2.dpad_down) {
                 robot.wrist.setPosition(.385);
             }
-            if (gamepad2.left_trigger > .3) {
-            robot.wrist.setPosition(robot.wrist.getPosition() - 0.01);
-            sleep(200);
-            }
-            else if (gamepad2.right_trigger > .3) {
-                robot.wrist.setPosition(robot.wrist.getPosition() + 0.01);
-                sleep(200);
-            }
+//            if (gamepad2.left_trigger > .3) {
+//            robot.wrist.setPosition(robot.wrist.getPosition() - 0.01);
+//            sleep(200);
+//            }
+//            else if (gamepad2.right_trigger > .3) {
+//                robot.wrist.setPosition(robot.wrist.getPosition() + 0.01);
+//                sleep(200);
+//            }
             else if (gamepad1.dpad_up) {
                 robot.launch.setPosition(1);
             }

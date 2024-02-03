@@ -85,7 +85,7 @@ public class AprilTagTest extends LinearOpMode
     // Adjust these numbers to suit your robot.
 
     Hardware robot = new Hardware();
-    final double DESIRED_DISTANCE = 8; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 8.5; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -196,13 +196,22 @@ public class AprilTagTest extends LinearOpMode
                 strafe = gamepad1.left_stick_x / 1.5;  // Reduce strafe rate to 50%.
                 turn = -gamepad1.right_stick_x / 2;  // Reduce turn rate to 33%.
                 telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
+                telemetry.addData("Wrist: ", robot.wrist.getPosition());
+                telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800
+                telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
+                telemetry.update();
             }
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
             sleep(10);
-
+            telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
+            telemetry.addData("Wrist: ", robot.wrist.getPosition());
+            telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800
+            telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
+            telemetry.update();
         }
     }
 

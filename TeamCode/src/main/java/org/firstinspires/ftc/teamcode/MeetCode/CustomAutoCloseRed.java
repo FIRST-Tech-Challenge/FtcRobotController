@@ -79,7 +79,7 @@ public class CustomAutoCloseRed extends LinearOpMode {
     final double MAX_AUTO_TURN  = 0.5;
 
     private  int DESIRED_TAG_ID = -1;
-    private int ticksForCascade = 820;
+    private int ticksForCascade = 920;
     private double DESIRED_STRAFE = 0;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
@@ -124,7 +124,7 @@ public class CustomAutoCloseRed extends LinearOpMode {
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.3);
-        robot.wrist.setPosition(1);
+        robot.wrist.setPosition(0.675);
         robot.claw.setPosition(0);
 
 
@@ -171,7 +171,7 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 4){
+            while (robot.timer.seconds() < 3.5){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -184,13 +184,17 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.cascadeLock(ticksForCascade);
             while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
             sleep(500);
-            robot.claw.setPosition(.6);
+            robot.encoderDrive(3.5);
+            sleep(500);
+            robot.claw.setPosition(.47);
+            sleep(500);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -238,13 +242,17 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.cascadeLock(ticksForCascade);
             while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
             sleep(500);
-            robot.claw.setPosition(.6);
+            robot.encoderDrive(3.5);
+            sleep(500);
+            robot.claw.setPosition(.47);
+            sleep(500);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
@@ -268,7 +276,7 @@ public class CustomAutoCloseRed extends LinearOpMode {
         }
         else{
             DESIRED_TAG_ID = 4;
-            robot.encoderDrive(26.5);
+            robot.encoderDrive(26.75);
             sleep(100);
             robot.encoderStrafeLeft(14.5);
             sleep(250);
@@ -295,13 +303,17 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.cascadeLock(ticksForCascade);
             while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
+            robot.arm.setTargetPosition(450);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(.3);
             sleep(1000);
-            robot.encoderDrive(4);
+            robot.wrist.setPosition(0.58);
             sleep(500);
-            robot.claw.setPosition(.6);
+            robot.encoderDrive(3.5);
+            sleep(500);
+            robot.claw.setPosition(.47);
+            sleep(500);
+            robot.claw.setPosition(0.8);
             sleep(500);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
