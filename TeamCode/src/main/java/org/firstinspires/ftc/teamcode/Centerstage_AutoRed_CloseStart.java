@@ -99,12 +99,48 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
 
         if (opModeIsActive()) {
             PlaceFirstPixel();
+            setupRobotToPlaceSecondPixel();
         }
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
+
+    private void setupRobotToPlaceSecondPixel() {
+        eatYellowPixel();
+        faceBackdrop();
+    }
+
+    private void faceBackdrop() {
+        if (desiredTag == 2) { // This turns the robot to the backboard if it is in the center position
+            gobbler.driveTrain.turnClockwise(-180, 0.5);
+        } else if (desiredTag == 1) { // This turns the robot to the backboard if it is in the right position
+            gobbler.driveTrain.moveBackward(3, 0.5);
+            gobbler.driveTrain.Wait(3.0);
+            gobbler.driveTrain.turnClockwise(-180, 0.5);
+        } else { // This turns the robot to the backboard if it is in the left positions
+            gobbler.driveTrain.turnCounterClockwise(-90, 0.5);
+        }
+    }
+    private void eatYellowPixel() {
+        lowerMailbox();
+        gobbler.driveTrain.Wait(1.0);
+        movePixelIntoMailbox();
+    }
+
+    private void movePixelIntoMailbox() {
+        gobbler.intake.turnOnConveyorBelt();
+        gobbler.driveTrain.Wait(5.0);
+        gobbler.intake.turnOffConveyorBelt();
+    }
+
+    private void lowerMailbox() {
+        gobbler.outtake.driveLift(0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+    }
 
     private void IdentifyTeamPropLocation() {
         seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape

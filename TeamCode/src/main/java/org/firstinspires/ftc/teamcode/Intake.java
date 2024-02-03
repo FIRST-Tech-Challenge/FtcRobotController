@@ -44,6 +44,14 @@ public class Intake {
         }
     }
 
+    public void turnOffConveyorBelt() {
+        conveyorMotor.setPower(0.0);
+    }
+
+    public void turnOnConveyorBelt() {
+        conveyorMotor.setPower(1.0);
+    }
+
     public void intakeDown(boolean down) {
         if (down) {
             intakeServo.setPosition(1.0);

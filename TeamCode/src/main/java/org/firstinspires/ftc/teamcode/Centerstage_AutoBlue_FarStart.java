@@ -242,7 +242,7 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
 //        }
 //        //Place first pixel
 //
-//        PlacePixelOnTape();
+        PlacePixelOnTape();
 //
 //        // Push telemetry to the Driver Station.
 //        telemetry.update();
