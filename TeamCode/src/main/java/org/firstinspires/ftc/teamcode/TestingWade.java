@@ -17,6 +17,8 @@ public class TestingWade extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
+        double slideStartingPosition;
+
 
         //double trayAngle = 0.52;
 
@@ -26,46 +28,15 @@ public class TestingWade extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            //robot.straightBlocking2(-30);
+            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
-            robot.stackAttachment.setPosition(0.5);
-
-            /*
-            if(gamepad1.a){
-                robot.trayAngle.setPosition(trayAngle += 0.01);
-            } else if (gamepad1.b){
-                robot.trayAngle.setPosition(trayAngle -= 0.01);
-            }
-
-            telemetry.addData("tray angle position servo", trayAngle);
-            telemetry.addData("imu", robot.getCurrentHeading());
-            Log.d("trayAngle", trayAngle + "tray" + robot.getCurrentHeading() + "heading");
-            */
-
-            /*robot.mecanumBlocking2(36); // right
-            this.sleep(2000);
-            robot.mecanumBlocking2(-36); // left
-            this.sleep(2000);*/
-
-            /*
-            robot.mecanumBlockingFixHeading(-24); //2 motors
-            this.sleep(2000);
-            robot.mecanumBlockingFixHeading(24);
-            this.sleep(2000);
-            */
-
-            //robot.mecanumBlockingTwoMotors(-24);
-            //this.sleep(2000);
-            //robot.mecanumBlockingTwoMotors(24);
-            //this.sleep(2000);
-
-            /*
-            robot.setHeading2(90);
-            this.sleep(2000);
-            robot.setHeading2(0);
-            this.sleep(2000);
-            */
-
+            // move linear slide up
+            robot.trayToIntakePos(true);
+            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
+            sleep(2000);
+            robot.trayToOuttakePos(true);
+            sleep(2000);
+            break;
         }
     }
 }
