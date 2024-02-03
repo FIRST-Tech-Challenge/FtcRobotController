@@ -41,6 +41,8 @@ public class Robot {
     Servo hook;
     DcMotor planeLauncher;
     Servo planeLauncherServo;
+    double planeServoDisengage = 0.73;
+
     Servo spikeServo;
     Servo trayAngle;
     IMU imu;
@@ -1262,7 +1264,7 @@ public class Robot {
         trayToIntakePos(true);
         opMode.sleep(100);
         planeLauncher.setPower(0);
-        planeLauncherServo.setPosition(0.8);
+        planeLauncherServo.setPosition(planeServoDisengage);
         //planeLauncher.setPosition(0.6);
         moveLinearSlideByTicksBlocking(0);
     }
@@ -1306,15 +1308,15 @@ public class Robot {
 
         boolean linearSlideFlag = false;
 
-        final long KONSTANT_TIME_GAP = 100;
-        double launcherSpeed = 0.5;
+        final long KONSTANT_TIME_GAP_MILLISECONDS = 100;
+        double launcherSpeedTarget = 0.49;
         //max power = 2800ticks/sec
-        double targetVelocity = ((2800/(1000/KONSTANT_TIME_GAP)*launcherSpeed));
+        //6000rpm rotations per second = 6000/60 rotation per millisecond = (6000/60)/1000 ticks per millisecond = 0.1*28
+        final double targetVelocity = ((0.028*KONSTANT_TIME_GAP_MILLISECONDS)*launcherSpeedTarget);
         double currentVelocity;
-        double planeLauncherPower = 0.5;
+        double initialPlaneLauncherPower = 0.2;
         double planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
         double planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
-        boolean wasPressed = false;
         ElapsedTime timeSincePressed = new ElapsedTime();
         double timeSincePressedRounded = Math.round(timeSincePressed.time());
         timeSincePressed.reset();
@@ -1352,45 +1354,39 @@ public class Robot {
                 slowMode = false;
             }
 
-            /** DELETE COMMENT LATER
-             *
-             *
-             *
-             *
-             *
-             */
-
             // both bumper launches drone
             if (gamepad1.right_bumper && gamepad1.left_bumper) {
-                planeLauncher.setPower(planeLauncherPower);
+                while (true) {
+                    planeLauncher.setPower(initialPlaneLauncherPower);
 
-                timeSincePressed.reset();
-                planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
+                    planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
 
-                opMode.sleep(KONSTANT_TIME_GAP);
+                    opMode.sleep(KONSTANT_TIME_GAP_MILLISECONDS);
 
-                planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
-                planeLauncherTicksAfterSleep = planeLauncherTicksBeforeSleep - planeLauncherTicksAfterSleep;
-                currentVelocity = Math.abs(planeLauncherTicksAfterSleep/KONSTANT_TIME_GAP/1000);
+                    planeLauncherTicksAfterSleep = planeLauncher.getCurrentPosition();
+                    planeLauncherTicksAfterSleep = planeLauncherTicksBeforeSleep - planeLauncherTicksAfterSleep;
+                    currentVelocity = Math.abs(planeLauncherTicksAfterSleep / KONSTANT_TIME_GAP_MILLISECONDS);
 
-                if (currentVelocity < targetVelocity) {
-                    planeLauncherPower -= 0.05;
+                    if ((currentVelocity >= targetVelocity) || (initialPlaneLauncherPower >= 1)) {
+                        //launch
+                        planeLauncherServo.setPosition(0.45);
+                        Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
+                        opMode.sleep(1000);
+                        break;
+                    } else {
+                        initialPlaneLauncherPower += 0.05;
 
-                    Log.d("drone", "current velocity: " + currentVelocity + "target velocity: " + targetVelocity);
-                    telemetry.addData("currentVelocity: ", currentVelocity);
-                    telemetry.addData("targetVelocity: ", currentVelocity);
+                        Log.d("drone", "current velocity: " + currentVelocity + "target velocity: " + targetVelocity + "current power" + initialPlaneLauncherPower);
+                        telemetry.addData("currentVelocity: ", currentVelocity);
+                        telemetry.addData("targetVelocity: ", targetVelocity);
 
-                } else if(currentVelocity >= targetVelocity || planeLauncherPower >= 1){
-                    //launch
-                    planeLauncherServo.setPosition(0.45);
-                    Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
+                    }
                 }
             } else {
                 planeLauncher.setPower(0);
                 //not launch
-                planeLauncherServo.setPosition(0.8);
+                planeLauncherServo.setPosition(planeServoDisengage);
             }
-            wasPressed = true;
 
             //setting forward and mecanum based on where the front is
             straight = gamepad1.left_stick_y * frontFacing * -1;
