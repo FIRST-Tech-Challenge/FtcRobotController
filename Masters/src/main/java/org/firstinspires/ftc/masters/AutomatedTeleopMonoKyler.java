@@ -239,6 +239,14 @@ public class AutomatedTeleopMonoKyler extends LinearOpMode {
             switch (driveMode) {
                 case NORMAL:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    if (gamepad1.y){
+                        planeRaise.setPosition(CSCons.droneShooting);
+                        ElapsedTime elapsedTime= new ElapsedTime();
+                        while (elapsedTime.time(TimeUnit.MILLISECONDS)<500 && opModeIsActive()){
+
+                        }
+                        planeRaise.setPosition((CSCons.droneFlat));
+                    }
                     break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -488,10 +496,6 @@ public class AutomatedTeleopMonoKyler extends LinearOpMode {
                     break;
             }
 
-            if (gamepad1.a ) {
-                clawPosition = ClawPosition.TRANSFER;
-                clawServo.setPosition(CSCons.clawTransfer);
-            }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
             telemetry.addData("left x", gamepad1.left_stick_x);

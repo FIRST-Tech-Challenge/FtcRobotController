@@ -17,16 +17,13 @@ public class MeepMeepPilesBlue {
 
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
+                                        .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
+                                        //.lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
+                                        .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
 
-                                        // Left Works
-                                        .turn(Math.toRadians(-13))
-                                        .turn(Math.toRadians(13))
-                                        .forward(40)
-                                        .splineToLinearHeading(new Pose2d(-16, 11, Math.toRadians(180)), Math.toRadians(0))
-                                        .back(55)
-                                        .strafeRight(30)
-                                        .strafeLeft(30)
-                                        .forward(55)
+                                        .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(180)))
+                                        .back(65)
+                                        .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))
                                         .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)

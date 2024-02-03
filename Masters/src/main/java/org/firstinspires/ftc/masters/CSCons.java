@@ -11,7 +11,7 @@ public class CSCons {
     public static double pixelDetectThreshold = 350;
     public static double clawOpen = 0.4;
     public static double clawClosed = 0.75;
-    public static double clawTransfer = 0.65;
+    public static double clawTransfer = 0.59; // .65
     public static double clawAngleGroundToThree = .98;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .34;
