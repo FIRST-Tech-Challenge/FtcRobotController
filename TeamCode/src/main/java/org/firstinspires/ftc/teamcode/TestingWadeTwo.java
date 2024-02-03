@@ -16,15 +16,24 @@ public class TestingWadeTwo extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setUpDrivetrainMotors();
+        robot.setUpIntakeOuttake();
 
         waitForStart();
 
-
         while (opModeIsActive()) {
-            robot.straightBlocking2(-30);
-            robot.setHeading(0, 1);
 
+            robot.stackAttachmentOut();
+            robot.intake.setPower(-1);
+            robot.openClamp(true, true);
+            /*
+            this.sleep(2000);
+            robot.straightBlocking(20, true, 0.5);
+            sleep(2000);
             break;
+            */
+
+            //go, come back, go, come back, clamp, regurgitate
+
         }
     }
 }

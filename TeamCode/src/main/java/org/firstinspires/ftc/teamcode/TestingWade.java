@@ -17,25 +17,24 @@ public class TestingWade extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
-        double slideStartingPosition;
-
-
-        //double trayAngle = 0.52;
 
         waitForStart();
-        //robot.trayAngle.setPosition(trayAngle);
-        //robot.trayToOuttakePos(false);
-
 
         while (opModeIsActive()) {
-            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
 
-            // move linear slide up
-            robot.trayToIntakePos(true);
-            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
-            sleep(2000);
-            robot.trayToOuttakePos(true);
-            sleep(2000);
+            // P1: (118, 35)
+            robot.setHeading(0, 0.7);
+            robot.mecanumBlocking2(24);
+            // P2: (118, 59)
+            robot.setHeading(0, 0.7);
+            robot.stackAttachmentOut();
+            robot.intake.setPower(-1);
+            robot.straightBlocking2(95);
+            // P3: (23, 59)
+            robot.setHeading(0, 0.7);
+
+            // TARGET: (60, 21)
+
             break;
         }
     }
