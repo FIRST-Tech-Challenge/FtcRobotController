@@ -15,16 +15,15 @@ public class TeleOp_OneGamepad extends CSBase {
     double yaw = 0.0;
     boolean TS = false;
     boolean wasTS = false;
-    final double speedMultiplier = 0.75;
-    final double baseTurnSpeed = 2.5;
+    static final double speedMultiplier = 0.75;
+    static final double baseTurnSpeed = 2.5;
     double slowdownMultiplier = 0.0;
-
+    static final double carWashPower = 1.0;
+    static final double[] backBounds = {0.3, 0.6};
 
     @Override
     public void runOpMode() {
         setup(color.n, false);
-        double carWashPower = 1.0;
-        double[] backBounds = {0.3, 0.6};
         if (trayTiltingServo != null) {
             trayTiltingServo.setPosition(1);
         }
