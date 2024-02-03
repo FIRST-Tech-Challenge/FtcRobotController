@@ -833,15 +833,6 @@ public class Robot {
 
     public void longMoveToBoard(boolean isJuice) {
         int polarity;
-        double VERTICAL_TOTAL;
-        double vertical1;
-        double vertical4;
-        double vertical6;
-        double horizontal2;
-        double horizontal3;
-        double HORIZONTAL_TOTAL;
-        double horizontal5;
-        double horizontal7;
 
         while (opMode.opModeIsActive()) {
             if (isRedAlliance) {
@@ -861,22 +852,19 @@ public class Robot {
             Log.d("vision", "path: Pos " + markerPos);
             Log.d("vision", "path: Tag " + wantedAprTagId);
 
-            HORIZONTAL_TOTAL = 53;
-            VERTICAL_TOTAL = 76;
-
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
                 Log.d("vision", "path: Inner Spike");
 
                 // P1: (35, 17)
 
-                straightBlocking2(-31);
+                straightBlocking2(-27);
 
-                // P2: (35, 48)
+                // P2: (35, 44)
 
                 setHeading(90 * polarity, 0.7);
 
-                // P3: (43.5, 39.5)
+                // P3: (43.5, 35.5)
 
                 straightBlocking2(-3);
                 setHeading(90 * polarity, 0.7);
@@ -888,14 +876,16 @@ public class Robot {
 
                 straightBlocking2(3);
 
-                // P3: (43.5, 39.5)
+                // P3: (43.5, 35.5)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(20.5);
+                    mecanumBlocking2(24.5);
                 } else {
-                    mecanumBlocking2(-20.5);
+                    mecanumBlocking2(-24.5);
                 }
                 setHeading(90 * polarity, 0.7);
+
+                opMode.sleep(5000);
 
                 // P4: (43.5, 60)
 
@@ -904,20 +894,24 @@ public class Robot {
 
                 // P5: (120, 60)
 
+                opMode.sleep(5000);
+
                 if (isRedAlliance) {
-                    mecanumBlocking2(-24);
+                    mecanumBlocking2(-30);
                 } else {
-                    mecanumBlocking2(24);
+                    mecanumBlocking2(30);
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (120, 36)
+                // P6: (120, 30)
 
                 break;
 
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
                 Log.d("vision", "path: Outer Spike");
+
+                // P1: (35, 17)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(21);
@@ -926,8 +920,15 @@ public class Robot {
                 }
                 setHeading(0, 0.7);
 
+                // P2: (14, 17)
+
                 straightBlocking2(-31);
+
+                // P3: (14, 48)
+
                 setHeading(90 * polarity, 0.7);
+
+                // P4: (22.5, 39.5)
 
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
@@ -939,6 +940,8 @@ public class Robot {
                 straightBlocking(4, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
+                // P5: (19.5, 39.5)
+
                 if (isRedAlliance) {
                     mecanumBlocking2(18);
                 } else {
@@ -946,15 +949,21 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
+                // P6: (19.5, 57.5)
+
                 straightBlocking2FixHeading(-98);
                 setHeading(90 * polarity, 0.7);
 
+                // P7: (117.5, 57.5)
+
                 if (isRedAlliance) {
-                    mecanumBlocking2(-24);
+                    mecanumBlocking2(-21);
                 } else {
-                    mecanumBlocking2(24);
+                    mecanumBlocking2(21);
                 }
                 setHeading(90 * polarity, 0.7);
+
+                // P8: (117.5, 36.5)
 
                 break;
 
@@ -964,21 +973,21 @@ public class Robot {
                 // P1: (35, 17)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(15);
+                    mecanumBlocking2(13);
                 } else {
-                    mecanumBlocking2(-15);
+                    mecanumBlocking2(-13);
                 }
                 setHeading(0, 0.7);
 
-                // P2: (20, 17)
+                // P2: (22, 17)
 
-                straightBlocking2(-39.5);
+                straightBlocking2(-35.5);
 
-                // P3: (20, 56.5)
+                // P3: (22, 52.5)
 
                 setHeading(90 * polarity, 0.7);
 
-                // P4: (28.5, 48)
+                // P4: (30.5, 44)
 
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
@@ -987,31 +996,33 @@ public class Robot {
 
                 straightBlocking(2, true, 0.7);
 
-                //P5: (26.5, 48)
+                //P5: (28.5, 44)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(12);
+                    mecanumBlocking2(16);
                 } else {
-                    mecanumBlocking2(-12);
+                    mecanumBlocking2(-16);
                 }
 
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (26.5, 60)
+                // P6: (28.5, 60)
 
-                straightBlocking2FixHeading(-93.5);
+                straightBlocking2FixHeading(-91.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(-24);
+                    mecanumBlocking2(-26);
                 } else {
-                    mecanumBlocking2(24);
+                    mecanumBlocking2(26);
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P8: (120, 36)
+                // P8: (120, 35)
+
+                // Measured P8: (124, 39)
 
                 break;
 
