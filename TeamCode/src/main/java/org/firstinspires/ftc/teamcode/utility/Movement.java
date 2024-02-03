@@ -619,7 +619,7 @@ public class Movement {
         return aprilTagAligned;
     }
 
-    public boolean RobotPosFromAprilTag(AprilTagLocation tagNumber) {
+    public Translation2d RobotPosFromAprilTag(AprilTagLocation tagNumber) {
         double aprilTagTargetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
         if (tagNumber == AprilTagLocation.BLUE_LEFT || tagNumber == AprilTagLocation.RED_LEFT) {
@@ -710,7 +710,8 @@ public class Movement {
         telemetry.addData("Current IMU Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         telemetry.update();
 
-        return aprilTagAligned;
+        Translation2d robotFieldPOSMeters = new Translation2d(robotFieldXmeters, robotFieldYmeters);
+        return robotFieldPOSMeters;
     }
 
     public boolean GoToPose2d(Pose2d targetPosition) {

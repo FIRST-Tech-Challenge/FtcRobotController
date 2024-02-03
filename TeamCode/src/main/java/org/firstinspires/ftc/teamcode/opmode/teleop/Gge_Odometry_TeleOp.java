@@ -34,6 +34,7 @@ import static java.lang.Math.abs;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
@@ -56,6 +57,9 @@ import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -274,13 +278,20 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
             if(visionSystem.getDetections() != null){
                 for (AprilTagLocation item: AprilTagLocation.values()){
-                    for (int i = 0; i < visionSystem.getDetections().size(); i++) {
-                        if (visionSystem.getDetections().get(i) != null) {
-                            if (visionSystem.getDetections().get(i).id == item.TagNum()) {
-                                    moveTo.RobotPosFromAprilTag(item);
-                            }
+                    List<AprilTagDetection> detection = visionSystem.getDetections();
+                    for (AprilTagDetection detectedTag: detection){
+                        if (detectedTag.id == item.TagNum()) {
+                            Translation2d robotFieldPOSMeters = moveTo.RobotPosFromAprilTag(item);
+                            odometry.resetPosition(new Pose2d(robotFieldPOSMeters, new Rotation2d(Math.toRadians(DirectionNow))), new Rotation2d(Math.toRadians(DirectionNow)));
                         }
                     }
+//                    for (int i = 0; i < visionSystem.getDetections().size(); i++) {
+//                        if (visionSystem.getDetections().get(i) != null) {
+//                            if (visionSystem.getDetections().get(i).id == item.TagNum()) {
+//                                    moveTo.RobotPosFromAprilTag(item);
+//                            }
+//                        }
+//                    }
                 }
             }
 
@@ -329,7 +340,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 //                    telemetry.update();
                 }
             } else if (gamepad1.y) {
-                while (!moveTo.RobotPosFromAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
+                while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){
 ////                    telemetry.addData ("Targeting April Tag: ", 2);
 ////                    telemetry.update();
                 }
