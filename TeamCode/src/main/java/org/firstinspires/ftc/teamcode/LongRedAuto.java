@@ -26,19 +26,34 @@ public class LongRedAuto extends LinearOpMode {
             robot.setServoPosBlocking(robot.spikeServo, 0.5);
             sleep(100);
 
-            slideStartingPosition = robot.lsFront.getCurrentPosition() + 50; //fake zero = 50 so slides don't slam down
+            robot.alignToBoardFast();
 
-            // move linear slide up
-            robot.moveLinearSlideByTicksBlocking(2000 + slideStartingPosition);
+            // move slides up
+            slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-
-            robot.alignToBoardFast();
             robot.autoOuttake(false, slideStartingPosition);
-            //robot.parkBot(true);
+
+            robot.boardToMiddle();
+            robot.middleToStack();
+            robot.hailMaryyyyyy();
+            robot.alignToBoardFast();
+
+            // move slides up
+            slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
+
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.autoOuttake(false, slideStartingPosition);
 
             break;
+
         }
     }
 }
 
+
+// todo write timeout for apriltag final forward
+// todo how to stop streaming
+// todo bring back to board
+// todo set complementary tag id
+// todo slide not high enough second time

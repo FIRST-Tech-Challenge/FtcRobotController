@@ -22,15 +22,24 @@ public class TestingWadeTwo extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            this.sleep(2000);
             robot.stackAttachmentOut();
             robot.intake.setPower(-1);
             robot.openClamp(true, true);
-            /*
-            this.sleep(2000);
-            robot.straightBlocking(20, true, 0.5);
-            sleep(2000);
+            this.sleep(300);
+            robot.straightBlocking(23, true, 0.3);
+            this.sleep(300);
+            robot.straightBlocking(3, false, 0.5);
+            this.sleep(300);
+            robot.straightBlocking(3, true, 0.5);
+            this.sleep(300);
+            robot.closeClamp(true);
+            robot.straightBlocking(3, false, 0.5);
+            this.sleep(300);
+            robot.intake.setPower(1);
+            robot.straightBlocking2(-20);
+
             break;
-            */
 
             //go, come back, go, come back, clamp, regurgitate
 
