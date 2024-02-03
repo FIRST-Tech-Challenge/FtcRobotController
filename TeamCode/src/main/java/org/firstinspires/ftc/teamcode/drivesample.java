@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,7 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.lang.Math;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @TeleOp
 public class drivesample extends LinearOpMode {
@@ -68,6 +73,13 @@ public class drivesample extends LinearOpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideR.setDirection(DcMotorSimple.Direction.FORWARD);
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        VisionPortal portal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Goof"))
+                .setCameraResolution(new Size(640, 480))
+                .setCamera(BuiltinCameraDirection.BACK)
+                .enableLiveView(true)
+                .build();
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
