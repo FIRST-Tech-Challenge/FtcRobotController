@@ -265,10 +265,17 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
     }   // end method telemetryTfod()
 
     private void PlaceFirstPixel() {
+        if (desiredTag == 2) { // drives robot to the center position.
+            gobbler.driveTrain.centerBlueFarRedClose();
+        }
 
-        gobbler.driveTrain.centerBlueFarRedClose();
+        else if (desiredTag == 1) { // drives robot to the right position.
+            gobbler.driveTrain.rightBlueFarRedClose();
+        }
 
-
+        else { // drives robot to the left position.
+            gobbler.driveTrain.leftBlueFarRedClose();
+        }
     }
 
     private void PlacePixelOnTape() {
