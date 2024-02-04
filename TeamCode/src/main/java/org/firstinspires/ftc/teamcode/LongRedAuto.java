@@ -32,7 +32,7 @@ public class LongRedAuto extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(true, slideStartingPosition);
 
             robot.boardToMiddle();
             robot.middleToStack();
@@ -50,7 +50,6 @@ public class LongRedAuto extends LinearOpMode {
         }
     }
 }
-
 
 // todo write timeout for apriltag final forward
 // todo how to stop streaming
