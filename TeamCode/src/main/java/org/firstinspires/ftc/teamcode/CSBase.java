@@ -617,7 +617,7 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
-    public void except(Exception e) {
+    public final void except(Exception e) {
         telemetry.addData("Exception", e);
     }
 

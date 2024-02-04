@@ -15,6 +15,12 @@ public class TeleOp_Full extends CSBase {
     double yaw = 0.0;
     boolean TS = false;
     boolean wasTS = false;
+    boolean isLT = false;
+    double leftFrontPower = 0.0;
+    double rightFrontPower = 0.0;
+    double leftBackPower = 0.0;
+    double rightBackPower = 0.0;
+    double max = 0.0;
     static final double SPEED_MULTIPLIER = 0.75;
     static final double BASE_TURN_SPEED = 2.5;
     double slowdownMultiplier = 0.0;
@@ -35,12 +41,12 @@ public class TeleOp_Full extends CSBase {
             lateral = ((gamepad1.left_stick_x * SPEED_MULTIPLIER) * slowdownMultiplier);
             yaw = ((gamepad1.right_stick_x * BASE_TURN_SPEED) * slowdownMultiplier);
 
-            double leftFrontPower = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower = axial - lateral + yaw;
-            double rightBackPower = axial + lateral - yaw;
+            leftFrontPower = axial + lateral + yaw;
+            rightFrontPower = axial - lateral - yaw;
+            leftBackPower = axial - lateral + yaw;
+            rightBackPower = axial + lateral - yaw;
 
-            double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
 
@@ -105,7 +111,7 @@ public class TeleOp_Full extends CSBase {
             }
 
             if (trayTiltingServo != null) {
-                boolean isLT = (gamepad2.left_trigger > 0.25);
+                isLT = (gamepad2.left_trigger > 0.25);
                 if (isLT && !wasLT) {
                     if (trayTiltingServo.getPosition() != 0) {
                         trayTiltingServo.setPosition(0);
