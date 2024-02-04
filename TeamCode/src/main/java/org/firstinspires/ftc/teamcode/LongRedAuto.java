@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -15,32 +17,31 @@ public class LongRedAuto extends LinearOpMode {
         robot.initVisionProcessing();
         double slideStartingPosition;
 
+        robot.detectPropEarly();
+
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.detectMarkerPosition();
+
+            if (robot.markerPos == MarkerDetector.MARKER_POSITION.UNDETECTED ||
+                    robot.markerPos == MarkerDetector.MARKER_POSITION.UNKNOWN) {
+                robot.detectMarkerPosition();
+                Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
+            }
+
+            robot.servoToInitPositions();
+
             robot.longMoveToBoard(false);
-
-            robot.closeClamp(false);
-            robot.openHook();
-            robot.setServoPosBlocking(robot.spikeServo, 0.5);
-            sleep(100);
-
             robot.alignToBoardFast(robot.wantedAprTagId);
 
-            // move slides up
-            slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
-
-            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            // note slide init position
+            slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
             robot.boardToMiddle();
             robot.middleToStack();
-            robot.hailMaryyyyyy();
+            robot.stackToBoard();
             robot.alignToBoardFast(robot.secondWantedTagId);
-
-            // move slides up
-            slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false, slideStartingPosition);
