@@ -53,6 +53,7 @@ public class Robot {
     ElapsedTime elapsedTime = new ElapsedTime();
     public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
+    int secondWantedTagId;
     private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
@@ -765,7 +766,7 @@ public class Robot {
         }
     }
 
-    public void alignToBoardFast() {
+    public void alignToBoardFast(int tagId) {
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
@@ -787,7 +788,7 @@ public class Robot {
 
                     if (detection.metadata != null && !movedToDesired) {
                         Log.d("apriltag", "found tag" + detection.id);
-                        distanceToMove = ((wantedAprTagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
+                        distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
                         Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
                         mecanumBlocking(distanceToMove - 1, false, 0.3); //-1 to fix too much movement
                         Log.d("apriltag", "moved");
@@ -2130,9 +2131,9 @@ public class Robot {
             // outer spike
 
             if (isRedAlliance) {
-                mecanumBlocking2(21);
+                mecanumBlocking2(19);
             } else {
-                mecanumBlocking2(-21);
+                mecanumBlocking2(-19);
             }
 
         } else {
@@ -2182,7 +2183,7 @@ public class Robot {
 
         straightBlocking(5, false, 0.6);
         intake.setPower(0);
-        straightBlocking2FixHeading(-86);
+        straightBlocking2FixHeading(-84);
 
         if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                 || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
@@ -2198,9 +2199,9 @@ public class Robot {
             // outer spike
 
             if (isRedAlliance) {
-                mecanumBlocking2(-21);
+                mecanumBlocking2(-19);
             } else {
-                mecanumBlocking2(21);
+                mecanumBlocking2(19);
             }
 
         } else {
@@ -2211,8 +2212,26 @@ public class Robot {
             } else {
                 mecanumBlocking2(26);
             }
-
         }
+    }
 
+    public void setSecondWantedTagId () {
+        if (isRedAlliance) {
+            if (wantedAprTagId == 4) {
+                secondWantedTagId = 6;
+            } else if (wantedAprTagId == 6) {
+                secondWantedTagId = 4;
+            } else {
+                secondWantedTagId = 4;
+            }
+        } else {
+            if (wantedAprTagId == 1) {
+                secondWantedTagId = 3;
+            } else if (wantedAprTagId == 3) {
+                secondWantedTagId = 1;
+            } else {
+                secondWantedTagId = 1;
+            }
+        }
     }
 }

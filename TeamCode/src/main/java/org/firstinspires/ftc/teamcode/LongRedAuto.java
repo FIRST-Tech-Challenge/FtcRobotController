@@ -26,7 +26,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.setServoPosBlocking(robot.spikeServo, 0.5);
             sleep(100);
 
-            robot.alignToBoardFast();
+            robot.alignToBoardFast(robot.wantedAprTagId);
 
             // move slides up
             slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down
@@ -37,7 +37,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.boardToMiddle();
             robot.middleToStack();
             robot.hailMaryyyyyy();
-            robot.alignToBoardFast();
+            robot.alignToBoardFast(robot.secondWantedTagId);
 
             // move slides up
             slideStartingPosition = robot.lsFront.getCurrentPosition(); //fake zero = ??? so slides don't slam down

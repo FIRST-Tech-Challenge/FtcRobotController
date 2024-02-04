@@ -36,7 +36,7 @@ public class SecondPathBlue extends LinearOpMode {
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
 
             robot.trayToOuttakePos(false); // pivot tray to outtake position
-            robot.alignToBoardFast();
+            robot.alignToBoardFast(robot.wantedAprTagId);
             robot.autoOuttake(true, slideStartingPosition);
 
             //second trip

@@ -19,7 +19,6 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.alignToBoardFast();
             //robot.mecanumBlocking(24,true,0.7);
             break;
         }

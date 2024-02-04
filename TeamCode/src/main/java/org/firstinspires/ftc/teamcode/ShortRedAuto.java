@@ -36,7 +36,7 @@ public class ShortRedAuto extends LinearOpMode {
             robot.moveLinearSlideByTicksBlocking(1550 + slideStartingPosition);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-            robot.alignToBoardFast();
+            robot.alignToBoardFast(robot.wantedAprTagId);
             robot.autoOuttake(true, slideStartingPosition);
             robot.parkBot(false);
 
