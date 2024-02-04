@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOPs;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.CenterStageRobot;
+import org.firstinspires.ftc.teamcode.PoseStorage;
+import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
@@ -57,6 +59,8 @@ public class CenterStageTeleOp extends CommandOpMode {
     public static double SLOW_SPEED_PERC = 0.3;
     public static double FAST_SPEED_PERC = 1;
 
+    public Pose2d pose;
+
     @Override
     public void initialize() {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
@@ -106,5 +110,16 @@ public class CenterStageTeleOp extends CommandOpMode {
 
 
         robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true, true);
+
+        pose = PoseStorage.currentPose;
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        telemetry.addData("X: ", pose.component1().component1());
+        telemetry.addData("Y: ", pose.component2().component1());
+        telemetry.addData("Heading: ", pose.heading.component1());
+        telemetry.update();
     }
 }

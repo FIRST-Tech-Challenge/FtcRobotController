@@ -78,7 +78,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 //        } else {
 //            telemetry.addData("Manual", "");
 //        }
-//        telemetry.update();
         if(getHeight() > 600) {
 //            openOuttake.get().schedule();
         } else {
