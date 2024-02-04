@@ -171,7 +171,7 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(startingPosition + 1700);
+            moveLinearSlideByTicksBlocking(startingPosition + 1650); //1700
             trayToOuttakePos(true); // pivot tray to outtake position
             openClamp(true, true); // drop pixel
             opMode.sleep(100);
@@ -848,6 +848,10 @@ public class Robot {
             }
         }
 
+        if (distanceToBoard == 12) {
+            Log.d("vision", "alignToBoardFast: didn't align, distanceToBoard is 12");
+        }
+
         straightBlocking(distanceToBoard, false, 0.6);
 
         if (isRedAlliance) {
@@ -1007,12 +1011,13 @@ public class Robot {
 
                 straightBlocking(3, true, 0.7);
 
-                //P5: (27.5, 44)
+                // P5: (27.5, 44)
+                // actually ending up at around 48 here
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(16);
+                    mecanumBlocking2(12);
                 } else {
-                    mecanumBlocking2(-16);
+                    mecanumBlocking2(-12);
                 }
 
                 setHeading(90 * polarity, 0.7);
@@ -1596,11 +1601,11 @@ public class Robot {
     }
 
     public void stackAttachmentOut() {
-        stackAttachment.setPosition(0.7);
+        stackAttachment.setPosition(0.65);
     }
 
     public void stackAttachmentIn() {
-        stackAttachment.setPosition(0.1);
+        stackAttachment.setPosition(0.01);
     }
 
     public void autoIntake() {
@@ -2177,28 +2182,25 @@ public class Robot {
         setServoPosBlocking(spikeServo, 0.5);
         opMode.sleep(100);
     }
-    public void middleToStack () {
+    public void middleToStackAndIntake() {
 
+        openClamp(true, false);
         stackAttachmentOut();
         intake.setPower(-1);
-        openClamp(true, false);
         straightBlocking2FixHeading(104);
 
-        straightBlocking(5, true, 0.5);
+        straightBlocking(5, true, 0.6);
         straightBlocking(3, false, 0.5);
 
         stackAttachmentIn();
         opMode.sleep(300);
 
-        straightBlocking(5, true, 0.5);
-        straightBlocking(3, false, 0.5);
-
-        straightBlocking(3, true, 0.5);
+        straightBlocking(6, true, 0.5);
         straightBlocking(3, false, 0.5);
 
         closeClamp(true);
         intake.setPower(1);
-        opMode.sleep(100);
+        opMode.sleep(300);
         intake.setPower(0);
     }
 
@@ -2208,20 +2210,8 @@ public class Robot {
 
         straightBlocking(9, false, 0.6);
         straightBlocking2FixHeading(-84);
+        mecanumBlocking2(23 * polarity);
 
-        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-            // inner spike
-            mecanumBlocking2(-29 * polarity);
-
-        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-            // outer spike
-            mecanumBlocking2(-19 * polarity);
-        } else {
-            // center spike
-            mecanumBlocking2(-26 * polarity);
-        }
     }
 
     public void setSecondWantedTagId () {
