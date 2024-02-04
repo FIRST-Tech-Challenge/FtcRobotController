@@ -53,9 +53,9 @@ public class Robot {
     public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
     int secondWantedTagId;
-    private MarkerProcessor markerProcessor;
-    private AprilTagProcessor aprilTagProcessor;
-    private VisionPortal visionPortal;
+    public MarkerProcessor markerProcessor;
+    public AprilTagProcessor aprilTagProcessor;
+    public VisionPortal visionPortal;
     boolean isRedAlliance;
     boolean testingOnBert = false;
     boolean allowTrayAngle = false;
@@ -280,6 +280,7 @@ public class Robot {
                 .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .enableLiveView(false)
                 .setAutoStopLiveView(true)
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTagProcessor)
@@ -913,6 +914,8 @@ public class Robot {
 
                 // P5: (120, 60)
 
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
                 if (isRedAlliance) {
                     mecanumBlocking2(-30);
                 } else {
@@ -972,6 +975,8 @@ public class Robot {
 
                 // P7: (117.5, 57.5)
 
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
                 if (isRedAlliance) {
                     mecanumBlocking2(-21);
                 } else {
@@ -1028,6 +1033,8 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-26);
@@ -2210,6 +2217,7 @@ public class Robot {
 
         straightBlocking(9, false, 0.6);
         straightBlocking2FixHeading(-84);
+        visionPortal.setProcessorEnabled(aprilTagProcessor, true);
         mecanumBlocking2(23 * polarity);
 
     }
