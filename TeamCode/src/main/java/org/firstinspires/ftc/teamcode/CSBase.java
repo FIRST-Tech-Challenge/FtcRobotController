@@ -528,13 +528,16 @@ public abstract class CSBase extends LinearOpMode {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 telemetry.addData("Strafe", a.ftcPose.x);
+                strafe(a.ftcPose.x);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 telemetry.addData("Drive", -a.ftcPose.y + 5);
+                drive(-a.ftcPose.y + 8);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 if (abs(a.ftcPose.yaw) > 1) {
                     telemetry.addData("Turn", a.ftcPose.yaw / 2);
+                    turn(a.ftcPose.yaw / 2);
                 }
                 telemetry.update();
         }
