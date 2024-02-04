@@ -166,13 +166,16 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(startingPosition + 1500);
-        } else {
             moveLinearSlideByTicksBlocking(startingPosition + 1700);
+            openClamp(true, true); // drop pixel
+            opMode.sleep(100);
+            moveLinearSlideByTicksBlocking(startingPosition + 1850);
+        } else {
+            moveLinearSlideByTicksBlocking(startingPosition + 1900);
+            openClamp(true, true); // drop pixel
+            opMode.sleep(100);
+            moveLinearSlideByTicksBlocking(startingPosition + 2050);
         }
-
-        openClamp(true, true); // drop pixel
-        opMode.sleep(100);
 
         straightBlocking(4, true, 0.7); //move back 2
 
@@ -763,13 +766,10 @@ public class Robot {
     }
 
     public void alignToBoardFast() {
-        boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
-        int polarity = isRedAlliance ? -1 : 1;
-        double PIXEL_SIZE = 4;
-        int inchesMovedBack = 0;
+        double PIXEL_SIZE = 4.5;
         int numberOfDetectionsProcessed = 0;
         double distanceToMove;
         double distanceBetweenId = 6;
@@ -784,23 +784,24 @@ public class Robot {
 
             myAprilTagDetections = aprilTagProcessor.getDetections();
             for (AprilTagDetection detection : myAprilTagDetections) {
-                if (detection.metadata != null && movedToDesired == false) {
-                    Log.d("apriltag", "found tag" + detection.id);
-                    distanceToMove = ((wantedAprTagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
-                    Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
-                    mecanumBlocking(distanceToMove - 1, false, 0.3); //-1 to fix too much movement
-                    Log.d("apriltag", "moved");
-                    movedToDesired = true;
-                }
-                telemetry.addLine("....");
-                telemetry.update();
-                if (detection.metadata != null && movedToDesired == true) {
-                    Log.d("vision", "runOpMode: aligned");
-                    Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
-                    distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
-                    aligned = true;
-                    break;
-                }
+
+                    if (detection.metadata != null && !movedToDesired) {
+                        Log.d("apriltag", "found tag" + detection.id);
+                        distanceToMove = ((wantedAprTagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
+                        Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
+                        mecanumBlocking(distanceToMove - 1, false, 0.3); //-1 to fix too much movement
+                        Log.d("apriltag", "moved");
+                        movedToDesired = true;
+                    }
+                    telemetry.addLine("....");
+                    telemetry.update();
+                    if (detection.metadata != null && movedToDesired) {
+                        Log.d("vision", "runOpMode: aligned");
+                        Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
+                        distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
+                        aligned = true;
+                        break;
+                    }
             }
         }
 
@@ -948,7 +949,7 @@ public class Robot {
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
 
-                // P1: (35, 17)
+                // P1: (36, 17)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(13);
@@ -957,24 +958,23 @@ public class Robot {
                 }
                 setHeading(0, 0.7);
 
-                // P2: (22, 17)
+                // P2: (23, 17)
 
-                straightBlocking2(-35.5);
+                straightBlocking2(-35);
 
-                // P3: (22, 52.5)
-
+                // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
 
-                // P4: (30.5, 44)
+                // P4: (31.5, 44)
 
                 if (!testingOnBert) {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, true, 0.7);
+                straightBlocking(3, true, 0.7);
 
-                //P5: (28.5, 44)
+                //P5: (27.5, 44)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(16);
@@ -984,9 +984,9 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (28.5, 60)
+                // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-91.5);
+                straightBlocking2FixHeading(-88.5); //todo: subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -1764,7 +1764,7 @@ public class Robot {
         double currentPos = fLeft.getCurrentPosition();
         double targetPos = currentPos + straightController.convertInchesToTicks(inches);
         double power;
-        double ERROR_TOLERANCE_IN_TICKS = 50;
+        double ERROR_TOLERANCE_IN_TICKS = 20;
         int counter = 0;
         double finalError;
         double velocity;
@@ -1831,7 +1831,7 @@ public class Robot {
 
             if (Math.abs(straightController.lastError) < ERROR_TOLERANCE_IN_TICKS && velocity < 0.1) {
                 counter++;
-            } else { //todo: test this
+            } else {
                 counter = 0;
             }
 
@@ -2156,18 +2156,15 @@ public class Robot {
         intake.setPower(-1);
         openClamp(true, false);
         straightBlocking2FixHeading(104);
+
         straightBlocking(5, true, 0.5);
-        opMode.sleep(300);
-
         straightBlocking(3, false, 0.5);
-        opMode.sleep(100);
+
         stackAttachmentIn();
-        opMode.sleep(500);
-        straightBlocking(7, true, 0.5);
-        opMode.sleep(300);
+        opMode.sleep(400);
 
+        straightBlocking(7, true, 0.5);
         straightBlocking(3, false, 0.5);
-        opMode.sleep(100);
 
         closeClamp(true);
         straightBlocking(3, false, 0.5);
