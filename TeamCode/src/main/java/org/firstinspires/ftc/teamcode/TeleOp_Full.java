@@ -66,6 +66,7 @@ public class TeleOp_Full extends CSBase {
             }
 
             if (pixelLiftingMotor != null) {
+                addTelemetry("Current position: " + pixelLiftingMotor.getCurrentPosition());
                 if (!gamepad2.dpad_up && !gamepad2.dpad_down || gamepad2.dpad_down && gamepad2.dpad_up) {
                     pixelLiftingMotor.setPower(0);
                 } else {

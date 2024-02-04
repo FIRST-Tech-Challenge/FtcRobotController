@@ -21,6 +21,8 @@ import java.util.*;
 /** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;
+    private static final double LIFT_VEL = 500;
+    private static final double ROTATIONS_PER_INCH = PI * 1.85;
     private TfodProcessor tfod;
     private static final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
@@ -636,4 +638,18 @@ public abstract class CSBase extends LinearOpMode {
         turn(-180);
         drive(-25);
     }
+
+    public void moveLift(double inches) {
+        
+        double duration = abs(inches * ROTATIONS_PER_INCH);
+        pixelLiftingMotor.setVelocity(LIFT_VEL);
+
+        while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
+            // Display it for the driver.
+            telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("Currently at",  " at %7d", pixelLiftingMotor.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+
 }

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
-@Autonomous(name = "Red Back", group = "CenterStage", preselectTeleOp = "Full")
+@Autonomous(name = "Red Back Full", group = "CenterStage", preselectTeleOp = "Full")
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
@@ -18,14 +18,13 @@ public class Auto_RedBackFull extends CSBase {
         int ID = setID(pos, teamColor);
         telemetry.addData("Team Prop X", x);
         telemetry.addData("Team Prop Position", pos);
-        telemetry.update(); //*/
-        //*
+        telemetry.update();
         purplePixel();
         drive(2);
         turn(-90);
         drive(tilesToInches(-1));
-        turn(-90); ///
-        drive(tilesToInches(-1)); //*/
+        turn(-90);
+        drive(tilesToInches(-1));
         setSpeed(1000);
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);
@@ -36,6 +35,7 @@ public class Auto_RedBackFull extends CSBase {
             }
         }
         align(ID);
+        moveLift(3);
         //drive(-12);
         //strafe(tilesToInches(1), dir.r);
         //drive(-18);
