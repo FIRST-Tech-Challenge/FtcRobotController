@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.teamcode.CSBase;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -29,7 +31,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  */
 
 @Disabled
-public class Test_RB2 extends CSBase {
+public class Test_RB4 extends CSBase {
     @Override
     public void runOpMode() {
         setup(true);
@@ -38,7 +40,10 @@ public class Test_RB2 extends CSBase {
         // ------Main Code------
         // ---------------------
 
+        drive(tilesToInches(-2.1));
         turn(-90);
+        drive(tilesToInches(1.7));
+        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
+
+import org.firstinspires.ftc.teamcode.CSBase;
 
 @Autonomous(name = "April Tag Detection", group = "Tests")
 //@Disabled

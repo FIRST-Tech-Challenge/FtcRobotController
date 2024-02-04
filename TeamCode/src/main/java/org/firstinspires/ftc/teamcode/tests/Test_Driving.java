@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
+
+import org.firstinspires.ftc.teamcode.CSBase;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
