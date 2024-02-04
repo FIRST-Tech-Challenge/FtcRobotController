@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.*;
-import java.util.*;
 
 import androidx.annotation.Nullable;
 
@@ -17,11 +16,13 @@ import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
 import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
+import java.util.*;
 
+/** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
-    private final ElapsedTime runtime = new ElapsedTime();
+    private static final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
@@ -40,7 +41,7 @@ public abstract class CSBase extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
-    static       double     velocity                = 2000;
+                 double     velocity                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
     //static final double     VEL_MODIFIER            = 1.12485939258;
@@ -48,20 +49,23 @@ public abstract class CSBase extends LinearOpMode {
     static final double     M                       = 0.889;
     static final double     TURN_SPEED              = 0.5;
     static final boolean    TURN_TYPE               = false;
-    public final double[]   BOUNDARIES              = {0, 350};
-    double                  carWashPower            = 1.0;
+    static final double[]   BOUNDARIES              = {0, 350};
+    static final double     CAR_WASH_POWER          = 1.0;
     spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
-    public static String tfodModelName;
+    public String tfodModelName;
     private AprilTagProcessor tagProcessor;
-    private final int WAIT_TIME = 500;
+    private static final int WAIT_TIME = 500;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "prop",
     };
-    IMU.Parameters imuParameters;
+    static final IMU.Parameters IMU_PARAMETERS = new IMU.Parameters(new RevHubOrientationOnRobot(
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+    ));
 
     /** Color options for the team prop. Options: r, b, n **/
     public enum color {
@@ -93,11 +97,7 @@ public abstract class CSBase extends LinearOpMode {
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
-        imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-        ));
-        if (!imu.initialize(imuParameters)){
+        if (!imu.initialize(IMU_PARAMETERS)){
             telemetry.addData("IMU","Initialization failed");
         }
         try {
@@ -356,10 +356,10 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Changes the velocity.
-     * @param velocity New velocity value.
+     * @param speed New velocity value.
      */
-    public void setSpeed(double velocity) {
-        CSBase.velocity = velocity;
+    public void setSpeed(double speed) {
+        velocity = speed;
     }
 
     /** Drives the specified number of inches. Negative values will drive backwards.
@@ -399,7 +399,7 @@ public abstract class CSBase extends LinearOpMode {
             telemetry.addData("Car Wash", "Ejecting Pixel");
             telemetry.update();
             int t = (int) runtime.milliseconds() + 1000;
-            carWashMotor.setPower(carWashPower);
+            carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
                 if (!(t > ((int) runtime.milliseconds()))) {
                     break;
@@ -450,7 +450,6 @@ public abstract class CSBase extends LinearOpMode {
             sleep(WAIT_TIME);
         }
     }
-
    /** Initializes the TFOD and April Tag processors. **/
     private void initProcessors() {
 
@@ -487,28 +486,9 @@ public abstract class CSBase extends LinearOpMode {
 
     }
 
-
-    /** Returns whether a tag with the specified ID is currently detected.
+    /** Returns information about a tag with the specified ID if it is currently detected.
      * @param id ID of tag to detect.
-     * @return (boolean) Was the tag detected? **/
-    public boolean detectTag(int id){
-        int i;
-        for (i = 0; i < tagProcessor.getDetections().size(); i++)
-        {
-            if (tagProcessor.getDetections().get(i).id == id){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-    /**
-     * Detects AprilTag
-     * @param id AprilTag ID
-     * @return AprilTag information
-     */
+     * @return Information about the tag detected. **/
     @Nullable
     public AprilTagDetection tagDetections(int id) {
         int i;
@@ -521,44 +501,40 @@ public abstract class CSBase extends LinearOpMode {
         return null;
     }
 
-    /** Attempts to detect AprilTag for a specified number of seconds.
-     * @param id AprilTag ID
-     * @param seconds Time in seconds to attempt detection
-     * @return AprilTag information
-     */
+    /** Returns information about a tag with the specified ID if it is detected within a designated timeout period.
+     * @param id ID of tag to detect.
+     * @param timeout Detection timeout (seconds).
+     * @return Information about the tag detected. **/
     @Nullable
-    public AprilTagDetection tagDetections(int id, double seconds) {
-        double ms = seconds * 1000;
-        AprilTagDetection a = tagDetections(id);
-        int t = (int) System.currentTimeMillis();
-        while (opModeIsActive() && (a == null &&  System.currentTimeMillis() - t < ms)) {
+    public AprilTagDetection tagDetections(int id, double timeout) {
+        double ms = timeout * 1000;
+        AprilTagDetection a;
+        int t = (int) runtime.milliseconds() + (int) ms;
+        while (opModeIsActive() && (runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
-                break;
+                return a;
             }
         }
-        return a;
+        return null;
     }
 
     /** Aligns the robot in front of the AprilTag.
-     * @param id AprilTag ID
+     * @param id ID of tag to align with.
      */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
-            while (opModeIsActive() && a != null && (abs(-a.ftcPose.y + 8) > 1 ||abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
+            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 telemetry.addData("Strafe", a.ftcPose.x);
-                strafe(a.ftcPose.x);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                telemetry.addData("Drive", -a.ftcPose.y + 8);
-                drive(-a.ftcPose.y + 8);
+                telemetry.addData("Drive", -a.ftcPose.y + 5);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 if (abs(a.ftcPose.yaw) > 1) {
                     telemetry.addData("Turn", a.ftcPose.yaw / 2);
-                    turn(a.ftcPose.yaw / 2);
                 }
                 telemetry.update();
         }
@@ -670,32 +646,5 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
         turn(-180);
         drive(-25);
-    }
-
-    /** Gives a range of 0 to x - 1
-     * @param x Integer
-     * @return A range of 0 to x - 1
-     */
-    public List<Integer> range(int x) {
-        List<Integer> a = new ArrayList<>();
-        for (int i = 0; i < x; i++) {
-            a.add(i);
-        }
-        return a;
-    }
-
-    /** Stupid method that cleans up warnings.*/
-    private void warningCleanup1() {
-        if (detectTag(1)) {
-            warningCleanup2();
-            strafe(5);
-        }
-    }
-
-    /** Stupid method that cleans up warnings.*/
-    private void warningCleanup2() {
-        if (!detectTag(1)) {
-            warningCleanup1();
-        }
     }
 }

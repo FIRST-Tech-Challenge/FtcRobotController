@@ -15,16 +15,15 @@ public class TeleOp_OneGamepad extends CSBase {
     double yaw = 0.0;
     boolean TS = false;
     boolean wasTS = false;
-    final double speedMultiplier = 0.75;
-    final double baseTurnSpeed = 2.5;
+    static final double SPEED_MULTIPLIER = 0.75;
+    static final double BASE_TURN_SPEED = 2.5;
     double slowdownMultiplier = 0.0;
-
+    static final double CAR_WASH_POWER = 1.0;
+    static final double[] BACK_BOUNDS = {0.3, 0.6};
 
     @Override
     public void runOpMode() {
         setup(color.n, false);
-        double carWashPower = 1.0;
-        double[] backBounds = {0.3, 0.6};
         if (trayTiltingServo != null) {
             trayTiltingServo.setPosition(1);
         }
@@ -32,9 +31,9 @@ public class TeleOp_OneGamepad extends CSBase {
         while (opModeIsActive()) {
             slowdownMultiplier = (1.0 - gamepad1.right_trigger);
 
-            axial = ((-gamepad1.left_stick_y * speedMultiplier) * slowdownMultiplier);
-            lateral = ((gamepad1.left_stick_x * speedMultiplier) * slowdownMultiplier);
-            yaw = ((gamepad1.right_stick_x * baseTurnSpeed) * slowdownMultiplier);
+            axial = ((-gamepad1.left_stick_y * SPEED_MULTIPLIER) * slowdownMultiplier);
+            lateral = ((gamepad1.left_stick_x * SPEED_MULTIPLIER) * slowdownMultiplier);
+            yaw = ((gamepad1.right_stick_x * BASE_TURN_SPEED) * slowdownMultiplier);
 
             double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -94,10 +93,10 @@ public class TeleOp_OneGamepad extends CSBase {
                     carWashMotor.setPower(0);
                 } else {
                     if (gamepad1.a) {
-                        carWashMotor.setPower(carWashPower);
+                        carWashMotor.setPower(CAR_WASH_POWER);
                         addTelemetry("carWashMotor now moving forward");
                     } else if (gamepad1.b) {
-                        carWashMotor.setPower(-carWashPower);
+                        carWashMotor.setPower(-CAR_WASH_POWER);
                         addTelemetry("carWashMotor now moving backward");
                     }
                 }
@@ -119,11 +118,11 @@ public class TeleOp_OneGamepad extends CSBase {
 
             if (pixelBackServo != null) {
                 if (gamepad2.y && !wasY) {
-                    if (pixelBackServo.getPosition() > backBounds[1] - 0.05 && pixelBackServo.getPosition() < backBounds[1] + 0.05) {
-                        pixelBackServo.setPosition(backBounds[0]);
+                    if (pixelBackServo.getPosition() > BACK_BOUNDS[1] - 0.05 && pixelBackServo.getPosition() < BACK_BOUNDS[1] + 0.05) {
+                        pixelBackServo.setPosition(BACK_BOUNDS[0]);
                         addTelemetry("Set pixelBackServo to 0");
                     } else {
-                        pixelBackServo.setPosition(backBounds[1]);
+                        pixelBackServo.setPosition(BACK_BOUNDS[1]);
                         addTelemetry("Set pixelBackServo to 0.6");
                     }
                 }
