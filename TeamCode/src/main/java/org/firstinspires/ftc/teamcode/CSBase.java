@@ -158,7 +158,11 @@ public abstract class CSBase extends LinearOpMode {
     public void setup(color teamColor){
         setup(teamColor, true);
     }
+
+    /** Initializes all hardware devices on the robot. **/
     public void setup() { setup(color.n, false); }
+    @Deprecated
+    public void setup(boolean isRed) { if (isRed) { setup(color.r,true); } else { setup(color.b,true); } }
 
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
