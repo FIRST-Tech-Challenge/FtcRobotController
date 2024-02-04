@@ -587,10 +587,10 @@ public abstract class CSBase extends LinearOpMode {
         return spike.n;
     }
 
-    /** mmmnllkp
-     * @param location n
-     * @param teamColor n
-     * @return n
+    /** Sets the AprilTag ID based on the spike location and robot color
+     * @param location Location of the team prop
+     * @param teamColor Color of the team's alliance
+     * @return AprilTag ID
      */
     public int setID(spike location, color teamColor) {
         int ID;
