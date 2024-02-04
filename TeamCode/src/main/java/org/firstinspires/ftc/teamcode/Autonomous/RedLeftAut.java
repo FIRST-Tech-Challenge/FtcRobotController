@@ -25,9 +25,9 @@ public class RedLeftAut extends LinearOpMode {
   int bark = 1;
   public static double x1 = -37.5, y1 = -36, h1 = -180, v1 = 0.5, w1 = 0.1, fR1 = 6,bf1 = 2,
       x2 = -53.2, y2 = -36, h2 = -180, v2 = 0.4, w2 = 0.18, fR2 = 5, bf2 = 1,
-      x3 = -53.5, y3 = -38, h3 = -183, v3 = 0.4, w3 = 0.15, fR3 = 4, bf3 = 2,
-      xx1 = 10.4, yy1 = -59.5, hh1 = -160, vv1 = 1.0, ww1 = 0.2, ffR1 = 6,
-      xx2 = -27.5, yy2 = -59.5, hh2 = -185, vv2 = 1.0, ww2 = 0.2, ffR2 = 7,
+      x3 = -52.5, y3 = -39, h3 = -183, v3 = 0.4, w3 = 0.15, fR3 = 4, bf3 = 2,
+      xx1 = 10.4, yy1 = -60.5, hh1 = -160, vv1 = 1.0, ww1 = 0.2, ffR1 = 6,
+      xx2 = -28.5, yy2 = -60.5, hh2 = -180, vv2 = 1.0, ww2 = 0.2, ffR2 = 6,
       xx3 = -49.5, yy3 = -42, hh3 = -200, vv3 = 1.0, ww3 = 0.2, ffR3 = 5;
 
   @Override
@@ -35,9 +35,7 @@ public class RedLeftAut extends LinearOpMode {
     BradBot robot = new BradBot(this, false);
     robot.roadrun.setPoseEstimate(new Pose2d(-38, -61, Math.toRadians(-90)));
     Path[] toSpike = new Path[3];
-    Waypoint start =
-        new StartWaypoint(
-            new com.arcrobotics.ftclib.geometry.Pose2d(-38, -61, new Rotation2d(toRadians(-90))));
+    Waypoint start = new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(-38, -61, new Rotation2d(toRadians(-90))));
     toSpike[0] = new Path(start);
     toSpike[0].add(new GeneralWaypoint(-40, -50, toRadians(-70), 0.5, 0.3, 5));
     toSpike[0].add(new EndWaypoint(-41, -36, toRadians(-70), 0.4, 0.2,5, 2, toRadians(10)));
@@ -62,7 +60,7 @@ public class RedLeftAut extends LinearOpMode {
       robot.queuer.queue(false, true);
       robot.upAuto();
       robot.purpurAuto();
-      robot.queuer.addDelay(0.5);
+      robot.queuer.addDelay(1.0);
       robot.followPPPath(toSpike[bark]);
       robot.queuer.addDelay(0.2);
       robot.dropAuto(0);
@@ -85,33 +83,32 @@ public class RedLeftAut extends LinearOpMode {
       //            if(bark==1){
       double y = 0, yy = 0, h=0;
       if (bark == 0) {
-        y = -29;
-        yy = -31;
-        h = toRadians(-160);
+        y = -29.5;
+        yy = -33;
+        h = toRadians(-180);
       }
       if (bark == 1) {
-        y = -36;
+        y = -35.5;
         yy = -39;
-        h=toRadians(-165);
+        h=toRadians(-180);
       }
       if (bark == 2) {
-        y = -40;
-        yy = -42;
-        h=toRadians(-170);
+        y = -41;
+        yy = -43;
+        h=toRadians(-180);
       }
 
-      stackToBack.add(new StartWaypoint(new Translation2d(x2 + 2, y2)));
-      stackToBack.add(new GeneralWaypoint(-32, -59.5, toRadians(-200), 1.0, 0.2, 8));
-      stackToBack.add(new GeneralWaypoint(10, -59.5, toRadians(-180), 1.0, 0.2, 6));
-      stackToBack.add(new GeneralWaypoint(38, yy, h, 1.0, 0.15, 6));
-      stackToBack.add(new EndWaypoint(43, y, toRadians(-177), .4, .12, 4, 2, toRadians(10)));
+      stackToBack.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+      stackToBack.add(new GeneralWaypoint(-32, -59.5, toRadians(-205), 1.0, 0.2, 5));
+      stackToBack.add(new GeneralWaypoint(10, -59, toRadians(-180), 1.0, 0.0, 6));
+      stackToBack.add(new GeneralWaypoint(38, yy, h, 1.0, 0.0, 6));
+      stackToBack.add(new EndWaypoint(44.5, y, toRadians(-180), .4, .1, 4, 2, toRadians(5)));
       //            }
       robot.followPPPath(stackToBack);
       robot.drop();
       for (int i = 0; i < 2; i++) {
         Path backToStack = new Path();
-        backToStack.add(
-            new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+        backToStack.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         backToStack.add(new GeneralWaypoint(xx1, yy1, toRadians(hh1), vv1, ww1, ffR1));
         backToStack.add(new GeneralWaypoint(xx2, yy2, toRadians(hh2), vv2, ww2, ffR2));
         backToStack.add(new GeneralWaypoint(xx3, yy3, toRadians(hh3), vv3, ww3, ffR3));
@@ -132,12 +129,11 @@ public class RedLeftAut extends LinearOpMode {
         robot.queuer.queue(false,true);
         robot.grabAuto();
         Path stackToBack2 = new Path();
-        stackToBack2.add(
-            new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-        stackToBack2.add(new GeneralWaypoint(-32, -60, toRadians(-200), 1.0, 0.2, 7));
+        stackToBack2.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+        stackToBack2.add(new GeneralWaypoint(-32, -60, toRadians(-205), 1.0, 0.2, 7));
         stackToBack2.add(new GeneralWaypoint(10, -60, toRadians(-180), 1.0, 0.2, 6));
         stackToBack2.add(new GeneralWaypoint(38, -40, toRadians(-170), 1.0, 0.2, 6));
-        stackToBack2.add(new EndWaypoint(44, -37, toRadians(-177), .4, .12, 4, 2, toRadians(10)));
+        stackToBack2.add(new EndWaypoint(44.5, -37, toRadians(-180), .45, .15, 4, 2, toRadians(10)));
         robot.followPPPath(stackToBack2);
         robot.lowAuto();
         robot.drop();

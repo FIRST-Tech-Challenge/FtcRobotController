@@ -32,7 +32,7 @@ public class RedLeft20 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-        robot.roadrun.setPoseEstimate(new Pose2d(-38, -60, Math.toRadians(-90)));
+        robot.roadrun.setPoseEstimate(new Pose2d(-38, -61, Math.toRadians(-90)));
         Path[] toSpike = new Path[3];
         Waypoint start =
                 new StartWaypoint(
@@ -75,31 +75,31 @@ public class RedLeft20 extends LinearOpMode {
                 preToStack[0] = new Path();
                 preToStack[0].add(
                         new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-                preToStack[0].add(new GeneralWaypoint(-33, -58.5, toRadians(-200), 1.0, 0.3, 8));
-                preToStack[0].add(new GeneralWaypoint(16, -58.5, toRadians(-185), 1.0, 0.3, 6));
-                preToStack[0].add(new GeneralWaypoint(39, -31, toRadians(-180), 0.9, 0.3, 6));
+                preToStack[0].add(new GeneralWaypoint(-39, -59, toRadians(-200), 1.0, 0.3, 6));
+                preToStack[0].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
+                preToStack[0].add(new GeneralWaypoint(40, -32, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[0].add(
-                        new EndWaypoint(42, -28, toRadians(-179), 0.5, 0.3, 5, 3, toRadians(10)));
+                        new EndWaypoint(44.5, -29.5, toRadians(-179), 0.5, 0.3, 5, 3, toRadians(10)));
             }
             if (bark == 1) {
                 preToStack[1] = new Path();
                 preToStack[1].add(
                         new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-                preToStack[1].add(new GeneralWaypoint(-33, -58.5, toRadians(-200), 1.0, 0.3, 8));
-                preToStack[1].add(new GeneralWaypoint(16, -58.5, toRadians(-185), 1.0, 0.3, 6));
-                preToStack[1].add(new GeneralWaypoint(39, -37, toRadians(-180), 0.9, 0.3, 6));
+                preToStack[1].add(new GeneralWaypoint(-39, -59, toRadians(-200), 1.0, 0.3, 6));
+                preToStack[1].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
+                preToStack[1].add(new GeneralWaypoint(40, -38, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[1].add(
-                        new EndWaypoint(42, -34, toRadians(-179), .5, 0.3, 6, 3, toRadians(5)));
+                        new EndWaypoint(44.5, -35.5, toRadians(-179), .5, 0.3, 6, 3, toRadians(5)));
             }
             if (bark ==2){
                 preToStack[2] = new Path();
                 preToStack[2].add(
                         new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-                preToStack[2].add(new GeneralWaypoint(-35, -58.5, toRadians(-200), 1.0, 0.3, 8));
-                preToStack[2].add(new GeneralWaypoint(16, -58.5, toRadians(-180), 1.0, 0.3, 6));
-                preToStack[2].add(new GeneralWaypoint(39, -45, toRadians(-170), 0.9, 0.3, 6));
+                preToStack[2].add(new GeneralWaypoint(-39, -59, toRadians(-200), 1.0, 0.3, 6));
+                preToStack[2].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
+                preToStack[2].add(new GeneralWaypoint(40, -45, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[2].add(
-                        new EndWaypoint(42, -42, toRadians(-165), .5, 0.3, 6, 3, toRadians(5)));
+                        new EndWaypoint(44.5, -41.5, toRadians(-179), .5, 0.3, 6, 3, toRadians(5)));
             }
 
 

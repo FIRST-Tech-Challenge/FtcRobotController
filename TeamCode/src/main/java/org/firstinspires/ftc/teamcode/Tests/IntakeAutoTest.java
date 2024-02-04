@@ -21,7 +21,7 @@ public class IntakeAutoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(-40, 0, 0));
+    robot.roadrun.setPoseEstimate(new Pose2d(-55, 0, 0));
         waitForStart();
         while (!isStopRequested() && opModeIsActive()) {
             robot.queuer.queue(false, false);

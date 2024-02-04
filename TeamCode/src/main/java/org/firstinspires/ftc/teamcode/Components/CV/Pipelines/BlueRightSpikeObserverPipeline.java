@@ -103,13 +103,13 @@ public class BlueRightSpikeObserverPipeline extends OpenCvPipeline {
         packet.put("cvThresh1", sums[1]);
         packet.put("cvThresh2", sums[2]);
         if(diffRatio>threshhold){
-            pos.add(2);
-        }
-        else if(diffRatio<-threshhold){
             pos.add(1);
         }
-        else{
+        else if(diffRatio<-threshhold){
             pos.add(0);
+        }
+        else{
+            pos.add(2);
         }
         if(pos.size()>5){
             pos.remove(0);

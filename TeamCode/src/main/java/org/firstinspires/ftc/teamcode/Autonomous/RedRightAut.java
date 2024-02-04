@@ -26,12 +26,12 @@ public class RedRightAut extends LinearOpMode {
   int bark = 1;
   public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 10.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
           pow1 = 0.3, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
-  followRad4 = 5 ,x4 = 16.5, y4 = -47, pow4 = 0.55, buff4 = 3;
+  followRad4 = 5 ,x4 = 16.5, y4 = -44, pow4 = 0.55, buff4 = 3;
 
   @Override
   public void runOpMode() throws InterruptedException {
     BradBot robot = new BradBot(this, false);
-    robot.roadrun.setPoseEstimate(new Pose2d(17, -63, Math.toRadians(-90)));
+    robot.roadrun.setPoseEstimate(new Pose2d(17, -61, Math.toRadians(-90)));
     Path[] toSpike = new Path[3];
     Waypoint start = new StartWaypoint( new com.arcrobotics.ftclib.geometry.Pose2d(
             17, -64, new Rotation2d(toRadians(-90))));
@@ -39,9 +39,9 @@ public class RedRightAut extends LinearOpMode {
     toSpike[0].add(new GeneralWaypoint(x4,y4, toRadians(x2), pow4, .2,followRad1));
     toSpike[0].add(new EndWaypoint(x1, y1, toRadians(-x3), pow3, 0.4, 8, buff1, toRadians(30)));
     toSpike[1] = new Path(start);
-    toSpike[1].add(new EndWaypoint(16.5, -46, toRadians(-91), 0.7, 0, 5, 2, toRadians(10)));
+    toSpike[1].add(new EndWaypoint(16.5, -44, toRadians(-91), 0.7, 0, 5, 2, toRadians(10)));
     toSpike[2] = new Path(start);
-    toSpike[2].add(new EndWaypoint(24.5, -49, toRadians(-90), 0.6, 0.2, 5, 2, toRadians(10)));
+    toSpike[2].add(new EndWaypoint(24.5, -47, toRadians(-90), 0.6, 0.2, 5, 2, toRadians(10)));
     Path[] spikeToBackdrop = new Path[3];
 
     Path[] preToStack = new Path[3];
@@ -68,24 +68,24 @@ public class RedRightAut extends LinearOpMode {
       if (bark == 0) {
         spikeToBackdrop[0] = new Path();
         spikeToBackdrop[0].add(
-                new StartWaypoint(new Translation2d(currentPose.getX()+1, currentPose.getY())));
+                new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[0].add(
-                new EndWaypoint(45, -29, toRadians(-179), .55, .1, 3, 3, toRadians(10)));
+                new EndWaypoint(48, -29.5, toRadians(-179), .45, .1, 2, 2, toRadians(10)));
       }
       if (bark == 1) {
         spikeToBackdrop[1] = new Path();
         spikeToBackdrop[1].add(
-            new StartWaypoint(new Translation2d(currentPose.getX()+1, currentPose.getY())));
+            new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[1].add(
-            new EndWaypoint(45, -36, toRadians(-179), .55, 0.1, 5, 3, toRadians(5)));
+            new EndWaypoint(48, -35.5, toRadians(-179), .45, 0.1, 2, 2, toRadians(5)));
       }
 
       if (bark ==2){
         spikeToBackdrop[2] = new Path();
         spikeToBackdrop[2].add(
-                new StartWaypoint(new Translation2d(currentPose.getX()+1, currentPose.getY())));
+                new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[2].add(
-                new EndWaypoint(45, -42, toRadians(-179), .55, 0.1, 5, 3, toRadians(5)));
+                new EndWaypoint(47, -41.5, toRadians(-179), .4, 0.1, 2, 2, toRadians(5)));
       }
       robot.followPPPath(spikeToBackdrop[bark]);
       robot.queuer.addDelay(0.3);

@@ -146,9 +146,9 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(
         true, purped)) {
       if (DROP.state) {
-        arm.purpurPigzl();
+//        arm.purpurPigzl();
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(100);
+        lift.setPosition(220);
         wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
@@ -454,7 +454,7 @@ public class BradBot extends BasicRobot {
       packet.put("equals", equals);
       var powers =
               MecanumKinematics.robotToWheelVelocities(
-                              new Pose2d(speeds[0], speeds[1], speeds[2]), 10, 12, 1.2)
+                              new Pose2d(speeds[0], speeds[1], speeds[2]), 12, 14, 1.2)
                       .toArray();
       roadrun.setMotorPowers(
               (double) powers[0], (double) powers[1], (double) powers[2], (double) powers[3]);
@@ -472,6 +472,7 @@ public class BradBot extends BasicRobot {
     }
   }
   public void loopPPPath(Path p_path, boolean change){
+    if(!path.isEmpty()||change){
     if (change){ path = p_path;
         path.setPathType(PathType.WAYPOINT_ORDERING_CONTROLLED);
         path.init();
@@ -490,6 +491,7 @@ public class BradBot extends BasicRobot {
                       .toArray();
       roadrun.setMotorPowers(
               (double) powers[0], (double) powers[1], (double) powers[2], (double) powers[3]);
+      }
 
     }
   public void setBlue(boolean blue){

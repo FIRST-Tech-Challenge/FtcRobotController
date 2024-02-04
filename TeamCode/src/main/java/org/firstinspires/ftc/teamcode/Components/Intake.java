@@ -40,7 +40,7 @@ public class Intake extends RFMotor {
   private boolean full = false;
   private int storPixel=0;
 
-  private boolean stopped = false;
+  private boolean stopped = true;
   public static double ONE=0.58, TWO=0.61, THREE = 0.64, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
   double lastTime =0;
   double reverseTime = -100;
@@ -74,6 +74,7 @@ public class Intake extends RFMotor {
     lastHeightTime=-5;
 
     reverseTime=-100;
+    pixeled = !isTeleop;
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -166,6 +167,7 @@ public class Intake extends RFMotor {
   public void uppies(){
     if ( IntakeStates.INTAKING.state && this.getPower()==0) {
       intakeServo.setPosition(UPPIES);
+      height =1;
     }
   }
   public void downy(){
@@ -268,20 +270,24 @@ public class Intake extends RFMotor {
 
 
   public void setHeight(int height){
+    double autoOff = 0.02;
+    if(isTeleop){
+      autoOff=0;
+    }
     if(height==1){
-      intakeServo.setPosition(ONE);
+      intakeServo.setPosition(ONE-autoOff);
     }
     else if(height ==2){
-      intakeServo.setPosition(TWO);
+      intakeServo.setPosition(TWO-autoOff);
     }
     else if(height ==3){
-      intakeServo.setPosition(THREE);
+      intakeServo.setPosition(THREE-autoOff);
     }
     else if(height==4){
-      intakeServo.setPosition(FOUR);
+      intakeServo.setPosition(FOUR-autoOff);
     }
     else{
-      intakeServo.setPosition(FIVE);
+      intakeServo.setPosition(FIVE-autoOff);
     }
   }
   public boolean intakePath(){
@@ -314,7 +320,7 @@ public class Intake extends RFMotor {
         lastTime = time;
         pixeled=true;
       }
-      if (time - lastTime > STOP_DELAY && !stopped) {
+      if (time - lastTime > STOP_DELAY && !stopped && IntakeStates.INTAKING.getState()) {
         reverseIntake();
         reverseTime = time;
         stopped = true;

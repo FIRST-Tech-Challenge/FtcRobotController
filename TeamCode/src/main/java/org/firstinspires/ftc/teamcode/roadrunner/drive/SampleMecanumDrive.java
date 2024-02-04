@@ -185,15 +185,11 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
+
 
         // TODO: reverse any motors using DcMotor.setDirection()
         rightFront.setDirection(DcMotor.Direction.FORWARD);
