@@ -27,11 +27,11 @@ public class Auto_RedBackFull extends CSBase {
         turn(-90); ///
         drive(tilesToInches(-1)); //*/
         setSpeed(1000);
-        for (int i : range(6)) {
+        for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);
             telemetry.update();
             strafe(5, dir.r);
-            if (detectTag(ID)) {
+            if (tagDetections(ID, 1000) != null) {
                 break;
             }
         }
