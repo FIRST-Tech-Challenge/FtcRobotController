@@ -27,14 +27,19 @@ public class LongRedAuto extends LinearOpMode {
                 robot.detectMarkerPosition();
                 Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
             }
+
             */
 
             robot.detectMarkerPosition();
+            robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+
             robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
             robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
@@ -44,6 +49,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.middleToStackAndIntake();
             robot.stackToBoard();
             robot.alignToBoardFast(robot.secondWantedTagId);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false, slideStartingPosition);
