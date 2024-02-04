@@ -30,6 +30,7 @@ public class LongRedAuto extends LinearOpMode {
             */
 
             robot.detectMarkerPosition();
+            robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
             robot.longMoveToBoard(false);
