@@ -42,7 +42,6 @@ public class Robot {
     DcMotor planeLauncher;
     Servo planeLauncherServo;
     double planeServoDisengage = 0.73;
-
     Servo spikeServo;
     Servo trayAngle;
     IMU imu;
@@ -66,6 +65,11 @@ public class Robot {
     PIDController setHeadingController;
     double robotX = 0;
     double robotY = 0;
+
+    public enum MARKER_LOCATION {
+        INNER, CENTER, OUTER;
+    }
+    MARKER_LOCATION markerLocation;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean isLong, boolean red, boolean isAutonomous) {
@@ -168,14 +172,16 @@ public class Robot {
         // move linear slide up
         if (lowOuttake) {
             moveLinearSlideByTicksBlocking(startingPosition + 1700);
+            trayToOuttakePos(true); // pivot tray to outtake position
             openClamp(true, true); // drop pixel
             opMode.sleep(100);
             moveLinearSlideByTicksBlocking(startingPosition + 1850);
         } else {
-            moveLinearSlideByTicksBlocking(startingPosition + 1900);
+            moveLinearSlideByTicksBlocking(startingPosition + 2000);
+            trayToOuttakePos(true); // pivot tray to outtake position
             openClamp(true, true); // drop pixel
             opMode.sleep(100);
-            moveLinearSlideByTicksBlocking(startingPosition + 2050);
+            moveLinearSlideByTicksBlocking(startingPosition + 2150);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
@@ -189,7 +195,44 @@ public class Robot {
         markerPos = position;
     }
 
+    public void setMarkerLocation (boolean isRedAlliance, boolean longPath, MarkerDetector.MARKER_POSITION markerPosition) {
+        if (longPath) {
+            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+
+                markerLocation = MARKER_LOCATION.INNER;
+
+            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+
+                markerLocation = MARKER_LOCATION.OUTER;
+
+            } else {
+
+                markerLocation = MARKER_LOCATION.CENTER;
+
+            }
+        } else {
+            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+
+                markerLocation = MARKER_LOCATION.OUTER;
+
+            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+
+                markerLocation = MARKER_LOCATION.INNER;
+
+            } else {
+
+                markerLocation = MARKER_LOCATION.CENTER;
+
+            }
+        }
+    }
+
     public void setWantedAprTagId(MarkerDetector.MARKER_POSITION position, MarkerDetector.ALLIANCE_COLOR allianceColor) {
+
         if (allianceColor == MarkerDetector.ALLIANCE_COLOR.RED) {
             switch (position) {
                 case CENTER:
@@ -534,6 +577,7 @@ public class Robot {
         //save marker position and apriltag position in robot class
         setMarkerPos(position);
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
+        setSecondWantedTagId();
 
         //print position
         Log.d("vision", "detected position: " + position);
@@ -570,8 +614,7 @@ public class Robot {
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
             VERTICAL_TOTAL = 68;
             HORIZONTAL_TOTAL = 48;
-            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) { //OUTER
+            if (markerLocation == MARKER_LOCATION.OUTER) { //OUTER
 
                 // Calculate distances
 
@@ -595,8 +638,7 @@ public class Robot {
                 mecanumBlocking(horizontal3, isRedAlliance, 0.7);
                 break;
 
-            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) { //INNER
+            } else if (markerLocation == MARKER_LOCATION.INNER) { //INNER
 
                 horizontal1 = 20;
                 horizontal2 = 14; //ORIGINALLY 15.
@@ -825,19 +867,10 @@ public class Robot {
                 polarity = 1;
             }
 
-            if (!testingOnBert) {
-                closeClamp(false);
-                openHook();
-                setServoPosBlocking(spikeServo, 0.5);
-                opMode.sleep(100);
-            }
-
-
             Log.d("vision", "path: Pos " + markerPos);
             Log.d("vision", "path: Tag " + wantedAprTagId);
 
-            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+            if (markerLocation == MARKER_LOCATION.INNER) {
                 Log.d("vision", "path: Inner Spike");
 
                 // P1: (35, 17)
@@ -887,8 +920,7 @@ public class Robot {
 
                 break;
 
-            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+            } else if (markerLocation == MARKER_LOCATION.OUTER) {
                 Log.d("vision", "path: Outer Spike");
 
                 // P1: (35, 17)
@@ -2110,47 +2142,41 @@ public class Robot {
 
     public void boardToMiddle () {
 
-        int polarity;
-        if (isRedAlliance) {
-            polarity = -1;
-        } else {
-            polarity = 1;
-        }
+        int polarity = (isRedAlliance) ? -1 : 1;
 
-        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-            // inner spike
-            if (isRedAlliance) {
-                mecanumBlocking2(29);
-            } else {
+        switch (wantedAprTagId) {
+            case 1:
                 mecanumBlocking2(-29);
-            }
-
-        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-            || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-            // outer spike
-
-            if (isRedAlliance) {
-                mecanumBlocking2(19);
-            } else {
-                mecanumBlocking2(-19);
-            }
-
-        } else {
-            // center spike
-
-            if (isRedAlliance) {
-                mecanumBlocking2(26);
-            } else {
+                break;
+            case 2:
                 mecanumBlocking2(-26);
-            }
-
+                break;
+            case 3:
+                mecanumBlocking2(-19);
+                break;
+            case 4:
+                mecanumBlocking2(19);
+                break;
+            case 5:
+                mecanumBlocking2(26);
+                break;
+            case 6:
+                mecanumBlocking2(29);
+                break;
+            default:
+                break;
         }
 
         setHeading(90 * polarity, 0.7);
-
     }
 
+    public void servoToInitPositions() {
+        // set clamp, hook, spike
+        closeClamp(false);
+        openHook();
+        setServoPosBlocking(spikeServo, 0.5);
+        opMode.sleep(100);
+    }
     public void middleToStack () {
 
         stackAttachmentOut();
@@ -2162,56 +2188,39 @@ public class Robot {
         straightBlocking(3, false, 0.5);
 
         stackAttachmentIn();
-        opMode.sleep(400);
+        opMode.sleep(300);
 
-        straightBlocking(7, true, 0.5);
+        straightBlocking(5, true, 0.5);
+        straightBlocking(3, false, 0.5);
+
+        straightBlocking(3, true, 0.5);
         straightBlocking(3, false, 0.5);
 
         closeClamp(true);
-        straightBlocking(3, false, 0.5);
         intake.setPower(1);
+        opMode.sleep(100);
+        intake.setPower(0);
     }
 
-    public void hailMaryyyyyy () {
+    public void stackToBoard() {
 
-        int polarity;
-        if (isRedAlliance) {
-            polarity = -1;
-        } else {
-            polarity = 1;
-        }
+        int polarity = (isRedAlliance) ? -1 : 1;
 
-        straightBlocking(5, false, 0.6);
-        intake.setPower(0);
+        straightBlocking(9, false, 0.6);
         straightBlocking2FixHeading(-84);
 
         if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                 || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
             // inner spike
-            if (isRedAlliance) {
-                mecanumBlocking2(-29);
-            } else {
-                mecanumBlocking2(29);
-            }
+            mecanumBlocking2(-29 * polarity);
 
         } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                 || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
             // outer spike
-
-            if (isRedAlliance) {
-                mecanumBlocking2(-19);
-            } else {
-                mecanumBlocking2(19);
-            }
-
+            mecanumBlocking2(-19 * polarity);
         } else {
             // center spike
-
-            if (isRedAlliance) {
-                mecanumBlocking2(-26);
-            } else {
-                mecanumBlocking2(26);
-            }
+            mecanumBlocking2(-26 * polarity);
         }
     }
 
