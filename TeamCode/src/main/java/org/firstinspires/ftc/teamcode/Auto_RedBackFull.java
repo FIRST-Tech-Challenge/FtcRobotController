@@ -18,20 +18,27 @@ public class Auto_RedBackFull extends CSBase {
         int ID = setID(pos, teamColor);
         telemetry.addData("Team Prop X", x);
         telemetry.addData("Team Prop Position", pos);
-        telemetry.update();
-        /*
+        telemetry.update(); //*/
+        //*
         purplePixel();
         drive(2);
         turn(-90);
         drive(tilesToInches(-1));
-        turn(-90); //*/
-        drive(tilesToInches(-1));
-        turn(90);
+        turn(-90); ///
+        drive(tilesToInches(-1)); //*/
         setSpeed(1000);
+        for (int i : range(6)) {
+            telemetry.addData("i", i);
+            telemetry.update();
+            strafe(5, dir.r);
+            if (detectTag(ID)) {
+                break;
+            }
+        }
         align(ID);
-        drive(-12);
-        strafe(tilesToInches(1), dir.r);
-        drive(-18);
+        //drive(-12);
+        //strafe(tilesToInches(1), dir.r);
+        //drive(-18);
 
         //*/
 

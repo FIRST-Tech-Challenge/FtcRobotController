@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.*;
+import java.util.*;
 
 import androidx.annotation.Nullable;
 
@@ -16,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.*;
 import org.firstinspires.ftc.vision.*;
 import org.firstinspires.ftc.vision.apriltag.*;
 import org.firstinspires.ftc.vision.tfod.*;
-import java.util.*;
 
 public abstract class CSBase extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;
@@ -450,6 +450,7 @@ public abstract class CSBase extends LinearOpMode {
             sleep(WAIT_TIME);
         }
     }
+
    /** Initializes the TFOD and April Tag processors. **/
     private void initProcessors() {
 
@@ -544,17 +545,20 @@ public abstract class CSBase extends LinearOpMode {
      */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
-            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
+            while (opModeIsActive() && a != null && (abs(-a.ftcPose.y + 8) > 1 ||abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 telemetry.addData("Strafe", a.ftcPose.x);
+                strafe(a.ftcPose.x);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                telemetry.addData("Drive", -a.ftcPose.y + 5);
+                telemetry.addData("Drive", -a.ftcPose.y + 8);
+                drive(-a.ftcPose.y + 8);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 if (abs(a.ftcPose.yaw) > 1) {
                     telemetry.addData("Turn", a.ftcPose.yaw / 2);
+                    turn(a.ftcPose.yaw / 2);
                 }
                 telemetry.update();
         }
@@ -667,6 +671,19 @@ public abstract class CSBase extends LinearOpMode {
         turn(-180);
         drive(-25);
     }
+
+    /** Gives a range of 0 to x - 1
+     * @param x Integer
+     * @return A range of 0 to x - 1
+     */
+    public List<Integer> range(int x) {
+        List<Integer> a = new ArrayList<>();
+        for (int i = 0; i < x; i++) {
+            a.add(i);
+        }
+        return a;
+    }
+
     /** Stupid method that cleans up warnings.*/
     private void warningCleanup1() {
         if (detectTag(1)) {
