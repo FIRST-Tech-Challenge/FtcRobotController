@@ -28,7 +28,7 @@ public class TeleOp_OneGamepad extends CSBase {
 
     @Override
     public void runOpMode() {
-        setup(color.n, false);
+        setup();
         if (trayTiltingServo != null) {
             trayTiltingServo.setPosition(1);
         }

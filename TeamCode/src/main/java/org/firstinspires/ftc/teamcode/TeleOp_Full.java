@@ -29,7 +29,7 @@ public class TeleOp_Full extends CSBase {
 
     @Override
     public void runOpMode() {
-        setup(color.n, false);
+        setup();
         if (trayTiltingServo != null) {
             trayTiltingServo.setPosition(1);
         }

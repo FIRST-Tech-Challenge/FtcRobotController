@@ -92,13 +92,12 @@ public abstract class CSBase extends LinearOpMode {
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
-            telemetry.addData("", "Team color not specified, will not use team prop detection!");
             useCam = false;
         }
 
         imu = hardwareMap.get(IMU.class, "imu");
         if (!imu.initialize(IMU_PARAMETERS)){
-            telemetry.addData("IMU","Initialization failed");
+            throw new RuntimeException("IMU initialization failed");
         }
         try {
             lf = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -159,19 +158,7 @@ public abstract class CSBase extends LinearOpMode {
     public void setup(color teamColor){
         setup(teamColor, true);
     }
-
-    /** Initializes all hardware devices on the robot.
-     * Note:
-     * When called without useCam manually set, useCam defaults to true.
-     * @param isRed Is the team prop red? **/
-    public void setup(boolean isRed){
-        if (isRed) {
-            setup(color.r, true);
-        }
-        else {
-            setup(color.b, true);
-        }
-    }
+    public void setup() { setup(color.n, false); }
 
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
@@ -302,7 +289,7 @@ public abstract class CSBase extends LinearOpMode {
      * robot to strafe until manually stopped.
      * @param inches Amount of inches to strafe.
      * @param direction Direction to strafe in.**/
-    public void strafe(double inches, dir direction /*double duration*/) {
+    public void strafe(double inches, dir direction) {
 
         if (opModeIsActive() && lf != null) {
             lb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -398,10 +385,10 @@ public abstract class CSBase extends LinearOpMode {
         if (carWashMotor != null) {
             telemetry.addData("Car Wash", "Ejecting Pixel");
             telemetry.update();
-            int t = (int) runtime.milliseconds() + 1000;
+            double t = runtime.milliseconds() + 1000;
             carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
-                if (!(t > ((int) runtime.milliseconds()))) {
+                if (!(runtime.milliseconds() < t)) {
                     break;
                 }
             }
@@ -451,7 +438,7 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
-    private void initProcessors() {
+    private void initProcessors(){
 
         tfod = new TfodProcessor.Builder()
 
@@ -507,9 +494,9 @@ public abstract class CSBase extends LinearOpMode {
      * @return Information about the tag detected. **/
     @Nullable
     public AprilTagDetection tagDetections(int id, double timeout) {
-        double ms = timeout * 1000;
+        double ms = (timeout * 1000);
         AprilTagDetection a;
-        int t = (int) runtime.milliseconds() + (int) ms;
+        double t = runtime.milliseconds() + ms;
         while (opModeIsActive() && (runtime.milliseconds() < t)) {
             a = tagDetections(id);
             if (a != null) {
@@ -587,10 +574,10 @@ public abstract class CSBase extends LinearOpMode {
         return spike.n;
     }
 
-    /** Sets the AprilTag ID based on the spike location and robot color
+    /** Sets the AprilTag ID based on the spike location and robot color.
      * @param location Location of the team prop
      * @param teamColor Color of the team's alliance
-     * @return AprilTag ID
+     * @return ID of the April Tag.
      */
     public int setID(spike location, color teamColor) {
         int ID;
@@ -623,8 +610,7 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Sleep a specified number of seconds.
      * @param seconds The amount of seconds to sleep. **/
-    public final void s(double seconds) {
-        sleep((long) seconds * 1000);
+    public final void s (double seconds){ sleep((long) seconds * 1000);
     }
 
     /** Place the purple pixel. **/
