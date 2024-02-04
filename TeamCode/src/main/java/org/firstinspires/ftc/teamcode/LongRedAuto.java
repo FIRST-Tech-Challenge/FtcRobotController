@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,18 +15,21 @@ public class LongRedAuto extends LinearOpMode {
         robot.initVisionProcessing();
         double slideStartingPosition;
 
-        robot.detectPropEarly();
+        // robot.detectPropEarly();
 
         waitForStart();
 
         while (opModeIsActive()) {
 
+            /*
             if (robot.markerPos == MarkerDetector.MARKER_POSITION.UNDETECTED ||
                     robot.markerPos == MarkerDetector.MARKER_POSITION.UNKNOWN) {
                 robot.detectMarkerPosition();
                 Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
             }
+            */
 
+            robot.detectMarkerPosition();
             robot.servoToInitPositions();
 
             robot.longMoveToBoard(false);
@@ -39,7 +40,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.autoOuttake(true, slideStartingPosition);
 
             robot.boardToMiddle();
-            robot.middleToStack();
+            robot.middleToStackAndIntake();
             robot.stackToBoard();
             robot.alignToBoardFast(robot.secondWantedTagId);
 
