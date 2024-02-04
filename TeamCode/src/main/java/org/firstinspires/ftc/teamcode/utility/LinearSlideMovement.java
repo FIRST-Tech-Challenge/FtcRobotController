@@ -15,9 +15,9 @@ public class LinearSlideMovement {
 
     public static final int top_linearslide_ticks = 1660; // adjusted to proper field height at T1 from memory
 
-    public static final int mid_linearslide_ticks = 900;
+    public static final int mid_linearslide_ticks = 1000;
 
-    public static final int low_linearslide_ticks = 450;
+    public static final int low_linearslide_ticks = 600;
 
     public static final int bottom_linearslide_ticks = 0;
 
@@ -44,21 +44,29 @@ public class LinearSlideMovement {
     }
 
     public void LinearSlidesTop(){
+        leftLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
         Movelinearslide (top_linearslide_ticks);
     }
 
     public void LinearSlidesMiddle(){
+        leftLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
         Movelinearslide (mid_linearslide_ticks);
     }
 
 
     public void LinearSlidesLow(){
+        leftLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(10.0, 0.2, 0.001, 10.0);
         Movelinearslide (low_linearslide_ticks);
     }
 
     public void LinearSlidesBottom(){
+        leftLinearSlide.setVelocityPIDFCoefficients(15.0, 0.5, 0.001, 2.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(15.0, 0.5, 0.001, 2.0);
         Movelinearslide (bottom_linearslide_ticks);
-        while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 10)){
+        while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 13)){
             // pause to wait for the slide to lower before raising the wrist back up.
         }
         intake.FlipUp();

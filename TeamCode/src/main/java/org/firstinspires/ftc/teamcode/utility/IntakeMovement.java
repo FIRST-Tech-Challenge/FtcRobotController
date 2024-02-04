@@ -24,12 +24,12 @@ public class IntakeMovement {
     // The lower the int the higher the wrist goes
     static final int WRIST_UP_TICKS     =  0;     // Gge MUST be started at all times with the claw fully raised and over the conveyor.
     static final int WRIST_SAFETY_TICKS = 30;     // Gge needs to have a safety  position for the wrist to allow the linear slides to raise.
-    public static final int WRIST_DOWN_TICKS   =  141;     // The number of ticks that achieve ground position for the wrist.
+    public static final int WRIST_DOWN_TICKS   =  144;     // The number of ticks that achieve ground position for the wrist.
     double WRIST_POWER = 1.0; // Set the power of the wrist movement
 
-    static final double SERVO_CLAW_DELAY = 0.9;
+    static final double SERVO_CLAW_DELAY = 1.0;
 
-    static final double CONVEYOR_ADVANCE_DELAY = 1.5;
+    static final double CONVEYOR_ADVANCE_DELAY = 0.9;
 
     // Tracks the amount of time a servo moving into position will take
     private ElapsedTime servoRuntime = new ElapsedTime();
@@ -131,7 +131,7 @@ public class IntakeMovement {
      * the claw servos to touch it.
      */
     public void FlipDown() {
-        wrist.setVelocityPIDFCoefficients(35, 0.1, 0.1, 4);
+        wrist.setVelocityPIDFCoefficients(45, 0.1, 0.001, 4);
         moveWrist (WRIST_DOWN_TICKS, WRIST_POWER);
     }
 
@@ -150,7 +150,7 @@ public class IntakeMovement {
      */
     public void FlipUp(){
         // For Wrist, PIDF values set to reduce jitter
-        wrist.setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
+        wrist.setVelocityPIDFCoefficients(25, 0.3, 0.02, 16);
         moveWrist (WRIST_UP_TICKS, WRIST_POWER);
 
     }
@@ -168,9 +168,7 @@ public class IntakeMovement {
             telemetry.addData("Running GrabAndSlowSequence...", WRIST_UP_TICKS);
             telemetry.update();
             ClawClosed();
-            //sleep(500);
             FlipUp();
-            //sleep(500);
             ClawOpen();
         }
 
