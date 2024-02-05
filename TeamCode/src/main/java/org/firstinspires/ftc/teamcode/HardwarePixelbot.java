@@ -94,7 +94,7 @@ public class HardwarePixelbot
     protected DcMotorEx collectorMotor     = null;
 
     public double  COLLECTOR_MOTOR_POWER = 0.90;  // Speed of the collector motor when we run
-    public double  COLLECTOR_EJECT_POWER = -0.90;  // Speed of the collector motor for autonomous (assumes ON TOP!)
+    public double  COLLECTOR_EJECT_POWER = 0.90;  // Speed of the collector motor for autonomous (assumes INSIDE!)
 
     // Viper slide motors (Y power cable to drive both motors from one port; single encoder cable on left motor
     protected DcMotorEx viperMotors = null;
@@ -153,7 +153,7 @@ public class HardwarePixelbot
     //====== SERVO FOR COLLECTOR ARM ====================================================================
     public Servo  collectorServo       = null;
 
-    public double COLLECTOR_SERVO_GROUND = 0.910;
+    public double COLLECTOR_SERVO_GROUND = 0.870; // flipped (0.830 spacer; 0.910 no spacer flipped)
     public double COLLECTOR_SERVO_STACK2 = 0.780;
     public double COLLECTOR_SERVO_STACK3 = 0.750;
     public double COLLECTOR_SERVO_STACK4 = 0.710;

@@ -48,19 +48,19 @@ class CenterstageSuperPipeline implements VisionProcessor {
     protected boolean saveNextSpikeMark = false;
     // NOTE: webcam resolution for the row/col values below is 1280 x 800
     // LEFT ALLIANCE (autonomous alignment uses RIGHT side of the field tile, away from truss)
-    protected Point sub1PointALeft = new Point( 375, 410); //Point1 is left spike mark, Point2 is center, Point3 is Right
-    protected Point sub1PointBLeft = new Point( 425, 460); // 50x50 pixel window (SMALL to avoid seeing stuff we don't want to)
-    protected Point sub2PointALeft = new Point( 775, 410);
-    protected Point sub2PointBLeft = new Point( 825, 460);
-    protected Point sub3PointALeft = new Point(1180, 420);
-    protected Point sub3PointBLeft = new Point(1230, 470);
+    protected Point sub1PointALeft = new Point( 375, 440); //Point1 is left spike mark, Point2 is center, Point3 is Right
+    protected Point sub1PointBLeft = new Point( 425, 490); // 50x50 pixel window (SMALL to avoid seeing stuff we don't want to)
+    protected Point sub2PointALeft = new Point( 775, 440);
+    protected Point sub2PointBLeft = new Point( 825, 490);
+    protected Point sub3PointALeft = new Point(1180, 450);
+    protected Point sub3PointBLeft = new Point(1230, 500);
     // RIGHT ALLIANCE (autonomous alignment uses LEFT side of the field tile, away from truss)
-    protected Point sub1PointARight = new Point( 90, 415);
-    protected Point sub1PointBRight = new Point(140, 465);
-    protected Point sub2PointARight = new Point(555, 400);
-    protected Point sub2PointBRight = new Point(605, 450);
-    protected Point sub3PointARight = new Point(935, 415);
-    protected Point sub3PointBRight = new Point(985, 465);
+    protected Point sub1PointARight = new Point( 90, 435);
+    protected Point sub1PointBRight = new Point(140, 485);
+    protected Point sub2PointARight = new Point(555, 420);
+    protected Point sub2PointBRight = new Point(605, 470);
+    protected Point sub3PointARight = new Point(935, 435);
+    protected Point sub3PointBRight = new Point(985, 485);
     
     protected Point spikeMarkCenter = new Point(); // defined dynamically below
 //  protected Mat YCrCb = new Mat();
@@ -113,10 +113,10 @@ class CenterstageSuperPipeline implements VisionProcessor {
         // Extract the HUE channel data (HSV -> HueChan)
         Core.extractChannel(HSV, HueChan, 0);
         // What target hue  are we looking for on this alliance?
-        //   RED team prop  = 175     BLUE team prop =
+        //   RED team prop  = 170     BLUE team prop = 110
         //   RED lion head  = 160     BLUE lion head = 105
         targetHue = (redAlliance)? 160 : 105;
-        maxHueErr = 25;     // how far off can we go and still be the desired color??
+        maxHueErr = 30;     // how far off can we go and still be the desired color??
 
         // Define 3 permanent sampling areas from this color channel (HueChan -> submatHue)
         if( leftSide ) {

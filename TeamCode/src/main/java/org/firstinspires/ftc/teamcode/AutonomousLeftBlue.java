@@ -71,9 +71,10 @@ public class AutonomousLeftBlue extends AutonomousBase {
                 .setCameraResolution(new Size(1280, 800))
                 .build();
         //
-        setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur
+//     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
+        parkLocation = PARK_RIGHT;  // blue-left normally parks on the right
         while (!isStarted()) {
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -145,9 +146,15 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous( int spikemark ) {
-        double pos_y=0, pos_x=0;
+        double pos_y=0, pos_x=0, pos_angle=-90.0;
+        int backdropAprilTagID = 2; // default to BLUE CENTER
 
-        // Drive forward to spike mark
+        // Do we start with an initial delay?
+        if( startDelaySec > 0 ) {
+            sleep( startDelaySec * 1000 );
+        }
+
+     // Drive forward to spike mark
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to Spike Mark");
             telemetry.update();
@@ -159,7 +166,10 @@ public class AutonomousLeftBlue extends AutonomousBase {
                     driveToPosition( -30.5, -6.5, -59.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -25.8, -3.7, -79.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -24.6, -3.9, -85.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
-                    driveToPosition( -24.7, -6.0, -122.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
+                    driveToPosition( -24.7, -6.0, -122.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -24.2,   -7.3, -140.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -22.4,   -4.9, -136.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+                    driveToPosition( -26.7,   -7.0, -101.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO );
                     break;
                 case 2:  // CENTER
                     driveToPosition( -10.0,  0.0,  0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
@@ -189,8 +199,12 @@ public class AutonomousLeftBlue extends AutonomousBase {
         if( opModeIsActive()) {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
+            // Lower the collector so the boot wheels don't touch the collector crossbar
+            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
+            // Start the collector in ejecting-mode
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(3000 );  // 3 sec
+            // Back straight up for 0.85 sec to drop purple pixel on the spike mark line
+            timeDriveStraight( -0.20, 850 );
             robot.collectorMotor.setPower(0.0);
         }
 
@@ -200,19 +214,13 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.update();
             switch( spikemark ) {
                 case 3 : // RIGHT
-                    driveToPosition( -24.2,   -7.3, -140.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
-                    driveToPosition( -22.4,   -4.9, -136.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
-                    driveToPosition( -26.7,   -7.7, -101.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -32.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
-                    pos_y = -32.0;
-                    pos_x = 34.0;
+                    backdropAprilTagID = 1; // BLUE Backdrop (left)
                     break;
                 case 2:  // CENTER
-                    driveToPosition( -35.2, 10.8, -94.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -26.0, 25.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -26.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
-                    pos_y = -26.0;
-                    pos_x = 34.0;
+                    backdropAprilTagID = 2; // BLUE Backdrop (center)
                     break;
                 case 1:  // LEFT
                 default:
@@ -221,11 +229,38 @@ public class AutonomousLeftBlue extends AutonomousBase {
                     driveToPosition( -39.0, 18.0, -45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -33.3, 21.8, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -20.0, 34.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
-                    pos_y = -20.0;
-                    pos_x = 35.0;
+                    backdropAprilTagID = 3; // BLUE Backdrop (right)
                     break;
             } // switch
-        }
+        } // opModeIsActive
+
+        // Drive toward backdrop in preparation to score the yellow pixel
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "AprilTag final alignment");
+            telemetry.update();
+            // Does the camera see the Backdrop AprilTag?
+//          boolean targetVisible = processAprilTagDetections( backdropAprilTagID );
+//          sleep(3000);
+//          if( targetVisible ) {
+            if( false ) {
+                // Where do we need to move to be 3" way with zero side-to-side offset
+                computeAprilTagCorrections( 3.0 );
+                pos_y = autoYpos;
+                pos_x = autoXpos;
+                pos_angle = autoAngle;
+                driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+            }
+            else {
+                switch( spikemark ) {
+                    case 3:  pos_y = ((yellowOnLeft)? -30.0:-32.0); pos_x = 34.0; break; // RIGHT
+                    case 2:  pos_y = ((yellowOnLeft)? -24.0:-26.0); pos_x = 34.0; break; // CENTER
+                    case 1 : pos_y = ((yellowOnLeft)? -18.0:-20.0); pos_x = 35.0; break; // LEFT
+                    default: pos_y = ((yellowOnLeft)? -24.0:-26.0); pos_x = 34.0; break; // (CENTER)
+                } // switch
+                pos_angle = -90.0; // same for all 3 positions
+                driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+            } // !targetVisible (just use odometry)
+        } // opModeIsActive
 
         // Score the yellow pixel
         if( opModeIsActive() ) {
@@ -235,20 +270,20 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.addData("Motion", "move to backdrop");
             telemetry.update();
             switch( spikemark ) {
-                case 3 : desiredDistanceCM = 13.0; break; // RIGHT
-                case 2:  desiredDistanceCM = 14.0; break; // CENTER
+                case 3 : desiredDistanceCM = 12.0; break; // RIGHT
+                case 2:  desiredDistanceCM = 13.0; break; // CENTER
                 case 1:
                 default: desiredDistanceCM = 15.0; break; // LEFT
             } // switch
             currentDistanceCM = robot.getBackdropRange();
             driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;
-            //telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
-            //telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);
-            //telemetry.update();
-            //sleep(3000);
+//          telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
+//          telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);
+//          telemetry.update();
+//          sleep(3000);
             if( Math.abs(driveOffsetInches) < 7.0 ) {
                 pos_x -= driveOffsetInches;
-                driveToPosition( pos_y, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+                driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
             }
             scoreYellowPixel();
         }
@@ -259,11 +294,23 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.update();
             //Back away from the backdrop 2 inches.
             pos_x -= 2;
-            driveToPosition( pos_y, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
-            //Strafe left to park
-            driveToPosition( -50.0, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
-            pos_x += 6;
-            driveToPosition( -50.0, pos_x, -90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
-        }
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            if( parkLocation == PARK_RIGHT){
+                //Strafe right to park
+                driveToPosition( -50.0, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
+                pos_x += 6;
+                driveToPosition( -50.0, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            }
+            else if( parkLocation == PARK_LEFT ){
+                //Strafe left to park
+                driveToPosition( -1.5, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU);
+                pos_x += 6;
+                driveToPosition( -1.5, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+
+            }else{
+                // park none means do nothing
+            }
+        } // opModeIsActive
+
     } // mainAutonomous
 } /* AutonomousLeftBlue */

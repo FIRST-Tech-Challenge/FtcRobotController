@@ -16,11 +16,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -93,14 +95,23 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean     redAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         initMenuSelected = 1;    // start on the first entry
-    int         initMenuMax      = 5;    // we have 5 total entries
+    int         initMenuMax      = 6;    // we have 6 total entries
+//  String[]    initMenuStr  = new String[initMenuMax];
 
     int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both Backdrop & Audience sides
     int         trussDelaySec    = 0;     // 2: wait [seconds] under the truss -- applies only to Audience side
 
-    boolean     audienceYellow   = true;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
-    boolean     audiencePark     = true;  // 4: park in Backstage from audience side (true=park; false=stop under truss)
-    int         fiveStackCycles = 0;      // 5: number of white pixels to score from 5-stack (only Audience side for now)
+    boolean     audienceYellow   = false;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
+    boolean     yellowOnLeft     = true;   // 4: drop yellow pixel in backdrop on left? (true=LEFT; false=RIGHT)
+
+    int         parkLocation    = 0;      // 5: park 0=NONE, 1=LEFT, 2=RIGHT
+    final int   PARK_NONE = 0;
+    final int   PARK_LEFT = 1;
+    final int   PARK_RIGHT = 2;
+
+    String[]    parkLocationStr = {"NONE", "LEFT", "RIGHT"};
+
+    int         fiveStackCycles = 0;      // 6: number of white pixels to score from 5-stack (only Audience side for now)
     int         fiveStackHeight = 5;      // Remaining pixels on 5-stack (always starts at 5); Dictates collector height
     ElapsedTime autonomousTimer = new ElapsedTime();
 
@@ -151,7 +162,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     protected VisionPortal visionPortalBack;
     protected CenterstageSuperPipeline pipelineBack;
     protected AprilTagProcessor aprilTag;
-
+    protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
     int pixelNumber = 0;
@@ -251,12 +262,27 @@ public abstract class AutonomousBase extends LinearOpMode {
                     audienceYellow   = !audienceYellow;
                 } // next
                 break;
-            case 4 : // PARK IN BACKSTAGE WHEN STARTING ON AUDIENCE SIDE? (or just sit under truss)
+            case 4 : // WHERE ON BACKDROP DO WE PLACE THE YELLOW PIXEL? (LEFT/RIGHT)
                 if( nextValue || prevValue) {
-                    audiencePark   = !audiencePark;
+                    yellowOnLeft   = !yellowOnLeft;
                 } // next
                 break;
-            case 5 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
+
+            case 5: // WHAT LOCATION DO YOU WANT TO PARK IN?
+                if( nextValue ){
+                    if( parkLocation < 2){
+                        parkLocation++;
+                    }
+                }// next
+
+                if( prevValue ){
+                    if( parkLocation > 0){
+                        parkLocation--;
+                    }
+                }// prev
+                break;
+
+            case 6 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
                 if( nextValue ) {
                     if (fiveStackCycles < 1) {
                         fiveStackCycles++;
@@ -279,9 +305,13 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("Truss Delay", "%d sec %s", trussDelaySec, ((initMenuSelected==2)? "<-":"  ") );
         telemetry.addData("Audience Yellow", "%s %s", (audienceYellow)? "Yes" : "No",
                 ((initMenuSelected==3)? "<-":"  "));
-        telemetry.addData("Audience Park","%s %s", (audiencePark)? "Yes" : "No",
+        telemetry.addData("Place Yellow","%s %s", (yellowOnLeft)? "LEFT" : "RIGHT",
                 ((initMenuSelected==4)? "<-":"  "));
-        telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==5)? "<-":"  ") );
+        telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
+                ((initMenuSelected==5)? "<-":"  "));
+
+        telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
+        telemetry.addData(">","version 109" );
         telemetry.update();
     } // processAutonomousInitMenu
 
@@ -324,6 +354,67 @@ public abstract class AutonomousBase extends LinearOpMode {
             sleep(20);
         }
     } // setWebcamManualExposure
+
+    /*---------------------------------------------------------------------------------*/
+    protected boolean processAprilTagDetections( int desiredAprilTagID ) {
+        boolean successfulDetection = false;
+
+        // discard any prior detection data
+        detectionData  = null;
+
+        // Step through the list of detected tags and look for a matching tag
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Look to see if we have size info on this tag.
+            if (detection.metadata != null) {
+                //  Check to see if we want to track towards this tag.
+                if ((desiredAprilTagID < 0) || (detection.id == desiredAprilTagID)) {
+                    // Yes, we want to use this tag.
+                    successfulDetection = true;
+                    detectionData = detection;
+                    break;  // don't look any further.
+                } else {
+                    // This tag is in the library, but we do not want to track it right now.
+//                  telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                }
+            } else {
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+//              telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        } // for()
+
+        return successfulDetection;
+
+    } // processAprilTagDetections
+
+    /*------------------------------------------------------------------------------------------*/
+    /* Where do we need to move to achieve the desired offset distance (zero yaw/heading error) */
+    protected void computeAprilTagCorrections( double desiredDistance ) {
+        // Where does our odometry say we are now? (x/y/angle)
+        double curXpos    = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;
+        double curYpos    = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;
+        double curDegrees = Math.toDegrees( robotOrientationRadians );
+        // What does our AprilTag reading says our error to the backdrop is? (inches/degrees/degrees)
+        double  errorInchesRange    = (detectionData.ftcPose.range - desiredDistance);
+        double  errorDegreesYaw     = -detectionData.ftcPose.yaw;
+        double  errorDegreesHeading = detectionData.ftcPose.bearing;
+        // Convert those error angles into inches
+        double  errorInchesX      = errorInchesRange * Math.cos( Math.toRadians(errorDegreesYaw) );
+        double  errorInchesY      = errorInchesRange * Math.sin( Math.toRadians(errorDegreesYaw) );
+        double  errorDegreesAngle = errorDegreesHeading;
+        // Compute the new desired x/y/angle to zero-out that error
+        autoXpos  = curXpos + errorInchesX;
+        autoYpos  = curYpos + errorInchesY;
+        autoAngle = curDegrees + errorDegreesAngle;
+        // Display results (DEBUGGING ONLY)
+        telemetry.addData("Error","Drive %.2f in, Strafe %.2f deg, Turn %.2f deg",
+                errorInchesRange, errorDegreesYaw, errorDegreesHeading);
+        telemetry.addData("Error","X %.2f in, Y %.2f deg, Turn %.2f deg",
+                errorInchesX, errorInchesY, errorDegreesAngle);
+        telemetry.update();
+        sleep(5000);
+
+    } // computeAprilTagCorrections
 
     // Create a time stamped folder in
     public void createAutoStorageFolder( boolean isRed, boolean isLeft ) {

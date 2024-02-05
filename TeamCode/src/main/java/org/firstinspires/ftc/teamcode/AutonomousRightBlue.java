@@ -71,9 +71,10 @@ public class AutonomousRightBlue extends AutonomousBase {
                 .setCameraResolution(new Size(1280, 800))
                 .build();
         //
-        setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur
+//     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
+        parkLocation = PARK_NONE;  // blue-right normally stops under the truss
         while (!isStarted()) {
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -145,30 +146,37 @@ public class AutonomousRightBlue extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous( int spikemark ) {
+        double pos_y=0, pos_x=0, pos_angle=-90.0;
+        int backdropAprilTagID = 2; // default to BLUE CENTER
+
+        // Do we start with an initial delay?
+        if( startDelaySec > 0 ) {
+            sleep( startDelaySec * 1000 );
+        }
 
      // Drive forward to spike mark
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to Spike Mark");
             telemetry.update();
-            // THe final motion depends on whether it's left/center/right spike (1/2/3)
+            // This movement depends on whether it's left/center/right spike (1/2/3)
             switch( spikemark ) {
                 case 1 : // LEFT
                     driveToPosition( -10.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -12.5, 0.5, 67.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -15.0, 1.0, 135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -25.4, 11.0, 135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
-                    driveToPosition( -23.0, 8.0, 143.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    driveToPosition( -23.0, 9.0, 143.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 2:  // CENTER
                     driveToPosition( -10.0, -3.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
-                    driveToPosition( -37.0, -6.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    driveToPosition( -38.0, -6.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
                 case 3:  // RIGHT
                 default:
                     driveToPosition( -9.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -16.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -30.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
-                    driveToPosition( -21.0, -4.0, -160.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    driveToPosition( -25.0, -4.0, -160.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
                     break;
             } // switch
         }
@@ -177,8 +185,12 @@ public class AutonomousRightBlue extends AutonomousBase {
         if( opModeIsActive()) {
             telemetry.addData("Skill", "eject purple pixel");
             telemetry.update();
+            // Lower the collector so the boot wheels don't touch the collector crossbar
+            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
+            // Start the collector in ejecting-mode
             robot.collectorMotor.setPower(robot.COLLECTOR_EJECT_POWER);
-            sleep(3000 );  // 3 sec
+            // Back straight up for 0.85 sec to drop purple pixel on the spike mark line
+            timeDriveStraight( -0.20, 850 );
             robot.collectorMotor.setPower(0.0);
         }
 
@@ -194,27 +206,97 @@ public class AutonomousRightBlue extends AutonomousBase {
                     driveToPosition( -13.0, 4.0, -150.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
                     driveToPosition( -9.0,  10.0, -130.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -4.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -4.0;
                     break;
                 case 2:  // CENTER
                     driveToPosition( -37.0, -10.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -20.0, -8.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -8.0, -1.0, -45.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -1.0;
                     break;
                 case 3:  // RIGHT
                 default:
-                    driveToPosition( -8.0, -1.0, -135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                    driveToPosition( -4.0, -1.0, -135.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
                     driveToPosition( -1.0, 20.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                    pos_y = -1.0;
                     break;
             } // switch
-        }
+            // Do we pause here under the truss?
+            if( trussDelaySec > 0 ) {
+                sleep( trussDelaySec * 1000 );
+            }
+        } // opModeIsActive
+
+        // Drive into back stage area
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "Drive into back stage");
+            telemetry.update();
+            if( audienceYellow || (parkLocation != PARK_NONE) ) {
+                driveToPosition( pos_y-1, 60.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+                driveToPosition( pos_y-2, 70.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+            } else {
+                // no yellow pixel and PARK_NONE means do nothing
+            }
+        } // opModeIsActive
+
+        // Align to backdrop to score yellow pixel?
+        if( opModeIsActive() && audienceYellow ) {
+            telemetry.addData("Motion", "Align to backdrop");
+            telemetry.update();
+            switch( spikemark ) {
+                // TODO: Audience side not repeatable enough to for 3" accuracy (odometry depends on starting alignment!)
+                // Once AprilTag navigation correction in place, then refine these numbers
+                case 3:  pos_y -= ((yellowOnLeft)? 27.0:27.0); pos_x = 84.0; break; // RIGHT
+                case 2:  pos_y -= ((yellowOnLeft)? 22.0:22.0); pos_x = 84.0; break; // CENTER
+                case 1 : pos_y -= ((yellowOnLeft)? 21.0:21.0); pos_x = 84.0; break; // LEFT // purple pixel has angle error
+                default: pos_y -= ((yellowOnLeft)? 22.0:22.0); pos_x = 84.0; break; // (CENTER)
+            } // switch
+            pos_angle = -90.0; // same for all 3 positions
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU);
+            pos_x += 6.0;  // we're roughly aligned; drive closer;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+        } // opModeIsActive
+
+        // Score yellow pixel
+        if( opModeIsActive() && audienceYellow ) {
+            double desiredDistanceCM;
+            double currentDistanceCM;
+            double driveOffsetInches;
+            telemetry.addData("Motion", "Score yellow pixel");
+            telemetry.update();
+            switch( spikemark ) {
+                case 3 : desiredDistanceCM = 12.0; break; // RIGHT
+                case 2:  desiredDistanceCM = 13.0; break; // CENTER
+                case 1:
+                default: desiredDistanceCM = 15.0; break; // LEFT
+            } // switch
+            currentDistanceCM = robot.getBackdropRange();
+            driveOffsetInches = (desiredDistanceCM-currentDistanceCM)/2.54;
+//          telemetry.addData("Backdrop Range", "%.1f CM", currentDistanceCM);
+//          telemetry.addData("Drive Offset", "%.1f IN", driveOffsetInches);
+//          telemetry.update();
+//          sleep(3000);
+            if( Math.abs(driveOffsetInches) < 7.0 ) {
+                pos_x -= driveOffsetInches;
+                driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            }
+            scoreYellowPixel();
+        } // opModeIsActive
 
         // Park in back stage
-        if( opModeIsActive() ) {
+        if( opModeIsActive() && (parkLocation != PARK_NONE) ) { // Either PARK_LEFT or PARK_RIGHT does the same thing
             telemetry.addData("Motion", "park in back stage");
             telemetry.update();
-            // FOR NOW, CAN'T PARK FROM RIGHT SIDE
-        }
+            // Are we parking from the backdrop or not?
+            if( audienceYellow) {
+               // Just back away from backdrop a bit
+                driveToPosition( pos_y, pos_x-2, pos_angle, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO);
+            }
+            else { // just finish the drive from the truss
+                driveToPosition( pos_y-1, 85.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+            }
+        } // opModeIsActive
 
     } // mainAutonomous
 
