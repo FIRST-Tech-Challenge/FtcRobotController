@@ -103,6 +103,7 @@ public class TouchesOptimisées extends LinearOpMode {
             if (this.gamepad1.left_bumper) {
                 motorA.setPower(tgtPowerA);
                 motorB.setPower(-tgtPowerB);
+                this.gamepad1.rumble(100);
             } else {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));

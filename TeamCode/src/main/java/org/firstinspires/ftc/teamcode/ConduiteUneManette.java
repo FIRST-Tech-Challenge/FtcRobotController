@@ -14,7 +14,8 @@ public class ConduiteUneManette extends LinearOpMode {
     private DcMotorEx bras1;
     private DcMotorEx bras2;
 
-    private Servo coude;
+    private Servo coudeG;
+    private Servo coudeD;
 
     private Servo mainG;
     private Servo mainD;
@@ -25,7 +26,8 @@ public class ConduiteUneManette extends LinearOpMode {
         motorB = hardwareMap.get(DcMotor.class, "moteur2");
         bras1 = hardwareMap.get(DcMotorEx.class, "bras1");
         bras2 = hardwareMap.get(DcMotorEx.class, "bras2");
-        coude = hardwareMap.get(Servo.class, "coude");
+        coudeG = hardwareMap.get(Servo.class, "coudeG");
+        coudeD = hardwareMap.get(Servo.class, "coudeD");
         mainG = hardwareMap.get(Servo.class, "mainG");
         mainD = hardwareMap.get(Servo.class, "mainD");
 
@@ -48,6 +50,7 @@ public class ConduiteUneManette extends LinearOpMode {
         double varRY = 0;
         double maPosCoude = 0;
         int bras0 = 0;
+        double debugTkt = 0;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -81,16 +84,21 @@ public class ConduiteUneManette extends LinearOpMode {
                 tgtPowerA = varYpos;
                 tgtPowerB = varYpos;
 
+                debugTkt = 1;
+
                 if (varX < 0) {
-                    tgtPowerA = tgtPowerA - varXpos;
-                } else if (varX > 0) {
                     tgtPowerB = tgtPowerB - varXpos;
+                } else if (varX > 0) {
+                    tgtPowerA = tgtPowerA - varXpos;
                 }
+
 
             } else if (varY < 0) //Backward
             {
                 tgtPowerA = -varYpos;
                 tgtPowerB = -varYpos;
+
+                debugTkt = -1;
 
                 if (varX < 0) {
                     tgtPowerA = tgtPowerA + varXpos;
@@ -119,6 +127,7 @@ public class ConduiteUneManette extends LinearOpMode {
             if (manette1.left_bumper) {
                 motorA.setPower(tgtPowerA);
                 motorB.setPower(-tgtPowerB);
+                manette1.rumble(100);
             } else {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
@@ -145,8 +154,8 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (triggergauche > 0) {
                 coudeX += 0.0013;
-                if (coudeX > 0.91) {
-                    coudeX = 0.91;
+                if (coudeX > 0.83) {
+                    coudeX = 0.83;
                 }
             } else if (triggerdroit > 0) {
 
@@ -155,7 +164,6 @@ public class ConduiteUneManette extends LinearOpMode {
                     coudeX = 0;
                 }
             }
-            coude.setPosition(coudeX);
 
 
             if (manette2.x) {
@@ -171,12 +179,13 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (manette2.y) {
                 maPosBras = brasA;
-                maPosCoude = coude.getPosition();
+                maPosCoude = coudeD.getPosition();
             }
 
             bras1.setPower(tgtBras);
             bras2.setPower(tgtBras);
-            coude.setPosition(coudeX);
+            coudeG.setPosition(coudeX);
+            coudeD.setPosition(1-coudeX);
 
             if (mainG.getPosition() > 0.10) {
                 while (manette2.a) {
@@ -184,27 +193,29 @@ public class ConduiteUneManette extends LinearOpMode {
                 }}
             if (mainG.getPosition() < 0.2){
                 while (manette2.a) {
-                    mainG.setPosition(0.4);
+                    mainG.setPosition(1);
                 }
             }
 
-            if (mainD.getPosition() > 0.6) {
+            if (mainD.getPosition() > 0.3) {
                 while (manette2.b) {
-                    mainD.setPosition(0.45);
+                    mainD.setPosition(0);
                 }}
-            if (mainD.getPosition() < 0.5){
+            if (mainD.getPosition() < 0.3){
                 while (manette2.b) {
                     mainD.setPosition(1);
                 }
             }
 
+            telemetry.addData("debugTkT", debugTkt);
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
             telemetry.addData("Var Y", varRY);
-            telemetry.addData("Coude", coudeX);
+            telemetry.addData("CoudeG", coudeG.getPosition());
+            telemetry.addData("CoudeD", coudeD.getPosition());
             telemetry.addData("Bras", brasA);
             telemetry.addData("Postion du bras eng", maPosBras);
-            telemetry.addData("bras0", bras0);
+            telemetry.addData("bras eng", bras0);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
