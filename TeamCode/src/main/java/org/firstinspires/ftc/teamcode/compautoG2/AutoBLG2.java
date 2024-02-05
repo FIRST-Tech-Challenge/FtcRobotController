@@ -16,12 +16,30 @@ import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
 public class AutoBLG2 extends LinearOpMode{
     public ALLIANCE_POS alliancePos = ALLIANCE_POS.LEFT;
 
-    public GlobalConfig globalConfig = new GlobalConfig(GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER);
-    MotionHardwareG2 robot = new MotionHardwareG2(this, globalConfig);
+    public GlobalConfig globalConfigG2 = new GlobalConfig(GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER);
+    MotionHardwareG2 robot = new MotionHardwareG2(this, globalConfigG2);
     VisionHardware vision = new VisionHardware(this, alliancePos);
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init();
         vision.init();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            PropPosition propPosition = vision.detectProp();
+
+            switch (propPosition) {
+                case MIDDLE:
+                    
+                    break;
+                case RIGHT:
+                    break;
+                case LEFT:
+                    break;
+                case UNKNOWN:
+                    break;
+            }
+        }
     }
 }
