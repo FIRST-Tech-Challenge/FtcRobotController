@@ -13,6 +13,11 @@ public class Auto_RedFrontLimited extends CSBase {
         // ------Main Code------
         // ---------------------
 
+        pos = findPos();
+        telemetry.addData("Team Prop X", x);
+        telemetry.addData("Team Prop Position", pos);
+        telemetry.update();
+        purplePixel();
         drive(-2);
         turn(-90);
         s(3);
@@ -21,6 +26,7 @@ public class Auto_RedFrontLimited extends CSBase {
         drive(15);
         setSpeed(2000);
         ejectPixel();
+        drive(5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
