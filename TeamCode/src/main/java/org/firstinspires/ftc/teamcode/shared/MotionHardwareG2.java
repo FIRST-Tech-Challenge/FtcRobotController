@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -25,15 +26,15 @@ public class MotionHardwareG2 {
     private DcMotor backRightMotor = null;
     private DcMotor rightLeadScrew = null;
     private DcMotor leftLeadScrew = null;
-    private DcMotor linearExtension = null;
-    private Servo intakeWrist = null;
-    private Servo bucketWrist = null;
-    private Servo intakeFingers = null;
-    private Servo intakeArmLeft = null;
-    private Servo intakeArmRight = null;
-    private Servo rightClimb = null;
-    private Servo leftClimb = null;
-    private Servo planeServo = null;
+    private DcMotor armMotor = null;
+    private Servo wristServo = null;
+    private Servo bucketServo = null;
+    private CRServo intServo = null;
+    private Servo leftInt = null;
+    private Servo rightInt = null;
+    //private Servo rightClimb = null;
+    //private Servo leftClimb = null;
+    //private Servo planeServo = null;
 
     // Variables
 
@@ -110,7 +111,7 @@ public class MotionHardwareG2 {
         backRightMotor = myOpMode.hardwareMap.get(DcMotor.class, "backRightMotor");
         rightLeadScrew = myOpMode.hardwareMap.get(DcMotor.class, "rightLeadScrew");
         leftLeadScrew = myOpMode.hardwareMap.get(DcMotor.class, "leftLeadScrew");
-        linearExtension = myOpMode.hardwareMap.get(DcMotor.class, "linearExtension");
+        armMotor = myOpMode.hardwareMap.get(DcMotor.class, "armMotor");
 
         //frontLeftMotor.setDirection(DcMotorEx.Direction.FORWARD);
         //frontRightMotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -122,7 +123,7 @@ public class MotionHardwareG2 {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         rightLeadScrew.setDirection(DcMotor.Direction.REVERSE);
         leftLeadScrew.setDirection(DcMotor.Direction.REVERSE);
-        linearExtension.setDirection(DcMotor.Direction.REVERSE);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
 
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -131,7 +132,7 @@ public class MotionHardwareG2 {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLeadScrew.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLeadScrew.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -140,7 +141,7 @@ public class MotionHardwareG2 {
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLeadScrew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLeadScrew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -150,17 +151,17 @@ public class MotionHardwareG2 {
         leftLeadScrew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if(globalConfigG2.getActiveDeliveryMode() == GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER) {
        }
-        linearExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //TODO Once wrist/gripper is fixed move pixel load step to new function
-        intakeArmLeft = myOpMode.hardwareMap.get(Servo.class, "intakeArmLeft");
-        intakeArmRight = myOpMode.hardwareMap.get(Servo.class, "intakeArmRight");
-        intakeWrist = myOpMode.hardwareMap.get(Servo.class, "intakeWrist");
-        intakeFingers = myOpMode.hardwareMap.get(Servo.class, "intakeFingers");
-        bucketWrist = myOpMode.hardwareMap.get(Servo.class, "bucketWrist");
-        leftClimb = myOpMode.hardwareMap.get(Servo.class, "leftClimb");
-        rightClimb = myOpMode.hardwareMap.get(Servo.class, "rightClimb");
-        planeServo = myOpMode.hardwareMap.get(Servo.class, "planeServo");
+        leftInt = myOpMode.hardwareMap.get(Servo.class, "leftInt");
+        rightInt = myOpMode.hardwareMap.get(Servo.class, "rightInt");
+        wristServo = myOpMode.hardwareMap.get(Servo.class, "wristServo");
+        intServo = myOpMode.hardwareMap.get(CRServo.class, "intServo");
+        bucketServo = myOpMode.hardwareMap.get(Servo.class, "bucketServo");
+        //leftClimb = myOpMode.hardwareMap.get(Servo.class, "leftClimb");
+        //rightClimb = myOpMode.hardwareMap.get(Servo.class, "rightClimb");
+        //planeServo = myOpMode.hardwareMap.get(Servo.class, "planeServo");
 
         runtime.reset();
         sleep(3000);
@@ -173,7 +174,7 @@ public class MotionHardwareG2 {
                 backRightMotor.getCurrentPosition());
                 rightLeadScrew.getCurrentPosition();
                 leftLeadScrew.getCurrentPosition();
-                linearExtension.getCurrentPosition();
+                armMotor.getCurrentPosition();
         myOpMode.telemetry.update();
 
 

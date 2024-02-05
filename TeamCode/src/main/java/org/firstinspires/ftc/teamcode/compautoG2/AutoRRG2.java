@@ -32,14 +32,20 @@ public class AutoRRG2 extends LinearOpMode {
 
             switch (propPosition) {
                 case MIDDLE:
+                    robot.moveRobot(.5,45, 10);
                     break;
                 case RIGHT:
+                    robot.moveRobot(.5,35, 10);
                     break;
                 case LEFT:
+                    robot.moveRobot(.5,25, 10);
                     break;
                 case UNKNOWN:
+                    robot.moveRobot(.5,15, 10);
                     break;
             }
+            sleep(20);
+            break;
         }
     }
 }
