@@ -204,13 +204,13 @@ public class GoBuilda extends LinearOpMode {
                 } //end arm extension end
 
                 if (gamepad1.b) {
-                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
                 } else if (gamepad1.x) {
-                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 } else if (gamepad1.a) {
-                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
                 } else if (gamepad1.y) {
-                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                    revBlinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.TWINKLES_LAVA_PALETTE);
                 }
 
                 //Gripper
