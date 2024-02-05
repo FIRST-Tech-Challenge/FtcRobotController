@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation project(':InventorsFtcLib')
+
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     implementation "com.acmerobotics.roadrunner:core:1.0.0-beta6"
@@ -43,5 +43,6 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.1.1'
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation 'org.openftc:apriltag:2.0.0'
-//    implementation 'com.github.theinventors-ftc:InventorsFtcLib:71e4867'
+    implementation 'com.github.theinventors-ftc:InventorsFtcLib:846658a' // Stable: 846658a
+    // Test acae552(plus localizer)
 }

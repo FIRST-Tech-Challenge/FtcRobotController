@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.CenterStageRobot;
 import org.firstinspires.ftc.teamcode.PoseStorage;
-import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
@@ -108,18 +107,18 @@ public class CenterStageTeleOp extends CommandOpMode {
         RobotConstants.SLOW_SPEED_PERC = SLOW_SPEED_PERC;
         RobotConstants.FAST_SPEED_PERC = FAST_SPEED_PERC;
 
+        pose = PoseStorage.currentPose;
 
         robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true, true);
-
-        pose = PoseStorage.currentPose;
     }
 
     @Override
     public void run() {
         super.run();
-        telemetry.addData("X: ", pose.component1().component1());
-        telemetry.addData("Y: ", pose.component2().component1());
-        telemetry.addData("Heading: ", pose.heading.component1());
-        telemetry.update();
+//        telemetry.addData("X: ", pose.position.x);
+//        telemetry.addData("Y: ", pose.position.y);
+//        telemetry.addData("Heading: ", Math.toDegrees(pose.heading.imag));
+        telemetry.addData("pose: ", Math.toDegrees(pose.heading.component1()));
+//        telemetry.update();
     }
 }

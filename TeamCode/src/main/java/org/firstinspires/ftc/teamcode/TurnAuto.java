@@ -23,5 +23,7 @@ public class TurnAuto extends LinearOpMode {
         waitForStart();
 
         Actions.runBlocking(turn);
+
+        PoseStorage.currentPose = drive.pose;
     }
 }
