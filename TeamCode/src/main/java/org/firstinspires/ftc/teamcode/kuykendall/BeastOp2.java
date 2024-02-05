@@ -7,15 +7,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.shared.MotionHardwareRuiming;
 
-@TeleOp(name="BeastOp1", group="Test")
-public class BeastOp1 extends LinearOpMode {
+@TeleOp(name="BeastOp2", group="Test")
+public class BeastOp2 extends LinearOpMode {
     private MotionHardwareRuiming robot = new MotionHardwareRuiming();
     private ElapsedTime runtime = new ElapsedTime();
 
     private final double pickupPosition = .65;
     private final double dropoffPosition = .2;
-    private static final int PICKUP_POSITIONE = 0;
-    private static final int DROPOFF_POSITIONE = -50;
+    private static final int PICKUP_POSITION = 0;
+    private static final int DROPOFF_POSITION = 50;
     // Modify these constants to represent inches within the 0 to 5 range
     private static final double PICKUP_POSITION_INCHES = 2.0; // Example value
     private static final double DROPOFF_POSITION_INCHES = 4.0; // Example value
@@ -86,27 +86,7 @@ public class BeastOp1 extends LinearOpMode {
     }
 
     private void controlArm() {
-        robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         if (gamepad1.a) {
-            robot.armMotor.setTargetPosition(PICKUP_POSITIONE);
-            robot.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.armMotor.setPower(1.0);
-        } else if (gamepad1.y) {
-            robot.armMotor.setTargetPosition(DROPOFF_POSITIONE);
-            robot.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.armMotor.setPower(1.0);
-        }
-
-        if (gamepad1.dpad_left) {
-            robot.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-        /*if (gamepad1.a) {
             robot.setArmPosition(1.0, PICKUP_POSITION_INCHES, 5.0, runtime, telemetry, this::opModeIsActive);
         } else if (gamepad1.y) {
             robot.setArmPosition(1.0, DROPOFF_POSITION_INCHES, 5.0, runtime, telemetry, this::opModeIsActive);
@@ -118,7 +98,7 @@ public class BeastOp1 extends LinearOpMode {
         }
 
         robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }*/
+    }
 
     private void controlServos() {
         if (gamepad1.right_bumper) {
@@ -132,7 +112,7 @@ public class BeastOp1 extends LinearOpMode {
         switch (robot.sequenceStep) {
             case 0:
                 // Normal operation, waiting for Y button press on gamepad2
-                if (gamepad2.a) {
+                if (gamepad2.y) {
                     // Move wrist first
                     robot.wristServo.setPosition(.8); // Adjust to your wrist up position
 
@@ -162,7 +142,7 @@ public class BeastOp1 extends LinearOpMode {
         }
 
         // New function to move delivery down then wrist down on 'A' button press on gamepad2
-        if (gamepad2.y) {
+        if (gamepad2.a) {
             robot.rightInt.setPosition(dropoffPosition);
             robot.leftInt.setPosition(1.0 - dropoffPosition);
             robot.wristServo.setPosition(0.4); // Wrist down position
