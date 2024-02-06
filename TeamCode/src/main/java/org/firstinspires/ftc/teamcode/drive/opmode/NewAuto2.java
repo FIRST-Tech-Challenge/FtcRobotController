@@ -20,23 +20,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 
-@Autonomous(name = "RedAuto", group = "Concept")
-public class RedAuto extends LinearOpMode{
+@Autonomous(name = "NewAuto2", group = "Concept")
+public class NewAuto2 extends LinearOpMode{
     private static final String TFOD_MODEL_ASSET = "model.tflite";
     private static final String[] LABELS = {"box"};
     private TfodProcessor tfod;
-
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
-
-    //movement
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
-    static final double FEET_PER_METER = 3.28084;
-    private double lastError = 0;
-    ElapsedTime timer = new ElapsedTime();
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -69,22 +57,8 @@ public class RedAuto extends LinearOpMode{
     @Override
     public void runOpMode() { // code to run after init
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-//        double distanceInches = 1;
-//        double placeHolderDistance = 1;
         initTfod();
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
-            }
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
+        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod);
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -97,7 +71,6 @@ public class RedAuto extends LinearOpMode{
             telemetry.update();
         }
 
-        camera.stopStreaming();
         visionPortal.close();
         visionPortal.stopStreaming();
 
@@ -162,37 +135,6 @@ public class RedAuto extends LinearOpMode{
                 .setModelAssetName("model.tflite")
                 .setMaxNumRecognitions(1)
                 .build();
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        builder.setCamera(hardwareMap.get(WebcamName.class, "webcam"));
-
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(false);
-//        builder.addProcessors()
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.7f);
-
-        // Disable or re-enable the TFOD processor at any time.
-        //visionPortal.setProcessorEnabled(tfod, true);
-
     }
 
     private void updateTfod() { // updates the model detection and add to telemetry

@@ -30,6 +30,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
@@ -80,6 +82,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public Servo liftServo2;
     public Servo doorServo;
     public Servo pixelServo;
+    public WebcamName camera;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -113,6 +116,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "rearRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
+
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -127,6 +131,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftServo2 = hardwareMap.servo.get("lift2");
         doorServo = hardwareMap.servo.get("door");
         pixelServo = hardwareMap.servo.get("pixel");
+
+        camera = hardwareMap.get(WebcamName.class, "webcam");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
