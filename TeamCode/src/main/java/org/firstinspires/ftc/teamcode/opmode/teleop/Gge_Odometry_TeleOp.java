@@ -150,6 +150,9 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         }
 
         allianceNow = AutoBase.getAllianceColour();
+        if(allianceNow == null){
+            allianceNow = AllianceColour.BLUE;
+        }
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 
