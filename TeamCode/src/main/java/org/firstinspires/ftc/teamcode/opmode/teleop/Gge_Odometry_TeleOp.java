@@ -258,28 +258,29 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // The initFieldPos is retrieved from the last AutoBase Pose2d recorded
         odometry.resetPosition(initFieldPos,initFieldPos.getRotation());
 
-        if (allianceNow == "BLUE"){
-            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
-            // backdrop when the robot starts in the blue left position
-            leftTagApproachX = 0.7; // 1m from the blue field side
-            centerTagApproachX = 0.9; // 1m from the blue field side
-            rightTagApproachX = 1.1; // 1m from the blue field side
-            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
-            allTagsApproachAngle = -90; // initialized as 0.0 degrees from blue field start
-            leftTagID = AprilTagLocation.BLUE_LEFT;
-            centerTagID = AprilTagLocation.BLUE_CENTRE;
-            rightTagID = AprilTagLocation.BLUE_RIGHT;
-        } else {
-            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
-            // backdrop when the robot starts in the blue left position
-            leftTagApproachX = 0.7; // 1m from the blue field side
-            centerTagApproachX = 0.9; // 1m from the blue field side
-            rightTagApproachX = 1.1; // 1m from the blue field side
-            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
-            allTagsApproachAngle = 90; // initialized as 0.0 degrees from blue field start
-            leftTagID = AprilTagLocation.RED_LEFT;
-            centerTagID = AprilTagLocation.RED_CENTRE;
-            rightTagID = AprilTagLocation.RED_RIGHT;
+        switch (allianceNow){
+            case BLUE:
+                // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+                // backdrop when the robot starts in the blue left position
+                leftTagApproachX = 0.7; // 1m from the blue field side
+                centerTagApproachX = 0.9; // 1m from the blue field side
+                rightTagApproachX = 1.1; // 1m from the blue field side
+                allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+                allTagsApproachAngle = -90; // initialized as 0.0 degrees from blue field start
+                leftTagID = AprilTagLocation.BLUE_LEFT;
+                centerTagID = AprilTagLocation.BLUE_CENTRE;
+                rightTagID = AprilTagLocation.BLUE_RIGHT;
+            case RED:
+                // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+                // backdrop when the robot starts in the blue left position
+                leftTagApproachX = 0.7; // 1m from the blue field side
+                centerTagApproachX = 0.9; // 1m from the blue field side
+                rightTagApproachX = 1.1; // 1m from the blue field side
+                allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+                allTagsApproachAngle = 90; // initialized as 0.0 degrees from blue field start
+                leftTagID = AprilTagLocation.RED_LEFT;
+                centerTagID = AprilTagLocation.RED_CENTRE;
+                rightTagID = AprilTagLocation.RED_RIGHT;
         }
 
         //drive speed limiter
