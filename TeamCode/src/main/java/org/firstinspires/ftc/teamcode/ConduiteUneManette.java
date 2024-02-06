@@ -33,15 +33,12 @@ public class ConduiteUneManette extends LinearOpMode {
 
         double tgtPowerA = 0;
         double tgtPowerB = 0;
-
         double tgtBras = 0;
         int maPosBras = 0;
-
         double varY = 0;
         double varX = 0;
         double varYpos = 0;
         double varXpos = 0;
-
         double coudeZero = 0.91;
         double coudeX = coudeZero;
         int brasA = 0;
@@ -54,6 +51,7 @@ public class ConduiteUneManette extends LinearOpMode {
         int isInnit = 0;
         int zeroDuBras=0;
         int zeroDuHaut=0;
+        boolean PrecisionMode = false;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -143,9 +141,19 @@ public class ConduiteUneManette extends LinearOpMode {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
             }
+            //Mode Precision (en test)
+            if (PrecisionMode){
+                while (gamepad1.dpad_up){
+                    PrecisionMode = false
+                }
+            } else {
+                while (gamepad1.dpad_up){
+                    PrecisionMode = true
+            }}
 
-            /// Bras + Coude + Main
 
+
+            // Changement Position Bras
             if (varRY < 0) {
                 tgtBras = varRY/3;
                 bras0 = brasA;
@@ -162,21 +170,23 @@ public class ConduiteUneManette extends LinearOpMode {
                     tgtBras = 0;
                 }
             }
+            //
 
+            // Changement Position Coude
             if (triggergauche > 0) {
                 coudeX += 0.003;
                 if (coudeX > 0.83) {
                     coudeX = 0.83;
                 }
             } else if (triggerdroit > 0) {
-
                 coudeX -= 0.003;
                 if (coudeX<0.10) {
                     coudeX = 0.10;
                 }
             }
+            //
 
-
+            // Activation Mode Enregistré
             if (manette2.x) {
                 if (brasA > maPosBras) {
                     tgtBras = -0.5;
@@ -188,17 +198,16 @@ public class ConduiteUneManette extends LinearOpMode {
                 coudeX = maPosCoude;
                 bras0 = maPosBras;
             }
+            //
 
+            // Enregistrement de la Position
             if (manette2.y) {
                 maPosBras = brasA;
                 maPosCoude = coudeG.getPosition();
             }
+            //
 
-            bras1.setPower(tgtBras);
-            bras2.setPower(tgtBras);
-            coudeG.setPosition(coudeX);
-            coudeD.setPosition(1-coudeX);
-
+            // Position Mains
             if (mainG.getPosition() > 0.10) {
                 while (manette2.a) {
                     mainG.setPosition(0);
@@ -208,7 +217,6 @@ public class ConduiteUneManette extends LinearOpMode {
                     mainG.setPosition(1);
                 }
             }
-
             if (mainD.getPosition() > 0.3) {
                 while (manette2.b) {
                     mainD.setPosition(0);
@@ -218,17 +226,31 @@ public class ConduiteUneManette extends LinearOpMode {
                     mainD.setPosition(1);
                 }
             }
+            //
+
+            // Changement des position - Hardware
+            coudeG.setPosition(coudeX);
+            coudeD.setPosition(1 - coudeX);
+
+            if (PrecisionMode) {
+                bras1.setPower(tgtBras/2);
+                bras2.setPower(tgtBras/2);
+            } else {
+                bras1.setPower(tgtBras);
+                bras2.setPower(tgtBras);
+            }
+            //
 
             telemetry.addData("zeroDuBras", zeroDuBras);
             telemetry.addData("zeroDuHaut", zeroDuHaut);
+            telemetry.addData("Position Actuelle Bras", brasA);
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
-            telemetry.addData("Var Y", varRY);
+            telemetry.addData("Joystick Gauche : VarY", varRY);
             telemetry.addData("CoudeG", coudeG.getPosition());
             telemetry.addData("CoudeD", coudeD.getPosition());
-            telemetry.addData("Bras", brasA);
             telemetry.addData("Postion du bras eng", maPosBras);
-            telemetry.addData("bras eng", bras0);
+            telemetry.addData("Position bras - Resistance", bras0);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
