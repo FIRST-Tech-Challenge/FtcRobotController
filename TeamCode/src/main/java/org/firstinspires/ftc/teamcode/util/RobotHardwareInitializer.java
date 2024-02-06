@@ -72,6 +72,11 @@ public class RobotHardwareInitializer {
         RIGHT
     }
 
+    public enum Gate {
+        LEFT,
+        RIGHT
+    }
+
     public static final String FRONT_LEFT_DRIVE = "fl_drv";
     public static final String FRONT_RIGHT_DRIVE = "fr_drv";
     public static final String BACK_LEFT_DRIVE = "bl_drv";
@@ -80,6 +85,9 @@ public class RobotHardwareInitializer {
     public static final String LEFT_ENCODER = FRONT_LEFT_DRIVE;
     public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
     public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
+
+    public static final String LEFT_GATE = "gateLeft";
+    public static final String RIGHT_GATE = "gateRight";
 
     public static HashMap<DriveMotor, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
@@ -130,6 +138,23 @@ public class RobotHardwareInitializer {
         motorMap.put(DriveMotor.ENCODER_BACK, encoderBack);
 
         return motorMap;
+    }
+
+    public static HashMap<Gate, Servo> initializeGateServos(final OpMode opMode) {
+        HashMap<Gate, Servo> servos = new HashMap<>();
+
+        Servo left = null;
+        Servo right = null;
+        try {
+            left = opMode.hardwareMap.get(Servo.class, LEFT_GATE);
+            right = opMode.hardwareMap.get(Servo.class, RIGHT_GATE);
+        } catch (Exception e) {
+            Error(e, opMode);
+        }
+
+        servos.put(Gate.LEFT, left);
+        servos.put(Gate.RIGHT, right);
+        return servos;
     }
 
     /** @noinspection rawtypes*/
@@ -328,6 +353,7 @@ public class RobotHardwareInitializer {
     /**
      * Creates the telemetry packet that contains data regarding the results of the initialization process.
      */
+    @Deprecated
     public static void beginInitialization(RobotOpMode robotOpMode) {
         robotOpMode.createTelemetryPacket();
     }
@@ -335,6 +361,7 @@ public class RobotHardwareInitializer {
     /**
      * Used to send the telemetry packet that contains data regarding the results of the initialization process
      */
+    @Deprecated
     public static void endInitialization(RobotOpMode robotOpMode) {
         robotOpMode.sendTelemetryPacket(true);
     }

@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.ZeroWristCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.GateSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
@@ -43,6 +44,8 @@ public class DriveCommandOpMode extends CommandOpMode {
     private FingerSubsystem fingerSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private LauncherSubsystem launcherSubsystem;
+    private GateSubsystem gateSubsystem;
+
 
     private DefaultDrive driveCommand;
     private MoveArmCommand moveArmCommand;
@@ -71,6 +74,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
         intakeSubsystem = new IntakeSubsystem(RobotHardwareInitializer.initializeIntake(this));
         launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
+        gateSubsystem = new GateSubsystem(RobotHardwareInitializer.initializeGateServos(this));
 
         dbp.info("Subsystems built.");
         dbp.send(false);
