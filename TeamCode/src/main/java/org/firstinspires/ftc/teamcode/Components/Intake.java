@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.58, TWO=0.61, THREE = 0.64, FOUR = 0.67, FIVE =0.69, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
+  public static double ONE=0.55, TWO=0.58, THREE = 0.60, FOUR = 0.62, FIVE =0.635, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -321,6 +321,7 @@ public class Intake extends RFMotor {
         pixeled=true;
       }
       if (time - lastTime > STOP_DELAY && !stopped && IntakeStates.INTAKING.getState()) {
+        uppies();
         reverseIntake();
         reverseTime = time;
         stopped = true;
@@ -330,7 +331,7 @@ public class Intake extends RFMotor {
       pixeled = false;
       stopped = false;
     }
-    if(stopped&& time-reverseTime>1.0){
+    if(stopped&& time-reverseTime>0.2){
       stopIntake();
       intakePath=false;
     }

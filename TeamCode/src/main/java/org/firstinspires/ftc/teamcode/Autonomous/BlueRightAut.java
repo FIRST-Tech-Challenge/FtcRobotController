@@ -39,7 +39,7 @@ public class BlueRightAut extends LinearOpMode {
         toSpike[2].add(new GeneralWaypoint(x4,y4, toRadians(x2), pow4, .2,followRad1));
         toSpike[2].add(new EndWaypoint(x1, y1, toRadians(x3), pow3, 0.4, 8, buff1, toRadians(30)));
         toSpike[1] = new Path(start);
-        toSpike[1].add(new EndWaypoint(16.5, 39, toRadians(91), 0.6, 0, 5, 2, toRadians(10)));
+        toSpike[1].add(new EndWaypoint(14, 39, toRadians(91), 0.6, 0, 5, 2, toRadians(10)));
         toSpike[0] = new Path(start);
         toSpike[0].add(new EndWaypoint(24.5, 47, toRadians(90), 0.6, 0.2, 5, 2, toRadians(10)));
         Path[] spikeToBackdrop = new Path[3];
@@ -121,7 +121,7 @@ public class BlueRightAut extends LinearOpMode {
             preToStack[2].add(
                     new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
             preToStack[2].add(
-                    new EndWaypoint(44, 13, toRadians(179), .5, 0.2, 5, 3, toRadians(5)));
+                    new EndWaypoint(46, 13, toRadians(179), .5, 0.2, 5, 3, toRadians(5)));
 
             robot.followPPPath(preToStack[2]);
 //      for (int i = 0; i < 3; i++) {

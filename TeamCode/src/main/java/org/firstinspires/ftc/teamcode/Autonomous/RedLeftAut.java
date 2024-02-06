@@ -24,11 +24,11 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 public class RedLeftAut extends LinearOpMode {
   int bark = 1;
   public static double x1 = -37.5, y1 = -36, h1 = -180, v1 = 0.5, w1 = 0.1, fR1 = 6,bf1 = 2,
-      x2 = -53.2, y2 = -36, h2 = -180, v2 = 0.4, w2 = 0.18, fR2 = 5, bf2 = 1,
-      x3 = -52.5, y3 = -39, h3 = -183, v3 = 0.4, w3 = 0.15, fR3 = 4, bf3 = 2,
-      xx1 = 10.4, yy1 = -60.5, hh1 = -160, vv1 = 1.0, ww1 = 0.2, ffR1 = 6,
-      xx2 = -28.5, yy2 = -60.5, hh2 = -180, vv2 = 1.0, ww2 = 0.2, ffR2 = 6,
-      xx3 = -49.5, yy3 = -42, hh3 = -200, vv3 = 1.0, ww3 = 0.2, ffR3 = 5;
+      x2 = -52.5, y2 = -36, h2 = -180, v2 = 0.4, w2 = 0.18, fR2 = 5, bf2 = 1,
+      x3 = -52.5, y3 = -34, h3 = -183, v3 = 0.4, w3 = 0.15, fR3 = 4, bf3 = 2,
+      xx1 = 10.4, yy1 = -56, hh1 = -160, vv1 = 1.0, ww1 = 0.3, ffR1 = 6,
+      xx2 = -28.5, yy2 = -56, hh2 = -180, vv2 = 1.0, ww2 = 0.3, ffR2 = 6,
+      xx3 = -49.5, yy3 = -41, hh3 = -200, vv3 = 0.9, ww3 = 0.3, ffR3 = 6;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -84,25 +84,25 @@ public class RedLeftAut extends LinearOpMode {
       double y = 0, yy = 0, h=0;
       if (bark == 0) {
         y = -29.5;
-        yy = -33;
+        yy = -32;
         h = toRadians(-180);
       }
       if (bark == 1) {
         y = -35.5;
-        yy = -39;
+        yy = -38;
         h=toRadians(-180);
       }
       if (bark == 2) {
-        y = -41;
-        yy = -43;
+        y = -41.5;
+        yy = -45;
         h=toRadians(-180);
       }
 
       stackToBack.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-      stackToBack.add(new GeneralWaypoint(-32, -59.5, toRadians(-205), 1.0, 0.2, 5));
-      stackToBack.add(new GeneralWaypoint(10, -59, toRadians(-180), 1.0, 0.0, 6));
-      stackToBack.add(new GeneralWaypoint(38, yy, h, 1.0, 0.0, 6));
-      stackToBack.add(new EndWaypoint(44.5, y, toRadians(-180), .4, .1, 4, 2, toRadians(5)));
+      stackToBack.add(new GeneralWaypoint(-32, -57, toRadians(-200), 1.0, 0.3, 6));
+      stackToBack.add(new GeneralWaypoint(10, -57, toRadians(-185), 1.0, 0.3, 6));
+      stackToBack.add(new GeneralWaypoint(38, yy, h, 0.9, 0.3, 6));
+      stackToBack.add(new EndWaypoint(44.25, y, toRadians(-179), .5, .3, 5, 3, toRadians(5)));
       //            }
       robot.followPPPath(stackToBack);
       robot.drop();
@@ -130,10 +130,10 @@ public class RedLeftAut extends LinearOpMode {
         robot.grabAuto();
         Path stackToBack2 = new Path();
         stackToBack2.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-        stackToBack2.add(new GeneralWaypoint(-32, -60, toRadians(-205), 1.0, 0.2, 7));
-        stackToBack2.add(new GeneralWaypoint(10, -60, toRadians(-180), 1.0, 0.2, 6));
-        stackToBack2.add(new GeneralWaypoint(38, -40, toRadians(-170), 1.0, 0.2, 6));
-        stackToBack2.add(new EndWaypoint(44.5, -37, toRadians(-180), .45, .15, 4, 2, toRadians(10)));
+        stackToBack2.add(new GeneralWaypoint(-32, -57, toRadians(-200), 1.0, 0.3, 6));
+        stackToBack2.add(new GeneralWaypoint(10, -57, toRadians(-185), 1.0, 0.3, 6));
+        stackToBack2.add(new GeneralWaypoint(38, -45, toRadians(-180), 1.0, 0.3, 6));
+        stackToBack2.add(new EndWaypoint(44, -38, toRadians(-179), .5, .3, 5, 1, toRadians(10)));
         robot.followPPPath(stackToBack2);
         robot.lowAuto();
         robot.drop();

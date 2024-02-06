@@ -27,17 +27,17 @@ public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     ArrayList<Integer> pos;
     public static double p1x = 0,
-            p1y = 390,
+            p1y = 240,
             p2x = 80,
-            p2y = 540,
+            p2y = 490,
             p21x = 340,
-            p21y = 410,
+            p21y = 360,
             p22x = 440,
-            p22y = 510,
+            p22y = 460,
             p31x = 715,
-            p31y = 410,
+            p31y = 360,
             p32x = 840,
-            p32y = 540,
+            p32y = 490,
             threshhold = 0.2,
 
     // h3u and s3u: 71 and 90

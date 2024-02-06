@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class RedRightAut extends LinearOpMode {
   int bark = 1;
-  public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 10.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
+  public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 8.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
           pow1 = 0.3, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
   followRad4 = 5 ,x4 = 16.5, y4 = -44, pow4 = 0.55, buff4 = 3;
 
@@ -41,7 +41,7 @@ public class RedRightAut extends LinearOpMode {
     toSpike[1] = new Path(start);
     toSpike[1].add(new EndWaypoint(16.5, -44, toRadians(-91), 0.7, 0, 5, 2, toRadians(10)));
     toSpike[2] = new Path(start);
-    toSpike[2].add(new EndWaypoint(24.5, -47, toRadians(-90), 0.6, 0.2, 5, 2, toRadians(10)));
+    toSpike[2].add(new EndWaypoint(24.5, -47, toRadians(-90), 0.6, 0.2, 7, 2, toRadians(10)));
     Path[] spikeToBackdrop = new Path[3];
 
     Path[] preToStack = new Path[3];
@@ -66,30 +66,42 @@ public class RedRightAut extends LinearOpMode {
       robot.queuer.addDelay(0.9);
       robot.dropAuto(0);
       if (bark == 0) {
+        Path spikeToBackd = new Path();
+        spikeToBackd.add(
+                new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(currentPose.getHeading()))));
+        spikeToBackd.add(new EndWaypoint(currentPose.getX()+3, currentPose.getY(), currentPose.getHeading(), .5,0,3,2,toRadians(10)));
+        robot.followPPPath(spikeToBackd);
         spikeToBackdrop[0] = new Path();
         spikeToBackdrop[0].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+//        spikeToBackdrop[0].add(new GeneralWaypoint(currentPose.getX()+3, currentPose.getY(), currentPose.getHeading(), .5,0,3));
         spikeToBackdrop[0].add(
-                new EndWaypoint(48, -29.5, toRadians(-179), .45, .1, 2, 2, toRadians(10)));
+                new EndWaypoint(46, -29.5, toRadians(-179), .45, .1, 2, 2, toRadians(10)));
       }
       if (bark == 1) {
         spikeToBackdrop[1] = new Path();
         spikeToBackdrop[1].add(
-            new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+            new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(currentPose.getHeading()))));
+//        spikeToBackdrop[1].add(new GeneralWaypoint(currentPose.getX(), currentPose.getY()-5, currentPose.getHeading(), .5,0,3));
         spikeToBackdrop[1].add(
-            new EndWaypoint(48, -35.5, toRadians(-179), .45, 0.1, 2, 2, toRadians(5)));
+            new EndWaypoint(46, -35.5, toRadians(-179), .45, 0.1, 2, 2, toRadians(5)));
       }
 
       if (bark ==2){
+        Path spikeToBackd = new Path();
+        spikeToBackd.add(
+                new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(currentPose.getHeading()))));
+        spikeToBackd.add(new EndWaypoint(currentPose.getX(), currentPose.getY()-5, currentPose.getHeading(), .5,0,3,2,toRadians(10)));
+        robot.followPPPath(spikeToBackd);
         spikeToBackdrop[2] = new Path();
         spikeToBackdrop[2].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[2].add(
-                new EndWaypoint(47, -41.5, toRadians(-179), .4, 0.1, 2, 2, toRadians(5)));
+                new EndWaypoint(46.5, -41.5, toRadians(-179), .4, 0.1, 2, 2, toRadians(5)));
       }
       robot.followPPPath(spikeToBackdrop[bark]);
       robot.queuer.addDelay(0.3);
-      robot.lowAuto();
+      robot.veryLowAuto();
       robot.drop();
       Path back = new Path();
       back.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
@@ -108,7 +120,7 @@ public class RedRightAut extends LinearOpMode {
         preToStack[1].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         preToStack[1].add(
-                new EndWaypoint(42, -36, toRadians(-179), .5, 0.2, 5, 3, toRadians(5)));
+                new EndWaypoint(42, -35.5, toRadians(-179), .5, 0.2, 5, 3, toRadians(5)));
       }
       if (bark ==2){
         preToStack[2] = new Path();

@@ -25,7 +25,7 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 600,
+      RESISTANCE = 700,
       kS = 0.03,
       kV = 3.2786E-4,
       kA = 4E-5,
@@ -54,7 +54,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1540, false),
     MID_SET_LINE(1200, false),
-    LOW_SET_LINE(800, false),
+    LOW_SET_LINE(850, false),
     AT_ZERO(0, true);
 
     double position;
@@ -220,7 +220,7 @@ public class Lift extends RFDualMotor {
    *     level. Updates LiftMovingStates state machine.
    */
   public void manualExtend(double p_power) {
-    super.setPower(p_power*=.4);
+    super.setPower(p_power*=.5);
     lastManualTime = time;
     if (p_power != lastPower) {
       LOGGER.setLogLevel(RFLogger.Severity.INFO);
