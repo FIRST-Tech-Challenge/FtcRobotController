@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.AllianceColour;
 import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
@@ -54,12 +55,18 @@ public abstract class AutoBase extends LinearOpMode {
     private DcMotorEx wrist = null;
 
 
+
+
     // Motor is 28 ticks per revolution
     // Gear Ratio is 12:1
     // Wheel diameter is 100mm
     final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
     protected VisionSystem visionSystem;
     protected static Pose2d lastFieldPos;
+
+
+
+    protected static AllianceColour allianceColour;
 
     protected double DirectionNow;
     protected static List<AprilTagLocation> targetAprilTags;
@@ -227,6 +234,10 @@ public abstract class AutoBase extends LinearOpMode {
 
     public static Pose2d getLastFieldPos(){
         return lastFieldPos;
+    }
+
+    public static AllianceColour getAllianceColour() {
+        return allianceColour;
     }
 
 }

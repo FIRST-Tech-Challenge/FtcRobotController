@@ -51,6 +51,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.opmode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.utility.AllianceColour;
 import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
@@ -128,7 +129,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
     private VisionSystem visionSystem;
     private Pose2d initFieldPos;
 
-    private String allianceNow;
+    private AllianceColour allianceNow;
     private double leftTagApproachX;
     private double centerTagApproachX;
     private double rightTagApproachX;
@@ -148,13 +149,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
            initFieldPos =  new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
         }
 
-        // Work out if the robot is on the Red Alliance or Blue Alliance from its starting fieldPos
-        // Approximately mid-field is 1.83 meters / 72 inches.
-        if (initFieldPos.getX() < 1.83){
-            allianceNow = "BLUE";
-        } else {
-            allianceNow = "RED";
-        }
+        allianceNow = AutoBase.getAllianceColour();
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 

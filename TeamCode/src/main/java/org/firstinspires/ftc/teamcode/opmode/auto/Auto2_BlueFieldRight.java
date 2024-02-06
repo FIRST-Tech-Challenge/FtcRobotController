@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.teamcode.utility.AllianceColour;
 import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
@@ -67,6 +68,8 @@ public class Auto2_BlueFieldRight extends AutoBase {
         super.runOpMode();
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.BLUE_FIELD_RIGHT);
+
+        allianceColour = AllianceColour.BLUE;
 
         // this is setting the initial field coordinates
         // need to set the AprilTagTargets

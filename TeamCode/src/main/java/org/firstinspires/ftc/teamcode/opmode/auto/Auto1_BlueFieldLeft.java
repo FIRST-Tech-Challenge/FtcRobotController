@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.teamcode.utility.AllianceColour;
 import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 
@@ -77,6 +78,8 @@ public class Auto1_BlueFieldLeft extends AutoBase {
                                                         AprilTagLocation.BLUE_RIGHT));
         lastFieldPos = new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
         odometry.resetPosition(lastFieldPos,lastFieldPos.getRotation());
+
+        allianceColour = AllianceColour.BLUE;
 
         /**
          * This loop is run continuously

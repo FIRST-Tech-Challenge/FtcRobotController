@@ -36,6 +36,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.AllianceColour;
 import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
@@ -66,6 +67,7 @@ public class Auto1_RedFieldRight extends AutoBase {
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.RED_FIELD_RIGHT);
 
+        allianceColour = AllianceColour.RED;
         // this is setting the initial field coordinates
         // need to set the AprilTagTargets
         targetAprilTags = new ArrayList<>(Arrays.asList(AprilTagLocation.RED_LEFT,
