@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other;
 
@@ -36,6 +37,12 @@ public class CompTrajectoryGenerator {
         RED_BOTTOM,
         RED_TOP
     }
+
+    private final TrajectoryAccelerationConstraint accelerationConstraint =
+            SampleMecanumDrive.getAccelerationConstraint(25);
+    private final TrajectoryVelocityConstraint velocityConstraint =
+            SampleMecanumDrive.getVelocityConstraint(30,
+                    DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
 
     /**
      * Generates pre-made sequences to be used in autonomous mode
@@ -98,12 +105,6 @@ public class CompTrajectoryGenerator {
     public TrajectorySequence generateFieldTrajectory(@NonNull final trajectories trajectory,
                                                       final HashMap<Other, DynamicTypeValue> other,
                                                       final boolean PARK_LEFT) {
-        final TrajectoryAccelerationConstraint accelerationConstraint =
-                SampleMecanumDrive.getAccelerationConstraint(25);
-        final TrajectoryVelocityConstraint velocityConstraint =
-                SampleMecanumDrive.getVelocityConstraint(30,
-                        DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
-
         final double WAIT_TIME = 2.4288;
 
         switch (trajectory) {
@@ -177,5 +178,15 @@ public class CompTrajectoryGenerator {
             default:
                 return null;
         }
+    }
+
+    public TrajectorySequenceBuilder purple_pixel(Pose2d startingPose) {
+        final TrajectorySequenceBuilder PURPLE_PIXEL_STATE =
+                DRIVE.trajectorySequenceBuilder(startingPose)
+                        .addDisplacementMarker(() -> {
+                            return;
+                        });
+
+        return null;
     }
 }

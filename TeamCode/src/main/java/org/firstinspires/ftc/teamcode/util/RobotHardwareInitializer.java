@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.RobotOpMode;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.CRServoTypeValue;
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.util.Other.DistanceSensorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
+import org.firstinspires.ftc.teamcode.util.Other.WebcamSensorTypeValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +66,8 @@ public class RobotHardwareInitializer {
         LAUNCHER,
         FINGER,
         WRIST,
-        COLOR_SENSOR
+        COLOR_SENSOR,
+        WEBCAM
     }
 
     public enum Intake {
@@ -158,6 +161,9 @@ public class RobotHardwareInitializer {
         tmp2[0] = LEFT;
         tmp2[1] = RIGHT;
         out.put(Other.INTAKE, new ArrayTypeValue<>(tmp2));
+
+        // Init Webcam
+        out.put(Other.WEBCAM, new WebcamSensorTypeValue(initializeCamera(opMode)));
 
         return out;
     }
@@ -275,6 +281,15 @@ public class RobotHardwareInitializer {
     public static ColorSensor initializeColorSensor(final OpMode opMode) {
         try {
             return opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    public static WebcamName initializeCamera(final OpMode opMode) {
+        try {
+            return opMode.hardwareMap.get(WebcamName.class, "Webcam 1");
         } catch(Exception e) {
             Error(e, opMode);
         }
