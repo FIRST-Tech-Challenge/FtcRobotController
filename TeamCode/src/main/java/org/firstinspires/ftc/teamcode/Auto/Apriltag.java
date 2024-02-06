@@ -35,7 +35,7 @@ public class Apriltag {
         if (team == "blueTeam") {blueTeam = true;} else if (team == "redTeam") {redTeam = true;}
     }
 
-    public void setTag(String direction) {
+    public int setTagID(String direction) {
         switch(direction) {
             case "left":
                 if (blueTeam) {desiredTagID = 1;} else {desiredTagID = 4;}
@@ -49,9 +49,12 @@ public class Apriltag {
                 if (blueTeam) {desiredTagID = 3;} else {desiredTagID = 6;}
                 break;
         }
+
+        return desiredTagID;
     }
 
-    public void goToTag() {
+
+    public double getTagRange() {
 
         // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
@@ -67,8 +70,7 @@ public class Apriltag {
             }
         }
 
-        double[] tagCoordinates = {desiredTag.ftcPose.range};
-
+        return desiredTag.ftcPose.range;
     }
 
 
