@@ -28,72 +28,29 @@ public class Globals {
     public static TrackingWheelIntegrator trackingWheelIntegrator;
     public static LinearOpMode opMode;
     public static LynxModule odoModule;
-    public static TouchSensor LeftTouch;
-    public static TouchSensor RightTouch;
-    public static TouchSensor BackTouch;
     public static double inch;
     public static double cmToInch;
     public static CenterStageDriveBase robot;
-    public static double LiftLevel;
-    public static DcMotorEx Lift;
     public static Servo Booper;
-    public static int LiftPos;
-    public static Servo TSELift;
-    public static Servo TSERotation;
-    public static Servo TSEClaw;
-    public static Servo RotationI;
-    public static Servo HEXCLAW;
-    public static Servo ARML;
-    public static Servo ARMR;
-    //public static CRServo DUCKwheel;
-    public static DcMotor Intake;
-    public static DcMotorEx Turret;
-    public static CRServo DUCKwheel;
-    public static DistanceSensor FrightDetector;
-    //public static DistanceSensor FrontDS;
-    public static double FrightDistance;
-    public static double LiftPower;
-    public static double LiftTarget;
-    public static DcMotorEx FL;
-    public static DcMotorEx FR;
-    public static DcMotorEx RR;
-    public static DcMotorEx RL;
-    public static DcMotor TSEMotor;
     public static double Y;
     public static double X;
     public static double wheelH;
-    public static TouchSensor LiftLimit;
-    public static DcMotorEx leftTW;
-    public static DcMotorEx rightTW;
-    public static DcMotorEx backTW;
-    public static AnalogInput potentiometer;
-    public static double currentVoltage;
-    public static boolean TRANSFERGoing;
-    public static boolean FIRSTMOVEMENT;
-    public static boolean LiftIsDown;
     public static boolean SpikeIsFinished;
-    public double DSStartPos = 20;
-    public static boolean TurretTurn;
-    public static double TurretTARGET;
-    public static double TurretPos;
-    public static double turnPower;
-    public static double FrontDistance;
-    public static boolean LOWERARM;
-    public static double TSEPOWER;
     public static boolean FirstMoving;
-    public static boolean MineralInClaw;
-    public static boolean WeHaveTheGoods = false;
-    public static double Cycle;
-    public static double ResetCycle;
     public static double LastY;
     public static double LastX;
-    public static boolean ReadyToPlace;
-    public static boolean GoDucks;
-    public static boolean NoDuckPark;
-    static LynxDcMotorController ctrl;
-    public static CRServo ATW;
-    public static CRServo LTW;
-    public static CRServo RTW;
+
+    public static Servo Door;
+    public static Servo Pivot;
+    public static Servo SLift;
+
+    public static DcMotorEx Lift;
+
+    public static boolean WeHaveNoGoods;
+    public static boolean RESETME;
+
+
+
 
 //    public static void clearEnc()        {
 //        ctrl.setMotorMode(3, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -141,15 +98,15 @@ public class Globals {
 //        LiftPower = 0.1 + (LiftTarget - LiftPos)/LiftTarget;
 //        trackingWheelIntegrator.update(left, right, aux);
 //
-        Y = trackingWheelIntegrator.getY();
-        X = trackingWheelIntegrator.getX();
-        wheelH = trackingWheelIntegrator.getHeading();
-
-        opMode.telemetry.addData("X", X);
-        //opMode.telemetry.addData("FrontInch", inch);
-        opMode.telemetry.addData("Y", Y);
-        opMode.telemetry.addData("wheelH", wheelH);
-        opMode.telemetry.update();
+//        Y = trackingWheelIntegrator.getY();
+//        X = trackingWheelIntegrator.getX();
+//        wheelH = trackingWheelIntegrator.getHeading();
+//
+//        opMode.telemetry.addData("X", X);
+//        //opMode.telemetry.addData("FrontInch", inch);
+//        opMode.telemetry.addData("Y", Y);
+//        opMode.telemetry.addData("wheelH", wheelH);
+//        opMode.telemetry.update();
 
     }
 }

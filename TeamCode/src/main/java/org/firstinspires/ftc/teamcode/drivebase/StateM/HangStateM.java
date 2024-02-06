@@ -17,12 +17,12 @@ public class HangStateM extends StateMachine<HangStateM.State> implements StateM
         HANDSUP,
         DONTASHOOT,
         STOPAMOVING,
-        BANG,
-        BEHINDTHEBACK,
-        THEREUGO,
-        ALLTHEWAY,
-        ISAIDALLTHEWAY,
-        STOPORSHOT,
+//        BANG,
+//        BEHINDTHEBACK,
+//        THEREUGO,
+//        ALLTHEWAY,
+//        ISAIDALLTHEWAY,
+//        STOPORSHOT,
         IDLE,
 
 
@@ -74,14 +74,14 @@ public class HangStateM extends StateMachine<HangStateM.State> implements StateM
             case HANDSUP: {
                 MecDrive.LHang.setPower(.3);
                 MecDrive.RHang.setPower(.3);
-                if(getElapsedStateTime() > 750) {
+                if(getElapsedStateTime() > 1000) {
                     switchState(State.DONTASHOOT);
                 }
                 break;
             }
             case DONTASHOOT: {
-                RHook.setPosition(.6);
-                LHook.setPosition(.4);
+                RHook.setPosition(0);
+                LHook.setPosition(1);
                 if(getElapsedStateTime() > 1000) {
                     switchState(State.STOPAMOVING);
                 }
@@ -92,70 +92,70 @@ public class HangStateM extends StateMachine<HangStateM.State> implements StateM
                 MecDrive.RHang.setPower(0);
                 if(getElapsedStateTime() > 750) {
 
-                    switchState(State.BANG);
-                }
-                break;
-            }
-            case BANG: {
-                airplane.setPosition(0);
-                if(getElapsedStateTime() > 2000) {
-
-                    switchState(State.BEHINDTHEBACK);
-                }
-                break;
-            }
-
-            case BEHINDTHEBACK: {
-                MecDrive.LHang.setPower(-.2);
-                MecDrive.RHang.setPower(-.2);
-                if(getElapsedStateTime() > 500) {
-
-                    switchState(State.THEREUGO);
-                }
-                break;
-            }
-
-            case THEREUGO: {
-                airplane.setPosition(.3);
-                if(getElapsedStateTime() > 500) {
-                    RHook.setPosition(1);
-                    LHook.setPosition(0);
-                    MecDrive.LHang.setPower(0);
-                    MecDrive.RHang.setPower(0);
-                }
-                if(getElapsedStateTime() > 2000) {
-
-                    switchState(State.ALLTHEWAY);
-                }
-                break;
-            }
-            case ALLTHEWAY: {
-                MecDrive.LHang.setPower(.3);
-                MecDrive.RHang.setPower(.3);
-                if(getElapsedStateTime() >2750) {
-
-                    switchState(State.ISAIDALLTHEWAY);
-                }
-                break;
-            }
-            case ISAIDALLTHEWAY: {
-                RHook.setPosition(0);
-                LHook.setPosition(1);
-                if(getElapsedStateTime() > 500) {
-
-                    switchState(State.STOPORSHOT);
-                }
-                break;
-            }
-            case STOPORSHOT: {
-                MecDrive.LHang.setPower(0);
-                MecDrive.RHang.setPower(0);
-                if(getElapsedStateTime() > 250) {
-
                     switchState(State.IDLE);
                 }
                 break;
             }
+//            case BANG: {
+//                airplane.setPosition(0);
+//                if(getElapsedStateTime() > 1000) {
+//
+//                    switchState(State.THEREUGO);
+//                }
+//                break;
+//            }
+
+//            case BEHINDTHEBACK: {
+//                MecDrive.LHang.setPower(-.2);
+//                MecDrive.RHang.setPower(-.2);
+//                if(getElapsedStateTime() > 500) {
+//
+//                    switchState(State.THEREUGO);
+//                }
+//                break;
+//            }
+
+//            case THEREUGO: {
+////                airplane.setPosition(.3);
+////                if(getElapsedStateTime() > 500) {
+//                RHook.setPosition(1);
+//                LHook.setPosition(0);
+//                MecDrive.LHang.setPower(0);
+//                MecDrive.RHang.setPower(0);
+////                }
+//                if(getElapsedStateTime() > 500) {
+//
+//                    switchState(State.ALLTHEWAY);
+//                }
+//                break;
+//            }
+//            case ALLTHEWAY: {
+//                MecDrive.LHang.setPower(.3);
+//                MecDrive.RHang.setPower(.3);
+//                if(getElapsedStateTime() > 1000) {
+//
+//                    switchState(State.ISAIDALLTHEWAY);
+//                }
+//                break;
+//            }
+//            case ISAIDALLTHEWAY: {
+//                RHook.setPosition(0);
+//                LHook.setPosition(1);
+//                if(getElapsedStateTime() > 500) {
+//
+//                    switchState(State.STOPORSHOT);
+//                }
+//                break;
+//            }
+//            case STOPORSHOT: {
+//                MecDrive.LHang.setPower(0);
+//                MecDrive.RHang.setPower(0);
+//                if(getElapsedStateTime() > 250) {
+//
+//                    switchState(State.IDLE);
+//                }
+//                break;
+//            }
 
             case IDLE: {
                 if(getElapsedStateTime() > 100) {

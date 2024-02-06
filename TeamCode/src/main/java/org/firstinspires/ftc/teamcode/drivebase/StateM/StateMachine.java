@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.drivebase.StateM;
  * Created by michael on 10/2/18.
  */
 
-public abstract class StateMachine<STATE_VAR extends Enum<STATE_VAR>>
+public abstract class     StateMachine<STATE_VAR extends Enum<STATE_VAR>>
 {
     public STATE_VAR state;
     private long stateStartTime;

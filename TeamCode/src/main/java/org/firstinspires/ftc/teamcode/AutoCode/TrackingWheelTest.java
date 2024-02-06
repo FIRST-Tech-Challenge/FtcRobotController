@@ -77,8 +77,8 @@ public class TrackingWheelTest extends LinearOpMode
 //            int right = -bulkData.getMotorCurrentPosition(1);
 //            int aux = -bulkData.getMotorCurrentPosition(0);
 
-            int left = -LeftTW.getCurrentPosition();
-            int right = -RightTW.getCurrentPosition();
+            int left = LeftTW.getCurrentPosition();
+            int right = RightTW.getCurrentPosition();
             int aux = -BackTW.getCurrentPosition();
 
             //cmToInch = FrontSonar.getDistanceSync();
