@@ -12,176 +12,98 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 @Config
 public class Magazine {
-    public static double CLOSE = 0.13, OPEN = 0.28, FLIP_TIME = 0.1;
-    double lastTime = 0, target = 0;
     private RFLEDStrip blinkin;
-    private RFColorSensor colorSensor, colorSensor2;
-    boolean closed;
+    private RFColorSensor colorSensor1, colorSensor2;
 
-    int colored = 0;
     public static int pixels = 0;
 
     public Magazine() {
-        colorSensor = new RFColorSensor("colorSensor");
+        colorSensor1 = new RFColorSensor("colorSensor");
         colorSensor2 = new RFColorSensor("colorSensor2");
-//        blinkin = new RFLEDStrip("blinkin");
-//        blinkin.shotwhite();
+        blinkin = new RFLEDStrip("blinkin");
     }
 
-    public enum ColorStates {
-        WHITE("WHITE", false),
-        YELLOW("YELLOW", false),
-        GREEN("GREEN", false),
-        PURPLE("PURPLE", true),
-        NONE("NONE",true);
+    public enum MagStates {
+        FRONT(false),
+        BACK(false);
 
-        String color;
         private boolean state;
-
-        ColorStates(String p_color, boolean p_state) {
-            this.color = p_color;
+        MagStates(boolean p_state) {
             this.state = p_state;
         }
 
-        void setStateTrue() {
-            if (!this.state) {
-                for (int i = 0; i < Magazine.ColorStates.values().length; i++) {
-                    Magazine.ColorStates.values()[i].state = false;
-                }
-                this.state = true;
-            }
+        void toggle() {
+            this.state = !this.state;
         }
 
-        public String getTrue(){
-            for(int i = 0; i< Magazine.ColorStates.values().length; i++){
-                if(ColorStates.values()[i].state){
-                    return ColorStates.values()[i].color;
-                }
-            }
-            return NONE.color;
+        void setState(boolean c_state){
+            this.state = c_state;
         }
 
         public boolean getState() {
             return this.state;
         }
-
-        public String getColor() {
-            return this.color;
-        }
     }
-    public enum ColorStates2 {
-        WHITE("WHITE", false),
-        YELLOW("YELLOW", false),
-        GREEN("GREEN", false),
-        PURPLE("PURPLE", true),
-        NONE("NONE",true);
 
-        String color;
-        boolean state;
+    public double frontdist(){
+        return colorSensor1.getDist();
+    }
 
-        ColorStates2(String p_color, boolean p_state) {
-            this.color = p_color;
-            this.state = p_state;
+    public double backdist(){
+        return colorSensor2.getDist();
+    }
+
+    public void updateSensors(){
+        double dist1 = colorSensor1.getDist();
+        double dist2 = colorSensor2.getDist();
+        if(dist1 < 1){
+            MagStates.FRONT.setState(true);
         }
-
-        void setStateTrue() {
-            if (!this.state) {
-                for (int i = 0; i < Magazine.ColorStates.values().length; i++) {
-                    Magazine.ColorStates.values()[i].state = false;
-                }
-                this.state = true;
-            }
+        else if(dist1 > 1){
+            MagStates.FRONT.setState(false);
         }
-
-        public String getTrue(){
-            for(int i = 0; i< Magazine.ColorStates.values().length; i++){
-                if(ColorStates.values()[i].state){
-                    return ColorStates.values()[i].color;
-                }
-            }
-            return NONE.color;
+        if(dist2 <1){
+            MagStates.BACK.setState(true);
         }
-
-        public boolean getState() {
-            return this.state;
-        }
-
-        public String getColor() {
-            return this.color;
+        else if(dist2 > 1){
+            MagStates.BACK.setState(false);
         }
     }
 
-    public void updateColor(){
-        String color = colorSensor.getColor();
-        for(int i = 0; i< Magazine.ColorStates.values().length; i++){
-            if(ColorStates.values()[i].color.equals(color)){
-                Magazine.ColorStates.values()[i].state = true;
-            }
-            else{
-                Magazine.ColorStates.values()[i].state = false;
-            }
+    public void updatePixels(){
+        if(MagStates.FRONT.state && MagStates.BACK.state){
+            pixels = 2;
         }
-        String color2 = colorSensor2.getColor();
-        for(int i = 0; i< Magazine.ColorStates2.values().length; i++){
-            if(ColorStates2.values()[i].color.equals(color2)){
-                Magazine.ColorStates2.values()[i].state = true;
-            }
-            else{
-                Magazine.ColorStates.values()[i].state = false;
-            }
+        else if(!MagStates.FRONT.state && !MagStates.BACK.state){
+            pixels = 0;
         }
-        pixels=0;
-        if(colorSensor.getDist()<1) pixels++;
-        if(colorSensor2.getDist()<1) pixels++;
+        else{
+            pixels = 1;
+        }
     }
+
     public void updateBlinkin(){
-        if(time%3<1 && colored!=0){
-            if(pixels==0)
-                blinkin.red();
-            else if(pixels==1)
-                blinkin.orange();
-            else
-                blinkin.bluegreen();
-            colored=0;
+        if(pixels == 0){
+            blinkin.shotwhite();
         }
-        else if(time%3<2&&colored!=1){
-            if(ColorStates.GREEN.getTrue().equals("WHITE"))
-                blinkin.white();
-            if(ColorStates.GREEN.getTrue().equals("GREEN"))
-                blinkin.green();
-            if(ColorStates.GREEN.getTrue().equals("PURPLE"))
-                blinkin.violet();
-            if(ColorStates.GREEN.getTrue().equals("YELLOW"))
-                blinkin.yellow();
-            if(ColorStates.GREEN.getTrue().equals("NONE"))
-                blinkin.shotwhite();
-            colored=1;
+        if(pixels == 1){
+            blinkin.white();
         }
-        else if(colored!=2){
-            if(ColorStates2.GREEN.getTrue().equals("WHITE"))
-                blinkin.white();
-            if(ColorStates2.GREEN.getTrue().equals("GREEN"))
-                blinkin.green();
-            if(ColorStates2.GREEN.getTrue().equals("PURPLE"))
-                blinkin.violet();
-            if(ColorStates2.GREEN.getTrue().equals("YELLOW"))
-                blinkin.yellow();
-            if(ColorStates2.GREEN.getTrue().equals("NONE"))
-                blinkin.shotwhite();
-            colored=2;
+        if(pixels == 2){
+            blinkin.rainbowrainbow();
         }
     }
+
     public int getPixels(){
         return pixels;
     }
 
-
-    public boolean getClamped() {
-        return closed;
-    }
-
     public void update() {
-        updateColor();
+        LOGGER.log("front | back dist: " + frontdist() + " | " + backdist());
+        LOGGER.log("front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
+        LOGGER.log("# Pixels: " + getPixels());
+        updateSensors();
+        updatePixels();
         updateBlinkin();
     }
 }

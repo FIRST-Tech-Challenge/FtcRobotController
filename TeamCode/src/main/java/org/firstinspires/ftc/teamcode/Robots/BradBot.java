@@ -695,7 +695,7 @@ public class BradBot extends BasicRobot {
 //    ultras.update();
     twrist.update();
     claw.update();
-    magazine.updateColor();
+    magazine.update();
   }
 
   public void stop() {
