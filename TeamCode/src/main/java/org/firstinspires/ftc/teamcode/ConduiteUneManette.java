@@ -252,7 +252,8 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Joystick Gauche : VarY", varRY);
             telemetry.addData("CoudeG", coudeG.getPosition());
             telemetry.addData("CoudeD", coudeD.getPosition());
-            telemetry.addData("Postion du bras eng", maPosBras);
+            telemetry.addData("Postion bras - Enregistre", maPosBras);
+            telemetry.addData("Postion coude - Enregistre", maPosCoude);
             telemetry.addData("Position bras - Resistance", bras0);
             telemetry.addData("Status", "Running");
             telemetry.update();
