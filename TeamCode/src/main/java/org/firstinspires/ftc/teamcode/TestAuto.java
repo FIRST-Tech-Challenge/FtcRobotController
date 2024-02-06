@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.hardware.IMU;
@@ -29,6 +31,7 @@ public class TestAuto extends LinearOpMode {
     private DcMotor frontRightMotor;
     private DcMotor backRightMotor;
 
+    //private DigitalChannel digital1;
     private double previousHeading = 0;
     private double integratedHeading = 0;
 
@@ -255,6 +258,26 @@ public class TestAuto extends LinearOpMode {
         }
     }
 
+    public void straight(double speed,
+                         double distance) {
+        double newLeftTarget = frontLeftMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+        double newRightTarget = frontRightMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+
+        if(opModeIsActive()) {
+            while (frontLeftMotor.getCurrentPosition() < newLeftTarget && frontRightMotor.getCurrentPosition() < newRightTarget) {
+                frontLeftMotor.setPower(Math.abs(speed));
+                frontRightMotor.setPower(Math.abs(speed));
+                backRightMotor.setPower(Math.abs(speed));
+                backLeftMotor.setPower(Math.abs(speed));
+            }
+
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
+        }
+    }
+
     @Override
     public void runOpMode() {
         // Set motors
@@ -266,6 +289,10 @@ public class TestAuto extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
         backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+
+        //digital1 = hardwareMap.get(DigitalChannel.class, "digital1");
+
+
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -281,9 +308,6 @@ public class TestAuto extends LinearOpMode {
         //parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         //parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
 
-        //parameters.loggingEnabled = true;   //For debugging
-        //parameters.loggingTag = "IMU";      //For debugging
-        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();  //Figure out why the naive one doesn't have a public constructor
         imu.initialize(parameters);
         imu.resetYaw();
 
@@ -301,12 +325,14 @@ public class TestAuto extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            unitTestTurn();
+            //unitTestTurn();
 
+            //encoderDrive(0.3,10,10,2.0);
+            straight(0.4, 11);
             telemetry.addData("current angle", currentAngle);
             telemetry.update();
 
-            //break;
+            break;
             //System.out.println(currentAngle);
             //setPowerWithTime(0.5, 0, 0, 1);
         }
