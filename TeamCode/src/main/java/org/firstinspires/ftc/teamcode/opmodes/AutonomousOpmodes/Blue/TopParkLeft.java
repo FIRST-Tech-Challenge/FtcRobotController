@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
 
-@Autonomous(name = "Blue Top - Park Left", group = "Blue", preselectTeleOp = "RealestDriverOpMode")
+@Autonomous(name = "Blue Top - Park Left - ROBOT FACES LEFT", group = "Blue", preselectTeleOp = "RealestDriverOpMode")
 public class TopParkLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
