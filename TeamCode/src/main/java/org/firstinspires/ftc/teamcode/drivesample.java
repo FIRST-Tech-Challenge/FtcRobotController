@@ -55,6 +55,13 @@ public class drivesample extends LinearOpMode {
     }
 
     RevBlinkinLedDriver lights;
+    public enum State {
+        HIGH_2ND_LINE,
+        LOW,
+        MID,
+        RESET,
+        GRAB
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -73,6 +80,8 @@ public class drivesample extends LinearOpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideR.setDirection(DcMotorSimple.Direction.FORWARD);
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        State state = State.RESET;
 
         VisionPortal portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Goof"))
@@ -95,6 +104,22 @@ public class drivesample extends LinearOpMode {
         while (opModeIsActive()) {
 
             //SECOND PLAYER
+//            switch (state) {
+//                case RESET:
+//                    // servo.setpos(0)
+//                    if (gamepad2.b) {
+//                        state = State.LOW;
+//                    } else if (gamepad2.y) {
+//                        state = State.HIGH_2ND_LINE;
+//                    } else if (gamepad2.x) {
+//                        state = State.MID;
+//                    } else if (gamepad2.right_bumper) {
+//                        state = State.GRAB;
+//                    }
+//                    break;
+//                case GRAB:
+//                    if
+//            }
 
             //FIRST PLAYER
             double y = -gamepad1.left_stick_y;
