@@ -52,6 +52,7 @@ public class ConduiteUneManette extends LinearOpMode {
         int zeroDuBras=0;
         int zeroDuHaut=0;
         boolean PrecisionMode = false;
+        double coudepas = 0,003;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -144,11 +145,13 @@ public class ConduiteUneManette extends LinearOpMode {
             //Mode Precision (en test)
             if (PrecisionMode){
                 while (gamepad1.dpad_up){
-                    PrecisionMode = false
+                    PrecisionMode = false;
+                    coudepas = 0,003;
                 }
             } else {
                 while (gamepad1.dpad_up){
-                    PrecisionMode = true
+                    PrecisionMode = true;
+                    coudepas = 0,0001;
             }}
 
 
@@ -174,12 +177,12 @@ public class ConduiteUneManette extends LinearOpMode {
 
             // Changement Position Coude
             if (triggergauche > 0) {
-                coudeX += 0.003;
+                coudeX += coudepas;
                 if (coudeX > 0.83) {
                     coudeX = 0.83;
                 }
             } else if (triggerdroit > 0) {
-                coudeX -= 0.003;
+                coudeX -= coudepas;
                 if (coudeX<0.10) {
                     coudeX = 0.10;
                 }
