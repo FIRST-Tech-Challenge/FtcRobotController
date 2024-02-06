@@ -67,7 +67,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
         armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
-        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
+        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this), true);
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
         intakeSubsystem = new IntakeSubsystem(RobotHardwareInitializer.initializeIntake(this));
         launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
@@ -79,6 +79,27 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         // Initialize commands for the subsystems
 
+        DoubleSupplier forwardWristSupplier = () -> {
+            double end = 0;
+            end += armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0;
+            double leftX = armerController.getLeftX();
+            if (leftX > 0) {
+                end += leftX;
+            }
+            end = Math.max(0, Math.min(1, end));
+            return end;
+        };
+        DoubleSupplier backwardWristSupplier = () -> {
+            double end = 0;
+            end += armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0;
+            double leftX = armerController.getLeftX();
+            if (leftX < 0) {
+                end -= leftX;
+            }
+            end = Math.max(0, Math.min(1, end));
+            return end;
+        };
+
         driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
         moveArmCommand = new MoveArmCommand(armSubsystem,
                 () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
@@ -86,9 +107,10 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getButton(GamepadKeys.Button.LEFT_BUMPER),
                 () -> armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
-                () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0) -
+                /*() -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0) -
                         (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0) +
-                        armerController.getLeftX());
+                        armerController.getLeftX());*/
+                forwardWristSupplier, backwardWristSupplier);
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +
