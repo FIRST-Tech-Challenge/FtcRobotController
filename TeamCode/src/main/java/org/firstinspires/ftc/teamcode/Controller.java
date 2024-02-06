@@ -1,43 +1,44 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "controller movement", group = "SA_FTC")
 public class Controller extends LinearOpMode {
-    // Declare OpMode members for each of the 4 motors.
+    final double MOVEMENT_SPEED = 0.5;
+    final int ARM_MAX_POSITION = 3050;
+
     ElapsedTime runtime = new ElapsedTime();
+
     DcMotor frontLeftMotor = null;
     DcMotor backLeftMotor = null;
     DcMotor frontRightMotor = null;
     DcMotor backRightMotor = null;
-
-    DcMotorEx armLift = null;
-
+    DcMotor armLift = null;
     DcMotor armExtend = null;
-
     Servo rightGrip = null;
-
     Servo leftGrip = null;
-
     Servo roller = null;
 
-    int currentArmPosition = 0;
+    DigitalChannel digital1 = null;
+    DigitalChannel digital0 = null;
+
+    int currentArmLiftPos = 0;
 
     public void Movement() {
         double max;
 
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = gamepad1.right_stick_x;
-        double yaw = gamepad1.left_stick_x;
+        // POV Mode uses left joys  tick to go forward & strafe, and right joystick to rotate.
+        double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = -gamepad1.left_stick_x;
+        double yaw = gamepad1.right_stick_x;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -60,10 +61,10 @@ public class Controller extends LinearOpMode {
         }
 
         // Send calculated power to wheels
-        frontLeftMotor.setPower(leftFrontPower);
-        frontRightMotor.setPower(rightFrontPower);
-        backLeftMotor.setPower(leftBackPower);
-        backRightMotor.setPower(rightBackPower);
+        frontLeftMotor.setPower(leftFrontPower * MOVEMENT_SPEED);
+        frontRightMotor.setPower(rightFrontPower * MOVEMENT_SPEED);
+        backLeftMotor.setPower(leftBackPower * MOVEMENT_SPEED);
+        backRightMotor.setPower(rightBackPower * MOVEMENT_SPEED);
     }
 
     @Override
@@ -78,11 +79,13 @@ public class Controller extends LinearOpMode {
         //frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
         //backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
 
-        armLift = (DcMotorEx) hardwareMap.dcMotor.get("armLift");
+        armLift = hardwareMap.dcMotor.get("armLift");
         armExtend = hardwareMap.dcMotor.get("armExtend");
         rightGrip = hardwareMap.servo.get("GripR");
         leftGrip = hardwareMap.servo.get("GripL");
         roller = hardwareMap.servo.get("Roll");
+        digital1 = hardwareMap.get(DigitalChannel.class, "digital1");
+        digital0 = hardwareMap.get(DigitalChannel.class, "digital0");
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -91,23 +94,17 @@ public class Controller extends LinearOpMode {
         roller.setDirection(Servo.Direction.FORWARD);
         armExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         rightGrip.setDirection(Servo.Direction.REVERSE);
+
+        armLift.setTargetPosition(0);
+        armLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armLift.setPower(0.4);
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        
-        // arm test
-        armLift.setDirection(DcMotor.Direction.REVERSE);
-        
-        armLift.setTargetPosition(0);
-        armLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        
-        armLift.setTargetPosition(300);
-        armLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        
+
         waitForStart();
         runtime.reset();
-
-        armLift.setVelocity(100);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -125,20 +122,20 @@ public class Controller extends LinearOpMode {
 
             // Arm
             armExtend.setPower(gamepad2.right_stick_y);
-            
-            // testing debugging
-            telemetry.addData("current position", armLift.getCurrentPosition());
-            telemetry.addData("target position", armLift.getTargetPosition());
-            telemetry.addData("Left stick y", (int)gamepad2.left_stick_y);
-            telemetry.addData("currentarmposition", currentArmPosition);
+
+            currentArmLiftPos -= (int)(gamepad2.left_stick_y * 10);
+            if (currentArmLiftPos < 0) currentArmLiftPos = 0;
+            if (currentArmLiftPos > ARM_MAX_POSITION) currentArmLiftPos = ARM_MAX_POSITION;
+
+            armLift.setTargetPosition(currentArmLiftPos);
 
             // Grip
             if (gamepad2.left_bumper) {
-                leftGrip.setPosition(0.4);
+                leftGrip.setPosition(0.5);
             }
 
             if (gamepad2.right_bumper) {
-                rightGrip.setPosition(0.4);
+                rightGrip.setPosition(0.5);
             }
 
             if (gamepad2.left_trigger > 0.01) {
@@ -149,11 +146,12 @@ public class Controller extends LinearOpMode {
                 rightGrip.setPosition(0);
             }
 
-            // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            // telemetry.addData("roller position: ", roller.getPosition());
+            telemetry.addData("current position", armLift.getCurrentPosition());
+            telemetry.addData("target position", armLift.getTargetPosition());
+            telemetry.addData("Left stick y", (int)gamepad2.left_stick_y);
+            telemetry.addData("digital state: ", digital1.getState());
+            telemetry.addData("digital0's state: ", digital0.getState());
             telemetry.update();
         }
     }
