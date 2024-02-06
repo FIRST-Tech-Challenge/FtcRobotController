@@ -26,27 +26,27 @@ public class NewAuto2 extends LinearOpMode{
     private static final String[] LABELS = {"box"};
     private TfodProcessor tfod;
 
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-    int targetPosition = 1;
-    int currentPosition;
-
-    //true == up
-    boolean direction = true;
-    double beginTime, currentTime, timeRemaining;
-
-    // UNITS ARE METERS
-    double tagsize = 0.166;
-
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+//    // Lens intrinsics
+//    // UNITS ARE PIXELS
+//    // NOTE: this calibration is for the C920 webcam at 800x448.
+//    // You will need to do your own calibration for other configurations!
+//    double fx = 578.272;
+//    double fy = 578.272;
+//    double cx = 402.145;
+//    double cy = 221.506;
+//    int targetPosition = 1;
+//    int currentPosition;
+//
+//    //true == up
+//    boolean direction = true;
+//    double beginTime, currentTime, timeRemaining;
+//
+//    // UNITS ARE METERS
+//    double tagsize = 0.166;
+//
+//    int LEFT = 1;
+//    int MIDDLE = 2;
+//    int RIGHT = 3;
 
     String detection;
 
