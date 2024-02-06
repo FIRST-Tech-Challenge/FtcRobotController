@@ -58,9 +58,6 @@ public class Movement {
     double moveStartDirection = 0.0;
     int alignStage = 0;
 
-    double tagRange = 15;
-    double tagBearing = 0;
-    double tagYaw = 0;
     boolean tagDetected = false;
     double aprilTagCurrentX = -2;
     double aprilTagCurrentY = 15;
@@ -113,9 +110,9 @@ public class Movement {
         visionProcessor = vProc;
 
         initOdometry();
-        yawPID = new PIDController((1.0/45.0), 0.002, 0.003);
+        yawPID = new PIDController((1.0/45.0), 0.005, 0.003);
         yawPID.reset();
-        axialPID = new PIDController(2.0, 0.00002, 0.06);
+        axialPID = new PIDController(3.0, 0.00002, 0.06);
         axialPID.reset();
         lateralPID = new PIDController(8.0, 0.00001, 0.02);
         lateralPID.reset();
@@ -430,9 +427,9 @@ public class Movement {
         double aprilTagTargetX = 0;
         // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
         if (tagNumber == AprilTagLocation.BLUE_LEFT || tagNumber == AprilTagLocation.RED_LEFT) {
-            aprilTagTargetX = 0.5;
+            aprilTagTargetX = 0.25;
         } else if (tagNumber == AprilTagLocation.BLUE_RIGHT || tagNumber == AprilTagLocation.RED_RIGHT) {
-            aprilTagTargetX = -0.5;
+            aprilTagTargetX = -0.25;
         }
         double aprilTagTargetY = 9.6;
         double aprilTagTargetAngle = 0;
@@ -462,9 +459,6 @@ public class Movement {
                         tagID = tag.get(i).id;
                         aprilTagCurrentX = tag.get(i).ftcPose.x;
                         aprilTagCurrentY = tag.get(i).ftcPose.y;
-                        tagRange = tag.get(i).ftcPose.range;
-                        tagBearing = tag.get(i).ftcPose.bearing;
-                        tagYaw = tag.get(i).ftcPose.yaw;
                         tagFieldX = tag.get(i).metadata.fieldPosition.get(0);
                         tagFieldY = tag.get(i).metadata.fieldPosition.get(1);
 
@@ -480,7 +474,7 @@ public class Movement {
         telemetry.addData("Pose2D Current (X,Y): ","(%5.2f,%5.2f)", aprilTagCurrentX, aprilTagCurrentY);
         telemetry.addData("Pose2D Target  (X,Y): ","(%5.2f,%5.2f)", aprilTagTargetX, aprilTagTargetY);
         telemetry.addData("Current Φ ","(IMU%5.2f,Pose2D%5.2f)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), odometry.getPoseMeters().getRotation().getDegrees());
-        telemetry.addData("Range To Target: ","%5.2f", tagRange);
+        telemetry.addData("Range To Target: ","%5.2f", (aprilTagTargetY - aprilTagCurrentY));
         telemetry.update();
 
         // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
@@ -530,9 +524,9 @@ public class Movement {
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
         lateral = (aprilTagTargetX - aprilTagCurrentX) / 20;
         if (aprilTagTargetX - aprilTagCurrentX > 1) {
-            lateral = 0.25;
+            lateral = 0.30;
         } else if (aprilTagTargetX - aprilTagCurrentX < -1) {
-            lateral = -0.25;
+            lateral = -0.30;
         } else {
             lateral = 0;
         }
@@ -567,14 +561,11 @@ public class Movement {
     }
 
     public Translation2d RobotPosFromAprilTag(AprilTagLocation tagNumber) {
-        double fieldXOffset = 0.0;
-        double fieldYOffset = 0.0;
         double tagFieldX = 0.0;
         double tagFieldY = 0.0;
-        double robotFieldXinches = 0.0;
-        double robotFieldYinches = 0.0;
-        double robotFieldXmeters = 0.0;
-        double robotFieldYmeters = 0.0;
+        double tagRange = 0.0;
+        double tagBearing = 0.0;
+        double tagYaw = 0.0;
 
         // Scan for April Tag detections and update current values if you find one.
         List<AprilTagDetection> tag = visionProcessor.getDetections();
@@ -597,16 +588,17 @@ public class Movement {
         }
 
         // Calculate the field X Offset given that the angle
-        fieldXOffset = -(Math.sin (Math.toRadians (tagBearing - tagYaw)) * tagRange);
-        fieldYOffset = Math.cos (Math.toRadians (tagBearing - tagYaw)) * tagRange;
+        double fieldXOffset = -(Math.sin (Math.toRadians (tagBearing - tagYaw)) * tagRange);
+        double fieldYOffset = Math.cos (Math.toRadians (tagBearing - tagYaw)) * tagRange;
 
         //calculate the robots field position and convert to meters
-        robotFieldXinches = (72-tagFieldY-fieldXOffset);
-        robotFieldYinches = (72+tagFieldX-fieldYOffset);
-        robotFieldXmeters = ((robotFieldXinches*2.54)/100);
-        robotFieldYmeters = ((robotFieldYinches*2.54)/100);
+        double robotFieldXinches = (72-tagFieldY-fieldXOffset);
+        double robotFieldYinches = (72+tagFieldX-fieldYOffset);
+        double robotFieldXmeters = ((robotFieldXinches*2.54)/100);
+        double robotFieldYmeters = ((robotFieldYinches*2.54)/100);
 
         Translation2d robotFieldPOSMeters = new Translation2d(robotFieldXmeters, robotFieldYmeters);
+
         return robotFieldPOSMeters;
     }
 
@@ -624,9 +616,7 @@ public class Movement {
         // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
         double yaw = yawPID.calculate(CalcTurnError(poseTargetAngle, poseCurrentAngle));
         double fieldX = -(poseTargetX - poseCurrentX);
-        ;
         double fieldY = poseTargetY - poseCurrentY;
-        ;
 
         // Reorient the field movement requested to robot orientation
         double axial = fieldX * Math.cos(Math.toRadians(poseCurrentAngle)) - fieldY * Math.sin(Math.toRadians(poseCurrentAngle));

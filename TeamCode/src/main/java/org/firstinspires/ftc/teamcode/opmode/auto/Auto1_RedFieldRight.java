@@ -106,7 +106,6 @@ public class Auto1_RedFieldRight extends AutoBase {
             //we don't need the front camera anymore,  now need the rear one with april tags
             VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
 
-
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 0) {

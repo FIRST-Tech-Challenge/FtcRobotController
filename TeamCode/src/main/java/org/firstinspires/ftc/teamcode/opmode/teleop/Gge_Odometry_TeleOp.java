@@ -128,6 +128,16 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
     private VisionSystem visionSystem;
     private Pose2d initFieldPos;
 
+    private String allianceNow;
+    private double leftTagApproachX;
+    private double centerTagApproachX;
+    private double rightTagApproachX;
+    private double allTagsApproachY;
+    private double allTagsApproachAngle;
+    private AprilTagLocation leftTagID;
+    private AprilTagLocation centerTagID;
+    private AprilTagLocation rightTagID;
+
     @Override
     public void runOpMode() {
 
@@ -136,6 +146,14 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         if(initFieldPos == null){
             // auto hasn't been run let's put in a default value
            initFieldPos =  new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        }
+
+        // Work out if the robot is on the Red Alliance or Blue Alliance from its starting fieldPos
+        // Approximately mid-field is 1.83 meters / 72 inches.
+        if (initFieldPos.getX() < 1.83){
+            allianceNow = "BLUE";
+        } else {
+            allianceNow = "RED";
         }
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
@@ -172,7 +190,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         // set TargetDirection to hold the desired direction of the robot while driving.
-        // this is inially 0.0
+        // this is initially 0.0
         double targetDirection = 0.0;
         // set a boolean to hold the state as to if the driver has locked onto a desired bearing.
         boolean directionLocked = false;
@@ -245,15 +263,29 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // The initFieldPos is retrieved from the last AutoBase Pose2d recorded
         odometry.resetPosition(initFieldPos,initFieldPos.getRotation());
 
-        // target positions -- for testing, this will be set to the approach point for the blue
-        // backdrop when the robot starts in the blue left position
-        double aprilTag1ApproachX = 0.7; // 1m from the blue field side
-        double aprilTag1ApproachY = 2.95; // 2.5m from the audience field side
-        double aprilTag2ApproachX = 0.9; // 1m from the blue field side
-        double aprilTag2ApproachY = 2.95; // 2.5m from the audience field side
-        double aprilTag3ApproachX = 1.1; // 1m from the blue field side
-        double aprilTag3ApproachY = 2.95; // 2.5m from the audience field side
-        double targetAngle = -90; // initialized as 0.0 degrees from blue field start
+        if (allianceNow == "BLUE"){
+            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+            // backdrop when the robot starts in the blue left position
+            leftTagApproachX = 0.7; // 1m from the blue field side
+            centerTagApproachX = 0.9; // 1m from the blue field side
+            rightTagApproachX = 1.1; // 1m from the blue field side
+            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+            allTagsApproachAngle = -90; // initialized as 0.0 degrees from blue field start
+            leftTagID = AprilTagLocation.BLUE_LEFT;
+            centerTagID = AprilTagLocation.BLUE_CENTRE;
+            rightTagID = AprilTagLocation.BLUE_RIGHT;
+        } else {
+            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+            // backdrop when the robot starts in the blue left position
+            leftTagApproachX = 0.7; // 1m from the blue field side
+            centerTagApproachX = 0.9; // 1m from the blue field side
+            rightTagApproachX = 1.1; // 1m from the blue field side
+            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+            allTagsApproachAngle = 90; // initialized as 0.0 degrees from blue field start
+            leftTagID = AprilTagLocation.RED_LEFT;
+            centerTagID = AprilTagLocation.RED_CENTRE;
+            rightTagID = AprilTagLocation.RED_RIGHT;
+        }
 
         //drive speed limiter
         double powerFactor;
@@ -331,7 +363,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
             // If the driver holds the right bumper while clicking the GoToAprilTag functions, drive to approach point for the tag.
             if (gamepad1.right_bumper){
                 if (gamepad1.x) {
-                    while (!moveTo.GoToPose2d(new Pose2d(aprilTag1ApproachX,aprilTag1ApproachY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.x){
+                    while (!moveTo.GoToPose2d(new Pose2d(leftTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.x){
                         DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                         directionLocked = false;
                         odometrySpeeds = moveTo.GetWheelSpeeds();
@@ -339,7 +371,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                                 new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
                     }
                 } else if (gamepad1.y) {
-                    while (!moveTo.GoToPose2d(new Pose2d(aprilTag2ApproachX,aprilTag2ApproachY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
+                    while (!moveTo.GoToPose2d(new Pose2d(centerTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.y){
                         DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                         directionLocked = false;
                         odometrySpeeds = moveTo.GetWheelSpeeds();
@@ -347,7 +379,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                                 new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
                     }
                 } else if (gamepad1.b) {
-                    while (!moveTo.GoToPose2d(new Pose2d(aprilTag3ApproachX,aprilTag3ApproachY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.b){
+                    while (!moveTo.GoToPose2d(new Pose2d(rightTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.b){
                         DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                         directionLocked = false;
                         odometrySpeeds = moveTo.GetWheelSpeeds();
@@ -357,11 +389,11 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 }
             } else {
                 if (gamepad1.x) {
-                    while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_LEFT) && gamepad1.x){}
+                    while (!moveTo.GoToAprilTag(leftTagID) && gamepad1.x){}
                 } else if (gamepad1.y) {
-                    while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_CENTRE) && gamepad1.y){}
+                    while (!moveTo.GoToAprilTag(centerTagID) && gamepad1.y){}
                 } else if (gamepad1.b) {
-                    while (!moveTo.GoToAprilTag(AprilTagLocation.BLUE_RIGHT) && gamepad1.b){}
+                    while (!moveTo.GoToAprilTag(rightTagID) && gamepad1.b){}
                 }
             }
 
@@ -486,11 +518,9 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + JavaUtil.formatNumber(runtime.milliseconds(), 2));
+            telemetry.addData("Alliance Now", allianceNow);
             telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
-            telemetry.addData("lfDrive Velocity: ", leftFrontDrive.getVelocity());
-            telemetry.addData("Odometry X: ", odometry.getPoseMeters().getX());
-            telemetry.addData("Odometry Y: ", odometry.getPoseMeters().getY());
-            telemetry.addData("Odometry Angle: ", odometry.getPoseMeters().getRotation().getDegrees());
+            telemetry.addData("Pose2D Current (X,Y): ","(%5.2f,%5.2f)", odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY());
             telemetry.addData("Wrist Position: ", wrist.getCurrentPosition());
             telemetry.addData("Drive Power multiplier", powerFactor);
             telemetry.addData("Yaw Correction", JavaUtil.formatNumber(yaw, 2));
