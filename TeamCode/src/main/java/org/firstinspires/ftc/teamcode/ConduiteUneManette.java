@@ -35,7 +35,7 @@ public class ConduiteUneManette extends LinearOpMode {
         double tgtPowerB = 0;
 
         double tgtBras = 0;
-        double maPosBras = 0;
+        int maPosBras = 0;
 
         double varY = 0;
         double varX = 0;
@@ -51,6 +51,9 @@ public class ConduiteUneManette extends LinearOpMode {
         double maPosCoude = 0;
         int bras0 = 0;
         double debugTkt = 0;
+        int isInnit = 0;
+        int zeroDuBras=0;
+        int zeroDuHaut=0;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -59,11 +62,19 @@ public class ConduiteUneManette extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+
+
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            if (isInnit == 0) {
+                zeroDuBras = bras2.getCurrentPosition();
+                zeroDuHaut = zeroDuBras - 462;
+                isInnit = 1;
+            }
             varY = manette1.left_stick_y;
             varX = manette1.left_stick_x;
 
@@ -153,15 +164,15 @@ public class ConduiteUneManette extends LinearOpMode {
             }
 
             if (triggergauche > 0) {
-                coudeX += 0.0013;
+                coudeX += 0.003;
                 if (coudeX > 0.83) {
                     coudeX = 0.83;
                 }
             } else if (triggerdroit > 0) {
 
-                coudeX -= 0.0013;
-                if (coudeX<0) {
-                    coudeX = 0;
+                coudeX -= 0.003;
+                if (coudeX<0.10) {
+                    coudeX = 0.10;
                 }
             }
 
@@ -175,11 +186,12 @@ public class ConduiteUneManette extends LinearOpMode {
                     tgtBras = 0;
                 }
                 coudeX = maPosCoude;
+                bras0 = maPosBras;
             }
 
             if (manette2.y) {
                 maPosBras = brasA;
-                maPosCoude = coudeD.getPosition();
+                maPosCoude = coudeG.getPosition();
             }
 
             bras1.setPower(tgtBras);
@@ -207,7 +219,8 @@ public class ConduiteUneManette extends LinearOpMode {
                 }
             }
 
-            telemetry.addData("debugTkT", debugTkt);
+            telemetry.addData("zeroDuBras", zeroDuBras);
+            telemetry.addData("zeroDuHaut", zeroDuHaut);
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
             telemetry.addData("Var Y", varRY);
