@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.shared.MotionHardware.Direction;
 import org.firstinspires.ftc.teamcode.shared.MotionHardwareG2;
 import org.firstinspires.ftc.teamcode.shared.VisionHardware;
 import org.firstinspires.ftc.teamcode.shared.VisionHardware.PropPosition;
+
+import Auto.Left;
+
 @Config
 @Autonomous
 public class AutoRRG2 extends LinearOpMode {
@@ -32,16 +35,29 @@ public class AutoRRG2 extends LinearOpMode {
 
             switch (propPosition) {
                 case MIDDLE:
-                    robot.moveRobot(.5,45, 10);
+                    robot.moveRobot(.5,40, 50);
+                    robot.dropperUp();
+                    robot.turnRobot(MotionHardwareG2.Direction.RIGHT, 9, .5, 10);
+                    robot.moveRobot(.5, 30, 50);
                     break;
                 case RIGHT:
-                    robot.moveRobot(.5,35, 10);
+                    robot.moveRobot(.5,40, 50);
+                    robot.turnRobot(MotionHardwareG2.Direction.LEFT, 9, .5, 10);
+                    robot.dropperUp();
+                    robot.moveRobot(.5, 30, 50);
                     break;
                 case LEFT:
-                    robot.moveRobot(.5,25, 10);
+                    robot.moveRobot(.5,40, 50);
+                    robot.turnRobot(MotionHardwareG2.Direction.RIGHT, 9, .5, 10);
+                    robot.dropperUp();
+                    robot.turnRobot(MotionHardwareG2.Direction.LEFT, 18, .5, 10);
+                    robot.moveRobot(.5, 25, 50 );
                     break;
                 case UNKNOWN:
-                    robot.moveRobot(.5,15, 10);
+                    robot.moveRobot(.5,40, 50);
+                    robot.turnRobot(MotionHardwareG2.Direction.LEFT, 9, .5, 10);
+                    robot.dropperUp();
+                    robot.moveRobot(.5, 30, 50);
                     break;
             }
             sleep(20);

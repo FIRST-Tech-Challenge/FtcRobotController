@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -32,6 +33,7 @@ public class MotionHardwareG2 {
     private CRServo intServo = null;
     private Servo leftInt = null;
     private Servo rightInt = null;
+    private Servo dropperServo = null;
     //private Servo rightClimb = null;
     //private Servo leftClimb = null;
     //private Servo planeServo = null;
@@ -47,12 +49,8 @@ public class MotionHardwareG2 {
     public static double FRONTDROP_POSITION = 0.8; // Placeholder value, adjust as needed
     public static double DROPOFF_POSITION = 1;
     public static double PICKUP_POSITION2 = .8;
-
-    // Gripper positions
-    public static double LEFT_SERVO_OPEN = 0.35;
-    public static double LEFT_SERVO_CLOSE = 0.0;
-    public static double RIGHT_SERVO_OPEN = 0.25;
-    public static double RIGHT_SERVO_CLOSE = 0.3;
+    public static double DROPPER_DOWN = 1;
+    public static double DROPPER_UP = 1;
 
     //arm encoder values
     public static int PICKUP_POSITION_ENCODER = 0;
@@ -80,6 +78,8 @@ public class MotionHardwareG2 {
     // Constants for the wider gripper open position
     public static double LEFT_SERVO_WIDE_OPEN = -0.4; // Adjust as needed
     public static double RIGHT_SERVO_WIDE_OPEN = 0.5;
+
+
 
 
     public enum Direction {
@@ -162,10 +162,13 @@ public class MotionHardwareG2 {
         //leftClimb = myOpMode.hardwareMap.get(Servo.class, "leftClimb");
         //rightClimb = myOpMode.hardwareMap.get(Servo.class, "rightClimb");
         //planeServo = myOpMode.hardwareMap.get(Servo.class, "planeServo");
+        dropperServo = myOpMode.hardwareMap.get(Servo.class, "dropperServo");
 
         runtime.reset();
         sleep(3000);
         sleep(1000);
+
+        dropperServo.setPosition(DROPPER_DOWN);
 
         myOpMode.telemetry.addData("Starting at",  "%7d %7d %7d %7d",
                 frontLeftMotor.getCurrentPosition(),
@@ -460,6 +463,12 @@ public class MotionHardwareG2 {
 
     public void moveToGridPosition(double xInches, double yInches) {
         moveToGridPosition(xInches, yInches, MAX_SPEED);
+    }
+    public void dropperDown() {
+        dropperServo.setPosition(DROPPER_DOWN);
+    }
+    public void dropperUp () {
+        dropperServo.setPosition(DROPPER_UP);
     }
 
     public void strafe(double distance, double speed, Direction direction, double timeoutS) {
