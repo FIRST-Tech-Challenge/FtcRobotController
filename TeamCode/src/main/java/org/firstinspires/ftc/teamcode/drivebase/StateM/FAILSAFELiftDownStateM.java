@@ -3,22 +3,21 @@ package org.firstinspires.ftc.teamcode.drivebase.StateM;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Globals;
-import org.firstinspires.ftc.teamcode.MecDrive;
 
 import static org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine.ReturnState.PROCEED;
 
-public class LiftStateM extends StateMachine<LiftStateM.State> implements StateMMovmentPerformer {
+public class FAILSAFELiftDownStateM extends StateMachine<FAILSAFELiftDownStateM.State> implements StateMMovmentPerformer {
 
     public double angle;
 
 
     public enum State {
         START,
-        PIVOTWITHTHATDOOR,
-        RAISETHATLIFT,
-        POSISTIONS,
+        REVERSEPOSISTIONS,
+        LOWERTHATLIFT,
         IDLE,
 
+        UPFIRST,
 
     }
   // PIVOT WITH THAT DOOR = pivet up and close the door
@@ -47,7 +46,7 @@ public class LiftStateM extends StateMachine<LiftStateM.State> implements StateM
     public String getName() {
         return "AutoTransfer";
     }
-    public LiftStateM() {
+    public FAILSAFELiftDownStateM() {
         state = State.START;
 
     }
@@ -56,39 +55,27 @@ public class LiftStateM extends StateMachine<LiftStateM.State> implements StateM
         switch (state) {
 
             case START: {
+                switchState(State.REVERSEPOSISTIONS);
+                break;
+            }
 
-                if (getElapsedStateTime() > 500) {
-                    switchState(State.PIVOTWITHTHATDOOR);
+            case REVERSEPOSISTIONS: {
+                Globals.SLift.setPosition(.9);
+                Globals.Pivot.setPosition(.7);
+
+
+                if(getElapsedStateTime() > 500) {
+                    switchState(State.LOWERTHATLIFT);
                 }
                 break;
             }
-            case PIVOTWITHTHATDOOR: {
-                Globals.SLift.setPosition(.15);
-                Globals.Pivot.setPosition(.8);
-                Globals.Door.setPosition(1);
-
-                if(getElapsedStateTime() >500) {
-                    switchState(State.RAISETHATLIFT);
-                }
-                break;
-            }
-            case RAISETHATLIFT: {
-                Globals.Lift.setTargetPosition(-1400);
+            case LOWERTHATLIFT: {
+                Globals.Lift.setTargetPosition(1400);
                 Globals.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 Globals.Lift.setPower(1);
+                Globals.Door.setPosition(.9);
 
-                if(getElapsedStateTime() > 200) {
-
-                    switchState(State.POSISTIONS);
-                }
-                break;
-            }
-            case POSISTIONS: {
-                Globals.SLift.setPosition(.3);
-                Globals.Pivot.setPosition(1);
-
-                if(getElapsedStateTime() > 200) {
-                    MecDrive.RESETME = true;
+                if(getElapsedStateTime() > 1000) {
                     switchState(State.IDLE);
                 }
                 break;
@@ -96,7 +83,7 @@ public class LiftStateM extends StateMachine<LiftStateM.State> implements StateM
 
             case IDLE: {
                 if(getElapsedStateTime() > 100) {
-
+                    Globals.RESETME = true;
                     return PROCEED;
                 }
                 break;

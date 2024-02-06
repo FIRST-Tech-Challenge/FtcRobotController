@@ -146,8 +146,8 @@ public class BackStagePARKAuto extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                int left = -LeftTW.getCurrentPosition();
-                int right = -RightTW.getCurrentPosition();
+                int left = LeftTW.getCurrentPosition();
+                int right = RightTW.getCurrentPosition();
                 int aux = -BackTW.getCurrentPosition();
                 trackingWheelIntegrator.update(left, right, aux);
 
@@ -184,26 +184,26 @@ public class BackStagePARKAuto extends LinearOpMode {
         FirstMovement = new StateMTrajectory.Builder()
 
          .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(-4,-40)
+                        .setTargetPosition(0,-40)
                         .setMaxPower(.2) // .4 - 6
                         .setXyGain(.04)
                         .setTargetHeading(0)
                         .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
                         .setMaxTurnPower(.2)
                         .setMovementThresh(2)
-                        .setHeadingThreshold(2)
+                        .setHeadingThreshold(10)
                         .stopMotorsOnDone(true)
                         .build())
 
                 .addMovement(new StateMPointApproach.Builder() //First movment.
-                        .setTargetPosition(-4,-35)
+                        .setTargetPosition(0,-35)
                         .setMaxPower(.4) // .4 - 6
                         .setXyGain(.04)
                         .setTargetHeading(0)
                         .setHeadingDynamicGain(new AcceleratedGain(.012, -0.0004))
                         .setMaxTurnPower(.2)
                         .setMovementThresh(2)
-                        .setHeadingThreshold(2)
+                        .setHeadingThreshold(15)
                         .stopMotorsOnDone(true)
                         .build())
                 .build();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drivebase.StateM;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Globals;
 import org.firstinspires.ftc.teamcode.MecDrive;
 
 import static org.firstinspires.ftc.teamcode.drivebase.StateM.StateMachine.ReturnState.PROCEED;
@@ -55,21 +56,21 @@ public class LiftDownStateM extends StateMachine<LiftDownStateM.State> implement
         switch (state) {
 
             case START: {
-                if (MecDrive.Lift.getCurrentPosition() < 1000) {switchState(State.REVERSEPOSISTIONS);}
+                if (Globals.Lift.getCurrentPosition() < 1000) {switchState(State.REVERSEPOSISTIONS);}
                 else {switchState(State.UPFIRST);}
                 break;
             }
             case UPFIRST: {
-                MecDrive.Lift.setTargetPosition(-1000);
-                MecDrive.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                MecDrive.Lift.setPower(1);
+                Globals.Lift.setTargetPosition(-1000);
+                Globals.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                Globals.Lift.setPower(1);
                 if(getElapsedStateTime() > 500) {switchState(State.REVERSEPOSISTIONS);}
                 break;
             }
             case REVERSEPOSISTIONS: {
-                MecDrive.SLift.setPosition(.9);
-                MecDrive.Pivot.setPosition(.7);
-                MecDrive.Door.setPosition(.9);
+                Globals.SLift.setPosition(.9);
+                Globals.Pivot.setPosition(.7);
+
 
                 if(getElapsedStateTime() > 500) {
                     switchState(State.LOWERTHATLIFT);
@@ -77,9 +78,10 @@ public class LiftDownStateM extends StateMachine<LiftDownStateM.State> implement
                 break;
             }
             case LOWERTHATLIFT: {
-                MecDrive.Lift.setTargetPosition(-1);
-                MecDrive.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                MecDrive.Lift.setPower(1);
+                Globals.Lift.setTargetPosition(-1);
+                Globals.Lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                Globals.Lift.setPower(1);
+                Globals.Door.setPosition(.9);
 
                 if(getElapsedStateTime() > 1000) {
                     switchState(State.IDLE);
@@ -89,7 +91,7 @@ public class LiftDownStateM extends StateMachine<LiftDownStateM.State> implement
 
             case IDLE: {
                 if(getElapsedStateTime() > 100) {
-                    MecDrive.RESETME = true;
+                    Globals.RESETME = true;
                     return PROCEED;
                 }
                 break;
