@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.utility;
 
 import static java.lang.Math.abs;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,12 +24,12 @@ public class IntakeMovement {
     // The lower the int the higher the wrist goes
     static final int WRIST_UP_TICKS     =  0;     // Gge MUST be started at all times with the claw fully raised and over the conveyor.
     static final int WRIST_SAFETY_TICKS = 30;     // Gge needs to have a safety  position for the wrist to allow the linear slides to raise.
-    public static final int WRIST_DOWN_TICKS   =  141;     // The number of ticks that achieve ground position for the wrist.
+    public static final int WRIST_DOWN_TICKS   =  144;     // The number of ticks that achieve ground position for the wrist.
     double WRIST_POWER = 1.0; // Set the power of the wrist movement
 
-    static final double SERVO_CLAW_DELAY = 0.9;
+    static final double SERVO_CLAW_DELAY = 1.0;
 
-    static final double CONVEYOR_ADVANCE_DELAY = 1.5;
+    static final double CONVEYOR_ADVANCE_DELAY = 0.9;
 
     // Tracks the amount of time a servo moving into position will take
     private ElapsedTime servoRuntime = new ElapsedTime();
@@ -41,7 +40,7 @@ public class IntakeMovement {
     int flipUpTicks = WRIST_UP_TICKS;
     int flipDownTicks = WRIST_DOWN_TICKS;
 
-    public DcMotor wrist;
+    public DcMotorEx wrist;
     public Servo rightClaw;
     public Servo leftClaw;
     public Servo conveyor;
@@ -58,7 +57,7 @@ public class IntakeMovement {
      * @Param: ConV - the servo that controls the conveyor motion
      * @Param: telemetry1 - the controlling class to display information on the drive station screen
      */
-   public IntakeMovement(Servo rightC, Servo leftC, DcMotor intakeFlip, Servo conV, Telemetry telemetry1) {
+   public IntakeMovement(Servo rightC, Servo leftC, DcMotorEx intakeFlip, Servo conV, Telemetry telemetry1) {
        rightClaw = rightC;
        leftClaw = leftC;
        wrist = intakeFlip;
@@ -71,7 +70,7 @@ public class IntakeMovement {
      * Resets the DcMotor powered wrist encoder positions to 0
      */
     private void initWrist(){
-        wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        wrist.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
     }
 
 
@@ -115,7 +114,7 @@ public class IntakeMovement {
      */
     public void moveWrist(int ticks, double power){
         wrist.setTargetPosition(ticks); // Tells the motor that the position it should go to is desiredPosition
-        wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wrist.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         wrist.setPower(power);
         // Hold the start of the next command until this movement is within 30 ticks of its position
         while(abs (wrist.getTargetPosition() - wrist.getCurrentPosition()) > 5){
@@ -132,7 +131,7 @@ public class IntakeMovement {
      * the claw servos to touch it.
      */
     public void FlipDown() {
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(35, 0.1, 0.1, 4);
+        wrist.setVelocityPIDFCoefficients(45, 0.1, 0.001, 4);
         moveWrist (WRIST_DOWN_TICKS, WRIST_POWER);
     }
 
@@ -142,7 +141,7 @@ public class IntakeMovement {
      */
     public void FlipSafety() {
         // For Wrist, PIDF values set to reduce jitter
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(20, 0, 0, 2);
+        wrist.setVelocityPIDFCoefficients(20, 0, 0, 2);
         moveWrist (WRIST_SAFETY_TICKS, WRIST_POWER);
     }
 
@@ -151,7 +150,7 @@ public class IntakeMovement {
      */
     public void FlipUp(){
         // For Wrist, PIDF values set to reduce jitter
-        ((DcMotorEx) wrist).setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
+        wrist.setVelocityPIDFCoefficients(25, 0.3, 0.02, 16);
         moveWrist (WRIST_UP_TICKS, WRIST_POWER);
 
     }
@@ -168,13 +167,8 @@ public class IntakeMovement {
         while (servoMoveEndTime >= servoRuntime.time()){
             telemetry.addData("Running GrabAndSlowSequence...", WRIST_UP_TICKS);
             telemetry.update();
-            //ClawOpen(); // This automation was removed because the drive team found it useful to
-            //FlipDown(); // lower the wrist and plow into the pixel before trying to close the
-            //sleep(500); // claw.  Will still Grab and Stow but wont Lower Grab and Stow.
             ClawClosed();
-            //sleep(500);
             FlipUp();
-            //sleep(500);
             ClawOpen();
         }
 

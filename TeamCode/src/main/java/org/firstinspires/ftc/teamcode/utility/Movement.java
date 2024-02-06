@@ -16,14 +16,11 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 /**refor
  * This class contains methods to control drive base movement
@@ -39,6 +36,7 @@ public class Movement {
         LEFT,
         RIGHT
     }
+
     private DcMotorEx lfDrive;
     private DcMotorEx rfDrive;
     private DcMotorEx lbDrive;
@@ -59,32 +57,32 @@ public class Movement {
 
     double moveStartDirection = 0.0;
     int alignStage = 0;
-    double currentX = -2;
-    double currentY = 15;
-    double tagRange = 15;
-    double tagBearing = 0;
+
     boolean tagDetected = false;
+    double aprilTagCurrentX = -2;
+    double aprilTagCurrentY = 15;
     boolean aprilTagAligned = false;
     boolean pose2dAligned = false;
 
     // Setup PID controllers for Pose2d motion.
     PIDController yawPID;
+    PIDController axialPID;
+    PIDController lateralPID;
     double axial = 0;
     double lateral = 0;
     double yaw = 0;
-    double currentAngle = 0;
 
     /**
      * Pulls in information about the motors that is determined during initialization and makes
      * that information accessible to the rest of the class.
      *
-     * @param leftFrontDrive       the front left wheels motor,
-     * @param rightFrontDrive      the front right wheels motor,
-     * @param leftBackDrive        the back left wheels motor,
-     * @param rightBackDrive       the back right wheels motor,
-     * @param imu1                 the ControlHub gyro,
-     * @param blinkinLED1          the BlinkinLED,
-     * @param telemetry1           telemetry for the Drive Station
+     * @param leftFrontDrive  the front left wheels motor,
+     * @param rightFrontDrive the front right wheels motor,
+     * @param leftBackDrive   the back left wheels motor,
+     * @param rightBackDrive  the back right wheels motor,
+     * @param imu1            the ControlHub gyro,
+     * @param blinkinLED1     the BlinkinLED,
+     * @param telemetry1      telemetry for the Drive Station
      */
     public Movement(DcMotorEx leftFrontDrive,
                     DcMotorEx rightFrontDrive,
@@ -97,7 +95,7 @@ public class Movement {
                     ElapsedTime odometryTimer1,
                     MecanumDriveWheelSpeeds odometrySpeeds1,
                     Telemetry telemetry1,
-                    VisionSystem vProc){
+                    VisionSystem vProc) {
         lfDrive = leftFrontDrive;
         rfDrive = rightFrontDrive;
         lbDrive = leftBackDrive;
@@ -112,17 +110,21 @@ public class Movement {
         visionProcessor = vProc;
 
         initOdometry();
-        yawPID = new PIDController((1.0/45.0), 0.00, 0.002);
+        yawPID = new PIDController((1.0/45.0), 0.005, 0.003);
         yawPID.reset();
+        axialPID = new PIDController(3.0, 0.00002, 0.06);
+        axialPID.reset();
+        lateralPID = new PIDController(8.0, 0.00001, 0.02);
+        lateralPID.reset();
     }
 
     public void initOdometry() {
         // Setup the 2d translation for GGE as coordinates of each motor, relative to the center of GGE.
         // in Meters - translated from inches as inches * 2.54 / 100
-        Translation2d lfMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
-        Translation2d rfMotorMeters = new Translation2d((6 * 2.54 / 100.0), (6 * 2.54 / 100.0));
-        Translation2d lbMotorMeters = new Translation2d(-(6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
-        Translation2d rbMotorMeters = new Translation2d((6 * 2.54 / 100.0), -(6 * 2.54 / 100.0));
+        Translation2d lfMotorMeters = new Translation2d(-(5.5 * 2.54 / 100.0), (5.5 * 2.54 / 100.0));
+        Translation2d rfMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), (5.5 * 2.54 / 100.0));
+        Translation2d lbMotorMeters = new Translation2d(-(5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
+        Translation2d rbMotorMeters = new Translation2d((5.5 * 2.54 / 100.0), -(5.5 * 2.54 / 100.0));
 
         // Create Mecanum Kinematics
         kinematics = new MecanumDriveKinematics(lfMotorMeters, rfMotorMeters, lbMotorMeters, rbMotorMeters);
@@ -130,8 +132,14 @@ public class Movement {
         // Create Mecanum Odometry
         odometry = new MecanumDriveOdometry(kinematics, new Rotation2d(0.0));
 
+        //Todo: Need to take the position information passed into GGE_Odometry set the starting position
         odometryTimer = new ElapsedTime();
         odometryTimer.reset();
+        imu.resetYaw();
+//        // Initialize the odometry to the start position of the robot.
+//        // TODO* - this will only presently work right from the blue field left start position and will need stored values from each location
+//        odometry.resetPosition(new Pose2d(0.25, 2.2, new Rotation2d(Math.toRadians(0.0))),
+//                new Rotation2d (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
     }
 
@@ -367,6 +375,7 @@ public class Movement {
      *
      * @param desiredDirection - which direction you want to go to
      * @param currentDirection - your current direction
+     * @return turnDiff - a value within 180 and -180 equiv to the delta of the two passed params
      */
     public double CalcTurnError(double desiredDirection, double currentDirection) {
         double turnDiff = desiredDirection - currentDirection;
@@ -378,36 +387,81 @@ public class Movement {
         return turnDiff;
     }
 
-    public boolean GoToAprilTag(int tagNumber) {
-        double targetX = 0;
-        // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
-        if (tagNumber == 1 || tagNumber == 4) {
-            targetX = 0.5;
-        } else if (tagNumber == 3 || tagNumber == 6) {
-            targetX = -0.5;
+    /**
+     * Normalize motor powers to ensure that passed values fall within a proportional range between
+     * a max value (specified or 1.0) and a min value aligned to the lowest useful power.
+     *
+     * @param lfPower - any double representing the proportionate power for the left front motor
+     * @param rfPower - any double representing the proportionate power for the right front motor
+     * @param lbPower - any double representing the proportionate power for the left back motor
+     * @param rbPower - any double representing the proportionate power for the right back motor
+     */
+    public void setNormalizedPowers(double lfPower, double rfPower, double lbPower, double rbPower) {
+        double deadZoneMin = 0.05;
+
+        // work out the max of passed values
+        double max = Math.max(Math.max(abs(lfPower), abs(rfPower)), Math.max(abs(lbPower), abs(rbPower)));
+
+        // normalize values to a range between 0 and 1
+        if (max > 1) {
+            lfPower /= max;
+            rfPower /= max;
+            lbPower /= max;
+            rbPower /= max;
         }
-        double targetY = 10;
-        double targetAngle = 0;
+
+        // If powers are less than the deadZoneMin, set them to 0, otherwise keep them as they are.
+        if (abs(lfPower) <= deadZoneMin) {lfPower = 0.0;}
+        if (abs(rfPower) <= deadZoneMin) {rfPower = 0.0;}
+        if (abs(lbPower) <= deadZoneMin) {lbPower = 0.0;}
+        if (abs(rbPower) <= deadZoneMin) {rbPower = 0.0;}
+
+        // Apply calculated values to drive motors
+        lfDrive.setPower(lfPower);
+        rfDrive.setPower(rfPower);
+        lbDrive.setPower(lbPower);
+        rbDrive.setPower(rbPower);
+    }
+
+    public boolean GoToAprilTag(AprilTagLocation tagNumber) {
+        double aprilTagTargetX = 0;
+        // The AprilTag is not centered on the LEFT and RIGHT backdrop zones, adjust X targets
+        if (tagNumber == AprilTagLocation.BLUE_LEFT || tagNumber == AprilTagLocation.RED_LEFT) {
+            aprilTagTargetX = 0.25;
+        } else if (tagNumber == AprilTagLocation.BLUE_RIGHT || tagNumber == AprilTagLocation.RED_RIGHT) {
+            aprilTagTargetX = -0.25;
+        }
+        double aprilTagTargetY = 9.6;
+        double aprilTagTargetAngle = 0;
 
         // Translate the tagNumber requested to know the angle of the backdrop in robot IMU
-        if (tagNumber <= 3) {
-            targetAngle = -90;
-        } else if (tagNumber > 3) {
-            targetAngle = 90;
+        if (tagNumber == AprilTagLocation.BLUE_LEFT ||
+                tagNumber == AprilTagLocation.BLUE_CENTRE ||
+                tagNumber == AprilTagLocation.BLUE_RIGHT) {
+            aprilTagTargetAngle = -90;
+        } else if (tagNumber == AprilTagLocation.RED_LEFT ||
+                tagNumber == AprilTagLocation.RED_CENTRE ||
+                tagNumber == AprilTagLocation.RED_RIGHT) {
+            aprilTagTargetAngle = 90;
         }
 
-        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double aprilTagCurrentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double tagID = 0.0;
+        double tagFieldX = 0.0;
+        double tagFieldY = 0.0;
 
         // Scan for April Tag detections and update current values if you find one.
         List<AprilTagDetection> tag = visionProcessor.getDetections();
         if (tag != null) {
             for (int i = 0; i < tag.size(); i++) {
                 if (tag.get(i) != null) {
-                    if (tag.get(i).id == tagNumber) {
-                        currentX = tag.get(i).ftcPose.x;
-                        currentY = tag.get(i).ftcPose.y;
-                        tagRange = tag.get(i).ftcPose.range;
-                        tagBearing = tag.get(i).ftcPose.bearing;
+                    if (tag.get(i).id == tagNumber.TagNum()) {
+                        tagID = tag.get(i).id;
+                        aprilTagCurrentX = tag.get(i).ftcPose.x;
+                        aprilTagCurrentY = tag.get(i).ftcPose.y;
+                        tagFieldX = tag.get(i).metadata.fieldPosition.get(0);
+                        tagFieldY = tag.get(i).metadata.fieldPosition.get(1);
+
                         blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                         tagDetected = true;
                     }
@@ -416,16 +470,11 @@ public class Movement {
         }
 
         // Update Telemetry with key data
-        telemetry.addData("tags found: ", tag.size());
-        telemetry.addData("AlignStage: ", alignStage);
-        telemetry.addData("Current X: ", currentX);
-        telemetry.addData("Target X: ", targetX);
-        telemetry.addData("Current Y: ", currentY);
-        telemetry.addData("Target Y: ", targetY);
-        telemetry.addData("Tag Range: ", tagRange);
-        telemetry.addData("Tag Bearing: ", tagBearing);
-        telemetry.addData("Current Angle: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Target Angle: ", targetAngle);
+        telemetry.addData("Tag ID: ", tagID);
+        telemetry.addData("Pose2D Current (X,Y): ","(%5.2f,%5.2f)", aprilTagCurrentX, aprilTagCurrentY);
+        telemetry.addData("Pose2D Target  (X,Y): ","(%5.2f,%5.2f)", aprilTagTargetX, aprilTagTargetY);
+        telemetry.addData("Current Φ ","(IMU%5.2f,Pose2D%5.2f)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), odometry.getPoseMeters().getRotation().getDegrees());
+        telemetry.addData("Range To Target: ","%5.2f", (aprilTagTargetY - aprilTagCurrentY));
         telemetry.update();
 
         // Like the driver control TeleOp, consider the needed axial, lateral and yaw for
@@ -440,30 +489,30 @@ public class Movement {
             // Refactor this to the Movement class to make a method to switch motors to run
             // on a defined power level.
             lfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             // Set default to BRAKE mode for control
             lfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rfDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rbDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //
             alignStage = 1;
         }
 
-        axial = -0.10;
+        axial = -0.2;
         // Assume april tag is not aligned at start.
         aprilTagAligned = false;
 
         // Square up the robot to the backdrop (from targetAngle above)
         // If the yaw is +, apply -yaw, if the yaw if -, apply +yaw (-right_stick_x in robot mode)
-        if (abs(targetAngle - currentAngle) > 2) {
-            yaw = -CalcTurnError(targetAngle, currentAngle) / 45;
-            if (yaw > 0.2) {
-                yaw = 0.2;
-            } else if (yaw < -0.2) {
-                yaw = -0.2;
+        if (abs(aprilTagTargetAngle - aprilTagCurrentAngle) > 2) {
+            yaw = -CalcTurnError(aprilTagTargetAngle, aprilTagCurrentAngle) / 45;
+            if (yaw > 0.25) {
+                yaw = 0.25;
+            } else if (yaw < -0.25) {
+                yaw = -0.25;
             }
         } else {
             yaw = 0;
@@ -473,19 +522,19 @@ public class Movement {
         // If the x distance is > 1 inch off of targetX move left or right accordingly
         // To make the robot go right, reduce the lateral (-left_stick_x in robot mode)
         // To make the robot go left, increase the lateral (-left_stick_x in robot mode)
-        //lateral = (targetX - currentY) / 20;
-        if (targetX - currentX > 1) {
-            lateral = 0.2;
-        } else if (targetX - currentX < -1) {
-            lateral = -0.2;
+        lateral = (aprilTagTargetX - aprilTagCurrentX) / 20;
+        if (aprilTagTargetX - aprilTagCurrentX > 1) {
+            lateral = 0.30;
+        } else if (aprilTagTargetX - aprilTagCurrentX < -1) {
+            lateral = -0.30;
         } else {
             lateral = 0;
         }
 
         // Back the robot up to the right distance to raise the lift
         //axial = -(currentY - targetY) / 40;
-        if (currentY > targetY) {
-            axial = -0.15;
+        if (aprilTagCurrentY > aprilTagTargetY) {
+            axial = -0.2;
         } else {
             axial = 0;
         }
@@ -503,69 +552,101 @@ public class Movement {
         rbDrive.setPower(rightBackPower);
 
         // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 2) {
+        if (abs(aprilTagTargetX - aprilTagCurrentX) < 1 && aprilTagCurrentY < aprilTagTargetY && abs(aprilTagTargetAngle - aprilTagCurrentAngle) < 2) {
             aprilTagAligned = true;
+            StopMotors();
             blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
         }
         return aprilTagAligned;
     }
 
+    public Translation2d RobotPosFromAprilTag(AprilTagLocation tagNumber) {
+        double tagFieldX = 0.0;
+        double tagFieldY = 0.0;
+        double tagRange = 0.0;
+        double tagBearing = 0.0;
+        double tagYaw = 0.0;
+
+        // Scan for April Tag detections and update current values if you find one.
+        List<AprilTagDetection> tag = visionProcessor.getDetections();
+        if (tag != null) {
+            for (int i = 0; i < tag.size(); i++) {
+                if (tag.get(i) != null) {
+                    if (tag.get(i).id == tagNumber.TagNum()) {
+                        aprilTagCurrentX = tag.get(i).ftcPose.x;
+                        aprilTagCurrentY = tag.get(i).ftcPose.y;
+                        tagRange = tag.get(i).ftcPose.range;
+                        tagBearing = tag.get(i).ftcPose.bearing;
+                        tagYaw = tag.get(i).ftcPose.yaw;
+                        tagFieldX = tag.get(i).metadata.fieldPosition.get(0);
+                        tagFieldY = tag.get(i).metadata.fieldPosition.get(1);
+                        blinkinLED.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY);
+                        tagDetected = true;
+                    }
+                }
+            }
+        }
+
+        // Calculate the field X Offset given that the angle
+        double fieldXOffset = -(Math.sin (Math.toRadians (tagBearing - tagYaw)) * tagRange);
+        double fieldYOffset = Math.cos (Math.toRadians (tagBearing - tagYaw)) * tagRange;
+
+        //calculate the robots field position and convert to meters
+        double robotFieldXinches = (72-tagFieldY-fieldXOffset);
+        double robotFieldYinches = (72+tagFieldX-fieldYOffset);
+        double robotFieldXmeters = ((robotFieldXinches*2.54)/100);
+        double robotFieldYmeters = ((robotFieldYinches*2.54)/100);
+
+        Translation2d robotFieldPOSMeters = new Translation2d(robotFieldXmeters, robotFieldYmeters);
+
+        return robotFieldPOSMeters;
+    }
+
     public boolean GoToPose2d(Pose2d targetPosition) {
-        double targetX = targetPosition.getX(); // desired X
-        double targetY = targetPosition.getY(); // desired Y
-        double targetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
-
-//        currentX = odometry.getPoseMeters().getX();
-//        currentY = odometry.getPoseMeters().getY();
-        targetX = 0;
-        targetY = 0;
-        currentX = 0;
-        currentY = 0;
-        currentAngle = odometry.getPoseMeters().getRotation().getDegrees();
-
+        double poseTargetX = targetPosition.getX(); // desired X
+        double poseTargetY = targetPosition.getY(); // desired Y
+        double poseTargetAngle = targetPosition.getRotation().getDegrees(); // desired Angle
         pose2dAligned = false;
 
-        axial = targetX - currentX;
-        lateral = targetY - currentY;
+        double poseCurrentX = odometry.getPoseMeters().getX();
+        double poseCurrentY = odometry.getPoseMeters().getY();
+        double poseCurrentAngle = odometry.getPoseMeters().getRotation().getDegrees();
 
-        // Use a PID controller to dampen the yaw motion on a turn.
-        yaw = yawPID.calculate (CalcTurnError(targetAngle, currentAngle));
+        // Since both the current and target X / Y coords are in field coordinates, so will the delta.
+        // Use a PID controller to dampen the error for yaw, fieldX and fieldY.
+        double yaw = yawPID.calculate(CalcTurnError(poseTargetAngle, poseCurrentAngle));
+        double fieldX = -(poseTargetX - poseCurrentX);
+        double fieldY = poseTargetY - poseCurrentY;
 
-//      // Combine the axial, lateral and yaw factors to be powers
+        // Reorient the field movement requested to robot orientation
+        double axial = fieldX * Math.cos(Math.toRadians(poseCurrentAngle)) - fieldY * Math.sin(Math.toRadians(poseCurrentAngle));
+        double lateral = fieldX * Math.sin(Math.toRadians(poseCurrentAngle)) + fieldY * Math.cos(Math.toRadians(poseCurrentAngle));
+
+        axial = axialPID.calculate(axial);
+        lateral = lateralPID.calculate(lateral);
+
+        // Combine the axial, lateral and yaw factors to be powers
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
         double rightBackPower = axial + lateral - yaw;
 
-        // Reorient the stick inputs to field orientation
-        // The current orientation is DirectionNow
-//        double field_axial = axial * Math.cos(Math.toRadians(currentAngle)) - lateral * Math.sin(Math.toRadians(currentAngle));
-//        double field_lateral = axial * Math.sin(Math.toRadians(currentAngle)) + lateral * Math.cos(Math.toRadians(currentAngle));
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-//        double leftFrontPower  = field_axial + field_lateral - yaw;
-//        double rightFrontPower = field_axial - field_lateral + yaw;
-//        double leftBackPower   = field_axial - field_lateral - yaw;
-//        double rightBackPower  = field_axial + field_lateral + yaw;
+        // Apply normalized calculated values to drive motors.
+        setNormalizedPowers(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
         // Update Telemetry with key data
-        telemetry.addLine(String.format("Pose2D X(Current%5.1f,Target%5.1f)", currentX, targetX));
-        telemetry.addLine(String.format("Pose2D Y(Current%5.1f,Target%5.1f)", currentY, targetY));
-        telemetry.addLine(String.format("Pose2D Φ(Current%5.1f,Target%5.1f)", currentAngle, targetAngle));
-        telemetry.addLine(String.format("Motion (Axial%5.1f,Lateral%5.1f,Yaw%5.1f)", axial, lateral, yaw));
-        telemetry.addLine(String.format("Motor Powers(lf:%4.1f,rf:%4.1f,lb%4.1f,rb%4.1f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower));
+        telemetry.addData("Pose2D X", "(Current%5.2f,Target%5.2f)", poseCurrentX, poseTargetX);
+        telemetry.addData("Pose2D Y", "(Current%5.1f,Target%5.2f)", poseCurrentY, poseTargetY);
+        telemetry.addData("Pose2D Φ", "(Current%5.2f,Target%5.2f)", poseCurrentAngle, poseTargetAngle);
+        telemetry.addData("Motion ", "(Axial%5.2f,Lateral%5.2f,Yaw%5.2f)", axial, lateral, yaw);
+        telemetry.addData("Motor Powers", "(lf:%4.1f,rf:%4.1f,lb%4.1f,rb%4.1f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
         telemetry.update();
 
-        // Apply calculated values to drive motors
-        lfDrive.setPower(leftFrontPower);
-        rfDrive.setPower(rightFrontPower);
-        lbDrive.setPower(leftBackPower);
-        rbDrive.setPower(rightBackPower);
-
         // Test to see if we are at all three parts of our desired position and we are aligned.
-        if (abs(targetX - currentX) < 1 && currentY < targetY && abs(targetAngle - currentAngle) < 1) {
+        if ((abs(poseTargetX - poseCurrentX) < 0.05) && (abs(poseTargetY - poseCurrentY) < 0.05) && abs(poseTargetAngle - poseCurrentAngle) < 3) {
             pose2dAligned = true;
+            // Stop motors to make the next command safe.
+            StopMotors();
         }
         return pose2dAligned;
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
@@ -13,8 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
@@ -24,9 +26,9 @@ import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
 
-public abstract class AutoBase extends LinearOpMode {
+import java.util.List;
 
-    // <<<<<<end of configurable parameters >>>>>>>>>>>
+public abstract class AutoBase extends LinearOpMode {
 
     protected ElapsedTime runtime = new ElapsedTime(); //
     protected DcMotorEx leftFrontDrive = null;
@@ -57,6 +59,10 @@ public abstract class AutoBase extends LinearOpMode {
     // Wheel diameter is 100mm
     final static double ticksPerInch = (28 * 12) / ((100 * 3.14) / 25.4);
     protected VisionSystem visionSystem;
+    protected static Pose2d lastFieldPos;
+
+    protected double DirectionNow;
+    protected static List<AprilTagLocation> targetAprilTags;
 
     @Override
     public void runOpMode() {
@@ -141,8 +147,8 @@ public abstract class AutoBase extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         wrist.setDirection(DcMotor.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
@@ -161,6 +167,8 @@ public abstract class AutoBase extends LinearOpMode {
                             visionSystem);
         linearSlideMove = new LinearSlideMovement(leftLinearSlide, rightLinearSlide, intake);
 
+        // getting the initialized odometry object
+        odometry = moveTo.getOdometry();
         state = 0;
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -172,14 +180,24 @@ public abstract class AutoBase extends LinearOpMode {
     protected void displayTelemetry(double DirectionNow) {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
-        telemetry.addData("Target Position", leftFrontDrive.getTargetPosition());
-        telemetry.addData("Left Front Pos", leftFrontDrive.getCurrentPosition());
-        telemetry.addData("Right Front Pos", rightFrontDrive.getCurrentPosition());
-        telemetry.addData("Left Back Pos", leftBackDrive.getCurrentPosition());
-        telemetry.addData("Right Back Pos", rightBackDrive.getCurrentPosition());
-        telemetry.addData("state", state);
-        telemetry.addData("location", gamepieceLocation);
+        telemetry.addData("GamePiece Location: ", gamepieceLocation);
+        telemetry.addData("Auto State Now: ", state);
+        telemetry.addData("Odometry (X, Y, Angle)", "%4.2f, %4.2f, %4.2f",
+                odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY(),
+                odometry.getPoseMeters().getRotation().getDegrees());
+        telemetry.addData("*******updating pos********",lastFieldPos);
         telemetry.update();
+    }
+
+    protected void updateOdometry() {
+        DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        odometrySpeeds = moveTo.GetWheelSpeeds();
+        odometry.updateWithTime(odometryTimer.seconds(),
+                new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
+    }
+
+    protected void updateLastPos(){
+        lastFieldPos = moveTo.getOdometry().getPoseMeters();
     }
 
     protected void setFieldPosition(FieldPosition fPos) {
@@ -200,6 +218,15 @@ public abstract class AutoBase extends LinearOpMode {
 
     protected double getRightSpikeSaturation() {
         return visionSystem.getRightSpikeSaturation();
+    }
+
+    protected void setInitFieldPos(Pose2d initPos, List<AprilTagLocation> aTags){
+        lastFieldPos = initPos;
+        targetAprilTags = aTags;
+    }
+
+    public static Pose2d getLastFieldPos(){
+        return lastFieldPos;
     }
 
 }

@@ -31,13 +31,19 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static android.os.SystemClock.sleep;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.GamePieceLocation;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.util.FieldPosition;
 import org.firstinspires.ftc.teamcode.vision.util.SpikePosition;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Autonomous operation class for 'BlueFieldLeft' scenario.
@@ -60,6 +66,14 @@ public class Auto1_RedFieldRight extends AutoBase {
         gamepieceLocation = GamePieceLocation.UNDEFINED; // this is the position that we can't see
         setFieldPosition(FieldPosition.RED_FIELD_RIGHT);
 
+        // this is setting the initial field coordinates
+        // need to set the AprilTagTargets
+        targetAprilTags = new ArrayList<>(Arrays.asList(AprilTagLocation.RED_LEFT,
+                AprilTagLocation.RED_CENTRE,
+                AprilTagLocation.RED_RIGHT));
+        //todo: put proper initial positions
+        lastFieldPos = new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        odometry.resetPosition(lastFieldPos,lastFieldPos.getRotation());
 
         /**
          * This loop is run continuously
@@ -88,9 +102,9 @@ public class Auto1_RedFieldRight extends AutoBase {
             // we don't want any streaming to the Driver Station, waste of processing and bandwidth
             visionSystem.stopLiveView();
 
+            updateOdometry();
             //we don't need the front camera anymore,  now need the rear one with april tags
             VisionProcessorMode currentVPMode = visionSystem.setVisionProcessingMode(VisionProcessorMode.REAR_CAMERA_BACKDROP_APRIL_TAG);
-
 
             double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -158,25 +172,23 @@ public class Auto1_RedFieldRight extends AutoBase {
             // Use the GoToAprilTag to get to within 7 inches of the Backdrop
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 1) {
                 // Align and drive to April Tag.  4 is RED side LEFT.
-                if (moveTo.GoToAprilTag(4) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.RED_LEFT) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 1) {
                 // Align and drive to April Tag.  5 is RED side CENTER.
-                if (moveTo.GoToAprilTag(5) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.RED_CENTRE) == true) {
                     state = 2;
                 }
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 1) {
                 // Align and drive to April Tag.  6 is RED side RIGHT.
-                if (moveTo.GoToAprilTag(6) == true) {
+                if (moveTo.GoToAprilTag(AprilTagLocation.RED_RIGHT) == true) {
                     state = 2;
                 }
             }
 
             // Complete the auto by dropping the game piece and going to park
             if (gamepieceLocation == GamePieceLocation.LEFT && state == 2) {
-                // Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -185,22 +197,20 @@ public class Auto1_RedFieldRight extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves left 32 inches
                 moveTo.Left((int) ((32 * ticksPerInch) * 1.04), 0.4);
                 // Backward 6 inches
                 moveTo.Backwards((int) ((10 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.CENTER && state == 2) {
-                //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 // Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -209,22 +219,20 @@ public class Auto1_RedFieldRight extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves right 26 inches
                 moveTo.Left((int) ((24 * ticksPerInch) * 1.04), 0.4);
                 // Backward 6 inches
                 moveTo.Backwards((int) ((10 * ticksPerInch) * 0.94), 0.25);
                 state = 3;
             } else if (gamepieceLocation == GamePieceLocation.RIGHT && state == 2) {
-                //Move back 5 more inches after the April Tag positioning completes.
-                moveTo.Backwards((int) ((5 * ticksPerInch) * 0.94), 0.25);
                 //Move the linear slide to the low scoring position
                 linearSlideMove.LinearSlidesLow();
                 // Moves the conveyor forward
@@ -233,14 +241,14 @@ public class Auto1_RedFieldRight extends AutoBase {
                 sleep(4000);
                 // Stops the conveyor
                 conveyor.setPosition(0.5);
+                // Forward 4 inches
+                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves the linear slide to the bottom position
                 linearSlideMove.LinearSlidesBottom();
                 // Pause to ensure the lift rest on the bottom
                 sleep(500);
                 // Finish all autos with the wrist up
                 intake.FlipUp();
-                // Forward 4 inches
-                moveTo.Forward((int) ((4 * ticksPerInch) * 0.94), 0.25);
                 // Moves left 18 inches
                 moveTo.Left((int) ((18 * ticksPerInch) * 1.04), 0.4);
                 // Backward 10 inches
@@ -249,6 +257,11 @@ public class Auto1_RedFieldRight extends AutoBase {
             }
             // Show the elapsed game time and wheel power.
             displayTelemetry(DirectionNow);
+
+            // save our last position so teleop can pick it up as a starting point
+            updateLastPos();
         }
+
+
     }
 }

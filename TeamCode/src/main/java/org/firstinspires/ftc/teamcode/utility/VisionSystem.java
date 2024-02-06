@@ -58,11 +58,9 @@ public class VisionSystem {
                 .build();
 
         // set apriltag resolution decimation factor
-        aprilTagProcessor.setDecimation(3);
+        aprilTagProcessor.setDecimation(2);
 
         frontCam = hardwareMap.get(WebcamName.class, "gge_cam");
-        CameraCharacteristics frontCamCar = frontCam.getCameraCharacteristics();
-        telemetry.addData("camera info",frontCamCar);
         rearCam = hardwareMap.get(WebcamName.class, "gge_backup_cam");
         switchableCamera = ClassFactory.getInstance()
                 .getCameraManager()
@@ -87,8 +85,6 @@ public class VisionSystem {
     }
 
     public boolean camerasReady(){
-        telemetry.addData("VP camera state:",visionPortal.getCameraState());
-        telemetry.update();
         return( visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING);
     }
 
@@ -142,11 +138,8 @@ public class VisionSystem {
             while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
                 telemetry.addData("Camera State: ", visionPortal.getCameraState());
                 telemetry.update();
-                //Thread.sleep(20);  may need this.  The while should just keep going
             }
         }
-        telemetry.addData("Camera State: ",visionPortal.getCameraState());
-        telemetry.update();
     }
 
     public void setFieldPosition(FieldPosition fPos) {

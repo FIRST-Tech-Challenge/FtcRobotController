@@ -31,11 +31,10 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import static java.lang.Math.abs;
 
-import android.util.Size;
-
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
@@ -50,16 +49,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.utility.AprilTagLocation;
 import org.firstinspires.ftc.teamcode.utility.IntakeMovement;
 import org.firstinspires.ftc.teamcode.utility.LinearSlideMovement;
 import org.firstinspires.ftc.teamcode.utility.Movement;
 import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.utility.VisionSystem;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -126,9 +126,35 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
     IntakeMovement intake;
     LinearSlideMovement linearslidemovement;
     private VisionSystem visionSystem;
+    private Pose2d initFieldPos;
+
+    private String allianceNow;
+    private double leftTagApproachX;
+    private double centerTagApproachX;
+    private double rightTagApproachX;
+    private double allTagsApproachY;
+    private double allTagsApproachAngle;
+    private AprilTagLocation leftTagID;
+    private AprilTagLocation centerTagID;
+    private AprilTagLocation rightTagID;
 
     @Override
     public void runOpMode() {
+
+        // pull in the last recorded location from Autonomous
+        initFieldPos = AutoBase.getLastFieldPos();
+        if(initFieldPos == null){
+            // auto hasn't been run let's put in a default value
+           initFieldPos =  new Pose2d(0.25,2.2, new Rotation2d(Math.toRadians(0.0)));
+        }
+
+        // Work out if the robot is on the Red Alliance or Blue Alliance from its starting fieldPos
+        // Approximately mid-field is 1.83 meters / 72 inches.
+        if (initFieldPos.getX() < 1.83){
+            allianceNow = "BLUE";
+        } else {
+            allianceNow = "RED";
+        }
 
         visionSystem = new VisionSystem(hardwareMap, telemetry);
 
@@ -164,7 +190,7 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         double DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         // set TargetDirection to hold the desired direction of the robot while driving.
-        // this is inially 0.0
+        // this is initially 0.0
         double targetDirection = 0.0;
         // set a boolean to hold the state as to if the driver has locked onto a desired bearing.
         boolean directionLocked = false;
@@ -181,15 +207,15 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // ...F as holding / static force (set first)
         // For Mecanum drive, 8, 0, 0.5, 5 works well on Tiny
         // ... and 7, 0.2, 0.1, 8 works on Rosie (heavier bot)
-        leftFrontDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        leftBackDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        rightFrontDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
-        rightBackDrive.setVelocityPIDFCoefficients(12, 0.2, 0.1, 8);
+        leftFrontDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        leftBackDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        rightFrontDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
+        rightBackDrive.setVelocityPIDFCoefficients(7.0, 0.2, 0.1, 8.0);
         // For Lift, PIDF values set to reduce jitter on high lift
-        leftLinearSlide.setVelocityPIDFCoefficients(12, 0.75, 0, 8);
-        rightLinearSlide.setVelocityPIDFCoefficients(12, 0.75, 0, 8);
+        leftLinearSlide.setVelocityPIDFCoefficients(12.0, 0.2, 0.001, 10.0);
+        rightLinearSlide.setVelocityPIDFCoefficients(12.0, 0.2, 0.001, 10.0);
         // For Wrist, PIDF values set to reduce jitter
-        wrist.setVelocityPIDFCoefficients(15, 0.2, 0.05, 16);
+        wrist.setVelocityPIDFCoefficients(15.0, 0.5, 0.05, 16.0);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -212,8 +238,8 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
         wrist.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = new IntakeMovement(rightClaw, leftClaw, wrist, conveyor, telemetry);
@@ -234,19 +260,39 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         //Iniitalize the odometry
         odometry = moveTo.getOdometry();
         odometrySpeeds = moveTo.GetWheelSpeeds();
+        // The initFieldPos is retrieved from the last AutoBase Pose2d recorded
+        odometry.resetPosition(initFieldPos,initFieldPos.getRotation());
 
-        // target positions
-        double targetX = odometry.getPoseMeters().getX();
-        double targetY = odometry.getPoseMeters().getY();
-        double targetAngle = odometry.getPoseMeters().getRotation().getDegrees() + 90;
+        if (allianceNow == "BLUE"){
+            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+            // backdrop when the robot starts in the blue left position
+            leftTagApproachX = 0.7; // 1m from the blue field side
+            centerTagApproachX = 0.9; // 1m from the blue field side
+            rightTagApproachX = 1.1; // 1m from the blue field side
+            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+            allTagsApproachAngle = -90; // initialized as 0.0 degrees from blue field start
+            leftTagID = AprilTagLocation.BLUE_LEFT;
+            centerTagID = AprilTagLocation.BLUE_CENTRE;
+            rightTagID = AprilTagLocation.BLUE_RIGHT;
+        } else {
+            // target positions -- when on the BLUE alliance these will be set to the approach for tags 1 - 3.
+            // backdrop when the robot starts in the blue left position
+            leftTagApproachX = 0.7; // 1m from the blue field side
+            centerTagApproachX = 0.9; // 1m from the blue field side
+            rightTagApproachX = 1.1; // 1m from the blue field side
+            allTagsApproachY = 2.75; // field Y is always the same for ideal approach
+            allTagsApproachAngle = 90; // initialized as 0.0 degrees from blue field start
+            leftTagID = AprilTagLocation.RED_LEFT;
+            centerTagID = AprilTagLocation.RED_CENTRE;
+            rightTagID = AprilTagLocation.RED_RIGHT;
+        }
 
         //drive speed limiter
         double powerFactor;
-        double basePowerFacter = 0.60;
-        double boostPowerFacter = 0.40;
+        double basePowerFacter = 0.65;
+        double boostPowerFacter = 0.35;
 
         // Set a local variable to accumulate error over time (I gain).
-        double accumulatedError = 0;
         PIDController driveYawPID;
         driveYawPID = new PIDController((1.0/100.0), 0.0004, 0.001);
         driveYawPID.reset();
@@ -262,6 +308,27 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            if(visionSystem.getDetections() != null){
+                for (AprilTagLocation item: AprilTagLocation.values()){
+                    List<AprilTagDetection> detection = visionSystem.getDetections();
+                    if (detection != null){
+                        for (AprilTagDetection detectedTag: detection){
+                            if (detectedTag.id == item.TagNum()) {
+                                Translation2d robotFieldPOSMeters = moveTo.RobotPosFromAprilTag(item);
+                                // Smooth any erratic and rare incorrect field position returns from RobotPosAprilTag.
+                                double weightedX = (0.1 * robotFieldPOSMeters.getX()) + (0.9 * odometry.getPoseMeters().getX());
+                                double weightedY = (0.1 * robotFieldPOSMeters.getY()) + (0.9 * odometry.getPoseMeters().getY());
+                                // Consider a low pass filter here... given that new April Tag data is
+                                // coming at high frequency, each tag's new position could be partially
+                                // taken as truth vs. existing field position.
+                                odometry.resetPosition(new Pose2d(weightedX, weightedY,
+                                        new Rotation2d(Math.toRadians(DirectionNow))), new Rotation2d(Math.toRadians(DirectionNow)));
+                            }
+                        }
+                    }
+                }
+            }
+
 
             DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             // Get the wheel speeds and update the odometry
@@ -273,7 +340,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 //Reset Yaw with the back button
                 imu.resetYaw();
                 DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                odometry.resetPosition(new Pose2d(odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY(), new Rotation2d(0.0)), new Rotation2d (Math.toRadians(DirectionNow)));
             }
 
             // Controls the intake
@@ -294,31 +360,40 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 }
             }
 
-            if (gamepad1.x) {
-                while (!moveTo.GoToAprilTag(1) && gamepad1.x){
-                    telemetry.addData ("Targeting April Tag: ", 1);
-                    telemetry.update();
+            // If the driver holds the right bumper while clicking the GoToAprilTag functions, drive to approach point for the tag.
+            if (gamepad1.right_bumper){
+                if (gamepad1.x) {
+                    while (!moveTo.GoToPose2d(new Pose2d(leftTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.x){
+                        DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        directionLocked = false;
+                        odometrySpeeds = moveTo.GetWheelSpeeds();
+                        odometry.updateWithTime(odometryTimer.seconds(),
+                                new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
+                    }
+                } else if (gamepad1.y) {
+                    while (!moveTo.GoToPose2d(new Pose2d(centerTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.y){
+                        DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        directionLocked = false;
+                        odometrySpeeds = moveTo.GetWheelSpeeds();
+                        odometry.updateWithTime(odometryTimer.seconds(),
+                                new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
+                    }
+                } else if (gamepad1.b) {
+                    while (!moveTo.GoToPose2d(new Pose2d(rightTagApproachX,allTagsApproachY,new Rotation2d(Math.toRadians(allTagsApproachAngle)))) && gamepad1.b){
+                        DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        directionLocked = false;
+                        odometrySpeeds = moveTo.GetWheelSpeeds();
+                        odometry.updateWithTime(odometryTimer.seconds(),
+                                new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
+                    }
                 }
-            } else if (gamepad1.y) {
-//                while (!moveTo.GoToAprilTag(2) && gamepad1.y){
-//                    telemetry.addData ("Targeting April Tag: ", 2);
-//                    telemetry.update();
-//                }
-
-                while (!moveTo.GoToPose2d(new Pose2d(targetX,targetY,new Rotation2d(Math.toRadians(targetAngle)))) && gamepad1.y){
-                    // Get the wheel speeds and update the odometry
-                    DirectionNow = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                    odometrySpeeds = moveTo.GetWheelSpeeds();
-                    odometry.updateWithTime(odometryTimer.seconds(),
-                            new Rotation2d(Math.toRadians(DirectionNow)), odometrySpeeds);
-                    telemetry.addData ("go to pos: ", "running");
-                    telemetry.update();
-                }
-
-            } else if (gamepad1.b) {
-                while (!moveTo.GoToAprilTag(3) && gamepad1.b){
-                    telemetry.addData ("Targeting April Tag: ", 3);
-                    telemetry.update();
+            } else {
+                if (gamepad1.x) {
+                    while (!moveTo.GoToAprilTag(leftTagID) && gamepad1.x){}
+                } else if (gamepad1.y) {
+                    while (!moveTo.GoToAprilTag(centerTagID) && gamepad1.y){}
+                } else if (gamepad1.b) {
+                    while (!moveTo.GoToAprilTag(rightTagID) && gamepad1.b){}
                 }
             }
 
@@ -327,11 +402,15 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 linearslidemovement.LinearSlidesMiddle();
             } else if (gamepad1.dpad_right) {
+                // Pull ahead slightly before lowering
+                leftBackDrive.setPower(0.3);
+                leftFrontDrive.setPower(0.3);
+                rightBackDrive.setPower(0.3);
+                rightFrontDrive.setPower(0.3);
+                sleep(250);
+                moveTo.StopMotors();
+                // Lower Slide
                 linearslidemovement.LinearSlidesBottom();
-                while (leftLinearSlide.getCurrentPosition() > (LinearSlideMovement.bottom_linearslide_ticks + 5)){
-                    // pause to wait for the slide to lower before raising the wrist back up.
-                }
-                intake.FlipUp();
             } else if (gamepad1.dpad_up) {
                 linearslidemovement.LinearSlidesTop();
             }
@@ -396,7 +475,6 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
                 // if there is rotational input, continuously set the desired angle to the current angle.
                 directionLocked = false;
                 // Reset the accumulated motion error.
-                accumulatedError = 0;
                 driveYawPID.reset();
             }
 
@@ -440,16 +518,13 @@ public class Gge_Odometry_TeleOp extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + JavaUtil.formatNumber(runtime.milliseconds(), 2));
+            telemetry.addData("Alliance Now", allianceNow);
             telemetry.addData("Direction Now", JavaUtil.formatNumber(DirectionNow, 2));
-            telemetry.addData("lfDrive Velocity: ", leftFrontDrive.getVelocity());
-            telemetry.addData("Odometry X: ", odometry.getPoseMeters().getX());
-            telemetry.addData("Odometry Y: ", odometry.getPoseMeters().getY());
-            telemetry.addData("Odometry Angle: ", odometry.getPoseMeters().getRotation().getDegrees());
-            telemetry.addData("Target Direction", JavaUtil.formatNumber(targetDirection, 2));
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Pose2D Current (X,Y): ","(%5.2f,%5.2f)", odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY());
+            telemetry.addData("Wrist Position: ", wrist.getCurrentPosition());
             telemetry.addData("Drive Power multiplier", powerFactor);
             telemetry.addData("Yaw Correction", JavaUtil.formatNumber(yaw, 2));
             telemetry.update();
         }
-    }}
+    }
+}

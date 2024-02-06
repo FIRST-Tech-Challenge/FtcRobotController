@@ -183,7 +183,6 @@ public class HSVSaturationProcessor implements VisionProcessor {
                 break;
             case CENTRE:
                 canvas.drawRect(makeGraphicsRect(centerSpike,scaleBmpPxToCanvasPx),paint);
-
                 break;
             case RIGHT:
                 canvas.drawRect(makeGraphicsRect(rightSpike,scaleBmpPxToCanvasPx),paint);
