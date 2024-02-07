@@ -91,6 +91,7 @@ public class Arm implements Subsystem {
 
         } else {
             arm1.set(firstSpeed);
+
         }
         if (potentiometer2.getVoltage() > vMax2 || potentiometer2.getVoltage() < vMin2) {
             arm2.set(0);
@@ -98,6 +99,8 @@ public class Arm implements Subsystem {
             arm2.set(secondSpeed);
 
         }
+        dashboard.addData("first joint output:", firstSpeed);
+        dashboard.addData("second joint output:", secondSpeed);
         servo.setPosition(servoPos);
 
     }
@@ -108,7 +111,7 @@ public class Arm implements Subsystem {
     public BTCommand armMoveManual(DoubleSupplier speedFirst, DoubleSupplier speedSecond, DoubleSupplier posServo) {
         return new RunCommand(() -> {
             arm1.set(speedFirst.getAsDouble());
-            setMotors(speedFirst.getAsDouble(), speedSecond.getAsDouble(), posServo.getAsDouble());
+            arm2.set(speedSecond.getAsDouble());
 
         });
     }
@@ -117,9 +120,10 @@ public class Arm implements Subsystem {
     public void periodic() {
         dashboard.addData("potent1:", potentiometer1.getVoltage());
         dashboard.addData("potent2:", potentiometer2.getVoltage());
+
         dashboard.update();
     }
-        
+
     private double calculateFeedForwardFirstJoint(double first_joint_angle){
 
         return  (resistance * (

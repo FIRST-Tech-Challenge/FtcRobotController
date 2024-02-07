@@ -29,10 +29,10 @@ public class Constants {
     public static final double neo_Kt = hex_stall_torque / hex_stall_current;
 
     public static final double motorMaxVolt = 12;
-    public static final double vMax1 = -1;//placeholder value
-    public static final double vMax2 = -1;//placeholder value
-    public static final double vMin1 = -1;//placeholder value
-    public static final double vMin2 = -1;//placeholder value
+    public static final double vMax1 = 0.8;//placeholder value
+    public static final double vMax2 = 0.8;//placeholder value
+    public static final double vMin1 = -0.8;//placeholder value
+    public static final double vMin2 = -0.8;//placeholder value
     public static final double a1Max = 1; // placeholder, not real
     public static final double a2Max = 1; // placeholder, not real
     public static final double arm1Min = 0; // placeholder, not real
@@ -57,7 +57,7 @@ public class Constants {
         public static SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ffks,ffkv,ffka);
         @Config
         public static class ChassisFeedForward{
-            public static double ffks = 0.12    ;
+            public static double ffks = 0.12;
             public static double ffkv = 0;
             public static double ffka = 0;
         }
