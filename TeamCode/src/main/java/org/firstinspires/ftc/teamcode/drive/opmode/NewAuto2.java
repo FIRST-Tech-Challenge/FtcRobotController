@@ -22,43 +22,37 @@ import java.util.List;
 
 @Autonomous(name = "NewAuto2", group = "Concept")
 public class NewAuto2 extends LinearOpMode{
+    // tensorflow object detection
     private static final String TFOD_MODEL_ASSET = "model.tflite";
     private static final String[] LABELS = {"box"};
     private TfodProcessor tfod;
+    String detection; // variable for position of model (left, middle, or right)
 
-//    // Lens intrinsics
-//    // UNITS ARE PIXELS
-//    // NOTE: this calibration is for the C920 webcam at 800x448.
-//    // You will need to do your own calibration for other configurations!
-//    double fx = 578.272;
-//    double fy = 578.272;
-//    double cx = 402.145;
-//    double cy = 221.506;
-//    int targetPosition = 1;
-//    int currentPosition;
-//
-//    //true == up
-//    boolean direction = true;
-//    double beginTime, currentTime, timeRemaining;
-//
-//    // UNITS ARE METERS
-//    double tagsize = 0.166;
-//
+//    AprilTag IDs
+//    blue:
 //    int LEFT = 1;
 //    int MIDDLE = 2;
 //    int RIGHT = 3;
+//    red:
+//    int LEFT = 4;
+//    int MIDDLE = 5;
+//    int RIGHT = 6;
 
-    String detection;
+    // lift control
+    int targetPosition = 1;
+    int currentPosition;
+    boolean direction = true;    //true == up
+    private double lastError = 0;
+    ElapsedTime timer = new ElapsedTime();
 
     double xCoordinate;
     double yCoordinate;
-
 
     @Override
     public void runOpMode() { // code to run after init
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         initTfod();
-        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod);
+        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod); // initialize visionportal
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -88,7 +82,10 @@ public class NewAuto2 extends LinearOpMode{
 //                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
                         .back(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(60))
-                        .build();
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })                        .build();
                 drive.followTrajectorySequence(left);
                 drive.breakFollowing();
                 break;
@@ -124,8 +121,9 @@ public class NewAuto2 extends LinearOpMode{
                         .build();
                 drive.followTrajectorySequence(right);
                 drive.breakFollowing();
-                break;
             }
+            drive.update();
+            liftUpdate(drive);
         }
     }
 
@@ -162,38 +160,39 @@ public class NewAuto2 extends LinearOpMode{
         }
     }
 
+    // update lift position - constantly called during opmode
+    public void liftUpdate(SampleMecanumDrive drive) {
+        currentPosition = drive.liftMotor1.getCurrentPosition();
+        if (targetPosition == 0){
+        }
+        else if (currentPosition < targetPosition && direction == true) {
+            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
+            drive.liftMotor1.setPower(power);
+            drive.liftMotor2.setPower(power);
 
-//    public void liftUpdate(SampleMecanumDrive drive) {
-//        currentPosition = drive.liftMotor1.getCurrentPosition();
-//        if (targetPosition == 0){
-//        }
-//        else if (currentPosition < targetPosition && direction == true) {
-//            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
-//            drive.liftMotor1.setPower(power);
-//            drive.liftMotor2.setPower(power);
-//
-//        } else if (currentPosition > targetPosition && direction == false) {
-//            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
-//            drive.liftMotor1.setPower(power);
-//            drive.liftMotor2.setPower(power);
-//
-//        }
-//        else if (currentPosition+10 > targetPosition && direction == true){
-//            drive.liftMotor1.setPower(0.05);
-//            drive.liftMotor2.setPower(0.05);
-//        }
-//        else if (currentPosition+10 < targetPosition && direction == false){
-//            drive.liftMotor1.setPower(0.05);
-//            drive.liftMotor2.setPower(0.05);
-//        }
-//    }
+        } else if (currentPosition > targetPosition && direction == false) {
+            double power = returnPower(targetPosition, drive.liftMotor1.getCurrentPosition());
+            drive.liftMotor1.setPower(power);
+            drive.liftMotor2.setPower(power);
 
-//    public double returnPower(double reference, double state) {
-//        double error = reference - state;
-//        double derivative = (error - lastError) / timer.seconds();
-//        lastError = error;
-//
-//        double output = (error * 0.03) + (derivative * 0.0002) + 0.05;
-//        return output;
-//    }
+        }
+        else if (currentPosition+10 > targetPosition && direction == true){
+            drive.liftMotor1.setPower(0.05);
+            drive.liftMotor2.setPower(0.05);
+        }
+        else if (currentPosition+10 < targetPosition && direction == false){
+            drive.liftMotor1.setPower(0.05);
+            drive.liftMotor2.setPower(0.05);
+        }
+    }
+
+    // lift control for getting power for motors
+    public double returnPower(double reference, double state) {
+        double error = reference - state;
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+
+        double output = (error * 0.03) + (derivative * 0.0002) + 0.05;
+        return output;
+    }
 }
