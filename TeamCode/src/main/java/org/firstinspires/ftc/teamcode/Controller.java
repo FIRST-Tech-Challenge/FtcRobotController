@@ -12,8 +12,26 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "controller movement", group = "SA_FTC")
 public class Controller extends LinearOpMode {
-    final double MOVEMENT_SPEED = 0.5;
+    // Movement
+    final double AXIAL_SPEED = 0.5;
+    final double LATERAL_SPEED = 0.6;
+    final double YAW_SPEED = 0.5;
+    final double SLOW_MODE_MULTIPLIER = 0.4;
+
+    // Roller
+    final double ROLLER_FLAT = 0.95;
+    final double ROLLER_UPSIDEDOWN = 0.275;
+
+    // Arm
+    final double ARM_EXTEND_SPEED = 1;
+    final double ARM_LIFT_SPEED = 3;
+    final double ARM_LIFT_POWER = 0.4;
     final int ARM_MAX_POSITION = 3050;
+
+    // Grip
+    final double GRIP_OPEN = 0.5;
+    final double GRIP_CLOSED = 0;
+    final double GRIP_TRIGGER_THRESHOLD = 0.1;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -31,14 +49,18 @@ public class Controller extends LinearOpMode {
     DigitalChannel digital0 = null;
 
     int currentArmLiftPos = 0;
+    boolean slowModeActive = false;
 
     public void Movement() {
         double max;
 
-        // POV Mode uses left joys  tick to go forward & strafe, and right joystick to rotate.
-        double axial = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral = -gamepad1.left_stick_x;
-        double yaw = gamepad1.right_stick_x;
+        double axialMultiplier = AXIAL_SPEED * (slowModeActive ? SLOW_MODE_MULTIPLIER : 1);
+        double lateralMultiplier = LATERAL_SPEED * (slowModeActive ? SLOW_MODE_MULTIPLIER : 1);
+        double yawMultiplier = YAW_SPEED * (slowModeActive ? SLOW_MODE_MULTIPLIER : 1);
+
+        double axial = gamepad1.left_stick_y * axialMultiplier;
+        double lateral = -gamepad1.left_stick_x * lateralMultiplier;
+        double yaw = gamepad1.right_stick_x * yawMultiplier;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -61,10 +83,10 @@ public class Controller extends LinearOpMode {
         }
 
         // Send calculated power to wheels
-        frontLeftMotor.setPower(leftFrontPower * MOVEMENT_SPEED);
-        frontRightMotor.setPower(rightFrontPower * MOVEMENT_SPEED);
-        backLeftMotor.setPower(leftBackPower * MOVEMENT_SPEED);
-        backRightMotor.setPower(rightBackPower * MOVEMENT_SPEED);
+        frontLeftMotor.setPower(leftFrontPower);
+        frontRightMotor.setPower(rightFrontPower);
+        backLeftMotor.setPower(leftBackPower);
+        backRightMotor.setPower(rightBackPower);
     }
 
     @Override
@@ -91,39 +113,40 @@ public class Controller extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        roller.setDirection(Servo.Direction.FORWARD);
         armExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         rightGrip.setDirection(Servo.Direction.REVERSE);
 
         armLift.setTargetPosition(0);
         armLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armLift.setPower(0.4);
+        armLift.setPower(ARM_LIFT_POWER);
 
-        // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             // Movement
+            slowModeActive = gamepad1.right_bumper;
+
             Movement();
 
             // Roller
             if (gamepad2.x) {
-                roller.setPosition(0.275);
+                roller.setPosition(ROLLER_UPSIDEDOWN);
             }
 
             if (gamepad2.b) {
-                roller.setPosition(0.95);
+                roller.setPosition(ROLLER_FLAT);
             }
 
             // Arm
-            armExtend.setPower(gamepad2.right_stick_y);
+            armExtend.setPower(gamepad2.right_stick_y * ARM_EXTEND_SPEED);
 
-            currentArmLiftPos -= (int)(gamepad2.left_stick_y * 10);
+            currentArmLiftPos -= (int)(gamepad2.left_stick_y * ARM_LIFT_SPEED);
             if (currentArmLiftPos < 0) currentArmLiftPos = 0;
             if (currentArmLiftPos > ARM_MAX_POSITION) currentArmLiftPos = ARM_MAX_POSITION;
 
@@ -131,27 +154,22 @@ public class Controller extends LinearOpMode {
 
             // Grip
             if (gamepad2.left_bumper) {
-                leftGrip.setPosition(0.5);
+                leftGrip.setPosition(GRIP_OPEN);
             }
 
             if (gamepad2.right_bumper) {
-                rightGrip.setPosition(0.5);
+                rightGrip.setPosition(GRIP_OPEN);
             }
 
-            if (gamepad2.left_trigger > 0.01) {
-                leftGrip.setPosition(0);
+            if (gamepad2.left_trigger > GRIP_TRIGGER_THRESHOLD) {
+                leftGrip.setPosition(GRIP_CLOSED);
             }
 
-            if (gamepad2.right_trigger > 0.01) {
-                rightGrip.setPosition(0);
+            if (gamepad2.right_trigger > GRIP_TRIGGER_THRESHOLD) {
+                rightGrip.setPosition(GRIP_CLOSED);
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("current position", armLift.getCurrentPosition());
-            telemetry.addData("target position", armLift.getTargetPosition());
-            telemetry.addData("Left stick y", (int)gamepad2.left_stick_y);
-            telemetry.addData("digital state: ", digital1.getState());
-            telemetry.addData("digital0's state: ", digital0.getState());
             telemetry.update();
         }
     }
