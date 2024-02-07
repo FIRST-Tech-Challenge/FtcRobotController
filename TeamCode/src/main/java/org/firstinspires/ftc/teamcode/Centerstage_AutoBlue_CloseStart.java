@@ -98,7 +98,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
 
         if (opModeIsActive()) {
             PlaceFirstPixel();
-            setupRobotToPlaceSecondPixel();
+           // setupRobotToPlaceSecondPixel();
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -277,7 +277,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
             }
              //Place first pixel
 
-        PlacePixelOnTape();
+       // PlacePixelOnTape();
 
         // Push telemetry to the Driver Station.
                 telemetry.update();
