@@ -187,10 +187,9 @@ public class ConduiteUneManette extends LinearOpMode {
                     }
                 }
             } else {
-                if (varRY < 0) {
                     tgtBras = varRY / 2;
                     bras0 = brasA;
-                }}
+                }
 
             //
 
