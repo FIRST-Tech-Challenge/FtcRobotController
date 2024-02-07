@@ -52,7 +52,8 @@ public class ConduiteUneManette extends LinearOpMode {
         int zeroDuBras=0;
         int zeroDuHaut=0;
         boolean PrecisionMode = false;
-        double coudepas = 0,003;
+        boolean OvercloakMode = false;
+        double coudepas = 0.003;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad1;
@@ -146,33 +147,51 @@ public class ConduiteUneManette extends LinearOpMode {
             if (PrecisionMode){
                 while (gamepad1.dpad_up){
                     PrecisionMode = false;
-                    coudepas = 0,003;
+                    coudepas = 0.003;
                 }
             } else {
                 while (gamepad1.dpad_up){
                     PrecisionMode = true;
-                    coudepas = 0,0001;
+                    coudepas = 0.001;
             }}
 
+            if (OvercloakMode){
+               while (gamepad1.dpad_down){
+                   OvercloakMode = false;
+                   coudepas = 0.003;
+               }
+            } else {
+                while (gamepad1.dpad_down){
+                    OvercloakMode = true;
+                    coudepas = 0.05;
+                }
+            }
 
 
             // Changement Position Bras
-            if (varRY < 0) {
-                tgtBras = varRY/3;
-                bras0 = brasA;
+            if (!OvercloakMode){
+                if (varRY < 0) {
+                    tgtBras = varRY/3;
+                    bras0 = brasA;
 
-            } else if (varRY > 0) {
-                tgtBras = varRY/3;
-                bras0 = brasA;
-            } else {
-                if (brasA > bras0) {
-                    tgtBras = -0.1;
-                } else if (brasA < bras0) {
-                    tgtBras = 0.1;
+                } else if (varRY > 0) {
+                    tgtBras = varRY/3;
+                    bras0 = brasA;
                 } else {
-                    tgtBras = 0;
+                    if (brasA > bras0) {
+                        tgtBras = -0.1;
+                    } else if (brasA < bras0) {
+                        tgtBras = 0.1;
+                    } else {
+                        tgtBras = 0;
+                    }
                 }
-            }
+            } else {
+                if (varRY < 0) {
+                    tgtBras = varRY / 2;
+                    bras0 = brasA;
+                }}
+
             //
 
             // Changement Position Coude
@@ -236,8 +255,10 @@ public class ConduiteUneManette extends LinearOpMode {
             coudeD.setPosition(1 - coudeX);
 
             if (PrecisionMode) {
-                bras1.setPower(tgtBras/2);
-                bras2.setPower(tgtBras/2);
+                bras1.setPower(tgtBras/1000);
+                bras1.setPower(-tgtBras/1000);
+                bras2.setPower(tgtBras/1000);
+                bras1.setPower(-tgtBras/1000);
             } else {
                 bras1.setPower(tgtBras);
                 bras2.setPower(tgtBras);
@@ -255,6 +276,8 @@ public class ConduiteUneManette extends LinearOpMode {
             telemetry.addData("Postion bras - Enregistre", maPosBras);
             telemetry.addData("Postion coude - Enregistre", maPosCoude);
             telemetry.addData("Position bras - Resistance", bras0);
+            telemetry.addData("PrecisionMode", PrecisionMode);
+            telemetry.addData("OvercloakMode", OvercloakMode);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
