@@ -820,14 +820,24 @@ public class Robot {
         boolean movedToDesired = false;
 
         while (!aligned) {
-            if (numberOfDetectionsProcessed > 5) {
+            Log.d("vision", "alignToBoardFast: passed tagid is " + tagId);
+
+            if (numberOfDetectionsProcessed > 20) {
                 break;
             } else {
                 numberOfDetectionsProcessed++;
             }
 
-            myAprilTagDetections = aprilTagProcessor.getDetections();
+            myAprilTagDetections = aprilTagProcessor.getDetections(); // see if it gets anything
+            if (myAprilTagDetections.size() == 0) {
+                Log.d("vision", "Houston: No tags seen");
+            }
+
             for (AprilTagDetection detection : myAprilTagDetections) {
+
+                    if (detection.metadata == null) {
+                        Log.d("vision", "Houston: No meta data for this detection");
+                    }
 
                     if (detection.metadata != null && !movedToDesired) {
                         Log.d("apriltag", "found tag" + detection.id);
@@ -865,12 +875,13 @@ public class Robot {
     public void longMoveToBoard(boolean isJuice) {
         int polarity;
 
+        if (isRedAlliance) {
+            polarity = -1;
+        } else {
+            polarity = 1;
+        }
+
         while (opMode.opModeIsActive()) {
-            if (isRedAlliance) {
-                polarity = -1;
-            } else {
-                polarity = 1;
-            }
 
             Log.d("vision", "path: Pos " + markerPos);
             Log.d("vision", "path: Tag " + wantedAprTagId);
@@ -1029,7 +1040,7 @@ public class Robot {
 
                 // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-88.5); //todo: subtracted 4 here
+                straightBlocking2FixHeading(-88.5); // subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -2217,7 +2228,6 @@ public class Robot {
 
         straightBlocking(9, false, 0.6);
         straightBlocking2FixHeading(-84);
-        visionPortal.setProcessorEnabled(aprilTagProcessor, true);
         mecanumBlocking2(23 * polarity);
 
     }
@@ -2240,5 +2250,255 @@ public class Robot {
                 secondWantedTagId = 1;
             }
         }
+    }
+
+    public void longMoveToBoardTruss () {
+        int polarity = (isRedAlliance) ? -1 : 1;
+
+        Log.d("vision", "path: Pos " + markerPos);
+        Log.d("vision", "path: Tag " + wantedAprTagId);
+
+        while (opMode.opModeIsActive()) {
+
+            if (markerLocation == MARKER_LOCATION.INNER) {
+                Log.d("vision", "path: Inner Spike");
+
+                // P1: (35, 17)
+
+                straightBlocking2(-27);
+
+                // P2: (35, 44)
+
+                setHeading(90 * polarity, 0.7);
+
+                // P3: (43.5, 35.5)
+
+                straightBlocking2(-3);
+                setHeading(90 * polarity, 0.7);
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking2(3);
+
+                // P3: (43.5, 35.5)
+
+                if (isRedAlliance) { //
+                    mecanumBlocking2(-24.5);
+                } else {
+                    mecanumBlocking2(24.5);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P4: (43.5, 60)
+
+                straightBlocking2FixHeading(-76.5);
+                setHeading(90 * polarity, 0.7);
+
+                // P5: (120, 60)
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(21);
+                } else {
+                    mecanumBlocking2(-21);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P6: (120, 30)
+
+                break;
+
+            } else if (markerLocation == MARKER_LOCATION.OUTER) {
+                Log.d("vision", "path: Outer Spike");
+
+                // P1: (35, 17)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(21);
+                } else {
+                    mecanumBlocking2(-21);
+                }
+                setHeading(0, 0.7);
+
+                // P2: (14, 17)
+
+                straightBlocking2(-31);
+
+                // P3: (14, 48)
+
+                setHeading(90 * polarity, 0.7);
+
+                // P4: (22.5, 39.5)
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking(1, false, 0.7);
+                setHeading(90 * polarity, 0.7);
+                straightBlocking(4, true, 0.7);
+                setHeading(90 * polarity, 0.7);
+
+                // P5: (19.5, 39.5)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-31);
+                } else {
+                    mecanumBlocking2(31);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P6: (19.5, 57.5)
+
+                straightBlocking2FixHeading(-98);
+                setHeading(90 * polarity, 0.7);
+
+                // P7: (117.5, 57.5)
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(30);
+                } else {
+                    mecanumBlocking2(-30);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P8: (117.5, 36.5)
+
+                break;
+
+            } else { //center, default
+                Log.d("vision", "path: Center Spike");
+
+                // P1: (36, 17)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(13);
+                } else {
+                    mecanumBlocking2(-13);
+                }
+                setHeading(0, 0.7);
+
+                // P2: (23, 17)
+
+                straightBlocking2(-35);
+
+                // P3: (23, 52)
+                setHeading(90 * polarity, 0.7);
+
+                // P4: (31.5, 44)
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking(3, true, 0.7);
+
+                // P5: (27.5, 44)
+                // actually ending up at around 48 here
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-36);
+                } else {
+                    mecanumBlocking2(36);
+                }
+
+                setHeading(90 * polarity, 0.7);
+
+                // P6: (27.5, 60)
+
+                straightBlocking2FixHeading(-88.5); // subtracted 4 here
+                setHeading(90 * polarity, 0.7);
+
+                // P7: (120, 60)
+
+                // visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(26);
+                } else {
+                    mecanumBlocking2(-26);
+                }
+                setHeading(90 * polarity, 0.7);
+
+                // P8: (120, 35)
+
+                break;
+
+            }
+
+        }
+    }
+
+    public void boardToTruss () {
+
+        int polarity = (isRedAlliance) ? -1 : 1;
+
+        switch (wantedAprTagId) {
+            case 1:
+                mecanumBlocking2(19);
+                break;
+            case 2:
+                mecanumBlocking2(26);
+                break;
+            case 3:
+                mecanumBlocking2(29);
+                break;
+            case 4:
+                mecanumBlocking2(-29);
+                break;
+            case 5:
+                mecanumBlocking2(-26);
+                break;
+            case 6:
+                mecanumBlocking2(-19);
+                break;
+            default:
+                break;
+        }
+
+        setHeading(90 * polarity, 0.7);
+
+    }
+
+    public void trussToStackAndIntake() {
+
+        openClamp(true, false);
+        stackAttachmentOut();
+        straightBlocking2FixHeading(102);
+        intake.setPower(-1);
+
+        mecanumBlocking2(24); // todo: test, maybe make method into boolean
+
+
+        straightBlocking(6, true, 0.7);
+        straightBlocking(4, false, 0.7);
+
+        stackAttachmentIn();
+        opMode.sleep(200);
+
+        straightBlocking(5, true, 0.7);
+        closeClamp(true);
+        straightBlocking(2, false, 0.7);
+
+        intake.setPower(1);
+        opMode.sleep(100);
+        intake.setPower(0);
+    }
+
+    public void stackToBoardTruss() {
+
+        int polarity = (isRedAlliance) ? -1 : 1;
+
+        mecanumBlocking2(-25); // todo: test, again maybe make method into boolean
+        straightBlocking2FixHeading(-93);
+        mecanumBlocking2(-18 * polarity);
     }
 }
