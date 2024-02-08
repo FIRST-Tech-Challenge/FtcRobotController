@@ -59,6 +59,10 @@ public class Robot {
     boolean isRedAlliance;
     boolean testingOnBert = false;
     boolean allowTrayAngle = false;
+    boolean allowTrayAngleOverride = false;
+    double hardStopTrayAngleBig;
+    double hardStopTrayAngleSmall;
+
     PIDController straightController;
     PIDController fLeftMecanumController;
     PIDController bRightMecanumController;
@@ -1481,7 +1485,7 @@ public class Robot {
             // dpad controlling lock
             if (gamepad2.dpad_up) { // up - close
                 closeHook();
-            } else if (gamepad2.dpad_down) { // down - open
+            } else { // down - open
                 openHook();
             }
 
@@ -1504,12 +1508,24 @@ public class Robot {
                 trayAngle.setPosition(0.25);
             }*/
 
+            hardStopTrayAngleBig = 0.68;
+            hardStopTrayAngleSmall = 0.32;
 
+            //overide tray angle
+            if (gamepad2.dpad_down) {
+                allowTrayAngleOverride = true;
+            }
 
-            if (allowTrayAngle) {
+            if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
-                trayAngleServoPos = Math.min(-0.00413*(relativeHeadingToBoard) + trayAngleDefault, 0.65);
-                trayAngleServoPos = Math.max(trayAngleServoPos, 0.35);
+                trayAngleServoPos = -0.0048*(relativeHeadingToBoard) + trayAngleDefault;
+
+                if (trayAngleServoPos > hardStopTrayAngleBig) {
+                    trayAngle.setPosition(trayAngleDefault);
+                } else if (trayAngleServoPos < hardStopTrayAngleSmall) {
+                    trayAngle.setPosition(trayAngleDefault);
+                }
+
                 trayAngle.setPosition(trayAngleServoPos);
             }
 
@@ -1582,6 +1598,7 @@ public class Robot {
                 }
             }
 
+            //onebutton outtake
             if(gamepad2.dpad_left) {
                 oneButtonOuttake(gamepad1, gamepad2);
             }
