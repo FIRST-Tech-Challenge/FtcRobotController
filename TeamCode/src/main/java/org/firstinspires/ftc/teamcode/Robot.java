@@ -1515,15 +1515,20 @@ public class Robot {
             if (gamepad2.dpad_down) {
                 allowTrayAngleOverride = true;
             }
+            if (gamepad2.dpad_down && allowTrayAngleOverride) {
+                allowTrayAngleOverride = false;
+            }
 
-            if (allowTrayAngle && !allowTrayAngleOverride) {
+                if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
-                trayAngleServoPos = -0.0048*(relativeHeadingToBoard) + trayAngleDefault;
 
-                if (trayAngleServoPos > hardStopTrayAngleBig) {
-                    trayAngle.setPosition(trayAngleDefault);
-                } else if (trayAngleServoPos < hardStopTrayAngleSmall) {
-                    trayAngle.setPosition(trayAngleDefault);
+                if ((relativeHeadingToBoard <= 90 && relativeHeadingToBoard >-90)) {
+
+                    trayAngleServoPos = Math.min(-0.0048*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
+                    trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
+                } else {
+
+                    trayAngleServoPos = trayAngleDefault;
                 }
 
                 trayAngle.setPosition(trayAngleServoPos);
