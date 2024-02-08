@@ -33,6 +33,13 @@ public class Controller extends LinearOpMode {
     final double GRIP_CLOSED = 0;
     final double GRIP_TRIGGER_THRESHOLD = 0.1;
 
+    // Startup Sequence
+    final int ARM_LIFT_POSITION = 500;
+    final int ROLLER_WAIT_TIME = 1000;
+
+    // Pixel Pickup Sequence
+    final double ARM_EXTEND_TARGET = 1200;
+
     ElapsedTime runtime = new ElapsedTime();
 
     DcMotor frontLeftMotor = null;
@@ -90,15 +97,35 @@ public class Controller extends LinearOpMode {
     }
 
     public void StartupSequence() {
-        armLift.setTargetPosition(500);
-        
+        armLift.setTargetPosition(ARM_LIFT_POSITION);
+        armExtend.setPower(ARM_EXTEND_SPEED);
+
         while (armLift.isBusy()) {}
-        
+
+        armExtend.setPower(0);
         roller.setPosition(ROLLER_FLAT);
-        
-        sleep(1000);
-        
+        leftGrip.setPosition(GRIP_OPEN);
+        rightGrip.setPosition(GRIP_OPEN);
+
+        sleep(ROLLER_WAIT_TIME);
+
         armLift.setTargetPosition(0);
+    }
+
+    public void PixelPickupSequence() {
+        armLift.setTargetPosition(0);
+        leftGrip.setPosition(GRIP_OPEN);
+        rightGrip.setPosition(GRIP_OPEN);
+        roller.setPosition(ROLLER_FLAT);
+        armExtend.setPower(-ARM_EXTEND_SPEED);
+
+        while (armExtend.getCurrentPosition() < ARM_EXTEND_TARGET) {}
+
+        armExtend.setPower(0);
+    }
+
+    public void PixelBackdropSequence() {
+
     }
 
     @Override
@@ -125,7 +152,8 @@ public class Controller extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        armExtend.setDirection(DcMotorSimple.Direction.REVERSE);
+        armExtend.setDirection(DcMotor.Direction.REVERSE);
+        armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightGrip.setDirection(Servo.Direction.REVERSE);
 
         armLift.setTargetPosition(0);
@@ -183,7 +211,17 @@ public class Controller extends LinearOpMode {
                 rightGrip.setPosition(GRIP_CLOSED);
             }
 
+            // Sequences
+            if (gamepad2.a) {
+                PixelPickupSequence();
+            }
+
+            if (gamepad2.y) {
+                PixelBackdropSequence();
+            }
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("arm extend position", armExtend.getCurrentPosition());
             telemetry.update();
         }
     }
