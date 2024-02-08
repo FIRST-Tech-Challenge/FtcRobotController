@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.6, FLIP_TIME = 0.7;
+  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.58, FLIP_TIME = 0.7;
   private double lastTime = 0;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -107,7 +107,7 @@ public class Arm extends RFServo {
     ArmStates.DROP.state = true;
     ArmTargetStates.DROP.state = false;
     ArmStates.GRAB.state = false;
-    super.setPosition(0.04);
+    super.setPosition(0.02);
     LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
     lastTime = time;
   }

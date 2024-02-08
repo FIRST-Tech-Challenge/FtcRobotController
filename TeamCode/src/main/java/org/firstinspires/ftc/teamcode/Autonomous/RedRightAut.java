@@ -34,14 +34,14 @@ public class RedRightAut extends LinearOpMode {
     robot.roadrun.setPoseEstimate(new Pose2d(17, -61, Math.toRadians(-90)));
     Path[] toSpike = new Path[3];
     Waypoint start = new StartWaypoint( new com.arcrobotics.ftclib.geometry.Pose2d(
-            17, -64, new Rotation2d(toRadians(-90))));
+            17, -61, new Rotation2d(toRadians(-90))));
     toSpike[0] = new Path(start);
     toSpike[0].add(new GeneralWaypoint(x4,y4, toRadians(x2), pow4, .2,followRad1));
     toSpike[0].add(new EndWaypoint(x1, y1, toRadians(-x3), pow3, 0.4, 8, buff1, toRadians(30)));
     toSpike[1] = new Path(start);
     toSpike[1].add(new EndWaypoint(16.5, -44, toRadians(-91), 0.7, 0, 5, 2, toRadians(10)));
     toSpike[2] = new Path(start);
-    toSpike[2].add(new EndWaypoint(24.5, -47, toRadians(-90), 0.6, 0.2, 7, 2, toRadians(10)));
+    toSpike[2].add(new EndWaypoint(24.5, -43, toRadians(-90), 0.6, 0.0, 8, 1, toRadians(10)));
     Path[] spikeToBackdrop = new Path[3];
 
     Path[] preToStack = new Path[3];
@@ -76,7 +76,7 @@ public class RedRightAut extends LinearOpMode {
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
 //        spikeToBackdrop[0].add(new GeneralWaypoint(currentPose.getX()+3, currentPose.getY(), currentPose.getHeading(), .5,0,3));
         spikeToBackdrop[0].add(
-                new EndWaypoint(46, -29.5, toRadians(-179), .45, .1, 2, 2, toRadians(10)));
+                new EndWaypoint(48, -28.5, toRadians(-179), .45, .1, 6, 1, toRadians(10)));
       }
       if (bark == 1) {
         spikeToBackdrop[1] = new Path();
@@ -84,7 +84,7 @@ public class RedRightAut extends LinearOpMode {
             new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(currentPose.getHeading()))));
 //        spikeToBackdrop[1].add(new GeneralWaypoint(currentPose.getX(), currentPose.getY()-5, currentPose.getHeading(), .5,0,3));
         spikeToBackdrop[1].add(
-            new EndWaypoint(46, -35.5, toRadians(-179), .45, 0.1, 2, 2, toRadians(5)));
+            new EndWaypoint(49, -34, toRadians(-180), .45, 0.2, 14, 1, toRadians(10)));
       }
 
       if (bark ==2){
@@ -97,7 +97,7 @@ public class RedRightAut extends LinearOpMode {
         spikeToBackdrop[2].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[2].add(
-                new EndWaypoint(46.5, -41.5, toRadians(-179), .4, 0.1, 2, 2, toRadians(5)));
+                new EndWaypoint(49, -41.5, toRadians(-179), .4, 0.3, 14, 1, toRadians(10)));
       }
       robot.followPPPath(spikeToBackdrop[bark]);
       robot.queuer.addDelay(0.3);

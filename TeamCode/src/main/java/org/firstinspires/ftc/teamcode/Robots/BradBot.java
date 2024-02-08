@@ -203,7 +203,7 @@ public class BradBot extends BasicRobot {
   }
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-        lift.setPosition(450);
+        lift.setPosition(680);
         intake.stopIntake();
         arm.flipTo(DROP);
 //        if(Wrist.WristStates.LOCK.getState()){
