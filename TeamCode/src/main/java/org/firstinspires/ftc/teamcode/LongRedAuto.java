@@ -47,7 +47,9 @@ public class LongRedAuto extends LinearOpMode {
 
             robot.boardToMiddle();
             robot.middleToStackAndIntake();
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
+
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
