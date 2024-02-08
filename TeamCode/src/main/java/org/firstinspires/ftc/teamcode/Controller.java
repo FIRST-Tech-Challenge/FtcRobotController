@@ -89,6 +89,18 @@ public class Controller extends LinearOpMode {
         backRightMotor.setPower(rightBackPower);
     }
 
+    public void StartupSequence() {
+        armLift.setTargetPosition(500);
+        
+        while (armLift.isBusy()) {}
+        
+        roller.setPosition(ROLLER_FLAT);
+        
+        sleep(1000);
+        
+        armLift.setTargetPosition(0);
+    }
+
     @Override
     public void runOpMode() {
 
@@ -126,6 +138,8 @@ public class Controller extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
+        StartupSequence();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
