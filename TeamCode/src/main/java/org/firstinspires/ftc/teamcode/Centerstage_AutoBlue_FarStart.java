@@ -229,19 +229,19 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
     }   // end method telemetryTfod()
 
     private void PlaceFirstPixel() {
-//        if (desiredTag == 2) { // drives robot to the center position.
-//            gobbler.driveTrain.centerBlueFarRedClose();
-//        }
+        if (desiredTag == 2) { // drives robot to the center position.
+            gobbler.driveTrain.centerBlueFarRedClose();
+        }
 
-//        else if (desiredTag == 1) { // drives robot to the right position.
-//            gobbler.driveTrain.rightBlueFarRedClose();
-//        }
-//
-//        else { // drives robot to the left position.
+        else if (desiredTag == 1) { // drives robot to the right position.
+            gobbler.driveTrain.rightBlueFarRedClose();
+        }
+
+        else { // drives robot to the left position.
             gobbler.driveTrain.leftBlueFarRedClose();
-//        }
-//        //Place first pixel
-//
+        }
+        //Place first pixel
+
         PlacePixelOnTape();
 //
 //        // Push telemetry to the Driver Station.

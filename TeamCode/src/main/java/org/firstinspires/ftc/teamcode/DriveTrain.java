@@ -641,6 +641,8 @@ public class DriveTrain {
         Wait(.5);
         strafeRight(13,0.5);
         Wait(.5);
+        moveBackward(2, 0.5);
+        Wait(.5);
     }
 
     public void leftBlueFarRedClose() {
