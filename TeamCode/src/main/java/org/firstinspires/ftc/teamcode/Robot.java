@@ -1305,10 +1305,6 @@ public class Robot {
         moveLinearSlideByTicksBlocking(0);
     }
 
-    public void toggleButtons () {
-
-    }
-
     public void teleOpWhileLoop(Gamepad gamepad1, Gamepad gamepad2) {
 
         boolean hangingMode = false;
@@ -1519,19 +1515,19 @@ public class Robot {
                 allowTrayAngleOverride = true;
                 trayAngle.setPosition(trayAngleDefault);
             } else if (allowTrayAngle && !allowTrayAngleOverride) {
-            relativeHeadingToBoard = getHeadingRelativeToBoard();
+                relativeHeadingToBoard = getHeadingRelativeToBoard();
 
-            //checking imu in correct range
-            if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
+                //checking imu in correct range
+                if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
 
-                trayAngleServoPos = Math.min(-0.0048*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
-                trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
-            } else {
+                    trayAngleServoPos = Math.min(-0.0048*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
+                    trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
+                } else {
 
-                trayAngleServoPos = trayAngleDefault;
-            }
+                    trayAngleServoPos = trayAngleDefault;
+                }
 
-            trayAngle.setPosition(trayAngleServoPos);
+                trayAngle.setPosition(trayAngleServoPos);
             }
 
 
