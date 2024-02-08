@@ -1339,6 +1339,7 @@ public class Robot {
         double trayAngleDefault = 0.5;
         double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
+        boolean overrideButton = false;
         double relativeIMU;
 
         boolean linearSlideFlag = false;
@@ -1511,8 +1512,13 @@ public class Robot {
             hardStopTrayAngleSmall = 0.32;
 
             //override tray angle
-            if (gamepad2.dpad_down) {
-                allowTrayAngleOverride = true;
+            if (!gamepad2.dpad_down && overrideButton) {
+                if (allowTrayAngleOverride) {
+                    allowTrayAngleOverride = false;
+                } else {
+                    allowTrayAngleOverride = true;
+                }
+
                 trayAngle.setPosition(trayAngleDefault);
             } else if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
@@ -1529,7 +1535,7 @@ public class Robot {
 
                 trayAngle.setPosition(trayAngleServoPos);
             }
-
+            overrideButton = gamepad2.dpad_down;
 
 
 
