@@ -1522,7 +1522,7 @@ public class Robot {
                 if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
 
-                if ((relativeHeadingToBoard <= 90 && relativeHeadingToBoard >-90)) {
+                if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
 
                     trayAngleServoPos = Math.min(-0.0048*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
                     trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
