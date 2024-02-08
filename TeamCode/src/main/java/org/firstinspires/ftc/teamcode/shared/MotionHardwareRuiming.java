@@ -15,6 +15,8 @@ public class MotionHardwareRuiming {
     public DcMotor frontRightMotor;
     public DcMotor backLeftMotor;
     public DcMotor backRightMotor;
+    public DcMotor leftLeadScrew;
+    public DcMotor rightLeadScrew;
     public Servo wristServo;
     public CRServo intServo;
     public Servo bucketServo;
@@ -49,6 +51,8 @@ public class MotionHardwareRuiming {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        leftLeadScrew = hardwareMap.get(DcMotor.class, "leftLeadScrew");
+        rightLeadScrew = hardwareMap.get(DcMotor.class, "leftLeadScrew");
 
         // Setting motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -72,6 +76,7 @@ public class MotionHardwareRuiming {
         rightInt.setPosition(0.65); // Pickup position
         leftInt.setPosition(0.35); // Pickup position
     }
+
 
     // setArmPosition method
     public void setArmPosition(double speed, double positionInches, double timeoutS, ElapsedTime runtime, Telemetry telemetry, BooleanSupplier opModeIsActive) {

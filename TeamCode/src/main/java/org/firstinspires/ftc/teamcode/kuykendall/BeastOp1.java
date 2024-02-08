@@ -15,7 +15,7 @@ public class BeastOp1 extends LinearOpMode {
     private final double pickupPosition = .65;
     private final double dropoffPosition = .2;
     private static final int PICKUP_POSITIONE = 0;
-    private static final int DROPOFF_POSITIONE = -50;
+    private static final int DROPOFF_POSITIONE = 350;
     // Modify these constants to represent inches within the 0 to 5 range
     private static final double PICKUP_POSITION_INCHES = 2.0; // Example value
     private static final double DROPOFF_POSITION_INCHES = 4.0; // Example value
@@ -30,7 +30,7 @@ public class BeastOp1 extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Initialization code that was in the init() method
-        robot.wristServo.setPosition(0.8);
+        robot.wristServo.setPosition(0.4);
         robot.rightInt.setPosition(pickupPosition);
         robot.leftInt.setPosition(1.0 - pickupPosition);
 
@@ -40,6 +40,7 @@ public class BeastOp1 extends LinearOpMode {
         while (opModeIsActive()) {
             // Code that was in the loop() method
             controlDrive();
+            controlLeadScrews();
             controlArm();
             controlServos();
             controlWristAndIntake(); // Control wrist and intake based on the sequence
@@ -84,14 +85,50 @@ public class BeastOp1 extends LinearOpMode {
         robot.backLeftMotor.setPower(backLeftPower);
         robot.backRightMotor.setPower(backRightPower);
     }
+    private void controlLeadScrews() {
+        if (gamepad1.dpad_up) {
+            robot.leftLeadScrew.setPower(0.6);  // Set power to raise the robot
+            robot.rightLeadScrew.setPower(0.6);
+
+        } else {
+            robot.leftLeadScrew.setPower(0);  // Set power to zero when not pressed
+            robot.rightLeadScrew.setPower(0);
+        }
+        if (gamepad1.dpad_down) {
+            robot.leftLeadScrew.setPower(-0.6);  // Set power to raise the robot
+            robot.rightLeadScrew.setPower(-0.6);
+        } else {
+            robot.leftLeadScrew.setPower(0);  // Set power to zero when not pressed
+            robot.rightLeadScrew.setPower(0);
+        }
+    }
 
     private void controlArm() {
+        robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // When Y button is pressed, move the arm up
+        if (gamepad1.y) {
+            robot.armMotor.setPower(1.0);
+        }
+        // When A button is pressed, move the arm down
+        else if (gamepad1.a) {
+            robot.armMotor.setPower(-1.0);
+        }
+        // When neither Y nor A is pressed, stop the arm
+        else {
+            robot.armMotor.setPower(0);
+        }
+
+        robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    /*private void controlArm() {
         robot.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (gamepad1.a) {
             robot.armMotor.setTargetPosition(PICKUP_POSITIONE);
             robot.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.armMotor.setPower(1.0);
+            robot.armMotor.setPower(-1.0);
         } else if (gamepad1.y) {
             robot.armMotor.setTargetPosition(DROPOFF_POSITIONE);
             robot.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -104,7 +141,10 @@ public class BeastOp1 extends LinearOpMode {
         }
 
         robot.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
+        if (!robot.armMotor.isBusy()) {
+            robot.armMotor.setPower(0);
+        }
+    } */
 
         /*if (gamepad1.a) {
             robot.setArmPosition(1.0, PICKUP_POSITION_INCHES, 5.0, runtime, telemetry, this::opModeIsActive);
@@ -129,40 +169,30 @@ public class BeastOp1 extends LinearOpMode {
     }
     private void controlWristAndIntake() {
         // Check the current step in the sequence
-        switch (robot.sequenceStep) {
+        switch(robot.sequenceStep) {
             case 0:
-                // Normal operation, waiting for Y button press on gamepad2
-                if (gamepad2.a) {
-                    // Move wrist first
+                if (gamepad2.y) {
                     robot.wristServo.setPosition(.8); // Adjust to your wrist up position
-
-                    // Move to next step and record time
                     robot.sequenceStep = 1;
                     robot.stepStartTime = System.currentTimeMillis();
                 }
                 break;
 
             case 1:
-                // Check if delay has passed
                 if (System.currentTimeMillis() - robot.stepStartTime >= robot.stepDuration) {
-                    // Move delivery to up position
                     robot.rightInt.setPosition(pickupPosition);
                     robot.leftInt.setPosition(1.0 - pickupPosition);
-
-                    // Reset sequence step to 0 for normal operation
                     robot.sequenceStep = 0;
                 }
                 break;
 
-            // Add other cases here if necessary
+            // ... [Implement other steps as needed]
 
             default:
-                // Handle default case
                 break;
         }
 
-        // New function to move delivery down then wrist down on 'A' button press on gamepad2
-        if (gamepad2.y) {
+        if (gamepad2.a) {
             robot.rightInt.setPosition(dropoffPosition);
             robot.leftInt.setPosition(1.0 - dropoffPosition);
             robot.wristServo.setPosition(0.4); // Wrist down position
@@ -184,6 +214,7 @@ public class BeastOp1 extends LinearOpMode {
         telemetry.addData("Wrist Servo Position", robot.wristServo.getPosition());
         telemetry.addData("Right Intake Servo Position", robot.rightInt.getPosition());
         telemetry.addData("Left Intake Servo Position", robot.leftInt.getPosition());
+        telemetry.addData("Arm Position", robot.armMotor.getCurrentPosition());
         telemetry.update();
     }
 }

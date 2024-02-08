@@ -113,6 +113,8 @@ public class MotionHardwareG2 {
         leftLeadScrew = myOpMode.hardwareMap.get(DcMotor.class, "leftLeadScrew");
         armMotor = myOpMode.hardwareMap.get(DcMotor.class, "armMotor");
 
+
+
         //frontLeftMotor.setDirection(DcMotorEx.Direction.FORWARD);
         //frontRightMotor.setDirection(DcMotorEx.Direction.REVERSE);
         //backLeftMotor.setDirection(DcMotorEx.Direction.FORWARD);
