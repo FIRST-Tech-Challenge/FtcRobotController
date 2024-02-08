@@ -20,7 +20,7 @@ public class TestAuto extends LinearOpMode {
     private IMU imu;
 
     //change these values for our motors
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;
+    static final double     COUNTS_PER_MOTOR_REV    = 384.5 ;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -147,7 +147,7 @@ public class TestAuto extends LinearOpMode {
 
     }
 
-    // transform the angles from (180,-179) to (inf, -inf)
+    // transform the angles from (180,-179) to (inf, -inf)w
     private double getIntegratedHeading() {
         double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         //double currentHeading = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
@@ -260,15 +260,26 @@ public class TestAuto extends LinearOpMode {
 
     public void straight(double speed,
                          double distance) {
-        double newLeftTarget = frontLeftMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-        double newRightTarget = frontRightMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+                             
+        
+        double startFrontLeft = frontLeftMotor.getCurrentPosition();
+        double startFrontRight = frontLeftMotor.getCurrentPosition();
+        
+        double newLeftTarget = Math.abs(frontLeftMotor.getCurrentPosition()) - (int)(distance * COUNTS_PER_INCH);
+        double newRightTarget = Math.abs(frontRightMotor.getCurrentPosition()) - (int)(distance * COUNTS_PER_INCH);
 
         if(opModeIsActive()) {
-            while (frontLeftMotor.getCurrentPosition() < newLeftTarget && frontRightMotor.getCurrentPosition() < newRightTarget) {
-                frontLeftMotor.setPower(Math.abs(speed));
-                frontRightMotor.setPower(Math.abs(speed));
-                backRightMotor.setPower(Math.abs(speed));
-                backLeftMotor.setPower(Math.abs(speed));
+            while ((frontLeftMotor.getCurrentPosition()) > newLeftTarget && ((frontRightMotor.getCurrentPosition()) > newRightTarget)) {
+                frontLeftMotor.setPower(-(speed));
+                frontRightMotor.setPower(-(speed));
+                backRightMotor.setPower(-(speed));
+                backLeftMotor.setPower(-(speed));
+
+                telemetry.addData("running to: ", newRightTarget);
+                telemetry.addData("currently at: ", frontRightMotor.getCurrentPosition());
+
+                telemetry.update();
+                //System.out.print(imu.getRobotOrientationAsQuaternion());
             }
 
             frontLeftMotor.setPower(0);
@@ -281,18 +292,18 @@ public class TestAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Set motors
-        //frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
-        //backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
-        //frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
-        //backRightMotor = hardwareMap.get(DcMotor.class, "motor3");
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
+        backRightMotor = hardwareMap.get(DcMotor.class, "motor3");
+        //frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
+        //backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
+        //frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
+        //backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
 
         //digital1 = hardwareMap.get(DigitalChannel.class, "digital1");
 
-
+        //System.out.print(imu.getRobotOrientationAsQuaternion());
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -328,7 +339,8 @@ public class TestAuto extends LinearOpMode {
             //unitTestTurn();
 
             //encoderDrive(0.3,10,10,2.0);
-            straight(0.4, 11);
+            straight(0.4, 50);
+            straight(0.4,50);
             telemetry.addData("current angle", currentAngle);
             telemetry.update();
 
