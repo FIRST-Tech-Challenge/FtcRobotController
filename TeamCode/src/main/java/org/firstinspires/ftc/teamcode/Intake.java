@@ -30,7 +30,7 @@ public class Intake {
             intakeToggle = true;
             time.reset();
 
-            intakeMotor.setPower(1.0);
+            intakeMotor.setPower(1.0);   
             conveyorMotor.setPower(1.0);
 
         }
