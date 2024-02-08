@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.autoutils;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +25,11 @@ import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 public class ObjectDetector {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
+    /**
+     * The variable to store our instance of the AprilTag processor.
+     */
+    private AprilTagProcessor aprilTag;
+
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
     private static final String TFOD_MODEL_ASSET = "MyModelStoredAsAsset.tflite";
@@ -28,7 +38,8 @@ public class ObjectDetector {
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "Pixel",
+            "Cube",
+            "Not the Cube"
     };
 
     public static final FTCDashboardPackets dbp = new FTCDashboardPackets("OBJ_DETECTOR");
@@ -47,6 +58,7 @@ public class ObjectDetector {
 
     public ObjectDetector(final HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> other) {
         OTHER = other;
+        dbp.createNewTelePacket();
         initTfod();
     }
 
@@ -72,11 +84,11 @@ public class ObjectDetector {
 
                 // The following default settings are available to un-comment and edit as needed to
                 // set parameters for custom models.
-                //.setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
+                .setModelLabels(LABELS)
+                .setIsModelTensorFlow2(true)
+                .setIsModelQuantized(true)
+                .setModelInputSize(300)
+                .setModelAspectRatio(16.0 / 9.0)
 
                 .build();
 
@@ -148,5 +160,163 @@ public class ObjectDetector {
         }
 
         return currentRecognitions;
+    }
+
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTag() {
+
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder()
+
+                // The following default settings are available to un-comment and edit as needed.
+                //.setDrawAxes(false)
+                //.setDrawCubeProjection(false)
+                //.setDrawTagOutline(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                // ... these parameters are fx, fy, cx, cy.
+
+                .build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        //aprilTag.setDecimation(3);
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USE_WEBCAM) {
+            builder.setCamera((CameraName) Objects.requireNonNull(OTHER.get(WEBCAM)).getValue());
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        //builder.setCameraResolution(new Size(640, 480));
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        //builder.enableLiveView(true);
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        //builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Disable or re-enable the aprilTag processor at any time.
+        //visionPortal.setProcessorEnabled(aprilTag, true);
+
+    }
+
+    public enum AprilTags {
+        BLUE_ALLIANCE_LEFT,
+        BLUE_ALLIANCE_CENTER,
+        BLUE_ALLIANCE_RIGHT,
+        RED_ALLIANCE_LEFT,
+        RED_ALLIANCE_CENTER,
+        RED_ALLIANCE_RIGHT
+    }
+
+    public static AprilTags aprilTagIdToEnumType(final int id) {
+        switch (id - 1) {
+            case 0:
+                return AprilTags.BLUE_ALLIANCE_LEFT;
+            case 1:
+                return AprilTags.BLUE_ALLIANCE_CENTER;
+            case 2:
+                return AprilTags.BLUE_ALLIANCE_RIGHT;
+            case 3:
+                return AprilTags.RED_ALLIANCE_LEFT;
+            case 4:
+                return AprilTags.RED_ALLIANCE_CENTER;
+            case 5:
+                return AprilTags.RED_ALLIANCE_RIGHT;
+        }
+
+        return null;
+    }
+
+    public static List<AprilTags> getDetectedAprilTagIds(final List<AprilTagDetection> detections) {
+        List<AprilTags> ids = new ArrayList<>();
+        for (AprilTagDetection detection : detections) {
+            ids.add(aprilTagIdToEnumType(detection.id - 1));
+        }
+        return ids;
+    }
+
+    public boolean isAprilTagRecognized(final AprilTags tag) {
+        List<AprilTagDetection> currentDetections = telemetryAprilTag();
+
+        return getDetectedAprilTagIds(currentDetections).contains(tag);
+    }
+
+
+    /**
+     * Add telemetry about AprilTag detections.
+     */
+    private List<AprilTagDetection> telemetryAprilTag() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        dbp.info(String.format(ENGLISH, "%d AprilTags Detected", currentDetections.size()));
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                dbp.info(String.format(ENGLISH, "\n==== (ID %d) %s",
+                        detection.id,
+                        detection.metadata.name)
+                );
+                dbp.info(String.format(ENGLISH, "XYZ %6.1f %6.1f %6.1f  (inch)",
+                        detection.ftcPose.x,
+                        detection.ftcPose.y,
+                        detection.ftcPose.z)
+                );
+                dbp.info(String.format(ENGLISH, "PRY %6.1f %6.1f %6.1f  (deg)",
+                        detection.ftcPose.pitch,
+                        detection.ftcPose.roll,
+                        detection.ftcPose.yaw)
+                );
+                dbp.info(String.format(ENGLISH, "RBE %6.1f %6.1f %6.1f  (inch, deg, deg)",
+                        detection.ftcPose.range,
+                        detection.ftcPose.bearing,
+                        detection.ftcPose.elevation)
+                );
+            } else {
+                dbp.info(String.format(ENGLISH, "\n==== (ID %d) Unknown", detection.id));
+                dbp.info(String.format(ENGLISH, "Center %6.0f %6.0f   (pixels)",
+                        detection.center.x, detection.center.y));
+            }
+            dbp.send(false);
+        }   // end for() loop
+
+        // Add "key" information to telemetry
+        dbp.info("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        dbp.info("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        dbp.info("RBE = Range, Bearing & Elevation");
+
+        dbp.send(false);
+
+        return currentDetections;
     }
 }
