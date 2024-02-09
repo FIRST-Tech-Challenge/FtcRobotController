@@ -683,7 +683,7 @@ public abstract class CSBase extends LinearOpMode {
    }
 
    /** A less space consuming way to add telemetry. **/
-   public void print(String caption, Object content) { print(caption, contest, false); }
+   public void print(String caption, Object content) { print(caption, content, false); }
 
    /** A less space consuming way to update the displayed telemetry. **/
   public void update() {
