@@ -24,8 +24,8 @@ public class Auto_RedBackFull extends CSBase {
         drive(-2);
         turn(90);
         drive(tilesToInches(-1));
-        turn(-90);
-        drive(tilesToInches(-1));
+//        turn(-90);
+//        drive(tilesToInches(-1));
         setSpeed(1000);
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);

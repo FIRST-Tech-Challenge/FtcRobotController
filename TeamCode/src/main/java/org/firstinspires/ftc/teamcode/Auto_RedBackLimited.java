@@ -29,16 +29,7 @@ public class Auto_RedBackLimited extends CSBase {
         drive(tilesToInches(0.4));
         ejectPixel();
         drive(tilesToInches(0.1));
-//        setSpeed(1000);
-//        for (int i = 0; i < 6; i++) {
-//            telemetry.addData("i", i);
-//            telemetry.update();
-//            strafe(5, dir.r);
-//            if (tagDetections(ID, 1000) != null) {
-//                break;
-//            }
-//        }
-//        align(ID);
+
         //moveLift(3);
         //drive(-12);
         //strafe(tilesToInches(1), dir.r);
