@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 import java.util.function.DoubleSupplier;
 
+@Deprecated
 public class ZeroWristCommand extends CommandBase {
 
     WristSubsystem subsystem;

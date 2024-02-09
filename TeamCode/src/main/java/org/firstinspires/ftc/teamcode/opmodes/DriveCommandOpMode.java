@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.commands.GateCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
@@ -54,7 +55,8 @@ public class DriveCommandOpMode extends CommandOpMode {
     private MoveFingerCommand moveFingerCommand;
     private IntakeCommand intakeCommand;
 
-    private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
+
+    private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
 
     @Override
     public void initialize() {
@@ -72,7 +74,6 @@ public class DriveCommandOpMode extends CommandOpMode {
         armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
         wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this), true);
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
-        intakeSubsystem = new IntakeSubsystem(RobotHardwareInitializer.initializeIntake(this));
         launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
         gateSubsystem = new GateSubsystem(RobotHardwareInitializer.initializeGateServos(this));
 
@@ -82,7 +83,6 @@ public class DriveCommandOpMode extends CommandOpMode {
         initializeDriveSuppliers();
 
         // Initialize commands for the subsystems
-
         DoubleSupplier forwardWristSupplier = () -> {
             double end = 0;
             end += armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0;
@@ -111,9 +111,6 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getButton(GamepadKeys.Button.LEFT_BUMPER),
                 () -> armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
-                /*() -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0) -
-                        (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0) +
-                        armerController.getLeftX());*/
                 forwardWristSupplier, backwardWristSupplier);
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
@@ -132,25 +129,24 @@ public class DriveCommandOpMode extends CommandOpMode {
                     }
                     return quantity/2.5d;
                 });
-        intakeCommand = new IntakeCommand(intakeSubsystem);
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
-        /*armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
-                new ZeroWristCommand(wristSubsystem, () -> (armerController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0)
-                        - (armerController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0), () -> 0));*/
+        armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.OPEN));
+        armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.CLOSED));
 
         register(driveSubsystem);
         register(armSubsystem);
         register(wristSubsystem);
         register(fingerSubsystem);
-        register(intakeSubsystem);
         register(launcherSubsystem);
+        register(gateSubsystem);
 
         driveSubsystem.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(moveArmCommand);
         wristSubsystem.setDefaultCommand(moveWristCommand);
         fingerSubsystem.setDefaultCommand(moveFingerCommand);
-        intakeSubsystem.setDefaultCommand(intakeCommand);
 
         dbp.info("Subsystems registered.");
         dbp.send(false);
@@ -159,7 +155,9 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.send(false);
 
         waitForStart();
-        schedule(intakeCommand);
+
+        dbp.info("GO GO GO!");
+        dbp.send(false);
     }
 
     private void initializeDriveSuppliers() {

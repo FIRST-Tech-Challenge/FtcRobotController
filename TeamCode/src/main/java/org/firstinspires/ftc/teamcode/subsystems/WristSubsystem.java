@@ -33,7 +33,6 @@ public class WristSubsystem extends SubsystemBase {
             power /= 2d;
             wrist.setPosition(power);
         } else {
-            // If frontward button is selected, then
             float deadzoneOffset = .1f;
             if (frontward > deadzoneOffset) {
                 zeroPositionMode = false;
