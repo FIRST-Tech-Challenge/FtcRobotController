@@ -6,20 +6,32 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public class ArmSubsystem extends SubsystemBase {
-    private final DcMotor armMotor;
+    private final DcMotor armMotor1;
+    private final DcMotor armMotor2;
+
+    private final Double SECOND_MOTOR_POWER = 1/5.25;
+
     private final int POSITION_MOVE_POWER = 1;
     private final int ARM_ANGLE_OFFSET = 0;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("ArmSubsystem");
 
-    public ArmSubsystem(DcMotor armMotor) {
-        this.armMotor = armMotor;
-        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public ArmSubsystem(final HashMap<RobotHardwareInitializer.Arm, DcMotor> ARM) {
+        this.armMotor1 = ARM.get(RobotHardwareInitializer.Arm.ARM1);
+        assert armMotor1 != null;
+        armMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        this.armMotor2 = ARM.get(ARM.get(RobotHardwareInitializer.Arm.ARM2));
+        assert armMotor2 != null;
+        armMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public enum Direction {
@@ -49,13 +61,19 @@ public class ArmSubsystem extends SubsystemBase {
     public void manualMoveArm(Direction direction, double power) {
         power = Math.max(0, Math.min(1, power));
         power *= (direction == Direction.FRONTWARD) ? 1f : -1f;
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setPower(power);
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor1.setPower(power);
+
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor2.setPower(power * SECOND_MOTOR_POWER);
     }
 
     public void manualMoveArm(double power) {
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setPower(power);
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor1.setPower(power);
+
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor2.setPower(power * SECOND_MOTOR_POWER);
     }
 
     /**
@@ -66,14 +84,17 @@ public class ArmSubsystem extends SubsystemBase {
         // calculated the error in the arm and multiplied by it
         // (may be an issue of gear ratios in the end)
         calculatedPosition = (int) (4.375d*calculatedPosition);
-        armMotor.setTargetPosition(calculatedPosition);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1); //POSITION_MOVE_POWER);
+        armMotor1.setTargetPosition(calculatedPosition);
+        armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor1.setPower(1); //POSITION_MOVE_POWER);
 
-        if (armMotor.isBusy()) {
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor2.setPower(SECOND_MOTOR_POWER);
+
+        if (armMotor1.isBusy()) {
             dbp.debug("Waiting for motor to move to position", true);
             dbp.debug(String.format(Locale.ENGLISH,
-                    "Arm position: %d", armMotor.getCurrentPosition()));
+                    "Arm position: %d", armMotor1.getCurrentPosition()));
         }
     }
 
@@ -84,7 +105,7 @@ public class ArmSubsystem extends SubsystemBase {
      * @return The angle converted into position units.
      */
     public int positionFromAngle(double angle, AngleUnit angleUnit) {
-        double ticksPerRevolution = armMotor.getMotorType().getTicksPerRev();
+        double ticksPerRevolution = armMotor1.getMotorType().getTicksPerRev();
         double scale = angleUnit.toDegrees(angle)/360;
         return (int) (ticksPerRevolution*scale);
     }
@@ -100,11 +121,13 @@ public class ArmSubsystem extends SubsystemBase {
      * Sets the power of the armMotor to zero
      */
     public void haltArm() {
-        armMotor.setPower(0);
+        armMotor1.setPower(0);
+        armMotor2.setPower(0);
     }
 
     public void resetArm() {
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override

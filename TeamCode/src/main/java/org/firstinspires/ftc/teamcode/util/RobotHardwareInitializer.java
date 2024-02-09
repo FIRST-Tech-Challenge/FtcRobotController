@@ -164,7 +164,13 @@ public class RobotHardwareInitializer {
     public static HashMap<Other, DynamicTypeValue> initializeAllOtherSystems(final OpMode opMode) {
         HashMap<Other, DynamicTypeValue> out = new HashMap<>();
         // Init Arm
-        out.put(Other.ARM, new MotorTypeValue(initializeArm(opMode)));
+        HashMap<Arm, DcMotor> tmp = initializeArm(opMode);
+        final DcMotor ARM1 = tmp.get(Arm.ARM1);
+        final DcMotor ARM2 = tmp.get(Arm.ARM2);
+        DcMotor[] tmp2 = new DcMotor[2];
+        tmp2[0] = ARM1;
+        tmp2[1] = ARM2;
+        out.put(Other.ARM, new ArrayTypeValue<>(tmp2));
 
         // Init Wrist
         out.put(Other.WRIST, new ServoTypeValue(initializeWrist(opMode)));
@@ -179,13 +185,13 @@ public class RobotHardwareInitializer {
         //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
 
         // Init Intake
-        HashMap<Intake, CRServo> tmp = initializeIntake(opMode);
-        final CRServo LEFT = tmp.get(Intake.LEFT);
-        final CRServo RIGHT = tmp.get(Intake.RIGHT);
-        CRServo[] tmp2 = new CRServo[2];
-        tmp2[0] = LEFT;
-        tmp2[1] = RIGHT;
-        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp2));
+        HashMap<Intake, CRServo> tmp3 = initializeIntake(opMode);
+        final CRServo LEFT = tmp3.get(Intake.LEFT);
+        final CRServo RIGHT = tmp3.get(Intake.RIGHT);
+        CRServo[] tmp4 = new CRServo[2];
+        tmp4[0] = LEFT;
+        tmp4[1] = RIGHT;
+        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));
 
         // Init Webcam
         out.put(Other.WEBCAM, new WebcamSensorTypeValue(initializeCamera(opMode)));
@@ -228,15 +234,29 @@ public class RobotHardwareInitializer {
         }
     }
 
-    public static DcMotor initializeArm(final OpMode opMode) {
+    public enum Arm {
+        ARM1,
+        ARM2
+    }
+
+    public static HashMap<Arm, DcMotor> initializeArm(final OpMode opMode) {
         DcMotor arm = null;
+        DcMotor arm2 = null;
         try {
-            arm = opMode.hardwareMap.get(DcMotor.class, "arm");
+            arm = opMode.hardwareMap.get(DcMotor.class, "arm1");
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            arm2 = opMode.hardwareMap.get(DcMotor.class, "arm2");
+            arm2.setDirection(DcMotorSimple.Direction.FORWARD);
         } catch (Exception e) {
             Error(e, opMode);
         }
-        return arm;
+
+        HashMap<Arm, DcMotor> out = new HashMap<>();
+        out.put(Arm.ARM1, arm);
+        out.put(Arm.ARM2, arm2);
+
+        return out;
     }
 
     public static HashMap<Intake, CRServo> initializeIntake(final OpMode opMode) {

@@ -42,8 +42,8 @@ public class AutoCommandMode extends CommandOpMode {
         assert motors != null;
 
         driveSubsystem = new DriveSubsystem(motors);
-        armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
-        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
+        //armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
+        //wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this));
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
 
         PA = new PredefinedAutomation(driveSubsystem, armSubsystem, wristSubsystem, fingerSubsystem);
