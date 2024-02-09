@@ -70,6 +70,7 @@ public class Robot {
     double robotX = 0;
     double robotY = 0;
     private boolean previousDpadValue;
+    private boolean hookShouldClose;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER;
@@ -1485,12 +1486,15 @@ public class Robot {
 
             // dpad controlling lock
             if (!gamepad2.dpad_up && previousDpadValue) { // up - close
-                closeHook();
-                
-            } else { // down - open
-                openHook();
+                hookShouldClose = !hookShouldClose;
             }
             previousDpadValue = gamepad2.dpad_up;
+
+            if (hookShouldClose) {
+                closeHook();
+            } else {
+                openHook();
+            }
 
             // pivoting tray
             if (gamepad2.a && gamepad2.y) { // both - stay at current
