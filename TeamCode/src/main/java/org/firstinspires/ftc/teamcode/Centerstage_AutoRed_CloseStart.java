@@ -276,6 +276,7 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
         else { // drives robot to the left position.
             gobbler.driveTrain.leftBlueFarRedClose();
         }
+        PlacePixelOnTape();
     }
 
     private void PlacePixelOnTape() {
