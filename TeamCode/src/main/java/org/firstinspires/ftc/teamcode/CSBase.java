@@ -30,6 +30,8 @@ public abstract class CSBase extends LinearOpMode {
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
     private WebcamName camera;
     public TouchSensor touchSensor;
+    public side stageSide;
+    public color teamColor;
     private IMU imu;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -72,6 +74,10 @@ public abstract class CSBase extends LinearOpMode {
     /** Color options for the team prop. Options: r, b, n **/
     public enum color {
         r, b, n
+    }
+    /** Side of the robot **/
+    public enum side {
+        f, b
     }
 
     /** Directions. Options: l, r, f, b **/
@@ -272,6 +278,8 @@ public abstract class CSBase extends LinearOpMode {
                 rb.setPower(turnPower);
                 lf.setPower(-turnPower);
                 rf.setPower(turnPower);
+                currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+                difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
                 telemetry.addData("Corrected Goal", correctedGoalAngle);
                 telemetry.addData("Initial Goal", initialGoalAngle);
                 telemetry.addData("Start", startAngle);
@@ -279,6 +287,7 @@ public abstract class CSBase extends LinearOpMode {
                 telemetry.addData("Distance from goal", difference);
                 telemetry.update();
             }
+            stopRobot();
             sleep(WAIT_TIME);
         }
     }
@@ -621,26 +630,32 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Place the purple pixel. **/
     public void purplePixel() {
+        double modifier = 1;
+        if (stageSide == side.f) { modifier *= -1; }
+        if (teamColor == color.b) { modifier *= -1; }
         s(2);
-        drive(-16);
+        drive(-18);
         s(.5);
         if (pos == spike.l) {
-            turn(-40);
+            turn(-35);
             drive(-8);
             drive(8);
-            turn(40);
+            turn(35);
         } else if (pos == spike.m) {
-            drive(-12);
-            drive(12);
-        } else {
-            turn(40);
+            drive(-17);
+            drive(17);
+        } else if (pos == spike.r) {
+            turn(35);
             drive(-8);
             drive(8);
-            turn(-40);
+            turn(-35);
         }
         s(.5);
-        turn(-180);
-        drive(-25);
+//        turn(180 * modifier);
+        drive(17);
+//        setSpeed(1000);
+//        drive(10);
+//        setSpeed(2000);
     }
 
     public void moveLift(double inches) {

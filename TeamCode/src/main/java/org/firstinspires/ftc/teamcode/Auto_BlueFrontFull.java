@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class Auto_BlueFrontFull extends CSBase {
     @Override
     public void runOpMode() {
+        stageSide = side.f;
         setup(color.b);
 
         // ---------------------

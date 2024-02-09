@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Auto_BlueFrontLimited extends CSBase {
     @Override
     public void runOpMode() {
+        stageSide = side.f;
         setup(color.b);
 
         // ---------------------

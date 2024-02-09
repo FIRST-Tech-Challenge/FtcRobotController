@@ -7,6 +7,7 @@ public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
         color teamColor = color.r;
+        stageSide = side.b;
         setup(teamColor);
 
         // ---------------------
@@ -20,8 +21,8 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.addData("Team Prop Position", pos);
         telemetry.update();
         purplePixel();
-        drive(2);
-        turn(-90);
+        drive(-2);
+        turn(90);
         drive(tilesToInches(-1));
         turn(-90);
         drive(tilesToInches(-1));
@@ -35,7 +36,7 @@ public class Auto_RedBackFull extends CSBase {
             }
         }
         align(ID);
-        moveLift(3);
+        //moveLift(3);
         //drive(-12);
         //strafe(tilesToInches(1), dir.r);
         //drive(-18);

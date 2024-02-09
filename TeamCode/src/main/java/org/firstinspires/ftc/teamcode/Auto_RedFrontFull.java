@@ -6,12 +6,14 @@ public class Auto_RedFrontFull extends CSBase {
     @Override
     public void runOpMode() {
         color teamColor = color.r;
+        stageSide = side.f;
         setup(teamColor);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
+        s(1);
         pos = findPos();
         int ID = setID(pos, teamColor);
         telemetry.addData("Team Prop X", x);

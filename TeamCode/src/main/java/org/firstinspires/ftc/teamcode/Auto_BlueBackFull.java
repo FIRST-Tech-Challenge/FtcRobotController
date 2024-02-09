@@ -8,6 +8,7 @@ public class Auto_BlueBackFull extends CSBase {
 
     @Override
     public void runOpMode() {
+        stageSide = side.b;
         setup(color.b);
 
         // ---------------------
