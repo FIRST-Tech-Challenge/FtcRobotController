@@ -663,14 +663,13 @@ public class Robot {
                     setServoPosBlocking(spikeServo, 0.2); //lift finger
                     opMode.sleep(200);
                 }
-
-                straightBlocking(2, false, 0.7);
                 setHeading(-90 * polarity, 0.7);
-                straightBlocking(7, true, 0.7);
 
+                straightBlocking2(5);
                 setHeading(90 * polarity, 0.7);
 
                 mecanumBlocking2(-10);
+                setHeading(90 * polarity, 0.7);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -979,7 +978,7 @@ public class Robot {
                         Log.d("apriltag", "found tag" + detection.id);
                         distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
                         Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
-                        mecanumBlocking(distanceToMove - 1, false, 0.3); //-1 to fix too much movement
+                        mecanumBlocking(distanceToMove - 1, false, 0.7); //-1 to fix too much movement
                         Log.d("apriltag", "moved");
                         movedToDesired = true;
                     }
@@ -999,7 +998,7 @@ public class Robot {
             Log.d("vision", "alignToBoardFast: didn't align, distanceToBoard is 12");
         }
 
-        straightBlocking(distanceToBoard, false, 0.6);
+        straightBlocking(distanceToBoard, false, 0.7);
 
         if (isRedAlliance) {
             setHeading(-90, 0.75);
@@ -2608,7 +2607,7 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(19);
+                mecanumBlocking2(16);
                 break;
             case 2:
                 mecanumBlocking2(26);
@@ -2623,7 +2622,7 @@ public class Robot {
                 mecanumBlocking2(-26);
                 break;
             case 6:
-                mecanumBlocking2(-19);
+                mecanumBlocking2(-16);
                 break;
             default:
                 break;
@@ -2643,13 +2642,13 @@ public class Robot {
         mecanumBlocking2(24); // todo: test, maybe make method into boolean
 
 
-        straightBlocking(6, true, 0.7);
+        straightBlocking(6, true, 0.3);
         straightBlocking(4, false, 0.7);
 
         stackAttachmentIn();
         opMode.sleep(200);
 
-        straightBlocking(5, true, 0.7);
+        straightBlocking(5, true, 0.3);
         closeClamp(true);
         straightBlocking(2, false, 0.7);
 
