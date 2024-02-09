@@ -65,6 +65,8 @@ public class drivesample extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //CONFIGS
+
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeft");
@@ -72,6 +74,12 @@ public class drivesample extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRight");
         DcMotor slideR = hardwareMap.dcMotor.get("slideRight");
         DcMotor slideL = hardwareMap.dcMotor.get("slideLeft");
+        Servo popper = hardwareMap.get(Servo.class, "pickol");
+        Servo arm = hardwareMap.get(Servo.class, "idk1");
+        Servo joint = hardwareMap.get(Servo.class, "idk2");
+        Servo claw = hardwareMap.get(Servo.class, "idk3");
+
+        //REVERSINGS
 
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -80,7 +88,9 @@ public class drivesample extends LinearOpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideR.setDirection(DcMotorSimple.Direction.FORWARD);
         slideL.setDirection(DcMotorSimple.Direction.REVERSE);
+        joint.setDirection(Servo.Direction.REVERSE);
 
+        //States
         State state = State.RESET;
 
         VisionPortal portal = new VisionPortal.Builder()
@@ -97,6 +107,14 @@ public class drivesample extends LinearOpMode {
         imu.initialize(parameters);
         imu.resetYaw();
 
+        //Servo/Motor intits here
+
+        popper.setPosition(0);
+        arm.setPosition(0);
+        joint.setPosition(0);
+        claw.setPosition(0);
+
+        //TELEOP MAIN
         waitForStart();
 
         if (isStopRequested()) return;
@@ -121,7 +139,19 @@ public class drivesample extends LinearOpMode {
 //                    if
 //            }
 
+            //TESTING
+            if(gamepad2.a){
+                arm.setPosition(1);
+                joint.setPosition(0.6);
+
+            }
+            if(gamepad2.b){
+                arm.setPosition(0);
+                joint.setPosition(0);
+            }
+
             //FIRST PLAYER
+
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
