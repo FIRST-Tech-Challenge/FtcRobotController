@@ -38,7 +38,10 @@ public class Controller extends LinearOpMode {
     final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
-    final double ARM_EXTEND_TARGET = 1200;
+    final int PICKUP_EXTEND_TARGET = 1200;
+
+    // Pixel Backdrop Sequence
+    final int BACKDROP_EXTEND_TARGET = 1200;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -117,15 +120,33 @@ public class Controller extends LinearOpMode {
         leftGrip.setPosition(GRIP_OPEN);
         rightGrip.setPosition(GRIP_OPEN);
         roller.setPosition(ROLLER_FLAT);
-        armExtend.setPower(-ARM_EXTEND_SPEED);
 
-        while (armExtend.getCurrentPosition() < ARM_EXTEND_TARGET) {}
+        if (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
+            armExtend.setPower(-ARM_EXTEND_SPEED);
+            while (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {}
+        }
+        else if (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {
+            armExtend.setPower(ARM_EXTEND_SPEED);
+            while (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {}
+        }
 
         armExtend.setPower(0);
     }
 
     public void PixelBackdropSequence() {
+        armLift.setTargetPosition(ARM_MAX_POSITION);
+        roller.setPosition(ROLLER_UPSIDEDOWN);
 
+        if (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {
+            armExtend.setPower(-ARM_EXTEND_SPEED);
+            while (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {}
+        }
+        else if (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {
+            armExtend.setPower(ARM_EXTEND_SPEED);
+            while (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {}
+        }
+
+        armExtend.setPower(0);
     }
 
     @Override
