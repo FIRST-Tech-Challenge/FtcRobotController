@@ -69,6 +69,7 @@ public class Robot {
     PIDController setHeadingController;
     double robotX = 0;
     double robotY = 0;
+    private boolean previousDpadValue;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER;
@@ -1483,11 +1484,13 @@ public class Robot {
             // GAMEPAD 2: ARM CONTROLS
 
             // dpad controlling lock
-            if (gamepad2.dpad_up) { // up - close
+            if (!gamepad2.dpad_up && previousDpadValue) { // up - close
                 closeHook();
+                
             } else { // down - open
                 openHook();
             }
+            previousDpadValue = gamepad2.dpad_up;
 
             // pivoting tray
             if (gamepad2.a && gamepad2.y) { // both - stay at current
