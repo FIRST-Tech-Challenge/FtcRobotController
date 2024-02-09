@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,6 +16,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.CRServo;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -128,56 +131,54 @@ public class TeleOpPhase3 extends LinearOpMode {
         }
     }
 
-    class Arm {
-        private ServoImplEx mArmServo;
-        private double mArmStage0, mArmStage1, mArmStage2;
-        private int mArmStage = 0;
-        private PwmControl.PwmRange mArmServoRange = new PwmControl.PwmRange(500, 2500);
-
-        public Arm(ServoImplEx armServo, double armStage0, double armStage1, double armStage2, double offset) {
-            mArmServo = armServo;
-            mArmStage0 = armStage0 - offset;
-            mArmStage1 = armStage1 - offset;
-            mArmStage2 = armStage2 - offset;
-            mArmServo.setPwmEnable();
-            mArmServo.setPwmRange(mArmServoRange);
-        }
-
-        public void setReverse(boolean isReverse) {
-            if (isReverse) {
-                mArmServo.setDirection(Servo.Direction.REVERSE);
-            }
-        }
-
-        public void setArmPosition(double x) {
-            mArmServo.setPosition(x);
-        }
-
-        public double getArmPosition() {
-            return mArmServo.getPosition();
-        }
-
-        public void setArmStage(int x) {
-            mArmStage = x;
-        }
-
-        public int getArmStage() {
-            return mArmStage;
-        }
-
-        public void goToArmStage() {
-            switch (mArmStage) {
-                case 0:
-                    mArmServo.setPosition(mArmStage0);
-                    break;
-                case 1:
-                    mArmServo.setPosition(mArmStage1);
-                    break;
-                case 2:
-                    mArmServo.setPosition(mArmStage2);
-            }
-        }
-    }
+//    class Arm {
+//        private CRServo mArmServo;
+//        private double mArmStage0, mArmStage1, mArmStage2;
+//        private int mArmStage = 0;
+//        private PwmControl.PwmRange mArmServoRange = new PwmControl.PwmRange(500, 2500);
+//
+//        public Arm(CRServo armServo, double armStage0, double armStage1, double armStage2, double offset) {
+//            mArmServo = armServo;
+//            mArmStage0 = armStage0 - offset;
+//            mArmStage1 = armStage1 - offset;
+//            mArmStage2 = armStage2 - offset;
+//        }
+//
+//        public void setReverse(boolean isReverse) {
+//            if (isReverse) {
+//                mArmServo.setDirection(Servo.Direction.REVERSE);
+//            }
+//        }
+//
+//        public void setArmPosition(double x) {
+//            mArmServo.setPosition(x);
+//        }
+//
+//        public double getArmPosition() {
+//            return mArmServo.getPosition();
+//        }
+//
+//        public void setArmStage(int x) {
+//            mArmStage = x;
+//        }
+//
+//        public int getArmStage() {
+//            return mArmStage;
+//        }
+//
+//        public void goToArmStage() {
+//            switch (mArmStage) {
+//                case 0:
+//                    mArmServo.setPosition(mArmStage0);
+//                    break;
+//                case 1:
+//                    mArmServo.setPosition(mArmStage1);
+//                    break;
+//                case 2:
+//                    mArmServo.setPosition(mArmStage2);
+//            }
+//        }
+//    }
 
     class Claw {
         private ServoImplEx mWristServo;
@@ -266,16 +267,16 @@ public class TeleOpPhase3 extends LinearOpMode {
 
         // Hardware map
         DcMotorEx intakeMotor = (DcMotorEx) hardwareMap.get(DcMotor.class, "intakeMotor");
-//        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
-//        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
-//        ServoImplEx armServo1 = hardwareMap.get(ServoImplEx.class, "armServo1");
-//        ServoImplEx armServo2 = hardwareMap.get(ServoImplEx.class, "armServo2");
+        DcMotorEx liftMotor1 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor1");
+        DcMotorEx liftMotor2 = (DcMotorEx) hardwareMap.get(DcMotor.class, "liftMotor2");
+        CRServo armServo1 = hardwareMap.get(CRServo.class, "armServo1");
+        CRServo armServo2 = hardwareMap.get(CRServo.class, "armServo2");
 //        ServoImplEx wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
 //        ServoImplEx fingerServo = hardwareMap.get(ServoImplEx.class, "fingerServo");
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Initialize camera??? Our stuff randomly goes into NaN
         VisionPortal visionPortal = new VisionPortal.Builder()
@@ -297,10 +298,10 @@ public class TeleOpPhase3 extends LinearOpMode {
         double liftkI = 0;
         double liftkD = 0;
 
-//        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
-//        liftMotor2.setPIDFCoefficients (DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
-//        liftMotor1.setTargetPositionTolerance(0);
-//        liftMotor2.setTargetPositionTolerance(0);
+        liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+        liftMotor2.setPIDFCoefficients (DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(liftkP, liftkI, liftkD, 0));
+        liftMotor1.setTargetPositionTolerance(0);
+        liftMotor2.setTargetPositionTolerance(0);
 
         // Initializing some variables necessary for driving
         Pose2d headingToHold = new Pose2d();
