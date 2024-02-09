@@ -113,11 +113,11 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
 
     private void faceBackdrop() {
             if (desiredTag == 2) { // This turns the robot to the backboard if it is in the center position
-                gobbler.driveTrain.turnClockwise(-180, 0.5);
+                gobbler.driveTrain.turnCounterClockwise(-180, 0.5);
             } else if (desiredTag == 1) { // This turns the robot to the backboard if it is in the right position
                 gobbler.driveTrain.moveBackward(3, 0.5);
                 gobbler.driveTrain.Wait(3.0);
-                gobbler.driveTrain.turnClockwise(-180, 0.5);
+                gobbler.driveTrain.turnCounterClockwise(-180, 0.5);
             } else { // This turns the robot to the backboard if it is in the left positions
                 gobbler.driveTrain.turnCounterClockwise(-90, 0.5);
             }
@@ -277,7 +277,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
             }
              //Place first pixel
 
-       // PlacePixelOnTape();
+        PlacePixelOnTape();
 
         // Push telemetry to the Driver Station.
                 telemetry.update();
