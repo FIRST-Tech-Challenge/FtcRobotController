@@ -7,20 +7,39 @@ public class Auto_BlueFrontLimited extends CSBase {
     @Override
     public void runOpMode() {
         stageSide = side.f;
-        setup(color.b);
+        color teamColor = color.b;
+        setup(teamColor);
 
         // ---------------------
         // ------Main Code------
         // ---------------------
 
+        s(1);
+        pos = findPos();
+//        int ID = setID(pos, teamColor);
+        telemetry.addData("Team Prop X", x);
+        telemetry.addData("Team Prop Position", pos);
+        telemetry.update();
+        purplePixel();
         drive(-2);
-        turn(90);
+        turn(90, dir.r);
         s(3);
         drive(70);
         setSpeed(1000);
         drive(15);
         setSpeed(2000);
         ejectPixel();
+        drive(5);
+
+
+//        drive(-2);
+//        turn(90);
+//        s(3);
+//        drive(70);
+//        setSpeed(1000);
+//        drive(15);
+//        setSpeed(2000);
+//        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
