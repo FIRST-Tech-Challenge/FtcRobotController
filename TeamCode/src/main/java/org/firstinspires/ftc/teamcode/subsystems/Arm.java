@@ -163,6 +163,27 @@ public class Arm implements Subsystem {
                 );
         desired_second_joint_angle = desired_first_joint_angle + desired_second_joint_angle;
     }
+    private void setDesiredAnglesToJointsNegativeX(){
+        desired_second_joint_angle = - Util.aCosInDegrees(
+                (Math.pow(current_desired_point.getX(), 2)
+                        + Math.pow(current_desired_point.getY(), 2)
+                        - Math.pow(l1, 2) - Math.pow(l2, 2))
+                        / (2 * l1 * l2));
+        desired_first_joint_angle =
+                Math.toDegrees(Math.atan2(
+                                current_desired_point.getY(),
+                                current_desired_point.getX()
+                        )
+
+                )
+                        + Math.toDegrees(
+                        Math.atan2(
+                                l2 * Util.sinInDegrees(desired_second_joint_angle)
+                                , (l1 + l2 * Util.cosInDegrees(desired_second_joint_angle))
+                        )
+                );
+        desired_second_joint_angle = desired_first_joint_angle - desired_second_joint_angle;
+    }
         public void setDesiredPoint(Translation2d point){
             //checks if the given point is already the desired point
             if (!point.equals(current_desired_point)) {
@@ -175,6 +196,9 @@ public class Arm implements Subsystem {
                         //set angles accordingly -x and x, not the same calculation for both
                         if (current_desired_point.getX() >= 0) {
                             setDesiredAnglesToJointsPositiveX();
+                        }
+                        else{
+                            setDesiredAnglesToJointsNegativeX();
                         }
                     }
                 }
