@@ -20,7 +20,6 @@ import java.util.*;
 
 /** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
-    private static final boolean USE_WEBCAM = true;
     private static final double LIFT_VEL = 500;
     private static final double ROTATIONS_PER_INCH = PI * 1.85;
     private TfodProcessor tfod;
@@ -28,10 +27,9 @@ public abstract class CSBase extends LinearOpMode {
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
-    private WebcamName camera;
     public TouchSensor touchSensor;
     public side stageSide;
-    public color teamColor;
+    public color allianceColor;
     private IMU imu;
     /*
      - Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -52,7 +50,6 @@ public abstract class CSBase extends LinearOpMode {
     static final double     B                       = 1.1375;
     static final double     M                       = 0.889;
     static final double     TURN_SPEED              = 0.5;
-    static final boolean    TURN_TYPE               = false;
     static final double[]   BOUNDARIES              = {0, 350};
     static final double     CAR_WASH_POWER          = 1.0;
     spike pos; // Team prop position
@@ -66,7 +63,7 @@ public abstract class CSBase extends LinearOpMode {
     private static final String[] LABELS = {
             "prop",
     };
-    static final IMU.Parameters IMU_PARAMETERS = new IMU.Parameters(new RevHubOrientationOnRobot(
+    private static final IMU.Parameters IMU_PARAMETERS = new IMU.Parameters(new RevHubOrientationOnRobot(
             RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     ));
@@ -75,7 +72,7 @@ public abstract class CSBase extends LinearOpMode {
     public enum color {
         r, b, n
     }
-    /** Side of the robot **/
+    /** Side of the robot. Options: f, b **/
     public enum side {
         f, b
     }
@@ -100,6 +97,7 @@ public abstract class CSBase extends LinearOpMode {
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
+            telemetry.addData("Warning","teamColor not specified");
             useCam = false;
         }
 
@@ -123,8 +121,8 @@ public abstract class CSBase extends LinearOpMode {
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
         if (useCam) {
             try {
-                camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-                initProcessors();
+                WebcamName cam = hardwareMap.get(WebcamName.class, "Webcam 1");
+                initProcessors(cam);
             } catch (Exception e) {except(e);}
         }
 
@@ -156,6 +154,8 @@ public abstract class CSBase extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        allianceColor = teamColor;
+
         waitForStart();
         runtime.reset();
     }
@@ -169,6 +169,12 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Initializes all hardware devices on the robot. **/
     public void setup() { setup(color.n, false); }
+
+    /**
+     * Initializes all hardware devices on the robot.
+     * @param isRed Is the team prop red?
+     * @deprecated - use setup() with a color instead
+     */
     @Deprecated
     public void setup(boolean isRed) { if (isRed) { setup(color.r,true); } else { setup(color.b,true); } }
 
@@ -240,7 +246,7 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Turns the robot a specified number of degrees. Positive values turn right,
-     * negative values turn left. A degrees value of zero will cause the robot to turn until manually stopped.
+     * negative values turn left.
      * @param degrees The amount of degrees to turn.
      * @param direction (opt.) Direction to turn if degrees is zero.
      */
@@ -254,42 +260,37 @@ public abstract class CSBase extends LinearOpMode {
         sleep(100);
         imu.resetYaw();
         double tolerance = 1;
-        if (TURN_TYPE) { // Boolean determines the method the robot takes to turn x degrees
-            encoderDrive(degrees / 7.5);
-            stopRobot();
-        } else {
-            degrees *= -1;
-            double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double currentAngle;
-            double initialGoalAngle = startAngle + degrees;
-            double correctedGoalAngle = initialGoalAngle;
-            double difference = 999;
-            double turnModifier;
-            double turnPower;
-            if (abs(initialGoalAngle) > 180) {
-                correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
-            }
-            while (opModeIsActive() && (difference > tolerance) && degrees != 0) {
-                currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-                difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                turnModifier = min(1, (difference + 3) / 30);
-                turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier * direct;
-                lb.setPower(-turnPower);
-                rb.setPower(turnPower);
-                lf.setPower(-turnPower);
-                rf.setPower(turnPower);
-                currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-                difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-                telemetry.addData("Corrected Goal", correctedGoalAngle);
-                telemetry.addData("Initial Goal", initialGoalAngle);
-                telemetry.addData("Start", startAngle);
-                telemetry.addData("Angle", currentAngle);
-                telemetry.addData("Distance from goal", difference);
-                telemetry.update();
-            }
-            stopRobot();
-            sleep(WAIT_TIME);
+        degrees *= -1;
+        double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double currentAngle;
+        double initialGoalAngle = startAngle + degrees;
+        double correctedGoalAngle = initialGoalAngle;
+        double difference = 999;
+        double turnModifier;
+        double turnPower;
+        if (abs(initialGoalAngle) > 180) {
+            correctedGoalAngle -= abs(initialGoalAngle) / initialGoalAngle * 360;
         }
+        while (opModeIsActive() && (difference > tolerance) && degrees != 0) {
+            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
+            turnModifier = min(1, (difference + 3) / 30);
+            turnPower = degrees / abs(degrees) * TURN_SPEED * turnModifier * direct;
+            lb.setPower(-turnPower);
+            rb.setPower(turnPower);
+            lf.setPower(-turnPower);
+            rf.setPower(turnPower);
+            currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
+            telemetry.addData("Corrected Goal", correctedGoalAngle);
+            telemetry.addData("Initial Goal", initialGoalAngle);
+            telemetry.addData("Start", startAngle);
+            telemetry.addData("Angle", currentAngle);
+            telemetry.addData("Distance from goal", difference);
+            telemetry.update();
+        }
+        stopRobot();
+        sleep(WAIT_TIME);
     }
 
     /** Turns the robot a specified number of degrees. Positive values turn right,
@@ -453,7 +454,7 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
-    private void initProcessors(){
+    private void initProcessors(WebcamName camera){
 
         tfod = new TfodProcessor.Builder()
 
@@ -470,11 +471,7 @@ public abstract class CSBase extends LinearOpMode {
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        if (USE_WEBCAM) {
-            builder.setCamera(camera);
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
+        builder.setCamera(camera);
 
         builder.enableLiveView(true);
 
@@ -630,9 +627,6 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Place the purple pixel. **/
     public void purplePixel() {
-        double modifier = 1;
-        if (stageSide == side.f) { modifier *= -1; }
-        if (teamColor == color.b) { modifier *= -1; }
         s(2);
         drive(-18);
         s(.5);
@@ -653,9 +647,9 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
 //        turn(180 * modifier);
         drive(17);
-//        setSpeed(1000);
-//        drive(10);
-//        setSpeed(2000);
+//*        setSpeed(1000);
+//*       drive(10);
+//*      setSpeed(2000);
     }
 
     public void moveLift(double inches) {
@@ -670,5 +664,24 @@ public abstract class CSBase extends LinearOpMode {
             telemetry.update();
         }
     }
+
+
+    /** A less space consuming way to add telemetry.
+    * Format: "(caption): (content)" 
+    * @param quick If true, instantly update the telemetry. **/
+   public void print(String caption, Object content, boolean quick){
+       telemetry.addData(caption, content);
+       if (quick) {
+           update();
+       }
+   }
+
+   /** A less space consuming way to add telemetry. **/
+   public void print(String caption, Object content) { print(caption, content, false); }
+
+   /** A less space consuming way to update the displayed telemetry. **/
+  public void update() {
+       telemetry.update();
+  }
 
 }
