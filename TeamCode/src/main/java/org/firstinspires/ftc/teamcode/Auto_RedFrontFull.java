@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-@Autonomous(name = "Red Frontc", group = "CenterStage", preselectTeleOp = "Full")
+@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Full")
 public class Auto_RedFrontFull extends CSBase {
     @Override
     public void runOpMode() {
@@ -24,15 +24,20 @@ public class Auto_RedFrontFull extends CSBase {
         turn(-90);
         s(3);
         drive(70);
-        // startStrafe(dir.l);
-        // while(opModeIsActive() && !detectTag(ID)) { continue; }
-        // endStrafe();
-        // align(ID);
-        setSpeed(1000);
-        drive(15);
-        setSpeed(2000);
-        ejectPixel();
-        drive(5);
+        for (int i = 0; i < 6; i++) {
+            telemetry.addData("i", i);
+            telemetry.update();
+            strafe(5, dir.r);
+            if (tagDetections(ID, 1000) != null) {
+                break;
+            }
+        }
+        align(ID);
+//        setSpeed(1000);
+//        drive(15);
+//        setSpeed(2000);
+//        ejectPixel();
+//        drive(5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
