@@ -55,14 +55,20 @@ public class Arm implements Subsystem {
     public void setMotorFromAngle1(){
         double voltageSetPoint = angleToVoltageA1();
         double currentVoltageMeasure=potentiometer1.getVoltage();
-        double PIDvalue= m_pid1.calculate(voltageSetPoint,currentVoltageMeasure);
-        arm1.set(PIDvalue+calculateFeedForwardSecondJoint(voltageToAngle1(currentVoltageMeasure)));
+        double currentVoltageMeasure2 =potentiometer2.getVoltage();
+//        double PIDvalue= m_pid1.calculate(voltageSetPoint,currentVoltageMeasure);
+        double motorSet = calculateFeedForwardFirstJoint(voltageToAngle1(currentVoltageMeasure))
+                +calculateFeedForwardSecondJoint(voltageToAngle2(currentVoltageMeasure2));
+        dashboard.addData("first joint output:", motorSet);
+//        arm1.set(motorSet);
     }
     public void setMotorFromAngle2(){
         double voltageSetPoint = angleToVoltageA2();
         double currentVoltageMeasure=potentiometer2.getVoltage();
-        double PIDvalue= m_pid2.calculate(voltageSetPoint,currentVoltageMeasure);
-        arm2.set(PIDvalue+calculateFeedForwardSecondJoint(voltageToAngle2(currentVoltageMeasure)));
+//        double PIDvalue= m_pid2.calculate(voltageSetPoint,currentVoltageMeasure);
+        double motorSet = calculateFeedForwardSecondJoint(voltageToAngle2(currentVoltageMeasure));
+        dashboard.addData("second joint output:", motorSet);
+//        arm2.set(motorSet);
 
     }
 
@@ -99,8 +105,6 @@ public class Arm implements Subsystem {
             arm2.set(secondSpeed);
 
         }
-        dashboard.addData("first joint output:", firstSpeed);
-        dashboard.addData("second joint output:", secondSpeed);
         servo.setPosition(servoPos);
 
     }
@@ -120,23 +124,24 @@ public class Arm implements Subsystem {
     public void periodic() {
         dashboard.addData("potent1:", potentiometer1.getVoltage());
         dashboard.addData("potent2:", potentiometer2.getVoltage());
-
+        setMotorFromAngle2();
+        setMotorFromAngle1();
         dashboard.update();
     }
 
     private double calculateFeedForwardFirstJoint(double first_joint_angle){
 
         return  (resistance * (
-                first_arm_weight * (g * l1 * Util.cosInDegrees(first_joint_angle) + RobotMaxVelFront  * Util.sinInDegrees(first_joint_angle))
+                first_arm_weight * (g * l1 * Util.cosInDegrees(first_joint_angle) )
         )
-                /(gear_ratio * neo_Kt))/ 10;
+                /(first_gear_ratio * neo_Kt))/ 10;
         // in volts
     }
     private double calculateFeedForwardSecondJoint(double second_joint_angle){
         return (resistance *
-                (second_arm_weight * (g * l2 * Util.cosInDegrees(second_joint_angle) + RobotMaxVelFront  * Util.sinInDegrees(second_joint_angle))
+                (second_arm_weight * (g * l2 * Util.cosInDegrees(second_joint_angle))
                 )
-                /(gear_ratio * neo_Kt))/motorMaxVolt;
+                /(second_gear_ratio * neo_Kt))/motorMaxVolt;
         //in volts
         // need to convert to pwm
     }
