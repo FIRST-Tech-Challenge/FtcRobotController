@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import static org.firstinspires.ftc.teamcode.Constants.ArmConstants.*;
 import static org.firstinspires.ftc.teamcode.Constants.*;
-import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
@@ -57,8 +57,7 @@ public class Arm implements Subsystem {
         double currentVoltageMeasure=potentiometer1.getVoltage();
         double currentVoltageMeasure2 =potentiometer2.getVoltage();
 //        double PIDvalue= m_pid1.calculate(voltageSetPoint,currentVoltageMeasure);
-        double motorSet = calculateFeedForwardFirstJoint(voltageToAngle1(currentVoltageMeasure))
-                +calculateFeedForwardSecondJoint(voltageToAngle2(currentVoltageMeasure2));
+        double motorSet = calculateFeedForwardFirstJoint(voltageToAngle1(currentVoltageMeasure));
         dashboard.addData("first joint output:", motorSet);
 //        arm1.set(motorSet);
     }

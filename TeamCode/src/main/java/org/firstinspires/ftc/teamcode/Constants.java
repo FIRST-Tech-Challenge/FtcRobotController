@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.ChassisFeedForward.*;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
+import static org.firstinspires.ftc.teamcode.Constants.ArmConstants.ArmFeedForward.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.trajectory.constraint.MecanumDriveKinematicsConstraint;
@@ -29,16 +31,26 @@ public class Constants {
 
     public static final double neo_Kt = hex_stall_torque / hex_stall_current;
 
-    public static final double motorMaxVolt = 12;
-    public static final double vMax1 = 0.8;//placeholder value
-    public static final double vMax2 = 0.8;//placeholder value
-    public static final double vMin1 = -0.8;//placeholder value
-    public static final double vMin2 = -0.8;//placeholder value
-    public static final double a1Max = 1; // placeholder, not real
-    public static final double a2Max = 1; // placeholder, not real
-    public static final double arm1Min = 0; // placeholder, not real
-    public static final double arm2Min = 0; // placeholder, not real
+    public static class ArmConstants {
 
+        public static final double motorMaxVolt = 12;
+        public static final double vMax1 = 0.8;//placeholder value
+        public static final double vMax2 = 3.1;//placeholder value
+        public static final double vMin1 = 0;//placeholder value
+        public static final double vMin2 = 0.77;//placeholder value
+        public static final double a1Max = 1; // placeholder, not real
+        public static final double a2Max = 1; // placeholder, not real
+        public static final double arm1Min = 0; // placeholder, not real
+        public static final double arm2Min = 0; // placeholder, not real
+        public static ArmFeedforward armFeedforward = new ArmFeedforward(kS,kG,kV);// omitting ka
+
+        @Config
+        public static class ArmFeedForward{
+        public static double kV = 0;
+        public static double kG = 0;
+        public static double kS = 0;
+        }
+    }
 
     public static class ChassisConstants {
         public static final TrapezoidProfile.Constraints TrapezoidConstraints = new TrapezoidProfile.Constraints(1.63, 1.47);
