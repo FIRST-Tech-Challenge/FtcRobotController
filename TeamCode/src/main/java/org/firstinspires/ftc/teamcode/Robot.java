@@ -1523,7 +1523,7 @@ public class Robot {
                 //checking imu in correct range
                 if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
 
-                    trayAngleServoPos = Math.min(-0.0048*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
+                    trayAngleServoPos = Math.min(-0.004*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
                     trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
                 } else {
 
