@@ -20,7 +20,6 @@ import java.util.*;
 
 /** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
-    private static final boolean USE_WEBCAM = true;
     private static final double LIFT_VEL = 500;
     private static final double ROTATIONS_PER_INCH = PI * 1.85;
     private TfodProcessor tfod;
@@ -28,7 +27,6 @@ public abstract class CSBase extends LinearOpMode {
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
     public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
-    private WebcamName camera;
     public TouchSensor touchSensor;
     public side stageSide;
     public color allianceColor;
@@ -123,8 +121,8 @@ public abstract class CSBase extends LinearOpMode {
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
         if (useCam) {
             try {
-                camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-                initProcessors();
+                WebcamName cam = hardwareMap.get(WebcamName.class, "Webcam 1");
+                initProcessors(cam);
             } catch (Exception e) {except(e);}
         }
 
@@ -456,7 +454,7 @@ public abstract class CSBase extends LinearOpMode {
         }
     }
    /** Initializes the TFOD and April Tag processors. **/
-    private void initProcessors(){
+    private void initProcessors(WebcamName camera){
 
         tfod = new TfodProcessor.Builder()
 
@@ -473,11 +471,7 @@ public abstract class CSBase extends LinearOpMode {
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        if (USE_WEBCAM) {
-            builder.setCamera(camera);
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
+        builder.setCamera(camera);
 
         builder.enableLiveView(true);
 
