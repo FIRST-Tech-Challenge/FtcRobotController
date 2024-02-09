@@ -592,6 +592,126 @@ public class Robot {
         telemetry.update();
     }
 
+
+    public void shortMoveToBoard2 () {
+        int polarity = isRedAlliance ? -1 : 1;
+
+        while (opMode.opModeIsActive()) {
+
+            Log.d("vision", "path: Pos " + markerPos);
+            Log.d("vision", "path: Tag " + wantedAprTagId);
+
+            if (markerLocation == MARKER_LOCATION.INNER) {
+                Log.d("vision", "path: Inner Spike");
+
+                // P1: (35, 17)
+
+                straightBlocking2(-27);
+
+                // P2: (35, 44)
+
+                setHeading(-90 * polarity, 0.7);
+
+                // P3: (43.5, 35.5)
+
+                straightBlocking2(-1);
+                setHeading(-90 * polarity, 0.7);
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking2(6);
+
+                // P3: (43.5, 35.5)
+
+                setHeading(90 * polarity, 0.7);
+                straightBlocking2(-20);
+
+                //might have to move forward here if april tag is not visible
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                break;
+
+            } else if (markerLocation == MARKER_LOCATION.OUTER) {
+                Log.d("vision", "path: Outer Spike");
+
+                // P1: (35, 17)
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-21);
+                } else {
+                    mecanumBlocking2(21);
+                }
+                setHeading(0, 0.7);
+
+                // P2: (14, 17)
+
+                straightBlocking2(-31);
+
+                // P3: (14, 48)
+
+                setHeading(-90 * polarity, 0.7);
+
+                // P4: (22.5, 39.5)
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking(1, false, 0.7);
+                setHeading(-90 * polarity, 0.7);
+                straightBlocking(6, true, 0.7);
+
+                setHeading(90 * polarity, 0.7);
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                break;
+
+            } else { //center, default
+                Log.d("vision", "path: Center Spike");
+
+                // P1: (36, 17)
+
+                straightBlocking2(-2);
+
+                if (isRedAlliance) {
+                    mecanumBlocking2(-13);
+                } else {
+                    mecanumBlocking2(13);
+                }
+                setHeading(0, 0.7);
+
+                // P2: (23, 17)
+
+                straightBlocking2(-33);
+
+                // P3: (23, 52)
+                setHeading(-90 * polarity, 0.7);
+
+                // P4: (31.5, 44)
+
+                if (!testingOnBert) {
+                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    opMode.sleep(200);
+                }
+
+                straightBlocking(6, true, 0.7);
+
+                setHeading(90 * polarity, 0.7);
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                break;
+            }
+        }
+    }
+
+
     public void shortMoveToBoard() {
         int polarity;
         double VERTICAL_TOTAL;
