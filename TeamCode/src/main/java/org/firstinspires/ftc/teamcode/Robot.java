@@ -614,7 +614,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-1);
+                straightBlocking2(-2);
                 setHeading(-90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -622,14 +622,13 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(6);
-
-                // P3: (43.5, 35.5)
+                straightBlocking2(29);
 
                 setHeading(90 * polarity, 0.7);
-                straightBlocking2(-20);
 
-                //might have to move forward here if april tag is not visible
+                mecanumBlocking2(5);
+
+                setHeading(90 * polarity, 0.7);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -640,16 +639,19 @@ public class Robot {
 
                 // P1: (35, 17)
 
+
+                straightBlocking2(-2);
+
                 if (isRedAlliance) {
-                    mecanumBlocking2(-21);
+                    mecanumBlocking2(-23);
                 } else {
-                    mecanumBlocking2(21);
+                    mecanumBlocking2(23);
                 }
                 setHeading(0, 0.7);
 
                 // P2: (14, 17)
 
-                straightBlocking2(-31);
+                straightBlocking2(-29);
 
                 // P3: (14, 48)
 
@@ -662,11 +664,13 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(1, false, 0.7);
+                straightBlocking(2, false, 0.7);
                 setHeading(-90 * polarity, 0.7);
-                straightBlocking(6, true, 0.7);
+                straightBlocking(7, true, 0.7);
 
                 setHeading(90 * polarity, 0.7);
+
+                mecanumBlocking2(-10);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -703,6 +707,12 @@ public class Robot {
                 straightBlocking(6, true, 0.7);
 
                 setHeading(90 * polarity, 0.7);
+
+                straightBlocking2(-12);
+
+                setHeading(90 * polarity, 0.7);
+
+                mecanumBlocking2(-10);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -2650,5 +2660,6 @@ public class Robot {
         mecanumBlocking2(-25); // todo: test, again maybe make method into boolean
         straightBlocking2FixHeading(-93);
         mecanumBlocking2(-18 * polarity);
+        setHeading(90 * polarity, 0.7);
     }
 }
