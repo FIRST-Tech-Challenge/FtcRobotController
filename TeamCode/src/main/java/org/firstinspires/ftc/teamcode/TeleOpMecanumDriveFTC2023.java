@@ -30,7 +30,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public DcMotor  backLeft = null;
     public DcMotor  backRight = null;
 
-    public DcMotor  climberMotor = null;
+    public DcMotor  Climber = null;
     public DcMotor  climber2 = null;
     public Servo  claw = null;
     public Servo arm1 = null;
@@ -56,7 +56,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft  = hardwareMap.get(DcMotor.class, "LB");
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
-        climberMotor  = hardwareMap.get(DcMotor.class, "Climber");
+        Climber  = hardwareMap.get(DcMotor.class, "Climber");
         climber2  = hardwareMap.get(DcMotor.class, "climber2");
         claw = hardwareMap.get(Servo.class, "Claw");
         arm1  = hardwareMap.get(Servo.class, "Arm1");
@@ -75,7 +75,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        climberMotor.setDirection(DcMotor.Direction.FORWARD);
+        Climber.setDirection(DcMotor.Direction.FORWARD);
         climber2.setDirection(DcMotor.Direction.FORWARD);
         arm1.setDirection(Servo.Direction.REVERSE);
         arm1.scaleRange(0,1);
@@ -84,7 +84,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        climberMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Climber.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         climber2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
@@ -157,10 +157,10 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         left1x = -gamepad1.left_stick_x;
         right1x = -gamepad1.right_stick_x;
 
-        double baseSpeed = 0.15;
+        double baseSpeed = 0.30;
 
         if (gamepad1.a){
-            baseSpeed = 0.25;
+            baseSpeed = 0.15;
         }
 
         double denominator = Math.max(Math.abs(left1y) + Math.abs(left1x) + Math.abs(right1x), 1);
@@ -185,59 +185,33 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         if (mySwitch.getState()) {
             telemetry.addData("switch", mySwitch.getState());
         }
-        // 0.5 is arm up
-        // 0.7 is arm down
-        if (gamepad2.x) {
-            arm1.setPosition(0.75);
-        }
-        if (gamepad2.right_stick_x > 0.1) {
-            arm1.setPosition(0.6);
-        }
-//        if (gamepad2.right_trigger > 0) {
-//            arm2.setPosition(0.2);
-//        }
-//        if (gamepad2.left_trigger > 0) {
-//            arm2.setPosition(1);
-//        }
-          if (gamepad2.y) {
-              arm1.setPosition(0.4);
 
-        }
-        if (gamepad2.right_trigger > 0.1) {
-            climberMotor.setPower(-1);
-        } else if (gamepad2.right_bumper) {
-            climberMotor.setPower(1);
-        } else {
-            climberMotor.setPower(0);
-        }
-
-        if (gamepad2.left_trigger > 0.1) {
+        if (gamepad2.left_stick_y > 0.1) {
             climber2.setPower(-1);
-        } else if (gamepad2.left_bumper) {
+        } else if (gamepad2.left_stick_y < -0.1) {
             climber2.setPower(1);
         } else {
             climber2.setPower(0);
         }
-        // "0" position is at the closed poesition
-        // furthest right is to the side of robot
-        // furthest left is a small part past 0 position
 
-        if (gamepad2.b) {
-            claw.setPosition(0.7);
+        if (gamepad2.right_stick_y > 0.1) {
+            Climber.setPower(0.25);
+        } else if (gamepad2.right_stick_y < -0.1) {
+            Climber.setPower(-0.25);
+        } else {
+            Climber.setPower(0);
         }
-        if (gamepad2.a) {
-            claw.setPosition(0.5);
+        // "1" position is at the closed poesition
+        // furthest right is to the side of robot
+        // furthest left is a small part past 1 position
+
+
 
         }
 //
 
         // Send telemetry message to signify robot running;
         //telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-        telemetry.addData("lefty",  "%.2f", left1y);
-        telemetry.addData("leftx",  "%.2f", left1x);
-        telemetry.addData("right", "%.2f", right1x);
-        telemetry.update();
-    }
 
     /*
      * Code to run ONCE after the driver hits STOP

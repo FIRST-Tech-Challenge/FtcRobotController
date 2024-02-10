@@ -72,8 +72,9 @@ public class InBackstage extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        arm1.setPosition(0.6);
         claw.setPosition(0.2);
+        sleep(100);
+        arm1.setPosition(0.6);
         sleep(2000);
         encoderDrive(DRIVE_SPEED, 4.5, 4.5, 5.0);
         telemetry.addData("Path", "Complete");
