@@ -59,7 +59,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 5;
+    private static final int DESIRED_TAG_ID = 1;
 
     private AprilTagProcessor aprilTag;
 
@@ -242,7 +242,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
             if (!errorIsAcceptable(rangeError, headingError, yawError)) {
 
-                gobbler.driveTrain.drive(drive, strafe, turn, true, runtimeTimer);
+                gobbler.driveTrain.drive(-drive, -strafe, turn, true, runtimeTimer);
+                telemetry.update();
             }
             else {
                 telemetry.addData("Made it to the intermediate position", "");
