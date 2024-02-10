@@ -59,7 +59,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 2;
+    private static final int DESIRED_TAG_ID = 1;
 
     private AprilTagProcessor aprilTag;
 
@@ -134,7 +134,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         if (targetFound) {
 
             driveToTarget();
-            placePixelOnBackboard();
+           //placePixelOnBackboard();
 
         }
     }
@@ -281,6 +281,9 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (DESIRED_TAG_ID == 1) {
             gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.Wait(0.5);
+            gobbler.driveTrain.strafeRight(2, 0.5);
+            gobbler.driveTrain.Wait(0.5);
         }
 
         else if (DESIRED_TAG_ID == 2) {
