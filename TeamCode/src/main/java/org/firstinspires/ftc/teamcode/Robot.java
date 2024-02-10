@@ -1471,7 +1471,7 @@ public class Robot {
         double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
         boolean dpadDownPreviousValue = false;
-        double relativeIMU;
+        boolean stackAttachmentOut = false;
 
         boolean linearSlideFlag = false;
 
@@ -1623,6 +1623,22 @@ public class Robot {
                 closeHook();
             } else {
                 openHook();
+            }
+
+            //dpad right - toggle stack attachment
+
+            if (gamepad2.dpad_right) {
+
+                if (stackAttachmentOut) {
+                    stackAttachmentOut = false;
+                    stackAttachmentIn();
+
+                } else {
+                    stackAttachmentOut = true;
+                    stackAttachmentOut();
+
+                }
+
             }
 
             // pivoting tray
