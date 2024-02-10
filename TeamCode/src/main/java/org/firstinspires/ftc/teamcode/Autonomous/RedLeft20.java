@@ -39,7 +39,7 @@ public class RedLeft20 extends LinearOpMode {
                         new com.arcrobotics.ftclib.geometry.Pose2d(-38, -60, new Rotation2d(toRadians(-90))));
         toSpike[0] = new Path(start);
         toSpike[0].add(new GeneralWaypoint(-40, -50, toRadians(-70), 0.4, 0.3, 5));
-        toSpike[0].add(new EndWaypoint(-41, -36, toRadians(-70), 0.4, 0.2,5, 1, toRadians(10)));
+        toSpike[0].add(new EndWaypoint(-41, -41, toRadians(-70), 0.4, 0.2,5, 1, toRadians(10)));
         toSpike[1] = new Path(start);
         toSpike[1].add(new EndWaypoint(-38, -41, toRadians(-91), 0.5, 0, 5, 2, toRadians(10)));;
         toSpike[2] = new Path(start);
@@ -59,7 +59,7 @@ public class RedLeft20 extends LinearOpMode {
             packet.put("pix", bark);
             robot.update();
         }
-        while (!isStopRequested() && opModeIsActive()) {
+        while (!isStopRequested() && opModeIsActive()&&!robot.queuer.isFullfilled()) {
             robot.queuer.queue(false, true);
             robot.upAuto();
             robot.purpurAuto();
@@ -81,7 +81,7 @@ public class RedLeft20 extends LinearOpMode {
                 preToStack[0].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
                 preToStack[0].add(new GeneralWaypoint(40, -32, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[0].add(
-                        new EndWaypoint(44, -27.5, toRadians(-179), 0.5, 0.2, 5, 2, toRadians(10)));
+                        new EndWaypoint(44, -29.5, toRadians(-179), 0.5, 0.2, 5, 2, toRadians(10)));
             }
             if (bark == 1) {
                 Path preBack = new Path();
@@ -96,7 +96,7 @@ public class RedLeft20 extends LinearOpMode {
                 preToStack[1].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
                 preToStack[1].add(new GeneralWaypoint(40, -36, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[1].add(
-                        new EndWaypoint(43, -33.5, toRadians(-175), .45, 0.3, 5, 2, toRadians(5)));
+                        new EndWaypoint(43, -35.5, toRadians(-175), .45, 0.3, 5, 2, toRadians(5)));
             }
             if (bark ==2){
                 preToStack[2] = new Path();
@@ -104,9 +104,9 @@ public class RedLeft20 extends LinearOpMode {
                         new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
                 preToStack[2].add(new GeneralWaypoint(-39, -59, toRadians(-200), 1.0, 0.3, 6));
                 preToStack[2].add(new GeneralWaypoint(16, -59, toRadians(-185), 1.0, 0.3, 6));
-                preToStack[2].add(new GeneralWaypoint(40, -45, toRadians(-180), 0.9, 0.3, 6));
+                preToStack[2].add(new GeneralWaypoint(40, -42, toRadians(-180), 0.9, 0.3, 6));
                 preToStack[2].add(
-                        new EndWaypoint(43, -39.5, toRadians(-179), .5, 0.2, 5,2, toRadians(5)));
+                        new EndWaypoint(43, -41.5, toRadians(-179), .5, 0.2, 5,2, toRadians(5)));
             }
             robot.queuer.queue(false, true);
             robot.queuer.addDelay(0.5);
@@ -129,17 +129,16 @@ public class RedLeft20 extends LinearOpMode {
 
             preToStack[2] = new Path();
             preToStack[2].add(
-                    new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+                    new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(toRadians(-180)))));
             preToStack[2].add(
                     new EndWaypoint(44, -13, toRadians(-179), .5, 0.2, 5, 3, toRadians(5)));
 
             robot.followPPPath(preToStack[2]);
-            Path pak = new Path();
-            pak.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-
 
 
             robot.resetAuto();
+            robot.queuer.waitForFinish();
+            robot.queuer.queue(false,true);
             robot.update();
         }
     }

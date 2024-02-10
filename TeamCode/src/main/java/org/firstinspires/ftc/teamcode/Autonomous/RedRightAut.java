@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class RedRightAut extends LinearOpMode {
   int bark = 1;
-  public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 8.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
+  public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 7.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
           pow1 = 0.3, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
   followRad4 = 5 ,x4 = 16.5, y4 = -44, pow4 = 0.55, buff4 = 3;
 
@@ -57,7 +57,7 @@ public class RedRightAut extends LinearOpMode {
       robot.update();
     }
 //    bark=0;
-    while (!isStopRequested() && opModeIsActive()) {
+    while (!isStopRequested() && opModeIsActive()&&!robot.queuer.isFullfilled()) {
       robot.queuer.queue(false, true);
       robot.upAuto();
       robot.purpurAuto();
@@ -84,7 +84,7 @@ public class RedRightAut extends LinearOpMode {
             new StartWaypoint(new com.arcrobotics.ftclib.geometry.Pose2d(new Translation2d(currentPose.getX(), currentPose.getY()), new Rotation2d(currentPose.getHeading()))));
 //        spikeToBackdrop[1].add(new GeneralWaypoint(currentPose.getX(), currentPose.getY()-5, currentPose.getHeading(), .5,0,3));
         spikeToBackdrop[1].add(
-            new EndWaypoint(49, -34, toRadians(-180), .45, 0.2, 14, 1, toRadians(10)));
+            new EndWaypoint(48, -34, toRadians(-180), .43, 0.2, 14, 1, toRadians(10)));
       }
 
       if (bark ==2){
@@ -97,7 +97,7 @@ public class RedRightAut extends LinearOpMode {
         spikeToBackdrop[2].add(
                 new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
         spikeToBackdrop[2].add(
-                new EndWaypoint(49, -41.5, toRadians(-179), .4, 0.3, 14, 1, toRadians(10)));
+                new EndWaypoint(48, -41.5, toRadians(-179), .4, 0.3, 14, 1, toRadians(10)));
       }
       robot.followPPPath(spikeToBackdrop[bark]);
       robot.queuer.addDelay(0.3);
@@ -153,6 +153,8 @@ public class RedRightAut extends LinearOpMode {
 //      robot.lowAuto();
 //      robot.drop();
       robot.resetAuto();
+      robot.queuer.waitForFinish();
+      robot.queuer.queue(false,true);
       robot.update();
     }
   }

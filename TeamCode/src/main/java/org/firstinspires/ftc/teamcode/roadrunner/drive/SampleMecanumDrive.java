@@ -160,7 +160,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "hangerMotor");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -240,6 +240,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         this(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
     }
 
+    public StandardTrackingWheelLocalizer getTracker(){
+        return (StandardTrackingWheelLocalizer)this.getLocalizer();
+    }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);

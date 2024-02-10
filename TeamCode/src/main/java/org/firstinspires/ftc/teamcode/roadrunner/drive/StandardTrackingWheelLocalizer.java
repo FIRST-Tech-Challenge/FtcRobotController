@@ -74,7 +74,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         super(Arrays.asList(new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftBack"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
@@ -101,7 +101,6 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         );
     }
 
-    @NonNull
     public List<Double>  getWheelVelocities() {
         // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a

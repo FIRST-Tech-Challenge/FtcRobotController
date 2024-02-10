@@ -83,14 +83,20 @@ public class Magazine {
     }
 
     public void updateBlinkin(){
-        if(pixels == 0){
-            blinkin.shotwhite();
+        if(Arm.ArmStates.HOVER.state && Claw.clawStates.GRAB.state){
+            blinkin.green();
         }
-        if(pixels == 1){
+        else if(Arm.ArmStates.GRAB.state){
+            blinkin.yellow();
+        }
+        else if(pixels == 0){
+            blinkin.red();
+        }
+        else if(pixels == 1){
+            blinkin.orange();
+        }
+        else if(pixels == 2){
             blinkin.white();
-        }
-        if(pixels == 2){
-            blinkin.rainbowrainbow();
         }
     }
 

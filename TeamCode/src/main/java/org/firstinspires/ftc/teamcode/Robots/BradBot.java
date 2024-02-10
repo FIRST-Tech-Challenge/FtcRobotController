@@ -47,7 +47,11 @@ import org.firstinspires.ftc.teamcode.Components.Twrist;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.secret.PPUI;
+import org.firstinspires.ftc.teamcode.roadrunner.secret.Waypoint;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
+import java.util.ArrayList;
 
 /** Warren Robot class to contain all the season's functions */
 public class BradBot extends BasicRobot {
@@ -70,6 +74,9 @@ public class BradBot extends BasicRobot {
   Ultrasonics ultras;
   Wrist wrist;
   Path path;
+
+  PPUI ppui;
+  double voltage=12;
 
   MecanumDrive drive;
 
@@ -102,6 +109,8 @@ public class BradBot extends BasicRobot {
     wrist = new Wrist();
     path = new Path();
     purped = false;
+    ppui = new PPUI(roadrun);
+    voltage = voltageSensor.getVoltage();
   }
 
   public int getSpikePos() {
@@ -242,8 +251,7 @@ public class BradBot extends BasicRobot {
         claw.flipTo(Claw.clawTargetStates.CLOSE);
         gapped = true;
       }
-      if (Magazine.pixels == 2
-          && GRAB.state
+      if (GRAB.state
           && !Arm.ArmTargetStates.HOVER.getState()
           && lift.getCurrentPosition() < 20) {
         claw.flipTo(Claw.clawTargetStates.GRAB);
@@ -367,6 +375,9 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+  public void loopPPUI(ArrayList<Waypoint> path, int sign){
+    ppui.followPath(path, sign);
+  }
 
   public void drop() {
     if (queuer.queue(false, queuer.isNextExecuted())) {
@@ -476,7 +487,7 @@ public class BradBot extends BasicRobot {
                               new Pose2d(speeds[0], speeds[1], speeds[2]), 12, 14, 1.2)
                       .toArray();
       roadrun.setMotorPowers(
-              (double) powers[0], (double) powers[1], (double) powers[2], (double) powers[3]);
+              (double) powers[0]*12.5/voltage, (double) powers[1]*12.5/voltage, (double) powers[2]*12.5/voltage, (double) powers[3]*12.5/voltage);
       if((double)powers[0] ==0 && (double)powers[1] ==0&&(double)powers[2] ==0 && (double)powers[3] ==0){
         queuer.done();
         pathFin = true;
@@ -549,7 +560,7 @@ public class BradBot extends BasicRobot {
     boolean left = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_dpad_left", "toggleClamp");
 
     boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "toggleFieldCentricSlow");
-    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "toggleFieldCentricSlow");
+    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "hanger up");
 
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
@@ -669,7 +680,7 @@ public class BradBot extends BasicRobot {
 //      preloader.deposit();
     }
     if (isY2) {
-//      preloader.load();
+      hanger.up();
     }
 
     roadrun.setWeightedDrivePower(
@@ -686,7 +697,7 @@ public class BradBot extends BasicRobot {
       claw.flipTo(Claw.clawTargetStates.CLOSE);
       gapped = true;
     }
-    if(Magazine.pixels==2 && GRAB.state&& !Arm.ArmTargetStates.HOVER.getState() && lift.getCurrentPosition()<20){
+    if(GRAB.state&& !Arm.ArmTargetStates.HOVER.getState() && lift.getCurrentPosition()<20){
       claw.flipTo(Claw.clawTargetStates.GRAB);
     }
     if (Claw.clawStates.GRAB.getState() && GRAB.state) {
@@ -719,6 +730,7 @@ public class BradBot extends BasicRobot {
     twrist.update();
     claw.update();
     magazine.update();
+    hanger.update();
   }
 
   public void stop() {

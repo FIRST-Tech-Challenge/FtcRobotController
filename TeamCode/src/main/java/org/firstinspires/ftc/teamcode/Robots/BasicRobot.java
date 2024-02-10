@@ -74,7 +74,9 @@ public class BasicRobot{
 
     public void update(){
         loops++;
-        time = op.getRuntime();
+        double newTime = op.getRuntime();
+        packet.put("loopTime", 1/(newTime-time));
+        time = newTime;
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();

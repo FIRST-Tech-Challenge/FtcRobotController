@@ -58,7 +58,7 @@ public class BlueLeft20 extends LinearOpMode {
             packet.put("pix", bark);
             robot.update();
         }
-        while (!isStopRequested() && opModeIsActive()) {
+        while (!isStopRequested() && opModeIsActive()&&!robot.queuer.isFullfilled()) {
             robot.queuer.queue(false, true);
             robot.upAuto();
             robot.purpurAuto();
