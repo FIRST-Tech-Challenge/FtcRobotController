@@ -39,47 +39,84 @@ public class AutoBL extends LinearOpMode {
 
             switch(propPosition) {
                 case MIDDLE:
-                    //Drop off pixel
-                    robot.moveRobot(.5, -38, 10);
-                    //Pretend to drop pixel
+                    // Dropper Mode
+                    robot.moveRobot(.5, -15, 10);
                     robot.dropPixel();
                     sleep(1000);
+                    robot.moveRobot(.5, 2, 10);
+
+                    // Turn to face camera to board so we can find april tag
+                    robot.turnRobot(Direction.RIGHT, 13, .5, 10);
+                    robot.moveRobot(.5, 21, 10);
+                    robot.moveArmMotorToPosition(-1200, 10);
+                    robot.moveRobot(.5, -5, 10);
+
+                    //Drop off pixel
+                    //robot.moveRobot(.5, -38, 10);
+                    //Pretend to drop pixel
+                    //robot.dropPixel();
+                    //sleep(1000);
                     //Backup and clear pixel
-                    robot.moveRobot(.5, -5, 5);
+                    //robot.moveRobot(.5, -5, 5);
                     //Turn to parking location
-                    robot.turnRobot(Direction.RIGHT, 16, .5, 10);
+                    //robot.turnRobot(Direction.RIGHT, 16, .5, 10);
                     //Park
-                    robot.moveRobot(.5, 30, 10);
+                    //robot.moveRobot(.5, 30, 10);
                     break;
                 case LEFT:
-                    //Drop off pixel
-                    robot.moveRobot(.5, -43.75, 10);
-                    //Turn left
-                    robot.turnRobot(Direction.RIGHT, 6, .5, 10);
-                    //Move to line
-                    robot.moveRobot(.5, 9, 5);
-                    //Drop pixel
+                    //Dropper Mode
+                    robot.moveRobot(.5, -13, 10);
+                    robot.turnRobot(Direction.LEFT, 7, .5, 10);
                     robot.dropPixel();
+                    robot.moveRobot(.5, 3, 10);
+                    robot.turnRobot(Direction.RIGHT, 13, .5, 10);
+                    robot.moveRobot(.5, 2, 10);
+                    robot.turnRobot(Direction.RIGHT, 6.5, .5, 10);
+                    robot.moveRobot(.5, 22, 10);
+                    robot.moveArmMotorToPosition(-1200, 10);
+                    robot.moveRobot(.5, -5, 10);
+
+                    //Drop off pixel
+                    //robot.moveRobot(.5, -43.75, 10);
+                    //Turn left
+                    //robot.turnRobot(Direction.RIGHT, 6, .5, 10);
+                    //Move to line
+                    //robot.moveRobot(.5, 9, 5);
+                    //Drop pixel
+                    //robot.dropPixel();
                     //Park
-                    robot.moveRobot(.5, 45, 10);
-                    robot.turnRobot(Direction.RIGHT, 14, 5, 10);
-                    robot.moveRobot(.5, 13, 5);
+                    //robot.moveRobot(.5, 45, 10);
+                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
+                    //robot.moveRobot(.5, 13, 5);
                     break;
                 default:
+                    //Dropper Mode
+                    robot.moveRobot(.5, -13, 10);
+                    robot.turnRobot(Direction.RIGHT, 9, .5, 10);
+                    robot.moveRobot(.5, -3, 10);
+                    robot.dropPixel();
+                    robot.moveRobot(.5, 2, 10);
+                    robot.turnRobot(Direction.RIGHT, 6, .5, 10);
+                    robot.moveRobot(.5, 9, 10);
+                    robot.turnRobot(Direction.LEFT, 3, .5, 10);
+                    robot.moveRobot(.5, 15, 10);
+                    robot.moveArmMotorToPosition(-1200, 10);
+                    robot.moveRobot(.5, -5, 10);
+
                     //Drop off pixel
-                    robot.moveRobot(.5, -30.75, 10);
+                    //robot.moveRobot(.5, -30.75, 10);
                     //Turn left
 
-                    robot.turnRobot(Direction.RIGHT, 14, .5, 10);
-                    robot.moveRobot(.5, -5, 10);
-                    robot.dropPixel();
-                    robot.moveRobot(.5, 5, 10);
-                    robot.turnRobot(Direction.LEFT, 15, .5, 10);
+                    //robot.turnRobot(Direction.RIGHT, 14, .5, 10);
+                    //robot.moveRobot(.5, -5, 10);
+                    //robot.dropPixel();
+                    //robot.moveRobot(.5, 5, 10);
+                    //robot.turnRobot(Direction.LEFT, 15, .5, 10);
                     //Move to line
-                    robot.moveRobot(.5, 30.75, 5);
+                    //robot.moveRobot(.5, 30.75, 5);
                     //Drop pixel
                     //Move awayn from line
-                    robot.moveRobot(.5, -9, 5);
+                    //robot.moveRobot(.5, -9, 5);
                     //Turn to park
                     //robot.turnRobot(Direction.RIGHT, 19, 5, 10);
                     //Park
