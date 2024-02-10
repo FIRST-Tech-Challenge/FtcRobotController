@@ -14,10 +14,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class PropFindBlue extends OpenCvPipeline {
+public class PropFindRight extends OpenCvPipeline {
 
-    public final Rect interestMid = new Rect(227, 148, 32, 50);
-    public final Rect interestRight = new Rect(545, 190, 32, 50);
+    public final Rect interestMid = new Rect(35, 185, 32, 50);
+    public final Rect interestRight = new Rect(320, 260, 32, 50);
     private final Rect pix = new Rect(1,1,1,1);
 
     public enum pos {
@@ -31,7 +31,7 @@ public class PropFindBlue extends OpenCvPipeline {
     Telemetry telemetry;
     private final TelemetryPacket packet;
 
-    public PropFindBlue(Telemetry telemetry, TelemetryPacket packet) {
+    public PropFindRight(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
         this.packet = packet;
     }
@@ -67,8 +67,7 @@ public class PropFindBlue extends OpenCvPipeline {
 
         inputToHSV(input);
 
-//        Core.inRange(HSV, new Scalar(105,40,0), new Scalar(115,255,255), mask);
-        Core.inRange(HSV, new Scalar(0,40,0), new Scalar(255,255,255), mask);
+        Core.inRange(HSV, new Scalar(0,50,0), new Scalar(255,255,255), mask);
 
         diff_im = new Mat();
         Core.add(diff_im, Scalar.all(0), diff_im);
@@ -97,21 +96,10 @@ public class PropFindBlue extends OpenCvPipeline {
             position = pos.LEFT;
         }
 
-        packet.put("avg h mid", avg_h_mid);
-        packet.put("avg s mid", avg_s_mid);
-        packet.put("avg h right", avg_h_right);
-        packet.put("avg s right", avg_s_right);
-        packet.put("pos: ", position);
-        packet.put("sf",Core.mean(HSV.submat(pix)).val[0]);
-        packet.put("sf1",Core.mean(HSV.submat(pix)).val[1]);
-        packet.put("sf2",Core.mean(HSV.submat(pix)).val[2]);
-
-        dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 
         Imgproc.rectangle(input, new Point(interestMid.x, interestMid.y), new Point(interestMid.x + interestMid.width, interestMid.y+ interestMid.height), new Scalar(0,255,0),1 );
         Imgproc.rectangle(input, new Point(interestRight.x, interestRight.y), new Point(interestRight.x + interestRight.width, interestRight.y+ interestRight.height), new Scalar(0,255,0),1 );
-
 
         return input; //dst
     }

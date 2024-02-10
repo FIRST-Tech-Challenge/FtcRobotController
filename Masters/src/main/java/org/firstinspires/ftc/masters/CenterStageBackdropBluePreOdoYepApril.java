@@ -19,7 +19,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 @Config
 @Autonomous(name = "Center Stage Backdrop Blue Pre Odo April", group = "competition")
@@ -70,8 +69,8 @@ public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         frontWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "backWebcam"), cameraMonitorViewId);
-        PropFindBlue myPipeline;
-        frontWebcam.setPipeline(myPipeline = new PropFindBlue(telemetry,packet));
+        PropFindLeft myPipeline;
+        frontWebcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
         camera.setPipeline(aprilTagDetectionPipeline);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
         frontWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

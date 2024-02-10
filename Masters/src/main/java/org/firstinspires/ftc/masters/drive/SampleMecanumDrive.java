@@ -85,6 +85,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
     DcMotor intakeSlides = null;
     DcMotor backSlides = null;
+    DcMotor otherBackSlides;
     DcMotor hangingMotor = null;
 
     Servo planeRaise;
@@ -178,6 +179,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
         intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
+        otherBackSlides = hardwareMap.dcMotor.get("otherBackSlides");
 
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
@@ -230,14 +232,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         hangingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         hangingMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void openClaw(){
@@ -474,6 +479,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             telemetry.addData("liftPower", liftPower);
         }
         backSlides.setPower(liftPower);
+        otherBackSlides.setPower(liftPower);
     }
 
     public DcMotor getBackSlides(){

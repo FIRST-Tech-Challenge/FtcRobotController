@@ -51,6 +51,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
     DcMotor intakeSlides = null;
     DcMotor backSlides = null;
+    DcMotor otherBackSlides = null;
     DcMotor hangingMotor = null;
 
     Servo planeRaise;
@@ -186,6 +187,7 @@ public class AutomatedTeleop extends LinearOpMode {
 
         //backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -195,6 +197,7 @@ public class AutomatedTeleop extends LinearOpMode {
         intakeSlides.setPower(.5);
 
         backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -203,6 +206,7 @@ public class AutomatedTeleop extends LinearOpMode {
         }
 
         backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         clawArm.setPosition(CSCons.clawArmTransition);
         clawAngle.setPosition(CSCons.clawAngleTransition);
@@ -236,6 +240,9 @@ public class AutomatedTeleop extends LinearOpMode {
             if (gamepad1.right_trigger>0.5){
                 driveMode= DriveMode.END_GAME;
             }
+            if (gamepad1.left_trigger>0.5){
+                driveMode= DriveMode.NORMAL;
+            }
             switch (driveMode) {
                 case NORMAL:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -250,6 +257,17 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
                         planeRaise.setPosition((CSCons.droneFlat));
                     }
+
+                    if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME){ //down
+                        backSlidePos = OuttakePosition.BOTTOM;
+                        target = backSlidePos.getTarget();
+                    }
+
+                    if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME){ //up
+                        backSlidePos = OuttakePosition.MID;
+                        target = backSlidePos.getTarget();
+                    }
+
                     break;
                 case PIXEL_SCORE:
                     drive(gamepad1.left_stick_x, 0, 0);
@@ -480,15 +498,13 @@ public class AutomatedTeleop extends LinearOpMode {
                         outtakeState= OuttakeState.MoveToTransfer;
                     }
 
-                    if (gamepad2.left_bumper){ //down
+                    if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME){ //down
                         target-=60;
                     }
 
-                    if (gamepad2.right_bumper){ //up
+                    if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME){ //up
                         target+=60;
                     }
-
-
 
                     //what button to mode back to transfer?
                     // what order to move (slide down or flip first?
@@ -593,6 +609,7 @@ public class AutomatedTeleop extends LinearOpMode {
         double liftPower = pid + ff;
 
         backSlides.setPower(liftPower);
+        otherBackSlides.setPower(liftPower);
     }
 
     protected ElapsedTime closeHook(){

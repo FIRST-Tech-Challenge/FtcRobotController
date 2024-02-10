@@ -56,8 +56,8 @@ public class CenterStageBackdropBlue extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindBlue myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindBlue(telemetry,packet));
+        PropFindLeft myPipeline;
+        webcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -83,7 +83,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //CenterStageComputerVisionPipelines CV = new CenterStageComputerVisionPipelines(hardwareMap, telemetry);
-        PropFindBlue.pos propPos = null;
+        PropFindLeft.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
         Pose2d startPose = new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)); //Start position for roadrunner
@@ -145,9 +145,9 @@ public class CenterStageBackdropBlue extends LinearOpMode {
         }
 
         currentState = State.PURPLE_DEPOSIT_PATH;
-        if (propPos == PropFindBlue.pos.LEFT) {
+        if (propPos == PropFindLeft.pos.LEFT) {
             drive.followTrajectoryAsync(purpleDepositPathL);
-        } else if (propPos == PropFindBlue.pos.RIGHT) {
+        } else if (propPos == PropFindLeft.pos.RIGHT) {
             drive.followTrajectoryAsync(purpleDepositPathR);
         } else {
             drive.followTrajectoryAsync(purpleDepositPathC);
@@ -173,9 +173,9 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                     drive.closeHook();
                     sleep(500);
                     drive.intakeToTransfer();
-                    if (propPos == PropFindBlue.pos.LEFT){
+                    if (propPos == PropFindLeft.pos.LEFT){
                         drive.turn(Math.toRadians(-45));
-                    } else if (propPos == PropFindBlue.pos.RIGHT){
+                    } else if (propPos == PropFindLeft.pos.RIGHT){
                         drive.turn(Math.toRadians(60));
                     }
                     currentState = State.UNTURN;
@@ -188,11 +188,11 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                     break;
                 case BACKUP_FROM_SPIKES:
                     if (!drive.isBusy()) {
-                        if (propPos == PropFindBlue.pos.LEFT){
+                        if (propPos == PropFindLeft.pos.LEFT){
                             drive.followTrajectoryAsync(yellowDepositPathL);
-                        } else if (propPos == PropFindBlue.pos.RIGHT){
+                        } else if (propPos == PropFindLeft.pos.RIGHT){
                             drive.followTrajectoryAsync(yellowDepositPathR);
-                        } else if (propPos == PropFindBlue.pos.MID){
+                        } else if (propPos == PropFindLeft.pos.MID){
                             drive.followTrajectoryAsync(yellowDepositPathC);
                         }
 

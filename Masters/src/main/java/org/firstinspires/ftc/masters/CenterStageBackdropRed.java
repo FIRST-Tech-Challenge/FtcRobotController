@@ -54,8 +54,8 @@ public class CenterStageBackdropRed extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindRed myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindRed(telemetry,packet));
+        PropFindRight myPipeline;
+        webcam.setPipeline(myPipeline = new PropFindRight(telemetry,packet));
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -80,7 +80,7 @@ public class CenterStageBackdropRed extends LinearOpMode {
         }
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        PropFindRed.pos propPos = null;
+        PropFindRight.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)); //Start position for roadrunner
@@ -142,9 +142,9 @@ public class CenterStageBackdropRed extends LinearOpMode {
         }
 
         currentState = State.PURPLE_DEPOSIT_PATH;
-        if (propPos == PropFindRed.pos.LEFT) {
+        if (propPos == PropFindRight.pos.LEFT) {
             drive.followTrajectoryAsync(purpleDepositPathL);
-        } else if (propPos == PropFindRed.pos.RIGHT) {
+        } else if (propPos == PropFindRight.pos.RIGHT) {
             drive.followTrajectoryAsync(purpleDepositPathR);
         } else {
             drive.followTrajectoryAsync(purpleDepositPathC);
@@ -186,11 +186,11 @@ public class CenterStageBackdropRed extends LinearOpMode {
                     break;
                 case BACKUP_FROM_SPIKES:
                     if (!drive.isBusy()) {
-                        if (propPos == PropFindRed.pos.LEFT){
+                        if (propPos == PropFindRight.pos.LEFT){
                             drive.followTrajectoryAsync(yellowDepositPathL);
-                        } else if (propPos == PropFindRed.pos.RIGHT){
+                        } else if (propPos == PropFindRight.pos.RIGHT){
                             drive.followTrajectoryAsync(yellowDepositPathR);
-                        } else if (propPos == PropFindRed.pos.MID){
+                        } else if (propPos == PropFindRight.pos.MID){
                             drive.followTrajectoryAsync(yellowDepositPathC);
                         }
 
