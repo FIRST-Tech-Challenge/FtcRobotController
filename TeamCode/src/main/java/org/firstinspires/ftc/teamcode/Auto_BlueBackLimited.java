@@ -21,15 +21,15 @@ public class Auto_BlueBackLimited extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(-90);
+        turn(-90, dir.l);
         drive(tilesToInches(-1));
-        turn(-90);
+        turn(-90, dir.l);
         drive(tilesToInches(2));
-        turn(90, dir.l);
-        setSpeed(1000);
-        drive(tilesToInches(0.4));
+        turn(-90, dir.l);
+        drive(tilesToInches(0.5));
         ejectPixel();
-        drive(tilesToInches(0.1));
+        setSpeed(1000);
+        drive(tilesToInches(0.2));
 
 
 //        drive(tilesToInches(-2.1));

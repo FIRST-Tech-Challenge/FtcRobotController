@@ -23,7 +23,7 @@ public class Auto_BlueBackFull extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(-90);
+        turn(-90, dir.l);
         drive(tilesToInches(-1));
 //        turn(-90);
 //        drive(tilesToInches(-1));

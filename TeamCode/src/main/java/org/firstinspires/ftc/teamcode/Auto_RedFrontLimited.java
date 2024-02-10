@@ -22,7 +22,7 @@ public class Auto_RedFrontLimited extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(-90);
+        turn(-90, dir.l);
         s(3);
         drive(70);
         setSpeed(1000);

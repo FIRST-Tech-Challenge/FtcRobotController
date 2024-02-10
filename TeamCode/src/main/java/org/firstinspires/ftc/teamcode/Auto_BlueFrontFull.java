@@ -23,7 +23,7 @@ public class Auto_BlueFrontFull extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(90, dir.l);
+        turn(-90, dir.l);
         s(3);
         drive(-70);
         for (int i = 0; i < 6; i++) {

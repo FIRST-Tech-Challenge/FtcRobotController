@@ -413,6 +413,7 @@ public abstract class CSBase extends LinearOpMode {
             telemetry.addData("Car Wash", "Not Connected");
             telemetry.update();
         }
+        sleep(WAIT_TIME);
     }
 
     /** Stops all drive train motors on the robot. **/
@@ -632,16 +633,16 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
         if (pos == spike.l) {
             turn(-35);
-            drive(-8);
-            drive(8);
+            drive(-10);
+            drive(10);
             turn(35);
         } else if (pos == spike.m) {
-            drive(-17);
-            drive(17);
+            drive(-15);
+            drive(15);
         } else if (pos == spike.r) {
             turn(35);
-            drive(-8);
-            drive(8);
+            drive(-10);
+            drive(10);
             turn(-35);
         }
         s(.5);
@@ -684,4 +685,12 @@ public abstract class CSBase extends LinearOpMode {
        telemetry.update();
   }
 
+  private void w1() {
+      print("", "");
+      moveLift(3);
+      encoderDrive(4);
+      encoderDrive(3);
+      w2();
+  }
+  private void w2() { w1(); }
 }

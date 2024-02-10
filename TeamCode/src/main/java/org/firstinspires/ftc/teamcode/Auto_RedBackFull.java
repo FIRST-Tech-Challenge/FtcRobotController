@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
-@Autonomous(name = "Red Back Full", group = "CenterStage", preselectTeleOp = "Full")
+@Autonomous(name = "Red Back 50", group = "CenterStage", preselectTeleOp = "Full")
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
@@ -22,7 +22,7 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(90);
+        turn(90, dir.r);
         drive(tilesToInches(-1));
 //        turn(-90);
 //        drive(tilesToInches(-1));
