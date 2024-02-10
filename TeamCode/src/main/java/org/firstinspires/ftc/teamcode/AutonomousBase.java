@@ -848,11 +848,12 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param time   How long to drive (milliseconds)
      */
     public void timeDriveStraight( double speed, int time ) {
-        if(opModeIsActive()) {
-            robot.driveTrainMotors(speed, speed, speed, speed);
-            sleep(time);
-            robot.stopMotion();
+        ElapsedTime timer = new ElapsedTime();
+        robot.driveTrainMotors(speed, speed, speed, speed);
+        while(opModeIsActive() && (timer.milliseconds() <= time)) {
+            performEveryLoop();
         }
+        robot.stopMotion();
     }
 
     /*---------------------------------------------------------------------------------------------
@@ -861,11 +862,12 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param time   How long to strafe (milliseconds)
      */
     public void timeDriveStrafe( double speed, int time ) {
-        if(opModeIsActive()) {
-            robot.driveTrainMotors(-speed, speed, speed, -speed);
-            sleep(time);
-            robot.stopMotion();
+        ElapsedTime timer = new ElapsedTime();
+        robot.driveTrainMotors(-speed, speed, speed, -speed);
+        while(opModeIsActive() && (timer.milliseconds() <= time)) {
+            performEveryLoop();
         }
+        robot.stopMotion();
     }
 
 
