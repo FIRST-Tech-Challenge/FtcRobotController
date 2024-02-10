@@ -10,7 +10,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Disabled
-@TeleOp(name = "Tele-OpFieldCentric")
+//@TeleOp(name = "Tele-OpFieldCentric")
 public class fieldCentric extends LinearOpMode {
 
     //comment to help with commit2

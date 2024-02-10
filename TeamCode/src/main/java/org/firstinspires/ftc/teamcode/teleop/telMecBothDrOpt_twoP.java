@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "TeleOpFinal")
+@Disabled
+//@TeleOp(name = "TeleOpFinal")
 public class telMecBothDrOpt_twoP extends LinearOpMode {
 
     @Override

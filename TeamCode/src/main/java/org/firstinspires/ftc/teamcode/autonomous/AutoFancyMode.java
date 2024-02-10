@@ -62,8 +62,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Auto Backup to Corner")
-public class AutoBackToCorner extends LinearOpMode {
+@Autonomous(name="Auto Fancy")
+public class AutoFancyMode extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor         frontLeftMotor   = null;
@@ -71,6 +71,7 @@ public class AutoBackToCorner extends LinearOpMode {
     private DcMotor         backLeftMotor   = null;
     private DcMotor         backRightMotor  = null;
 
+    DcMotor lifterMotor = null;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -82,8 +83,8 @@ public class AutoBackToCorner extends LinearOpMode {
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     //static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // Neverest 40 motor (old motor - first competition)
     static final double     COUNTS_PER_MOTOR_REV    = 751.9;    // possible new motor spec (actual was 751.8)
-                                                                // 752 ... 48 inches was 48.5 inches driven
-                                                                // 751.8 ... 48 inches was 47 inches driven
+    // 752 ... 48 inches was 48.5 inches driven
+    // 751.8 ... 48 inches was 47 inches driven
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
 
     //Gear Ratio ... 26.9:1
@@ -91,7 +92,7 @@ public class AutoBackToCorner extends LinearOpMode {
     //measuring with the calipers, it looked like wheel diameter might be 3.805 (but it might be human error in my measurement)
     static final double     WHEEL_DIAMETER_INCHES   = 3.8582;     //  TETRIX Mechanum For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+            (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.5;
 
@@ -103,6 +104,8 @@ public class AutoBackToCorner extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
         backRightMotor = hardwareMap.get(DcMotor.class, "br");
+
+        lifterMotor = hardwareMap.dcMotor.get("lifter");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -121,6 +124,8 @@ public class AutoBackToCorner extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
 
         // Send telemetry message to indicate successful Encoder reset
@@ -143,6 +148,31 @@ public class AutoBackToCorner extends LinearOpMode {
         telemetry.addData("Currently at",  " at fl: %7d fr:%7d  bl:%7d  br:%7d",
                 frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition(),
                 backLeftMotor.getCurrentPosition(), backRightMotor.getCurrentPosition());
+
+        //raise the pixel arm to deliver the pixel
+        while(lifterMotor.getCurrentPosition() < 695) {
+            float lifterRaiseMotorPower = 0.5F;
+            if (lifterRaiseMotorPower > 0) {
+
+                if (Math.abs(lifterMotor.getCurrentPosition()) < 695 &&
+                        Math.abs(lifterMotor.getCurrentPosition()) > 600) {                 //was 1025 with the old motor, now 701 (using a value that is 1% less than that)
+                    //pixellifterRaise
+                    lifterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    lifterMotor.setPower(0.3 * (lifterRaiseMotorPower));
+
+                } else if (Math.abs(lifterMotor.getCurrentPosition()) < 600) {                 //was 1025 with the old motor, now 701 (using a value that is 1% less than that)
+                    //pixellifterRaise
+                    lifterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    lifterMotor.setPower(0.5 * (lifterRaiseMotorPower));
+
+                } else {
+                    lifterMotor.setPower(0f);
+                }
+            } else {
+                //intake
+                lifterMotor.setPower(0);
+            }
+        }
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -200,9 +230,9 @@ public class AutoBackToCorner extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (frontLeftMotor.isBusy() && backLeftMotor.isBusy()
-                   && frontRightMotor.isBusy() && backRightMotor.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (frontLeftMotor.isBusy() && backLeftMotor.isBusy()
+                            && frontRightMotor.isBusy() && backRightMotor.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget,  newRightFrontTarget);

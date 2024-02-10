@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Disabled
-@TeleOp(name = "Tele-Op")
+//@TeleOp(name = "Tele-Op")
 public class teleopMecanum extends LinearOpMode {
 
     //comment to help with commit2

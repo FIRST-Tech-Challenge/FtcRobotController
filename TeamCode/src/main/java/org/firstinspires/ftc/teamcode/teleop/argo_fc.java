@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+@Config
 
 @TeleOp(name = "TeleOpWord_FC")
 public class argo_fc extends argonautRobot {

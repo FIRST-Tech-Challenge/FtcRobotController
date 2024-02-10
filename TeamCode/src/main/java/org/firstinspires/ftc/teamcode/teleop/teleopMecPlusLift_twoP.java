@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Disabled
-@TeleOp(name = "Tele-Op_PlusLiftTwoP")
+//@TeleOp(name = "Tele-Op_PlusLiftTwoP")
 public class teleopMecPlusLift_twoP extends LinearOpMode {
 
     //comment to help with commit2
