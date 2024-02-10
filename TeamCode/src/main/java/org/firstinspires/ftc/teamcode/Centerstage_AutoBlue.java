@@ -282,7 +282,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         if (DESIRED_TAG_ID == 1) {
             gobbler.driveTrain.moveBackward(15, 0.5);
             gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeRight(2, 0.5);
+            gobbler.driveTrain.strafeRight(4, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
