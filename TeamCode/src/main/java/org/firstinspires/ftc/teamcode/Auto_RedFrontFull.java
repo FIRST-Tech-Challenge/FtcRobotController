@@ -22,7 +22,7 @@ public class Auto_RedFrontFull extends CSBase {
         purplePixel();
         drive(-2);
         turn(90);
-        s(3);
+        s(2);
         drive(-70);
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);

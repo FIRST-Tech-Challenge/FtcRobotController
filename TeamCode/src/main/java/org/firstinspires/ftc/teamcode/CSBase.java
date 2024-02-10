@@ -57,7 +57,7 @@ public abstract class CSBase extends LinearOpMode {
     public VisionPortal visionPortal;
     public String tfodModelName;
     private AprilTagProcessor tagProcessor;
-    private static final int WAIT_TIME = 500;
+    private static final int WAIT_TIME = 250;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {

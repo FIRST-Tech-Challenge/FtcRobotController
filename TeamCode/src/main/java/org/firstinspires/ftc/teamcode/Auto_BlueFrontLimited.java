@@ -23,7 +23,7 @@ public class Auto_BlueFrontLimited extends CSBase {
         purplePixel();
         drive(-2);
         turn(90);
-        s(3);
+        s(2);
         drive(70);
         setSpeed(1000);
         drive(15);
