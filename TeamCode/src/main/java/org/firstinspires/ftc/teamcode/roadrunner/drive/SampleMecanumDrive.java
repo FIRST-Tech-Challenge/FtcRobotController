@@ -240,6 +240,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         this(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
     }
 
+    public StandardTrackingWheelLocalizer getTracker(){
+        return (StandardTrackingWheelLocalizer)this.getLocalizer();
+    }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
