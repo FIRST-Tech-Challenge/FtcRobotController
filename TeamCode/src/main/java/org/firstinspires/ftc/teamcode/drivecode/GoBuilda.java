@@ -18,7 +18,8 @@ public class GoBuilda extends LinearOpMode {
     private DcMotor backLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backRightMotor;
-    private Servo linearGripper;
+    private Servo servoRight;
+    private Servo servoLeft;
     private RevBlinkinLedDriver revBlinkin;
 
 
@@ -38,14 +39,8 @@ public class GoBuilda extends LinearOpMode {
         double Rx;
         double Ly;
         double Lx;
-        double Lt;
-        double Rt;
-        double a;
-        double h;
         //Value for armLock
         boolean armLocked;
-        boolean c = false;
-        boolean d = false;
 
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
         armBrace = hardwareMap.get(DcMotor.class, "armBrace");
@@ -54,15 +49,13 @@ public class GoBuilda extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        linearGripper = hardwareMap.get(Servo.class, "linearGripper");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
         revBlinkin = hardwareMap.get(RevBlinkinLedDriver.class, "revBlinkin");
-
-        a = .05;
 
         //Sets variables to 0 on initialization
         rotation = 0;
         ext = 0;
-        h = 0;
         armLocked = false;
         waitForStart();
 
@@ -77,7 +70,6 @@ public class GoBuilda extends LinearOpMode {
             armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armBrace.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armBrace.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            linearGripper.getPosition();
 
             frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,14 +82,11 @@ public class GoBuilda extends LinearOpMode {
                 //Ext and Rotation are set to receive inputs from encoders
                 ext = armExt.getCurrentPosition();
                 rotation = armRotate.getCurrentPosition();
-                h = linearGripper.getPosition();
                 //Multipliers are applied to X and Y and they are tied to sticks on the game pads.
                 Ly = gamepad1.left_stick_y;
                 Rx = gamepad1.right_stick_x;
                 Lx = gamepad1.left_stick_x;
                 Ry = gamepad1.right_stick_y;
-                Lt = gamepad1.left_trigger;
-                Rt = gamepad1.right_trigger;
 
                 if (gamepad1.right_trigger > .5) {
                     if (Ly > 0.2 || Ly < -0.2 || Rx > .02 || Rx < -.02) {
@@ -214,19 +203,12 @@ public class GoBuilda extends LinearOpMode {
                 }
 
                 //Gripper
-                if (gamepad2.b && h < 3.7) {
-                    c = true;
-                    d = false;
-                    linearGripper.setPosition(a+=.02);
+                if (gamepad2.b) {
+                    servoLeft.setPosition(0);
+                    servoRight.setPosition(1);
                 } else if (gamepad2.a) {
-                    c = false;
-                    d = true;
-                    a = .01;
-                    linearGripper.setPosition(.01);
-                } else if (c == true) {
-                    linearGripper.setPosition(a);
-                } else if (d == true) {
-                    linearGripper.setPosition(.01);
+                    servoLeft.setPosition(0.3);
+                    servoRight.setPosition(0.7);
                 }
 
 
@@ -239,7 +221,6 @@ public class GoBuilda extends LinearOpMode {
                 telemetry.addData("Front Right Motor Power", frontRightMotor.getPower());
                 telemetry.addData("Front Left Motor Power", frontLeftMotor.getPower());
                 telemetry.addData("Arm Locked: ", armLocked);
-                telemetry.addData("Servo Position", linearGripper.getPosition());
                 telemetry.update();
             } //end while loop
         } //end if loop

@@ -76,7 +76,8 @@ public class PlaceLinePixel extends LinearOpMode {
     public DcMotor armExt;
     public DcMotor armBrace;
     public DcMotor armRotate;
-    public Servo linearGripper;
+    public Servo servoLeft;
+    public Servo servoRight;
 
     public double index = 0;
 
@@ -104,7 +105,8 @@ public class PlaceLinePixel extends LinearOpMode {
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
         armBrace = hardwareMap.get(DcMotor.class, "armBrace");
         armExt = hardwareMap.get(DcMotor.class, "armExt");
-        linearGripper = hardwareMap.get(Servo.class, "linearGripper");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
 
         initTfod();
 
@@ -238,32 +240,23 @@ public class PlaceLinePixel extends LinearOpMode {
 
     public void PixelLocation1() {
         try {
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(600);
+            RobotMoveFarwardHalf();
+            TimeUnit.MILLISECONDS.sleep(300);
 
-            frontLeftMotor.setPower(.3);
-            backLeftMotor.setPower(.3);
-            TimeUnit.MILLISECONDS.sleep(700);
+            RobotTurnLeft();
+            TimeUnit.MILLISECONDS.sleep(80);
 
-            frontLeftMotor.setPower(0);
-            backRightMotor.setPower(-.3);
-            TimeUnit.MILLISECONDS.sleep(1800);
+            RobotMoveFarwardHalf();
+            TimeUnit.MILLISECONDS.sleep(250);
 
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(200);
+            RobotMoveBackwardHalf();
+            TimeUnit.MILLISECONDS.sleep(250);
 
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(500);
+            RobotTurnRight();
+            TimeUnit.MILLISECONDS.sleep(140);
 
-            frontLeftMotor.setPower(0);
-            backLeftMotor.setPower(0);
-            TimeUnit.MILLISECONDS.sleep(1250);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(800);
+            RobotMoveBackwardHalf();
+            TimeUnit.MILLISECONDS.sleep(190);
 
             RobotStop();
         } catch (InterruptedException e) {
@@ -273,14 +266,11 @@ public class PlaceLinePixel extends LinearOpMode {
 
     public void PixelLocation2() {
         try {
-           RobotMoveFarward();
-           TimeUnit.MILLISECONDS.sleep(2300);
+           RobotMoveFarwardHalf();
+           TimeUnit.MILLISECONDS.sleep(800);
 
-           RobotStop();
-           TimeUnit.MILLISECONDS.sleep(100);
-
-           RobotMoveBackward();
-           TimeUnit.MILLISECONDS.sleep(1700);
+           RobotMoveBackwardHalf();
+           TimeUnit.MILLISECONDS.sleep(300);
         } catch (InterruptedException e) {
             //Nothing
         }
@@ -288,32 +278,23 @@ public class PlaceLinePixel extends LinearOpMode {
 
     public void PixelLocation3() {
         try {
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(600);
+            RobotMoveFarwardHalf();
+            TimeUnit.MILLISECONDS.sleep(300);
 
-            frontRightMotor.setPower(-.3);
-            backRightMotor.setPower(-.3);
-            TimeUnit.MILLISECONDS.sleep(500);
+            RobotTurnRight();
+            TimeUnit.MILLISECONDS.sleep(160);
 
-            frontRightMotor.setPower(-0);
-            backLeftMotor.setPower(.3);
-            TimeUnit.MILLISECONDS.sleep(1700);
+            RobotMoveFarwardHalf();
+            TimeUnit.MILLISECONDS.sleep(250);
 
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(200);
+            RobotMoveBackwardHalf();
+            TimeUnit.MILLISECONDS.sleep(230);
 
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(500);
+            RobotTurnLeft();
+            TimeUnit.MILLISECONDS.sleep(130);
 
-            frontRightMotor.setPower(0);
-            backRightMotor.setPower(0);
-            TimeUnit.MILLISECONDS.sleep(1200);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotMoveBackward();
-            TimeUnit.MILLISECONDS.sleep(650);
+            RobotMoveBackwardHalf();
+            TimeUnit.MILLISECONDS.sleep(190);
 
             RobotStop();
         } catch (InterruptedException e) {
@@ -375,22 +356,10 @@ public class PlaceLinePixel extends LinearOpMode {
     public void BlueLocation1() {
         try {
             RobotTurnLeft();
-            TimeUnit.MILLISECONDS.sleep(1200);
+            TimeUnit.MILLISECONDS.sleep(700);
 
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(1500);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
-
-            RobotStrafeRight();
-            TimeUnit.MILLISECONDS.sleep(2600);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
+            RobotMoveFarwardHalf();
+            TimeUnit.MILLISECONDS.sleep(200);
         } catch (InterruptedException e) {
             //Nothing
         }
@@ -485,9 +454,6 @@ public class PlaceLinePixel extends LinearOpMode {
             armRotate.setPower(.05);
             TimeUnit.MILLISECONDS.sleep(1000);
 
-            linearGripper.setPosition(.3);
-            TimeUnit.MILLISECONDS.sleep(500);
-
             armExt.setPower(-1);
             TimeUnit.MILLISECONDS.sleep(500);
 
@@ -523,9 +489,6 @@ public class PlaceLinePixel extends LinearOpMode {
             armBrace.setPower(.05);
             armRotate.setPower(.05);
             TimeUnit.MILLISECONDS.sleep(1000);
-
-            linearGripper.setPosition(.3);
-            TimeUnit.MILLISECONDS.sleep(500);
 
             armExt.setPower(-1);
             TimeUnit.MILLISECONDS.sleep(500);
@@ -569,9 +532,6 @@ public class PlaceLinePixel extends LinearOpMode {
             armRotate.setPower(.05);
             TimeUnit.MILLISECONDS.sleep(1000);
 
-            linearGripper.setPosition(.3);
-            TimeUnit.MILLISECONDS.sleep(500);
-
             armExt.setPower(-1);
             TimeUnit.MILLISECONDS.sleep(500);
 
@@ -601,31 +561,111 @@ public class PlaceLinePixel extends LinearOpMode {
     }
 
     public void RobotMoveFarward() {
-        frontLeftMotor.setPower(-.5);
-        frontRightMotor.setPower(.5);
-        backLeftMotor.setPower(-.5);
-        backRightMotor.setPower(.5);
+        index = 0;
+        try {
+            while (index <= 1) {
+                frontLeftMotor.setPower(-index);
+                frontRightMotor.setPower(index);
+                backLeftMotor.setPower(-index);
+                backRightMotor.setPower(index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void RobotMoveFarwardHalf() {
+        index = 0;
+        try {
+            while (index <= 0.5) {
+                frontLeftMotor.setPower(-index);
+                frontRightMotor.setPower(index);
+                backLeftMotor.setPower(-index);
+                backRightMotor.setPower(index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void RobotMoveBackward() {
-        frontLeftMotor.setPower(.5);
-        frontRightMotor.setPower(-.5);
-        backLeftMotor.setPower(.5);
-        backRightMotor.setPower(-.5);
+        index = 0;
+        try {
+            while (index <= 1) {
+                frontLeftMotor.setPower(index);
+                frontRightMotor.setPower(-index);
+                backLeftMotor.setPower(index);
+                backRightMotor.setPower(-index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void RobotMoveBackwardHalf() {
+        index = 0;
+        try {
+            while (index <= 0.5) {
+                frontLeftMotor.setPower(index);
+                frontRightMotor.setPower(-index);
+                backLeftMotor.setPower(index);
+                backRightMotor.setPower(-index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void RobotTurnRight() {
-        frontLeftMotor.setPower(-.5);
-        frontRightMotor.setPower(-.5);
-        backLeftMotor.setPower(-.5);
-        backRightMotor.setPower(-.5);
+        index = 0;
+        try {
+            while (index <= 0.5) {
+                frontLeftMotor.setPower(-index);
+                frontRightMotor.setPower(-index);
+                backLeftMotor.setPower(-index);
+                backRightMotor.setPower(-index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void RobotTurnLeft() {
-        frontLeftMotor.setPower(.5);
-        frontRightMotor.setPower(.5);
-        backLeftMotor.setPower(.5);
-        backRightMotor.setPower(.5);
+        index = 0;
+        try {
+            while (index <= 0.5) {
+                frontLeftMotor.setPower(index);
+                frontRightMotor.setPower(index);
+                backLeftMotor.setPower(index);
+                backRightMotor.setPower(index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
     public void RobotStop() {
@@ -636,34 +676,85 @@ public class PlaceLinePixel extends LinearOpMode {
     }
 
     public void RobotStrafeLeft() {
-        frontLeftMotor.setPower(-.5);
-        frontRightMotor.setPower(.5);
-        backLeftMotor.setPower(.5);
-        backRightMotor.setPower(-.5);
+        index = 0;
+        try {
+            while (index <= 1) {
+                frontLeftMotor.setPower(-index);
+                frontRightMotor.setPower(index);
+                backLeftMotor.setPower(index);
+                backRightMotor.setPower(-index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
     }
 
-    public void RobotStrafeRight() {
-        frontLeftMotor.setPower(.5);
-        frontRightMotor.setPower(-.5);
-        backLeftMotor.setPower(-.5);
-        backRightMotor.setPower(-.5);
-    }
-
-    public void test() {
+    public void RobotStrafeLeftHalf() {
+        index = 0;
         try {
             while (index <= 0.5) {
                 frontLeftMotor.setPower(-index);
                 frontRightMotor.setPower(index);
+                backLeftMotor.setPower(index);
+                backRightMotor.setPower(-index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void RobotStrafeRight() {
+        index = 0;
+        try {
+            while (index <= 1) {
+                frontLeftMotor.setPower(index);
+                frontRightMotor.setPower(-index);
                 backLeftMotor.setPower(-index);
                 backRightMotor.setPower(index);
                 telemetry.addData("Index: ", index);
                 telemetry.update();
                 index += 0.1;
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(50);
             }
         } catch (InterruptedException e) {
             //Nothing
         }
+    }
+
+    public void RobotStrafeRightHalf() {
+        index = 0;
+        try {
+            while (index <= 0.5) {
+                frontLeftMotor.setPower(index);
+                frontRightMotor.setPower(-index);
+                backLeftMotor.setPower(-index);
+                backRightMotor.setPower(index);
+                telemetry.addData("Index: ", index);
+                telemetry.update();
+                index += 0.1;
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void Grab() {
+        servoLeft.setPosition(0.3);
+        servoRight.setPosition(0.7);
+    }
+
+    public void Release() {
+        servoLeft.setPosition(0);
+        servoRight.setPosition(1);
     }
 
 }   // end class

@@ -25,7 +25,8 @@ public class AutoTest extends PlaceLinePixel {
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
         armBrace = hardwareMap.get(DcMotor.class, "armBrace");
         armExt = hardwareMap.get(DcMotor.class, "armExt");
-        linearGripper = hardwareMap.get(Servo.class, "linearGripper");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
 
         try {
 
@@ -34,8 +35,6 @@ public class AutoTest extends PlaceLinePixel {
             waitForStart();
 
             if (opModeIsActive()) {
-                linearGripper.setPosition(.7);
-                TimeUnit.MILLISECONDS.sleep(250);
 
                 RobotMoveFarward();
                 TimeUnit.MILLISECONDS.sleep(250);

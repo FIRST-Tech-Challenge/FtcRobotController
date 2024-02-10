@@ -23,7 +23,8 @@ public class BlueAuto1 extends PlaceLinePixel {
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
         armBrace = hardwareMap.get(DcMotor.class, "armBrace");
         armExt = hardwareMap.get(DcMotor.class, "armExt");
-        linearGripper = hardwareMap.get(Servo.class, "linearGripper");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
 
         try {
 
@@ -32,14 +33,12 @@ public class BlueAuto1 extends PlaceLinePixel {
             waitForStart();
 
             if (opModeIsActive()) {
-                linearGripper.setPosition(.7);
+                Grab();
                 TimeUnit.MILLISECONDS.sleep(250);
 
-                RobotMoveFarward();
-                TimeUnit.MILLISECONDS.sleep(250);
+                RobotMoveFarwardHalf();
 
                 RobotStop();
-                TimeUnit.MILLISECONDS.sleep(250);
 
                 armUp();
 
@@ -61,6 +60,7 @@ public class BlueAuto1 extends PlaceLinePixel {
                 TimeUnit.MILLISECONDS.sleep(500);
 
                 BlueLocation1();
+                /*
 
                 if (Location1 == true) {
                     BoardPixel1();
@@ -68,7 +68,7 @@ public class BlueAuto1 extends PlaceLinePixel {
                     BoardPixel2();
                 } else if (Location3 == true) {
                     BoardPixel3();
-                }
+                }*/
 
                 TimeUnit.MILLISECONDS.sleep(100);
             }
