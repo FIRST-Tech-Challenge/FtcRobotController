@@ -560,7 +560,7 @@ public class BradBot extends BasicRobot {
     boolean left = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_dpad_left", "toggleClamp");
 
     boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "toggleFieldCentricSlow");
-    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "toggleFieldCentricSlow");
+    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "hanger up");
 
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
@@ -680,7 +680,7 @@ public class BradBot extends BasicRobot {
 //      preloader.deposit();
     }
     if (isY2) {
-//      preloader.load();
+      hanger.up();
     }
 
     roadrun.setWeightedDrivePower(
@@ -730,6 +730,7 @@ public class BradBot extends BasicRobot {
     twrist.update();
     claw.update();
     magazine.update();
+    hanger.update();
   }
 
   public void stop() {

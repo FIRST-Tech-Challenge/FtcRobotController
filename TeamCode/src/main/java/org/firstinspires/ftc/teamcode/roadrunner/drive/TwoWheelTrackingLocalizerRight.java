@@ -39,8 +39,8 @@ public class TwoWheelTrackingLocalizerRight extends RFTwoTrackingWheelLocalizer 
     public static final double WHEEL_RADIUS = 1.377 / 2; // in
     public static final double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static final double PARALLEL_X = 0; // X is the up and down direction
-    public static final double PARALLEL_Y = -12.93 / 2; // Y is the strafe direction
+    public static final double PARALLEL_X = -5.8; // X is the up and down direction
+    public static final double PARALLEL_Y = -12.29 / 2; // Y is the strafe direction
 
     public static final double PERPENDICULAR_X = 0;
     public static final double PERPENDICULAR_Y = 0;
@@ -60,7 +60,7 @@ public class TwoWheelTrackingLocalizerRight extends RFTwoTrackingWheelLocalizer 
 
         this.drive = drive;
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightBack"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftBack"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
     }
@@ -87,7 +87,7 @@ public class TwoWheelTrackingLocalizerRight extends RFTwoTrackingWheelLocalizer 
         op.telemetry.addData("a", getPoseEstimate().getHeading() * 180 / PI);
         return Arrays.asList(
                 encoderTicksToInches(parallelEncoder.getCurrentPosition()),
-                encoderTicksToInches(perpendicularEncoder.getCurrentPosition())
+                encoderTicksToInches(perpendicularEncoder.getCurrentPosition()*2/1.3779)
         );
     }
 
@@ -96,7 +96,7 @@ public class TwoWheelTrackingLocalizerRight extends RFTwoTrackingWheelLocalizer 
     public List<Double> getWheelVelocities() {
         return Arrays.asList(
                 encoderTicksToInches(parallelEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(perpendicularEncoder.getCorrectedVelocity())
+                encoderTicksToInches(perpendicularEncoder.getCorrectedVelocity()*2/1.3779)
         );
     }
 }

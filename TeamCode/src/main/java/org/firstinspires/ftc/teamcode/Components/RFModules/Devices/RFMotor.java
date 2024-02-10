@@ -52,6 +52,7 @@ public class RFMotor {
     private double[] positions = new double[8];
     private double maxtickcount = 10000;
     private double mintickcount = 0;
+    private double additionalVelo = 0;
     private final double DEFAULTCOEF1 = 0.0001;
     private final double DEFAULTCOEF2 = 0.01;
     private final double lastError = 0;
@@ -134,9 +135,9 @@ public class RFMotor {
         if (p_targetPos < mintickcount) {
             p_targetPos = mintickcount;
         }
-        position = rfMotor.getCurrentPosition();
+        position = rfMotor.getCurrentPosition()+additionalTicks;
         targetPos = p_targetPos;
-        acceleration = rfMotor.getVelocity() - velocity;
+        acceleration = rfMotor.getVelocity() - velocity + additionalVelo;
         velocity += acceleration;
         acceleration /= (time - lastTime);
         if (!sameTarget) {
@@ -187,7 +188,7 @@ public class RFMotor {
     public double[] getTargetMotion(double p_curve) {
         double[] targets = {0, 0};
 
-        relativeDist = targetPos - getCurrentPosition();
+        relativeDist = targetPos - getCurrentPosition()+additionalTicks;
 
         if (relativeDist == 0) {
             return targets;
@@ -205,8 +206,8 @@ public class RFMotor {
             velocities[0] = direction * velocity;
             positions[0] = direction * currentTickPos;
         } else {
-            velocities[0] = direction * rfMotor.getVelocity();
-            positions[0] = direction * rfMotor.getCurrentPosition();
+            velocities[0] = direction * (rfMotor.getVelocity()+additionalVelo);
+            positions[0] = direction * (rfMotor.getCurrentPosition()+additionalTicks);
         }
 
         if (velocities[0] == 0) {
@@ -233,8 +234,8 @@ public class RFMotor {
             positions[0] = currentTickPos;
             isSim = false;
         } else {
-            velocities[0] = rfMotor.getVelocity();
-            positions[0] = rfMotor.getCurrentPosition();
+            velocities[0] = rfMotor.getVelocity()+additionalVelo;
+            positions[0] = rfMotor.getCurrentPosition()+additionalTicks;
         }
 
         targets[0] = getTargetVelocity(BasicRobot.time);
@@ -603,6 +604,10 @@ public class RFMotor {
         additionalTicks = p_position - rfMotor.getCurrentPosition();
     }
 
+    public void setCurrentVelocity(double p_velocity){
+        additionalVelo= p_velocity-rfMotor.getVelocity();
+    }
+
     public void resetPosition(){
         rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -683,7 +688,7 @@ public class RFMotor {
         if(profile==null){
             velocity = rfMotor.getVelocity();
         }
-        return rfMotor.getVelocity();
+        return rfMotor.getVelocity()+additionalVelo;
     }
 
     public void setTarget(double p_target) {
