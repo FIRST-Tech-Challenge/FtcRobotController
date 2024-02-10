@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRedTruss extends LinearOpMode {
-
+public class LongRedFreeway extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -16,19 +15,29 @@ public class ShortRedTruss extends LinearOpMode {
         robot.initVisionProcessing();
         double slideStartingPosition;
 
+        // robot.detectPropEarly();
+
         waitForStart();
 
         while (opModeIsActive()) {
 
+            /*
+            if (robot.markerPos == MarkerDetector.MARKER_POSITION.UNDETECTED ||
+                    robot.markerPos == MarkerDetector.MARKER_POSITION.UNKNOWN) {
+                robot.detectMarkerPosition();
+                Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
+            }
+
+            */
+
             robot.detectMarkerPosition();
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
-            //robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, false, robot.markerPos);
+            robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
-            robot.shortMoveToBoard2();
-
+            robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
@@ -36,17 +45,25 @@ public class ShortRedTruss extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
-            robot.boardToTruss();
-            robot.trussToStackAndIntake();
+            robot.boardToMiddle();
+            robot.middleToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
-            robot.stackToBoardTruss();
+            robot.stackToBoard();
 
-            robot.alignToBoardFast(6); // todo remove hard-coded value
-            robot.autoOuttake(false, slideStartingPosition);
-
+            robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.autoOuttake(false, slideStartingPosition);
+
             break;
+
         }
     }
 }
+
+// todo write timeout for apriltag final forward
+// todo how to stop streaming
+// todo bring back to board
+// todo set complementary tag id
+// todo slide not high enough second time
