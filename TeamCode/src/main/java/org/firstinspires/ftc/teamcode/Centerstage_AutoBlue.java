@@ -208,7 +208,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         // as possible.  To that extent, we'll position the robot in such a way that it will only
         // need to drive forward.
 
-        driveToIntermediatePosition();
+        //driveToIntermediatePosition();
         driveToFinalPosition();
 
         if (hasSecondCamera) {
@@ -241,21 +241,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // spending a certain amount of time here.
             if (desiredTag == null) {
                 continue;
-            }
-
-            gobbler.driveTrain.strafeRight(5,0.5);
-            gobbler.driveTrain.Wait(3);
-
-            if (DESIRED_TAG_ID == 1) {
-                gobbler.driveTrain.moveBackward(15, 0.5);
-            }
-
-            else if (DESIRED_TAG_ID == 2) {
-                gobbler.driveTrain.moveBackward(16, 0.5);
-            }
-
-            else if (DESIRED_TAG_ID == 3) {
-                gobbler.driveTrain.moveBackward(20, 0.5);
             }
 
             double rangeError = desiredTag.ftcPose.range - desiredDistance;
@@ -291,8 +276,26 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     private void driveToFinalPosition() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-        gobbler.driveTrain.strafe(6, 0.25);
-        gobbler.driveTrain.moveForward(-20, 0.5);
+//        gobbler.driveTrain.strafe(6, 0.25);
+//        gobbler.driveTrain.moveForward(-20, 0.5);
+
+        if (DESIRED_TAG_ID == 1) {
+            gobbler.driveTrain.moveBackward(15, 0.5);
+        }
+
+        else if (DESIRED_TAG_ID == 2) {
+            gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.Wait(0.5);
+            gobbler.driveTrain.strafeLeft(2, 0.5);
+            gobbler.driveTrain.Wait(0.5);
+        }
+
+        else if (DESIRED_TAG_ID == 3) {
+            gobbler.driveTrain.moveBackward(15, 0.5);
+        }
+
+        gobbler.driveTrain.moveBackward(7, 0.5);
+
         // If using RoadRunner, can just directly put in a RR path to go from current position to
         // the desired final position in front of the backboard
     }
@@ -306,18 +309,14 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     // Once we're in position, execute code to put the pixel on the backboard
     // Probably just a combination of moving the lift and mailbox.
     private void placePixelOnBackboard() {
-
         gobbler.outtake.driveLift(-1.0);
-        gobbler.driveTrain.Wait(3);
+        gobbler.driveTrain.Wait(2);
         gobbler.outtake.driveLift(0.0);
         gobbler.outtake.openTrapdoor();
         gobbler.driveTrain.Wait(1);
         gobbler.outtake.closeTrapdoor();
         gobbler.outtake.driveLift(1.0);
-        gobbler.driveTrain.Wait(3);
+        gobbler.driveTrain.Wait(1.5);
         gobbler.outtake.driveLift(0.0);
-
-
     }
-
 }   // end class
