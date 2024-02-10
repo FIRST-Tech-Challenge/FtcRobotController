@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSub
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
-public class RoadRunnerSubsystem_RED {
+public class RoadRunnerSubsystem_BLUE {
     protected SampleMecanumDrive drive;
     /*-------------------------------------------------------
     -Mechanisms-
@@ -110,31 +110,31 @@ public class RoadRunnerSubsystem_RED {
     protected Integer stackStationTangetValue;
     protected Integer parkingTangetValue;
 
-    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
-    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, TileInverted - (RobotY/2), Math.toRadians(270));
-    protected Pose2d rightPixel_SHORT = new Pose2d(Tile - (RobotY/2), 1.5 * TileInverted, Math.toRadians(180));
+    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), Tile + (RobotX/2), Math.toRadians(180));
+    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, Tile + (RobotY/2), Math.toRadians(90));
+    protected Pose2d rightPixel_SHORT = new Pose2d(Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(0));
 
-    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted + (RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
-    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, TileInverted - (RobotY/2), Math.toRadians(270));
-    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), TileInverted, Math.toRadians(180));
+    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted + (RobotY/2), Tile + (RobotX/2), Math.toRadians(180));
+    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, Tile + (RobotY/2), Math.toRadians(90));
+    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), Tile, Math.toRadians(0));
 
-    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.25 * TileInverted, Math.toRadians(180)); // Default
-    protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * TileInverted, Math.toRadians(180));
-    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * TileInverted, Math.toRadians(180)); // Default
+    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(180));
+    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.25 * TileInverted, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2),TileInverted/2, Math.toRadians(180)); // Default
-    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),TileInverted, Math.toRadians(180));
-    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * TileInverted, Math.toRadians(180)); // Default
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2, Math.toRadians(180)); // Default
+    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
+    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d parkingInner = new Pose2d(2.5 * Tile, TileInverted/2, Math.toRadians(180));
-    protected Pose2d parkingMiddle = new Pose2d(2 * Tile, 1.5 * TileInverted, Math.toRadians(180));
-    protected Pose2d parkingOuter = new Pose2d(2.5 * Tile, 2.5 * TileInverted, Math.toRadians(180));
+    protected Pose2d parkingInner = new Pose2d(2.5 * Tile, Tile/2, Math.toRadians(180));
+    protected Pose2d parkingMiddle = new Pose2d(2 * Tile, 1.5 * Tile, Math.toRadians(180));
+    protected Pose2d parkingOuter = new Pose2d(2.5 * Tile, 2.5 * Tile, Math.toRadians(180));
 
-    protected Vector2d stationClose_Inner = new Vector2d(Tile, TileInverted/2);
-    protected Vector2d stationFar_Inner = new Vector2d(2 * TileInverted,TileInverted/2);
+    protected Vector2d stationClose_Inner = new Vector2d(Tile, Tile/2);
+    protected Vector2d stationFar_Inner = new Vector2d(2 * TileInverted,Tile/2);
 
-    protected Vector2d stationClose_Outer = new Vector2d(Tile, 2.5 * TileInverted);
-    protected Vector2d stationFar_Outer = new Vector2d(2 * TileInverted,2.5 * TileInverted);
+    protected Vector2d stationClose_Outer = new Vector2d(Tile, 2.5 * Tile);
+    protected Vector2d stationFar_Outer = new Vector2d(2 * TileInverted,2.5 * Tile);
     /*-------------------------------------------------------
     -FTCLib Commands-
     -------------------------------------------------------*/
@@ -197,9 +197,9 @@ public class RoadRunnerSubsystem_RED {
     /*-------------------------------------------------------
     -La program-
     -------------------------------------------------------*/
-    RoadRunnerSubsystem_RED(HardwareMap hardwareMap, Pose2d HomePose,
-                        StartingPosition startingPosition, Path path,PixelStack pixelStack,
-                        ParkingPosition parkingPosition){
+    RoadRunnerSubsystem_BLUE(HardwareMap hardwareMap, Pose2d HomePose,
+                             StartingPosition startingPosition, Path path, PixelStack pixelStack,
+                             ParkingPosition parkingPosition){
 
         this.drive = new SampleMecanumDrive(hardwareMap);
         this.startingPosition = startingPosition;
