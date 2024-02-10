@@ -59,7 +59,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 5;
+    private static final int DESIRED_TAG_ID = 2;
 
     private AprilTagProcessor aprilTag;
 
@@ -106,12 +106,19 @@ public class Centerstage_AutoBlue extends LinearOpMode {
 
         if (opModeIsActive()) {
             PlaceSecondPixel();
+            parkRobot();
         }
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end runOpMode()
+
+    private void parkRobot() {
+
+
+
+    }
 
     private void PlaceSecondPixel() {
         // Want to avoid a scenario wherein the camera doesn't recognize the april tag on the first
@@ -123,10 +130,12 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         // How do we want to handle potentially needing to wait for our alliance partner to
         // place their pixel on the backboard before we can?
 
-        // What do we want to do if we don't identify the target?
+        // What do we want        to do if we don't identify the target?
         if (targetFound) {
+
             driveToTarget();
             placePixelOnBackboard();
+
         }
     }
 
@@ -218,9 +227,9 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         // What is our desired intermediate position? This can and should be independent of which
         // april tag we're moving toward.  Probably needs to be determined through testing, but a
         // reasonable approximation could be calculated from the geometry of the field/robot.
-        double desiredDistance = 20.0;
-        double desiredHeading = 20.0;
-        double desiredYaw = 20.0;
+        double desiredDistance = 21.6;
+       // double desiredHeading = 20.0;
+        // double desiredYaw = 20.0;
 
         while (opModeIsActive()) {
             LocateTargetAprilTag();
@@ -233,16 +242,21 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             }
 
             double rangeError = desiredTag.ftcPose.range - desiredDistance;
-            double headingError = desiredTag.ftcPose.bearing - desiredHeading;
-            double yawError = desiredTag.ftcPose.yaw - desiredYaw;
+            double headingError = desiredTag.ftcPose.bearing;    // - desiredHeading;
+            double yawError = desiredTag.ftcPose.yaw;   // - desiredYaw;
 
             double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
             double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
             if (!errorIsAcceptable(rangeError, headingError, yawError)) {
 
-                gobbler.driveTrain.drive(drive, strafe, turn, true, runtimeTimer);
+                gobbler.driveTrain.drive(-drive, -strafe, turn, true, runtimeTimer);
+
+                telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+                telemetry.update();
             }
             else {
                 telemetry.addData("Made it to the intermediate position", "");
@@ -260,7 +274,8 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     private void driveToFinalPosition() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-
+        gobbler.driveTrain.strafe(6, 0.25);
+        gobbler.driveTrain.moveForward(-20, 0.5);
         // If using RoadRunner, can just directly put in a RR path to go from current position to
         // the desired final position in front of the backboard
     }
@@ -275,5 +290,17 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     // Probably just a combination of moving the lift and mailbox.
     private void placePixelOnBackboard() {
 
+        gobbler.outtake.driveLift(-1.0);
+        gobbler.driveTrain.Wait(3);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.outtake.openTrapdoor();
+        gobbler.driveTrain.Wait(1);
+        gobbler.outtake.closeTrapdoor();
+        gobbler.outtake.driveLift(1.0);
+        gobbler.driveTrain.Wait(3);
+        gobbler.outtake.driveLift(0.0);
+
+
     }
+
 }   // end class
