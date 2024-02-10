@@ -231,17 +231,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
        // double desiredHeading = 20.0;
         // double desiredYaw = 20.0;
 
-        if (DESIRED_TAG_ID == 1) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-        }
 
-        else if (DESIRED_TAG_ID == 2) {
-            gobbler.driveTrain.moveBackward(16, 0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 3) {
-            gobbler.driveTrain.moveBackward(20, 0.5);
-        }
 
         while (opModeIsActive()) {
             LocateTargetAprilTag();
@@ -251,6 +241,21 @@ public class Centerstage_AutoBlue extends LinearOpMode {
             // spending a certain amount of time here.
             if (desiredTag == null) {
                 continue;
+            }
+
+            gobbler.driveTrain.strafeRight(5,0.5);
+            gobbler.driveTrain.Wait(3);
+
+            if (DESIRED_TAG_ID == 1) {
+                gobbler.driveTrain.moveBackward(15, 0.5);
+            }
+
+            else if (DESIRED_TAG_ID == 2) {
+                gobbler.driveTrain.moveBackward(16, 0.5);
+            }
+
+            else if (DESIRED_TAG_ID == 3) {
+                gobbler.driveTrain.moveBackward(20, 0.5);
             }
 
             double rangeError = desiredTag.ftcPose.range - desiredDistance;
