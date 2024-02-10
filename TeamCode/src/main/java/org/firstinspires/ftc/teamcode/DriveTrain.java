@@ -102,7 +102,7 @@ public class DriveTrain {
         // "howMuch" is in inches. A negative howMuch moves backward.
 
         if (howMuch < 0) {
-            howMuch *= -1;
+            howMuch = Math.abs(howMuch);
         }
 
         // Fetch Drive positions:
