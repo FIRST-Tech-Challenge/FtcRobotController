@@ -35,6 +35,7 @@ public class moo extends LinearOpMode {
 
         Servo turnClaw = hardwareMap.servo.get("turnClaw");
         Servo closeClaw = hardwareMap.servo.get("closeClaw");
+        Servo planeLauncher = hardwareMap.servo.get("planeLauncher");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -165,8 +166,11 @@ public class moo extends LinearOpMode {
             if (gamepad2.b) {
                 closeClaw.setPosition(0.2);
             }
+            if (gamepad1.a) {
+                planeLauncher.setPosition(0.5);
 
-            telemetry.update();
+            }
+                telemetry.update();
 
         }
 

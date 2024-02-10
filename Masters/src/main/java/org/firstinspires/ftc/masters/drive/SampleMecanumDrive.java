@@ -189,7 +189,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         outtakeHook = hardwareMap.servo.get("outtakeHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
-        touchSensor = hardwareMap.touchSensor.get("touch");
+        touchSensor = hardwareMap.touchSensor.get("touchBucket");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
 
         controller = new PIDController(p, i, d);

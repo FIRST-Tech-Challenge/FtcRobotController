@@ -232,7 +232,7 @@ public class AutomatedTeleop extends LinearOpMode {
         waitForStart();
 
         runtime.reset();
-
+        ElapsedTime elapsedTime;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
@@ -251,7 +251,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
                     if (gamepad2.y){
                         planeRaise.setPosition(CSCons.droneShooting);
-                        ElapsedTime elapsedTime= new ElapsedTime();
+                         elapsedTime= new ElapsedTime();
                         while (elapsedTime.time(TimeUnit.MILLISECONDS)<500 && opModeIsActive()){
 
                         }
@@ -415,10 +415,10 @@ public class AutomatedTeleop extends LinearOpMode {
             }
             switch (outtakeState){
                 case ReadyToTransfer:
-//                    if (!touchBucket.isPressed()){
-//                        bucketMovedBy = bucketMovedBy + .01;
-//                        outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
-//                    }
+                    if (!touchBucket.isPressed()){
+                        bucketMovedBy = bucketMovedBy + .01;
+                        outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+                    }
                     if (gamepad2.x && hookPosition==HookPosition.CLOSED){ // if press x and hook is closed, open hook
                         if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
                             outtakeElapsedTime = new ElapsedTime();
@@ -532,10 +532,10 @@ public class AutomatedTeleop extends LinearOpMode {
                     break;
             }
 
-            if (gamepad1.a ) {
-                clawPosition = ClawPosition.TRANSFER;
-                clawServo.setPosition(CSCons.clawTransfer);
-            }
+//            if (gamepad1.a ) {
+//                clawPosition = ClawPosition.TRANSFER;
+//                clawServo.setPosition(CSCons.clawTransfer);
+//            }
 
             telemetry.addData("left y", gamepad1.left_stick_y);
             telemetry.addData("left x", gamepad1.left_stick_x);
@@ -554,6 +554,7 @@ public class AutomatedTeleop extends LinearOpMode {
 //            telemetry.addData("Raw Optics", colorSensor.rawOptical());
             telemetry.addData("Status", colorSensor.status());
             telemetry.addData("Outtake state", outtakeState.name());
+            telemetry.addData("Intake state", intakeState.name());
             telemetry.addData("back left", leftRearMotor.getCurrentPosition());
             telemetry.addData("back right", rightRearMotor.getCurrentPosition());
             telemetry.addData("front left", leftFrontMotor.getCurrentPosition());
