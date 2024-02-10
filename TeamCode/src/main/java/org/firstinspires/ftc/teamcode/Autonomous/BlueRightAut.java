@@ -57,7 +57,7 @@ public class BlueRightAut extends LinearOpMode {
         }
 
 //    bark=0;
-        while (!isStopRequested() && opModeIsActive()) {
+        while (!isStopRequested() && opModeIsActive()&&!robot.queuer.isFullfilled()) {
             robot.queuer.queue(false, true);
             robot.upAuto();
             robot.purpurAuto();

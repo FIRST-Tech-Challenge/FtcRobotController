@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.55, TWO=0.58, THREE = 0.60, FOUR = 0.62, FIVE =0.635, STOP_DELAY = 0.8, UPPIES = 0.84, SUPPER_UPIES = 1.0;
+  public static double ONE=0.56, TWO=0.58, THREE = 0.60, FOUR = 0.62, FIVE =0.635, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -54,6 +54,7 @@ public class Intake extends RFMotor {
 
   double intakePathTIme = -100;
   double lastHeightTime=-5;
+  double TICKS_PER_REV = 200;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
@@ -165,7 +166,7 @@ public class Intake extends RFMotor {
   }
 
   public void uppies(){
-    if ( IntakeStates.INTAKING.state && this.getPower()==0) {
+    if (IntakeStates.INTAKING.state || IntakeStates.REVERSING.getState() && this.getPower() == 0) {
       intakeServo.setPosition(UPPIES);
       height =1;
     }
@@ -183,13 +184,20 @@ public class Intake extends RFMotor {
   /** Sets intake power 0, logs that intake is stopped to general and intake surface level */
   public void stopIntake() {
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " );
+      double pos = this.getVelocity()*0.3+this.getCurrentPosition();
+      pos%=TICKS_PER_REV;
+      if(pos>TICKS_PER_REV/2){
+        pos -= TICKS_PER_REV;
+      }
+    if (abs(pos) < 20) {
       setRawPower(0);
+    }
+    IntakeStates.STOPPED.setStateTrue();
       uppies();
       pixeled1=false;
 
     //        }
     //        LOGGER.log("position" + pos);
-    IntakeStates.STOPPED.setStateTrue();
   }
 
   /**
@@ -304,6 +312,7 @@ public class Intake extends RFMotor {
     double power = this.getPower();
     LOGGER.setLogLevel(RFLogger.Severity.FINEST);
     LOGGER.log("intake power:" + power);
+    packet.put("intakePos", this.getCurrentPosition());
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();

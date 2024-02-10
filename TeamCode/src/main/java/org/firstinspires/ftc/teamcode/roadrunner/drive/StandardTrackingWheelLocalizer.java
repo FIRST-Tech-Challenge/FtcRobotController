@@ -101,7 +101,6 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         );
     }
 
-    @NonNull
     public List<Double>  getWheelVelocities() {
         // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
