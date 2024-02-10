@@ -9,9 +9,9 @@ public class CSCons {
     public static double skewampus = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     public static double pixelDetectThreshold = 350;
-    public static double clawOpen = 0.4;
-    public static double clawClosed = 0.75;
-    public static double clawTransfer = 0.59; // .65
+    public static double clawOpen = 0.35;
+    public static double clawClosed = 0.7;
+    public static double clawTransfer = 0.54; // .65
     public static double clawAngleGroundToThree = .98;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .34;
@@ -25,8 +25,8 @@ public class CSCons {
     public static double clawArmTransfer = .22;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
-    public static double outtakeAngleFolder=0.15;
-    public static double outtakeAngleTransfer=.58;
+    public static double outtakeAngleFolder=0.17;
+    public static double outtakeAngleTransfer=.6;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop = .65;
