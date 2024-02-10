@@ -534,6 +534,7 @@ public class MotionHardware {
                 leftGripper.setPosition(LEFT_GRIPPER_OPEN);
             case DROPPER:
                 dropper.setPosition(DROPPER_DROP_PIXEL);
+                sleep(700);
         }
 
     }

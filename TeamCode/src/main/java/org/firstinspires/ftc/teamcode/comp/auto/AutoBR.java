@@ -78,7 +78,7 @@ public class AutoBR extends LinearOpMode {
                     //Dropper Mode
                     robot.moveRobot(.5, -13, 10);
                     robot.turnRobot(Direction.LEFT, 9, .5, 10);
-                    robot.moveRobot(.5, -3, 10);
+                    robot.moveRobot(.5, -4, 10);
                     robot.dropPixel();
 
                     //Drop off pixel
