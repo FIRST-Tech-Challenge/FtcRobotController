@@ -56,16 +56,16 @@ public class Magazine {
     public void updateSensors(){
         double dist1 = colorSensor1.getDist();
         double dist2 = colorSensor2.getDist();
-        if(dist1 < 1.5){
+        if(dist1 < 1){
             MagStates.FRONT.setState(true);
         }
-        else if(dist1 > 1.5){
+        else if(dist1 > 1){
             MagStates.FRONT.setState(false);
         }
-        if(dist2 <1.5){
+        if(dist2 <1){
             MagStates.BACK.setState(true);
         }
-        else if(dist2 > 1.5){
+        else if(dist2 > 1){
             MagStates.BACK.setState(false);
         }
     }
@@ -83,26 +83,21 @@ public class Magazine {
     }
 
     public void updateBlinkin(){
-    if (!Claw.clawStates.GRAB.getState() && !Arm.ArmTargetStates.GRAB.getState()) {
-      if (pixels == 0) {
-        blinkin.larsonscannergray();
-      }
-      if (pixels == 1) {
-        blinkin.white();
-      }
-      if (pixels == 2) {
-        blinkin.rainbowrainbow();
-      }
+        if(Arm.ArmStates.HOVER.state && Claw.clawStates.GRAB.state){
+            blinkin.green();
         }
-    if(Arm.ArmTargetStates.GRAB.getState()){
-        blinkin.orange();
-    }
-    if(Arm.ArmStates.GRAB.state){
-        blinkin.yellow();
-    }
-    if(Arm.ArmStates.HOVER.state&&Claw.clawStates.GRAB.getState()){
-        blinkin.darkgreen();
-    }
+        else if(Arm.ArmStates.GRAB.state){
+            blinkin.yellow();
+        }
+        else if(pixels == 0){
+            blinkin.red();
+        }
+        else if(pixels == 1){
+            blinkin.shotred();
+        }
+        else if(pixels == 2){
+            blinkin.white();
+        }
     }
 
     public int getPixels(){
