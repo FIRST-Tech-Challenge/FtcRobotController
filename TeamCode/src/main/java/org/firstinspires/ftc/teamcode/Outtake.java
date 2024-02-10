@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,16 +26,16 @@ public class Outtake {
     // The first input is the button used to control the trap door.
     // The second input is the time the function uses to space out inputs.
     public void trapdoor(boolean button, ElapsedTime time) {
-        if (button && time.time() > .50 && !trapToggle) {
+        if (button && time.time() > .25 && !trapToggle) {
             trapToggle = true;
             time.reset();
-            trapdoorServo.setPosition(1.0);
+            trapdoorServo.setPosition(0.0);
 
         }
-        else if (button && time.time() > .50 && trapToggle) {
+        else if (button && time.time() > .25 && trapToggle) {
             trapToggle = false;
             time.reset();
-            trapdoorServo.setPosition(0.0);
+            trapdoorServo.setPosition(1.0);
 
         }
     }
