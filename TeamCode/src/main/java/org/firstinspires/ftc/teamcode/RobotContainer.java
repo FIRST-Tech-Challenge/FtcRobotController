@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.*;
 
+import android.graphics.Point;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -79,6 +82,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller2.assignCommand(m_arm.armMoveManual(()-> m_controller2.left_x.getAsDouble(),
                 ()-> m_controller2.left_y.getAsDouble(), m_controller2.right_y),false ,LEFT_Y,
                 LEFT_Y, LEFT_X);
+        m_controller2.assignCommand(m_arm.armMoveToPoint(
+                new Translation2d(0.1,0.1)),
+                false, BUTTON_DOWN);
 //        m_controller.assignCommand(m_arm.armMoveManual(()-> -m_controller.left_trigger.getAsDouble()
 //                + m_controller.right_trigger.getAsDouble(), ),false,RIGHT_TRIGGER,LEFT_TRIGGER);
 //        m_controller.assignCommand(m_arm.armMoveManual(),false,LEFT_Y);
