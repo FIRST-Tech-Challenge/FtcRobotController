@@ -18,6 +18,7 @@ public class ProgrammingBoard {
 
     private static Servo clawServo;
     private static Servo wristServo;
+    private static Servo droneServo;
 
     // Defines the motors.
 
@@ -53,7 +54,8 @@ public class ProgrammingBoard {
 
         clawServo = hwMap.get(Servo.class, "clawServo");
         wristServo = hwMap.get(Servo.class, "wristServo");
-
+        droneServo = hwMap.get(Servo.class, "droneServo");
+        clawServo.setDirection(Servo.Direction.REVERSE);
     }
 
     public void setDCMotorPower(double leftFrontPower, double leftBackPower, double rightFrontPower, double rightBackPower){
@@ -66,7 +68,7 @@ public class ProgrammingBoard {
     }
 
     public void setIntakePower(double intakePower){
-        intakeMotor.setPower(intakePower);
+        intakeMotor.setPower(-intakePower);
     }
 
     public void setArmPower(double armPower) {armMotor.setPower(armPower);}
@@ -74,6 +76,7 @@ public class ProgrammingBoard {
     public void setClawServo (double clawAngle) {clawServo.setPosition(clawAngle);}
 
     public void setWristServo (double wristAngle) {wristServo.setPosition(wristAngle);}
+    public void setDroneServo (double droneAngle) {droneServo.setPosition(droneAngle);}
 
 
 

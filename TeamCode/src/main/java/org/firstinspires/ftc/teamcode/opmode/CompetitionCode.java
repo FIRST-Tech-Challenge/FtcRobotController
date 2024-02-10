@@ -19,6 +19,7 @@ public class CompetitionCode extends OpMode {
     double yaw;
     double intakePower;
     double armPower;
+    double droneAngle;
     boolean alreadyPressed;
     boolean state;
 
@@ -50,41 +51,56 @@ public class CompetitionCode extends OpMode {
             lateral =  gamepad1.left_stick_x;
         } else {
             axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            lateral =  -gamepad1.left_stick_x;
+            lateral = -gamepad1.left_stick_x;
         }
 
         yaw = gamepad1.right_stick_x;
-        intakePower = gamepad1.left_trigger - gamepad1.right_trigger;
+        intakePower = -gamepad1.left_trigger + gamepad1.right_trigger;
 
 
-        if (gamepad1.right_bumper) {
+//        if (gamepad1.right_bumper) {
+//            armPower = .3;
+//            telemetry.addLine("Arm up!");
+//        } else if (gamepad1.left_bumper) {
+//            armPower = -.3;
+//            telemetry.addLine("Arm down!");
+//        } else if (gamepad1.left_stick_button) {
+//            armPower = 1;
+//            telemetry.addLine("Arm destroy!");
+//        } else {
+//            armPower = 0;
+//            telemetry.addLine("Arm neutral!");
+//        }
+
+        if (gamepad2.right_bumper && gamepad2.left_bumper) {
             armPower = 1;
-            telemetry.addLine("Arm up!");
-        } else if (gamepad1.left_bumper) {
-            armPower = -1;
-            telemetry.addLine("Arm down!");
         } else {
-            armPower = 0;
-            telemetry.addLine("Arm neutral!");
+            armPower = -gamepad2.right_stick_y/2;
         }
 
 // Set arm and intake power based off variables defined above.
         Board.setIntakePower(intakePower);
         Board.setArmPower(armPower);
 
-        if (gamepad1.x) {
-            Board.setClawServo(-1);
-            telemetry.addLine("x pressed");
-        } else if (gamepad1.b) {
+        if (gamepad2.x) {
             Board.setClawServo(0);
+            telemetry.addLine("x pressed");
+        } else if (gamepad2.b) {
+            Board.setClawServo(1);
             telemetry.addLine("b pressed");
         }
 
-        if (gamepad1.dpad_up) {
-            Board.setWristServo(1);
-        } else if (gamepad1.dpad_down) {
+        if (gamepad2.dpad_up) {
+            Board.setWristServo(.35);
+        } else if (gamepad2.dpad_down) {
             Board.setWristServo(0);
         }
+
+        if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
+            droneAngle = .5;
+        }
+
+        Board.setDroneServo(droneAngle);
 
         // Servo supposedly measured where 1 unit = 180 degrees
 
