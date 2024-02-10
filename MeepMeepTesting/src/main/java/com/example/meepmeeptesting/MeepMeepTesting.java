@@ -32,8 +32,6 @@ public class MeepMeepTesting {
                                         .lineToLinearHeading(new Pose2d(50,-30,toRadians(-180)))
                                         .lineTo(new Vector2d(50,-10))
                                         .build()
-
-
                 );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
