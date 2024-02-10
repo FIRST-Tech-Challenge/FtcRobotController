@@ -20,11 +20,11 @@ public class Auto_RedBackLimited extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(90, dir.r);
+        turn(90);
         drive(tilesToInches(-1));
-        turn(90, dir.r);
+        turn(90);
         drive(tilesToInches(2));
-        turn(90, dir.r);
+        turn(90);
         drive(tilesToInches(0.5));
         ejectPixel();
         setSpeed(1000);

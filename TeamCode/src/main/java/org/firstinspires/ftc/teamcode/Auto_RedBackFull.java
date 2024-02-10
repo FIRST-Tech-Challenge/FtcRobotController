@@ -22,7 +22,7 @@ public class Auto_RedBackFull extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(90, dir.r);
+        turn(90);
         drive(tilesToInches(-1));
 //        turn(-90);
 //        drive(tilesToInches(-1));

@@ -22,7 +22,7 @@ public class Auto_BlueFrontLimited extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(90, dir.r);
+        turn(90);
         s(3);
         drive(70);
         setSpeed(1000);
