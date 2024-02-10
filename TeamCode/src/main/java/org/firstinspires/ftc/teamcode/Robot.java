@@ -1741,6 +1741,11 @@ public class Robot {
                 }
             }
 
+            if (gamepad2.x) {
+                lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //override 0
+                lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
             //onebutton outtake
             if(gamepad2.dpad_left) {
                 oneButtonOuttake(gamepad1, gamepad2);
@@ -2311,7 +2316,7 @@ public class Robot {
 
     public void linearSlidesMoveToZeroParallel() {
         double distanceToMove = 0 - lsFront.getCurrentPosition();
-        double p_constant = 0.0001;
+        double p_constant = 0.001;
 
         if (distanceToMove < -10) {
             lsFront.setPower(distanceToMove * p_constant);
