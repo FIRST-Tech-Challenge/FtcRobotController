@@ -240,6 +240,98 @@ public class DriveTrain {
         rightBackDrive.setPower(0);
     }
 
+    public void strafeLeft(int howMuch, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+        if (howMuch > 0) {
+            howMuch *= -1;
+        }
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += (int) (howMuch * clicksPerInch);
+        rfPos -= (int) (howMuch * clicksPerInch);
+        lrPos -= (int) (howMuch * clicksPerInch);
+        rrPos += (int) (howMuch * clicksPerInch);
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+        }
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    public void strafeRight(int howMuch, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+        if (howMuch < 0) {
+            howMuch = Math.abs(howMuch);
+        }
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += (int) (howMuch * clicksPerInch);
+        rfPos -= (int) (howMuch * clicksPerInch);
+        lrPos -= (int) (howMuch * clicksPerInch);
+        rrPos += (int) (howMuch * clicksPerInch);
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+        }
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
     public void moveWholeBlock(String direction, double speed) {
         // "howMuch" is in inches. A negative howMuch moves backward.
 

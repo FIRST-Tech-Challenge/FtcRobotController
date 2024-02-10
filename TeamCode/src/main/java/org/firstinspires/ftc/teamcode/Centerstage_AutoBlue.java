@@ -231,6 +231,18 @@ public class Centerstage_AutoBlue extends LinearOpMode {
        // double desiredHeading = 20.0;
         // double desiredYaw = 20.0;
 
+        if (DESIRED_TAG_ID == 1) {
+            gobbler.driveTrain.moveBackward(15, 0.5);
+        }
+
+        else if (DESIRED_TAG_ID == 2) {
+            gobbler.driveTrain.moveBackward(16, 0.5);
+        }
+
+        else if (DESIRED_TAG_ID == 3) {
+            gobbler.driveTrain.moveBackward(20, 0.5);
+        }
+
         while (opModeIsActive()) {
             LocateTargetAprilTag();
             // if the camera didn't detect the desired tag in the previous cycle, give it a chance
