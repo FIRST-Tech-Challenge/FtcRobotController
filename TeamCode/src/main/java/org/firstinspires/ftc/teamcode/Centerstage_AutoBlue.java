@@ -297,7 +297,7 @@ public class Centerstage_AutoBlue extends LinearOpMode {
         gobbler.driveTrain.Wait(1);
         gobbler.outtake.closeTrapdoor();
         gobbler.outtake.driveLift(1.0);
-        gobbler.driveTrain.Wait(3);
+        gobbler.driveTrain.Wait(2);
         gobbler.outtake.driveLift(0.0);
 
 
