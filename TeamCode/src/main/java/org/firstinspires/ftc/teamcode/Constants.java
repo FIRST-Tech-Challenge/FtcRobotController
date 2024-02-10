@@ -33,16 +33,16 @@ public class Constants {
     public static class ArmConstants {
 
         public static final double motorMaxVolt = 12;
-        public static final double vMax1 = 2.405;//placeholder value
+        public static final double vMax1 = 1.6;//placeholder value
         public static final double vMax2 = 3.1;//placeholder value
-        public static final double vMin1 = 0.51;//placeholder value
+        public static final double vMin1 = 0.55;//placeholder value
         public static final double vMin2 = 0.77;//placeholder value
-        public static final double a1Max = 1; // placeholder, not real
-        public static final double a2Max = 1; // placeholder, not real
+        public static final double a1Max = 90; // placeholder, not real
+        public static final double a2Max = -180; // placeholder, not real
         public static final double arm1Min = 0; // placeholder, not real
-        public static final double arm2Min = 0; // placeholder, not real
-        public static final double arm1AngleOffset = 87.5;
-        public static final double arm2AngleOffset = 72;
+        public static final double arm2Min = 180; // placeholder, not real
+        public static final double arm1AngleOffset = 32.2;
+        public static final double arm2AngleOffset = 97.7;
 
         @Config
         public static class ArmPID{

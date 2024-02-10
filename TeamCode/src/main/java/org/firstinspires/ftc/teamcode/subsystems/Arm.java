@@ -75,20 +75,20 @@ public class Arm implements Subsystem {
 
     public double angleToVoltageA1(double angle) {
         double ptVoltage = ( angle * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1);
-        return ptVoltage / 180 / Math.PI;
+        return ptVoltage;
     }
     public double voltageToAngle1( double voltage) {
         double angle1 = (voltage-vMin1)*(a1Max-arm1Min)/vMax1-vMin1;
-        return angle1 * 180 / Math.PI + arm1AngleOffset;
+        return angle1;
     }
     public double angleToVoltageA2(double angle) {
         double ptVoltage = ( angle * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1);
-        return ptVoltage / 180 / Math.PI;
+        return ptVoltage;
 
     }
     public double voltageToAngle2( double voltage) {
         double angle2 = (voltage-vMin2)*(a2Max-arm2Min)/vMax2-vMin2;
-        return angle2 * 180 / Math.PI - arm2AngleOffset;
+        return angle2;
     }
 
     public void setMotors(double firstSpeed, double secondSpeed, double servoPos) {
@@ -236,6 +236,8 @@ public class Arm implements Subsystem {
         public BTCommand armMoveToPoint(Translation2d point){
         return new RunCommand(
                 ()->{setDesiredPoint(point);
+                    arm1.set(angleToVoltageA1(desired_first_joint_angle));
+                    arm2.set(angleToVoltageA2(desired_second_joint_angle));
                 }
         );
     }
