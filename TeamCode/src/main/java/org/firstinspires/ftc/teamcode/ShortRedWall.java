@@ -34,6 +34,7 @@ public class ShortRedWall extends LinearOpMode {
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
+
             robot.autoOuttake(true, slideStartingPosition);
 
             robot.boardToTruss();
