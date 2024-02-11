@@ -26,7 +26,7 @@ public abstract class CSBase extends LinearOpMode {
     private static final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
     public DcMotorEx lf, lb, rf, rb, carWashMotor, pixelLiftingMotor;
-    public Servo droneServo, pixelBackServo, pixelFrontServo, trayTiltingServo;
+    public Servo droneServo, pixelBackServo, pixelLockingServo, trayTiltingServo;
     public TouchSensor touchSensor;
     public side stageSide;
     public color allianceColor;
@@ -119,7 +119,8 @@ public abstract class CSBase extends LinearOpMode {
         try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
-        try {pixelFrontServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
+        try {
+            pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
         if (useCam) {

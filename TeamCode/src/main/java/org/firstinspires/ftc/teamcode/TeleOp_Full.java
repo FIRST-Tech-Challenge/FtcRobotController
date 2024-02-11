@@ -77,7 +77,7 @@ public class TeleOp_Full extends CSBase {
                         addTelemetry("Touch sensor not connected");
                     }
                     if (gamepad2.dpad_up && !gamepad2.dpad_down) {
-                        if (pixelLiftingMotor.getCurrentPosition() < 2450) {
+                        if (pixelLiftingMotor.getCurrentPosition() < 6000) {
                             pixelLiftingMotor.setPower(0.75);
                             addTelemetry("pixelLiftingMotor now moving");
                         } else {
@@ -117,34 +117,21 @@ public class TeleOp_Full extends CSBase {
                         trayTiltingServo.setPosition(0);
                         addTelemetry("Set trayTiltingServo to 0");
                     } else {
-                        trayTiltingServo.setPosition(1);
-                        addTelemetry("Set trayTiltingServo to 1");
+                        trayTiltingServo.setPosition(0.5);
+                        addTelemetry("Set trayTiltingServo to 0.5");
                     }
                 }
                 wasLT = isLT;
             }
 
-            if (pixelBackServo != null) {
-                if (gamepad2.y && !wasY) {
-                    if (pixelBackServo.getPosition() > BACK_BOUNDS[1] - 0.05 && pixelBackServo.getPosition() < BACK_BOUNDS[1] + 0.05) {
-                        pixelBackServo.setPosition(BACK_BOUNDS[0]);
-                        addTelemetry("Set pixelBackServo to 0");
-                    } else {
-                        pixelBackServo.setPosition(BACK_BOUNDS[1]);
-                        addTelemetry("Set pixelBackServo to 0.6");
-                    }
-                }
-                wasY = gamepad2.y;
-            }
-
-            if (pixelFrontServo != null) {
+            if (pixelLockingServo != null) {
                 if (gamepad2.x && !wasX) {
-                    if (pixelFrontServo.getPosition() > 0.83 - 0.05 && pixelFrontServo.getPosition() < 0.83 + 0.05) {
-                        pixelFrontServo.setPosition(0.5);
-                        addTelemetry("Set pixelFrontServo to 0.5");
+                    if (pixelLockingServo.getPosition() > 0.83 - 0.05 && pixelLockingServo.getPosition() < 0.83 + 0.05) {
+                        pixelLockingServo.setPosition(0);
+                        addTelemetry("Set pixelFrontServo to 0");
                     } else {
-                        pixelFrontServo.setPosition(0.83);
-                        addTelemetry("Set pixelFrontServo to 0.83");
+                        pixelLockingServo.setPosition(1);
+                        addTelemetry("Set pixelFrontServo to 1");
                     }
                 }
                 wasX = gamepad2.x;
@@ -179,7 +166,7 @@ public class TeleOp_Full extends CSBase {
         if(trayTiltingServo == null) {
             telemetry.addData("Tray Tilting Servo", "Disconnected");
         }
-        if (pixelFrontServo == null) {
+        if (pixelLockingServo == null) {
             telemetry.addData("Pixel Front Servo", "Disconnected");
         }
         if (touchSensor == null) {

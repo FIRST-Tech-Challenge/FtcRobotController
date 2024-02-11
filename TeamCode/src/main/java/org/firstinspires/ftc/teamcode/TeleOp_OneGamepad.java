@@ -134,13 +134,13 @@ public class TeleOp_OneGamepad extends CSBase {
                 wasY = gamepad2.y;
             }
 
-            if (pixelFrontServo != null) {
+            if (pixelLockingServo != null) {
                 if (gamepad2.x && !wasX) {
-                    if (pixelFrontServo.getPosition() > 0.83 - 0.05 && pixelFrontServo.getPosition() < 0.83 + 0.05) {
-                        pixelFrontServo.setPosition(0.5);
+                    if (pixelLockingServo.getPosition() > 0.83 - 0.05 && pixelLockingServo.getPosition() < 0.83 + 0.05) {
+                        pixelLockingServo.setPosition(0.5);
                         addTelemetry("Set pixelFrontServo to 0.5");
                     } else {
-                        pixelFrontServo.setPosition(0.83);
+                        pixelLockingServo.setPosition(0.83);
                         addTelemetry("Set pixelFrontServo to 0.83");
                     }
                 }
@@ -174,7 +174,7 @@ public class TeleOp_OneGamepad extends CSBase {
         if(trayTiltingServo == null) {
             telemetry.addData("Tray Tilting Servo", "Disconnected");
         }
-        if (pixelFrontServo == null) {
+        if (pixelLockingServo == null) {
             telemetry.addData("Pixel Front Servo", "Disconnected");
         }
         if (touchSensor == null) {
