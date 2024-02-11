@@ -1396,7 +1396,7 @@ public class Robot {
 
     public void openClamp(boolean wide, boolean blocking) {
         if (wide) {
-            setServoPosBlocking(clamp, 0.472);
+            setServoPosBlocking(clamp, 0.44); //0.471
         } else {
             setServoPosBlocking(clamp, 0.51);
         }
@@ -2033,7 +2033,6 @@ public class Robot {
         setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
     }
-
     public void straightBlocking2FixHeading (double inches) {
         resetDrivetrainEncoders();
         straightController.integral = 0;
@@ -2050,9 +2049,8 @@ public class Robot {
         double currentHeading;
         double headingError;
         double targetHeading = botHeading;
-        double leftPower;
-        double rightPower;
-        double headingScaleFactor = 0.7;
+        double leftPower = 0;
+        double rightPower = 0;
 
         while (opMode.opModeIsActive() && counter < 3) {
 
@@ -2105,15 +2103,6 @@ public class Robot {
             } else {
                 setMotorPower(power, power, power, power);
             }
-
-            // leftPower = power + (headingError * headingScaleFactor);
-            // rightPower = power - (headingError * headingScaleFactor);
-
-            Log.d("fixHeading", "straightBlocking2FixHeading: power is " + power);
-            Log.d("fixHeading", "straightBlocking2FixHeading: leftpower is " + leftPower);
-            Log.d("fixHeading", "straightBlocking2FixHeading: rightpower is " + rightPower);
-            Log.d("fixHeading", "straightBlocking2FixHeading: headingerror is " + headingError);
-            setMotorPower(leftPower, rightPower, leftPower, rightPower);
         }
 
         currentPos = fLeft.getCurrentPosition();
@@ -2666,9 +2655,9 @@ public class Robot {
         straightBlocking2FixHeading(102);
         intake.setPower(-1);
 
-        mecanumBlocking2(24); // todo: test, maybe make method into boolean
+        mecanumBlocking2(26); // todo: test, maybe make method into boolean
 
-        opMode.sleep(5000);
+        opMode.sleep(1000);
 
         straightBlocking(6, true, 0.3);
         straightBlocking(4, false, 0.7);
@@ -2689,7 +2678,7 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(-25); // todo: test, again maybe make method into boolean
+        mecanumBlocking2(-26); // todo: test, again maybe make method into boolean
         straightBlocking2FixHeading(-93);
         mecanumBlocking2(-18 * polarity);
         setHeading(90 * polarity, 0.7);
