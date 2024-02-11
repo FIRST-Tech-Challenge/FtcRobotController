@@ -195,10 +195,24 @@ public class RedBackstagePixelDrop extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 24.0, 10.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -90.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        //commenting out to see why bot is swerving
+      //Rotate counterclockewise 90
+       turnToHeading( TURN_SPEED, 90.0);
+          // Stop 4 secs
+        sleep(4000);
+          //Drive toward back drop
+       driveStraight(DRIVE_SPEED, -45.0, 90.0);
+          //Drop pixel onto back drop
 
+          //slip left to park( how do i go left?)
+        // driveStraight(DRIVE_SPEED, 16.0, 180.0);
+          //back into park
+      //driveStraight(DRIVE_SPEED, -6.0, -90.0);
+
+
+       // holdHeading( TURN_SPEED, -90.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
+/*
         driveStraight(DRIVE_SPEED, 17.0, 10.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
         turnToHeading( TURN_SPEED,  90.0);               // Turn  CCW  to  45 Degrees
         holdHeading( TURN_SPEED,  90.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
@@ -208,7 +222,7 @@ public class RedBackstagePixelDrop extends LinearOpMode {
         //holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
 
         driveStraight(DRIVE_SPEED,-20.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
-
+*/
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message.
