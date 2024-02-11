@@ -29,7 +29,7 @@ public class TeleOp_Full extends CSBase {
     public void runOpMode() {
         setup();
         if (trayTiltingServo != null) {
-            trayTiltingServo.setPosition(1);
+            trayTiltingServo.setPosition(0);
         }
 
         while (opModeIsActive()) {
@@ -75,7 +75,7 @@ public class TeleOp_Full extends CSBase {
                         addTelemetry("Touch sensor not connected");
                     }
                     if (gamepad2.dpad_up && !gamepad2.dpad_down) {
-                        if (pixelLiftingMotor.getCurrentPosition() < 6000) {
+                        if (pixelLiftingMotor.getCurrentPosition() < 5500) {
                             pixelLiftingMotor.setPower(0.75);
                             addTelemetry("pixelLiftingMotor now moving");
                         } else {
