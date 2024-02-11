@@ -22,7 +22,24 @@ public class TestingWade extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.straightBlocking2FixHeading(-96);
+            robot.openClamp(true, true);
+            robot.intake.setPower(-1);
+            robot.straightBlocking(5, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.mecanumBlocking2(1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.straightBlocking(1, true, 1);
+            robot.straightBlocking(1, false, 1);
+            robot.closeClamp(true);
 
             break;
         }
