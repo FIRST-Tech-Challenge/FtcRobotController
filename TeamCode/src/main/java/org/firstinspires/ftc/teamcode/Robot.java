@@ -1004,13 +1004,15 @@ public class Robot {
             Log.d("vision", "alignToBoardFast: didn't align, distanceToBoard is 12");
         }
 
-        straightBlocking(distanceToBoard, false, 0.7);
+        straightBlocking(distanceToBoard, false, 0.4);
 
+        /*
         if (isRedAlliance) {
             setHeading(-90, 0.75);
         } else {
             setHeading(90, 0.75);
         }
+        */
     }
 
     public void longMoveToBoard(boolean isJuice) {
@@ -1394,7 +1396,7 @@ public class Robot {
 
     public void openClamp(boolean wide, boolean blocking) {
         if (wide) {
-            setServoPosBlocking(clamp, 0.44); //0.471
+            setServoPosBlocking(clamp, 0.455); //0.471
         } else {
             setServoPosBlocking(clamp, 0.51);
         }
@@ -2652,19 +2654,34 @@ public class Robot {
 
         opMode.sleep(1000);
 
-        straightBlocking(6, true, 0.3);
-        straightBlocking(4, false, 0.7);
+        straightBlocking(4, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        mecanumBlocking2(1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
 
-        stackAttachmentIn();
-        opMode.sleep(200);
-
-        straightBlocking(5, true, 0.3);
         closeClamp(true);
-        straightBlocking(2, false, 0.7);
+        opMode.sleep(100);
+
+
+
+        //stackAttachmentIn();
+        //opMode.sleep(200);
+
+        //straightBlocking(5, true, 0.3);
+        //closeClamp(true);
+        //straightBlocking(2, false, 0.7);
 
         intake.setPower(1);
         opMode.sleep(100);
-        intake.setPower(0);
     }
 
     public void stackToBoardTruss() {

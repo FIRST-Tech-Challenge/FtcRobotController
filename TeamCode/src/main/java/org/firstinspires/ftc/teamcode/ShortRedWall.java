@@ -41,6 +41,7 @@ public class ShortRedWall extends LinearOpMode {
             robot.trussToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoardTruss();
+            robot.intake.setPower(0);
 
             robot.alignToBoardFast(6); // todo remove hard-coded value
             robot.autoOuttake(false, slideStartingPosition);
