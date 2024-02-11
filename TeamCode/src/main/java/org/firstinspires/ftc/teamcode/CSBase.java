@@ -667,6 +667,7 @@ public abstract class CSBase extends LinearOpMode {
             telemetry.addData("Currently at",  " at %7d", pixelLiftingMotor.getCurrentPosition());
             telemetry.update();
         }
+        pixelLiftingMotor.setVelocity(0);
     }
 
 
