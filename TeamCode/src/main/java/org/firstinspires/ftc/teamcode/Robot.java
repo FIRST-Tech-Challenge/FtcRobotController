@@ -444,11 +444,6 @@ public class Robot {
         Log.d("pid", "setHeading: final heading is " + currentHeading);
     }
 
-    public void setTrayAngle() {
-        double currentHeading = getCurrentHeading();
-        //setServoPosBlocking();
-    }
-
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
 
         double ERROR_TOLERANCE = 10;
@@ -872,84 +867,6 @@ public class Robot {
         }
     }
 
-    //contains most apriltag logic
-    public void alignToBoard() {
-
-        boolean tagVisible = false;
-        boolean aligned = false;
-        List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 12;
-        int polarity = isRedAlliance ? -1 : 1;
-        double PIXEL_SIZE = 4;
-        int inchesMovedBack = 0;
-        int numberOfDetectionsProcessed = 0;
-
-        while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
-            while (!aligned) {
-                //get detections
-
-                if (numberOfDetectionsProcessed > 5) {
-                    break;
-                } else {
-                    numberOfDetectionsProcessed++;
-                }
-
-                myAprilTagDetections = aprilTagProcessor.getDetections();
-                //process detection list
-                for (AprilTagDetection detection : myAprilTagDetections) {
-                    if (detection.metadata != null) { //if there's an apriltag
-                        if (detection.id == wantedAprTagId) { //check if its desired tag
-                            Log.d("vision", "runOpMode: tag visible - this one " + wantedAprTagId);
-                            tagVisible = true; //if it is, the desired tag is visible
-                            //alignment based on bearing
-                            if (Math.abs(detection.ftcPose.bearing) > 5) {
-                                Log.d("vision", "runOpMode: bearing > +/-5, move left");
-                                mecanumBlocking(1, (detection.ftcPose.bearing > 0), 0.75);
-                                setHeading(90 * polarity, 0.7);
-                                aligned = false;
-                            } else {
-                                Log.d("vision", "runOpMode: aligned");
-                                Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
-                                distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
-                                aligned = true;
-                            }
-                        }
-                    } else {
-                        tagVisible = false;
-                    }
-                }
-
-                if (!tagVisible) { //if tag isnt visible
-                    Log.d("vision", "runOpMode: tag not visible, move back");
-                    straightBlocking(2, true, 0.6); //V IMP: should NOT go back into partner's space
-                    setHeading(90 * polarity, 0.75);
-                    inchesMovedBack = inchesMovedBack + 2;
-                    tagVisible = false;
-                    aligned = false;
-                }
-
-                if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
-                    Log.d("vision", "alignToBoard: apriltag detection timed out");
-                    distanceToBoard = distanceToBoard + inchesMovedBack;
-                    Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
-                    break;
-                }
-            }
-
-            Log.d("vision", "alignToBoard: broken out of !aligned while loop");
-            Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
-
-            straightBlocking(distanceToBoard, false, 0.6);
-            if (isRedAlliance) {
-                setHeading(-90, 0.75);
-            } else {
-                setHeading(90, 0.75);
-            }
-            //TODO: do things based on apriltag id
-            break;
-        }
-    }
-
     public void alignToBoardFast(int tagId) {
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
@@ -1203,12 +1120,6 @@ public class Robot {
 
             }
         }
-    }
-
-    public void updatePosition (double newX, double newY) {
-        robotX = newX;
-        robotY = newY;
-        Log.d("bot coordinates", "updatePosition: new robotX is " + robotX + ", new robotY is " + robotY);
     }
 
     public void parkBot(boolean longPath) {
