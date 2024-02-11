@@ -16,10 +16,10 @@ import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
 
 public class Constants {
-    public static final double l1 = 0.385/2;// com distant from axis first arm METERS
-    public static final double l2 = 0.29;// com distant from axis second arm METERS
-    public static final double first_arm_weight = 100; // first arm weight KG
-    public static final double second_arm_weight = 300; // second arm weight with gripper KG
+    public static final double l1 = 0.378;// com distant from axis first arm METERS
+    public static final double l2 = 0.355;// com distant from axis second arm METERS
+    public static final double first_arm_weight = 0.200; // first arm weight KG
+    public static final double second_arm_weight = 0.200; // second arm weight with gripper KG
     public static final double g = 9.806;
     public static final double hex_stall_current = 9.801;
     public static final double resistance = 12 / hex_stall_current; //volt
@@ -33,26 +33,30 @@ public class Constants {
     public static class ArmConstants {
 
         public static final double motorMaxVolt = 12;
-        public static final double vMax1 = 1.6;//placeholder value
-        public static final double vMax2 = 3.1;//placeholder value
-        public static final double vMin1 = 0.55;//placeholder value
-        public static final double vMin2 = 0.77;//placeholder value
-        public static final double a1Max = 90; // placeholder, not real
-        public static final double a2Max = -180; // placeholder, not real
-        public static final double arm1Min = 0; // placeholder, not real
-        public static final double arm2Min = 180; // placeholder, not real
-        public static final double arm1AngleOffset = 32.2;
-        public static final double arm2AngleOffset = 97.7;
+        public static final double a1Max = 90;
+        public static final double vMax1 = 1.456;
+        public static final double a2Max = 0;
+        public static final double vMin2 = 1.632;
+        public static final double arm1Min = 0;
+        public static final double vMin1 = 0.455;
+        public static final double arm2Min = -90;
+        public static final double vMax2 = 2.189;
 
         @Config
         public static class ArmPID{
-        public static double a1KP = 0;
-        public static double a2KP = 0;
-        public static double a1KI = 0;
-        public static double a2KI = 0;
+        public static double a1KP = 0.0;
+        public static double a2KP = 0.0;
+        public static double a1KI = 0.00;
+        public static double a2KI = 0.00;
         public static double a1KD = 0;
         public static double a2KD = 0;
+        public static double ffConv=12;
         }
+
+
+        public static final SimpleMotorFeedforward c_arm1FF = new SimpleMotorFeedforward(0,1,0);
+        public static  final SimpleMotorFeedforward c_arm2FF = new SimpleMotorFeedforward(0.15,1,0);
+
     }
 
     public static class ChassisConstants {

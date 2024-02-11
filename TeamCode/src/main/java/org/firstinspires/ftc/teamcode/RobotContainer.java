@@ -83,8 +83,11 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                 ()-> m_controller2.left_y.getAsDouble(), m_controller2.right_y),false ,LEFT_Y,
                 LEFT_Y, LEFT_X);
         m_controller2.assignCommand(m_arm.armMoveToPoint(
-                new Translation2d(-0.031,-0.091)),
+                new Translation2d(0.514,0.368)),
                 true, BUTTON_DOWN);
+        m_controller2.assignCommand(m_arm.armMoveToPoint(
+                new Translation2d(0.278,0.092)),
+                true, BUMPER_LEFT);
 //        m_controller.assignCommand(m_arm.armMoveManual(()-> -m_controller.left_trigger.getAsDouble()
 //                + m_controller.right_trigger.getAsDouble(), ),false,RIGHT_TRIGGER,LEFT_TRIGGER);
 //        m_controller.assignCommand(m_arm.armMoveManual(),false,LEFT_Y);

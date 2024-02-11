@@ -37,15 +37,15 @@ public class Arm implements Subsystem {
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
     private PIDController m_pid1;
     private PIDController m_pid2;
-    private double desired_first_joint_angle;
-    private double desired_second_joint_angle;
+    private double desired_first_joint_angle=0;
+    private double desired_second_joint_angle=0;
     private Translation2d current_desired_point;
     private double current_second_joint_angle;
     private double current_first_joint_angle;
     private double current_pot1_voltage;
     private double current_pot2_voltage;
-    private double arm1PID;
-    private double arm2PID;
+    private double arm1PID,arm1FF;
+    private double arm2PID,arm2FF;
 
 
     public Arm(HardwareMap map, Telemetry telemetry, MotorEx arm1, MotorEx arm2) {
@@ -53,6 +53,8 @@ public class Arm implements Subsystem {
         this.m_telemetry = telemetry;
         this.arm1 = arm1;
         this.arm2 = arm2;
+        this.arm1.setInverted(true);
+        this.arm2.setInverted(true);
         m_pid1 = new PIDController(a1KP,a1KI,a1KD);
         m_pid2 = new PIDController(a2KP,a2KI,a2KD);
         potentiometer1 = map.get(AnalogInput.class, "pt1");//port 3
@@ -63,31 +65,34 @@ public class Arm implements Subsystem {
     }
     public void setMotorFromAngle1(){
         arm1PID= m_pid1.calculate(current_first_joint_angle,desired_second_joint_angle);
+        arm1FF=calculateFeedForwardFirstJoint(current_first_joint_angle);
         dashboard.addData("first joint output:", arm1PID);
-//        arm1.set(motorSet);
+        arm1.set(c_arm1FF.calculate(arm1FF+arm1PID));
+
     }
     public void setMotorFromAngle2(){
         arm2PID= m_pid2.calculate(current_second_joint_angle,desired_second_joint_angle);
+        arm2FF=calculateFeedForwardSecondJoint(current_second_joint_angle);
         dashboard.addData("second joint output:", arm2PID);
-//        arm2.set(motorSet);
+        arm2.set(c_arm2FF.calculate(arm2FF+arm2PID));
 
     }
 
     public double angleToVoltageA1(double angle) {
-        double ptVoltage = ( angle * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1);
+        double ptVoltage = ( angle-arm1Min) * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1;
         return ptVoltage;
     }
     public double voltageToAngle1( double voltage) {
-        double angle1 = (voltage-vMin1)*(a1Max-arm1Min)/vMax1-vMin1;
+        double angle1 = (voltage-vMin1)*(a1Max-arm1Min)/(vMax1-vMin1) + arm1Min;
         return angle1;
     }
     public double angleToVoltageA2(double angle) {
-        double ptVoltage = ( angle * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1);
+        double ptVoltage = (angle-arm2Min) * (vMax1 - vMin1) / (a1Max - arm1Min) + vMin1;
         return ptVoltage;
 
     }
     public double voltageToAngle2( double voltage) {
-        double angle2 = (voltage-vMin2)*(a2Max-arm2Min)/vMax2-vMin2;
+        double angle2 = (voltage-vMin2)*(a2Max-arm2Min)/(vMax2-vMin2)  + arm2Min;
         return angle2;
     }
 
@@ -124,37 +129,42 @@ public class Arm implements Subsystem {
     @Override
     public void periodic() {
         current_first_joint_angle = voltageToAngle1(potentiometer1.getVoltage());
-        current_second_joint_angle = voltageToAngle2(potentiometer1.getVoltage());
+        current_second_joint_angle = voltageToAngle2(potentiometer2.getVoltage());
         current_pot1_voltage = potentiometer1.getVoltage();
         current_pot2_voltage = potentiometer2.getVoltage();
         setMotorFromAngle2();
         setMotorFromAngle1();
+        dashboard.addData("desired angle 1:", desired_first_joint_angle);
+        dashboard.addData("desired angle 2:", desired_second_joint_angle);
         dashboard.addData("pot1:", current_pot1_voltage);
         dashboard.addData("pot2:", current_pot2_voltage);
         dashboard.addData("first angle ", current_first_joint_angle);
         dashboard.addData("second angle", current_second_joint_angle);
         dashboard.addData("arm1PID", arm1PID);
         dashboard.addData("arm2PID", arm2PID);
-        dashboard.addData("DesiredArmX:", anglesToPoint(desired_first_joint_angle,desired_second_joint_angle).getX());
-        dashboard.addData("DesiredArmY:", anglesToPoint(desired_first_joint_angle,desired_second_joint_angle).getY());
+        dashboard.addData("FFArm1:", calculateFeedForwardFirstJoint(current_first_joint_angle));
+        dashboard.addData("FFArm2:", calculateFeedForwardSecondJoint(current_second_joint_angle));
         dashboard.addData("ArmX", anglesToPoint(current_first_joint_angle,current_second_joint_angle).getX());
         dashboard.addData("ArmY", anglesToPoint(current_first_joint_angle,current_second_joint_angle).getY());
         dashboard.update();
+
+        m_pid1.setPID(a1KP,a1KI,a1KD);
+        m_pid2.setPID(a2KP,a2KI,a2KD);
     }
 
     private double calculateFeedForwardFirstJoint(double first_joint_angle){
 
-        return  (resistance * (
-                first_arm_weight * (g * l1 * Util.cosInDegrees(first_joint_angle) )
-        )
-                /(first_gear_ratio * neo_Kt))/ 10;
+        return  ((resistance *
+                (first_arm_weight * (g * l1 * Util.cosInDegrees(first_joint_angle) )
+                )
+                /(first_gear_ratio * neo_Kt))/ motorMaxVolt)/ffConv;//to conv between
         // in volts
     }
     private double calculateFeedForwardSecondJoint(double second_joint_angle){
-        return (resistance *
-                (second_arm_weight * (g * l2 * Util.cosInDegrees(second_joint_angle))
+        return ((resistance *
+                (second_arm_weight * (g * l2 * Util.cosInDegrees(second_joint_angle+90))
                 )
-                /(second_gear_ratio * neo_Kt))/motorMaxVolt;
+                /(second_gear_ratio * neo_Kt))/motorMaxVolt)/ffConv;
         //in volts
         // need to convert to pwm
     }
@@ -203,8 +213,8 @@ public class Arm implements Subsystem {
         desired_second_joint_angle = desired_first_joint_angle - desired_second_joint_angle;
     }
     public Translation2d anglesToPoint(double firstAngle, double second) {
-        double x = Util.cosInDegrees(firstAngle) * l1 + Util.cosInDegrees(second) * l2;
-        double y = Util.sinInDegrees(firstAngle) * l1 + Util.sinInDegrees(second) * l2;
+        double x = Util.cosInDegrees(firstAngle) * l1 + Util.cosInDegrees(180-second+firstAngle) * l2;
+        double y = Util.sinInDegrees(firstAngle) * l1 + Util.sinInDegrees(180-second+firstAngle) * l2;
         y = ((int) (y * 1000)) / 1000.0;
         x = ((int) (x * 1000)) / 1000.0;
         return new Translation2d(x, y);
@@ -235,10 +245,7 @@ public class Arm implements Subsystem {
 
         public BTCommand armMoveToPoint(Translation2d point){
         return new RunCommand(
-                ()->{setDesiredPoint(point);
-                    arm1.set(angleToVoltageA1(desired_first_joint_angle));
-                    arm2.set(angleToVoltageA2(desired_second_joint_angle));
-                }
+                ()->{setDesiredPoint(point);}
         );
     }
 
