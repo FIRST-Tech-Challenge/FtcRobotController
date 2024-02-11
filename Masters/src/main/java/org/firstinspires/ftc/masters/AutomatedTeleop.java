@@ -12,6 +12,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -156,6 +157,7 @@ public class AutomatedTeleop extends LinearOpMode {
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
         intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
         backSlides = hardwareMap.dcMotor.get("backSlides");
+        otherBackSlides=hardwareMap.dcMotor.get("otherBackSlides");
 
         planeRaise = hardwareMap.servo.get("planeRaise");
         clawServo = hardwareMap.servo.get("clawServo");
@@ -174,6 +176,7 @@ public class AutomatedTeleop extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        otherBackSlides.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -216,6 +219,7 @@ public class AutomatedTeleop extends LinearOpMode {
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
         hookPosition = HookPosition.OPEN;
+        planeRaise.setPosition(CSCons.droneFlat);
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
@@ -258,14 +262,19 @@ public class AutomatedTeleop extends LinearOpMode {
                         planeRaise.setPosition((CSCons.droneFlat));
                     }
 
-                    if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME){ //down
+                    if (gamepad2.left_bumper){ //down
                         backSlidePos = OuttakePosition.BOTTOM;
                         target = backSlidePos.getTarget();
                     }
 
-                    if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME){ //up
+                    if (gamepad2.right_bumper){ //up
                         backSlidePos = OuttakePosition.MID;
                         target = backSlidePos.getTarget();
+                    }
+
+                    if (backSlides.getCurrentPosition()>2000){
+                        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
+                        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
                     }
 
                     break;
@@ -276,260 +285,260 @@ public class AutomatedTeleop extends LinearOpMode {
 
             backSlidesMove(target);
 
+            if (driveMode!=DriveMode.END_GAME) {
 
+                switch (intakeState) {
+                    case Intake:
+                        if (gamepad2.a && !buttonPushed) {
+                            buttonPushed = true;
+                            if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
+                                clawPosition = ClawPosition.CLOSED;
+                                clawServo.setPosition(CSCons.clawClosed);
 
-            switch (intakeState) {
-                case Intake:
-                    if (gamepad2.a && !buttonPushed) {
-                        buttonPushed= true;
-                        if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
+                            } else if (clawPosition == ClawPosition.CLOSED) {
+                                clawPosition = ClawPosition.OPEN;
+                                clawServo.setPosition(clawOpen);
+                                claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
+                            }
+                        } else {
+                            buttonPushed = false;
+                        }
+
+                        if (clawPosition == ClawPosition.OPEN && detectPixel()) {
                             clawPosition = ClawPosition.CLOSED;
                             clawServo.setPosition(CSCons.clawClosed);
+                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(0.5);
 
-                        } else if (clawPosition == ClawPosition.CLOSED) {
-                            clawPosition = ClawPosition.OPEN;
-                            clawServo.setPosition(clawOpen);
-                            claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
                         }
-                    } else {
-                        buttonPushed = false;
-                    }
 
-                    if (clawPosition == ClawPosition.OPEN && detectPixel()) {
-                        clawPosition = ClawPosition.CLOSED;
-                        clawServo.setPosition(CSCons.clawClosed);
-                        intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
-                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(0.5);
+                        if (gamepad2.dpad_up) {
+                            if (intakeSlides.getCurrentPosition() > 50) {
+                                intakeSlides.setTargetPosition(0);
+                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                intakeSlides.setPower(1);
+                                clawAngle.setPosition(CSCons.clawAngleTransition);
+                                clawArm.setPosition(CSCons.clawArmTransition);
+                                intakeState = IntakeState.MoveToTransfer;
+                            } else {
+                                intakeState = IntakeState.Transfer;
+                                clawAngle.setPosition(CSCons.clawAngleTransfer);
+                                clawArm.setPosition(CSCons.clawArmTransfer);
+                            }
 
-                    }
+                        }
 
-                    if (gamepad2.dpad_up) {
-                        if (intakeSlides.getCurrentPosition()>50){
+                        if (gamepad2.dpad_left) {
+                            intakeState = IntakeState.Transition;
+                            clawAngle.setPosition(CSCons.clawAngleTransition);
+                            clawArm.setPosition(CSCons.clawArmTransition);
+                        }
+
+                        if (gamepad1.dpad_up) {
+                            intakeSlides.setTargetPosition(1700);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
+                        }
+
+                        if (gamepad1.dpad_down) {
                             intakeSlides.setTargetPosition(0);
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(1);
-                            clawAngle.setPosition(CSCons.clawAngleTransition);
-                            clawArm.setPosition(CSCons.clawArmTransition);
-                            intakeState = IntakeState.MoveToTransfer;
-                        } else {
+                        }
+
+
+                        break;
+                    case MoveToTransfer:
+                        if (intakeSlides.getCurrentPosition() < 50) {
                             intakeState = IntakeState.Transfer;
                             clawAngle.setPosition(CSCons.clawAngleTransfer);
                             clawArm.setPosition(CSCons.clawArmTransfer);
                         }
-
-                    }
-
-                    if (gamepad2.dpad_left) {
-                        intakeState = IntakeState.Transition;
-                        clawAngle.setPosition(CSCons.clawAngleTransition);
-                        clawArm.setPosition(CSCons.clawArmTransition);
-                    }
-
-                    if (gamepad1.dpad_up){
-                        intakeSlides.setTargetPosition(1700);
-                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(1);
-                    }
-
-                    if (gamepad1.dpad_down){
-                        intakeSlides.setTargetPosition(0);
-                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(1);
-                    }
-
-
-                    break;
-                case MoveToTransfer:
-                    if (intakeSlides.getCurrentPosition()<50){
-                        intakeState = IntakeState.Transfer;
-                        clawAngle.setPosition(CSCons.clawAngleTransfer);
-                        clawArm.setPosition(CSCons.clawArmTransfer);
-                    }
-                    break;
-                case MoveToIntake:
-                    if (intakeElapsedTime != null && intakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToBottomIntake) {
-                        intakeState = IntakeState.Intake;
-                        clawPosition = ClawPosition.OPEN;
-                        clawServo.setPosition(clawOpen);
-                    }
-
-
-                    break;
-                case Transfer:
-                    //is there a reason we would ever want to close the claw here?
-                    if (gamepad1.a) {
-                        clawPosition = ClawPosition.TRANSFER;
-                        clawServo.setPosition(CSCons.clawTransfer);
-                    }
-
-
-                    if (gamepad2.dpad_down) {
-                        intakeState = IntakeState.MoveToIntake;
-                        intakeElapsedTime = new ElapsedTime();
-                        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-                        clawArm.setPosition(CSCons.clawArmGround);
-                    }
-
-                    if (gamepad2.dpad_left) {
-                        intakeState = IntakeState.Transition;
-                        clawAngle.setPosition(CSCons.clawAngleTransition);
-                        clawArm.setPosition(CSCons.clawArmTransition);
-                    }
-
-                    if (gamepad1.dpad_down){
-                        intakeSlides.setTargetPosition(0);
-                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(1);
-                    }
-
-
-                    break;
-                case Transition:
-
-                    if (gamepad2.dpad_down) {
-                        intakeState = IntakeState.MoveToIntake;
-                        intakeElapsedTime = new ElapsedTime();
-                        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-                        clawArm.setPosition(CSCons.clawArmGround);
-                    }
-
-
-                    if (gamepad2.dpad_up) {
-                        intakeState = IntakeState.Transfer;
-                        clawAngle.setPosition(CSCons.clawAngleTransfer);
-                        clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
-                    }
-
-                    if (gamepad1.dpad_down){
-                        intakeSlides.setTargetPosition(0);
-                        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        intakeSlides.setPower(1);
-                    }
-
-                    break;
-            }
-            if (gamepad2.dpad_right) {
-                outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-                outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-            }
-            switch (outtakeState){
-                case ReadyToTransfer:
-                    if (!touchBucket.isPressed()){
-                        bucketMovedBy = bucketMovedBy + .01;
-                        outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
-                    }
-                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){ // if press x and hook is closed, open hook
-                        if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
-                            outtakeElapsedTime = new ElapsedTime();
-                            hookPosition = HookPosition.OPEN;
-                            outtakeHook.setPosition(CSCons.openHook);
-                        } else {
-                            outtakeHook.setPosition(CSCons.closeHook);
+                        break;
+                    case MoveToIntake:
+                        if (intakeElapsedTime != null && intakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToBottomIntake) {
+                            intakeState = IntakeState.Intake;
+                            clawPosition = ClawPosition.OPEN;
+                            clawServo.setPosition(clawOpen);
                         }
-                    }
-                    if (gamepad2.x && hookPosition == HookPosition.OPEN){ // closes hook with x
-                        if(outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300){
+
+
+                        break;
+                    case Transfer:
+                        //is there a reason we would ever want to close the claw here?
+                        if (gamepad1.a) {
+                            clawPosition = ClawPosition.TRANSFER;
+                            clawServo.setPosition(CSCons.clawTransfer);
+                        }
+
+
+                        if (gamepad2.dpad_down) {
+                            intakeState = IntakeState.MoveToIntake;
+                            intakeElapsedTime = new ElapsedTime();
+                            clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                            clawArm.setPosition(CSCons.clawArmGround);
+                        }
+
+                        if (gamepad2.dpad_left) {
+                            intakeState = IntakeState.Transition;
+                            clawAngle.setPosition(CSCons.clawAngleTransition);
+                            clawArm.setPosition(CSCons.clawArmTransition);
+                        }
+
+                        if (gamepad1.dpad_down) {
+                            intakeSlides.setTargetPosition(0);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
+                        }
+
+
+                        break;
+                    case Transition:
+
+                        if (gamepad2.dpad_down) {
+                            intakeState = IntakeState.MoveToIntake;
+                            intakeElapsedTime = new ElapsedTime();
+                            clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                            clawArm.setPosition(CSCons.clawArmGround);
+                        }
+
+
+                        if (gamepad2.dpad_up) {
+                            intakeState = IntakeState.Transfer;
+                            clawAngle.setPosition(CSCons.clawAngleTransfer);
+                            clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
+                        }
+
+                        if (gamepad1.dpad_down) {
+                            intakeSlides.setTargetPosition(0);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
+                        }
+
+                        break;
+                }
+                if (gamepad2.dpad_right) {
+                    outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+                    outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                }
+                switch (outtakeState) {
+                    case ReadyToTransfer:
+//                        if (!touchBucket.isPressed()) {
+//                            bucketMovedBy = bucketMovedBy + .01;
+//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+//                        }
+                        if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.OPEN;
+                                outtakeHook.setPosition(CSCons.openHook);
+                            } else {
+                                outtakeHook.setPosition(CSCons.closeHook);
+                            }
+                        }
+                        if (gamepad2.x && hookPosition == HookPosition.OPEN) { // closes hook with x
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = closeHook();
+                            } else {
+                                outtakeHook.setPosition(CSCons.openHook);
+                            }
+                        }
+
+                        if (gamepad2.left_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.LOW;
                             outtakeElapsedTime = closeHook();
-                        } else {
-                        outtakeHook.setPosition(CSCons.openHook);
+                            outtakeState = OuttakeState.ClosingHook;
+
                         }
-                    }
-
-                    if (gamepad2.left_trigger>0.5){
-                        backSlidePos = OuttakePosition.LOW;
-                       outtakeElapsedTime = closeHook();
-                       outtakeState = OuttakeState.ClosingHook;
-
-                    }
-                    if (gamepad2.right_trigger>0.5){
-                        backSlidePos = OuttakePosition.MID;
-                        outtakeElapsedTime = closeHook();
-                        outtakeState = OuttakeState.ClosingHook;
-                    }
-
-
-
-                    break;
-                case MoveToTransfer:
-                    if (backSlides.getCurrentPosition()<50){
-                        outtakeHook.setPosition(CSCons.openHook);
-                        outtakeState= OuttakeState.ReadyToTransfer;
-                        target =0;
-                    }
-
-
-                    //if touch sensor => ready to transfer
-                    break;
-                case ReadyToDrop:
-                    if (gamepad2.x && hookPosition==HookPosition.CLOSED){
-                        if (outtakeElapsedTime==null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300) {
-                            outtakeElapsedTime = new ElapsedTime();
-                            hookPosition = HookPosition.OPEN;
-                            outtakeHook.setPosition(CSCons.openHook);
-                        } else {
-                            outtakeHook.setPosition(CSCons.closeHook);
-                        }
-                    }
-                    if (gamepad2.x && hookPosition == HookPosition.OPEN){
-                        if(outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>300){
+                        if (gamepad2.right_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.MID;
                             outtakeElapsedTime = closeHook();
-                        } else {
-                            outtakeHook.setPosition(CSCons.openHook);
+                            outtakeState = OuttakeState.ClosingHook;
                         }
-                    }
-
-                    if (gamepad2.left_trigger>0.5){
-                        backSlidePos = OuttakePosition.LOW;
 
 
-                    }
-                    if (gamepad2.right_trigger>0.5){
-                        backSlidePos = OuttakePosition.MID;
-                        target = backSlidePos.getTarget();
-                    }
+                        break;
+                    case MoveToTransfer:
+                        if (backSlides.getCurrentPosition() < 50) {
+                            outtakeHook.setPosition(CSCons.openHook);
+                            outtakeState = OuttakeState.ReadyToTransfer;
+                            target = 0;
+                        }
 
-                    if (gamepad2.left_stick_y>0.2){
-                        backSlidePos= OuttakePosition.BOTTOM;
-                        outtakeHook.setPosition(CSCons.openHook);
-                        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-                        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-                        target = backSlidePos.getTarget();
-                        outtakeState= OuttakeState.MoveToTransfer;
-                    }
 
-                    if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME){ //down
-                        target-=60;
-                    }
+                        //if touch sensor => ready to transfer
+                        break;
+                    case ReadyToDrop:
+                        if (gamepad2.x && hookPosition == HookPosition.CLOSED) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.OPEN;
+                                outtakeHook.setPosition(CSCons.openHook);
+                            } else {
+                                outtakeHook.setPosition(CSCons.closeHook);
+                            }
+                        }
+                        if (gamepad2.x && hookPosition == HookPosition.OPEN) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = closeHook();
+                            } else {
+                                outtakeHook.setPosition(CSCons.openHook);
+                            }
+                        }
 
-                    if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME){ //up
-                        target+=60;
-                    }
+                        if (gamepad2.left_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.LOW;
 
-                    //what button to mode back to transfer?
-                    // what order to move (slide down or flip first?
 
-                    break;
-                case MoveToDrop:
-                    if (backSlides.getCurrentPosition()>100){
-                        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-                        outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
-                        outtakeRotation.setPosition(outtakeRotationTarget);
-                    }
-                    if (backSlides.getCurrentPosition()>backSlidePos.getTarget()-100){
-                        outtakeState = OuttakeState.ReadyToDrop;
-                    }
-                    break;
-                case Align:
-                    break;
-                case BackUp:
-                    break;
-                case ClosingHook:
-                    if (outtakeElapsedTime!=null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS)>CSCons.transferToScoreOuttake){
-                        outtakeState = OuttakeState.MoveToDrop;
-                        target = backSlidePos.getTarget();
-                    }
-                    break;
+                        }
+                        if (gamepad2.right_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.MID;
+                            target = backSlidePos.getTarget();
+                        }
+
+                        if (gamepad2.left_stick_y > 0.2) {
+                            backSlidePos = OuttakePosition.BOTTOM;
+                            outtakeHook.setPosition(CSCons.openHook);
+                            outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+                            outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                            target = backSlidePos.getTarget();
+                            outtakeState = OuttakeState.MoveToTransfer;
+                        }
+
+                        if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
+                            target -= 60;
+                        }
+
+                        if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
+                            target += 60;
+                        }
+
+                        //what button to mode back to transfer?
+                        // what order to move (slide down or flip first?
+
+                        break;
+                    case MoveToDrop:
+                        if (backSlides.getCurrentPosition() > 100) {
+                            outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+                            outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                            outtakeRotation.setPosition(outtakeRotationTarget);
+                        }
+                        if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
+                            outtakeState = OuttakeState.ReadyToDrop;
+                        }
+                        break;
+                    case Align:
+                        break;
+                    case BackUp:
+                        break;
+                    case ClosingHook:
+                        if (outtakeElapsedTime != null && outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToScoreOuttake) {
+                            outtakeState = OuttakeState.MoveToDrop;
+                            target = backSlidePos.getTarget();
+                        }
+                        break;
+                }
             }
 
 //            if (gamepad1.a ) {

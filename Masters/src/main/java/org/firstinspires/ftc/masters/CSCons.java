@@ -25,17 +25,17 @@ public class CSCons {
     public static double clawArmTransfer = .22;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
-    public static double outtakeAngleFolder=0.17;
+    public static double outtakeAngleFolder=0.08;
     public static double outtakeAngleTransfer=.6;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop = .65;
-    public static double outtakeMovementTransfer = .1;
+    public static double outtakeMovementBackDrop = .70;
+    public static double outtakeMovementTransfer = .17;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
 
-    public static double droneFlat = 0.3;
+    public static double droneFlat = 0.59;
     public static double droneShooting = 0.2;
 
     public static double closeClawDistance = 3; //in cm

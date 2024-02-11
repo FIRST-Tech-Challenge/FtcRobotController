@@ -63,6 +63,7 @@ public class moo extends LinearOpMode {
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
+        planeLauncher.setPosition(0.95 );
         turnClaw.setPosition(0.47);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
@@ -89,15 +90,15 @@ public class moo extends LinearOpMode {
                 target = 300;
             }
 
-            if(gamepad2.dpad_down){
+            if (gamepad2.dpad_down) {
                 armQuickPosition = 0;
-            } else if(gamepad2.dpad_up){
+            } else if (gamepad2.dpad_up) {
                 armQuickPosition = 1;
-            } else if (gamepad2.dpad_left){
+            } else if (gamepad2.dpad_left) {
                 turnClaw.setPosition(0.6);
             }
-            double drivePower = -gamepad1.left_stick_y*0.8;
-            double rotatePower = gamepad1.right_stick_x*0.8;
+            double drivePower = -gamepad1.left_stick_y * 0.8;
+            double rotatePower = gamepad1.right_stick_x * 0.8;
 
             // Flip these signs if the robot rotates the wrong way
             frontLeft.setPower(drivePower + rotatePower);
@@ -105,25 +106,25 @@ public class moo extends LinearOpMode {
             backLeft.setPower(drivePower + rotatePower);
             backRight.setPower(drivePower - rotatePower);
 
-//            double y = -gamepad1.left_stick_y;
-//            double x = gamepad1.left_stick_x;
-//            double rx = gamepad1.right_stick_x;
-//
-//            if (Math.abs(y) < 0.2) {
-//                y = 0;
-//            }
-//            if (Math.abs(x) < 0.2) {
-//                x = 0;
-//            }
-//
-//            double leftFrontPower = y + x + rx;
-//            double leftRearPower = y - x + rx;
-//            double rightFrontPower = y - x - rx;
-//            double rightRearPower = y + x - rx;
-//
-//            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-//
-//                double max;
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
+
+            if (Math.abs(y) < 0.2) {
+                y = 0;
+            }
+            if (Math.abs(x) < 0.2) {
+                x = 0;
+            }
+
+            double leftFrontPower = y + x + rx;
+            double leftRearPower = y - x + rx;
+            double rightFrontPower = y - x - rx;
+            double rightRearPower = y + x - rx;
+
+            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+
+                double max;
 //                max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
 //                max = Math.max(max, Math.abs(rightFrontPower));
 //                max = Math.max(max, Math.abs(rightRearPower));
@@ -139,41 +140,41 @@ public class moo extends LinearOpMode {
 //            frontRight.setPower(rightFrontPower);
 //            backRight.setPower(rightRearPower);
 
-            telemetry.addData("left slide", slideLeft.getCurrentPosition());
-            telemetry.addData("right slide", slideRight.getCurrentPosition());
+                telemetry.addData("left slide", slideLeft.getCurrentPosition());
+                telemetry.addData("right slide", slideRight.getCurrentPosition());
 
-            if (gamepad2.left_stick_y < -.7 && slideLeft.getCurrentPosition() < 1000 && slideRight.getCurrentPosition() < 1000 && clawUp.getCurrentPosition()>100) {
-                slideLeft.setPower(.5);
-                slideRight.setPower(.5);
-            } else if (gamepad2.left_stick_y > 0.7 && slideLeft.getCurrentPosition() > -5 && slideRight.getCurrentPosition() > -5 && clawUp.getCurrentPosition()>100) {
-                slideLeft.setPower(-0.5);
-                slideRight.setPower(-0.5);
-            } else {
-                slideLeft.setPower(0);
-                slideRight.setPower(0);
-            }
+                if (gamepad2.left_stick_y < -.7 && slideLeft.getCurrentPosition() < 1000 && slideRight.getCurrentPosition() < 1000 && clawUp.getCurrentPosition() > 100) {
+                    slideLeft.setPower(.5);
+                    slideRight.setPower(.5);
+                } else if (gamepad2.left_stick_y > 0.7 && slideLeft.getCurrentPosition() > -5 && slideRight.getCurrentPosition() > -5 && clawUp.getCurrentPosition() > 100) {
+                    slideLeft.setPower(-0.5);
+                    slideRight.setPower(-0.5);
+                } else {
+                    slideLeft.setPower(0);
+                    slideRight.setPower(0);
+                }
 
 
-            if (gamepad2.x) {
-                turnClaw.setPosition(0.46);
-            }
-            if (gamepad2.y) {
-                turnClaw.setPosition(0.3);
-            }
-            if (gamepad2.a) {
-                closeClaw.setPosition(0.9);
-            }
-            if (gamepad2.b) {
-                closeClaw.setPosition(0.2);
-            }
-            if (gamepad1.a) {
-                planeLauncher.setPosition(0.5);
+                if (gamepad2.x) {
+                    turnClaw.setPosition(0.46);
+                }
+                if (gamepad2.y) {
+                    turnClaw.setPosition(0.3);
+                }
+                if (gamepad2.a) {
+                    closeClaw.setPosition(0.9);
+                }
+                if (gamepad2.b) {
+                    closeClaw.setPosition(0.2);
+                }
+                if (gamepad1.a) {
+                    planeLauncher.setPosition(1);
 
-            }
+                }
                 telemetry.update();
 
+            }
+
         }
-
-
     }
 }
