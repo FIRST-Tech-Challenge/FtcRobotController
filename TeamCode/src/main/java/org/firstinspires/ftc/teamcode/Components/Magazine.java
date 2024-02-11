@@ -93,7 +93,7 @@ public class Magazine {
             blinkin.red();
         }
         else if(pixels == 1){
-            blinkin.shotred();
+            blinkin.redorange();
         }
         else if(pixels == 2){
             blinkin.white();
