@@ -84,8 +84,7 @@ public class TeleOp_Full extends CSBase {
                             pixelLiftingMotor.setPower(0);
                             addTelemetry("pixelLiftingMotor no longer moving");
                         }
-                    }
-                    if (gamepad2.dpad_down && !gamepad2.dpad_up && !TS) {
+                    } else if (gamepad2.dpad_down && !gamepad2.dpad_up && !TS) {
                         if (pixelLiftingMotor.getCurrentPosition() > 0) {
                             pixelLiftingMotor.setPower(-0.75);
                             addTelemetry("pixelLiftingMotor now moving");
