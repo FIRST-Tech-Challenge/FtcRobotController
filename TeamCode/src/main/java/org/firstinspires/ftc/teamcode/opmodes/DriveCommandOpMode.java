@@ -72,7 +72,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         assert driveMotors != null;
         driveSubsystem = new DriveSubsystem(driveMotors);
         armSubsystem = new ArmSubsystem(RobotHardwareInitializer.initializeArm(this));
-        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this), true);
+        wristSubsystem = new WristSubsystem(RobotHardwareInitializer.initializeWrist(this), false);
         fingerSubsystem = new FingerSubsystem(RobotHardwareInitializer.initializeFinger(this));
         launcherSubsystem = new LauncherSubsystem(RobotHardwareInitializer.initializeLauncher(this));
         gateSubsystem = new GateSubsystem(RobotHardwareInitializer.initializeGateServos(this));

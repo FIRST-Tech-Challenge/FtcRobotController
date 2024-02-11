@@ -186,6 +186,10 @@ public class RobotHardwareInitializer {
         // Init Color Sensor
         //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
 
+        // Init Pixel Pooper
+        out.put(Other.PIXEL_POOPER, new ServoTypeValue(initializePixelPooper(opMode)));
+
+        /*
         // Init Intake
         HashMap<Intake, CRServo> tmp3 = initializeIntake(opMode);
         final CRServo LEFT = tmp3.get(Intake.LEFT);
@@ -193,7 +197,8 @@ public class RobotHardwareInitializer {
         CRServo[] tmp4 = new CRServo[2];
         tmp4[0] = LEFT;
         tmp4[1] = RIGHT;
-        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));
+        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));]
+         */
 
         // Init Webcam
         HashMap<Cameras, WebcamName> tmp5 = initializeCamera(opMode);
@@ -319,6 +324,17 @@ public class RobotHardwareInitializer {
     public static Servo initializeFinger(final OpMode opMode) {
         try {
             Servo servo = opMode.hardwareMap.get(Servo.class, "finger_servo");
+            servo.setDirection(Servo.Direction.FORWARD);
+            return servo;
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
+    public static Servo initializePixelPooper(final OpMode opMode) {
+        try {
+            Servo servo = opMode.hardwareMap.get(Servo.class, "pixel_pooper");
             servo.setDirection(Servo.Direction.FORWARD);
             return servo;
         } catch(Exception e) {
