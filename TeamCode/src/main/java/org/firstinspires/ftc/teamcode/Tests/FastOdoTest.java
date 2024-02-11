@@ -26,14 +26,14 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 //@Disabled
 
 @Autonomous
-public class RightIMUMoveTest extends LinearOpMode {
+public class FastOdoTest extends LinearOpMode {
     Queuer queuer;
     SampleMecanumDrive roadrun;
 
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
-        roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_IMU_RIGHT);
+        roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         roadrun.setPoseEstimate(startPose);
@@ -43,8 +43,8 @@ public class RightIMUMoveTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(35.25, 35.5,Math.toRadians(180)))
-                .lineToSplineHeading(new Pose2d(13.75, 35.5,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(35.25, 0,Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(13.75, 0,Math.toRadians(90)))
                 .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
                 .build();
