@@ -21,6 +21,7 @@ public class GoBuilda extends LinearOpMode {
     private Servo servoRight;
     private Servo servoLeft;
     private RevBlinkinLedDriver revBlinkin;
+    private Servo servoDrone;
 
 
     /**
@@ -52,6 +53,7 @@ public class GoBuilda extends LinearOpMode {
         servoLeft = hardwareMap.get(Servo.class, "servoLeft");
         servoRight = hardwareMap.get(Servo.class, "servoRight");
         revBlinkin = hardwareMap.get(RevBlinkinLedDriver.class, "revBlinkin");
+        servoDrone = hardwareMap.get(Servo.class, "servoDrone");
 
         //Sets variables to 0 on initialization
         rotation = 0;
@@ -166,7 +168,7 @@ public class GoBuilda extends LinearOpMode {
                 //Limiters are applied if the motors position is less than 350° or greater than 2900°
                 //If the position is less than 350°, the arm can only extend forward
                 //If the position is greater than 2900°, the arm can only retract
-                if (ext > 350 && ext < 2900) {
+                if (ext >= 100 && ext < 2900) {
                     if (gamepad2.dpad_up) {
                         armExt.setPower(1);
                     } else if (gamepad2.dpad_down) {
@@ -174,13 +176,13 @@ public class GoBuilda extends LinearOpMode {
                     } else {
                         armExt.setPower(0);
                     }
-                } else if (ext < 350 && ext < 2900) {
+                } else if (ext <= 100 && ext < 2900) {
                     if (gamepad2.dpad_up) {
                         armExt.setPower(1);
                     } else {
                         armExt.setPower(0);
                     }
-                } else if (ext > 2900 && ext > 350) {
+                } else if (ext > 2900 && ext >= 100) {
                     if (gamepad2.dpad_down) {
                         armExt.setPower(-1);
                     } else {
@@ -211,6 +213,12 @@ public class GoBuilda extends LinearOpMode {
                     servoRight.setPosition(0.7);
                 }
 
+                if (gamepad2.dpad_left) {
+                    servoDrone.setPosition(1);
+                    sleep(1000);
+                    servoDrone.setPosition(0);
+                }
+
 
                 //Telemetry for debugging
                 telemetry.addData("Current Arm Extension", ext);
@@ -221,6 +229,7 @@ public class GoBuilda extends LinearOpMode {
                 telemetry.addData("Front Right Motor Power", frontRightMotor.getPower());
                 telemetry.addData("Front Left Motor Power", frontLeftMotor.getPower());
                 telemetry.addData("Arm Locked: ", armLocked);
+                telemetry.addData("Drone Servo", servoDrone.getPosition());
                 telemetry.update();
             } //end while loop
         } //end if loop
