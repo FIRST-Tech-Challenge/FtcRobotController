@@ -69,8 +69,10 @@ public class Robot {
     PIDController setHeadingController;
     double robotX = 0;
     double robotY = 0;
-    private boolean previousDpadValue;
+    private boolean previousHookButtonValue;
     private boolean hookShouldClose;
+    private boolean stackShouldBeDown;
+    private boolean previousStackButtonValue;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -1479,6 +1481,7 @@ public class Robot {
         double launcherSpeedTarget = 0.49;
         //max power = 2800ticks/sec
         //6000rpm rotations per second = 6000/60 rotation per millisecond = (6000/60)/1000 ticks per millisecond = 0.1*28
+        boolean droneShouldHaveLaunched = false;
         final double targetVelocity = ((0.028*KONSTANT_TIME_GAP_MILLISECONDS)*launcherSpeedTarget);
         double currentVelocity;
         double initialPlaneLauncherPower = 0.2;
@@ -1523,7 +1526,7 @@ public class Robot {
 
             // both bumper launches drone
             if (gamepad1.right_bumper && gamepad1.left_bumper) {
-                while (true) {
+                while (!droneShouldHaveLaunched) {
                     planeLauncher.setPower(initialPlaneLauncherPower);
 
                     planeLauncherTicksBeforeSleep = planeLauncher.getCurrentPosition();
@@ -1537,6 +1540,7 @@ public class Robot {
                     if ((currentVelocity >= targetVelocity) || (initialPlaneLauncherPower >= 1)) {
                         //launch
                         planeLauncherServo.setPosition(0.45);
+                        droneShouldHaveLaunched = true;
                         Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
                         opMode.sleep(1000);
                         break;
@@ -1553,6 +1557,20 @@ public class Robot {
                 planeLauncher.setPower(0);
                 //not launch
                 planeLauncherServo.setPosition(planeServoDisengage);
+            }
+
+
+            //dpad right - toggle stack attachment
+
+            if (!gamepad1.dpad_right && previousStackButtonValue) {
+                stackShouldBeDown = !stackShouldBeDown;
+            }
+            previousStackButtonValue = gamepad1.dpad_right;
+
+            if (stackShouldBeDown) {
+                stackAttachmentOut();
+            } else {
+                stackAttachmentIn();
             }
 
             //setting forward and mecanum based on where the front is
@@ -1614,31 +1632,15 @@ public class Robot {
             // GAMEPAD 2: ARM CONTROLS
 
             // dpad controlling lock
-            if (!gamepad2.dpad_up && previousDpadValue) { // up - close
+            if (!gamepad2.dpad_up && previousHookButtonValue) { // up - close
                 hookShouldClose = !hookShouldClose;
             }
-            previousDpadValue = gamepad2.dpad_up;
+            previousHookButtonValue = gamepad2.dpad_up;
 
             if (hookShouldClose) {
                 closeHook();
             } else {
                 openHook();
-            }
-
-            //dpad right - toggle stack attachment
-
-            if (gamepad2.dpad_right) {
-
-                if (stackAttachmentOut) {
-                    stackAttachmentOut = false;
-                    stackAttachmentIn();
-
-                } else {
-                    stackAttachmentOut = true;
-                    stackAttachmentOut();
-
-                }
-
             }
 
             // pivoting tray
@@ -2203,12 +2205,7 @@ public class Robot {
                     slowMode = false;
                 }
 
-                // both bumper launches drone
-                if (gamepad1.right_bumper && gamepad1.left_bumper) {
-                    planeLauncher.setPower(-1);
-                } else {
-                    planeLauncher.setPower(0);
-                }
+
 
 
                 //setting forward and mecanum based on where the front is
