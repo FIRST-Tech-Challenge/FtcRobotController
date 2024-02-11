@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedWall extends LinearOpMode {
+public class LongRedWaitWall extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -14,6 +14,7 @@ public class LongRedWall extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
+        int delay = 10000;
 
         waitForStart();
 
@@ -26,6 +27,8 @@ public class LongRedWall extends LinearOpMode {
             robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
+            this.sleep(delay);
+
             robot.longMoveToBoardTruss();
 
             robot.alignToBoardFast(robot.wantedAprTagId);
@@ -35,16 +38,9 @@ public class LongRedWall extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
+            // parking here
             robot.boardToTruss();
-            robot.trussToStackAndIntake();
-            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
-            robot.stackToBoardTruss();
-
-            robot.alignToBoardFast(6);
-            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
-
-            robot.autoOuttake(false, slideStartingPosition);
-
+            robot.straightBlocking2(20);
             break;
 
         }

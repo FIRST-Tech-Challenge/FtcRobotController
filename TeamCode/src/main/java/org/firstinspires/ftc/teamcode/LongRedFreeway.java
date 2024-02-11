@@ -15,20 +15,9 @@ public class LongRedFreeway extends LinearOpMode {
         robot.initVisionProcessing();
         double slideStartingPosition;
 
-        // robot.detectPropEarly();
-
         waitForStart();
 
         while (opModeIsActive()) {
-
-            /*
-            if (robot.markerPos == MarkerDetector.MARKER_POSITION.UNDETECTED ||
-                    robot.markerPos == MarkerDetector.MARKER_POSITION.UNKNOWN) {
-                robot.detectMarkerPosition();
-                Log.d("early vision", "auto: ran detectMarkerPosition(). prop undetected/unknown at start");
-            }
-
-            */
 
             robot.detectMarkerPosition();
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
