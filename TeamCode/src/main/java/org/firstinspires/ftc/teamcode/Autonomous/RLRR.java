@@ -31,6 +31,7 @@ public class RLRR extends LinearOpMode {
 
         spikey[1] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
+                .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-36,-36,toRadians(-90)))
                 .build();
 
@@ -121,21 +122,21 @@ public class RLRR extends LinearOpMode {
             robot.upAuto();
             robot.purpurAuto();
             robot.queuer.addDelay(1.0);
-            robot.followTrajSeq(spikey[bark]);
+            robot.followTrajSeq(spikey[1]);
             robot.queuer.addDelay(0.2);
             robot.dropAuto(0);
             robot.queuer.addDelay(0.3);
-            robot.followTrajSeq(pathy[bark]);
+            robot.followTrajSeq(pathy[1]);
             robot.queuer.addDelay(.6);
             robot.resetAuto();
             robot.grabSupAuto();
-            robot.followTrajSeq(droppy[bark]);
+            robot.followTrajSeq(droppy[1]);
             robot.queuer.addDelay(.5);
             robot.lowAuto();
             robot.drop();
             robot.queuer.addDelay(.5);
             robot.resetAuto();
-            robot.followTrajSeq(parky[bark]);
+            robot.followTrajSeq(parky[1]);
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);
             robot.update();
