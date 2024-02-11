@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.ChassisF
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.PIDConstants.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.trajectory.constraint.MecanumDriveKinematicsConstraint;
@@ -15,29 +16,44 @@ import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
 
 public class Constants {
-    public static final double l1 = 1;// com distant from axis first arm METERS
-    public static final double l2 = 0.70;// com distant from axis second arm METERS
-    public static final double first_arm_weight = 1.7; // first arm weight KG
-    public static final double second_arm_weight = 1.3; // second arm weight with gripper KG
+    public static final double l1 = 0.385/2;// com distant from axis first arm METERS
+    public static final double l2 = 0.29;// com distant from axis second arm METERS
+    public static final double first_arm_weight = 100; // first arm weight KG
+    public static final double second_arm_weight = 300; // second arm weight with gripper KG
     public static final double g = 9.806;
-    public static final double hex_stall_current = 181;
+    public static final double hex_stall_current = 9.801;
     public static final double resistance = 12 / hex_stall_current; //volt
 
-    public static final double gear_ratio = 80;
-    public static final double hex_stall_torque = 0.182; //N * meter
+    public static final double first_gear_ratio = 3;
+    public static final double second_gear_ratio = 1.33333;
+    public static final double hex_stall_torque = 0.173; //N * meter
 
     public static final double neo_Kt = hex_stall_torque / hex_stall_current;
 
-    public static final double motorMaxVolt = 12;
-    public static final double vMax1 = -1;//placeholder value
-    public static final double vMax2 = -1;//placeholder value
-    public static final double vMin1 = -1;//placeholder value
-    public static final double vMin2 = -1;//placeholder value
-    public static final double a1Max = 1; // placeholder, not real
-    public static final double a2Max = 1; // placeholder, not real
-    public static final double arm1Min = 0; // placeholder, not real
-    public static final double arm2Min = 0; // placeholder, not real
+    public static class ArmConstants {
 
+        public static final double motorMaxVolt = 12;
+        public static final double vMax1 = 1.6;//placeholder value
+        public static final double vMax2 = 3.1;//placeholder value
+        public static final double vMin1 = 0.55;//placeholder value
+        public static final double vMin2 = 0.77;//placeholder value
+        public static final double a1Max = 90; // placeholder, not real
+        public static final double a2Max = -180; // placeholder, not real
+        public static final double arm1Min = 0; // placeholder, not real
+        public static final double arm2Min = 180; // placeholder, not real
+        public static final double arm1AngleOffset = 32.2;
+        public static final double arm2AngleOffset = 97.7;
+
+        @Config
+        public static class ArmPID{
+        public static double a1KP = 0;
+        public static double a2KP = 0;
+        public static double a1KI = 0;
+        public static double a2KI = 0;
+        public static double a1KD = 0;
+        public static double a2KD = 0;
+        }
+    }
 
     public static class ChassisConstants {
         public static final TrapezoidProfile.Constraints TrapezoidConstraints = new TrapezoidProfile.Constraints(1.63, 1.47);
@@ -57,7 +73,7 @@ public class Constants {
         public static SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ffks,ffkv,ffka);
         @Config
         public static class ChassisFeedForward{
-            public static double ffks = 0.12    ;
+            public static double ffks = 0.12;
             public static double ffkv = 0;
             public static double ffka = 0;
         }
