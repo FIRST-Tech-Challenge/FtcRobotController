@@ -22,7 +22,7 @@ public class TestingWade extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.straightBlocking2(-35);
+            robot.straightBlocking2FixHeading(-96);
 
             break;
         }

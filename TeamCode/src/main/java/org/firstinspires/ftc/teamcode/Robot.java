@@ -73,7 +73,7 @@ public class Robot {
     private boolean hookShouldClose;
 
     public enum MARKER_LOCATION {
-        INNER, CENTER, OUTER;
+        INNER, CENTER, OUTER
     }
     MARKER_LOCATION markerLocation;
 
@@ -378,6 +378,14 @@ public class Robot {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
+
+        // Loop here if IMU is bad (usually because battery power is low)
+        while ((robotOrientation.getAcquisitionTime() == 0) && opMode.opModeIsActive()) {
+            Log.d("imu crash", "getCurrentHeading: acquisition time is 0");
+            opMode.sleep(100);
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+        }
+
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
@@ -398,8 +406,8 @@ public class Robot {
             double minPower = 0.15;
             //while start
             while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
-                robotOrientation = imu.getRobotYawPitchRollAngles();
-                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+                currentHeading = getCurrentHeading();
+
                 currentTime = SystemClock.elapsedRealtimeNanos();
                 error = targetAbsDegrees - currentHeading; //error is degrees to goal
                 errorDer = (error - prevError) / (currentTime - prevTime);
@@ -624,7 +632,7 @@ public class Robot {
 
                 straightBlocking2(29);
 
-                setHeading(90 * polarity, 0.7);
+                setHeading(90 * polarity, 0.7); //TODO: the robot couldn't terminate this in one run
 
                 mecanumBlocking2(5);
 
@@ -683,15 +691,15 @@ public class Robot {
                 straightBlocking2(-2);
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(-13);
+                    mecanumBlocking2(-15);
                 } else {
-                    mecanumBlocking2(13);
+                    mecanumBlocking2(15);
                 }
                 setHeading(0, 0.7);
 
                 // P2: (23, 17)
 
-                straightBlocking2(-33);
+                straightBlocking2(-35);
 
                 // P3: (23, 52)
                 setHeading(-90 * polarity, 0.7);
@@ -707,7 +715,7 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                straightBlocking2(-12);
+                straightBlocking2(-10);
 
                 setHeading(90 * polarity, 0.7);
 
@@ -1465,15 +1473,11 @@ public class Robot {
         double lsPowerFast = 1;
         double lsStayUpAddPower = 0.1;
 
-        double targetLinearSlideTicks = 0;
-
         double trayAngleDefault = 0.5;
         double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
         boolean dpadDownPreviousValue = false;
         boolean stackAttachmentOut = false;
-
-        boolean linearSlideFlag = false;
 
         final long KONSTANT_TIME_GAP_MILLISECONDS = 100;
         double launcherSpeedTarget = 0.49;
@@ -1686,9 +1690,6 @@ public class Robot {
             }
             dpadDownPreviousValue = gamepad2.dpad_down;
 
-
-
-
             // clamp controls
             if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
                 willOpenClamp = false;
@@ -1710,9 +1711,9 @@ public class Robot {
             if (gamepad2.left_trigger > TRIGGER_PRESSED && gamepad2.left_bumper) { // both - nothing
                 // do nothing
             } else if (gamepad2.left_trigger > TRIGGER_PRESSED) { // left trigger - intake
-                intake.setPower(-0.7);
+                intake.setPower(-1);
             } else if (gamepad2.left_bumper) { // left bumper - regurgitate
-                intake.setPower(0.7);
+                intake.setPower(1);
             } else { // neither - stop
                 intake.setPower(0);
             }
@@ -2049,8 +2050,9 @@ public class Robot {
         double currentHeading;
         double headingError;
         double targetHeading = botHeading;
-        double leftPower = 0;
-        double rightPower = 0;
+        double leftPower;
+        double rightPower;
+        double headingScaleFactor = 0.7;
 
         while (opMode.opModeIsActive() && counter < 3) {
 
@@ -2103,6 +2105,15 @@ public class Robot {
             } else {
                 setMotorPower(power, power, power, power);
             }
+
+            // leftPower = power + (headingError * headingScaleFactor);
+            // rightPower = power - (headingError * headingScaleFactor);
+
+            Log.d("fixHeading", "straightBlocking2FixHeading: power is " + power);
+            Log.d("fixHeading", "straightBlocking2FixHeading: leftpower is " + leftPower);
+            Log.d("fixHeading", "straightBlocking2FixHeading: rightpower is " + rightPower);
+            Log.d("fixHeading", "straightBlocking2FixHeading: headingerror is " + headingError);
+            setMotorPower(leftPower, rightPower, leftPower, rightPower);
         }
 
         currentPos = fLeft.getCurrentPosition();
@@ -2623,22 +2634,22 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(16);
+                mecanumBlocking2(21);
                 break;
             case 2:
-                mecanumBlocking2(26);
+                mecanumBlocking2(26.5);
                 break;
             case 3:
-                mecanumBlocking2(29);
+                mecanumBlocking2(32);
                 break;
             case 4:
-                mecanumBlocking2(-29);
+                mecanumBlocking2(-32);
                 break;
             case 5:
-                mecanumBlocking2(-26);
+                mecanumBlocking2(-26.5);
                 break;
             case 6:
-                mecanumBlocking2(-16);
+                mecanumBlocking2(-21);
                 break;
             default:
                 break;
@@ -2657,6 +2668,7 @@ public class Robot {
 
         mecanumBlocking2(24); // todo: test, maybe make method into boolean
 
+        opMode.sleep(5000);
 
         straightBlocking(6, true, 0.3);
         straightBlocking(4, false, 0.7);
@@ -2682,4 +2694,5 @@ public class Robot {
         mecanumBlocking2(-18 * polarity);
         setHeading(90 * polarity, 0.7);
     }
+
 }
