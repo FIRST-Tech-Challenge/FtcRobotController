@@ -391,27 +391,24 @@ public class Robot {
     }
 
     public void setHeading(double targetAbsDegrees, double maxPower) {
-        if (targetAbsDegrees == 180) {
-            setHeading(179.5, maxPower);
-        } else {
-            YawPitchRollAngles robotOrientation;
-            double KP = 0.06;
-            double KD = 2_500_000;
-            double ERROR_TOLERANCE = 0.5; //degrees
-            double currentHeading = getCurrentHeading();
-            double error = targetAbsDegrees - currentHeading;
-            double errorDer;
-            double power;
-            double currentTime;
-            double minPower = 0.15;
-            //while start
-            while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
-                currentHeading = getCurrentHeading();
+        YawPitchRollAngles robotOrientation;
+        double KP = 0.06;
+        double KD = 2_500_000;
+        double ERROR_TOLERANCE = 0.5; //degrees
+        double currentHeading = getCurrentHeading();
+        double error = angleWrap(targetAbsDegrees - currentHeading);
+        double errorDer;
+        double power;
+        double currentTime;
+        double minPower = 0.15;
+        //while start
+        while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+            currentHeading = getCurrentHeading();
 
-                currentTime = SystemClock.elapsedRealtimeNanos();
-                error = targetAbsDegrees - currentHeading; //error is degrees to goal
-                errorDer = (error - prevError) / (currentTime - prevTime);
-                power = (KP * error) + (KD * errorDer);
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = targetAbsDegrees - currentHeading; //error is degrees to goal
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
 
                 /*
                 Log.d("pid", "setHeading: current heading is " + currentHeading);
@@ -422,28 +419,27 @@ public class Robot {
                 Log.d("pid", "setHeading: calculated power is " + power);
                 */
 
-                if (power > 0 && power < minPower) {
-                    power = minPower;
-                    // Log.d("pid", "setHeading: adjusted power is " + power);
-                } else if (power < 0 && power > -1 * minPower) {
-                    power = minPower * -1;
-                    // Log.d("pid", "setHeading: adjusted power is " + power);
-                }
-
-                //cap power
-                power = Range.clip(power, -1 * maxPower, maxPower);
-                // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
-
-                setMotorPower(-1 * power, power, -1 * power, power);
-                prevError = error;
-                prevTime = currentTime;
+            if (power > 0 && power < minPower) {
+                power = minPower;
+                // Log.d("pid", "setHeading: adjusted power is " + power);
+            } else if (power < 0 && power > -1 * minPower) {
+                power = minPower * -1;
+                // Log.d("pid", "setHeading: adjusted power is " + power);
             }
-            setMotorPower(0, 0, 0, 0);
-            opMode.sleep(100);
-            currentHeading = getCurrentHeading();
-            botHeading = targetAbsDegrees;
-            Log.d("pid", "setHeading: final heading is " + currentHeading);
+
+            //cap power
+            power = Range.clip(power, -1 * maxPower, maxPower);
+            // Log.d("pid", "straightBlockingFixHeading: power after clipping is " + power);
+
+            setMotorPower(-1 * power, power, -1 * power, power);
+            prevError = error;
+            prevTime = currentTime;
         }
+        setMotorPower(0, 0, 0, 0);
+        opMode.sleep(100);
+        currentHeading = getCurrentHeading();
+        botHeading = targetAbsDegrees;
+        Log.d("pid", "setHeading: final heading is " + currentHeading);
     }
 
     public void setTrayAngle() {
@@ -2682,6 +2678,16 @@ public class Robot {
         straightBlocking2FixHeading(-93);
         mecanumBlocking2(-18 * polarity);
         setHeading(90 * polarity, 0.7);
+    }
+
+    public static double angleWrap (double angle) {
+        double moddedAngle = angle % 360;
+        if (moddedAngle > 180) {
+            return moddedAngle - 360;
+        } else if (moddedAngle <= -180) {
+            return moddedAngle + 360;
+        }
+        return moddedAngle;
     }
 
 }
