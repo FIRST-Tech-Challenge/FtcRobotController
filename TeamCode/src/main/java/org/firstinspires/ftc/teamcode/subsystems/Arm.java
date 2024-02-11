@@ -123,8 +123,8 @@ public class Arm implements Subsystem {
 
     @Override
     public void periodic() {
-        current_first_joint_angle = voltageToAngle1(potentiometer1.getVoltage());
-        current_second_joint_angle = voltageToAngle2(potentiometer1.getVoltage());
+        current_first_joint_angle = -voltageToAngle1(potentiometer1.getVoltage());
+        current_second_joint_angle = -voltageToAngle2(potentiometer1.getVoltage());
         current_pot1_voltage = potentiometer1.getVoltage();
         current_pot2_voltage = potentiometer2.getVoltage();
         setMotorFromAngle2();
@@ -202,9 +202,9 @@ public class Arm implements Subsystem {
                 );
         desired_second_joint_angle = desired_first_joint_angle - desired_second_joint_angle;
     }
-    public Translation2d anglesToPoint(double firstAngle, double second) {
-        double x = Util.cosInDegrees(firstAngle) * l1 + Util.cosInDegrees(second) * l2;
-        double y = Util.sinInDegrees(firstAngle) * l1 + Util.sinInDegrees(second) * l2;
+    public Translation2d anglesToPoint(double firstAngle, double secondAngle) {
+        double x = Util.cosInDegrees(firstAngle) * l1 + Util.cosInDegrees(secondAngle) * l2;
+        double y = Util.sinInDegrees(firstAngle) * l1 + Util.sinInDegrees(secondAngle) * l2;
         y = ((int) (y * 1000)) / 1000.0;
         x = ((int) (x * 1000)) / 1000.0;
         return new Translation2d(x, y);
