@@ -43,21 +43,20 @@ public abstract class CSBase extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * PI);
-                 double     velocity                = 2000;
     static final double     TILE_LENGTH             = 23.25;
     static final double     STRAFE_FRONT_MODIFIER   = 1.3;
-    //static final double     VEL_MODIFIER            = 1.12485939258;
     static final double     B                       = 1.1375;
     static final double     M                       = 0.889;
     static final double     TURN_SPEED              = 0.5;
     static final double[]   BOUNDARIES              = {0, 350};
     static final double     CAR_WASH_POWER          = 1.0;
+    private static final int WAIT_TIME              = 250;
+                 double     velocity                = 2000;
     spike pos; // Team prop position
     public double x;
     public VisionPortal visionPortal;
     public String tfodModelName;
     private AprilTagProcessor tagProcessor;
-    private static final int WAIT_TIME = 250;
 
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
@@ -70,30 +69,30 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Color options for the team prop. Options: r, b, n **/
     public enum color {
-        r, b, n
+        red, blue, none
     }
     /** Side of the robot. Options: f, b **/
     public enum side {
-        f, b
+        front, back
     }
 
     /** Directions. Options: l, r, f, b **/
     public enum dir {
-        l, r, f, b
+        left, right, forward, backward
     }
 
     /** Spike mark positions for the team prop. Options: l, m, r, n **/
     public enum spike {
-        l, m, r, n
+        left, middle, right, none
     }
 
     /** Initializes all hardware devices on the robot.
      * @param teamColor The color of the team prop.
      * @param useCam Should the camera be initialized? **/
     public void setup(color teamColor, boolean useCam) {
-        if (teamColor == color.r) {
+        if (teamColor == color.red) {
             tfodModelName = "Prop_Red.tflite";
-        } else if (teamColor == color.b){
+        } else if (teamColor == color.blue){
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
@@ -105,6 +104,10 @@ public abstract class CSBase extends LinearOpMode {
         if (!imu.initialize(IMU_PARAMETERS)){
             throw new RuntimeException("IMU initialization failed");
         }
+
+        // The following try catch statements "check" if a motor is connected. If it isn't, it sets
+        // that motor's value to null. Later, we check if that value is null. If it is, then we
+        // don't try to run the motor.
         try {
             lf = hardwareMap.get(DcMotorEx.class, "leftFront");
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -168,7 +171,7 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Initializes all hardware devices on the robot. **/
-    public void setup() { setup(color.n, false); }
+    public void setup() { setup(color.none, false); }
 
     /**
      * Initializes all hardware devices on the robot.
@@ -176,7 +179,7 @@ public abstract class CSBase extends LinearOpMode {
      * @deprecated - use setup() with a color instead
      */
     @Deprecated
-    public void setup(boolean isRed) { if (isRed) { setup(color.r,true); } else { setup(color.b,true); } }
+    public void setup(boolean isRed) { if (isRed) { setup(color.red,true); } else { setup(color.blue,true); } }
 
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.
@@ -207,13 +210,13 @@ public abstract class CSBase extends LinearOpMode {
                 lf.setVelocity(velocity * signum(inches));
                 rf.setVelocity(velocity * signum(inches));
             }
-            else if (direction == dir.f){
+            else if (direction == dir.forward){
                 lb.setVelocity(velocity);
                 rb.setVelocity(velocity);
                 lf.setVelocity(velocity);
                 rf.setVelocity(velocity);
             }
-            else if (direction == dir.b){
+            else if (direction == dir.backward){
                 lb.setVelocity(-velocity);
                 rb.setVelocity(-velocity);
                 lf.setVelocity(-velocity);
@@ -242,7 +245,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Drives using encoder velocity. An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive.**/
     private void encoderDrive(double inches){
-        encoderDrive(inches, dir.f);
+        encoderDrive(inches, dir.forward);
     }
 
     /** Turns the robot a specified number of degrees. Positive values turn right,
@@ -252,9 +255,9 @@ public abstract class CSBase extends LinearOpMode {
      */
     public void turn(double degrees, dir direction) {
         double direct = 0;
-        if (direction == dir.l) {
+        if (direction == dir.left) {
             direct = -1;
-        } else if (direction == dir.r){
+        } else if (direction == dir.right){
             direct = 1;
         }
         sleep(100);
@@ -298,7 +301,7 @@ public abstract class CSBase extends LinearOpMode {
      * @param degrees The amount of degrees to turn.
      */
     public void turn(double degrees){
-        turn(degrees, dir.r);
+        turn(degrees, dir.right);
     }
 
     /** Strafes left or right for a specified number of inches. An inches value of zero will cause the
@@ -320,9 +323,9 @@ public abstract class CSBase extends LinearOpMode {
 
             double d = 0;
 
-            if (direction == dir.r) {
+            if (direction == dir.right) {
                 d = -1;
-            } else if (direction == dir.l){
+            } else if (direction == dir.left){
                 d = 1;
             }
 
@@ -355,7 +358,7 @@ public abstract class CSBase extends LinearOpMode {
      * @param inches Amount of inches to strafe.
      */
     public void strafe(double inches){
-        strafe(inches, dir.r);
+        strafe(inches, dir.right);
     }
 
     /** Changes the velocity.
@@ -387,7 +390,7 @@ public abstract class CSBase extends LinearOpMode {
      * An inches value of zero will cause the robot to drive until manually stopped.
      * @param inches Amount of inches to drive. **/
     public void drive(double inches){
-        drive(inches, dir.f);
+        drive(inches, dir.forward);
     }
 
     /** Converts an amount of tiles on the game board to an amount of inches.
@@ -574,17 +577,17 @@ public abstract class CSBase extends LinearOpMode {
         s(2);
         double x = detectProp();
         if (x == -1){
-            return spike.l;
+            return spike.left;
         }
         if (x > BOUNDARIES[0] && x < BOUNDARIES[1]){
-            return spike.m;
+            return spike.middle;
         }
         else if (x >= BOUNDARIES[1]){
-            return spike.r;
+            return spike.right;
         } else if (x <= BOUNDARIES[0]){
-            return spike.l;
+            return spike.left;
         }
-        return spike.n;
+        return spike.none;
     }
 
     /** Sets the AprilTag ID based on the spike location and robot color.
@@ -594,19 +597,19 @@ public abstract class CSBase extends LinearOpMode {
      */
     public int setID(spike location, color teamColor) {
         int ID;
-        if (teamColor == color.b) {
+        if (teamColor == color.blue) {
             ID = 0;
         } else {
             ID = 3;
         }
         switch (location) {
-            case l:
+            case left:
                 ID += 1;
                 break;
-            case m:
+            case middle:
                 ID += 2;
                 break;
-            case r:
+            case right:
                 ID += 3;
                 break;
             default:
@@ -631,15 +634,15 @@ public abstract class CSBase extends LinearOpMode {
         s(2);
         drive(-18);
         s(.5);
-        if (pos == spike.l) {
+        if (pos == spike.left) {
             turn(-35);
             drive(-10);
             drive(10);
             turn(35);
-        } else if (pos == spike.m) {
+        } else if (pos == spike.middle) {
             drive(-15);
             drive(15);
-        } else if (pos == spike.r) {
+        } else if (pos == spike.right) {
             turn(35);
             drive(-10);
             drive(10);
@@ -684,13 +687,4 @@ public abstract class CSBase extends LinearOpMode {
   public void update() {
        telemetry.update();
   }
-
-  private void w1() {
-      print("", "");
-      moveLift(3);
-      encoderDrive(4);
-      encoderDrive(3);
-      w2();
-  }
-  private void w2() { w1(); }
 }

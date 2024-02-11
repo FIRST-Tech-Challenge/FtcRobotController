@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Auto_BlueFrontFull extends CSBase {
     @Override
     public void runOpMode() {
-        stageSide = side.f;
-        color teamColor = color.b;
+        stageSide = side.front;
+        color teamColor = color.blue;
         setup(teamColor);
 
         // ---------------------
@@ -29,7 +29,7 @@ public class Auto_BlueFrontFull extends CSBase {
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);
             telemetry.update();
-            strafe(5, dir.l);
+            strafe(5, dir.left);
             if (tagDetections(ID, 1000) != null) {
                 break;
             }
