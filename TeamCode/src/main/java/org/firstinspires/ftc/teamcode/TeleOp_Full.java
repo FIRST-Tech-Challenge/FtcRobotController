@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class TeleOp_Full extends CSBase {
 
     // Declare OpMode members for each of the 4 motors.
-    boolean wasY = false;
     boolean wasX = false;
     boolean wasLT = false;
     double axial = 0.0;
@@ -25,7 +24,6 @@ public class TeleOp_Full extends CSBase {
     static final double BASE_TURN_SPEED = 2.5;
     double slowdownMultiplier = 0.0;
     static final double CAR_WASH_POWER = 1.0;
-    static final double[] BACK_BOUNDS = {0.3, 0.6};
 
     @Override
     public void runOpMode() {
@@ -145,7 +143,6 @@ public class TeleOp_Full extends CSBase {
             }
         }
 
-        //*
         if (touchSensor != null) {
             if (!wasTS) {
                 if (touchSensor.isPressed()) {
@@ -158,7 +155,7 @@ public class TeleOp_Full extends CSBase {
             } else if (!touchSensor.isPressed()) {
                 wasTS = false;
             }
-        }//*/
+        }
     }
     public void addTelemetry(String message){
         telemetry.addData("Last Action",message);
