@@ -8,8 +8,8 @@ public class Auto_BlueBackFull extends CSBase {
 
     @Override
     public void runOpMode() {
-        stageSide = side.b;
-        color teamColor = color.b;
+        stageSide = side.back;
+        color teamColor = color.blue;
         setup(teamColor);
 
         // ---------------------
@@ -23,7 +23,7 @@ public class Auto_BlueBackFull extends CSBase {
         telemetry.update();
         purplePixel();
         drive(-2);
-        turn(-90, dir.l);
+        turn(-90, dir.left);
         drive(tilesToInches(-1));
 //        turn(-90);
 //        drive(tilesToInches(-1));
@@ -31,7 +31,7 @@ public class Auto_BlueBackFull extends CSBase {
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);
             telemetry.update();
-            strafe(5, dir.l);
+            strafe(5, dir.left);
             if (tagDetections(ID, 1000) != null) {
                 break;
             }

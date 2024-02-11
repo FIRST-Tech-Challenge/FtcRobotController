@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 public class Auto_RedBackFull extends CSBase {
     @Override
     public void runOpMode() {
-        color teamColor = color.r;
-        stageSide = side.b;
+        color teamColor = color.red;
+        stageSide = side.back;
         setup(teamColor);
 
         // ---------------------
@@ -30,7 +30,7 @@ public class Auto_RedBackFull extends CSBase {
         for (int i = 0; i < 6; i++) {
             telemetry.addData("i", i);
             telemetry.update();
-            strafe(5, dir.r);
+            strafe(5, dir.right);
             if (tagDetections(ID, 1000) != null) {
                 break;
             }

@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class Auto_RedBackLimited extends CSBase {
     @Override
     public void runOpMode() {
-        stageSide = side.b;
-        setup(color.r);
+        stageSide = side.back;
+        setup(color.red);
 
         // ---------------------
         // ------Main Code------

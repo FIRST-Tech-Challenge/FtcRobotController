@@ -8,6 +8,6 @@ import org.firstinspires.ftc.teamcode.CSBase;
 public class Test_Strafing15 extends CSBase {
     public void runOpMode() {
         setup(true);
-        strafe(15, dir.l);
+        strafe(15, dir.left);
     }
 }
