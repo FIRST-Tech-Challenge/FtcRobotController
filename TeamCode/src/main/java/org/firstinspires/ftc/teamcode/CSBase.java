@@ -155,7 +155,7 @@ public abstract class CSBase extends LinearOpMode {
 
 
         print("Status", "Initialized");
-        telemetry.update();
+        update();
 
         allianceColor = teamColor;
 
@@ -234,7 +234,7 @@ public abstract class CSBase extends LinearOpMode {
                 print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 print("Running to",  " " + lfTarget + ":" + rfTarget);
                 print("Currently at",  " at "+ lf.getCurrentPosition() + ":"+ rf.getCurrentPosition());
-                telemetry.update();
+                update();
             }
             if (inches != 0) {
               stopRobot();
@@ -290,7 +290,7 @@ public abstract class CSBase extends LinearOpMode {
             print("Start", startAngle);
             print("Angle", currentAngle);
             print("Distance from goal", difference);
-            telemetry.update();
+            update();
         }
         stopRobot();
         sleep(WAIT_TIME);
@@ -343,7 +343,7 @@ public abstract class CSBase extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 print("Strafing until",  duration + " seconds");
                 print("Currently at",  runtime.seconds() + " seconds");
-                telemetry.update();
+                update();
             }
             if (inches != 0) {
                 stopRobot();
@@ -403,7 +403,7 @@ public abstract class CSBase extends LinearOpMode {
     public void ejectPixel() {
         if (carWashMotor != null) {
             print("Car Wash", "Ejecting Pixel");
-            telemetry.update();
+            update();
             double t = runtime.milliseconds() + 1000;
             carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
@@ -414,7 +414,7 @@ public abstract class CSBase extends LinearOpMode {
             carWashMotor.setPower(0);
         } else {
             print("Car Wash", "Not Connected");
-            telemetry.update();
+            update();
         }
         sleep(WAIT_TIME);
     }
@@ -542,7 +542,7 @@ public abstract class CSBase extends LinearOpMode {
                     print("Turn", a.ftcPose.yaw / 2);
                     turn(a.ftcPose.yaw / 2);
                 }
-                telemetry.update();
+                update();
         }
     }
 
@@ -668,7 +668,7 @@ public abstract class CSBase extends LinearOpMode {
             // Display it for the driver.
             print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             print("Currently at",  " at " + pixelLiftingMotor.getCurrentPosition());
-            telemetry.update();
+            update();
         }
         pixelLiftingMotor.setVelocity(0);
     }
