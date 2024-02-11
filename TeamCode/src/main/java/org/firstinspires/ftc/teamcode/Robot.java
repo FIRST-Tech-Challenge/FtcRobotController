@@ -181,13 +181,13 @@ public class Robot {
         if (lowOuttake) {
             moveLinearSlideByTicksBlocking(startingPosition + 1650); //1700
             trayToOuttakePos(true); // pivot tray to outtake position
-            openClamp(true, true); // drop pixel
+            openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
             moveLinearSlideByTicksBlocking(startingPosition + 1850);
         } else {
             moveLinearSlideByTicksBlocking(startingPosition + 2000);
             trayToOuttakePos(true); // pivot tray to outtake position
-            openClamp(true, true); // drop pixel
+            openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
             moveLinearSlideByTicksBlocking(startingPosition + 2150);
         }
@@ -1305,9 +1305,14 @@ public class Robot {
         }
     }
 
-    public void openClamp(boolean wide, boolean blocking) {
+    public void openClamp(boolean wide, boolean auto, boolean blocking) {
         if (wide) {
-            setServoPosBlocking(clamp, 0.455); //0.471
+            if (auto) {
+                setServoPosBlocking(clamp, 0.455);
+            }
+            else {
+                setServoPosBlocking(clamp, 0.471);
+            }
         } else {
             setServoPosBlocking(clamp, 0.51);
         }
@@ -1348,6 +1353,7 @@ public class Robot {
         openHook();
         closeClamp(false);
         trayToIntakePos(true);
+        setServoPosBlocking(spikeServo, 0.2); //lift finger
         opMode.sleep(100);
         planeLauncher.setPower(0);
         planeLauncherServo.setPosition(planeServoDisengage);
@@ -1422,6 +1428,7 @@ public class Robot {
                     setHeading(90, 0.7);
                 }
             }
+
 
             //a and y switch which side is front
             if (gamepad1.a) {
@@ -1568,13 +1575,6 @@ public class Robot {
                 trayToOuttakePos(false);
             }
 
-            //TODO  delete
-            /*if (trayAngleServoPos > 0.75) {
-                trayAngle.setPosition(0.75);
-            } else if (trayAngleServoPos < 0.25) {
-                trayAngle.setPosition(0.25);
-            }*/
-
             hardStopTrayAngleBig = 0.68;
             hardStopTrayAngleSmall = 0.32;
 
@@ -1613,7 +1613,7 @@ public class Robot {
             }
 
             if (willOpenClamp) {
-                openClamp(true, false);
+                openClamp(true, false, false);
             } else {
                 closeClamp(false);
             }
@@ -1720,7 +1720,7 @@ public class Robot {
 
     public void autoIntake() {
         int count = 0;
-        openClamp(true, false);
+        openClamp(true, true, false);
         intake.setPower(-1);
         while (count < 3) {
             setMotorPower(0.3, 0.3, 0.3, 0.3);
@@ -2055,9 +2055,9 @@ public class Robot {
     }
 
     public void oneButtonOuttake(Gamepad gamepad1, Gamepad gamepad2) {
-        double distanceToMove = 0 - lsFront.getCurrentPosition();
+        double distanceToMove = -lsFront.getCurrentPosition();
 
-        openClamp(true, true);
+        openClamp(true, false, true);
         opMode.sleep(500);
         trayAngle.setPosition(0.50);
         allowTrayAngle = false;
@@ -2288,7 +2288,7 @@ public class Robot {
     }
     public void middleToStackAndIntake() {
 
-        openClamp(true, false);
+        openClamp(true, true, false);
         stackAttachmentOut();
         intake.setPower(-1);
         straightBlocking2FixHeading(104);
@@ -2556,26 +2556,24 @@ public class Robot {
 
     public void trussToStackAndIntake() {
 
-        openClamp(true, false);
+        openClamp(true, true, false);
         stackAttachmentOut();
         straightBlocking2FixHeading(102);
         intake.setPower(-1);
 
-        mecanumBlocking2(26); // todo: test, maybe make method into boolean
+        mecanumBlocking2(26);
 
-        opMode.sleep(1000);
-
-        straightBlocking(4, true, 1);
+        straightBlocking(5, true, 1);
         straightBlocking(1, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
+        straightBlocking(1.5, true, 1);
+        straightBlocking(1.5, false, 1);
         straightBlocking(1, true, 1);
         straightBlocking(1, false, 1);
         straightBlocking(1, true, 1);
         straightBlocking(1, false, 1);
         mecanumBlocking2(1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
+        straightBlocking(1.5, true, 1);
+        straightBlocking(1.5, false, 1);
         straightBlocking(1, true, 1);
         straightBlocking(1, false, 1);
 
