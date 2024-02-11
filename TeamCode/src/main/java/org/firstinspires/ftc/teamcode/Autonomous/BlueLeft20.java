@@ -14,10 +14,12 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.EndWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 
+@Disabled
 @Autonomous
 @Config
 public class BlueLeft20 extends LinearOpMode {
@@ -112,6 +114,7 @@ public class BlueLeft20 extends LinearOpMode {
             robot.queuer.waitForFinish();
             robot.queuer.addDelay(1.0);
             robot.followPPPath(preToStack[bark]);
+
             robot.grabSupAuto();
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);

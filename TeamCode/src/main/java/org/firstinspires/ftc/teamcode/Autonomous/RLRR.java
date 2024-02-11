@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous
+@Autonomous(name = "RedLeft2+0")
 @Config
 public class RLRR extends LinearOpMode {
     int bark = 1;
@@ -19,7 +19,7 @@ public class RLRR extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-        Pose2d startPose = new Pose2d(-38,-61,toRadians(-90));
+        Pose2d startPose = new Pose2d(-38,-60,toRadians(-90));
         robot.roadrun.setPoseEstimate(startPose);
         TrajectorySequence[] spikey = new TrajectorySequence[3];
 
@@ -47,44 +47,44 @@ public class RLRR extends LinearOpMode {
         pathy[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46,-58, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-40,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,-58, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
                 .build();
 
         pathy[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46,-57, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,-57, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
                 .build();
 
         pathy[2] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46,-57, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,-57, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
                 .build();
 
         TrajectorySequence[] droppy = new TrajectorySequence[3];
 
         droppy[0] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[0].end())
-                .lineToLinearHeading(new Pose2d(47.2,-29,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(46.4,-29.5,toRadians(-180)))
                 .build();
 
         droppy[1] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[1].end())
-                .lineToLinearHeading(new Pose2d(35,-31,toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(47.2,-35.5,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(40.5,-35,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(46.4,-35.5,toRadians(-180)))
                 .build();
 
         droppy[2] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[2].end())
-                .lineToLinearHeading(new Pose2d(35,-31,toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(47.2,-41.5,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(40.5,-35,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(46.4,-41.5,toRadians(-180)))
                 .build();
 
 
@@ -122,21 +122,23 @@ public class RLRR extends LinearOpMode {
             robot.upAuto();
             robot.purpurAuto();
             robot.queuer.addDelay(1.0);
-            robot.followTrajSeq(spikey[1]);
+            robot.followTrajSeq(spikey[bark]);
             robot.queuer.addDelay(0.2);
             robot.dropAuto(0);
             robot.queuer.addDelay(0.3);
-            robot.followTrajSeq(pathy[1]);
+            robot.followTrajSeq(pathy[bark]);
             robot.queuer.addDelay(.6);
             robot.resetAuto();
             robot.grabSupAuto();
-            robot.followTrajSeq(droppy[1]);
+            robot.followTrajSeq(droppy[bark]);
             robot.queuer.addDelay(.5);
             robot.lowAuto();
+            robot.queuer.addDelay(1.5);
+            robot.veryLowAuto();
             robot.drop();
             robot.queuer.addDelay(.5);
             robot.resetAuto();
-            robot.followTrajSeq(parky[1]);
+            robot.followTrajSeq(parky[bark]);
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);
             robot.update();

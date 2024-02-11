@@ -21,8 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-
-@Autonomous
+@Autonomous(name = "BlueRight2+0")
 @Config
 public class BRRR extends LinearOpMode {
     int bark = 1;
@@ -31,26 +30,25 @@ public class BRRR extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-        robot.roadrun.setPoseEstimate(new Pose2d(17, 61, Math.toRadians(90)));
+        robot.roadrun.setPoseEstimate(new Pose2d(18, 61, Math.toRadians(90)));
 
         TrajectorySequence[] preload = new TrajectorySequence[3];
         preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61, toRadians(90)))
                 .lineToLinearHeading(new Pose2d(16.5, 43, toRadians(60)))
-                .lineToLinearHeading(new Pose2d(11, 40, toRadians(50))).build();
+                .lineToLinearHeading(new Pose2d(10, 40, toRadians(50))).build();
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61,toRadians(90)))
-                .lineToLinearHeading(new Pose2d(16.5, 36.5, toRadians(91))).build();
+                .lineToLinearHeading(new Pose2d(16.5, 32.5, toRadians(91))).build();
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61, toRadians(90)))
                 .lineToLinearHeading(new Pose2d(24.5,43, toRadians(90))).build();
         TrajectorySequence[] preToStack = new TrajectorySequence[3];
         preToStack[2] = robot.roadrun.trajectorySequenceBuilder(preload[2].end())
-
-                .lineToLinearHeading(new Pose2d(30, 35, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(48, 29.5, toRadians(180))).build();
+                .lineToLinearHeading(new Pose2d(36.4, 35, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(46.4, 29.5, toRadians(180))).build();
         preToStack[1] = robot.roadrun.trajectorySequenceBuilder(preload[1].end())
-                .lineToLinearHeading(new Pose2d(30, 35, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(48, 35.5, toRadians(180))).build();
+                .lineToLinearHeading(new Pose2d(36.4, 35, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(46.4, 35.5, toRadians(180))).build();
         preToStack[0] = robot.roadrun.trajectorySequenceBuilder(preload[0].end())
-                .lineToLinearHeading(new Pose2d(48, 41.5, toRadians(180))).build();
+                .lineToLinearHeading(new Pose2d(46.4, 41.5, toRadians(180))).build();
         TrajectorySequence[] park = new TrajectorySequence[3];
         park[0] = robot.roadrun.trajectorySequenceBuilder(preToStack[0].end())
                 .lineToLinearHeading(new Pose2d(43, 29.5, toRadians(180)))

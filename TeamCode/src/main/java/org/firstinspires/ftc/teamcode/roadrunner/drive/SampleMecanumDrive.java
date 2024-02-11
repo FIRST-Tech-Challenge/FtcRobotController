@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 
 import androidx.annotation.NonNull;
 
@@ -232,6 +233,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     drive =
         new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive(
             frontLeft, frontRight, backLeft, backRight);
+    currentPose = new Pose2d(0,0,0);
+    poseHeadOffset = 0;
+
+    update();
 
 //
     }

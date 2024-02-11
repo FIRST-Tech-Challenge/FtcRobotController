@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.ceil;
@@ -56,7 +57,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 10;
+  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 8;
   public static int EXPOSURE_MS = 3, GAIN = 5;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
@@ -197,7 +198,7 @@ public class RFAprilCam {
                       new Vector2d(
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
-                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 + PI);
+                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(6)+ PI);
           if (poseFtc.range < UPSAMPLE_THRESHOLD /*&& camPose.vec().distTo(currentPose.vec())<5*/) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
@@ -231,8 +232,9 @@ public class RFAprilCam {
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), 0);
+          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), camPoseError.getHeading());
           LOGGER.log("oldPose" + currentPose);
+          poseHeadOffset += camPoseError.getHeading()/poseCount;
           currentPose = currentPose.plus(camPoseError.div(poseCount));
           LOGGER.log("newPose" + currentPose);
           poseCount = 0;

@@ -54,15 +54,18 @@ public class Magazine {
     }
 
     public void updateSensors(){
+        pixels=0;
         double dist1 = colorSensor1.getDist();
         double dist2 = colorSensor2.getDist();
-        if(dist1 < 1){
+        if(dist1 < 1.5){
             MagStates.FRONT.setState(true);
+            pixels++;
         }
-        else if(dist1 > 1){
+        else if(dist1 > 1.5){
             MagStates.FRONT.setState(false);
         }
         if(dist2 <1){
+            pixels++;
             MagStates.BACK.setState(true);
         }
         else if(dist2 > 1){
@@ -109,7 +112,7 @@ public class Magazine {
         LOGGER.log("front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
         LOGGER.log("# Pixels: " + getPixels());
         updateSensors();
-        updatePixels();
+//        updatePixels();
         updateBlinkin();
     }
 }
