@@ -96,7 +96,7 @@ public abstract class CSBase extends LinearOpMode {
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
-            telemetry.addData("Warning","teamColor not specified");
+            print("Warning","teamColor not specified");
             useCam = false;
         }
 
@@ -154,8 +154,8 @@ public abstract class CSBase extends LinearOpMode {
         }
 
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        print("Status", "Initialized");
+        update();
 
         allianceColor = teamColor;
 
@@ -231,10 +231,10 @@ public abstract class CSBase extends LinearOpMode {
 
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 // Display it for the driver.
-                telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.addData("Running to",  " %7d :%7d", lfTarget,  rfTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d", lf.getCurrentPosition(), rf.getCurrentPosition());
-                telemetry.update();
+                print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                print("Running to",  " " + lfTarget + ":" + rfTarget);
+                print("Currently at",  " at "+ lf.getCurrentPosition() + ":"+ rf.getCurrentPosition());
+                update();
             }
             if (inches != 0) {
               stopRobot();
@@ -285,12 +285,12 @@ public abstract class CSBase extends LinearOpMode {
             rf.setPower(turnPower);
             currentAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             difference = min(abs(initialGoalAngle - currentAngle), abs(correctedGoalAngle - currentAngle));
-            telemetry.addData("Corrected Goal", correctedGoalAngle);
-            telemetry.addData("Initial Goal", initialGoalAngle);
-            telemetry.addData("Start", startAngle);
-            telemetry.addData("Angle", currentAngle);
-            telemetry.addData("Distance from goal", difference);
-            telemetry.update();
+            print("Corrected Goal", correctedGoalAngle);
+            print("Initial Goal", initialGoalAngle);
+            print("Start", startAngle);
+            print("Angle", currentAngle);
+            print("Distance from goal", difference);
+            update();
         }
         stopRobot();
         sleep(WAIT_TIME);
@@ -341,9 +341,9 @@ public abstract class CSBase extends LinearOpMode {
             double duration = abs(inches * COUNTS_PER_INCH / velocity);
 
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
-                telemetry.addData("Strafing until",  duration + " seconds");
-                telemetry.addData("Currently at",  runtime.seconds() + " seconds");
-                telemetry.update();
+                print("Strafing until",  duration + " seconds");
+                print("Currently at",  runtime.seconds() + " seconds");
+                update();
             }
             if (inches != 0) {
                 stopRobot();
@@ -402,8 +402,8 @@ public abstract class CSBase extends LinearOpMode {
     /** Makes the car wash outtake for 1 second. **/
     public void ejectPixel() {
         if (carWashMotor != null) {
-            telemetry.addData("Car Wash", "Ejecting Pixel");
-            telemetry.update();
+            print("Car Wash", "Ejecting Pixel");
+            update();
             double t = runtime.milliseconds() + 1000;
             carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
@@ -413,8 +413,8 @@ public abstract class CSBase extends LinearOpMode {
             }
             carWashMotor.setPower(0);
         } else {
-            telemetry.addData("Car Wash", "Not Connected");
-            telemetry.update();
+            print("Car Wash", "Not Connected");
+            update();
         }
         sleep(WAIT_TIME);
     }
@@ -530,19 +530,19 @@ public abstract class CSBase extends LinearOpMode {
             while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                telemetry.addData("Strafe", a.ftcPose.x);
+                print("Strafe", a.ftcPose.x);
                 strafe(a.ftcPose.x);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                telemetry.addData("Drive", -a.ftcPose.y + 5);
+                print("Drive", -a.ftcPose.y + 5);
                 drive(-a.ftcPose.y + 8);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 if (abs(a.ftcPose.yaw) > 1) {
-                    telemetry.addData("Turn", a.ftcPose.yaw / 2);
+                    print("Turn", a.ftcPose.yaw / 2);
                     turn(a.ftcPose.yaw / 2);
                 }
-                telemetry.update();
+                update();
         }
     }
 
@@ -562,12 +562,12 @@ public abstract class CSBase extends LinearOpMode {
             x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData(""," ");
+            print(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
-        telemetry.update();
+        update();
         return x;
     }   // end method detectProp()
 
@@ -621,7 +621,7 @@ public abstract class CSBase extends LinearOpMode {
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
     public final void except(Exception e) {
-        telemetry.addData("Exception", e);
+        print("Exception", e);
     }
 
     /** Sleep a specified number of seconds.
@@ -656,6 +656,9 @@ public abstract class CSBase extends LinearOpMode {
 //*      setSpeed(2000);
     }
 
+    /** Moves the lift motor a specified number of inches.
+     * @param inches Number of inches to move.
+     */
     public void moveLift(double inches) {
         
         double duration = abs(inches * ROTATIONS_PER_INCH);
@@ -663,9 +666,9 @@ public abstract class CSBase extends LinearOpMode {
 
         while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
             // Display it for the driver.
-            telemetry.addData("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.addData("Currently at",  " at %7d", pixelLiftingMotor.getCurrentPosition());
-            telemetry.update();
+            print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            print("Currently at",  " at " + pixelLiftingMotor.getCurrentPosition());
+            update();
         }
         pixelLiftingMotor.setVelocity(0);
     }
