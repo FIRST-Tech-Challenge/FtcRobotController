@@ -126,7 +126,7 @@ public class TeleOp_Full extends CSBase {
 
             if (pixelLockingServo != null) {
                 if (gamepad2.x && !wasX) {
-                    if (pixelLockingServo.getPosition() > 0.83 - 0.05 && pixelLockingServo.getPosition() < 0.83 + 0.05) {
+                    if (pixelLockingServo.getPosition() > 0.9 && pixelLockingServo.getPosition() < 1.1) {
                         pixelLockingServo.setPosition(0);
                         addTelemetry("Set pixelFrontServo to 0");
                     } else {
