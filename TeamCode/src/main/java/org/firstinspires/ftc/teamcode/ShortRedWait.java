@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRedWaitWall extends LinearOpMode {
+public class ShortRedWait extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -15,7 +15,7 @@ public class ShortRedWaitWall extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 10000;
+        int delay = 7000;  // Max delay allowed 13 seconds, leaves 3 seconds for vision timeout
 
         waitForStart();
 
