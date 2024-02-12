@@ -62,7 +62,7 @@ import org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer;
  * precision. The heading should still line up.
  */
 @Config
-@TeleOp(group = "roadrunner")
+@TeleOp(group = "drive")
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
 
@@ -76,14 +76,14 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
                     + "(hardwareMap));\" is called in SampleMecanumDrive.java");
         }
 
-        drive.haltSlides();
-
         telemetry.addLine("Prior to beginning the routine, please read the directions "
                 + "located in the comments of the opmode file.");
         telemetry.addLine("Press play to begin the tuning routine.");
         telemetry.addLine("");
         telemetry.addLine("Press Y/△ to stop the routine.");
         telemetry.update();
+
+        drive.haltSlides();
 
         waitForStart();
 
@@ -110,6 +110,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
             lastHeading = heading;
 
             telemetry.clearAll();
+            telemetry.addData("stick", -gamepad1.right_stick_x);
             telemetry.addLine("Total Heading (deg): " + Math.toDegrees(headingAccumulator));
             telemetry.addLine("Raw Heading (deg): " + Math.toDegrees(heading));
             telemetry.addLine();
@@ -121,6 +122,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         }
 
         telemetry.clearAll();
+
         telemetry.addLine("Localizer's total heading: " + Math.toDegrees(headingAccumulator) + "°");
         telemetry.addLine("Effective LATERAL_DISTANCE: " +
                 (headingAccumulator / (NUM_TURNS * Math.PI * 2)) * StandardTrackingWheelLocalizer.LATERAL_DISTANCE);
