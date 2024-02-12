@@ -1,23 +1,18 @@
 package org.firstinspires.ftc.teamcode.driver;
 
-import static android.os.SystemClock.sleep;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
 @Disabled
-@TeleOp(name = "Drive", group = "TeleOp Driver")
-public class Driver extends LinearOpMode {
-    private final ElapsedTime runtime = new ElapsedTime();
+@TeleOp(name = "2D3riverTeleopDS", group = "TeleOp Driver")
+public class DriverG2 extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
     static final int CYCLE_MS = 50;     // period of each cycle
     static final double MAX_FWD = 1.0;     // Maximum FWD power applied to motor
@@ -37,15 +32,14 @@ public class Driver extends LinearOpMode {
     static final double RIGHT_GRIPPER_CLOSE = -0.9;
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
-    static final double WRIST_INTAKE_POS = 0.3;
-    static final double WRIST_FORWARD_DROP_POS = 0.85;
+    static final double WRIST_INTAKE_POS = 0.22;
     static final double DRONE_LAUNCH = 0.8;
     static final double DRONE_SECURE = 0.3;
     private Servo leftGripper;
     private Servo rightGripper;
     private Servo wristServo;
     private Servo launcherServo = null;
-    private final Servo DroneCoverServo = null;
+    private Servo DroneCoverServo = null;
     private DcMotor armMotor = null;
 
     private Thread launcherThread;
@@ -126,13 +120,14 @@ public class Driver extends LinearOpMode {
             telemetry.update();
 
             // Declare Motors
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
+
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = -gamepad1.right_stick_x;
 
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator; //
             double backLeftPower = (y - x + rx) / denominator;
@@ -157,7 +152,7 @@ public class Driver extends LinearOpMode {
                 rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
             }
             telemetry.update();
-        }
+            }
 
         // Stop the threads when the op mode is no longer active
         if (launcherThread != null) launcherThread.interrupt();
@@ -187,7 +182,7 @@ public class Driver extends LinearOpMode {
                         // move to 90 degrees.
                         launcherServo.setPosition(1);
                     }*/
-
+                    //TODO Move to single drone launcher logic
                     /*
                     if (gamepad1.dpad_left) {
                         // move to 0 degrees.
@@ -195,9 +190,8 @@ public class Driver extends LinearOpMode {
                     } else if (gamepad1.dpad_right) {
                         // move to 90 degrees.
                         DroneCoverServo.setPosition(.7);
-                    }*/
                     }
-
+                    */
 
                     // Launch Drone
                     //TODO Validate the servo positions for launch
@@ -213,9 +207,10 @@ public class Driver extends LinearOpMode {
                         Thread.sleep(10); // Small delay to prevent looping too fast
                     } catch (InterruptedException e) {
                         break; // Exit the loop if the thread is interrupted
+                    }
                 }
             }
-        }
+        });
     }
 
 
@@ -246,12 +241,6 @@ public class Driver extends LinearOpMode {
                     }else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_DROP_POS_LOW);
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
-                    }
-                    if (gamepad1.b) {
-                        // move to 0 degrees.
-                        wristServo.setPosition(WRIST_FORWARD_DROP_POS);
-                    }else if (gamepad1.a) {
-                        wristServo.setPosition(ARM_INTAKE_POS);
                     }
 
                     //and here put your logic to move the arm up and down
