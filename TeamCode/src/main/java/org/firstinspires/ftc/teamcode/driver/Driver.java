@@ -35,7 +35,8 @@ public class Driver extends LinearOpMode {
     static final double RIGHT_GRIPPER_CLOSE = -0.9;
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
-    static final double WRIST_INTAKE_POS = 0.22;
+    static final double WRIST_INTAKE_POS = 0.3;
+    static final double WRIST_FORWARD_DROP_POS = 0.85;
     private Servo leftGripper;
     private Servo rightGripper;
     private Servo wristServo;
@@ -183,13 +184,14 @@ public class Driver extends LinearOpMode {
                         // move to 90 degrees.
                         launcherServo.setPosition(1);
                     }*/
+                    /*
                     if (gamepad1.dpad_left) {
                         // move to 0 degrees.
                         DroneCoverServo.setPosition(0.3);
                     } else if (gamepad1.dpad_right) {
                         // move to 90 degrees.
                         DroneCoverServo.setPosition(.7);
-                    }
+                    }*/
 
                     if (gamepad1.left_bumper) {
                         // move to 0 degrees.
@@ -237,6 +239,12 @@ public class Driver extends LinearOpMode {
                     }else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_DROP_POS_LOW);
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
+                    }
+                    if (gamepad1.b) {
+                        // move to 0 degrees.
+                        wristServo.setPosition(WRIST_FORWARD_DROP_POS);
+                    }else if (gamepad1.a) {
+                        wristServo.setPosition(ARM_INTAKE_POS);
                     }
 
                     //and here put your logic to move the arm up and down
