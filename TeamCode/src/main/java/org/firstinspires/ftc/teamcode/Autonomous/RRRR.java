@@ -38,14 +38,14 @@ public class RRRR extends LinearOpMode {
         TrajectorySequence[] preload = new TrajectorySequence[3];
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(16.5, -43, toRadians(-60)))
-                .lineToLinearHeading(new Pose2d(9, -40, toRadians(-40))).build();
+                .lineToLinearHeading(new Pose2d(9.5, -40, toRadians(-40))).build();
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61,toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(16.5, -36.5, toRadians(-91))).build();
         preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(24.5,-43, toRadians(-90))).build();
         TrajectorySequence[] preToStack = new TrajectorySequence[3];
         preToStack[0] = robot.roadrun.trajectorySequenceBuilder(preload[0].end())
-                .lineToLinearHeading(new Pose2d(46.4, -29.5, toRadians(-180))).build();
+                .lineToLinearHeading(new Pose2d(46.4, -29, toRadians(-180))).build();
         preToStack[1] = robot.roadrun.trajectorySequenceBuilder(preload[1].end())
                 .lineToLinearHeading(new Pose2d(46.4, -35.5, toRadians(-180))).build();
         preToStack[2] = robot.roadrun.trajectorySequenceBuilder(preload[2].end())
