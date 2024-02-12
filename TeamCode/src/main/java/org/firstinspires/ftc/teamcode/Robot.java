@@ -73,6 +73,7 @@ public class Robot {
     private boolean hookShouldClose;
     private boolean stackShouldBeDown;
     private boolean previousStackButtonValue;
+    private double trayAngleSlope;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -1589,8 +1590,8 @@ public class Robot {
 
                 //checking imu in correct range
                 if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
-
-                    trayAngleServoPos = Math.min(-0.004*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
+                    //-0.004
+                    trayAngleServoPos = Math.min(trayAngleSlope*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
                     trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
                 } else {
 
@@ -1600,6 +1601,13 @@ public class Robot {
                 trayAngle.setPosition(trayAngleServoPos);
             }
             dpadDownPreviousValue = gamepad2.dpad_down;
+
+            //adjustable tray
+            if (gamepad2.right_stick_x > 0) {
+                trayAngleSlope += 0.001;
+            } else {
+                trayAngleSlope -= 0.001;
+            }
 
             // clamp controls
             if (gamepad2.right_trigger > TRIGGER_PRESSED) { // right trigger - close clamp
