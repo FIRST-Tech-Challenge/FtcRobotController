@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous
+@Autonomous(name = "RedRight2+0")
 @Config
 public class RRRR extends LinearOpMode {
     int bark = 1;
@@ -33,6 +33,7 @@ public class RRRR extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
         robot.roadrun.setPoseEstimate(new Pose2d(17, -61, Math.toRadians(-90)));
+        robot.update();
 
         TrajectorySequence[] preload = new TrajectorySequence[3];
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
@@ -44,11 +45,11 @@ public class RRRR extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(24.5,-43, toRadians(-90))).build();
         TrajectorySequence[] preToStack = new TrajectorySequence[3];
         preToStack[0] = robot.roadrun.trajectorySequenceBuilder(preload[0].end())
-                .lineToLinearHeading(new Pose2d(46.5, -29.5, toRadians(-180))).build();
+                .lineToLinearHeading(new Pose2d(46.4, -29.5, toRadians(-180))).build();
         preToStack[1] = robot.roadrun.trajectorySequenceBuilder(preload[1].end())
-                .lineToLinearHeading(new Pose2d(46.5, -35.5, toRadians(-180))).build();
+                .lineToLinearHeading(new Pose2d(46.4, -35.5, toRadians(-180))).build();
         preToStack[2] = robot.roadrun.trajectorySequenceBuilder(preload[2].end())
-                .lineToLinearHeading(new Pose2d(46.5, -41.5, toRadians(-180))).build();
+                .lineToLinearHeading(new Pose2d(46.4, -41.5, toRadians(-180))).build();
         TrajectorySequence[] park = new TrajectorySequence[3];
         park[0] = robot.roadrun.trajectorySequenceBuilder(preToStack[0].end())
                 .lineToLinearHeading(new Pose2d(43, -29.5, toRadians(-180)))

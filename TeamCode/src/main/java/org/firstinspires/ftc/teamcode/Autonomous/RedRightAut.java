@@ -19,13 +19,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
-
+@Disabled
 @Autonomous
 @Config
 public class RedRightAut extends LinearOpMode {
   int bark = 1;
   public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 7.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
-          pow1 = 0.3, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
+          pow1 = 0.43, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
   followRad4 = 5 ,x4 = 16.5, y4 = -44, pow4 = 0.55, buff4 = 3;
 
   @Override

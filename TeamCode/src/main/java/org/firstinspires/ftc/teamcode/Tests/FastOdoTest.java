@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  */
 //@Disabled
 //@Disabled
-
+//@Photon
 @Autonomous
 public class FastOdoTest extends LinearOpMode {
     Queuer queuer;
@@ -57,7 +58,6 @@ public class FastOdoTest extends LinearOpMode {
                 followTrajAsync(trajSeq2);
             }
             loops++;
-            packet.put("loopTime", loops/BasicRobot.time);
             queuer.setFirstLoop(false);
             robot.update();
             roadrun.update();

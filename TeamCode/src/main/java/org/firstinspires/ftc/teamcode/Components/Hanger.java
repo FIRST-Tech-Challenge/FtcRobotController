@@ -46,20 +46,18 @@ public class Hanger extends RFMotor {
         }
     }
     public void setPermaPower(double p_permaPower){
-        permaPower=signum(p_permaPower)*min(abs(p_permaPower), 0.3);
+        permaPower=-signum(p_permaPower)*min(abs(p_permaPower), 0.3);
         up = false;
     }
     @Override
     public void setPower(double p_power){
-    if (this.getCurrentPosition() < max && this.getCurrentPosition()>0) {
+//    if (this.getCurrentPosition() < max) {
             setRawPower(-p_power + permaPower);
-        }
-    else if (getCurrentPosition()>max){
-        setRawPower(min(0,-p_power));
-    }
-    else{
-        setRawPower(max(0,-p_power));
-    }
+//        }
+//    else if (getCurrentPosition()>max){
+//        setRawPower(min(0,-p_power));
+//    }
+
     if (abs(p_power) > 0.1) {
       up = false;
     }
