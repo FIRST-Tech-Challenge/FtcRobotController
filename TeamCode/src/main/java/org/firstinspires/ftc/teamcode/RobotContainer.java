@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Constants.ArmConstants.*;
 import static org.firstinspires.ftc.teamcode.Constants.ChassisConstants.*;
 import static org.firstinspires.ftc.teamcode.utils.BTController.Buttons.*;
 
@@ -83,8 +84,13 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                 ()-> m_controller2.left_y.getAsDouble(), m_controller2.right_y),false ,LEFT_Y,
                 LEFT_Y, LEFT_X);
         m_controller2.assignCommand(m_arm.armMoveToPoint(
-                new Translation2d(-0.031,-0.091)),
-                true, BUTTON_DOWN);
+                PixelPickUp),
+                false, BUTTON_DOWN);
+        m_controller2.assignCommand(m_arm.armMoveToPoint(
+                PixelScore),
+                false, BUMPER_LEFT);
+        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_LEFT);//pick up tbd
+        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_RIGHT);//pick up tbd
 //        m_controller.assignCommand(m_arm.armMoveManual(()-> -m_controller.left_trigger.getAsDouble()
 //                + m_controller.right_trigger.getAsDouble(), ),false,RIGHT_TRIGGER,LEFT_TRIGGER);
 //        m_controller.assignCommand(m_arm.armMoveManual(),false,LEFT_Y);
