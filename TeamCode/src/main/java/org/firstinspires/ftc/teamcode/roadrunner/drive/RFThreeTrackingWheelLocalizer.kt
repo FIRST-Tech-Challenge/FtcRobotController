@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVel
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.lastWheelPositions
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -30,6 +31,7 @@ abstract class RFThreeTrackingWheelLocalizer(
         get() = currentPose
         set(value) {
             lastWheelPositions = emptyList()
+            poseHeadOffset = value.heading- currentPose.heading
             currentPose = value
         }
     override var poseVelocity: Pose2d? = null
@@ -76,7 +78,9 @@ abstract class RFThreeTrackingWheelLocalizer(
                 .zip(lastWheelPositions)
                 .map { it.first - it.second }
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
+            val heading = currentPose.heading;
             currentPose = Kinematics.relativeOdometryUpdate(currentPose, robotPoseDelta)
+            currentPose = Pose2d(currentPose.x, currentPose.y, heading)
         }
 
         val wheelVelocities = getWheelVelocities()

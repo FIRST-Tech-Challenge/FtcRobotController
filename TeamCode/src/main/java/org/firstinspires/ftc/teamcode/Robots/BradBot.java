@@ -111,6 +111,7 @@ public class BradBot extends BasicRobot {
     purped = false;
     ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
+    update();
   }
 
   public int getSpikePos() {
@@ -157,7 +158,7 @@ public class BradBot extends BasicRobot {
       if (DROP.state) {
         arm.purpurPigzl();
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(220);
+        lift.setPosition(300);
         wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
@@ -212,14 +213,16 @@ public class BradBot extends BasicRobot {
   }
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-        lift.setPosition(680);
+      if (currentPose.getX() > 10 && DROP.state || Lift.LiftPositionStates.LOW_SET_LINE.getState()) {
+        lift.setPosition(730);
         intake.stopIntake();
         arm.flipTo(DROP);
-//        if(Wrist.WristStates.LOCK.getState()){
-//          wrist.flipTo(Wrist.WristTargetStates.GRAB);
-//        }
-      wrist.flipTo(Wrist.WristTargetStates.DROP);
-      LOGGER.log("ocook");
+        //        if(Wrist.WristStates.LOCK.getState()){
+        //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
+        //        }
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        LOGGER.log("ocook");
+      }
       }
   }
 
@@ -233,7 +236,7 @@ public class BradBot extends BasicRobot {
           wrist.flipTo(Wrist.WristTargetStates.GRAB);
         }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.DROP);
+        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
     }

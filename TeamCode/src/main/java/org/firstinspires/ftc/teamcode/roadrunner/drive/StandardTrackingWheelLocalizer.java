@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.poseHeadOffset;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -19,6 +20,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -49,8 +51,8 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     public static double WHEEL_RADIUS = 1.3779/2; // in
     public static double wheelrad2 = 1;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
-
-    public static double LATERAL_DISTANCE = 12.29*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
+    //short clockwise, 12.27, short counter clock wise, 12.29
+    public static double LATERAL_DISTANCE = 12.24*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = -5.8*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
 
     private double[] lastTicks = {0,0,0};
@@ -71,8 +73,8 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
-        super(Arrays.asList(new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
+        super(Arrays.asList(new Pose2d(0.4, LATERAL_DISTANCE / 2, 0), // left
+                new Pose2d(0.4, -LATERAL_DISTANCE / 2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftBack"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
@@ -94,9 +96,10 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
         packet.put("x",getPoseEstimate().getX());
         packet.put("y",getPoseEstimate().getY());
         packet.put("a",getPoseEstimate().getHeading()*180/PI);        /*op.telemetry.update();*/
+        currentPose = new Pose2d(currentPose.getX(), currentPose.getY(), Angle.norm(-encoderTicksToInches(leftEncoder.getCurrentPosition()-rightEncoder.getCurrentPosition())/(LATERAL_DISTANCE)+poseHeadOffset));
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
-                encoderTicksToInches(rightEncoder.getCurrentPosition()),
+                encoderTicksToInches(rightEncoder.getCurrentPosition()*.9992481),
                 encoderTicksToInches(frontEncoder.getCurrentPosition())*2/1.3779
         );
     }
@@ -111,7 +114,7 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
 
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCorrectedVelocity()*X_MULTIPLIER),
-                encoderTicksToInches(rightEncoder.getCorrectedVelocity()*X_MULTIPLIER),
+                encoderTicksToInches(rightEncoder.getCorrectedVelocity()*.9992481),
                 encoderTicksToInches(frontEncoder.getCorrectedVelocity()*2/1.3779)
         );
     }

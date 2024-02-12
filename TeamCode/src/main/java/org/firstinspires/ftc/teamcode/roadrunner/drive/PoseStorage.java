@@ -14,6 +14,7 @@ public class PoseStorage {
     public static Pose2d currentPose = new Pose2d(0,0,0);
     public static Pose2d currentVelocity = new Pose2d(0,0,0);
     public static Pose2d currentPOVVelocity = new Pose2d(0,0,0);
+    public static double poseHeadOffset = 0;
     public static List<Double> lastWheelPositions = Collections.emptyList();
     public static void setPose(Pose2d pose){
         currentPose = pose;

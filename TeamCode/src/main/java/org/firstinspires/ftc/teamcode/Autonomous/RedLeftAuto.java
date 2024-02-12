@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 @Disabled
-
 @Config
 @Autonomous(name = "RedLeftPreParkAuto")
 public class RedLeftAuto extends LinearOpMode {
