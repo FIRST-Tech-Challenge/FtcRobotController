@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedWaitWall extends LinearOpMode {
+public class LongRedFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -14,8 +14,6 @@ public class LongRedWaitWall extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
-
 
         waitForStart();
 
@@ -28,22 +26,35 @@ public class LongRedWaitWall extends LinearOpMode {
             robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
-            this.sleep(delay);
-
-            robot.longMoveToBoardTruss();
-
+            robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
+
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
-            // parking here
-            robot.boardToTruss();
-            robot.straightBlocking2(-10);
+            robot.boardToMiddle();
+            robot.middleToStackAndIntake();
+
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
+            robot.stackToBoard();
+            robot.intake.setPower(0);
+            robot.alignToBoardFast(robot.secondWantedTagId);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.autoOuttake(false, slideStartingPosition);
+
             break;
 
         }
     }
 }
+
+// todo write timeout for apriltag final forward
+// todo how to stop streaming
+// todo bring back to board
+// todo set complementary tag id
+// todo slide not high enough second time

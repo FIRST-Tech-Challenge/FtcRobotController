@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRedWait extends LinearOpMode {
-
+public class LongRedFreeway20 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -15,7 +14,7 @@ public class ShortRedWait extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 7000;  // Max delay allowed 13 seconds, leaves 3 seconds for vision timeout
+        int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
 
         waitForStart();
 
@@ -25,26 +24,27 @@ public class ShortRedWait extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, false, robot.markerPos);
+            robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
             this.sleep(delay);
 
-            robot.shortMoveToBoard2();
-
+            robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
-
             robot.autoOuttake(true, slideStartingPosition);
 
+            /*
             // parking here
-            robot.boardToTruss();
+            robot.boardToMiddle();
             robot.straightBlocking2(-10);
+            */
 
             break;
+
         }
     }
 }

@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRedWall extends LinearOpMode {
-
+public class LongRedWall22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -22,19 +21,18 @@ public class ShortRedWall extends LinearOpMode {
 
             robot.detectMarkerPosition();
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
-            //robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, false, robot.markerPos);
+            robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
 
-            robot.shortMoveToBoard2();
+            robot.longMoveToBoardTruss();
 
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
-
             robot.autoOuttake(true, slideStartingPosition);
 
             robot.boardToTruss();
@@ -43,12 +41,13 @@ public class ShortRedWall extends LinearOpMode {
             robot.stackToBoardTruss();
             robot.intake.setPower(0);
 
-            robot.alignToBoardFast(6); // todo remove hard-coded value
-            robot.autoOuttake(false, slideStartingPosition);
-
+            robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
+            robot.autoOuttake(false, slideStartingPosition);
+
             break;
+
         }
     }
 }
