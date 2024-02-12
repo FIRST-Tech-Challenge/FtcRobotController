@@ -42,7 +42,8 @@ public class ShortRedWaitWall extends LinearOpMode {
 
             // parking here
             robot.boardToTruss();
-            robot.straightBlocking2(20);
+            robot.straightBlocking2(-10);
+
             break;
         }
     }
