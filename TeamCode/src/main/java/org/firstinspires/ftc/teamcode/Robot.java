@@ -182,12 +182,14 @@ public class Robot {
         if (lowOuttake) {
             moveLinearSlideByTicksBlocking(startingPosition + 1650); //1700
             trayToOuttakePos(true); // pivot tray to outtake position
+            opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
             moveLinearSlideByTicksBlocking(startingPosition + 1850);
         } else {
             moveLinearSlideByTicksBlocking(startingPosition + 2000);
             trayToOuttakePos(true); // pivot tray to outtake position
+            opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
             moveLinearSlideByTicksBlocking(startingPosition + 2150);
@@ -2317,7 +2319,7 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(19);
+                mecanumBlocking2(21);
                 break;
             case 2:
                 mecanumBlocking2(30);
@@ -2332,7 +2334,7 @@ public class Robot {
                 mecanumBlocking2(-30);
                 break;
             case 6:
-                mecanumBlocking2(-19);
+                mecanumBlocking2(-21);
                 break;
             default:
                 if (isRedAlliance) {
@@ -2447,6 +2449,7 @@ public class Robot {
                 } else {
                     mecanumBlocking2(-21);
                 }
+
                 setHeading(0, 0.7);
 
                 // P2: (14, 17)
@@ -2464,9 +2467,9 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(1, false, 0.7);
+                straightBlocking(2, false, 0.7);
                 setHeading(90 * polarity, 0.7);
-                straightBlocking(4, true, 0.7);
+                straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (19.5, 39.5)
@@ -2480,7 +2483,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-98);
+                straightBlocking2FixHeading(-95);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -2597,10 +2600,10 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        straightBlocking2FixHeading(102);
+        straightBlocking2FixHeading(99);
         intake.setPower(-1);
 
-        mecanumBlocking2(26);
+        mecanumBlocking2(23);
 
         straightBlocking(5, true, 1);
         straightBlocking(1, false, 1);
@@ -2627,9 +2630,32 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(-26); // todo: test, again maybe make method into boolean
+        mecanumBlocking2(polarity * 26);
         straightBlocking2FixHeading(-93);
-        mecanumBlocking2(-18 * polarity);
+
+        switch (wantedAprTagId) {
+            case 1:
+                mecanumBlocking2(-33);
+                break;
+            case 2:
+                mecanumBlocking2(-24);
+                break;
+            case 3:
+                mecanumBlocking2(-24);
+                break;
+            case 4:
+                mecanumBlocking2(24);
+                break;
+            case 5:
+                mecanumBlocking2(24);
+                break;
+            case 6:
+                mecanumBlocking2(33);
+                break;
+            default:
+                break;
+        }
+
         setHeading(90 * polarity, 0.7);
     }
 
