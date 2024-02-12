@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -90,8 +89,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red Backstage Pxl", group="Robot")
-public class RedBackstagePixelDrop extends LinearOpMode {
+@Autonomous(name="Delayed Blue Backstage Pxl", group="Robot")
+public class DelayedBlueBackstagePixelDrop extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor         frontLeftMotor   = null;
@@ -195,16 +194,15 @@ public class RedBackstagePixelDrop extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-         //*** RAISED DRIVE SPEED UP TO 0.8 AND TURN SPEED TO 0.4
-        
+        sleep(20000);
         driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
         //commenting out to see why bot is swerving
       //Rotate counterclockewise 90
-       turnToHeading( TURN_SPEED, 90.0);
+       turnToHeading( TURN_SPEED, -90.0);
           // Stop 4 secs
         sleep(4000);
           //Drive toward back drop
-       driveStraight(DRIVE_SPEED, -45.0, 90.0);
+       driveStraight(DRIVE_SPEED, -45.0, -90.0);
           //Drop pixel onto back drop
 
           //slip left to park( how do i go left?)
