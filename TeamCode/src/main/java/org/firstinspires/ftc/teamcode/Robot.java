@@ -1380,6 +1380,7 @@ public class Robot {
         double lsStayUpAddPower = 0.1;
 
         double trayAngleDefault = 0.5;
+        trayAngleSlope = -0.004;
         double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
         boolean dpadDownPreviousValue = false;
@@ -1387,9 +1388,9 @@ public class Robot {
 
         final long KONSTANT_TIME_GAP_MILLISECONDS = 100;
         double launcherSpeedTarget = 0.49;
+        boolean droneShouldHaveLaunched = false;
         //max power = 2800ticks/sec
         //6000rpm rotations per second = 6000/60 rotation per millisecond = (6000/60)/1000 ticks per millisecond = 0.1*28
-        boolean droneShouldHaveLaunched = false;
         final double targetVelocity = ((0.028*KONSTANT_TIME_GAP_MILLISECONDS)*launcherSpeedTarget);
         double currentVelocity;
         double initialPlaneLauncherPower = 0.2;
