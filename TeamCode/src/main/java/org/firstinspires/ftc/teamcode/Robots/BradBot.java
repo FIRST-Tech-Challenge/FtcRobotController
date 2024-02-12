@@ -221,6 +221,7 @@ public class BradBot extends BasicRobot {
         //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
         //        }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
+        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
       }

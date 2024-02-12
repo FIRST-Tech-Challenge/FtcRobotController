@@ -136,9 +136,10 @@ public class BlueLeft20 extends LinearOpMode {
                     new EndWaypoint(44, 13, toRadians(179), .5, 0.2, 5, 3, toRadians(5)));
 
             robot.followPPPath(preToStack[2]);
-            Path pak = new Path();
-            pak.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-
+//            Path pak = new Path();
+//            pak.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
+//            pak.add(new EndWaypoint(46, 13, toRadians(179), .5, 0.2, 5, 3, toRadians(5)));
+//            robot.followPPPath(pak);
 
 
             robot.resetAuto();
