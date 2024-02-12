@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "testDrive (Blocks to Java)")
+@TeleOp(name = "mainOpModeMecanum", group = "official")
 public class mainOpModeMecanum extends LinearOpMode {
 
     private DcMotor frontLeftMotor;
@@ -54,7 +54,7 @@ public class mainOpModeMecanum extends LinearOpMode {
         backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-        hardwareMap.get(Servo.class, "plane");
+        plane = hardwareMap.get(Servo.class, "plane");
         rollIn = hardwareMap.get(DcMotor.class, "rollIn");
         dualArm = hardwareMap.get(DcMotor.class, "dualArm");
         garbageCollector = hardwareMap.get(Servo.class, "garbageCollector");
