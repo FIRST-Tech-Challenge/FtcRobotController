@@ -14,7 +14,7 @@ public class LongRedWaitFreeway extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 10000;
+        int delay = 12000;
 
         waitForStart();
 
@@ -37,9 +37,12 @@ public class LongRedWaitFreeway extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
+            /*
             // parking here
             robot.boardToMiddle();
-            robot.straightBlocking2(20);
+            robot.straightBlocking2(-10);
+            */
+
             break;
 
         }
