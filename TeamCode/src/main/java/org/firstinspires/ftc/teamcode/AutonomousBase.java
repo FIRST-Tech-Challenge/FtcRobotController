@@ -311,7 +311,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 ((initMenuSelected==5)? "<-":"  "));
 
         telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 109" );
+        telemetry.addData(">","version 117" );
         telemetry.update();
     } // processAutonomousInitMenu
 
@@ -359,6 +359,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     protected boolean processAprilTagDetections( int desiredAprilTagID ) {
         boolean successfulDetection = false;
 
+        // Allow robot to settle and april tag processor to see april tag
+        sleep(500);
+
         // discard any prior detection data
         detectionData  = null;
 
@@ -375,11 +378,11 @@ public abstract class AutonomousBase extends LinearOpMode {
                     break;  // don't look any further.
                 } else {
                     // This tag is in the library, but we do not want to track it right now.
-//                  telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                 }
             } else {
                 // This tag is NOT in the library, so we don't have enough information to track to it.
-//              telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
         } // for()
 
@@ -395,25 +398,27 @@ public abstract class AutonomousBase extends LinearOpMode {
         double curYpos    = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;
         double curDegrees = Math.toDegrees( robotOrientationRadians );
         // What does our AprilTag reading says our error to the backdrop is? (inches/degrees/degrees)
+        int     aprilTagId          =  detectionData.id;
         double  errorInchesRange    = (detectionData.ftcPose.range - desiredDistance);
-        double  errorDegreesYaw     = -detectionData.ftcPose.yaw;
+        double  errorDegreesYaw     = detectionData.ftcPose.yaw;
         double  errorDegreesHeading = detectionData.ftcPose.bearing;
         // Convert those error angles into inches
-        double  errorInchesX      = errorInchesRange * Math.cos( Math.toRadians(errorDegreesYaw) );
-        double  errorInchesY      = errorInchesRange * Math.sin( Math.toRadians(errorDegreesYaw) );
-        double  errorDegreesAngle = errorDegreesHeading;
+        double  errorInchesX      = errorInchesRange * Math.cos( Math.toRadians(errorDegreesHeading) );
+        double  errorInchesY      = errorInchesRange * Math.sin( Math.toRadians(errorDegreesHeading) );
+        double  errorDegreesAngle = errorDegreesYaw;
         // Compute the new desired x/y/angle to zero-out that error
-        autoXpos  = curXpos + errorInchesX;
-        autoYpos  = curYpos + errorInchesY;
+        autoXpos  = curXpos - errorInchesX;
+        autoYpos  = curYpos - errorInchesY;
         autoAngle = curDegrees + errorDegreesAngle;
         // Display results (DEBUGGING ONLY)
-        telemetry.addData("Error","Drive %.2f in, Strafe %.2f deg, Turn %.2f deg",
-                errorInchesRange, errorDegreesYaw, errorDegreesHeading);
-        telemetry.addData("Error","X %.2f in, Y %.2f deg, Turn %.2f deg",
-                errorInchesX, errorInchesY, errorDegreesAngle);
-        telemetry.update();
-        sleep(5000);
-
+        // telemetry.addData("Tag","%d Drive %.1f in, Strafe %.1f deg, Turn %.1f deg",
+        //       aprilTagId, errorInchesRange, errorDegreesYaw, errorDegreesHeading);
+        //telemetry.addData("Offsets","X %.1f in, Y %.1f in, Turn %.1f deg",
+        //        errorInchesX, errorInchesY, errorDegreesAngle);
+        //telemetry.addData("New Pos","X %.1f in, Y %.1f in, Turn %.1f deg",
+        //        autoXpos, autoYpos, autoAngle);
+        //telemetry.update();
+        //sleep(30000);
     } // computeAprilTagCorrections
 
     // Create a time stamped folder in
@@ -848,12 +853,11 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param time   How long to drive (milliseconds)
      */
     public void timeDriveStraight( double speed, int time ) {
-        ElapsedTime timer = new ElapsedTime();
-        robot.driveTrainMotors(speed, speed, speed, speed);
-        while(opModeIsActive() && (timer.milliseconds() <= time)) {
-            performEveryLoop();
+        if(opModeIsActive()) {
+            robot.driveTrainMotors(speed, speed, speed, speed);
+            sleep(time);
+            robot.stopMotion();
         }
-        robot.stopMotion();
     }
 
     /*---------------------------------------------------------------------------------------------
@@ -862,13 +866,40 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param time   How long to strafe (milliseconds)
      */
     public void timeDriveStrafe( double speed, int time ) {
+        if(opModeIsActive()) {
+            robot.driveTrainMotors(-speed, speed, speed, -speed);
+            sleep(time);
+            robot.stopMotion();
+        }
+    }
+
+    /*---------------------------------------------------------------------------------------------
+     * Method will drive straight for a specified time.
+     * @param speed  Speed to set all motors, positive forward, negative backward
+     * @param time   How long to drive (milliseconds)
+     */
+    public void timeDriveStraight2( double speed, int time ) {
+        ElapsedTime timer = new ElapsedTime();
+        robot.driveTrainMotors(speed, speed, speed, speed);
+        while(opModeIsActive() && (timer.milliseconds() <= time)) {
+            performEveryLoop();
+        }
+        robot.stopMotion();
+    } // timeDriveStraight
+
+    /*---------------------------------------------------------------------------------------------
+     * Method will strafe straight for a specified time.
+     * @param speed  Speed to set all motors, postive strafe left, negative strafe right
+     * @param time   How long to strafe (milliseconds)
+     */
+    public void timeDriveStrafe2( double speed, int time ) {
         ElapsedTime timer = new ElapsedTime();
         robot.driveTrainMotors(-speed, speed, speed, -speed);
         while(opModeIsActive() && (timer.milliseconds() <= time)) {
             performEveryLoop();
         }
         robot.stopMotion();
-    }
+    } // timeDriveStrafe
 
 
     //============================ IMU/GYRO-BASED NAVIGATION FUNCTIONS ============================
