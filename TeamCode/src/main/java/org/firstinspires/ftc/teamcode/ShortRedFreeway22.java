@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedFreeway extends LinearOpMode {
+public class ShortRedFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
@@ -23,10 +23,10 @@ public class LongRedFreeway extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, true, robot.markerPos);
+            robot.setMarkerLocation(true, false, robot.markerPos);
             robot.servoToInitPositions();
 
-            robot.longMoveToBoard(false);
+            robot.shortMoveToBoard2();
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
@@ -50,9 +50,3 @@ public class LongRedFreeway extends LinearOpMode {
         }
     }
 }
-
-// todo write timeout for apriltag final forward
-// todo how to stop streaming
-// todo bring back to board
-// todo set complementary tag id
-// todo slide not high enough second time

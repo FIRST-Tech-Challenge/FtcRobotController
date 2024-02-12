@@ -878,59 +878,45 @@ public class Robot {
         double distanceBetweenId = 6;
         boolean movedToDesired = false;
 
-        while (!aligned) {
-            Log.d("vision", "alignToBoardFast: passed tagid is " + tagId);
+        while (!aligned && opMode.opModeIsActive()) {
+            Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
 
-            if (numberOfDetectionsProcessed > 20) {
+            if (numberOfDetectionsProcessed > 200) {
+                Log.d("apriltag", "alignToBoardFast: didn't align, distanceToBoard is 12");
                 break;
             } else {
                 numberOfDetectionsProcessed++;
             }
 
-            myAprilTagDetections = aprilTagProcessor.getDetections(); // see if it gets anything
+            myAprilTagDetections = aprilTagProcessor.getDetections();
             if (myAprilTagDetections.size() == 0) {
-                Log.d("vision", "Houston: No tags seen");
+                Log.d("apriltag", "Houston: No tags seen");
             }
 
             for (AprilTagDetection detection : myAprilTagDetections) {
+                if (detection.metadata == null) {
+                    Log.d("apriltag", "Houston: No meta data for this detection");
+                }
 
-                    if (detection.metadata == null) {
-                        Log.d("vision", "Houston: No meta data for this detection");
-                    }
+                if (detection.metadata != null && !movedToDesired) {
+                    Log.d("apriltag", "found tag" + detection.id);
+                    distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
+                    Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
+                    mecanumBlocking(distanceToMove - 1, false, 0.7); //-1 to fix too much movement
+                    Log.d("apriltag", "moved");
+                    movedToDesired = true;
+                }
 
-                    if (detection.metadata != null && !movedToDesired) {
-                        Log.d("apriltag", "found tag" + detection.id);
-                        distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
-                        Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
-                        mecanumBlocking(distanceToMove - 1, false, 0.7); //-1 to fix too much movement
-                        Log.d("apriltag", "moved");
-                        movedToDesired = true;
-                    }
-                    telemetry.addLine("....");
-                    telemetry.update();
-                    if (detection.metadata != null && movedToDesired) {
-                        Log.d("vision", "runOpMode: aligned");
-                        Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
-                        distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
-                        aligned = true;
-                        break;
-                    }
+                if (detection.metadata != null && movedToDesired) {
+                    Log.d("apriltag", "runOpMode: aligned");
+                    Log.d("apriltag", "alignToBoard: Range is " + detection.ftcPose.range);
+                    distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
+                    aligned = true;
+                    break;
+                }
             }
         }
-
-        if (distanceToBoard == 12) {
-            Log.d("vision", "alignToBoardFast: didn't align, distanceToBoard is 12");
-        }
-
         straightBlocking(distanceToBoard, false, 0.4);
-
-        /*
-        if (isRedAlliance) {
-            setHeading(-90, 0.75);
-        } else {
-            setHeading(90, 0.75);
-        }
-        */
     }
 
     public void longMoveToBoard(boolean isJuice) {
@@ -1026,9 +1012,9 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(1, false, 0.7);
+                straightBlocking(2, false, 0.7);
                 setHeading(90 * polarity, 0.7);
-                straightBlocking(4, true, 0.7);
+                straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (19.5, 39.5)
@@ -1042,7 +1028,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-98);
+                straightBlocking2FixHeading(-95);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -1309,7 +1295,7 @@ public class Robot {
     public void openClamp(boolean wide, boolean auto, boolean blocking) {
         if (wide) {
             if (auto) {
-                setServoPosBlocking(clamp, 0.455);
+                setServoPosBlocking(clamp, 0.471);
             }
             else {
                 setServoPosBlocking(clamp, 0.471);
@@ -2266,7 +2252,7 @@ public class Robot {
                 mecanumBlocking2(-29);
                 break;
             case 2:
-                mecanumBlocking2(-26);
+                mecanumBlocking2(-23);
                 break;
             case 3:
                 mecanumBlocking2(-19);
@@ -2275,7 +2261,7 @@ public class Robot {
                 mecanumBlocking2(19);
                 break;
             case 5:
-                mecanumBlocking2(26);
+                mecanumBlocking2(23);
                 break;
             case 6:
                 mecanumBlocking2(29);
@@ -2298,22 +2284,28 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        intake.setPower(-1);
         straightBlocking2FixHeading(104);
+        intake.setPower(-1);
 
-        straightBlocking(5, true, 0.6);
-        straightBlocking(3, false, 0.5);
-
-        stackAttachmentIn();
-        opMode.sleep(300);
-
-        straightBlocking(6, true, 0.5);
-        straightBlocking(3, false, 0.5);
+        straightBlocking(5, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1.5, true, 1);
+        straightBlocking(1.5, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
+        mecanumBlocking2(1);
+        straightBlocking(1.5, true, 1);
+        straightBlocking(1.5, false, 1);
+        straightBlocking(1, true, 1);
+        straightBlocking(1, false, 1);
 
         closeClamp(true);
+        opMode.sleep(100);
+
         intake.setPower(1);
-        opMode.sleep(300);
-        intake.setPower(0);
+        opMode.sleep(100);
     }
 
     public void stackToBoard() {
@@ -2322,28 +2314,67 @@ public class Robot {
 
         straightBlocking(9, false, 0.6);
         straightBlocking2FixHeading(-84);
-        mecanumBlocking2(23 * polarity);
+
+        switch (wantedAprTagId) {
+            case 1:
+                mecanumBlocking2(19);
+                break;
+            case 2:
+                mecanumBlocking2(30);
+                break;
+            case 3:
+                mecanumBlocking2(30);
+                break;
+            case 4:
+                mecanumBlocking2(-30);
+                break;
+            case 5:
+                mecanumBlocking2(-30);
+                break;
+            case 6:
+                mecanumBlocking2(-19);
+                break;
+            default:
+                if (isRedAlliance) {
+                    mecanumBlocking2(-30);
+                } else {
+                    mecanumBlocking2(30);
+                }
+        }
+        setHeading(90 * polarity, 0.7);
 
     }
 
     public void setSecondWantedTagId () {
-        if (isRedAlliance) {
-            if (wantedAprTagId == 4) {
-                secondWantedTagId = 6;
-            } else if (wantedAprTagId == 6) {
-                secondWantedTagId = 4;
-            } else {
-                secondWantedTagId = 4;
-            }
-        } else {
-            if (wantedAprTagId == 1) {
+
+        switch (wantedAprTagId) {
+            case 1:
                 secondWantedTagId = 3;
-            } else if (wantedAprTagId == 3) {
+                break;
+            case 2:
+                secondWantedTagId = 3;
+                break;
+            case 3:
                 secondWantedTagId = 1;
-            } else {
-                secondWantedTagId = 1;
-            }
+                break;
+            case 4:
+                secondWantedTagId = 6;
+                break;
+            case 5:
+                secondWantedTagId = 6;
+                break;
+            case 6:
+                secondWantedTagId = 4;
+                break;
+            default:
+                if (isRedAlliance) {
+                    secondWantedTagId = 5;
+                } else {
+                    secondWantedTagId = 2;
+                }
         }
+
+        Log.d("apriltag", "setSecondWantedTagId: SECOND WANTED TAG ID IS " + secondWantedTagId);
     }
 
     public void longMoveToBoardTruss () {
@@ -2587,15 +2618,6 @@ public class Robot {
 
         closeClamp(true);
         opMode.sleep(100);
-
-
-
-        //stackAttachmentIn();
-        //opMode.sleep(200);
-
-        //straightBlocking(5, true, 0.3);
-        //closeClamp(true);
-        //straightBlocking(2, false, 0.7);
 
         intake.setPower(1);
         opMode.sleep(100);
