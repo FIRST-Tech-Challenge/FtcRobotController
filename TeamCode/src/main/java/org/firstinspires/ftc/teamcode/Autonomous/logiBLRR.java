@@ -12,13 +12,13 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 // backup to drop
 @Config
-@Autonomous(name = "BlueLeft2+0")
-public class BLRR extends LinearOpMode {
+@Autonomous(name = "logiBlueLeft2+0")
+public class logiBLRR extends LinearOpMode {
 //    int bark = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BL20 aut = new BL20(this, false);
+        BL20 aut = new BL20(this, true);
 //        BradBot robot = new BradBot(this, false);
 //        Pose2d startPose = new Pose2d(-36,59,toRadians(90));
 //        robot.roadrun.setPoseEstimate(startPose);

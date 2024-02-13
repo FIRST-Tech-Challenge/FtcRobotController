@@ -87,13 +87,13 @@ public class BradBot extends BasicRobot {
    * @param p_op opMode
    * @param p_is_Teleop is the program a teleop program
    */
-  public BradBot(LinearOpMode p_op, boolean p_is_Teleop) {
+  public BradBot(LinearOpMode p_op, boolean p_is_Teleop, boolean isLogi) {
     super(p_op, p_is_Teleop);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Components!");
     arm = new Arm();
     if (!isTeleop) {
-      cv = new CVMaster();
+      cv = new CVMaster(isLogi);
     }
     claw = new Claw();
     magazine = new Magazine();
@@ -112,6 +112,9 @@ public class BradBot extends BasicRobot {
     ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
     update();
+  }
+  public BradBot(LinearOpMode p_op, boolean p_isTeleop){
+    this(p_op, p_isTeleop, false);
   }
 
   public int getSpikePos() {
@@ -158,7 +161,7 @@ public class BradBot extends BasicRobot {
       if (DROP.state) {
         arm.purpurPigzl();
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(300);
+        lift.setPosition(310);
         wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
@@ -214,21 +217,20 @@ public class BradBot extends BasicRobot {
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
       if (currentPose.getX() > 10 && DROP.state || Lift.LiftPositionStates.LOW_SET_LINE.getState()) {
-        lift.setPosition(730);
+        lift.setPosition(850);
         intake.stopIntake();
         arm.flipTo(DROP);
         //        if(Wrist.WristStates.LOCK.getState()){
         //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
         //        }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
       }
   }
 
   public void lowAuto() {
-    if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==900)) {
       if (currentPose.getX() > 9) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
@@ -237,7 +239,6 @@ public class BradBot extends BasicRobot {
           wrist.flipTo(Wrist.WristTargetStates.GRAB);
         }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
     }

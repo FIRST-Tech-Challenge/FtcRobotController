@@ -62,8 +62,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.012;
-    public static double kA = 0.0003 ;
+    public static double kV = 0.014;
+    public static double kA = 0.004 ;
     public static double kStatic = 0.11;
 
     /*
@@ -73,10 +73,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 5;
-    public static double MAX_ANG_ACCEL = 3;
+    public static double MAX_VEL = 80;
+    public static double MAX_ACCEL = 50;
+    public static double MAX_ANG_VEL = 7;
+    public static double MAX_ANG_ACCEL = 5;
 
 
     public static double encoderTicksToInches(double ticks) {

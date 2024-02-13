@@ -41,7 +41,7 @@ public class AprilTagRRTest extends LinearOpMode {
         roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
         Pose2d startPose = new Pose2d(20.5, -36, Math.toRadians(180));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        CVMaster cv = new CVMaster();
+        CVMaster cv = new CVMaster(false);
         cv.switchToApril();
         roadrun.setPoseEstimate(startPose);
         queuer = new Queuer();
