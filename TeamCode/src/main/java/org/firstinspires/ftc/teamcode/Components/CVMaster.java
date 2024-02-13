@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.BlueSpikeObserverP
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedRightSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline;
+import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.logiRedRightSpikeObserverPipeline;
+import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.logiRedSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,12 +25,14 @@ public class CVMaster {
   private OpenCvWebcam webcam;
   private RFAprilCam cam;
   private RedSpikeObserverPipeline openSleevi = null;
+  private logiRedSpikeObserverPipeline logiopenSleevi = null;
+
   private BlueSpikeObserverPipeline openSleeviy = null;
 
-
   private RedRightSpikeObserverPipeline openSleeve = null;
-  private BlueRightSpikeObserverPipeline openSleevey = null;
+  private logiRedRightSpikeObserverPipeline logiopenSleeve = null;
 
+  private BlueRightSpikeObserverPipeline openSleevey = null;
 
   private boolean isObservingPole = false, isObservingCone = false;
 
@@ -36,15 +40,24 @@ public class CVMaster {
 
   private boolean isRed = true, isBlue = false;
 
+  private boolean isLogi = false;
+
   /**
    * initializes opencv webcam, starts observing spike logs that func is called to general surface
    * log logs that opencv webcam is initialized and recording spike pipeline to general surface log
    */
-  public CVMaster() {
+  public CVMaster(boolean isLogi) {
+    this.isLogi = isLogi;
     LOGGER.log(RFLogger.Severity.INFO, "intializing OpenCV");
-    webcam =
-        OpenCvCameraFactory.getInstance()
-            .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
+    if (!isLogi) {
+      webcam =
+          OpenCvCameraFactory.getInstance()
+              .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 2"));
+    } else {
+      webcam =
+          OpenCvCameraFactory.getInstance()
+              .createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
+    }
     isStreaming = true;
   }
 
@@ -55,22 +68,21 @@ public class CVMaster {
   /** observes spike logs that spike is being observed general surface log */
   public void observeSpike() {
     if (!isRed && !isBlue) {
-      openSleevi = new RedSpikeObserverPipeline();
-      webcam.setPipeline(openSleevi);
-    }
-    else if(isRed && !isBlue) {
-      openSleeve = new RedRightSpikeObserverPipeline();
-      webcam.setPipeline(openSleeve);
-    }
-    else if(!isRed && isBlue){
-      openSleeviy = new BlueSpikeObserverPipeline();
-      webcam.setPipeline(openSleeviy);
-
-    }
-    else{
-      openSleevey = new BlueRightSpikeObserverPipeline();
-      webcam.setPipeline(openSleevey);
-
+      if (!isLogi) {
+        openSleevi = new RedSpikeObserverPipeline();
+        webcam.setPipeline(openSleevi);
+      } else {
+        logiopenSleevi = new logiRedSpikeObserverPipeline();
+        webcam.setPipeline(logiopenSleevi);
+      }
+    } else if (isRed && !isBlue) {
+      if (!isLogi) {
+        openSleeve = new RedRightSpikeObserverPipeline();
+        webcam.setPipeline(openSleeve);
+      } else {
+        logiopenSleeve = new logiRedRightSpikeObserverPipeline();
+        webcam.setPipeline(logiopenSleeve);
+      }
     }
     isObservingPole = true;
     webcam.openCameraDeviceAsync(
@@ -93,18 +105,23 @@ public class CVMaster {
              * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
              * away from the user.
              */
-//            if (isRed&&!isBlue) {
-//              webcam.setPipeline(openSleevi);
-//            } else if(isRed&&isBlue){
-//              webcam.setPipeline(openSleeviy);
-//            }else if(!isRed&&isBlue){
-//              webcam.setPipeline(openSleevey);
-//            }
-//            else {
-//              webcam.setPipeline(openSleeve);
-//            }
+            //            if (isRed&&!isBlue) {
+            //              webcam.setPipeline(openSleevi);
+            //            } else if(isRed&&isBlue){
+            //              webcam.setPipeline(openSleeviy);
+            //            }else if(!isRed&&isBlue){
+            //              webcam.setPipeline(openSleevey);
+            //            }
+            //            else {
+            //              webcam.setPipeline(openSleeve);
+            //            }
+            if (!isLogi)
+              webcam.startStreaming(
+                  1280, 800, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
+            else
+              webcam.startStreaming(
+                  640, 480, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
 
-            webcam.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
             dashboard.startCameraStream(webcam, 10);
             LOGGER.log("Camera Streaming now!");
           }
@@ -124,15 +141,18 @@ public class CVMaster {
    *
    * @return position from spike pipeline
    */
-  public void setBlue(boolean blue){
+  public void setBlue(boolean blue) {
     isBlue = blue;
   }
+
   public int getPosition() {
 
     int pos = 0;
-    if (!isRed&&!isBlue) pos = openSleevi.getPosition();
-    else if(isRed && !isBlue)pos = openSleeve.getPosition();
-    else if(!isRed && isBlue) pos = openSleeviy.getPosition();
+    if (!isRed && !isBlue && !isLogi) pos = openSleevi.getPosition();
+    else if (!isRed && !isBlue && isLogi) pos = logiopenSleevi.getPosition();
+    else if (isRed && !isBlue && !isLogi) pos = openSleeve.getPosition();
+    else if (isRed && !isBlue && isLogi) pos = logiopenSleeve.getPosition();
+    else if (!isRed && isBlue) pos = openSleeviy.getPosition();
     else pos = openSleevey.getPosition();
     packet.put("cvPosition", pos);
     return pos;
@@ -148,6 +168,7 @@ public class CVMaster {
     packet.put("cvPosition", pos);
     return pos;
   }
+
   public int getBluePosition() {
     int pos = 0;
     if (!isBlue) {
@@ -158,6 +179,7 @@ public class CVMaster {
     packet.put("cvPosition", pos);
     return pos;
   }
+
   public int getBlueRightPosition() {
     int pos = 0;
     if (isRed) {
@@ -172,9 +194,9 @@ public class CVMaster {
 
   /** switches to apriltag camera logs to general surface log */
   public void switchToApril() {
-//    webcam.stopRecordingPipeline();
-//    webcam.stopStreaming();
-    cam = new RFAprilCam();
+    //    webcam.stopRecordingPipeline();
+    //    webcam.stopStreaming();
+    cam = new RFAprilCam(isLogi);
     isStreaming = false;
   }
 
@@ -194,7 +216,7 @@ public class CVMaster {
       switchToApril();
       isStreaming = false;
     }
-    if(isTeleop&&isStreaming){
+    if (isTeleop && isStreaming) {
       stop();
     }
     if (!isStreaming) {

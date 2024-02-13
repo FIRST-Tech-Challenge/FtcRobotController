@@ -19,9 +19,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * Odom localizer 8 24x24 squares...but Kotlin!
  */
 
-@Autonomous(name = "KprilTagRRTest")
+@Autonomous(name = "LogiKprilTagRRTest")
 
-class KotlinAprilTagRRTest : LinearOpMode() {
+class LogiKprilTagTest : LinearOpMode() {
     private lateinit var queuer : Queuer
     private lateinit var roadrun: SampleMecanumDrive
     override fun runOpMode() {
@@ -29,7 +29,7 @@ class KotlinAprilTagRRTest : LinearOpMode() {
         roadrun = SampleMecanumDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY)
         val startPose = Pose2d(40.0, 1.5 * 23.5, Math.toRadians(180.0))
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        val cv = CVMaster(false)
+        val cv = CVMaster(true)
         cv.switchToApril()
         roadrun.poseEstimate = startPose
         queuer = Queuer()
