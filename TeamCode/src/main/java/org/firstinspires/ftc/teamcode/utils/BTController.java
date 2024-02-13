@@ -40,6 +40,7 @@ public class BTController{
         this.m_buttonsSuppliers[RIGHT_TRIGGER.ordinal()] = (() -> Math.abs(gamepad.right_trigger) > threshold);
 
         this.m_buttonsSuppliers[BUMPER_LEFT.ordinal()] = ()->gamepad.left_bumper;
+        this.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()] = ()->gamepad.right_bumper;
         this.m_buttonsSuppliers[DPAD_DOWN.ordinal()]=()->gamepad.dpad_down;
         this.m_buttonsSuppliers[DPAD_RIGHT.ordinal()]=()->gamepad.dpad_right;
         this.m_buttonsSuppliers[DPAD_LEFT.ordinal()]=()->gamepad.dpad_left;

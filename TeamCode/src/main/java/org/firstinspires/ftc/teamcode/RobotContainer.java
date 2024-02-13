@@ -44,7 +44,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller = new BTController(gamepad1);
         m_controller2 = new BTController(gamepad2);
 
-        //      m_gripper = new Gripper(map,telemetry);
+              m_gripper = new Gripper(map,telemetry);
         m_chassis = new Chassis(map, telemetry, armM2encoderL.encoder, armM1encoderR.encoder);
 //        m_plane = new plane(map, telemetry);
 //        m_climb = new climb(map, telemetry);
@@ -56,9 +56,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
     //bind commands to trigger
     public void bindCommands() {
+//        m_controller2.assignCommand(m_gripper.manual(),true,LEFT_TRIGGER ).whenInactive(m_gripper.stop());
 
-//        m_controller.assignCommand(m_chassis.drive(()-> m_gamepad1.left_stick_x, ()-> m_gamepad1.left_trigger+ m_gamepad1.right_trigger, ()-> m_gamepad1.left_stick_y),
-//                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER);
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
                         () -> -m_controller.left_y.getAsDouble(),
                         m_controller.left_x,
@@ -79,18 +78,18 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                 m_chassis);
         m_controller.assignCommand(new InstantCommand(()->fp2.get()), false, BUTTON_UP)
                 .whenInactive(m_chassis.stopMotor());
-
-        m_controller2.assignCommand(m_arm.armMoveManual(()-> m_controller2.left_x.getAsDouble(),
-                ()-> m_controller2.left_y.getAsDouble(), m_controller2.right_y),false ,LEFT_Y,
-                LEFT_Y, LEFT_X);
-        m_controller2.assignCommand(m_arm.armMoveToPoint(
-                PixelPickUp),
-                false, BUTTON_DOWN);
-        m_controller2.assignCommand(m_arm.armMoveToPoint(
-                PixelScore),
-                false, BUMPER_LEFT);
-        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_LEFT);//pick up tbd
-        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_RIGHT);//pick up tbd
+//
+//        m_controller2.assignCommand(m_arm.armMoveManual(()-> m_controller2.left_x.getAsDouble(),
+//                ()-> m_controller2.left_y.getAsDouble(), m_controller2.right_y),false ,LEFT_Y,
+//                LEFT_Y, LEFT_X);
+//        m_controller2.assignCommand(m_arm.armMoveToPoint(
+//                PixelPickUp),
+//                false, BUTTON_DOWN);
+//        m_controller2.assignCommand(m_arm.armMoveToPoint(
+//                PixelScore),
+//                false, BUMPER_LEFT);
+//        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_LEFT);//pick up tbd
+//        m_controller2.assignCommand(m_arm.armMoveToAngle(0,0),false,BUTTON_RIGHT);//pick up tbd
 //        m_controller.assignCommand(m_arm.armMoveManual(()-> -m_controller.left_trigger.getAsDouble()
 //                + m_controller.right_trigger.getAsDouble(), ),false,RIGHT_TRIGGER,LEFT_TRIGGER);
 //        m_controller.assignCommand(m_arm.armMoveManual(),false,LEFT_Y);

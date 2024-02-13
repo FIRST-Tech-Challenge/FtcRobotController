@@ -31,6 +31,13 @@ public class Constants {
 
     public static final double neo_Kt = hex_stall_torque / hex_stall_current;
 
+    public static class Gripper{
+        @Config
+        public static class Gripperpwm{
+            public static double serv1=0.5;
+            public static double serv0=0.5;
+        }
+    }
     public static class ArmConstants {
 
         public static final double motorMaxVolt = 12;
