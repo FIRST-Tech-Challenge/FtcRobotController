@@ -20,7 +20,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Position Object Detection", group = "Concept")
+@Autonomous(name = "SecondBlueFar", group = "Concept")
 //@Disabled
 public class Centerstage_AutoBlueFar extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
