@@ -23,10 +23,10 @@ public class Controller extends LinearOpMode {
     final double ROLLER_UPSIDEDOWN = 0.97;
 
     // Arm
-    final double ARM_EXTEND_SPEED = 1;
-    final double ARM_LIFT_SPEED = 3;
+    final double ARM_EXTEND_SPEED = 0.5;
+    final double ARM_LIFT_SPEED = 7;
     final double ARM_LIFT_POWER = 0.4;
-    final int ARM_MAX_POSITION = 3050;
+    final int ARM_MAX_POSITION = 3400;
 
     // Grip
     final double GRIP_OPEN = 0.5;
@@ -44,8 +44,8 @@ public class Controller extends LinearOpMode {
     final int BACKDROP_EXTEND_TARGET = 1200;
 
     // Find Arm Extend Zero
-    final double ARM_EXTEND_FAST_SPEED = 1;
-    final double ARM_EXTEND_SLOW_SPEED = 0.1;
+    final double ARM_EXTEND_FAST_SPEED = 0.1;
+    final double ARM_EXTEND_SLOW_SPEED = 0.01;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -106,22 +106,27 @@ public class Controller extends LinearOpMode {
 
     public void FindArmExtendZero() {
         if (armExtendSwitch.getState()) { // If switch is not pressed
-            armExtend.setPower(ARM_EXTEND_FAST_SPEED);
+            armExtend.setPower(-ARM_EXTEND_SLOW_SPEED);
 
-            while (armExtendSwitch.getState()) {}
+            telemetry.addData("test", 1);
+            telemetry.update();
+            while (armExtendSwitch.getState()) {} // While not pressed
 
             armExtend.setPower(0);
         }
 
         // Go forward slowly and then backwards and find the switch
-        armExtend.setPower(-ARM_EXTEND_SLOW_SPEED);
-
-        while (!armExtendSwitch.getState()) {}
-
         armExtend.setPower(ARM_EXTEND_SLOW_SPEED);
+        telemetry.addData("test", 2);
+        telemetry.update();
+        while (!armExtendSwitch.getState()) {} // While pressed
 
-        while (armExtendSwitch.getState()) {}
-
+        armExtend.setPower(-ARM_EXTEND_SLOW_SPEED);
+        telemetry.addData("test", 3);
+        telemetry.update();
+        while (armExtendSwitch.getState()) {} // While not pressed
+        telemetry.addData("test", 4);
+        telemetry.update();
         armExtend.setPower(0);
         armExtendZero = armExtend.getCurrentPosition();
     }
@@ -129,11 +134,11 @@ public class Controller extends LinearOpMode {
     public void StartupSequence() {
         currentArmLiftPos = ARM_LIFT_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
-        //armExtend.setPower(ARM_EXTEND_SPEED);
+        armExtend.setPower(-ARM_EXTEND_SPEED);
 
-        //while (armLift.isBusy()) {}
+        while (armLift.isBusy()) {}
 
-        //armExtend.setPower(0);
+        armExtend.setPower(0);
 
         FindArmExtendZero();
 
@@ -155,11 +160,11 @@ public class Controller extends LinearOpMode {
         roller.setPosition(ROLLER_FLAT);
 
         if (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
-            armExtend.setPower(-ARM_EXTEND_SPEED);
+            armExtend.setPower(ARM_EXTEND_SPEED);
             while (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {}
         }
         else if (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {
-            armExtend.setPower(ARM_EXTEND_SPEED);
+            armExtend.setPower(-ARM_EXTEND_SPEED);
             while (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {}
         }
 
@@ -172,11 +177,11 @@ public class Controller extends LinearOpMode {
         roller.setPosition(ROLLER_UPSIDEDOWN);
 
         if (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {
-            armExtend.setPower(-ARM_EXTEND_SPEED);
+            armExtend.setPower(ARM_EXTEND_SPEED);
             while (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {}
         }
         else if (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {
-            armExtend.setPower(ARM_EXTEND_SPEED);
+            armExtend.setPower(-ARM_EXTEND_SPEED);
             while (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {}
         }
 
@@ -185,7 +190,6 @@ public class Controller extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
         backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
         frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
@@ -207,8 +211,8 @@ public class Controller extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        armExtend.setDirection(DcMotor.Direction.REVERSE);
         armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightGrip.setDirection(Servo.Direction.REVERSE);
 
         armLift.setTargetPosition(0);
@@ -241,8 +245,8 @@ public class Controller extends LinearOpMode {
             }
 
             // Arm
-            if (armExtend.getCurrentPosition() > armExtendZero || gamepad2.right_stick_y < 0) {
-                armExtend.setPower(gamepad2.right_stick_y * ARM_EXTEND_SPEED);
+            if (armExtend.getCurrentPosition() > armExtendZero + 10 || -gamepad2.right_stick_y > 0 || armExtendSwitch.getState()) {
+                armExtend.setPower(-gamepad2.right_stick_y * ARM_EXTEND_SPEED);
             }
 
             currentArmLiftPos -= (int)(gamepad2.left_stick_y * ARM_LIFT_SPEED);
