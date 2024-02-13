@@ -4,17 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedFreeway20 extends LinearOpMode {
+public class LongBlueFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
 
         waitForStart();
 
@@ -24,21 +23,39 @@ public class LongRedFreeway20 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, true, robot.markerPos);
+            robot.setMarkerLocation(false, true, robot.markerPos);
             robot.servoToInitPositions();
-
-            this.sleep(delay);
 
             robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
+
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
+            robot.boardToMiddle();
+
+            robot.middleToStackAndIntake();
+
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
+            robot.stackToBoard();
+            robot.intake.setPower(0);
+            robot.alignToBoardFast(robot.secondWantedTagId);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+
+            robot.trayToOuttakePos(true); // pivot tray to outtake position
+            robot.autoOuttake(false, slideStartingPosition);
+
             break;
 
         }
     }
 }
+
+// todo write timeout for apriltag final forward
+// todo how to stop streaming
+// todo bring back to board
+// todo set complementary tag id
+// todo slide not high enough second time
