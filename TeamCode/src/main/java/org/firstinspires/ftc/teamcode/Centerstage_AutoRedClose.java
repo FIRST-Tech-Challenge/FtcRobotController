@@ -248,28 +248,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
 //        gobbler.driveTrain.strafe(6, 0.25);
 //        gobbler.driveTrain.moveForward(-20, 0.5);
 
-        if (DESIRED_TAG_ID == 1) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeRight(4, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 2) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(2, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 3) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(8, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 4) {
+        if (DESIRED_TAG_ID == 4) {
             gobbler.driveTrain.moveBackward(15, 0.5);
             gobbler.driveTrain.Wait(0.5);
             gobbler.driveTrain.strafeRight(4, 0.5);

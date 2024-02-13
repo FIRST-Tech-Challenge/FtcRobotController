@@ -298,27 +298,6 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
             gobbler.driveTrain.Wait(0.5);
         }
 
-        else if (DESIRED_TAG_ID == 4) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeRight(4, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 5) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(4, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 6) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(8, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
         gobbler.driveTrain.moveBackward(7, 0.5);
 
         // If using RoadRunner, can just directly put in a RR path to go from current position to
