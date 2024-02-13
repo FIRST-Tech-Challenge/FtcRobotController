@@ -922,13 +922,7 @@ public class Robot {
     }
 
     public void longMoveToBoard(boolean isJuice) {
-        int polarity;
-
-        if (isRedAlliance) {
-            polarity = -1;
-        } else {
-            polarity = 1;
-        }
+        int polarity = (isRedAlliance) ? -1 : 1;
 
         while (opMode.opModeIsActive()) {
 
@@ -969,7 +963,7 @@ public class Robot {
 
                 // P4: (43.5, 60)
 
-                straightBlocking2FixHeading(-76.5);
+                straightBlocking2FixHeading(-73.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (120, 60)
@@ -1028,7 +1022,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-95);
+                straightBlocking2FixHeading(-94);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -1087,7 +1081,7 @@ public class Robot {
 
                 // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-88.5); // subtracted 4 here
+                straightBlocking2FixHeading(-85.5); // subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -2296,13 +2290,9 @@ public class Robot {
         straightBlocking(1.5, false, 1);
         straightBlocking(1, true, 1);
         straightBlocking(1, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
         mecanumBlocking2(1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
 
         closeClamp(true);
         opMode.sleep(100);
@@ -2328,7 +2318,7 @@ public class Robot {
                 mecanumBlocking2(21);
                 break;
             case 2:
-                mecanumBlocking2(30);
+                mecanumBlocking2(21);
                 break;
             case 3:
                 mecanumBlocking2(30);
@@ -2337,7 +2327,7 @@ public class Robot {
                 mecanumBlocking2(-30);
                 break;
             case 5:
-                mecanumBlocking2(-30);
+                mecanumBlocking2(-21);
                 break;
             case 6:
                 mecanumBlocking2(-21);
@@ -2406,7 +2396,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-3);
+                straightBlocking2(-2);
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -2414,7 +2404,7 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(3);
+                straightBlocking2(2);
 
                 // P3: (43.5, 35.5)
 
@@ -2427,7 +2417,7 @@ public class Robot {
 
                 // P4: (43.5, 60)
 
-                straightBlocking2FixHeading(-76.5);
+                straightBlocking2FixHeading(-73.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (120, 60)
@@ -2453,7 +2443,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(21);
                 } else {
-                    mecanumBlocking2(-21);
+                    mecanumBlocking2(-24);
                 }
 
                 setHeading(0, 0.7);
@@ -2473,8 +2463,6 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, false, 0.7);
-                setHeading(90 * polarity, 0.7);
                 straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
@@ -2489,7 +2477,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-95);
+                straightBlocking2FixHeading(-96);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -2548,7 +2536,7 @@ public class Robot {
 
                 // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-88.5); // subtracted 4 here
+                straightBlocking2FixHeading(-85.5); // subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -2577,13 +2565,13 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(21);
+                mecanumBlocking2(19);
                 break;
             case 2:
-                mecanumBlocking2(26.5);
+                mecanumBlocking2(23.5);
                 break;
             case 3:
-                mecanumBlocking2(32);
+                mecanumBlocking2(29);
                 break;
             case 4:
                 mecanumBlocking2(-32);
@@ -2621,13 +2609,9 @@ public class Robot {
         straightBlocking(1.5, false, 1);
         straightBlocking(1, true, 1);
         straightBlocking(1, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
         mecanumBlocking2(1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
 
         closeClamp(true);
         opMode.sleep(100);
