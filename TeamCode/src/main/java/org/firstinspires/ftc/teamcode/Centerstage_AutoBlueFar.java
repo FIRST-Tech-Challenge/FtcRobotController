@@ -247,7 +247,6 @@ public class Centerstage_AutoBlueFar extends LinearOpMode {
         // the robot the last leg to in front of the backboard, in position to score a pixel
 //        gobbler.driveTrain.strafe(6, 0.25);
 //        gobbler.driveTrain.moveForward(-20, 0.5);
-
         if (DESIRED_TAG_ID == 1) {
             gobbler.driveTrain.moveBackward(15, 0.5);
             gobbler.driveTrain.Wait(0.5);
