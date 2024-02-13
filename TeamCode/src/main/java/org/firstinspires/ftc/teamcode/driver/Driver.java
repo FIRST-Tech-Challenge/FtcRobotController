@@ -212,10 +212,10 @@ public class Driver extends LinearOpMode {
                     try {
                         Thread.sleep(10); // Small delay to prevent looping too fast
                     } catch (InterruptedException e) {
-                        break; // Exit the loop if the thread is interrupted
+                        
                 }
             }
-        }
+        });
     }
 
 
