@@ -27,8 +27,8 @@ public class CVTesting extends LinearOpMode {
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindRight myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindRight(telemetry,packet));
+        PropFindLeft myPipeline;
+        webcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override

@@ -89,31 +89,31 @@ public class CenterStagePilesBlue extends LinearOpMode {
         PropFindLeft.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
-        Pose2d startPose = new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
         State currentState;
 
         Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(90)))
                 .build();
 
         Trajectory purpleDepositPathL = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
-                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
+                .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(43)))
                 .build();
 
         Trajectory purpleDepositPathR = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
-                .lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
+                .lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(120)))
                 .build();
 
 
 
         Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
-                .back(.5)
+                .forward(.5)
                 .build();
 
         Trajectory yellowDepositPath1 = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .lineToSplineHeading(new Pose2d(-35, 8, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-35, 5, Math.toRadians(180)))
                 .build();
 
         Trajectory yellowDepositPath2 = drive.trajectoryBuilder(yellowDepositPath1.end(),false)
@@ -121,13 +121,13 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         Trajectory yellowDepositPathC = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
-                .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
+                .splineToLinearHeading(new Pose2d(46, 34, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory yellowDepositPathL = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
-                .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
+                .splineToLinearHeading(new Pose2d(46, 37, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(yellowDepositPath2.end(),false)
-                .splineToLinearHeading(new Pose2d(48, 36, Math.toRadians(180)), Math.toRadians(0))                .build();
+                .splineToLinearHeading(new Pose2d(48, 30, Math.toRadians(180)), Math.toRadians(0))                .build();
 
         Trajectory park;
 
@@ -159,7 +159,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
-            drive.backSlidesMove(target);
+            //drive.backSlidesMove(target);
 
             telemetry.addData("current state", currentState.name());
 
@@ -265,12 +265,12 @@ public class CenterStagePilesBlue extends LinearOpMode {
                     break;
                 case BACK:
                     if (!drive.isBusy()) {
-                        drive.outtakeToTransfer();
+                        //drive.outtakeToTransfer();
                         target = 0;
                         park = drive.trajectoryBuilder(drive.getPoseEstimate(),false)
                                 .splineToLinearHeading(new Pose2d(new Vector2d(50, 56), Math.toRadians(180)), Math.toRadians(0))
                                 .build();
-                        drive.followTrajectoryAsync(park);
+                        //drive.followTrajectoryAsync(park);
                         currentState= State.PARK;
                     }
                     break;
