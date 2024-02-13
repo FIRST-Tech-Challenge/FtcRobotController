@@ -51,7 +51,7 @@ import java.util.List;
  */
 @Autonomous(name = "Position Object Detection", group = "Concept")
 //@Disabled
-public class Centerstage_AutoBlue extends LinearOpMode {
+public class Centerstage_AutoBlueClose extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
