@@ -1592,10 +1592,12 @@ public class Robot {
             dpadDownPreviousValue = gamepad2.dpad_down;
 
             //adjustable tray
-            if (gamepad2.right_stick_x > 0) {
-                trayAngleSlope += 0.001;
-            } else {
-                trayAngleSlope -= 0.001;
+            if (gamepad2.right_stick_x < -0.9) {
+                trayAngleSlope += 0.0001;
+            } else if (gamepad2.right_stick_x  > 0.9){
+                trayAngleSlope -= 0.0001;
+            } else if (gamepad2.right_stick_button) {
+                trayAngleSlope = -0.004;
             }
 
             // clamp controls
