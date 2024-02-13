@@ -20,8 +20,8 @@ import java.util.*;
 
 /** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
-    private static final double LIFT_VEL = 500;
-    private static final double ROTATIONS_PER_INCH = PI * 1.85;
+    private static final double LIFT_VEL = 1000;
+    public static final double GOAL_ENCODERS = 2000;
     private TfodProcessor tfod;
     private static final ElapsedTime runtime = new ElapsedTime();
     // All non-primitive datatypes initialize to null on default.
@@ -50,7 +50,7 @@ public abstract class CSBase extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
     static final double[]   BOUNDARIES              = {0, 350};
     static final double     CAR_WASH_POWER          = 1.0;
-    private static final int WAIT_TIME              = 250;
+    private static final int WAIT_TIME              = 100;
                  double     velocity                = 2000;
     spike pos; // Team prop position
     public double x;
@@ -162,6 +162,9 @@ public abstract class CSBase extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        if (pixelLockingServo != null){
+            pixelLockingServo.setPosition(0);
+        }
     }
 
     /** Initializes all hardware devices on the robot.
@@ -341,6 +344,7 @@ public abstract class CSBase extends LinearOpMode {
 
             double duration = abs(inches * COUNTS_PER_INCH / velocity);
 
+            runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
                 print("Strafing until",  duration + " seconds");
                 print("Currently at",  runtime.seconds() + " seconds");
@@ -349,6 +353,8 @@ public abstract class CSBase extends LinearOpMode {
             if (inches != 0) {
                 stopRobot();
             }
+            print("Strafing", "Complete");
+            update();
 
         }
         sleep(WAIT_TIME);
@@ -511,7 +517,7 @@ public abstract class CSBase extends LinearOpMode {
      * @return Information about the tag detected. **/
     @Nullable
     public AprilTagDetection tagDetections(int id, double timeout) {
-        double ms = (timeout * 1000);
+        double ms = (timeout);
         AprilTagDetection a;
         double t = runtime.milliseconds() + ms;
         while (opModeIsActive() && (runtime.milliseconds() < t)) {
@@ -528,7 +534,7 @@ public abstract class CSBase extends LinearOpMode {
      */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
-            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 1 || abs(a.ftcPose.yaw) > 1)) {
+            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 0.5 || abs(a.ftcPose.yaw) > 0.5)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 print("Strafe", a.ftcPose.x);
@@ -536,13 +542,11 @@ public abstract class CSBase extends LinearOpMode {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 print("Drive", -a.ftcPose.y + 5);
-                drive(-a.ftcPose.y + 8);
+                drive(-a.ftcPose.y + 2);
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
-                if (abs(a.ftcPose.yaw) > 1) {
-                    print("Turn", a.ftcPose.yaw / 2);
-                    turn(a.ftcPose.yaw / 2);
-                }
+                print("Turn", a.ftcPose.yaw / 2);
+                turn(a.ftcPose.yaw / 2);
                 update();
         }
     }
@@ -645,8 +649,8 @@ public abstract class CSBase extends LinearOpMode {
             drive(15);
         } else if (pos == spike.right) {
             turn(35);
-            drive(-10);
-            drive(10);
+            drive(-14);
+            drive(14);
             turn(-35);
         }
         s(.5);
@@ -658,22 +662,53 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Moves the lift motor a specified number of inches.
-     * @param inches Number of inches to move.
+     * @param encoders Number of encoders to turn the motor.
      */
-    public void moveLift(double inches) {
-        
-        double duration = abs(inches * ROTATIONS_PER_INCH);
-        pixelLiftingMotor.setVelocity(LIFT_VEL);
+    public void moveLift(double encoders) {
+        if (pixelLiftingMotor != null) {
+            pixelLiftingMotor.setVelocity(LIFT_VEL * signum(encoders));
 
-        while (opModeIsActive() && (runtime.seconds() < duration) && inches != 0) {
-            // Display it for the driver.
-            print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            print("Currently at",  " at " + pixelLiftingMotor.getCurrentPosition());
-            update();
+            runtime.reset();
+            while (opModeIsActive() && pixelLiftingMotor.getCurrentPosition() < encoders) {
+                // Display it for the driver.
+                print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                print("Currently at", " at " + pixelLiftingMotor.getCurrentPosition());
+                print("Goal", encoders);
+                update();
+            }
+            pixelLiftingMotor.setVelocity(0);
         }
-        pixelLiftingMotor.setVelocity(0);
     }
 
+    public void retractLift() {
+        if (pixelLiftingMotor != null) {
+            pixelLiftingMotor.setVelocity(-LIFT_VEL);
+            while (opModeIsActive() && pixelLiftingMotor.getCurrentPosition() > 0) {
+                // Display it for the driver.
+                print("Angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                print("Currently at", " at " + pixelLiftingMotor.getCurrentPosition());
+                print("Goal", 0);
+                update();
+            }
+            pixelLiftingMotor.setVelocity(0);
+        }
+    }
+
+    public void dropPixels() {
+        if (pixelLockingServo != null && trayTiltingServo != null) {
+            pixelLockingServo.setPosition(0);
+            s(1);
+            trayTiltingServo.setPosition(0.5);
+            s(1);
+            pixelLockingServo.setPosition(1);
+            s(1);
+            trayTiltingServo.setPosition(0);
+            s(1);
+        } else {
+            print("ERROR", "Pixel Locking Servo or Tray Tilting Servo not connected");
+            s(0.5);
+        }
+    }
 
     /** A less space consuming way to add telemetry.
     * Format: "(caption): (content)" 

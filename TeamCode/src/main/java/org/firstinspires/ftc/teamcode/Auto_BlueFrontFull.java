@@ -35,6 +35,9 @@ public class Auto_BlueFrontFull extends CSBase {
             }
         }
         align(ID);
+        moveLift(GOAL_ENCODERS);
+        dropPixels();
+        retractLift();
 
 
 //        findPos();

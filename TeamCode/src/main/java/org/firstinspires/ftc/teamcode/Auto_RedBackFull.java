@@ -36,7 +36,9 @@ public class Auto_RedBackFull extends CSBase {
             }
         }
         align(ID);
-        //moveLift(3);
+        moveLift(GOAL_ENCODERS);
+        dropPixels();
+        retractLift();
         //drive(-12);
         //strafe(tilesToInches(1), dir.r);
         //drive(-18);
