@@ -2594,16 +2594,16 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        straightBlocking2FixHeading(99);
+        straightBlocking2FixHeading(101);
         intake.setPower(-1);
 
         if (isRedAlliance) {
             mecanumBlocking2(23);
         } else {
-            mecanumBlocking2(-23);
+            mecanumBlocking2(-26);
         }
 
-        straightBlocking(5, true, 1);
+        straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
         straightBlocking(1, false, 1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
