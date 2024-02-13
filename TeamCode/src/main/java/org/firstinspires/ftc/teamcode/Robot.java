@@ -948,7 +948,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-3);
+                straightBlocking2(-2);
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -956,14 +956,14 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(3);
+                straightBlocking2(2);
 
                 // P3: (43.5, 35.5)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(24.5);
                 } else {
-                    mecanumBlocking2(-24.5);
+                    mecanumBlocking2(-27.5);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -995,7 +995,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(21);
                 } else {
-                    mecanumBlocking2(-21);
+                    mecanumBlocking2(-24);
                 }
                 setHeading(0, 0.7);
 
@@ -1014,8 +1014,6 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, false, 0.7);
-                setHeading(90 * polarity, 0.7);
                 straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
@@ -1024,7 +1022,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(18);
                 } else {
-                    mecanumBlocking2(-18);
+                    mecanumBlocking2(-21);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -1082,7 +1080,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(12);
                 } else {
-                    mecanumBlocking2(-12);
+                    mecanumBlocking2(-15);
                 }
 
                 setHeading(90 * polarity, 0.7);
@@ -1710,7 +1708,7 @@ public class Robot {
     }
 
     public void stackAttachmentOut() {
-        stackAttachment.setPosition(0.65);
+        stackAttachment.setPosition(0.7);
     }
 
     public void stackAttachmentIn() {
@@ -2254,13 +2252,13 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(-29);
+                mecanumBlocking2(-33);
                 break;
             case 2:
-                mecanumBlocking2(-23);
+                mecanumBlocking2(-27);
                 break;
             case 3:
-                mecanumBlocking2(-19);
+                mecanumBlocking2(-23);
                 break;
             case 4:
                 mecanumBlocking2(19);
@@ -2311,6 +2309,11 @@ public class Robot {
 
         intake.setPower(1);
         opMode.sleep(100);
+
+        if (!isRedAlliance) {
+            mecanumBlocking2(-1);
+        }
+
     }
 
     public void stackToBoard() {
@@ -2606,7 +2609,11 @@ public class Robot {
         straightBlocking2FixHeading(99);
         intake.setPower(-1);
 
-        mecanumBlocking2(23);
+        if (isRedAlliance) {
+            mecanumBlocking2(23);
+        } else {
+            mecanumBlocking2(-23);
+        }
 
         straightBlocking(5, true, 1);
         straightBlocking(1, false, 1);
