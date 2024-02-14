@@ -10,7 +10,7 @@ public class ShortRedWall22 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
@@ -22,7 +22,7 @@ public class ShortRedWall22 extends LinearOpMode {
 
             robot.detectMarkerPosition();
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
-            //robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             robot.setMarkerLocation(true, false, robot.markerPos);
             robot.servoToInitPositions();
