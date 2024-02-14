@@ -47,7 +47,7 @@ public class RL20 {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-38,-38,toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(-32,-38,toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(-32.5,-34,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-33.5,-33,toRadians(-180)))
 
                 .build();
 
@@ -96,7 +96,7 @@ public class RL20 {
               .roadrun
               .trajectorySequenceBuilder(pathy[2].end())
               .lineToLinearHeading(new Pose2d(40.5, -35, toRadians(-180)))
-              .lineToLinearHeading(new Pose2d(46.3, -41.5, toRadians(-180)))
+              .lineToLinearHeading(new Pose2d(46.6, -41.5, toRadians(-180)))
               .build();
         } else{
         droppy[0] =
@@ -105,7 +105,7 @@ public class RL20 {
                         .trajectorySequenceBuilder(pathy[0].end())
                         .lineToLinearHeading(new Pose2d(40.5, -32, toRadians(-180)))
                         .waitSeconds(2)
-                        .lineToLinearHeading(new Pose2d(46.3, -29, toRadians(-180)))
+                        .lineToLinearHeading(new Pose2d(47.3, -29, toRadians(-180)))
                         .build();
 
         droppy[1] =
@@ -114,7 +114,7 @@ public class RL20 {
                         .trajectorySequenceBuilder(pathy[1].end())
                         .lineToLinearHeading(new Pose2d(40.5, -35, toRadians(-180)))
                         .waitSeconds(2)
-                        .lineToLinearHeading(new Pose2d(46.3, -35.25, toRadians(-180)))
+                        .lineToLinearHeading(new Pose2d(47.5, -36, toRadians(-180)))
                         .build();
 
         droppy[2] =
@@ -162,6 +162,7 @@ public class RL20 {
     }
     public void purp()
     {
+        robot.queuer.queue(false, true);
         robot.queuer.addDelay(3.0);
         robot.queuer.queue(false, true);
         robot.upAuto();

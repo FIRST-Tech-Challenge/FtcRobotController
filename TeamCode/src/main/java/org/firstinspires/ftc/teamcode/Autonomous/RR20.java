@@ -102,7 +102,7 @@ public class RR20 {
                 .lineToLinearHeading(new Pose2d(58, 58, toRadians(180)))
                 .build();
 
-        robot.setRight(false);
+        robot.setRight(true);
         robot.setBlue(false);
         robot.observeSpike();
     }

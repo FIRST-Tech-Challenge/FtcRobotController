@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -64,10 +65,10 @@ public class Magazine {
     public void updateSensors(){
         double dist1 = colorSensor1.getDist();
         double dist2 = colorSensor2.getDist();
-        if(dist1 < 1){
+        if(dist1 < 2){
             MagStates.FRONT.setState(true);
         }
-        else if(dist1 > 1){
+        else if(dist1 > 2){
             MagStates.FRONT.setState(false);
         }
         if(dist2 <1){
