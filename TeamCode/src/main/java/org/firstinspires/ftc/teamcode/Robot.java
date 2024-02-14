@@ -185,14 +185,14 @@ public class Robot {
             opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
-            moveLinearSlideByTicksBlocking(startingPosition + 1850);
+            moveLinearSlideByTicksBlocking(startingPosition + 2000);
         } else {
             moveLinearSlideByTicksBlocking(startingPosition + 2000);
             trayToOuttakePos(true); // pivot tray to outtake position
             opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
-            moveLinearSlideByTicksBlocking(startingPosition + 2150);
+            moveLinearSlideByTicksBlocking(startingPosition + 2350);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
@@ -610,7 +610,7 @@ public class Robot {
 
                 // P1: (35, 17)
 
-                straightBlocking2(-27);
+                straightBlocking2(-29);
 
                 // P2: (35, 44)
 
@@ -618,7 +618,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-2);
+                straightBlocking2(-3);
                 setHeading(-90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -626,15 +626,15 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(29);
+                straightBlocking2(31);
 
                 setHeading(90 * polarity, 0.7); //TODO: the robot couldn't terminate this in one run
+
+                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 mecanumBlocking2(-5 * polarity);
 
                 setHeading(90 * polarity, 0.7);
-
-                visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 break;
 
@@ -643,13 +643,12 @@ public class Robot {
 
                 // P1: (35, 17)
 
-
                 straightBlocking2(-2);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-23);
                 } else {
-                    mecanumBlocking2(23);
+                    mecanumBlocking2(21);
                 }
                 setHeading(0, 0.7);
 
@@ -661,6 +660,8 @@ public class Robot {
 
                 setHeading(-90 * polarity, 0.7);
 
+                straightBlocking2(-2.5);
+
                 // P4: (22.5, 39.5)
 
                 if (!testingOnBert) {
@@ -669,13 +670,13 @@ public class Robot {
                 }
                 setHeading(-90 * polarity, 0.7);
 
-                straightBlocking2(5);
-                setHeading(90 * polarity, 0.7);
-
-                mecanumBlocking2(-10);
+                straightBlocking2(9.5);
                 setHeading(90 * polarity, 0.7);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                mecanumBlocking2(10 * polarity);
+                setHeading(90 * polarity, 0.7);
 
                 break;
 
@@ -689,8 +690,9 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(-15);
                 } else {
-                    mecanumBlocking2(15);
+                    mecanumBlocking2(12);
                 }
+
                 setHeading(0, 0.7);
 
                 // P2: (23, 17)
@@ -715,9 +717,9 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                mecanumBlocking2(-1 * 10);
-
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
+
+                mecanumBlocking2(10 * polarity);
 
                 break;
             }

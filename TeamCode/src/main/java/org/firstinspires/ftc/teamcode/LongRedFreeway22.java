@@ -58,3 +58,5 @@ public class LongRedFreeway22 extends LinearOpMode {
 // todo bring back to board
 // todo set complementary tag id
 // todo slide not high enough second time
+// todo turns need a timeout, and maybe other control loops
+// todo tune tray outtake pos/how close it is to board

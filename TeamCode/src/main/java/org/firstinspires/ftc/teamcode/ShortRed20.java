@@ -15,7 +15,7 @@ public class ShortRed20 extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 7000;  // Max delay allowed 13 seconds, leaves 3 seconds for vision timeout
+        int delay = 0;  // Max delay is 12000
 
         waitForStart();
 
