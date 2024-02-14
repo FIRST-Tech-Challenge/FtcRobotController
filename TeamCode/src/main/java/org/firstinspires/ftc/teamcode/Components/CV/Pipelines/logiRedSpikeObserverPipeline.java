@@ -29,7 +29,7 @@ public class logiRedSpikeObserverPipeline extends OpenCvPipeline {
             p21y = 370,
             p22x = 170,
             p22y = 460,
-            p31x = 510,
+            p31x = 450,
             p31y = 340,
             p32x = 520,
             p32y = 410,

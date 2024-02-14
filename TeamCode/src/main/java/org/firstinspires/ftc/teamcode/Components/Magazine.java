@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.LED;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFColorSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLEDStrip;
@@ -13,11 +16,17 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Magazine {
     private RFLEDStrip blinkin;
+    private LED rf, rb, lf, lb;
     private RFColorSensor colorSensor1, colorSensor2;
 
     public static int pixels = 0;
 
     public Magazine() {
+        rf = op.hardwareMap.get(LED.class, "rf");
+        rb = op.hardwareMap.get(LED.class, "rb");
+        lf = op.hardwareMap.get(LED.class, "lf");
+        lb = op.hardwareMap.get(LED.class, "lb");
+
         colorSensor1 = new RFColorSensor("colorSensor");
         colorSensor2 = new RFColorSensor("colorSensor2");
         blinkin = new RFLEDStrip("blinkin");
@@ -54,18 +63,15 @@ public class Magazine {
     }
 
     public void updateSensors(){
-        pixels=0;
         double dist1 = colorSensor1.getDist();
         double dist2 = colorSensor2.getDist();
-        if(dist1 < 1.5){
+        if(dist1 < 2){
             MagStates.FRONT.setState(true);
-            pixels++;
         }
-        else if(dist1 > 1.5){
+        else if(dist1 > 2){
             MagStates.FRONT.setState(false);
         }
         if(dist2 <1){
-            pixels++;
             MagStates.BACK.setState(true);
         }
         else if(dist2 > 1){
@@ -85,21 +91,31 @@ public class Magazine {
         }
     }
 
-    public void updateBlinkin(){
+    public void updateLEDs(){
         if(Arm.ArmStates.HOVER.state && Claw.clawStates.GRAB.state){
-            blinkin.green();
+            rf.enable(true);
+            rb.enable(true);
+            lf.enable(true);
+            lb.enable(true);
         }
-        else if(Arm.ArmStates.GRAB.state){
-            blinkin.yellow();
-        }
+
         else if(pixels == 0){
-            blinkin.red();
+            rf.enable(false);
+            rb.enable(false);
+            lf.enable(false);
+            lb.enable(false);
         }
         else if(pixels == 1){
-            blinkin.redorange();
+            rf.enable(false);
+            rb.enable(false);
+            lf.enable(false);
+            lb.enable(false);
         }
         else if(pixels == 2){
-            blinkin.white();
+            rf.enable(true);
+            rb.enable(false);
+            lf.enable(true);
+            lb.enable(false);
         }
     }
 
@@ -112,7 +128,7 @@ public class Magazine {
         LOGGER.log("front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
         LOGGER.log("# Pixels: " + getPixels());
         updateSensors();
-//        updatePixels();
-        updateBlinkin();
+        updatePixels();
+        updateLEDs();
     }
 }
