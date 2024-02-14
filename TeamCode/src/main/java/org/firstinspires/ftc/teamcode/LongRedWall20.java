@@ -14,7 +14,7 @@ public class LongRedWall20 extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
+        int delay = 12000;  // Max delay is 12000
 
 
         waitForStart();
