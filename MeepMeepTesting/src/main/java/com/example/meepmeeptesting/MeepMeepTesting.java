@@ -25,14 +25,14 @@ public class MeepMeepTesting {
                             // Option: Set theme. Default = ColorSchemeRedDark()
                             .setColorScheme(new ColorSchemeRedDark())
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(pose)
-                                            .strafeLeft(15)
-                                            .forward(18)
-                                            .back(18)
-                                            .splineToLinearHeading(new Pose2d(48, 42, Math.toRadians(180)),Math.toRadians(0))
-                                            .strafeRight(18)
-                                            .back(6)
-                                    .build()
+                                    drive.trajectorySequenceBuilder(new Pose2d(-32, 62, Math.toRadians(270)))
+                                            .lineTo(new Vector2d(-36, 62))
+                                            .lineToLinearHeading(new Pose2d(-37,33))
+                                            .forward(13)
+                                            .back(15)
+                                            .splineToLinearHeading(new Pose2d(38,36,Math.toRadians(180)),Math.toRadians(50))
+                                            .back(10)
+                                            .build()
 
                             );
                     meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
@@ -46,12 +46,12 @@ public class MeepMeepTesting {
         if(num ==2) {
             RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                     // Required: Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                    .setConstraints(47.25, 47.25, Math.toRadians(22.36), Math.toRadians(22.36), 13.9)
+                    .setConstraints(55, 55, Math.toRadians(29.3), Math.toRadians(29.3), 13.9)
                     // Option: Set theme. Default = ColorSchemeRedDark()
                     .setColorScheme(new ColorSchemeRedDark())
                     .followTrajectorySequence(drive ->
                             drive.trajectorySequenceBuilder(new Pose2d(-36, -62, Math.toRadians(90)))
-                                    .forward(12)
+
                                     .build()
 
                     );
