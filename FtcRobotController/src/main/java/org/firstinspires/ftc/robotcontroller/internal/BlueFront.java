@@ -57,9 +57,9 @@ public class BlueFront extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-            if(runtime.time() < 0.75) {
+            if(runtime.time() < 0.8) {
                 drive(0, -1, 0);
-            } else if (runtime.time() < 7.75) {
+            } else if (runtime.time() < 7.8) {
                 if(color.blue() >= color.red() && color.blue() >= color.green()){
                     drive(0, 0, 0);
                     pixel.setPosition(0.0);
