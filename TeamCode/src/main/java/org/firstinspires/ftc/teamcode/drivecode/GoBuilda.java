@@ -213,7 +213,7 @@ public class GoBuilda extends LinearOpMode {
                     servoRight.setPosition(0.7);
                 }
 
-                if (gamepad2.dpad_left) {
+                if (gamepad2.dpad_left && gamepad1.dpad_left) {
                     servoDrone.setPosition(1);
                     sleep(1000);
                     servoDrone.setPosition(0);

@@ -42,7 +42,7 @@ public class BlueAuto1 extends PlaceLinePixel {
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(4);
+                TimeUnit.SECONDS.sleep(1);
                 telemetryTfod();
                 telemetry.update();
 
@@ -60,7 +60,6 @@ public class BlueAuto1 extends PlaceLinePixel {
                 TimeUnit.MILLISECONDS.sleep(500);
 
                 BlueLocation1();
-                /*
 
                 if (Location1 == true) {
                     BoardPixel1();
@@ -68,7 +67,7 @@ public class BlueAuto1 extends PlaceLinePixel {
                     BoardPixel2();
                 } else if (Location3 == true) {
                     BoardPixel3();
-                }*/
+                }
 
                 TimeUnit.MILLISECONDS.sleep(100);
             }
