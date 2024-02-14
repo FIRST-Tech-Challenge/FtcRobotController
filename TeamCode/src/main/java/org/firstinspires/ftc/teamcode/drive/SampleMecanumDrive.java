@@ -78,8 +78,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     public DcMotorEx liftMotor1;
     public DcMotorEx liftMotor2;
-    public Servo liftServo1;
-    public Servo liftServo2;
+    public Servo rightLiftServo;
+    public Servo leftLiftServo;
     public Servo doorServo;
     public Servo pixelServo;
     public WebcamName camera;
@@ -127,8 +127,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        liftServo1 = hardwareMap.servo.get("lift1");
-        liftServo2 = hardwareMap.servo.get("lift2");
+        rightLiftServo = hardwareMap.servo.get("rightLiftServo");
+        leftLiftServo = hardwareMap.servo.get("leftLiftServo");
         doorServo = hardwareMap.servo.get("door");
         pixelServo = hardwareMap.servo.get("pixel");
 

@@ -61,13 +61,14 @@ public class DriveTrain extends OpMode
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
     private DcMotor intakeMotor = null;
-    private Servo liftServo1 = null;
-    private Servo liftServo2 = null;
+    private Servo rightLiftServo = null;
+    private Servo leftLiftServo = null;
     private Servo door = null;
     private Servo pixelHolder = null;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
     private double Kg = 0.07;
+    private boolean boxUp = false;
     //private PIDController pid = new PIDController(0.06, 0, 0);
 
     /*
@@ -88,8 +89,8 @@ public class DriveTrain extends OpMode
         liftMotor1 = hardwareMap.get(DcMotor.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        liftServo1 = hardwareMap.servo.get("lift1");
-        liftServo2 = hardwareMap.servo.get("lift2");
+        rightLiftServo = hardwareMap.servo.get("rightLiftServo");
+        leftLiftServo = hardwareMap.servo.get("leftLiftServo");
         door = hardwareMap.servo.get("door");
         pixelHolder = hardwareMap.servo.get("pixel");
 
@@ -163,14 +164,11 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(0.4);
+            intakeMotor.setPower(1);
         }
         else if (gamepad1.x) {
             intakeMotor.setPower(-0.4);
         }
-//        else if (gamepad1.left_bumper) {
-//            intakeMotor.setPower(-0.6);
-//        }
         else {
             intakeMotor.setPower(0);
         }
@@ -189,10 +187,6 @@ public class DriveTrain extends OpMode
                 liftMotor1.setPower(-0.3);
                 liftMotor2.setPower(-0.3);
             }
-//            else if (lift1Position <= 50) {
-//                liftMotor1.setPower(0);
-//                liftMotor2.setPower(0);
-//            }
         }
         if (gamepad1.y) {
             liftMotor1.setPower(1);
@@ -203,57 +197,57 @@ public class DriveTrain extends OpMode
             liftMotor2.setPower(0);
         }
 
+
         // gamepad 2 controls
         if (gamepad2.right_stick_y > 0.8) {
+//            liftMotor1.setPower(-1);
+//            liftMotor2.setPower(-1);
             lift1Position = liftMotor1.getCurrentPosition();
-            if (lift1Position > 1000) {
-                liftMotor1.setPower(-0.75);
-                liftMotor2.setPower(-0.75);
-            }
-            else if (lift1Position <= 0) {
-                liftMotor1.setPower(0);
-                liftMotor2.setPower(0);
-            }
-            else if (lift1Position <= 50) {
-                liftMotor1.setPower(-0.35);
-                liftMotor2.setPower(-0.35);
-            }
-            else if (lift1Position <= 500) {
-                liftMotor1.setPower(-0.45);
-                liftMotor2.setPower(-0.45);
-            }
-            else if (lift1Position <= 1000) {
+            if (lift1Position < 500) {
                 liftMotor1.setPower(-0.5);
                 liftMotor2.setPower(-0.5);
+            } else {
+                liftMotor1.setPower(-1);
+                liftMotor2.setPower(-1);
             }
+//            else if (lift1Position <= 0) {
+//                liftMotor1.setPower(0);
+//                liftMotor2.setPower(0);
+//            }
+//            else if (lift1Position <= 50) {
+//                liftMotor1.setPower(-0.35);
+//                liftMotor2.setPower(-0.35);
+//            }
+//            else if (lift1Position <= 500) {
+//                liftMotor1.setPower(-0.45);
+//                liftMotor2.setPower(-0.45);
+//            }
+//            else if (lift1Position <= 1000) {
+//                liftMotor1.setPower(-0.5);
+//                liftMotor2.setPower(-0.5);
+//            }
         } else if (gamepad2.right_stick_y < -0.8) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
-        } else { // counteract gravity
-            liftMotor1.setPower(Kg*1.5);
-            liftMotor2.setPower(Kg*1.5);
         }
 
         if (gamepad2.y) {
-            liftServo1.setPosition(0);
-            liftServo2.setPosition(0);
-        }
-        else if (gamepad2.a) {
-            liftServo1.setPosition(1);
-            liftServo2.setPosition(1);
+//            rightLiftServo.setPosition(0);
+            leftLiftServo.setPosition(0);
+        } else if (gamepad2.a) {
+//            rightLiftServo.setPosition(1);
+            leftLiftServo.setPosition(0.82);
         }
 
         if (gamepad2.left_bumper) {
             door.setPosition(0.7);
-        }
-        else if (gamepad2.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             door.setPosition(0);
         }
 
         if (gamepad2.b) {
             pixelHolder.setPosition(1);
-        }
-        else if (gamepad2.x) {
+        } else if (gamepad2.x) {
             pixelHolder.setPosition(0);
         }
 
@@ -263,9 +257,8 @@ public class DriveTrain extends OpMode
         telemetry.addData("Motors", "frontLeft (%.2f), rearLeft (%.2f), frontRight (%.2f), rearRight (%.2f)", frontLeftPower, rearLeftPower, frontRightPower, rearRightPower);
         telemetry.addData("Motor 1", lift1Position);
         telemetry.addData("Motor 2", liftMotor2.getCurrentPosition());
-        telemetry.addData("Servo1", liftServo1.getPosition());
-        telemetry.addData("Servo2", liftServo2.getPosition());
-
+        telemetry.addData("Servo1", rightLiftServo.getPosition());
+        telemetry.addData("Servo2", leftLiftServo.getPosition());
 
         telemetry.update();
     }

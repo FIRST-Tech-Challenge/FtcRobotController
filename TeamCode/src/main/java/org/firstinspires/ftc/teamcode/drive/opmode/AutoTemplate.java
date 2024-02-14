@@ -6,22 +6,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 
-@Autonomous(name = "NewAuto2", group = "Concept")
-public class NewAuto2 extends LinearOpMode{
+@Autonomous(name = "AutoTemplate", group = "Concept")
+public class AutoTemplate extends LinearOpMode{
     // tensorflow object detection
     private static final String TFOD_MODEL_ASSET = "model.tflite";
     private static final String[] LABELS = {"box"};
@@ -41,7 +37,7 @@ public class NewAuto2 extends LinearOpMode{
     // lift control
     int targetPosition = 1;
     int currentPosition;
-    boolean direction = true;    //true == up
+    boolean direction = true; //true == up
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
 
@@ -51,13 +47,23 @@ public class NewAuto2 extends LinearOpMode{
     @Override
     public void runOpMode() { // code to run after init
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        initTfod();
-        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod); // initialize visionportal
 
-        telemetry.setMsTransmissionInterval(50);
+        // Tfod processor
+        initTfod();
+
+        // create visionportal with two processors
+        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod); // initialize visionportal
 
         // starting position
         Pose2d startingPose = new Pose2d(12, -60, Math.toRadians(90));
+        drive.setPoseEstimate(startingPose);
+
+        TrajectorySequence beginning = drive.trajectorySequenceBuilder(startingPose)
+                .forward(30)
+                .build();
+        drive.followTrajectorySequenceAsync(beginning);
+
+        telemetry.setMsTransmissionInterval(50);
 
         while (!isStarted() && !isStopRequested()) {
             updateTfod();// Push telemetry to the Driver Station.
@@ -71,8 +77,8 @@ public class NewAuto2 extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()) {
-            drive.setPoseEstimate(startingPose);
             if (detection == "left") {
+                drive.setPoseEstimate(startingPose);
                 TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(5, -30), Math.toRadians(180))
                         .addTemporalMarker(() -> {
@@ -85,23 +91,39 @@ public class NewAuto2 extends LinearOpMode{
                         .addTemporalMarker(() -> {
                             targetPosition = 1000;
                             direction = true;
-                        })                        .build();
-                drive.followTrajectorySequence(left);
-                drive.breakFollowing();
-                break;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
+                        .build();
+                drive.followTrajectorySequenceAsync(left);
+//                drive.breakFollowing();
             }
             else if (detection == "middle") {
                 TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
                         .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
                         .addTemporalMarker(() -> {
-                            drive.pixelServo.setPosition(0.5);
+                            drive.pixelServo.setPosition(1);
                         })
                         .waitSeconds(1)
                         .back(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(60))
                         .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
                         .build();
-                drive.followTrajectorySequence(middle);
+                drive.followTrajectorySequenceAsync(middle);
                 drive.breakFollowing();
                 break;
             }
@@ -111,15 +133,25 @@ public class NewAuto2 extends LinearOpMode{
                         .addTemporalMarker(() -> {
                             drive.pixelServo.setPosition(1);
                         })
-                        .waitSeconds(1)
                         .back(8, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(60))
                         .strafeRight(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(60))
                         .forward(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(60))
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
                         .build();
-                drive.followTrajectorySequence(right);
+                drive.followTrajectorySequenceAsync(right);
                 drive.breakFollowing();
             }
             drive.update();
