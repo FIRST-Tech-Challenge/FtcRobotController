@@ -18,7 +18,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.CSCons.*;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 import java.util.List;
@@ -237,6 +236,8 @@ public class AutomatedTeleop extends LinearOpMode {
 
         runtime.reset();
         ElapsedTime elapsedTime;
+        ElapsedTime colorSensorElapsedTime = null;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
@@ -249,7 +250,15 @@ public class AutomatedTeleop extends LinearOpMode {
             }
             switch (driveMode) {
                 case NORMAL:
-                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    if (colorSensorElapsedTime != null) {
+                        if (colorSensorElapsedTime.milliseconds() < 450) {
+                            drive(0,0,0);
+                        } else {
+                            drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                        }
+                    } else {
+                        drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+                    }
                     break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -310,7 +319,7 @@ public class AutomatedTeleop extends LinearOpMode {
                             intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(0.5);
-
+                            colorSensorElapsedTime = new ElapsedTime();
                         }
 
                         if (gamepad2.dpad_up) {
@@ -553,14 +562,6 @@ public class AutomatedTeleop extends LinearOpMode {
             telemetry.addData("backSlides", backSlides.getCurrentPosition()) ;
             telemetry.addData("intakeSides", intakeSlides.getCurrentPosition());// 1725, 2400,
             telemetry.addData("time", runtime.time());
-//            telemetry.addData("Sensed Red", colorSensor.red());
-//            telemetry.addData("Sensed Blue", colorSensor.blue());
-//            telemetry.addData("Sensed Green", colorSensor.green());
-//            telemetry.addData("Distance CM", colorSensor.getDistance(DistanceUnit.CM));
-//            telemetry.addData("Light Detected", colorSensor.getLightDetected());
-//            telemetry.addData("Raw Light Detected", colorSensor.getRawLightDetected());
-//            telemetry.addData("Max Raw Light Detected", colorSensor.getRawLightDetectedMax());
-//            telemetry.addData("Raw Optics", colorSensor.rawOptical());
             telemetry.addData("Status", colorSensor.status());
             telemetry.addData("Outtake state", outtakeState.name());
             telemetry.addData("Intake state", intakeState.name());
@@ -587,9 +588,9 @@ public class AutomatedTeleop extends LinearOpMode {
         }
 
         double leftFrontPower = y + x + rx;
-        double leftRearPower = y - x + rx;
+        double leftRearPower = y - (x*.69) + rx;
         double rightFrontPower = y - x - rx;
-        double rightRearPower = y + x - rx;
+        double rightRearPower = y + (x*.69) - rx;
 
         if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
