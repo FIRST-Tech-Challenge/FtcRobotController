@@ -4,18 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRed20 extends LinearOpMode {
+public class ShortBlueWall22 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 7000;  // Max delay allowed 13 seconds, leaves 3 seconds for vision timeout
 
         waitForStart();
 
@@ -25,10 +24,8 @@ public class ShortRed20 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, false, robot.markerPos);
+            robot.setMarkerLocation(false, false, robot.markerPos);
             robot.servoToInitPositions();
-
-            this.sleep(delay);
 
             robot.shortMoveToBoard2();
 
@@ -40,9 +37,16 @@ public class ShortRed20 extends LinearOpMode {
 
             robot.autoOuttake(true, slideStartingPosition);
 
-            // parking here
             robot.boardToTruss();
-            robot.straightBlocking2(-10);
+            robot.trussToStackAndIntake();
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
+            robot.stackToBoardTruss();
+            robot.intake.setPower(0);
+
+            robot.alignToBoardFast(robot.secondWantedTagId);
+            robot.autoOuttake(false, slideStartingPosition);
+
+            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             break;
         }

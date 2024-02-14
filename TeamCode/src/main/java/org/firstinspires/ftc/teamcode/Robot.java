@@ -630,7 +630,7 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7); //TODO: the robot couldn't terminate this in one run
 
-                mecanumBlocking2(5);
+                mecanumBlocking2(-5 * polarity);
 
                 setHeading(90 * polarity, 0.7);
 
@@ -715,7 +715,7 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                mecanumBlocking2(-10);
+                mecanumBlocking2(-1 * 10);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 

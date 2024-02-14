@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class ShortRed20 extends LinearOpMode {
+public class ShortBlue20 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
@@ -25,7 +25,7 @@ public class ShortRed20 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, false, robot.markerPos);
+            robot.setMarkerLocation(false, false, robot.markerPos);
             robot.servoToInitPositions();
 
             this.sleep(delay);
