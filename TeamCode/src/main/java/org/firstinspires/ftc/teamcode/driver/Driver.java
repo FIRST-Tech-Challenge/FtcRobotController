@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
-@Disabled
-@TeleOp(name = "Drive", group = "TeleOp Driver")
+
+@TeleOp(name = "Drive", group = "TeleOp2Driver")
 public class Driver extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
@@ -45,7 +45,6 @@ public class Driver extends LinearOpMode {
     private Servo rightGripper;
     private Servo wristServo;
     private Servo launcherServo = null;
-    private final Servo DroneCoverServo = null;
     private DcMotor armMotor = null;
 
     private Thread launcherThread;
@@ -117,7 +116,7 @@ public class Driver extends LinearOpMode {
             telemetry.addData("Mode", "running");
             // check to see if we need to move the servo.
 
-            telemetry.addData("Servo Position", DroneCoverServo.getPosition());
+            //telemetry.addData("Servo Position", DroneCoverServo.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
 
@@ -212,7 +211,7 @@ public class Driver extends LinearOpMode {
                     try {
                         Thread.sleep(10); // Small delay to prevent looping too fast
                     } catch (InterruptedException e) {
-                        
+
                 }
             }
         });

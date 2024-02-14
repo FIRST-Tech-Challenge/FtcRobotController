@@ -18,8 +18,9 @@ public class TELEOPtest1 extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
     private Servo leftGripper;
     private Servo rightGripper;
+    private Servo dropperServo = null;
     private Servo launcherServo = null;
-    private Servo DroneCoverServo = null;
+    //private Servo DroneCoverServo = null;
     private DcMotor armMotor = null;
     MotionHardware robot = new MotionHardware(this);
 
@@ -50,7 +51,7 @@ public class TELEOPtest1 extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wristServo = hardwareMap.servo.get("wristServo");
         launcherServo = hardwareMap.get(Servo.class, "launcherServo");
-        DroneCoverServo = hardwareMap.get(Servo.class, "DroneCoverServo");
+        dropperServo = hardwareMap.get(Servo.class, "dropperServo");
         leftGripper = hardwareMap.get(Servo.class, "leftGripper");
         rightGripper = hardwareMap.get(Servo.class, "rightGripper");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
@@ -90,12 +91,12 @@ public class TELEOPtest1 extends LinearOpMode {
             // check to see if we need to move the servo.
             if (gamepad1.dpad_left) {
                 // move to 0 degrees.
-                DroneCoverServo.setPosition(0.3);
+               // DroneCoverServo.setPosition(0.3);
             } else if (gamepad1.dpad_right) {
                 // move to 90 degrees.
-                DroneCoverServo.setPosition(.7);
+               // DroneCoverServo.setPosition(.7);
             }
-            telemetry.addData("Servo Position", DroneCoverServo.getPosition());
+           // telemetry.addData("Servo Position", DroneCoverServo.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
 
