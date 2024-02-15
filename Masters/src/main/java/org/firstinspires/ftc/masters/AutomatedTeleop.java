@@ -433,10 +433,10 @@ public class AutomatedTeleop extends LinearOpMode {
                 }
                 switch (outtakeState) {
                     case ReadyToTransfer:
-//                        if (!touchBucket.isPressed()) {
-//                            bucketMovedBy = bucketMovedBy + .01;
-//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
-//                        }
+                        if (!touchBucket.isPressed()) {
+                            bucketMovedBy = bucketMovedBy + .01;
+                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+                        }
                         if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
