@@ -633,7 +633,7 @@ public class Robot {
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
-                mecanumBlocking2(-5 * polarity);
+                mecanumBlocking2(-29 * polarity);
 
                 setHeading(90 * polarity, 0.7);
 
@@ -2569,13 +2569,13 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(19);
+                mecanumBlocking2(17);
                 break;
             case 2:
                 mecanumBlocking2(23.5);
                 break;
             case 3:
-                mecanumBlocking2(29);
+                mecanumBlocking2(27);
                 break;
             case 4:
                 mecanumBlocking2(-32);
@@ -2598,7 +2598,11 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        straightBlocking2FixHeading(101);
+        if (isRedAlliance) {
+            straightBlocking2FixHeading(101);
+        } else {
+            straightBlocking2FixHeading(104);
+        }
         intake.setPower(-1);
 
         if (isRedAlliance) {
@@ -2607,7 +2611,7 @@ public class Robot {
             mecanumBlocking2(-26);
         }
 
-        straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
+        //straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
         straightBlocking(1, false, 1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
@@ -2628,7 +2632,7 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(polarity * 26);
+        mecanumBlocking2(polarity * 24);
         straightBlocking2FixHeading(-93);
 
         switch (wantedAprTagId) {
