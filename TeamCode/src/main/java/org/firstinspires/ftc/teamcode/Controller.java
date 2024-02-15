@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "controller movement", group = "SA_FTC")
 public class Controller extends LinearOpMode {
-    // movement
+    // Movement
     final double AXIAL_SPEED = 0.5;
     final double LATERAL_SPEED = 0.6;
     final double YAW_SPEED = 0.5;
@@ -21,14 +21,15 @@ public class Controller extends LinearOpMode {
     // Roller
     final double ROLLER_FLAT = 0.29;
     final double ROLLER_UPSIDEDOWN = 0.97;
-    final double ROLLER_ARM_LIMIT = 400;
+    final double ROLLER_ARM_LIMIT = 100;
 
     // Arm
     final double ARM_EXTEND_SPEED = 0.5;
-    final double ARM_LIFT_SPEED = 7;
-    final double ARM_LIFT_POWER = 0.4;
-    final int ARM_MAX_POSITION = 3050;
-    final int ARM_EXTEND_LIMIT = 1000;
+    final double ARM_LIFT_SPEED = 10;
+    final double ARM_LIFT_POWER = 0.8;
+    final int ARM_MAX_POSITION = 2950;
+    final int ARM_MIN_POSITION = -100;
+    final int ARM_EXTEND_LIMIT = 3600;
 
     // Grip
     final double GRIP_OPEN = 0.5;
@@ -40,10 +41,10 @@ public class Controller extends LinearOpMode {
     final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
-    final int PICKUP_EXTEND_TARGET = 800;
+    final int PICKUP_EXTEND_TARGET = 1000;
 
     // Pixel Backdrop Sequence
-    final int BACKDROP_EXTEND_TARGET = 800;
+    final int BACKDROP_EXTEND_TARGET = 1000;
 
     // Find Arm Extend Zero
     final double ARM_EXTEND_FAST_SPEED = 0.1;
@@ -146,7 +147,7 @@ public class Controller extends LinearOpMode {
 
         armExtend.setPower(0);
 
-        findArmExtendZero();
+        //findArmExtendZero();
 
         roller.setPosition(ROLLER_FLAT);
         leftGrip.setPosition(GRIP_OPEN);
@@ -154,26 +155,24 @@ public class Controller extends LinearOpMode {
 
         sleep(ROLLER_WAIT_TIME);
 
-        currentArmLiftPos = 0;
-        armLift.setTargetPosition(0);
+        currentArmLiftPos = ARM_MIN_POSITION;
+        armLift.setTargetPosition(currentArmLiftPos);
     }
 
     public void pixelPickupSequence() {
-        pickupSequenceActive = true;
-
-        currentArmLiftPos = 0;
+        currentArmLiftPos = ARM_MIN_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
         leftGrip.setPosition(GRIP_OPEN);
         rightGrip.setPosition(GRIP_OPEN);
         roller.setPosition(ROLLER_FLAT);
 
-        if (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
+        if (-armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
             armExtend.setPower(ARM_EXTEND_SPEED);
-            while (armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {}
+            while (-armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {}
         }
-        else if (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {
+        else if (-armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {
             armExtend.setPower(-ARM_EXTEND_SPEED);
-            while (armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {}
+            while (-armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {}
         }
 
         armExtend.setPower(0);
@@ -182,26 +181,24 @@ public class Controller extends LinearOpMode {
     }
 
     public void pixelBackdropSequence() {
-        backdropSequenceActive = true;
-
         currentArmLiftPos = ARM_MAX_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
         roller.setPosition(ROLLER_UPSIDEDOWN);
 
-        if (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {
+        if (-armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {
             armExtend.setPower(ARM_EXTEND_SPEED);
-            while (armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {}
+            while (-armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {}
         }
-        else if (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {
+        else if (-armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {
             armExtend.setPower(-ARM_EXTEND_SPEED);
-            while (armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {}
+            while (-armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {}
         }
 
         armExtend.setPower(0);
 
         backdropSequenceActive = false;
     }
-    
+
     public void interrupt() {
         while (true) {
             if (!overrideMode) {
@@ -210,7 +207,7 @@ public class Controller extends LinearOpMode {
                 }
             }
 
-            sleep(1);
+            sleep(100);
         }
     }
 
@@ -275,13 +272,13 @@ public class Controller extends LinearOpMode {
             }
 
             // Arm Extend
-            if (armExtend.getCurrentPosition() > armExtendZero + 10 || armExtend.getCurrentPosition() < ARM_EXTEND_LIMIT || -gamepad2.right_stick_y > 0 || armExtendSwitch.getState() || overrideMode) {
+            if (-armExtend.getCurrentPosition() < ARM_EXTEND_LIMIT || -gamepad2.right_stick_y > 0 || armExtendSwitch.getState() || overrideMode) {
                 armExtend.setPower(-gamepad2.right_stick_y * ARM_EXTEND_SPEED);
             }
 
             // Arm Lift
             currentArmLiftPos -= (int)(gamepad2.left_stick_y * ARM_LIFT_SPEED);
-            if (currentArmLiftPos < 0) currentArmLiftPos = 0;
+            if (currentArmLiftPos < ARM_MIN_POSITION) currentArmLiftPos = ARM_MIN_POSITION;
             if (currentArmLiftPos > ARM_MAX_POSITION && !overrideMode) currentArmLiftPos = ARM_MAX_POSITION;
 
             armLift.setTargetPosition(currentArmLiftPos);
@@ -305,11 +302,15 @@ public class Controller extends LinearOpMode {
 
             // Sequences
             if (gamepad2.a && !pickupSequenceActive) {
-                new Thread(this::pixelPickupSequence).start();
+                pickupSequenceActive = true;
+                //new Thread(this::pixelPickupSequence).start();
+                pixelPickupSequence();
             }
 
             if (gamepad2.y && !backdropSequenceActive) {
-                new Thread(this::pixelBackdropSequence).start();
+                backdropSequenceActive = true;
+                //new Thread(this::pixelBackdropSequence).start();
+                pixelBackdropSequence();
             }
 
             // Override Mode
@@ -317,9 +318,9 @@ public class Controller extends LinearOpMode {
 
             // Debugging
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("arm extend position", armExtend.getCurrentPosition());
-            telemetry.addData("arm extend zero", armExtendZero);
+            telemetry.addData("arm extend position", -armExtend.getCurrentPosition());
             telemetry.addData("arm extend switch", armExtendSwitch.getState());
+            telemetry.addData("arm lift position", currentArmLiftPos);
             telemetry.update();
         }
     }
