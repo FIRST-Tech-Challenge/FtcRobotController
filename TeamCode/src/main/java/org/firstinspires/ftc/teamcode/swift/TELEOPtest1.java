@@ -18,7 +18,7 @@ public class TELEOPtest1 extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
     private Servo leftGripper;
     private Servo rightGripper;
-    private Servo dropperServo = null;
+    private Servo dropperServo;
     private Servo launcherServo = null;
     //private Servo DroneCoverServo = null;
     private DcMotor armMotor = null;
