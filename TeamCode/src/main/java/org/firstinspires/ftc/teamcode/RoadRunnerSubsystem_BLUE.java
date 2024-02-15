@@ -105,22 +105,22 @@ public class RoadRunnerSubsystem_BLUE {
     protected Integer[] stackStationTanget = {180, 225, 135}; // 180 for Inner 225 for Mid and Outer FROM INNER// 135 for FROM OUTER
     protected Integer[] parkingTanget = {135, 225}; // 135 for Inner 225 for Mid and Outer
 
-    protected Integer leftSpikeStartingTangetValue;
-    protected Integer leftSpikeFinalTangetValue;
-    protected Integer stackStationTangetValue;
-    protected Integer parkingTangetValue;
+    protected Integer leftSpikeStartingTangetValue = 0;
+    protected Integer leftSpikeFinalTangetValue = 0;
+    protected Integer stackStationTangetValue = 0;
+    protected Integer parkingTangetValue = 1;
 
-    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), Tile + (RobotX/2), Math.toRadians(180));
-    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, Tile + (RobotY/2), Math.toRadians(90));
-    protected Pose2d rightPixel_SHORT = new Pose2d(Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(0));
+    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), Tile + (RobotX/2), Math.toRadians(0));
+    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, Tile + (RobotY/2), Math.toRadians(270));
+    protected Pose2d rightPixel_SHORT = new Pose2d(Tile, 1.5 * Tile, Math.toRadians(180));
 
-    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted + (RobotY/2), Tile + (RobotX/2), Math.toRadians(180));
-    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, Tile + (RobotY/2), Math.toRadians(90));
-    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), Tile, Math.toRadians(0));
+    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted,1.5 * Tile, Math.toRadians(180));
+    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, Tile + (RobotY/2), Math.toRadians(270));
+    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), Tile + (RobotX/2), Math.toRadians(0));
 
-    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.25 * Tile, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(180));
-    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.25 * TileInverted, Math.toRadians(180)); // Default
+    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * Tile, Math.toRadians(180)); // Default
 
     protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2, Math.toRadians(180)); // Default
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
@@ -135,6 +135,8 @@ public class RoadRunnerSubsystem_BLUE {
 
     protected Vector2d stationClose_Outer = new Vector2d(Tile, 2.5 * Tile);
     protected Vector2d stationFar_Outer = new Vector2d(2 * TileInverted,2.5 * Tile);
+
+    protected Pose2d pixel_cycle_PoseTransfer = centerPixel_SHORT;
     /*-------------------------------------------------------
     -FTCLib Commands-
     -------------------------------------------------------*/
@@ -253,8 +255,8 @@ public class RoadRunnerSubsystem_BLUE {
                 .addDisplacementMarker(() -> {
                     randomizationPixelElevator();
                 })
-                .setTangent(Math.toRadians(270))
-                .splineToLinearHeading(randomizedBackdrop, Math.toRadians(60))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(randomizedBackdrop, Math.toRadians(300))
                 .addDisplacementMarker(() -> {
                     scoring();
                 })

@@ -38,6 +38,7 @@ public class DriveConstants {
       getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
+    
      * These are physical constants that can be determined from your robot (including the track
      * width; it will be tune empirically later although a rough estimate is important). Users are
      * free to chose whichever linear distance unit they would like so long as it is consistently
@@ -47,7 +48,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 0.3076923076923077; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 7; // in
+    public static double TRACK_WIDTH = 9; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -99,9 +100,9 @@ public class DriveConstants {
      * https://github.com/acmerobotics/road-runner-quickstart/issues/91
      
      */
-    public static double MAX_VEL = 60;
-    public static double MAX_ACCEL = 60;
-    public static double MAX_ANG_VEL = Math.toRadians(360);
+    public static double MAX_VEL = 30;//60
+    public static double MAX_ACCEL = 30;//60
+    public static double MAX_ANG_VEL = Math.toRadians(308.3301087536676);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
 

@@ -19,30 +19,36 @@ public class RoadRunnerCommand_RED extends RoadRunnerSubsystem_RED {
         if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.SHORT){
             if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
                 leftPixelSpike = leftPixel_SHORT;
+                pixel_cycle_PoseTransfer = leftPixel_SHORT;
                 leftSpikeStartingTangetValue = 0;
                 leftSpikeFinalTangetValue = 0;
                 return leftSpike;
             }
             else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
                 centerPixelSpike = centerPixel_SHORT;
+                pixel_cycle_PoseTransfer = centerPixel_SHORT;
                 return centerSpike;
             }
             else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
                 rightPixelSpike = rightPixel_SHORT;
+                pixel_cycle_PoseTransfer = rightPixel_SHORT;
                 return rightSpike;
             }
         }
         else if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.LONG){
             if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
                 rightPixelSpike = leftPixel_LONG;
+                pixel_cycle_PoseTransfer = leftPixel_LONG;
                 return rightSpike;
             }
             else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
                 centerPixelSpike = centerPixel_LONG;
+                pixel_cycle_PoseTransfer = centerPixel_LONG;
                 return centerSpike;
             }
             else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
                 leftPixelSpike = rightPixel_LONG;
+                pixel_cycle_PoseTransfer = rightPixel_LONG;
                 leftSpikeStartingTangetValue = 1;
                 leftSpikeFinalTangetValue = 1;
                 return leftSpike;

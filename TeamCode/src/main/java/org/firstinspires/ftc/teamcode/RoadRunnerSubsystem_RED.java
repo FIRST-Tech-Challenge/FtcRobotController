@@ -35,8 +35,8 @@ public class RoadRunnerSubsystem_RED {
     -------------------------------------------------------*/
     public final double Tile = 24; /*-inches-*/
     public final double TileInverted = -24; /*-inches-*/
-    public final double RobotX = 12.5984252; /*-inches-*/
-    public final double RobotY = 16.9291339; /*-inches-*/
+    public final double RobotX = 12.6; /*-inches-*/
+    public final double RobotY = 18; /*-inches-*/
     public final double BackdropDistance = 0; /*-inches-*/
     /*-------------------------------------------------------
     -Trajectories-
@@ -90,39 +90,29 @@ public class RoadRunnerSubsystem_RED {
     -Poses-
     -------------------------------------------------------*/
 
-    protected Pose2d leftPixelSpike;
-    protected Pose2d centerPixelSpike;
-    protected Pose2d rightPixelSpike;
-    protected Pose2d randomizedBackdrop;
-    protected Vector2d stationClose;
-    protected Vector2d stationFar;
-    protected Pose2d backdrop_Unload;
-    protected Pose2d stackStation;
-    protected Pose2d parkingPose;
-
     protected Integer[] leftSpikeStartingTanget = {45, 135}; //For short 45 and long 135 difference
     protected Integer[] leftSpikeFinalTanget = {180, 0}; //For short 180 and long 0 difference
     protected Integer[] stackStationTanget = {180, 225, 135}; // 180 for Inner 225 for Mid and Outer FROM INNER// 135 for FROM OUTER
     protected Integer[] parkingTanget = {135, 225}; // 135 for Inner 225 for Mid and Outer
 
-    protected Integer leftSpikeStartingTangetValue;
-    protected Integer leftSpikeFinalTangetValue;
-    protected Integer stackStationTangetValue;
-    protected Integer parkingTangetValue;
+    protected Integer leftSpikeStartingTangetValue = 0;
+    protected Integer leftSpikeFinalTangetValue = 0;
+    protected Integer stackStationTangetValue = 0;
+    protected Integer parkingTangetValue = 1;
 
-    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
-    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, TileInverted - (RobotY/2), Math.toRadians(270));
-    protected Pose2d rightPixel_SHORT = new Pose2d(Tile - (RobotY/2), 1.5 * TileInverted, Math.toRadians(180));
+    protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), TileInverted - (RobotX/2), Math.toRadians(180));
+    protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, TileInverted - (RobotY/2), Math.toRadians(90));
+    protected Pose2d rightPixel_SHORT = new Pose2d(Tile, 1.5 * TileInverted, Math.toRadians(0));
 
-    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted + (RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
-    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, TileInverted - (RobotY/2), Math.toRadians(270));
-    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), TileInverted, Math.toRadians(180));
+    protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted,1.5 * TileInverted, Math.toRadians(180));
+    protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, TileInverted - (RobotY/2), Math.toRadians(90));
+    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
 
-    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.25 * TileInverted, Math.toRadians(180)); // Default
+    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2),1.25 * TileInverted, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * TileInverted, Math.toRadians(180));
     protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * TileInverted, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2),TileInverted/2, Math.toRadians(180)); // Default
+    protected Pose2d stationInner = new Pose2d(2.5 * TileInverted + (RobotY/2),TileInverted/2, Math.toRadians(180)); // Default
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),TileInverted, Math.toRadians(180));
     protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * TileInverted, Math.toRadians(180)); // Default
 
@@ -134,7 +124,19 @@ public class RoadRunnerSubsystem_RED {
     protected Vector2d stationFar_Inner = new Vector2d(2 * TileInverted,TileInverted/2);
 
     protected Vector2d stationClose_Outer = new Vector2d(Tile, 2.5 * TileInverted);
-    protected Vector2d stationFar_Outer = new Vector2d(2 * TileInverted,2.5 * TileInverted);
+    protected Vector2d stationFar_Outer = new Vector2d(1.5 * TileInverted,2.5 * TileInverted);
+
+    protected Pose2d pixel_cycle_PoseTransfer = centerPixel_SHORT;
+    protected Pose2d leftPixelSpike = leftPixel_SHORT;
+    protected Pose2d centerPixelSpike = centerPixel_SHORT;
+    protected Pose2d rightPixelSpike = rightPixel_SHORT;
+    protected Pose2d randomizedBackdrop = backdropCenter;
+    protected Vector2d stationClose = stationClose_Inner;
+    protected Vector2d stationFar = stationFar_Inner;
+    protected Pose2d backdrop_Unload = backdropLeft;
+    protected Pose2d stackStation = stationInner;
+    protected Pose2d parkingPose = parkingMiddle;
+    
     /*-------------------------------------------------------
     -FTCLib Commands-
     -------------------------------------------------------*/
@@ -217,47 +219,45 @@ public class RoadRunnerSubsystem_RED {
 
         /*-----------------------------------------------------*/
 
-        drive.setPoseEstimate(HomePose);
-
         /*-----------------------------------------------------*/
-        test = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        test = drive.trajectorySequenceBuilder(HomePose)
                 .strafeTo(new Vector2d(0,0));
         /*-----------------------------------------------------*/
 
-        leftSpike = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        leftSpike = drive.trajectorySequenceBuilder(HomePose)
                 .setTangent(Math.toRadians(leftSpikeStartingTanget[leftSpikeStartingTangetValue])) //tan pair 45/135
-                .splineToLinearHeading(leftPixelSpike, Math.toRadians(leftSpikeFinalTanget[leftSpikeFinalTangetValue]))
-                .addDisplacementMarker(() -> {
-                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
-                });//tan pair 180/0
+                .splineToLinearHeading(leftPixelSpike, Math.toRadians(leftSpikeFinalTanget[leftSpikeFinalTangetValue]));
+//                .addDisplacementMarker(() -> {
+////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+//                });//tan pair 180/0
 
         /*------------------------------------------------------------------------*/
 
-        centerSpike = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineTo(centerPixelSpike.vec())
-                .addDisplacementMarker(() -> {
-                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
-                });
+        centerSpike = drive.trajectorySequenceBuilder(HomePose)
+                .lineTo(centerPixelSpike.vec());
+//                .addDisplacementMarker(() -> {
+////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+//                });
 
         /*------------------------------------------------------------------------*/
 
-        rightSpike = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .strafeTo(rightPixelSpike.vec())
-                .addDisplacementMarker(() -> {
-                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
-                });
+        rightSpike = drive.trajectorySequenceBuilder(HomePose)
+                .strafeTo(rightPixelSpike.vec());
+//                .addDisplacementMarker(() -> {
+////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+//                });
 
         /*----------------------------------------------------------------------------------------*/
 
-        pixel_backdrop_Short = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .addDisplacementMarker(() -> {
-                    randomizationPixelElevator();
-                })
+        pixel_backdrop_Short = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
+//                .addDisplacementMarker(() -> {
+////                    randomizationPixelElevator();
+//                })
                 .setTangent(Math.toRadians(270))
                 .splineToLinearHeading(randomizedBackdrop, Math.toRadians(60))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                })
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                })
                 /*-------------------------------------------------------------------*/
                 /*----2+2----*/
                 /*-------------------------------------------------------------------*/
@@ -265,20 +265,20 @@ public class RoadRunnerSubsystem_RED {
                 .splineToConstantHeading(stationClose, Math.toRadians(180))
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    stackStationIntake();
-                })
+//                .addDisplacementMarker(() -> {
+////                    stackStationIntake();
+//                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-                .addDisplacementMarker(() -> {
-                    elevator();
-                })
+//                .addDisplacementMarker(() -> {
+////                    elevator();
+//                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                })
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                })
                 /*-------------------------------------------------------------------*/
                 /*----2+4----*/
                 /*-------------------------------------------------------------------*/
@@ -286,39 +286,39 @@ public class RoadRunnerSubsystem_RED {
                 .splineToConstantHeading(stationClose, Math.toRadians(180))
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    stackStationIntake();
-                })
+//                .addDisplacementMarker(() -> {
+////                    stackStationIntake();
+//                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-                .addDisplacementMarker(() -> {
-                    elevator();
-                })
-                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                });
+//                .addDisplacementMarker(() -> {
+////                    elevator();
+//                })
+                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                });
         /*----------------------------------------------------------------------------------------*/
 
-        pixel_backdrop_Long = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        pixel_backdrop_Long = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(stackStation, Math.toRadians(180))
-                .addDisplacementMarker(() -> {
-                    stackStationIntake();
-                })
+//                .addDisplacementMarker(() -> {
+////                    stackStationIntake();
+//                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-                .addDisplacementMarker(() -> {
-                    randomizationPixelElevator();
-                })
+//                .addDisplacementMarker(() -> {
+////                    randomizationPixelElevator();
+//                })
                 .splineToConstantHeading(randomizedBackdrop.vec(), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                })
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                })
                 /*-------------------------------------------------------------------*/
                 /*----2+3----*/
                 /*-------------------------------------------------------------------*/
@@ -326,20 +326,20 @@ public class RoadRunnerSubsystem_RED {
                 .splineToConstantHeading(stationClose, Math.toRadians(180))
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    stackStationIntake();
-                })
+//                .addDisplacementMarker(() -> {
+////                    stackStationIntake();
+//                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-                .addDisplacementMarker(() -> {
-                    elevator();
-                })
+//                .addDisplacementMarker(() -> {
+////                    elevator();
+//                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                })
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                })
                 /*-------------------------------------------------------------------*/
                 /*----2+5----*/
                 /*-------------------------------------------------------------------*/
@@ -347,24 +347,24 @@ public class RoadRunnerSubsystem_RED {
                 .splineToConstantHeading(stationClose, Math.toRadians(180))
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    stackStationIntake();
-                })
+//                .addDisplacementMarker(() -> {
+////                    stackStationIntake();
+//                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-                .addDisplacementMarker(() -> {
-                    elevator();
-                })
-                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    scoring();
-                });
+//                .addDisplacementMarker(() -> {
+////                    elevator();
+//                })
+                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
+//                .addDisplacementMarker(() -> {
+////                    scoring();
+//                });
 
         /*----------------------------------------------------------------------------------------*/
 
-        parking = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        parking = drive.trajectorySequenceBuilder(backdrop_Unload)
                 .setTangent(Math.toRadians(parkingTanget[parkingTangetValue])) //tan 135/225
                 .splineToConstantHeading(parkingPose.vec(), Math.toRadians(0));
     }

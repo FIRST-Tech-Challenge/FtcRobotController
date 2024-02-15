@@ -19,8 +19,8 @@ public class CenterStageAutnomous_RED extends LinearOpMode {
     public final double RobotY = 16.9291339; /*-inches-*/
     public final double BackdropDistance = 0; /*-inches-*/
 
-    protected Pose2d HomePose_SHORT = new Pose2d(Tile/2, 3 * TileInverted + (RobotY/2), Math.toRadians(270));
-    protected Pose2d HomePose_LONG = new Pose2d(1.5 * TileInverted, 3 * TileInverted + (RobotY/2), Math.toRadians(270));
+    public Pose2d HomePose_SHORT = new Pose2d(Tile/2, 3 * TileInverted + (RobotY/2) + 3, Math.toRadians(90));
+    public Pose2d HomePose_LONG = new Pose2d(1.5 * TileInverted, 3 * TileInverted + (RobotY/2), Math.toRadians(90));
 
     @Override
     public void runOpMode(){
@@ -28,7 +28,11 @@ public class CenterStageAutnomous_RED extends LinearOpMode {
         RR_Red = new RoadRunnerCommand_RED(hardwareMap, HomePose_SHORT, RoadRunnerSubsystem_RED.StartingPosition.SHORT,
                 RoadRunnerSubsystem_RED.Path.INNER, RoadRunnerSubsystem_RED.PixelStack.INNER, RoadRunnerSubsystem_RED.ParkingPosition.OUTER);
 
+        rand = RoadRunnerSubsystem_RED.Randomization.CENTER;
+
         waitForStart();
+
+        drive.setPoseEstimate(HomePose_SHORT);
 
         drive.update();
         drive.followTrajectorySequence(RR_Red.spikeRandomizationPath(rand).build());

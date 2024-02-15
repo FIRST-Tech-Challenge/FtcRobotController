@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.util.Encoder;
 
 @TeleOp(name = "EncodersTesting_RoadRunner", group = "Tests")
 public class IMUEmmulatedTuning_RoadRunner extends LinearOpMode {
+    DcMotorEx rearRight, frontLeft, rearLeft;
     Encoder leftEncoder, rightEncoder, frontEncoder;
 
     int leftPos, rightPos, frontPos, diff;
@@ -22,10 +23,18 @@ public class IMUEmmulatedTuning_RoadRunner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        rearRight = hardwareMap.get(DcMotorEx.class, "rearRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        rearLeft = hardwareMap.get(DcMotorEx.class, "rearLeft");
+        
+        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rearRight"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rearLeft"));
+        leftEncoder = new Encoder(rearRight);
+        rightEncoder = new Encoder(frontLeft);
+        frontEncoder = new Encoder(rearLeft);
+
 
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
