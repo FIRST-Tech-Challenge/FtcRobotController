@@ -74,6 +74,7 @@ public class Robot {
     private boolean stackShouldBeDown;
     private boolean previousStackButtonValue;
     private double trayAngleSlope;
+    private double teleOpTuneValueTrayAngle;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -1375,6 +1376,7 @@ public class Robot {
 
         double trayAngleDefault = 0.5;
         trayAngleSlope = -0.004;
+        teleOpTuneValueTrayAngle = 0;
         double relativeHeadingToBoard = getCurrentHeading();
         double trayAngleServoPos = trayAngleDefault;
         boolean dpadDownPreviousValue = false;
@@ -1559,8 +1561,8 @@ public class Robot {
                 trayToOuttakePos(false);
             }
 
-            hardStopTrayAngleBig = 0.68;
-            hardStopTrayAngleSmall = 0.32;
+            hardStopTrayAngleBig = trayAngleDefault + 0.18;
+            hardStopTrayAngleSmall = trayAngleDefault - 0.18;
 
             //override tray angle toggle
             if (!gamepad2.dpad_down && dpadDownPreviousValue) {
@@ -1574,7 +1576,7 @@ public class Robot {
                 //checking imu in correct range
                 if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
                     //-0.004
-                    trayAngleServoPos = Math.min(trayAngleSlope*(relativeHeadingToBoard) + trayAngleDefault, hardStopTrayAngleBig);
+                    trayAngleServoPos = Math.min(trayAngleSlope*(relativeHeadingToBoard + teleOpTuneValueTrayAngle) + trayAngleDefault, hardStopTrayAngleBig);
                     trayAngleServoPos = Math.max(trayAngleServoPos, hardStopTrayAngleSmall);
                 } else {
 
@@ -1585,13 +1587,13 @@ public class Robot {
             }
             dpadDownPreviousValue = gamepad2.dpad_down;
 
-            //adjustable tray
+            //adjustable tray in teleop
             if (gamepad2.right_stick_x < -0.9) {
-                trayAngleSlope += 0.0001;
+                teleOpTuneValueTrayAngle += 0.25;
             } else if (gamepad2.right_stick_x  > 0.9){
-                trayAngleSlope -= 0.0001;
+                teleOpTuneValueTrayAngle -= 0.25;
             } else if (gamepad2.right_stick_button) {
-                trayAngleSlope = -0.004;
+                teleOpTuneValueTrayAngle = 0;
             }
 
             // clamp controls
