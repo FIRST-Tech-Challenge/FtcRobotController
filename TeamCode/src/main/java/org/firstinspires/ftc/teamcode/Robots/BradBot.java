@@ -158,8 +158,10 @@ public class BradBot extends BasicRobot {
   public void purpurAuto() {
     if (queuer.queue(
         true, purped)) {
-      if (DROP.state) {
+      if(lift.getCurrentPosition()>750){
         arm.purpurPigzl();
+      }
+      if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
         lift.setPosition(310);
         wrist.purpur();
@@ -200,8 +202,12 @@ public class BradBot extends BasicRobot {
     //    }
   }
 
+  public void hoverArm(){
+    arm.flipTo(HOVER);
+  }
+
   public void upAuto() {
-    if (queuer.queue(true, lift.getCurrentPosition()>600)) {
+    if (queuer.queue(true, lift.getCurrentPosition()>500)) {
       if (!Lift.LiftMovingStates.LOW.state) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
@@ -216,7 +222,7 @@ public class BradBot extends BasicRobot {
   }
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-      if (currentPose.getX() > 10 && DROP.state || Lift.LiftPositionStates.LOW_SET_LINE.getState()) {
+      if (currentPose.getX() > 9) {
         lift.setPosition(850);
         intake.stopIntake();
         arm.flipTo(DROP);
@@ -324,7 +330,7 @@ public class BradBot extends BasicRobot {
       if (!queuer.isExecuted()) {
         twrist.flipTo(Twrist.twristTargetStates.GRAB);
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
-        arm.flipTo(HOVER, -.04);
+        arm.flipTo(HOVER, -.04, false);
         lift.update();
         wrist.update();
         twrist.update();
@@ -361,7 +367,9 @@ public class BradBot extends BasicRobot {
           }
         }
       }
-      loopPPPath(new Path(), false);
+      if (intake.intakePath()) {
+        loopPPPath(new Path(), false);
+      }
 
     }
   }
@@ -581,7 +589,7 @@ public class BradBot extends BasicRobot {
     if (isA) {
       twrist.flipTo(Twrist.twristTargetStates.GRAB);
       wrist.flipTo(Wrist.WristTargetStates.GRAB);
-      arm.flipTo(HOVER, -.04);
+      arm.flipTo(HOVER, -.04, false);
       lift.update();
       wrist.update();
       twrist.update();
