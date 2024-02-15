@@ -2250,10 +2250,10 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(-33);
+                mecanumBlocking2(-35);
                 break;
             case 2:
-                mecanumBlocking2(-27);
+                mecanumBlocking2(-29);
                 break;
             case 3:
                 mecanumBlocking2(-23);
@@ -2319,10 +2319,10 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(21);
+                mecanumBlocking2(23);
                 break;
             case 2:
-                mecanumBlocking2(21);
+                mecanumBlocking2(23);
                 break;
             case 3:
                 mecanumBlocking2(30);
