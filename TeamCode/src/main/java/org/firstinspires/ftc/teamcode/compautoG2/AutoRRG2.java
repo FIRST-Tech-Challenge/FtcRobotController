@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.compautoG2;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.shared.GlobalConfig;
@@ -16,6 +17,7 @@ import Auto.Left;
 
 @Config
 @Autonomous
+@Disabled
 public class AutoRRG2 extends LinearOpMode {
     public ALLIANCE_POS alliancePos = ALLIANCE_POS.RIGHT;
 

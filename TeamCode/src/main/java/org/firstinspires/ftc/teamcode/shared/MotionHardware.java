@@ -392,127 +392,39 @@ public class MotionHardware {
         myOpMode.sleep(1000);
     }
 
-    // Move along an arc to a grid position in inches relative to the robots current position
-    //TODO This is an untested function
-    public void moveToGridPosition(double xInches, double yInches, double speed) {
-        // Calculate the angle to the target position in radians
-        double angleRadians = Math.atan2(yInches, xInches);
 
-        // Calculate the distance to the target position
-        double distance = Math.hypot(xInches, yInches);
 
-        // Calculate the target encoder counts based on distance
-        int targetCounts = (int) (COUNTS_PER_INCH * distance);
-
-        // Calculate the powers for each motor to achieve the specified angle
-        double frontLeftPower = speed * Math.cos(angleRadians);
-        double backLeftPower = speed * Math.sin(angleRadians);
-        double frontRightPower = speed * Math.sin(angleRadians);
-        double backRightPower = speed * Math.cos(angleRadians);
-
-        // Normalize the powers so that the maximum is 1.0
-        double maxPower = Math.max(
-                Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower)),
-                Math.max(Math.abs(frontRightPower), Math.abs(backRightPower))
-        );
-
-        frontLeftPower /= maxPower;
-        backLeftPower /= maxPower;
-        frontRightPower /= maxPower;
-        backRightPower /= maxPower;
-
-        // Set the target position for each motor
-        int frontLeftTarget = frontLeftMotor.getCurrentPosition() + targetCounts;
-        int backLeftTarget = backLeftMotor.getCurrentPosition() + targetCounts;
-        int frontRightTarget = frontRightMotor.getCurrentPosition() + targetCounts;
-        int backRightTarget = backRightMotor.getCurrentPosition() + targetCounts;
-
-        // Set the motor targets and run to position mode
-        frontLeftMotor.setTargetPosition(frontLeftTarget);
-        backLeftMotor.setTargetPosition(backLeftTarget);
-        frontRightMotor.setTargetPosition(frontRightTarget);
-        backRightMotor.setTargetPosition(backRightTarget);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set the motor powers
-        frontLeftMotor.setPower(frontLeftPower);
-        backLeftMotor.setPower(backLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backRightMotor.setPower(backRightPower);
-
-        // Wait until all motors have reached their targets
-        while (frontLeftMotor.isBusy() || backLeftMotor.isBusy() || frontRightMotor.isBusy() || backRightMotor.isBusy()) {
-            // You can add additional logic here if needed
-        }
-
-        // Stop all motors
-        frontLeftMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-        // Reset motor run mode to RUN_USING_ENCODER
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void moveToGridPosition(double xInches, double yInches) {
-        moveToGridPosition(xInches, yInches, MAX_SPEED);
-    }
-
-    public void strafe(double distance, double speed, Direction direction, double timeoutS) {
-        int newFrontLeftTarget = frontLeftMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-        int newBackLeftTarget = backLeftMotor.getCurrentPosition() + (int)(-distance * COUNTS_PER_INCH);
-        int newFrontRightTarget = frontRightMotor.getCurrentPosition() + (int)(-distance * COUNTS_PER_INCH);
-        int newBackRightTarget = backRightMotor.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-
-        frontLeftMotor.setTargetPosition(newFrontLeftTarget);
-        backLeftMotor.setTargetPosition(newBackLeftTarget);
-        frontRightMotor.setTargetPosition(newFrontRightTarget);
-        backLeftMotor.setTargetPosition(newBackLeftTarget);
-
-        frontLeftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+    /**
+     * Strafe the robot in a specified direction.
+     *
+     * @param speed     The speed at which to strafe (e.g., 0 to 1).
+     * @param direction The direction in which to strafe (0 to 360 degrees).
+     *                  0   = Forward
+     *                  90  = Right
+     *                  180 = Back
+     *                  270 = Left
+     */
+    public void strafeWithTime(double speed, double direction, double time) {
+        double radians = Math.toRadians(direction);
+        double frontLeftSpeed = speed * Math.sin(radians + Math.PI / 4);
+        double frontRightSpeed = speed * Math.cos(radians + Math.PI / 4);
+        double backLeftSpeed = speed * Math.cos(radians + Math.PI / 4);
+        double backRightSpeed = speed * Math.sin(radians + Math.PI / 4);
 
         runtime.reset();
-        frontRightMotor.setPower(Math.abs(speed));
-        frontLeftMotor.setPower(Math.abs(speed));
-        backRightMotor.setPower(Math.abs(speed));
-        backLeftMotor.setPower(Math.abs(speed));
+
+        // Set the speed for each motor
+        frontLeftMotor.setPower(frontLeftSpeed);
+        frontRightMotor.setPower(frontRightSpeed);
+        backLeftMotor.setPower(backLeftSpeed);
+        backRightMotor.setPower(backRightSpeed);
 
         while (myOpMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (frontLeftMotor.isBusy() && frontRightMotor.isBusy() && backLeftMotor.isBusy())) {
-
-            // Display it for the driver.
-            myOpMode.telemetry.addData("Running to",  " %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
-            myOpMode.telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d",
-                    frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(), backRightMotor.getCurrentPosition());
+                (runtime.seconds() < time)) {
+            myOpMode.telemetry.addData("Strafing: ", direction);
             myOpMode.telemetry.update();
         }
-
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-        frontLeftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        myOpMode.telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d",
-                frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(), backRightMotor.getCurrentPosition());
-        myOpMode.telemetry.update();
-        sleep(1000);
+        stopRobot();
     }
 
     public void stopRobot() {
