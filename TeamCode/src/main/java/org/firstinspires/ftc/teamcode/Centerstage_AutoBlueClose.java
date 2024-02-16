@@ -59,7 +59,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 1;
+    private static final int DESIRED_TAG_ID = 3;
 
     private AprilTagProcessor aprilTag;
 

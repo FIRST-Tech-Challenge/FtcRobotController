@@ -30,7 +30,7 @@ public class Centerstage_AutoBlueFar extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 1;
+    private static final int DESIRED_TAG_ID = 3;
 
     private AprilTagProcessor aprilTag;
 
@@ -103,10 +103,8 @@ public class Centerstage_AutoBlueFar extends LinearOpMode {
 
         // What do we want        to do if we don't identify the target?
         if (targetFound) {
-
             driveToTarget();
             //placePixelOnBackboard();
-
         }
     }
 
