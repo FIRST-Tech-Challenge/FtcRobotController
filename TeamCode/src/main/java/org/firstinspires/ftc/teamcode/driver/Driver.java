@@ -245,12 +245,13 @@ public class Driver extends LinearOpMode {
                     }else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_DROP_POS_LOW);
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
-                    }
-                    if (gamepad1.b) {
+                    }else if (gamepad1.b) {
                         // move to 0 degrees.
                         wristServo.setPosition(WRIST_FORWARD_DROP_POS);
+                        moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
                     }else if (gamepad1.a) {
                         wristServo.setPosition(ARM_INTAKE_POS);
+                        moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     }
 
                     //and here put your logic to move the arm up and down
