@@ -118,28 +118,37 @@ public class AutonomousRescore extends AutonomousBase {
         // We must start in the correct starting orientation for X and Y to be correct
         // Turn toward the backdrop from the RED side
         driveToPosition( 0.0, 0.0, 90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO ); // RED
-        //driveToPosition( 0.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO ); // BLUE
+      //driveToPosition( 0.0, 0.0, -90.0, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO ); // BLUE
 
         // Drive toward backdrop in preparation to score the yellow pixel
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "AprilTag final alignment");
             telemetry.update();
-            // Does the camera see the Backdrop AprilTag?
-            boolean targetVisible = processAprilTagDetections( backdropAprilTagID );
+            // Does the camera see ANY of the Backdrop AprilTags?
+            boolean targetVisible = updateBackdropAprilTags();
             if( targetVisible ) {
-                // Where do we need to move to be 3" way with zero side-to-side offset
-                computeAprilTagCorrections( 3.0 );
+                // Wherever we start, move to where we're aligned to 0 angle error, and 15" away
+                // (if we're too far away, or the angle is too large, the AprilTag reading won't be accurate)
+                computeBackdropLocation( 15.0, 0.0 );
                 pos_y = autoYpos;
                 pos_x = autoXpos;
                 pos_angle = autoAngle;
                 driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                targetVisible = updateBackdropAprilTags();
+                if( targetVisible ) {
+                    // Move to final position (camera 4" away from the backdrop, 1.5" to the left of CENTER apriltag)
+                    computeBackdropLocation( 4.0, -1.5 );
+                    pos_y = autoYpos;
+                    pos_x = autoXpos;
+                    pos_angle = autoAngle;
+                    driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_TO);
+                }
             }
             else {
                 telemetry.addData("ERROR", "AprilTag %d not detected", backdropAprilTagID );
                 telemetry.update();
             } // !targetVisible (just use odometry)
         } // opModeIsActive
-  sleep(30000);
 
         // Score the yellow pixel
         if( opModeIsActive() ) {
@@ -149,10 +158,10 @@ public class AutonomousRescore extends AutonomousBase {
             telemetry.addData("Motion", "move to backdrop");
             telemetry.update();
             switch( spikemark ) {
-                case 1 : desiredDistanceCM = 12.0; break; // LEFT
-                case 2:  desiredDistanceCM = 13.0; break; // CENTER
+                case 1 : desiredDistanceCM = 14.0; break; // LEFT
+                case 2:  desiredDistanceCM = 14.0; break; // CENTER
                 case 3:
-                default: desiredDistanceCM = 15.0; break; // RIGHT
+                default: desiredDistanceCM = 14.0; break; // RIGHT
             } // switch
             currentDistanceCM = robot.getBackdropRange();
             driveOffsetInches = (desiredDistanceCM -currentDistanceCM)/2.54;

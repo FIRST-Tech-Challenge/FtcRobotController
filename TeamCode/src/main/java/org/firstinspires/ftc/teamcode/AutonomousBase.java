@@ -113,7 +113,9 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     int         fiveStackCycles = 0;      // 6: number of white pixels to score from 5-stack (only Audience side for now)
     int         fiveStackHeight = 5;      // Remaining pixels on 5-stack (always starts at 5); Dictates collector height
+
     ElapsedTime autonomousTimer = new ElapsedTime();
+    ElapsedTime motionTimer = new ElapsedTime();
 
     // Instrumentation for optimizing ABORT times
     double   timeNow;
@@ -156,13 +158,31 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean backCameraInitialized = false;
     boolean rightCameraInitialized = false;
 
-    /**
-     * The variable to store our instance of the vision portal.
-     */
     protected VisionPortal visionPortalBack;
     protected CenterstageSuperPipeline pipelineBack;
+
+    // AprilTag variables
     protected AprilTagProcessor aprilTag;
     protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
+    
+    protected boolean atBackdropLeftDetected   = false;
+    protected int     atBackdropLeftTag        = 0;
+    protected double  atBackdropLeftDistance   = 0.0;   // inches
+    protected double  atBackdropLeftStrafe     = 0.0;   // inches
+    protected double  atBackdropLeftAngle      = 0.0;   // degrees
+    
+    protected boolean atBackdropCenterDetected = false;
+    protected int     atBackdropCenterTag      = 0;
+    protected double  atBackdropCenterDistance = 0.0;   // inches
+    protected double  atBackdropCenterStrafe   = 0.0;   // inches
+    protected double  atBackdropCenterAngle    = 0.0;   // degrees
+    
+    protected boolean atBackdropRightDetected  = false;
+    protected int     atBackdropRightTag       = 0;
+    protected double  atBackdropRightDistance  = 0.0;   // inches
+    protected double  atBackdropRightStrafe    = 0.0;   // inches
+    protected double  atBackdropRightAngle     = 0.0;   // degrees
+
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
     int pixelNumber = 0;
@@ -311,7 +331,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 ((initMenuSelected==5)? "<-":"  "));
 
         telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 117" );
+        telemetry.addData(">","version 124" );
         telemetry.update();
     } // processAutonomousInitMenu
 
@@ -356,15 +376,124 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // setWebcamManualExposure
 
     /*---------------------------------------------------------------------------------*/
+    protected boolean updateBackdropAprilTags() {
+        // Allow robot to settle and april tag processor to see april tag
+        sleep(900);
+        // discard any prior detection data
+        atBackdropLeftDetected   = false;
+        atBackdropCenterDetected = false;
+        atBackdropRightDetected  = false;
+        // Step through the list of detected tags and look for a matching tag
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Verify that we have size info for this tag in our tag library
+            if (detection.metadata != null) {
+                //  Assess whether this is an AprilTag we care about for CENTERSTAGE Backdrop
+                if ((detection.id == 1) || (detection.id == 4)) {
+                    atBackdropLeftDetected = true;
+                    atBackdropLeftTag      = detection.id;
+                    atBackdropLeftDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropLeftStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropLeftAngle    = detection.ftcPose.yaw;
+                }    // LEFT (blue=1, red=4)
+                else if ((detection.id == 2) || (detection.id == 5)) {
+                    atBackdropCenterDetected = true;
+                    atBackdropCenterTag      = detection.id;
+                    atBackdropCenterDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropCenterStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropCenterAngle    = detection.ftcPose.yaw;
+                }    // CENTER (blue=2, red=5)
+                else if ((detection.id == 3) || (detection.id == 6)) {
+                    atBackdropRightDetected = true;
+                    atBackdropRightTag      = detection.id;
+                    atBackdropRightDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropRightStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
+                    atBackdropRightAngle    = detection.ftcPose.yaw;
+                }    // RIGHT (blue=3, red=6)
+            } // in library
+        } // for()
+        // Do we want to display what we found?  (COMMENT-OUT unless debugging)
+//      displayBackdropAprilTags();
+        // Did we find anything?
+        return (atBackdropLeftDetected || atBackdropCenterDetected || atBackdropRightDetected);
+    } // updateBackdropAprilTags
+
+    /*---------------------------------------------------------------------------------*/
+    protected void displayBackdropAprilTags() {
+       telemetry.addLine("BACKDROP:");
+       telemetry.addLine("AprilTag  X[in]  Y[in]  ANGLE");
+       telemetry.addLine("--------  -----  -----  -----");
+       // Did we detect LEFT?
+       if( atBackdropLeftDetected ) {
+          telemetry.addData(" ","%d LEFT    %5.1f  %5.1f  %5.1f", atBackdropLeftTag,
+             atBackdropLeftDistance, atBackdropLeftStrafe, atBackdropLeftAngle );
+       } else {
+          telemetry.addLine("LEFT NOT DETECTED");
+       }
+       // Did we detect CENTER?
+       if( atBackdropCenterDetected ) {
+          telemetry.addData(" ","%d CENTER  %5.1f  %5.1f  %5.1f", atBackdropCenterTag,
+             atBackdropCenterDistance, atBackdropCenterStrafe, atBackdropCenterAngle );
+       } else {
+          telemetry.addLine("CENTER NOT DETECTED");
+       }
+       // Did we detect RIGHT?
+       if( atBackdropRightDetected ) {
+          telemetry.addData(" ","%d RIGHT   %5.1f  %5.1f  %5.1f", atBackdropRightTag,
+             atBackdropRightDistance, atBackdropRightStrafe, atBackdropRightAngle );
+       } else {
+          telemetry.addLine("RIGHT NOT DETECTED");
+       }
+       telemetry.update();
+       sleep(2000);
+    } // displayBackdropAprilTags
+
+    /*------------------------------------------------------------------------------------------*/
+    /* What odometry x/y/angle puts us at the desired offset from the backdrop?                 */
+    protected void computeBackdropLocation( double desiredXoffset, double desiredYoffset ) {
+        double  errorInchesX, errorInchesY, errorDegreesAngle;
+        // Where does our odometry say we are now? (x/y/angle)
+        double curYpos    = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;
+        double curXpos    = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;
+        double curDegrees = Math.toDegrees( robotOrientationRadians );
+        // What do our AprilTag readings says the backdrop is
+        if( atBackdropCenterDetected ) {
+           errorInchesX      = atBackdropCenterDistance; 
+           errorInchesY      = atBackdropCenterStrafe;
+           errorDegreesAngle = atBackdropCenterAngle;
+        } else if( atBackdropLeftDetected ) {
+           errorInchesX      = atBackdropLeftDistance;
+           errorInchesY      = atBackdropLeftStrafe - 6.0;
+           errorDegreesAngle = atBackdropLeftAngle;
+        } else if( atBackdropRightDetected ) {
+           errorInchesX      = atBackdropRightDistance;
+           errorInchesY      = atBackdropRightStrafe + 6.0;
+           errorDegreesAngle = atBackdropRightAngle;
+        } else {
+           errorInchesX      = 0.0;
+           errorInchesY      = 0.0;
+           errorDegreesAngle = 0.0;
+        }
+        // Adjust for desired offset to the center apriltag
+        errorInchesX -= desiredXoffset;
+        errorInchesY -= desiredYoffset;
+        //telemetry.addData("ODOM","X=%5.1f Y=%5.1f Angle=%5.1f", curXpos, curYpos, curDegrees);
+        //telemetry.addData("ERROR","X=%5.1f Y=%5.1f Angle=%5.1f", errorInchesX, errorInchesY, errorDegreesAngle);
+        //telemetry.update();
+        //sleep(2000);
+        // Compute the new odometry location
+        autoXpos  = curXpos - errorInchesX;
+        autoYpos  = curYpos - errorInchesY;
+        autoAngle = curDegrees - errorDegreesAngle;
+    } // computeBackdropLocation
+
+    /*---------------------------------------------------------------------------------*/
     protected boolean processAprilTagDetections( int desiredAprilTagID ) {
         boolean successfulDetection = false;
-
         // Allow robot to settle and april tag processor to see april tag
         sleep(500);
-
         // discard any prior detection data
         detectionData  = null;
-
         // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
@@ -385,9 +514,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
         } // for()
-
         return successfulDetection;
-
     } // processAprilTagDetections
 
     /*------------------------------------------------------------------------------------------*/
@@ -420,6 +547,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         //telemetry.update();
         //sleep(30000);
     } // computeAprilTagCorrections
+
 
     // Create a time stamped folder in
     public void createAutoStorageFolder( boolean isRed, boolean isLeft ) {
@@ -853,35 +981,9 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param time   How long to drive (milliseconds)
      */
     public void timeDriveStraight( double speed, int time ) {
-        if(opModeIsActive()) {
-            robot.driveTrainMotors(speed, speed, speed, speed);
-            sleep(time);
-            robot.stopMotion();
-        }
-    }
-
-    /*---------------------------------------------------------------------------------------------
-     * Method will strafe straight for a specified time.
-     * @param speed  Speed to set all motors, postive strafe left, negative strafe right
-     * @param time   How long to strafe (milliseconds)
-     */
-    public void timeDriveStrafe( double speed, int time ) {
-        if(opModeIsActive()) {
-            robot.driveTrainMotors(-speed, speed, speed, -speed);
-            sleep(time);
-            robot.stopMotion();
-        }
-    }
-
-    /*---------------------------------------------------------------------------------------------
-     * Method will drive straight for a specified time.
-     * @param speed  Speed to set all motors, positive forward, negative backward
-     * @param time   How long to drive (milliseconds)
-     */
-    public void timeDriveStraight2( double speed, int time ) {
-        ElapsedTime timer = new ElapsedTime();
+        motionTimer.reset();
         robot.driveTrainMotors(speed, speed, speed, speed);
-        while(opModeIsActive() && (timer.milliseconds() <= time)) {
+        while(opModeIsActive() && (motionTimer.milliseconds() <= time)) {
             performEveryLoop();
         }
         robot.stopMotion();
@@ -892,15 +994,14 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param speed  Speed to set all motors, postive strafe left, negative strafe right
      * @param time   How long to strafe (milliseconds)
      */
-    public void timeDriveStrafe2( double speed, int time ) {
-        ElapsedTime timer = new ElapsedTime();
+    public void timeDriveStrafe( double speed, int time ) {
+        motionTimer.reset();
         robot.driveTrainMotors(-speed, speed, speed, -speed);
-        while(opModeIsActive() && (timer.milliseconds() <= time)) {
+        while(opModeIsActive() && (motionTimer.milliseconds() <= time)) {
             performEveryLoop();
         }
         robot.stopMotion();
     } // timeDriveStrafe
-
 
     //============================ IMU/GYRO-BASED NAVIGATION FUNCTIONS ============================
 
@@ -1085,8 +1186,8 @@ public abstract class AutonomousBase extends LinearOpMode {
             lastDriveAngle = deltaAngle;
         }
 
-        // We are done if we are within 2 degrees
-        if(Math.abs(Math.toDegrees(deltaAngle)) < 2) {
+        // We are done if we are within 1.8 degrees
+        if(Math.abs(Math.toDegrees(deltaAngle)) < 1.8) {
             // We have reached our destination if the angle is close enough
             robot.stopMotion();
             reachedDestination = true;
