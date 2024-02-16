@@ -24,9 +24,9 @@ public class Driver extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
 
     static final double ARM_SPEED = 1.0;
-    static final int ARM_DROP_POS_LOW = -4530;
-    static final int ARM_DROP_POS_HIGH = -3550;
-    static final int ARM_DRIVE_POS = -800;
+    static final int ARM_DROP_POS_LOW = -4520;
+    static final int ARM_DROP_POS_HIGH = -3540;
+    static final int ARM_DRIVE_POS = -820;
     static final int ARM_INTAKE_POS = 25;
     static final double LEFT_GRIPPER_OPEN = 0.90;
     //was 1.5
