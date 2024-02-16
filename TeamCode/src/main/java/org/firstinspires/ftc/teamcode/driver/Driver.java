@@ -38,7 +38,7 @@ public class Driver extends LinearOpMode {
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
     static final double WRIST_INTAKE_POS = 0.3;
-    static final double WRIST_FORWARD_DROP_POS_HIGH = 0.73;
+    static final double WRIST_FORWARD_DROP_POS_HIGH = 0.62; //was 73
     static final double WRIST_FORWARD_DROP_POS_LOW = 0.65;
     static final double DRONE_LAUNCH = 0.8;
     static final double DRONE_SECURE = 0.3;
@@ -149,9 +149,19 @@ public class Driver extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(LEFT_GRIPPER_CLOSE);
-                rightGripper.setPosition(RIGHT_GRIPPER_CLOSE);// Adjust the position value as needed
+                rightGripper.setPosition(RIGHT_GRIPPER_CLOSE);// Ad'just the position value as needed
 
             } else if (gamepad2.left_bumper) {
+                // Return servos to the center position when "x" is pressed
+                leftGripper.setPosition(LEFT_GRIPPER_OPEN);
+                rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
+            }
+            if (gamepad1.x) {
+                // Move servos in opposite directions when "y" is pressed
+                leftGripper.setPosition(LEFT_GRIPPER_CLOSE);
+                rightGripper.setPosition(RIGHT_GRIPPER_CLOSE);// Adjust the position value as needed
+
+            } else if (gamepad1.y) {
                 // Return servos to the center position when "x" is pressed
                 leftGripper.setPosition(LEFT_GRIPPER_OPEN);
                 rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
@@ -196,7 +206,6 @@ public class Driver extends LinearOpMode {
                         // move to 90 degrees.
                         DroneCoverServo.setPosition(.7);
                     }*/
-                    }
 
 
                     // Launch Drone
@@ -208,7 +217,7 @@ public class Driver extends LinearOpMode {
                         // Secure Drone
                         launcherServo.setPosition(DRONE_SECURE);
                     }
-
+                     }
                     try {
                         Thread.sleep(10); // Small delay to prevent looping too fast
                     } catch (InterruptedException e) {
