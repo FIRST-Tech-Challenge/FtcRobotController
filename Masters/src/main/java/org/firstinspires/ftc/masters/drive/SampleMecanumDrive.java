@@ -243,6 +243,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        otherBackSlides.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void openClaw(){

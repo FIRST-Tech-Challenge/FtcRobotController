@@ -62,6 +62,7 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo outtakeHook;
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo microHook;
 
     TouchSensor touchBucket;
 
@@ -164,6 +165,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawAngle = hardwareMap.servo.get("clawAngle");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
+        microHook = hardwareMap.servo.get("microHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchBucket = hardwareMap.touchSensor.get("touchBucket");
@@ -217,6 +219,7 @@ public class AutomatedTeleop extends LinearOpMode {
         outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
+        microHook.setPosition(CSCons.openMicroHook);
         hookPosition = HookPosition.OPEN;
         planeRaise.setPosition(CSCons.droneFlat);
 
@@ -433,17 +436,19 @@ public class AutomatedTeleop extends LinearOpMode {
                 }
                 switch (outtakeState) {
                     case ReadyToTransfer:
-                        if (!touchBucket.isPressed()) {
-                            bucketMovedBy = bucketMovedBy + .01;
-                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
-                        }
+//                        if (!touchBucket.isPressed()) {
+//                            bucketMovedBy = bucketMovedBy + .01;
+//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+//                        }
                         if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             } else {
                                 outtakeHook.setPosition(CSCons.closeHook);
+                                microHook.setPosition(CSCons.closeMicroHook);
                             }
                         }
                         if (gamepad2.x && hookPosition == HookPosition.OPEN) { // closes hook with x
@@ -451,6 +456,7 @@ public class AutomatedTeleop extends LinearOpMode {
                                 outtakeElapsedTime = closeHook();
                             } else {
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             }
                         }
 
@@ -471,6 +477,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     case MoveToTransfer:
                         if (backSlides.getCurrentPosition() < 50) {
                             outtakeHook.setPosition(CSCons.openHook);
+                            microHook.setPosition(CSCons.openMicroHook);
                             outtakeState = OuttakeState.ReadyToTransfer;
                             target = 0;
                         }
@@ -479,15 +486,38 @@ public class AutomatedTeleop extends LinearOpMode {
                         //if touch sensor => ready to transfer
                         break;
                     case ReadyToDrop:
-                        if (gamepad2.x && hookPosition == HookPosition.CLOSED) {
+                        if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             } else {
                                 outtakeHook.setPosition(CSCons.closeHook);
+                                microHook.setPosition(CSCons.closeMicroHook);
+
                             }
                         }
+                        if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.HALF;
+                                outtakeHook.setPosition(CSCons.openHook);
+
+                            }
+                        }
+
+                        if (gamepad2.y && hookPosition == HookPosition.HALF) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.OPEN;
+                                outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
+
+                            }
+                        }
+
+
                         if (gamepad2.x && hookPosition == HookPosition.OPEN) {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = closeHook();
@@ -516,11 +546,11 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
-                            target -= 60;
+                            target -= 30;
                         }
 
                         if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
-                            target += 60;
+                            target += 30;
                         }
 
                         //what button to mode back to transfer?
@@ -627,11 +657,12 @@ public class AutomatedTeleop extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
         hookPosition = HookPosition.CLOSED;
         outtakeHook.setPosition(CSCons.closeHook);
+        microHook.setPosition(CSCons.closeMicroHook);
         return time;
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 300){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 1000){
             return true;
         } else {
             return false;

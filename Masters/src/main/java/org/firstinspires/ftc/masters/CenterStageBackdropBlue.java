@@ -32,6 +32,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
     enum State {
         PURPLE_DEPOSIT_PATH,
         PURPLE_DEPOSIT,
+        PURPLE_BACKUP,
 
         UNTURN,
         BACKUP_FROM_SPIKES,
@@ -92,31 +93,53 @@ public class CenterStageBackdropBlue extends LinearOpMode {
         State currentState;
 
         Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(7.5, 38), Math.toRadians(305)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(9.5, 38), Math.toRadians(305)))
                 .build();
 
         Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, 32.5), Math.toRadians(210)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(11, 32.5), Math.toRadians(210)))
                 .build();
 
         Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, 37), Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(12, 36.5), Math.toRadians(270)))
                 .build();
 
-        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
-                .back(5.3)
+        Trajectory purpleBackUpC = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
+                .back(3)
+                .build();
+
+        Trajectory purpleBackUpR = drive.trajectoryBuilder(purpleDepositPathR.end(), false)
+                .back(4)
+                .build();
+
+        Trajectory purpleBackUpL = drive.trajectoryBuilder(purpleDepositPathL.end(), false)
+                .back(3)
+                .build();
+
+        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleBackUpC.end(),false)
+                .back(3.3)
                 .build();
 
         Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, 30), Math.toRadians(180)), Math.toRadians(-60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, 30), Math.toRadians(180)), Math.toRadians(-60))
                 .build();
 
         Trajectory yellowDepositPathL = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, 34), Math.toRadians(180)), Math.toRadians(-60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, 34), Math.toRadians(180)), Math.toRadians(-60))
                 .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(48, 22), Math.toRadians(180)), Math.toRadians(-60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(45, 24), Math.toRadians(180)), Math.toRadians(-60))
+                .build();
+
+        Trajectory parkC = drive.trajectoryBuilder(yellowDepositPathC.end())
+                .back(4)
+                .build();
+        Trajectory parkL = drive.trajectoryBuilder(yellowDepositPathL.end())
+                .back(4)
+                .build();
+        Trajectory parkR = drive.trajectoryBuilder(yellowDepositPathR.end())
+                .back(4)
                 .build();
 
 
@@ -172,13 +195,26 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                     drive.openClaw();
                     drive.closeHook();
                     sleep(500);
-                    drive.intakeToTransfer();
                     if (propPos == PropFindLeft.pos.LEFT){
-                        drive.turn(Math.toRadians(-45));
-                    } else if (propPos == PropFindLeft.pos.RIGHT){
-                        drive.turn(Math.toRadians(60));
+                        drive.followTrajectory(purpleBackUpL);
+                    } else if (propPos== PropFindLeft.pos.RIGHT){
+                        drive.followTrajectory(purpleBackUpR);
+                    } else {
+                        drive.followTrajectoryAsync(purpleBackUpC);
                     }
-                    currentState = State.UNTURN;
+                    currentState= State.PURPLE_BACKUP;
+                    break;
+                case PURPLE_BACKUP:
+                    if (!drive.isBusy()) {
+                        drive.intakeToTransfer();
+                        sleep(300);
+                        if (propPos == PropFindLeft.pos.LEFT) {
+                            drive.turn(Math.toRadians(-45));
+                        } else if (propPos == PropFindLeft.pos.RIGHT) {
+                            drive.turn(Math.toRadians(60));
+                        }
+                        currentState = State.UNTURN;
+                    }
                     break;
                 case UNTURN:
                     if (!drive.isBusy()) {
@@ -199,7 +235,7 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                         currentState = State.YELLOW_DEPOSIT_PATH;
                         //currentState = State.STOP;
                     } else {
-                        target= CSCons.OuttakePosition.LOW.getTarget();
+                        target= CSCons.OuttakePosition.LOW_AUTO.getTarget();
                         drive.intakeToTransfer();
                         drive.outtakeToBackdrop();
                      }
@@ -232,16 +268,20 @@ public class CenterStageBackdropBlue extends LinearOpMode {
                     if(resetInt == 1){
                     if (!drive.isBusy()) {
 
-                        park = drive.trajectoryBuilder(drive.getPoseEstimate(), false)
-                                .back(4)
-                                .build();
+
                         //april tag alignment
                         //if april tag is aligned drop and
                         if (depositTime.milliseconds() > 500) {
                             drive.dropPixel();
                         }
                         if (depositTime.milliseconds() > 700) {
-                            drive.followTrajectoryAsync(park);
+                            if (propPos== PropFindLeft.pos.LEFT){
+                                drive.followTrajectoryAsync(parkL);
+                            } else if (propPos== PropFindLeft.pos.RIGHT){
+                                drive.followTrajectoryAsync(parkR);
+                            } else{
+                                drive.followTrajectoryAsync(parkC);
+                            }
                             currentState = State.BACK;
 
                         }
