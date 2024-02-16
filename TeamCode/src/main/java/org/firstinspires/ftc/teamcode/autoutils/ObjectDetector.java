@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 import static java.util.Locale.ENGLISH;
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other.WEBCAM;
+import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Cameras;
 
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
@@ -29,10 +31,11 @@ public class ObjectDetector {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
+    private final WebcamName Camera1, Camera2;
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "MyModelStoredAsAsset.tflite";
+    private static final String TFOD_MODEL_ASSET = "cube.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
@@ -59,11 +62,28 @@ public class ObjectDetector {
     public ObjectDetector(final HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> other) {
         OTHER = other;
         dbp.createNewTelePacket();
+
+        Camera1 =
+                (WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(0);
+
+        Camera2 =
+                (WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(1);
+
         initTfod();
     }
 
     public void stopCamera() {
         visionPortal.close();
+    }
+
+    public void setCamera(Cameras camera) {
+        if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
+            if (camera == Cameras.CAM1) {
+                visionPortal.setActiveCamera(Camera1);
+            } else if (camera == Cameras.CAM2) {
+                visionPortal.setActiveCamera(Camera2);
+            }
+        }
     }
 
     /**
@@ -79,7 +99,7 @@ public class ObjectDetector {
                 // choose one of the following:
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelAssetName(TFOD_MODEL_ASSET)
                 //.setModelFileName(TFOD_MODEL_FILE)
 
                 // The following default settings are available to un-comment and edit as needed to
@@ -97,7 +117,7 @@ public class ObjectDetector {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera((CameraName) Objects.requireNonNull(OTHER.get(WEBCAM)).getValue());
+            builder.setCamera((CameraName) Camera1);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }

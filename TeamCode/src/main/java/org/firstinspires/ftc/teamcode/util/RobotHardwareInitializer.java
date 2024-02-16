@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.WebcamSensorTypeValue;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -68,7 +69,8 @@ public class RobotHardwareInitializer {
         FINGER,
         WRIST,
         COLOR_SENSOR,
-        WEBCAM
+        WEBCAM,
+        PIXEL_POOPER
     }
 
     public enum Intake {
@@ -185,6 +187,10 @@ public class RobotHardwareInitializer {
         // Init Color Sensor
         //out.put(Other.COLOR_SENSOR, new ColorSensorTypeValue(initializeColorSensor(opMode)));
 
+        // Init Pixel Pooper
+        out.put(Other.PIXEL_POOPER, new ServoTypeValue(initializePixelPooper(opMode)));
+
+        /*
         // Init Intake
         HashMap<Intake, CRServo> tmp3 = initializeIntake(opMode);
         final CRServo LEFT = tmp3.get(Intake.LEFT);
@@ -192,10 +198,13 @@ public class RobotHardwareInitializer {
         CRServo[] tmp4 = new CRServo[2];
         tmp4[0] = LEFT;
         tmp4[1] = RIGHT;
-        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));
+        out.put(Other.INTAKE, new ArrayTypeValue<>(tmp4));]
+         */
 
         // Init Webcam
-        out.put(Other.WEBCAM, new WebcamSensorTypeValue(initializeCamera(opMode)));
+        HashMap<Cameras, WebcamName> tmp5 = initializeCamera(opMode);
+        assert tmp5 != null;
+        out.put(Other.WEBCAM, new ArrayTypeValue<>(tmp5.values().toArray()));
 
         return out;
     }
@@ -323,6 +332,17 @@ public class RobotHardwareInitializer {
         return null;
     }
 
+    public static Servo initializePixelPooper(final OpMode opMode) {
+        try {
+            Servo servo = opMode.hardwareMap.get(Servo.class, "pixel_pooper");
+            servo.setDirection(Servo.Direction.FORWARD);
+            return servo;
+        } catch(Exception e) {
+            Error(e, opMode);
+        }
+        return null;
+    }
+
     public static ColorSensor initializeColorSensor(final OpMode opMode) {
         try {
             return opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
@@ -332,9 +352,17 @@ public class RobotHardwareInitializer {
         return null;
     }
 
-    public static WebcamName initializeCamera(final OpMode opMode) {
+    public enum Cameras {
+        CAM1,
+        CAM2
+    }
+
+    public static HashMap<Cameras, WebcamName> initializeCamera(final OpMode opMode) {
+        HashMap<Cameras, WebcamName> out = new HashMap<>();
         try {
-            return opMode.hardwareMap.get(WebcamName.class, "Webcam 1");
+            out.put(Cameras.CAM1, opMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
+            out.put(Cameras.CAM2, opMode.hardwareMap.get(WebcamName.class, "Webcam 2"));
+            return out;
         } catch(Exception e) {
             Error(e, opMode);
         }

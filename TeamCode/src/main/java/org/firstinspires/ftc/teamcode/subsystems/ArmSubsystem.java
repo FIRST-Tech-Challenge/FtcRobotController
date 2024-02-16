@@ -24,12 +24,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(final HashMap<RobotHardwareInitializer.Arm, DcMotor> ARM) {
         this.armMotor1 = ARM.get(RobotHardwareInitializer.Arm.ARM1);
-        assert armMotor1 != null;
+        assert this.armMotor1 != null;
         armMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.armMotor2 = ARM.get(RobotHardwareInitializer.Arm.ARM2);
-        assert armMotor2 != null;
+        assert this.armMotor2 != null;
         armMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }

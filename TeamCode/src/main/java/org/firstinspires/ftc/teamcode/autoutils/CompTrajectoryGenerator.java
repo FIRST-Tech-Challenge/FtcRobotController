@@ -12,10 +12,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.hardware.ServoEx;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other;
 
@@ -28,6 +30,7 @@ public class CompTrajectoryGenerator {
 
     private final SampleMecanumDrive DRIVE;
     private final HashMap<Other, DynamicTypeValue> OTHER;
+    private final FTCDashboardPackets dbp = new FTCDashboardPackets("TrajectoryGen");
 
     private final String TEAM_PROP_LABEL = "Cube";
 
@@ -64,6 +67,8 @@ public class CompTrajectoryGenerator {
                                    final HashMap<Other, DynamicTypeValue> other,
                                    final boolean park_left) {
         DRIVE = drive;
+
+        dbp.createNewTelePacket();
 
         this.BLUE_BOTTOM = generateFieldTrajectory(trajectories.BLUE_BOTTOM, other, park_left);
         this.BLUE_TOP = generateFieldTrajectory(trajectories.BLUE_TOP, other, park_left);
@@ -130,7 +135,7 @@ public class CompTrajectoryGenerator {
                         .lineTo(new Vector2d(58, 23))
                         .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(0)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
                         .lineTo(new Vector2d(-36, 66))
@@ -199,6 +204,7 @@ public class CompTrajectoryGenerator {
         PLACE_LEFT,
         PLACE_MIDDLE,
         PLACE_RIGHT,
+        POOP_PIXEL,
         MOVE_BOARD,
         PLACE_BOARD_LEFT,
         PLACE_BOARD_MIDDLE,
@@ -394,8 +400,8 @@ public class CompTrajectoryGenerator {
     public HashMap<PixelStates, TrajectorySequence> purple_pixel(Pose2d startingPose) {
         HashMap<PixelStates, TrajectorySequence> out = new HashMap<>();
 
-        final double DETECT_DISTANCE = 10;
-        final double PLACE_DISTANCE = 5;
+        final double DETECT_DISTANCE = 2;
+        final double PLACE_DISTANCE = 1;
 
         final TrajectorySequence PLACE_MIDDLE =
                 DRIVE.trajectorySequenceBuilder(startingPose)
@@ -407,6 +413,7 @@ public class CompTrajectoryGenerator {
                 DRIVE.trajectorySequenceBuilder(startingPose)
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .lineTo(vector_moveX(startingPose, DETECT_DISTANCE))
+                        .waitSeconds(5)
                         .build();
 
         final TrajectorySequence PLACE_LEFT =
@@ -419,6 +426,7 @@ public class CompTrajectoryGenerator {
                 DRIVE.trajectorySequenceBuilder(DETECT_LEFT.end())
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .lineTo(vector_moveX(DETECT_LEFT.end(), -2 * DETECT_DISTANCE))
+                        .waitSeconds(5)
                         .build();
 
         final TrajectorySequence PLACE_RIGHT =
@@ -446,12 +454,12 @@ public class CompTrajectoryGenerator {
             case PLACE_BOARD_LEFT:
                 return DRIVE.trajectorySequenceBuilder(currentPose)
                         .setConstraints(velocityConstraint, accelerationConstraint)
-                        .lineTo(vector_moveY(currentPose, -5))
+                        .lineTo(vector_moveY(currentPose, 5))
                         .build();
             case PLACE_BOARD_RIGHT:
                 return DRIVE.trajectorySequenceBuilder(currentPose)
                         .setConstraints(velocityConstraint, accelerationConstraint)
-                        .lineTo(vector_moveY(currentPose, 5))
+                        .lineTo(vector_moveY(currentPose, -5))
                         .build();
         }
 
@@ -501,23 +509,33 @@ public class CompTrajectoryGenerator {
         while (opModeIsActive.getAsBoolean() && !isStopRequested.getAsBoolean()) {
             switch (state) {
                 case DETECT_MIDDLE:
+                    dbp.info("In Detect Middle", true);
                     state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                                     PixelStates.PLACE_MIDDLE : PixelStates.DETECT_LEFT;
+                    dbp.info((OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
+                            "Detected Team Prop" : "Did not detect team prop...", true);
                     break;
                 case DETECT_LEFT:
+                    dbp.info("In Detect Left", true);
                     DRIVE.followTrajectorySequence(
                             Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state))
                     );
                     state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                             PixelStates.PLACE_LEFT : PixelStates.DETECT_RIGHT;
+                    dbp.info((OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
+                            "Detected Team Prop" : "Did not detect team prop...", true);
                     break;
                 case DETECT_RIGHT:
+                    dbp.info("In Detect Right", true);
                     DRIVE.followTrajectorySequence(
                             Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state))
                     );
-                    if (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL))
+                    if (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) {
+                        dbp.info("Detected team prop", true);
                         state = PixelStates.PLACE_RIGHT;
+                    }
                     else {
+                        dbp.info("Did not detect prop");
                         state = PixelStates.PARK;
                     }
                     break;
@@ -527,9 +545,15 @@ public class CompTrajectoryGenerator {
                     DRIVE.followTrajectorySequence(
                             Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state))
                     );
-                    state = PixelStates.MOVE_BOARD;
+                    state = PixelStates.POOP_PIXEL;
                     spikeMarkPlacement = getSpikeMarkPlacementFromCurrentState(state);
                     lastPose = Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state)).start();
+                    break;
+                case POOP_PIXEL:
+                    final ServoEx SERVO = (ServoEx) OTHER.get(Other.PIXEL_POOPER);
+                    assert SERVO != null;
+                    SERVO.turnToAngle(300);
+                    state = PixelStates.MOVE_BOARD;
                     break;
                 case MOVE_BOARD:
                     DRIVE.followTrajectorySequence(
@@ -565,7 +589,8 @@ public class CompTrajectoryGenerator {
                     break;
                 case PARK:
                     // TODO: implement parking
-                    break;
+                    return;
+                    //break;
                 case IDLE:
                     return;
                 default:
