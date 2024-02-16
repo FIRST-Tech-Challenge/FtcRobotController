@@ -46,7 +46,7 @@ public class AutoBL extends LinearOpMode {
                     robot.moveRobot(.5, 2, 10);
 
                     // Turn to face camera to board so we can find april tag
-                    robot.turnRobot(Direction.RIGHT, 13, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 14, .5, 10);
                     robot.moveRobot(.5, 21, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
@@ -71,7 +71,7 @@ public class AutoBL extends LinearOpMode {
                     robot.moveRobot(.5, 3, 10);
                     robot.turnRobot(Direction.RIGHT, 13, .5, 10);
                     robot.moveRobot(.5, 2, 10);
-                    robot.turnRobot(Direction.RIGHT, 6.5, .5, 10);
+                    robot.turnRobot(Direction.RIGHT, 7.5, .5, 10);
                     robot.moveRobot(.5, 22, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
@@ -93,13 +93,13 @@ public class AutoBL extends LinearOpMode {
                     //Dropper Mode
                     robot.moveRobot(.5, -13, 10);
                     robot.turnRobot(Direction.RIGHT, 9, .5, 10);
-                    robot.moveRobot(.5, -3, 10);
+                    robot.moveRobot(.5, -4, 10);
                     robot.dropPixel();
                     robot.moveRobot(.5, 2, 10);
-                    robot.turnRobot(Direction.RIGHT, 6, .5, 10);
-                    robot.moveRobot(.5, 9, 10);
+                    robot.turnRobot(Direction.RIGHT, 7, .5, 10);
+                    robot.moveRobot(.5, 12, 10);
                     robot.turnRobot(Direction.LEFT, 3, .5, 10);
-                    robot.moveRobot(.5, 15, 10);
+                    robot.moveRobot(.5, 14, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
 

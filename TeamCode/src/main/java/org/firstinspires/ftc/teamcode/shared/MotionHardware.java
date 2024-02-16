@@ -639,7 +639,7 @@ public class MotionHardware {
         sleep(1000);
         leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value as needed
         rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value as needed
-        sleep(5000);
+        sleep(3000);
         armMotor.setPower(0); // Stop the motor once the position is reached
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

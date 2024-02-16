@@ -78,7 +78,7 @@ public class AutoRL extends LinearOpMode {
                     //Dropper Mode
                     robot.moveRobot(.5, -13, 10);
                     robot.turnRobot(Direction.RIGHT, 9, .5, 10);
-                    robot.moveRobot(.5, -3, 10);
+                    robot.moveRobot(.5, -4.5, 10);
                     robot.dropPixel();
                     //robot.moveRobot(.5, -8, 5);
                     //robot.turnRobot(Direction.RIGHT, 14, .5, 10);
