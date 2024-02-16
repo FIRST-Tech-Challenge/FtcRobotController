@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,8 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class ConduiteUneManette extends LinearOpMode {
-    private DcMotor motorA;
-    private DcMotor motorB;
+    void waitTime(double tps) {
+        double t=getRuntime();
+        while (getRuntime()-t < tps) {idle();}
+    }
+    private DcMotorEx motorA;
+    private DcMotorEx motorB;
     private DcMotorEx bras1;
     private DcMotorEx bras2;
 
@@ -19,17 +25,18 @@ public class ConduiteUneManette extends LinearOpMode {
 
     private Servo mainG;
     private Servo mainD;
-
+    private Servo lanceur;
     @Override
     public void runOpMode() {
-        motorA = hardwareMap.get(DcMotor.class, "moteur1");
-        motorB = hardwareMap.get(DcMotor.class, "moteur2");
+        motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
+        motorB = hardwareMap.get(DcMotorEx.class, "moteur2");
         bras1 = hardwareMap.get(DcMotorEx.class, "bras1");
         bras2 = hardwareMap.get(DcMotorEx.class, "bras2");
         coudeG = hardwareMap.get(Servo.class, "coudeG");
         coudeD = hardwareMap.get(Servo.class, "coudeD");
         mainG = hardwareMap.get(Servo.class, "mainG");
         mainD = hardwareMap.get(Servo.class, "mainD");
+        lanceur = hardwareMap.get(Servo.class, "lanceur");
 
         double tgtPowerA = 0;
         double tgtPowerB = 0;
@@ -62,11 +69,12 @@ public class ConduiteUneManette extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-
-
+        lanceur.setPosition(1);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -78,8 +86,8 @@ public class ConduiteUneManette extends LinearOpMode {
             varY = manette1.left_stick_y;
             varX = manette1.left_stick_x;
 
-            varYpos = Math.abs(varY);
-            varXpos = Math.abs(varX);
+            varYpos = abs(varY);
+            varXpos = abs(varX);
 
             varRY = manette1.right_stick_y;
 
@@ -210,9 +218,13 @@ public class ConduiteUneManette extends LinearOpMode {
             // Activation Mode Enregistré
             if (manette2.x) {
                 if (brasA > maPosBras) {
-                    tgtBras = -0.5;
+                    if (zeroDuHaut + brasA < 100) {
+                        tgtBras = -0.05;
+                    } else {
+                        tgtBras = -0.3;
+                    }
                 } else if (brasA < maPosBras) {
-                    tgtBras = 0.5;
+                    tgtBras = 0.3;
                 } else {
                     tgtBras = 0;
                 }
@@ -251,6 +263,7 @@ public class ConduiteUneManette extends LinearOpMode {
 
             // Changement des position - Hardware
             coudeG.setPosition(coudeX);
+
             coudeD.setPosition(1 - coudeX);
 
             if (PrecisionMode) {
@@ -262,6 +275,15 @@ public class ConduiteUneManette extends LinearOpMode {
                 bras1.setPower(tgtBras);
                 bras2.setPower(tgtBras);
             }
+
+            if (manette1.left_stick_button) {
+                lanceur.setPosition(0);
+                waitTime(1);
+                lanceur.setPosition(1);
+
+            }
+
+
             //
 
             telemetry.addData("zeroDuBras", zeroDuBras);

@@ -12,21 +12,30 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class autoRedSideBas extends LinearOpMode {
 
     void goForward(double speed, double tps) {
-
-        motorA.setPower(-speed);
-        motorB.setPower(speed);
-        waitTime(tps);
-        motorA.setPower(0);
-        motorB.setPower(0);
+        double t=getRuntime();
+        speed = -speed;
+        double quo = 1;
+        while (getRuntime()-t < tps) {
+            if (motorA.getVelocity() != 0) {
+                quo = motorA.getVelocity() / motorB.getVelocity() * -1;
+            }
+            if (quo<0.4) {
+                quo=0.4;
+            }
+            motorA.setVelocity(speed*2600);
+            motorB.setVelocity(-motorA.getVelocity()*quo);
+        }
+        motorA.setVelocity(0);
+        motorB.setVelocity(0);
     }
 
     void goLeft() {
 
-        motorA.setPower(0.5);
-        motorB.setPower(0.5);
+        motorA.setVelocity(1300);
+        motorB.setVelocity(1300);
         waitTime(0.59);
-        motorA.setPower(0);
-        motorB.setPower(0);
+        motorA.setVelocity(0);
+        motorB.setVelocity(0);
     }
 
     void waitTime(double tps) {
@@ -34,8 +43,8 @@ public class autoRedSideBas extends LinearOpMode {
         while (getRuntime()-t < tps) {idle();}
     }
 
-    private DcMotor motorA;
-    private DcMotor motorB;
+    private DcMotorEx motorA;
+    private DcMotorEx motorB;
     private DcMotorEx bras1;
     private DcMotorEx bras2;
 
@@ -44,28 +53,28 @@ public class autoRedSideBas extends LinearOpMode {
 
     private Servo mainG;
     private Servo mainD;
+    private Servo lanceur;
     @Override
     public void runOpMode() {
-        motorA = hardwareMap.get(DcMotor.class, "moteur1");
-        motorB = hardwareMap.get(DcMotor.class, "moteur2");
+        motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
+        motorB = hardwareMap.get(DcMotorEx.class, "moteur2");
         bras1 = hardwareMap.get(DcMotorEx.class, "bras1");
         bras2 = hardwareMap.get(DcMotorEx.class, "bras2");
         coudeG = hardwareMap.get(Servo.class, "coudeG");
         coudeD = hardwareMap.get(Servo.class, "coudeD");
         mainG = hardwareMap.get(Servo.class, "mainG");
         mainD = hardwareMap.get(Servo.class, "mainD");
+        lanceur = hardwareMap.get(Servo.class, "lanceur");
 
         double t;
 
 
 
-        while (!(isStarted() || isStopRequested())) {
-
             // Display the light level while we are waiting to start
-            telemetry.addData("Status", "Waiting for start");
-            telemetry.update();
-            idle();
-        }
+        telemetry.addData("Status", "Waiting for start");
+        telemetry.update();
+        waitForStart();
+
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -80,7 +89,7 @@ public class autoRedSideBas extends LinearOpMode {
 
         waitTime(3);
 
-        goForward(0.5,0.5);
+        goForward(0.6,0.5);
 
         waitTime(1);
 
