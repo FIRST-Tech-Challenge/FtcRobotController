@@ -28,9 +28,8 @@ public class TeleOp_Full extends CSBase {
     @Override
     public void runOpMode() {
         setup();
-        if (trayTiltingServo != null) {
-            trayTiltingServo.setPosition(0);
-        }
+        if (trayTiltingServo != null) { trayTiltingServo.setPosition(0); }
+        if (pixelLockingServo != null) { pixelLockingServo.setPosition(1); }
 
         while (opModeIsActive()) {
             slowdownMultiplier = (1.0 - gamepad1.right_trigger);
@@ -98,10 +97,10 @@ public class TeleOp_Full extends CSBase {
                 if (!gamepad2.a && !gamepad2.b) {
                     carWashMotor.setPower(0);
                 } else {
-                    if (gamepad2.a) {
+                    if (gamepad2.b) {
                         carWashMotor.setPower(CAR_WASH_POWER);
                         addTelemetry("carWashMotor now moving forward");
-                    } else if (gamepad2.b) {
+                    } else if (gamepad2.a) {
                         carWashMotor.setPower(-CAR_WASH_POWER);
                         addTelemetry("carWashMotor now moving backward");
                     }
@@ -123,15 +122,16 @@ public class TeleOp_Full extends CSBase {
             }
 
             if (pixelLockingServo != null) {
-                if (gamepad2.x && !wasX) {
-                    if (pixelLockingServo.getPosition() > 0.9 && pixelLockingServo.getPosition() < 1.1) {
-                        pixelLockingServo.setPosition(0);
-                        addTelemetry("Set pixelFrontServo to 0");
-                    } else {
-                        pixelLockingServo.setPosition(1);
-                        addTelemetry("Set pixelFrontServo to 1");
-                    }
-                }
+                if (gamepad2.x) {
+                    pixelLockingServo.setPosition(1);
+//                    if (pixelLockingServo.getPosition() > 0.9 && pixelLockingServo.getPosition() < 1.1) {
+//                        pixelLockingServo.setPosition(0);
+//                        addTelemetry("Set pixelFrontServo to 0");
+//                    } else {
+//                        pixelLockingServo.setPosition(1);
+//                        addTelemetry("Set pixelFrontServo to 1");
+//                    }
+                } else { pixelLockingServo.setPosition(0); }
                 wasX = gamepad2.x;
             }
 

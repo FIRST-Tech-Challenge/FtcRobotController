@@ -152,9 +152,10 @@ public abstract class CSBase extends LinearOpMode {
 
         allianceColor = teamColor;
 
+        if (droneServo != null) { droneServo.setPosition(1); }
+        if (pixelLockingServo != null){ pixelLockingServo.setPosition(0); }
         waitForStart();
         runtime.reset();
-        if (pixelLockingServo != null){ pixelLockingServo.setPosition(0); }
     }
 
     /** Initializes all hardware devices on the robot.
@@ -525,7 +526,7 @@ public abstract class CSBase extends LinearOpMode {
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
         turn(0);
-            while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 0.5 || abs(a.ftcPose.yaw) > 0.5)) {
+            while (opModeIsActive() && (a != null && (abs(a.ftcPose.x) > 0.5 || abs(a.ftcPose.yaw) > 0.5))) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
                 print("Strafe", a.ftcPose.x);
@@ -638,6 +639,7 @@ public abstract class CSBase extends LinearOpMode {
         } else if (pos == spike.middle) {
             drive(-15);
             drive(15);
+            turn(0);
         } else if (pos == spike.right) {
             turn(35);
             drive(-14);
