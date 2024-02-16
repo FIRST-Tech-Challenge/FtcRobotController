@@ -53,8 +53,8 @@ public class BlueAuto1 extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location2 = true;
-                    PixelLocation2();
+                    Location3 = true;
+                    PixelLocation3();
                 }
 
                 TimeUnit.MILLISECONDS.sleep(500);

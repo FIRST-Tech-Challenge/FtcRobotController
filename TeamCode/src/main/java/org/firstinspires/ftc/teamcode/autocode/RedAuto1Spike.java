@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode.autocode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "test")
+@Autonomous(name = "RedAuto1Spike", group = "Spike Mark")
 
-public class test extends PlaceLinePixel {
+public class RedAuto1Spike extends PlaceLinePixel {
 
     @Override
 
@@ -33,12 +31,45 @@ public class test extends PlaceLinePixel {
             initTfod();
 
             waitForStart();
-            double index = 0;
 
             if (opModeIsActive()) {
-                RobotMoveFarward();
-                TimeUnit.MILLISECONDS.sleep(1000);
+                Grab();
+                TimeUnit.MILLISECONDS.sleep(250);
+
+                RobotMoveFarwardHalf();
+
                 RobotStop();
+
+                armUp();
+
+                TimeUnit.SECONDS.sleep(1);
+                telemetryTfod();
+                telemetry.update();
+
+                if (Location1 == true) {
+                    PixelLocation1();
+                } else if (Location2 == true) {
+                    PixelLocation2();
+                } else if (Location3 == true) {
+                    PixelLocation3();
+                } else {
+                    Location3 = true;
+                    PixelLocation3();
+                }
+
+                TimeUnit.MILLISECONDS.sleep(500);
+
+                RedLocation1Spike();
+
+                TimeUnit.MILLISECONDS.sleep(100);
+
+                armBrace.setPower(-.2);
+                armRotate.setPower(-.2);
+                TimeUnit.MILLISECONDS.sleep(500);
+
+                armRotate.setPower(0);
+                armBrace.setPower(0);
+                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

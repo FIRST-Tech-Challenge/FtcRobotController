@@ -397,37 +397,41 @@ public class PlaceLinePixel extends LinearOpMode {
         }
     }
 
-    public void BlueLocationPlace() {
+    public void BlueLocation1Spike() {
         try {
-            RobotTurnLeft();
-            TimeUnit.MILLISECONDS.sleep(1200);
 
-            RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
 
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(2500);
-
-            RobotStop();
-            TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
             //Nothing
         }
     }
 
-    public void RedLocationPlace() {
+    public void BlueLocation2Spike() {
         try {
-            RobotTurnRight();
-            TimeUnit.MILLISECONDS.sleep(1550);
 
-            RobotStop();
             TimeUnit.MILLISECONDS.sleep(100);
 
-            RobotMoveFarward();
-            TimeUnit.MILLISECONDS.sleep(2600);
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
 
-            RobotStop();
+    public void RedLocation1Spike() {
+        try {
+
             TimeUnit.MILLISECONDS.sleep(100);
+
+        } catch (InterruptedException e) {
+            //Nothing
+        }
+    }
+
+    public void RedLocation2Spike() {
+        try {
+
+            TimeUnit.MILLISECONDS.sleep(100);
+
         } catch (InterruptedException e) {
             //Nothing
         }
