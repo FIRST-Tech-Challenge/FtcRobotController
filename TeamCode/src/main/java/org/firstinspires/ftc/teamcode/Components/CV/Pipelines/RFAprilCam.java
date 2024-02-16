@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -4.75, UPSAMPLE_THRESHOLD = 30, NUMBER_OF_SAMPLES = 5;
+  public static double X_OFFSET = 6.5, Y_OFFSET = -4.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 10;
   public static int EXPOSURE_MS = 3, GAIN = 5;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
@@ -236,11 +236,11 @@ public class RFAprilCam {
                       new Vector2d(
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
-                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(6)+ PI);
+                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(5.2)+ PI);
           if(isLogi){
             camPose =
                     new Pose2d(
-                            camPose.getX(),camPose.getY(),camPose.getHeading()-toRadians(9));
+                            camPose.getX(),camPose.getY(),camPose.getHeading()-toRadians(8.1));
           }
           if (poseFtc.range < UPSAMPLE_THRESHOLD && (!isLogi||currentVelocity.vec().norm()<1)/*camPose.vec().distTo(currentPose.vec())<5*/) {
             //                        if (!upsample) {
@@ -275,7 +275,7 @@ public class RFAprilCam {
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), camPoseError.getHeading());
+          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), 0/*camPoseError.getHeading()*/);
           LOGGER.log("oldPose" + currentPose);
           poseHeadOffset += camPoseError.getHeading()/poseCount;
           currentPose = currentPose.plus(camPoseError.div(poseCount));

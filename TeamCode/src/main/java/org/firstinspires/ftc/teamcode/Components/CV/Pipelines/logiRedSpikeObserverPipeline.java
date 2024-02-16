@@ -33,7 +33,7 @@ public class logiRedSpikeObserverPipeline extends OpenCvPipeline {
             p31y = 340,
             p32x = 520,
             p32y = 410,
-            threshhold = 0.3,
+            threshhold = 0.4,
 
     // h3u and s3u: 71 and 90
     colour = 1,

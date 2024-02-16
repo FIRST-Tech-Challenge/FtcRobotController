@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 public class Hanger extends RFMotor {
     double permaPower = 0.0;
     boolean up = false;
-    public static double max = 6000,
+    public static double max = 5540,
             min = -15,
             RESISTANCE = 400,
             kS = 0.3,
@@ -32,17 +32,17 @@ public class Hanger extends RFMotor {
             MAX_DECEL = -10000,
             kP = 0,
             kD = 0;
-//    DcMotorEx encoder;
+    DcMotorEx encoder;
     public Hanger(){
         super("hangerMotor", !isTeleop);
         super.setDirection(DcMotorSimple.Direction.REVERSE);
         setConstants(
                 max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
         super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        encoder = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
+        encoder = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         if(!isTeleop){
-//            encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
     public void setPermaPower(double p_permaPower){
@@ -51,16 +51,20 @@ public class Hanger extends RFMotor {
     }
     @Override
     public void setPower(double p_power){
-//    if (this.getCurrentPosition() < max) {
+        double possy = this.getCurrentPosition();
+    if (possy < max && possy >0) {
             setRawPower(-p_power + permaPower);
-//        }
-//    else if (getCurrentPosition()>max){
-//        setRawPower(min(0,-p_power));
-//    }
-
-    if (abs(p_power) > 0.1) {
-      up = false;
     }
+    else if(possy > max){
+        setRawPower(min(-p_power,0));
+    }
+    else if (getCurrentPosition()<=0){
+        setRawPower(max(0,-p_power));
+    }
+
+//    if (abs(p_power) > 0.1) {
+//      up = false;
+//    }
     }
     public void up(){
         this.setPosition(max,0);
@@ -76,7 +80,7 @@ public class Hanger extends RFMotor {
 //        this.setCurrentPosition(encoder.getCurrentPosition());
 //        this.setCurrentVelocity(encoder.getVelocity());
         packet.put("hangPos", super.getCurrentPosition());
-        packet.put("hangerPower", super.getPower());
+//        packet.put("hangerPower", super.getPower());
         packet.put("upping",up);
     }
 }

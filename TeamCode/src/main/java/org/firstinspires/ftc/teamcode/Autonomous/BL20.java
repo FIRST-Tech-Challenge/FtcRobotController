@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -47,6 +48,7 @@ public class BL20 {
 
         spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-44,39,toRadians(90)))
                 .lineToLinearHeading(new Pose2d(-44,42,toRadians(90)))
                 .build();
 //
@@ -59,25 +61,26 @@ public class BL20 {
         pathy[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-38,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-43,31, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(42,57.5, toRadians(180)))
                 .build();
 
         pathy[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-38,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(42,57.5, toRadians(180)))
                 .build();
 
         pathy[2] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[2].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-38,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(42,57.5, toRadians(180)))
                 .build();
         if(!isLogi){
 
@@ -85,17 +88,17 @@ public class BL20 {
         droppy[0] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[0].end())
                 .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46.5,41.5,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(46.8,41.5,toRadians(180)))
                 .build();
         droppy[1] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[1].end())
                 .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46.5,35.25,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(46.8,35.25,toRadians(180)))
                 .build();
         droppy[2] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[2].end())
                 .lineToLinearHeading(new Pose2d(42.5,32,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46.5,29,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(46.8,29,toRadians(180)))
                 .build();
         }
         else{
@@ -103,19 +106,19 @@ public class BL20 {
                     .trajectorySequenceBuilder(pathy[0].end())
                     .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
                     .waitSeconds(2)
-                    .lineToLinearHeading(new Pose2d(46.5,41.5,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.8,41.5,toRadians(180)))
                     .build();
             droppy[1] = robot.roadrun
                     .trajectorySequenceBuilder(pathy[1].end())
                     .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
                     .waitSeconds(2)
-                    .lineToLinearHeading(new Pose2d(46.5,35.25,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.8,35.25,toRadians(180)))
                     .build();
             droppy[2] = robot.roadrun
                     .trajectorySequenceBuilder(pathy[2].end())
                     .lineToLinearHeading(new Pose2d(42.5,32,toRadians(180)))
                     .waitSeconds(2)
-                    .lineToLinearHeading(new Pose2d(46.5,29,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.8,29,toRadians(180)))
                     .build();
         }
 
@@ -163,7 +166,7 @@ public class BL20 {
             robot.update();
         }
         op.resetRuntime();
-    }
+        time=0;    }
     public void purp()
     {
         robot.queuer.addDelay(3.0);

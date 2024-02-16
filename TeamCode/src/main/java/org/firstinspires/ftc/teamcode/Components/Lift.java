@@ -25,9 +25,9 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 700,
+      RESISTANCE = 650,
       kS = 0.03,
-      kV = 3.2786E-4,
+      kV = 4.2786E-4,
       kA = 4E-5,
       MAX_UP_VELO = 3000,
       MAX_DOWN_VELO = -1080,
@@ -54,7 +54,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1540, false),
     MID_SET_LINE(1200, false),
-    LOW_SET_LINE(850, false),
+    LOW_SET_LINE(800, false),
     AT_ZERO(0, true);
 
     double position;
@@ -131,9 +131,9 @@ public class Lift extends RFDualMotor {
    * LiftPositionStates state machines.
    */
   public void update() {
-    LOGGER.log(
-        RFLogger.Severity.FINEST,
-        "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
+//    LOGGER.log(
+//        RFLogger.Severity.FINEST,
+//        "currentPos: " + super.getCurrentPosition() + ", currentTarget: " + super.getTarget());
     for (var i : LiftPositionStates.values()) {
       if (abs(super.getCurrentPosition() - i.position) < 50
           && (i != LiftPositionStates.AT_ZERO
@@ -165,8 +165,8 @@ public class Lift extends RFDualMotor {
         setTarget(super.getCurrentPosition());
         LiftMovingStates.LOW.clearTargets();
       }
-    LOGGER.log(RFLogger.Severity.FINE, "currentPos: " + super.getCurrentPosition());
-    packet.put("liftPos", super.getCurrentPosition());
+//    LOGGER.log(RFLogger.Severity.FINE, "currentPos: " + super.getCurrentPosition());
+//    packet.put("liftPos", super.getCurrentPosition());
   }
 
   /**

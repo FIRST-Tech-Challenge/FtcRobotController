@@ -11,8 +11,8 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
-  public static double GRABBY = 0.42
-          , DROPPY = .624, FLIP_TIME=0.2, LOCKY=0.45;
+  public static double GRABBY = 0.35
+          , DROPPY = .616, FLIP_TIME=0.4, LOCKY=0.4;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);

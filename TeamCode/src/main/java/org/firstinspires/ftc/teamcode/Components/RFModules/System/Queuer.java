@@ -23,6 +23,15 @@ public class Queuer {
 
   public Queuer() {
     queueElements = new ArrayList<>();
+    firstLoop=true;
+    queueElements.clear();
+    mustFinish = false;
+    isFulfilled=false;
+    currentlyQueueing = 0;
+    currentEvent = -1;
+    mustStartCondition = -1;
+    completeCurrentEvent = 0;
+    delay = 0;
   }
 
   public void setFirstLoop(boolean p_firstLoop) {
@@ -167,7 +176,10 @@ public class Queuer {
       boolean p_done_condition,
       boolean p_extra_condition,
       boolean p_isOptional) {
-    boolean isStart = isStarted();
+    boolean isStart= false;
+    if (queueElements.size() > 0) {
+      isStart = isStarted();
+    }
     p_done_condition = isStart && p_done_condition;
     // if it is first Loop
     if (firstLoop) {
@@ -259,6 +271,7 @@ public class Queuer {
     queueElements.clear();
     firstLoop = true;
     mustFinish = false;
+    isFulfilled=false;
     currentlyQueueing = 0;
     currentEvent = -1;
     mustStartCondition = -1;
@@ -270,7 +283,6 @@ public class Queuer {
   public boolean isFullfilled() {
     var newFulfilled = !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
     if (isFulfilled != newFulfilled && newFulfilled) {
-      LOGGER.setLogLevel(RFLogger.Severity.INFO);
       LOGGER.log("queue finished!");
     }
     isFulfilled = newFulfilled;

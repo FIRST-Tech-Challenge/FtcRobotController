@@ -20,18 +20,15 @@ public class MeepMeepTesting2 {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setDimensions(16.5,17.5)
-                .setConstraints(80, 40, 4 * PI, 2 * PI, 16)
-                .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-50,-31.25, toRadians(-180)))
-                                        .setReversed(true)
-                                        .splineToConstantHeading(new Vector2d(-28, -58.5), toRadians(3))
-                                        .splineToConstantHeading(new Vector2d(0, -58.5), toRadians(0))
-                                        .splineTo(new Vector2d(46.3, -35), toRadians(0))
-                                        .setReversed(false)
-                                        .splineTo(new Vector2d(3, -58.5), toRadians(180))
-                                        .splineToConstantHeading(new Vector2d(-28, -58.5), toRadians(180))
-                                        .splineToConstantHeading(new Vector2d(-53, -35.25), toRadians(150))
 
+                .setConstraints(60, 35, 4 * PI, 2 * PI, 16)
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(46.3,-41.5, toRadians(180)))
+                                        .setReversed(false)
+                                        .splineToConstantHeading(new Vector2d(24, -62.5), toRadians(180))
+                                        .splineTo(new Vector2d(10, -63.5), toRadians(190))
+                                        .splineToConstantHeading(new Vector2d(-38, -66.5), toRadians(180))
+                                        .splineToConstantHeading(new Vector2d(-55, -38.25), toRadians(180))
                                         .build()
                 );
 

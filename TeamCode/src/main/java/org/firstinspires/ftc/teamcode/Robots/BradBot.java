@@ -77,6 +77,7 @@ public class BradBot extends BasicRobot {
 
   PPUI ppui;
   double voltage=12;
+  boolean intaked = false;
 
   MecanumDrive drive;
 
@@ -111,6 +112,7 @@ public class BradBot extends BasicRobot {
     purped = false;
     ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
+    //12.4,12.2
     update();
   }
   public BradBot(LinearOpMode p_op, boolean p_isTeleop){
@@ -158,12 +160,12 @@ public class BradBot extends BasicRobot {
   public void purpurAuto() {
     if (queuer.queue(
         true, purped)) {
-      if(lift.getCurrentPosition()>750){
+      if(lift.getCurrentPosition()>600){
         arm.purpurPigzl();
       }
       if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(310);
+        lift.setPosition(300);
         wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
@@ -176,6 +178,25 @@ public class BradBot extends BasicRobot {
     }
     else{
       claw.moveTwo(false);
+    }
+  }
+
+  public void yellowAuto(boolean left){
+    if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.LEFT_TILT.getState())) {
+      if (currentPose.getX() > 9 && DROP.getState()) {
+        lift.setPosition(780);
+        if(left){
+          twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
+        }
+        else{
+          twrist.flipTo(Twrist.twristTargetStates.DROP);
+        }
+        //        if(Wrist.WristStates.LOCK.getState()){
+        //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
+        //        }
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        LOGGER.log("ocook");
+      }
     }
   }
 
@@ -223,7 +244,7 @@ public class BradBot extends BasicRobot {
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
       if (currentPose.getX() > 9) {
-        lift.setPosition(850);
+        lift.setPosition(880);
         intake.stopIntake();
         arm.flipTo(DROP);
         //        if(Wrist.WristStates.LOCK.getState()){
@@ -236,9 +257,9 @@ public class BradBot extends BasicRobot {
   }
 
   public void lowAuto() {
-    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==900)) {
-      if (currentPose.getX() > 9) {
-        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==1000)) {
+      if (currentPose.getX() > 0) {
+        lift.setPosition(1000);
         intake.stopIntake();
         arm.flipTo(DROP);
         if(Wrist.WristStates.LOCK.getState()){
@@ -343,11 +364,13 @@ public class BradBot extends BasicRobot {
   }
 
   public void intakeAuto(int height) {
-    if (queuer.queue(true, Magazine.pixels==2)) {
+    if (queuer.queue(true, Magazine.pixels==2&&intaked)) {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
       if (currentPose.getX()<-49 || intake.intakePath()) {
+        intaked=true;
+        magazine.updateSensors();
         if(intake.intakeAutoHeight(height)){
 
         } else if (!intake.intakePath()) {
@@ -399,6 +422,7 @@ public class BradBot extends BasicRobot {
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
         gapped = false;
+        intaked = false;
 //      }
     }
   }
@@ -554,6 +578,12 @@ public class BradBot extends BasicRobot {
     }
   }
 
+  public void hangerTele(){
+    float hangUp = op.gamepad2.right_trigger;
+    float hangDown = op.gamepad2.left_trigger;
+    hanger.setRawPower(hangDown-hangUp);
+  }
+
   /** What is run each loop in teleOp Logs that this function is being called to general surface */
   public void teleOp() {
     boolean isA = gampad.readGamepad(op.gamepad2.a, "gamepad1_a", "resetOuttake");
@@ -692,9 +722,7 @@ public class BradBot extends BasicRobot {
     if (isX2) {
 //      preloader.deposit();
     }
-    if (isY2) {
-      hanger.up();
-    }
+
 
     roadrun.setWeightedDrivePower(
         new Pose2d(
@@ -727,8 +755,8 @@ public class BradBot extends BasicRobot {
    * general log All else is logged in each respective function
    */
   public void update() {
-    LOGGER.setLogLevel(RFLogger.Severity.FINER);
-    LOGGER.log("updating each component");
+//    LOGGER.setLogLevel(RFLogger.Severity.FINER);
+//    LOGGER.log("updating each component");
     super.update();
     arm.update();
     if (!isTeleop) {

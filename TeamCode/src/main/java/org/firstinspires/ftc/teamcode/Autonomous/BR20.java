@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -34,8 +35,8 @@ public class BR20 {
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61,toRadians(90)))
                 .lineToLinearHeading(new Pose2d(16.5, 36.5, toRadians(91))).build();
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61, toRadians(90)))
-                .lineToLinearHeading(new Pose2d(24.5,40, toRadians(90)))
-                .lineToLinearHeading(new Pose2d(24.5,43, toRadians(90))).build();
+                .lineToLinearHeading(new Pose2d(24.5,33, toRadians(90)))
+                .lineToLinearHeading(new Pose2d(24.5,45, toRadians(90))).build();
     if (!isLogi) {
       preToStack[2] =
           robot
@@ -66,7 +67,7 @@ public class BR20 {
                         .trajectorySequenceBuilder(preload[2].end())
                         .lineToLinearHeading(new Pose2d(36.4, 35, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(46.5, 29, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(47.3, 29, toRadians(180)))
                         .build();
         preToStack[1] =
                 robot
@@ -75,15 +76,16 @@ public class BR20 {
                         .lineToLinearHeading(new Pose2d(16.5, 39.5, toRadians(91)))
                         .lineToLinearHeading(new Pose2d(36.4, 37, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(46.5, 35.25, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(47.3, 35.25, toRadians(180)))
                         .build();
         preToStack[0] =
                 robot
                         .roadrun
                         .trajectorySequenceBuilder(preload[0].end())
+                        .lineToLinearHeading(new Pose2d(24.5, 50, toRadians(90)))
                         .lineToLinearHeading(new Pose2d(40.5, 39.5, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(46.5, 41.5, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(47.3, 42, toRadians(180)))
                         .build();
 
     }
@@ -115,6 +117,7 @@ public class BR20 {
             robot.update();
         }
         op.resetRuntime();
+        time=0;
     }
     public void purp()
     {
