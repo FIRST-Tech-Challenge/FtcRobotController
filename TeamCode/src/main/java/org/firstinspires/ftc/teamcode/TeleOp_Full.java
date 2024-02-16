@@ -76,7 +76,7 @@ public class TeleOp_Full extends CSBase {
                     }
                     if (gamepad2.dpad_up && !gamepad2.dpad_down) {
                         if (pixelLiftingMotor.getCurrentPosition() < 5500) {
-                            pixelLiftingMotor.setPower(0.75);
+                            pixelLiftingMotor.setPower(1);
                             addTelemetry("pixelLiftingMotor now moving");
                         } else {
                             pixelLiftingMotor.setPower(0);
@@ -84,7 +84,7 @@ public class TeleOp_Full extends CSBase {
                         }
                     } else if (gamepad2.dpad_down && !gamepad2.dpad_up && !TS) {
                         if (pixelLiftingMotor.getCurrentPosition() > 0) {
-                            pixelLiftingMotor.setPower(-0.75);
+                            pixelLiftingMotor.setPower(-1);
                             addTelemetry("pixelLiftingMotor now moving");
                         } else {
                             pixelLiftingMotor.setPower(0);

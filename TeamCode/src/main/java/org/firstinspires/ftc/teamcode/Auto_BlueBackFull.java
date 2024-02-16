@@ -28,13 +28,14 @@ public class Auto_BlueBackFull extends CSBase {
 //        turn(-90);
 //        drive(tilesToInches(-1));
         setSpeed(1000);
-        for (int i = 0; i < 6; i++) {
-            telemetry.addData("i", i);
+        strafe(15, dir.left);
+        for (int i = 0; i < 3; i++) {
+            telemetry.addData("Strafe #", i);
             telemetry.update();
-            strafe(5, dir.left);
             if (tagDetections(ID, 1000) != null) {
                 break;
             }
+            strafe(5, dir.left);
         }
         align(ID);
         moveLift(GOAL_ENCODERS);

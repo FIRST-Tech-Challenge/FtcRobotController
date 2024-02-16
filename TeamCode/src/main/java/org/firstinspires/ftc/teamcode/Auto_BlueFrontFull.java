@@ -26,13 +26,15 @@ public class Auto_BlueFrontFull extends CSBase {
         turn(-90);
         s(2);
         drive(-70);
-        for (int i = 0; i < 6; i++) {
-            telemetry.addData("i", i);
+        setSpeed(1000);
+        strafe(15, dir.left);
+        for (int i = 0; i < 3; i++) {
+            telemetry.addData("Strafe #", i);
             telemetry.update();
-            strafe(5, dir.left);
             if (tagDetections(ID, 1000) != null) {
                 break;
             }
+            strafe(5, dir.left);
         }
         align(ID);
         moveLift(GOAL_ENCODERS);

@@ -28,7 +28,7 @@ public class Auto_RedFrontLimited extends CSBase {
         setSpeed(1000);
         drive(15);
         setSpeed(2000);
-        ejectPixel();
+        ejectPixel(3000);
         drive(5);
 
 //        pos = findPos();

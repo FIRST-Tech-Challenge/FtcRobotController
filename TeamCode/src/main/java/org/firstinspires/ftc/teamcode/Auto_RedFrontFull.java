@@ -24,13 +24,15 @@ public class Auto_RedFrontFull extends CSBase {
         turn(90);
         s(2);
         drive(-70);
-        for (int i = 0; i < 4; i++) {
-            telemetry.addData("i", i);
+        setSpeed(1000);
+        strafe(15, dir.right);
+        for (int i = 0; i < 3; i++) {
+            telemetry.addData("Strafe #", i);
             telemetry.update();
-            strafe(8, dir.right);
-            if (tagDetections(ID, 500) != null) {
+            if (tagDetections(ID, 1000) != null) {
                 break;
             }
+            strafe(5, dir.right);
         }
         align(ID);
         moveLift(GOAL_ENCODERS);

@@ -26,7 +26,7 @@ public class Auto_RedBackLimited extends CSBase {
         drive(tilesToInches(2));
         turn(90);
         drive(tilesToInches(0.5));
-        ejectPixel();
+        ejectPixel(3000);
         setSpeed(1000);
         drive(tilesToInches(0.2));
 

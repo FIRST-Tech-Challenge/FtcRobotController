@@ -20,7 +20,7 @@ import java.util.*;
 
 /** Base class that contains common methods and other configuration. */
 public abstract class CSBase extends LinearOpMode {
-    private static final double LIFT_VEL = 1000;
+    private static final double LIFT_VEL = 1500;
     public static final double GOAL_ENCODERS = 2000;
     private TfodProcessor tfod;
     private static final ElapsedTime runtime = new ElapsedTime();
@@ -67,24 +67,16 @@ public abstract class CSBase extends LinearOpMode {
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     ));
 
-    /** Color options for the team prop. Options: r, b, n **/
-    public enum color {
-        red, blue, none
-    }
-    /** Side of the robot. Options: f, b **/
-    public enum side {
-        front, back
-    }
+    /** Color options for the team prop. Options: red, blue, none **/
+    public enum color { red, blue, none }
+    /** Side of the robot. Options: front, back **/
+    public enum side { front, back }
 
-    /** Directions. Options: l, r, f, b **/
-    public enum dir {
-        left, right, forward, backward
-    }
+    /** Directions. Options: left, right, forward, backward **/
+    public enum dir { left, right, forward, backward }
 
-    /** Spike mark positions for the team prop. Options: l, m, r, n **/
-    public enum spike {
-        left, middle, right, none
-    }
+    /** Spike mark positions for the team prop. Options: left, middle, right, none **/
+    public enum spike { left, middle, right, none }
 
     /** Initializes all hardware devices on the robot.
      * @param teamColor The color of the team prop.
@@ -104,6 +96,7 @@ public abstract class CSBase extends LinearOpMode {
         if (!imu.initialize(IMU_PARAMETERS)){
             throw new RuntimeException("IMU initialization failed");
         }
+        imu.resetYaw();
 
         // The following try catch statements "check" if a motor is connected. If it isn't, it sets
         // that motor's value to null. Later, we check if that value is null. If it is, then we
@@ -119,8 +112,7 @@ public abstract class CSBase extends LinearOpMode {
         try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
         try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
         try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
-        try {
-            pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
+        try {pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
         try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
         try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
         if (useCam) {
@@ -162,9 +154,7 @@ public abstract class CSBase extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        if (pixelLockingServo != null){
-            pixelLockingServo.setPosition(0);
-        }
+        if (pixelLockingServo != null){ pixelLockingServo.setPosition(0); }
     }
 
     /** Initializes all hardware devices on the robot.
@@ -259,15 +249,13 @@ public abstract class CSBase extends LinearOpMode {
      */
     public void turn(double degrees, dir direction) {
         double direct = 0;
-        if (direction == dir.left) {
-            direct = -1;
-        } else if (direction == dir.right){
-            direct = 1;
-        }
+        if (direction == dir.left) { direct = -1; }
+        else if (direction == dir.right) { direct = 1; }
         sleep(100);
+        degrees *= -1;
+        degrees -= imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         imu.resetYaw();
         double tolerance = 1;
-        degrees *= -1;
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double currentAngle;
         double initialGoalAngle = startAngle + degrees;
@@ -297,6 +285,7 @@ public abstract class CSBase extends LinearOpMode {
             update();
         }
         stopRobot();
+        imu.resetYaw();
         sleep(WAIT_TIME);
     }
 
@@ -407,11 +396,11 @@ public abstract class CSBase extends LinearOpMode {
     }
 
     /** Makes the car wash outtake for 1 second. **/
-    public void ejectPixel() {
+    public void ejectPixel(double time) {
         if (carWashMotor != null) {
             print("Car Wash", "Ejecting Pixel");
             update();
-            double t = runtime.milliseconds() + 1000;
+            double t = runtime.milliseconds() + time;
             carWashMotor.setPower(CAR_WASH_POWER);
             while (opModeIsActive()) {
                 if (!(runtime.milliseconds() < t)) {
@@ -425,6 +414,7 @@ public abstract class CSBase extends LinearOpMode {
         }
         sleep(WAIT_TIME);
     }
+    public void ejectPixel() {ejectPixel(2000);}
 
     /** Stops all drive train motors on the robot. **/
     public void stopRobot() {
@@ -534,6 +524,7 @@ public abstract class CSBase extends LinearOpMode {
      */
     public void align(int id) {
         AprilTagDetection a = tagDetections(id, 1);
+        turn(0);
             while (opModeIsActive() && a != null && (abs(a.ftcPose.x) > 0.5 || abs(a.ftcPose.yaw) > 0.5)) {
                 a = tagDetections(id, 1);
                 if (a == null) { return; }
