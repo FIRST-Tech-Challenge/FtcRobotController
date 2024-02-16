@@ -15,6 +15,11 @@ public class GlobalConfig {
         RIGHT
     }
 
+    public static enum ALLIANCE_COL {
+        BLUE,
+        RED
+    }
+
     public static enum AUTONOMOUS_DELIVERY_MODES {
         ARM,
         DROPPER

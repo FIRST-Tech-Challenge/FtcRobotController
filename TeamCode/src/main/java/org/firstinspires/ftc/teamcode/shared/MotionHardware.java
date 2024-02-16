@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.Locale;
 
@@ -53,6 +56,23 @@ public class MotionHardware {
     public static double WRIST_DROP_PIXEL = 1;
     public static double DROPPER_LOAD_PIXEL = 0.48;
     public static double DROPPER_DROP_PIXEL = -1.0;
+
+    static final double ARM_SPEED = 1.0;
+    static final int ARM_DROP_POS_LOW = -4530;
+    static final int ARM_DROP_POS_HIGH = -3550;
+    static final int ARM_DRIVE_POS = -800;
+    static final int ARM_INTAKE_POS = 25;
+
+    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
+    //  applied to the drive motors to correct the error.
+    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
     public enum Direction {
         RIGHT,
@@ -95,10 +115,13 @@ public class MotionHardware {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         //armMotor.setDirection(DcMotor.Direction.REVERSE);
 
+
+
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -511,6 +534,7 @@ public class MotionHardware {
                 leftGripper.setPosition(LEFT_GRIPPER_OPEN);
             case DROPPER:
                 dropper.setPosition(DROPPER_DROP_PIXEL);
+                sleep(700);
         }
 
     }
@@ -595,6 +619,111 @@ public class MotionHardware {
 
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         sleep(1000);
+    }
+
+    public void moveArmMotorToPosition(int position, double timeoutS) {
+        ElapsedTime runtime = new ElapsedTime();
+
+        runtime.reset();
+        armMotor.setTargetPosition(position);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(ARM_SPEED); // Set your desired power
+        while ((armMotor.isBusy()) && (runtime.seconds() < timeoutS)) {
+
+            myOpMode.telemetry.addData("Running to", "%7d", position);
+            myOpMode.telemetry.addData("Currently at", "%7d", armMotor.getCurrentPosition());
+            myOpMode.telemetry.update();
+        }
+
+        wrist.setPosition(0.80);
+        sleep(1000);
+        leftGripper.setPosition(LEFT_GRIPPER_OPEN); // Adjust the position value as needed
+        rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value as needed
+        sleep(3000);
+        armMotor.setPower(0); // Stop the motor once the position is reached
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void navToTag(AprilTagDetection desiredTag, int DESIRED_DISTANCE) {
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+
+        while(desiredTag.ftcPose.range > DESIRED_DISTANCE) {
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
+
+            // Use the speed and turn "gains" to calculate how we want the robot to move.
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+            myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+
+            myOpMode.telemetry.update();
+
+            // Apply desired axes motions to the drivetrain.
+            moveRobotTag(drive, strafe, turn);
+            sleep(10);
+        }
+
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+
+
+    }
+
+
+    /**
+     * Move robot according to desired axes motions
+     * Used only by Vision AprilTag Navigation Mode
+     * <p>
+     * Positive X is forward
+     * <p>
+     * Positive Y is strafe left
+     * <p>
+     * Positive Yaw is counter-clockwise
+     */
+    public void moveRobotTag(double x, double y, double yaw) {
+
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        frontLeftMotor.setPower(leftFrontPower);
+        frontRightMotor.setPower(rightFrontPower);
+        backLeftMotor.setPower(leftBackPower);
+        backRightMotor.setPower(rightBackPower);
     }
 
 
