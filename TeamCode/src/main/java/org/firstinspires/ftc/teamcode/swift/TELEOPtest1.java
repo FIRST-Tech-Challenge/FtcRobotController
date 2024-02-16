@@ -8,9 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.shared.GlobalConfig;
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 @TeleOp
 public class TELEOPtest1 extends LinearOpMode {
+    public GlobalConfig globalConfig = new GlobalConfig(GlobalConfig.AUTONOMOUS_DELIVERY_MODES.DROPPER);
     private ElapsedTime runtime = new ElapsedTime();
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
     static final int CYCLE_MS = 50;     // period of each cycle
@@ -18,11 +21,13 @@ public class TELEOPtest1 extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
     private Servo leftGripper;
     private Servo rightGripper;
-    private Servo dropperServo;
+    //private Servo dropperServo;
     private Servo launcherServo = null;
     //private Servo DroneCoverServo = null;
     private DcMotor armMotor = null;
-    MotionHardware robot = new MotionHardware(this);
+//    MotionHardware robot = new MotionHardware(this);
+    MotionHardware robot = new MotionHardware(this, globalConfig);
+
 
 
     @Override
@@ -50,8 +55,8 @@ public class TELEOPtest1 extends LinearOpMode {
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wristServo = hardwareMap.servo.get("wristServo");
-        launcherServo = hardwareMap.get(Servo.class, "launcherServo");
-        dropperServo = hardwareMap.get(Servo.class, "dropperServo");
+        launcherServo = hardwareMap.get(Servo.class, "planeServo");
+       // dropperServo = hardwareMap.get(Servo.class, "dropperServo");
         leftGripper = hardwareMap.get(Servo.class, "leftGripper");
         rightGripper = hardwareMap.get(Servo.class, "rightGripper");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
