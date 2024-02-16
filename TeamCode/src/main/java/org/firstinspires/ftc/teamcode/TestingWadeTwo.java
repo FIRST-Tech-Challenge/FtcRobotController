@@ -21,10 +21,7 @@ public class TestingWadeTwo extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
-            robot.stackAttachment.setPosition(0.5);
-            sleep(2000);
-            break;
+            robot.setServoPosBlocking(robot.spikeServo, 0.5); //closed 0.5 open 0.2
 
             //go, come back, go, come back, clamp, regurgitate
 
