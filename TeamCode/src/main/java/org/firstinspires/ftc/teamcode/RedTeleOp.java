@@ -15,7 +15,6 @@ public class RedTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        //TODO: add manual pivot
         robot.teleOpWhileLoop(gamepad1, gamepad2);
     }
 }

@@ -609,7 +609,7 @@ public class Robot {
                 setHeading(-90 * polarity, 0.7);
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -618,8 +618,6 @@ public class Robot {
                 setHeading(90 * polarity, 0.7); //TODO: the robot couldn't terminate this in one run
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
-                mecanumBlocking2(-29 * polarity);
 
                 setHeading(90 * polarity, 0.7);
 
@@ -652,7 +650,7 @@ public class Robot {
                 // P4: (22.5, 39.5)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
                 setHeading(-90 * polarity, 0.7);
@@ -692,7 +690,7 @@ public class Robot {
                 // P4: (31.5, 44)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -789,7 +787,7 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -847,7 +845,7 @@ public class Robot {
                 // P4: (22.5, 39.5)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -905,7 +903,7 @@ public class Robot {
                 // P4: (31.5, 44)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -1001,7 +999,7 @@ public class Robot {
         openHook();
         closeClamp(false);
         trayToIntakePos(true);
-        setServoPosBlocking(spikeServo, 0.2); //lift finger
+        moveFingerUp();
         opMode.sleep(100);
         planeLauncher.setPower(0);
         planeLauncherServo.setPosition(planeServoDisengage);
@@ -1760,7 +1758,7 @@ public class Robot {
         // set clamp, hook, spike
         closeClamp(false);
         openHook();
-        setServoPosBlocking(spikeServo, 0.5);
+        moveFingerDown();
         opMode.sleep(100);
     }
     public void middleToStackAndIntake() {
@@ -1886,7 +1884,7 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                     moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -1945,7 +1943,7 @@ public class Robot {
                 // P4: (22.5, 39.5)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -2003,7 +2001,7 @@ public class Robot {
                 // P4: (31.5, 44)
 
                 if (!testingOnBert) {
-                    setServoPosBlocking(spikeServo, 0.2); //lift finger
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
@@ -2083,18 +2081,18 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(101);
         } else {
-            straightBlocking2FixHeading(104);
+            straightBlocking2FixHeading(105);
         }
         intake.setPower(-1);
 
         if (isRedAlliance) {
             mecanumBlocking2(23);
         } else {
-            mecanumBlocking2(-26);
+            mecanumBlocking2(-27);
         }
 
         //straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
-        straightBlocking(1, false, 1);
+        straightBlocking(2, false, 1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
         straightBlocking(1, true, 1);
@@ -2140,7 +2138,8 @@ public class Robot {
                 break;
         }
 
-        setHeading(90 * polarity, 0.7);
+        setHeading(0, 0.7);
+        // todo fix this - setHeading(90 * polarity, 0.7);
     }
 
     public static double angleWrap (double angle) {
@@ -2151,6 +2150,14 @@ public class Robot {
             return moddedAngle + 360;
         }
         return moddedAngle;
+    }
+
+    public void moveFingerUp() {
+        setServoPosBlocking(spikeServo, 0.5);
+    }
+
+    public void moveFingerDown () {
+        setServoPosBlocking(spikeServo, 0.68);
     }
 
 }
