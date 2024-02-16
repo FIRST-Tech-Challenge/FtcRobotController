@@ -38,7 +38,8 @@ public class Driver extends LinearOpMode {
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
     static final double WRIST_INTAKE_POS = 0.3;
-    static final double WRIST_FORWARD_DROP_POS = 0.85;
+    static final double WRIST_FORWARD_DROP_POS_HIGH = 0.73;
+    static final double WRIST_FORWARD_DROP_POS_LOW = 0.65;
     static final double DRONE_LAUNCH = 0.8;
     static final double DRONE_SECURE = 0.3;
     private Servo leftGripper;
@@ -247,10 +248,10 @@ public class Driver extends LinearOpMode {
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
                     }else if (gamepad1.b) {
                         // move to 0 degrees.
-                        wristServo.setPosition(WRIST_FORWARD_DROP_POS);
+                        wristServo.setPosition(WRIST_FORWARD_DROP_POS_HIGH);
                         moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
                     }else if (gamepad1.a) {
-                        wristServo.setPosition(ARM_INTAKE_POS);
+                        wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     }
 
