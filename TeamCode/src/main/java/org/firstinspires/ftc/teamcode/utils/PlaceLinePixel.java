@@ -54,6 +54,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Place Line Pixel")
+@Disabled
 public class PlaceLinePixel extends LinearOpMode {
 
     public static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera

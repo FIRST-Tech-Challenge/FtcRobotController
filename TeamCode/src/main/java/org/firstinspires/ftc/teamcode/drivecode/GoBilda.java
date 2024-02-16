@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 @TeleOp
-public class GoBuilda extends LinearOpMode {
+public class GoBilda extends LinearOpMode {
 
 
     private DcMotor armRotate;
