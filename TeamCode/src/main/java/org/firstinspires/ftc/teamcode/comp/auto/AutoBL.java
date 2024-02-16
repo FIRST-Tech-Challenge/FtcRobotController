@@ -44,24 +44,11 @@ public class AutoBL extends LinearOpMode {
                     robot.dropPixel();
                     sleep(1000);
                     robot.moveRobot(.5, 2, 10);
-
-                    // Turn to face camera to board so we can find april tag
                     robot.turnRobot(Direction.RIGHT, 14, .5, 10);
                     robot.moveRobot(.5, 21, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -38, 10);
-                    //Pretend to drop pixel
-                    //robot.dropPixel();
-                    //sleep(1000);
-                    //Backup and clear pixel
-                    //robot.moveRobot(.5, -5, 5);
-                    //Turn to parking location
-                    //robot.turnRobot(Direction.RIGHT, 16, .5, 10);
-                    //Park
-                    //robot.moveRobot(.5, 30, 10);
+                    robot.strafeWithTime(.5, 270, 2);
                     break;
                 case LEFT:
                     //Dropper Mode
@@ -75,19 +62,7 @@ public class AutoBL extends LinearOpMode {
                     robot.moveRobot(.5, 22, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -43.75, 10);
-                    //Turn left
-                    //robot.turnRobot(Direction.RIGHT, 6, .5, 10);
-                    //Move to line
-                    //robot.moveRobot(.5, 9, 5);
-                    //Drop pixel
-                    //robot.dropPixel();
-                    //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.strafeWithTime(.5, 270, 2);
                     break;
                 default:
                     //Dropper Mode
@@ -102,29 +77,8 @@ public class AutoBL extends LinearOpMode {
                     robot.moveRobot(.5, 14, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -30.75, 10);
-                    //Turn left
-
-                    //robot.turnRobot(Direction.RIGHT, 14, .5, 10);
-                    //robot.moveRobot(.5, -5, 10);
-                    //robot.dropPixel();
-                    //robot.moveRobot(.5, 5, 10);
-                    //robot.turnRobot(Direction.LEFT, 15, .5, 10);
-                    //Move to line
-                    //robot.moveRobot(.5, 30.75, 5);
-                    //Drop pixel
-                    //Move awayn from line
-                    //robot.moveRobot(.5, -9, 5);
-                    //Turn to park
-                    //robot.turnRobot(Direction.RIGHT, 19, 5, 10);
-                    //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.RIGHT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.strafeWithTime(.5, 270, 2);
                     break;
-
             }
             
             sleep(20);

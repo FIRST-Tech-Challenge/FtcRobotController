@@ -51,56 +51,16 @@ public class AutoRR extends LinearOpMode {
 
             switch(propPosition) {
                 case MIDDLE:
-                    DESIRED_TAG_ID = 5;
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -3, 10);
-                    //robot.moveArm(.5, -10, 5);
-                    //robot.moveRobot(.5, -36, 10);
-                    //robot.moveRobot(.5, -38, 10);
-
                     // Dropper Mode
                     robot.moveRobot(.5, -15, 10);
                     robot.dropPixel();
                     sleep(1000);
                     robot.moveRobot(.5, 2, 10);
-
-                    // Turn to face camera to board so we can find april tag
                     robot.turnRobot(Direction.LEFT, 13, .5, 10);
                     robot.moveRobot(.5, 21, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //robot.turnRobot(Direction.RIGHT, 13, .5, 10);
-                    //robot.moveRobot(.5, 8, 10);
-
-
-
-
-
-
-                    //vision.setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
-
-
-                    //vision.detectTag(DESIRED_TAG_ID, robot, 10);
-                    /**
-                    if(desiredTag == null) {
-                        // go park because we didn't find the tag
-                        telemetry.addData("Tag Not Found ","%7d", DESIRED_TAG_ID);
-                        telemetry.update();
-                    } else {
-                        robot.navToTag(desiredTag, DESIRED_DISTANCE);
-                    }
-                     **/
-
-
-                    //Backup and clear pixel
-                    //robot.moveRobot(.5, -3.75, 5);
-                    //robot.moveRobot(.5, -5, 5);
-
-                    //Turn to parking location
-                    //robot.turnRobot(Direction.LEFT, 9, .5, 10);
-                    //Park
-                    //robot.moveRobot(.5, 28, 10);
+                    robot.strafeWithTime(.5, 180, 2);
                     break;
                 case RIGHT:
                     //Dropper Mode
@@ -114,22 +74,7 @@ public class AutoRR extends LinearOpMode {
                     robot.moveRobot(.5, 22, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //robot.turnRobot(Direction.RIGHT, 13, .5, 10);
-                    //robot.moveRobot(.5, 8, 10);
-
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -43.75, 10);
-                    //Turn left
-                    //robot.turnRobot(Direction.LEFT, 6, .5, 10);
-                    //Move to line
-                    //robot.moveRobot(.5, 9, 5);
-                    //Drop pixel
-                    //robot.dropPixel();
-                    //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.LEFT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.strafeWithTime(.5, 180, 2);
                     break;
                 default:
                     //Dropper Mode
@@ -144,26 +89,7 @@ public class AutoRR extends LinearOpMode {
                     robot.moveRobot(.5, 15, 10);
                     robot.moveArmMotorToPosition(-1200, 10);
                     robot.moveRobot(.5, -3, 10);
-
-                    //robot.turnRobot(Direction.RIGHT, 13, .5, 10);
-                    //robot.moveRobot(.5, 8, 10);
-
-                    //Drop off pixel
-                    //robot.moveRobot(.5, -30.75, 10);
-                    //Turn left
-                    //robot.turnRobot(Direction.RIGHT, 14, .5, 10);
-                    //Move to line
-                    //robot.moveRobot(.5, 9, 5);
-                    //Drop pixel
-                    //robot.dropPixel();
-                    //Move awayn from line
-                    //robot.moveRobot(.5, -9, 5);
-                    //Turn to park
-                    //robot.turnRobot(Direction.LEFT, 19, 5, 10);
-                    //Park
-                    //robot.moveRobot(.5, 45, 10);
-                    //robot.turnRobot(Direction.LEFT, 14, 5, 10);
-                    //robot.moveRobot(.5, 13, 5);
+                    robot.strafeWithTime(.5, 180, 2);
                     break;
             }
 
