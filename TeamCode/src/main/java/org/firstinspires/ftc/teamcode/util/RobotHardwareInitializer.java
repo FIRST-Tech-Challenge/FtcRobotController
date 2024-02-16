@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -173,7 +174,7 @@ public class RobotHardwareInitializer {
         out.put(Other.ARM, new ArrayTypeValue<>(tmp2));
 
         // Init Wrist
-        out.put(Other.WRIST, new ServoTypeValue(initializeWrist(opMode)));
+        out.put(Other.WRIST, new MotorTypeValue(initializeWrist(opMode)));
 
         // Init Finger
         out.put(Other.FINGER, new ServoTypeValue(initializeFinger(opMode)));
@@ -301,11 +302,10 @@ public class RobotHardwareInitializer {
         }
     }
 
-    public static Servo initializeWrist(final OpMode opMode) {
+    public static DcMotorEx initializeWrist(final OpMode opMode) {
         try {
-            Servo servo = opMode.hardwareMap.get(Servo.class, "wrist_servo");
-            servo.setDirection(Servo.Direction.FORWARD);
-            return servo;
+            DcMotorEx motor = opMode.hardwareMap.get(DcMotorEx.class, "wrist"); // port 2
+            return motor;
         } catch(Exception e) {
             Error(e, opMode);
         }

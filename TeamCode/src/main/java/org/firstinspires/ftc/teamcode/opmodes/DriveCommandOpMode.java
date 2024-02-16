@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,7 +13,7 @@ import org.firstinspires.ftc.teamcode.commands.MoveArmCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.commands.ThrowAirplaneCommand;
-import org.firstinspires.ftc.teamcode.commands.ZeroWristCommand;
+import org.firstinspires.ftc.teamcode.commands.WristPositionCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
@@ -27,7 +25,6 @@ import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
 @TeleOp(name = "RealestDriverOpMode")
@@ -51,7 +48,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DefaultDrive driveCommand;
     private MoveArmCommand moveArmCommand;
     private MoveWristCommand moveWristCommand;
-    private ZeroWristCommand zeroWristCommand;
+    private WristPositionCommand zeroWristCommand;
     private MoveFingerCommand moveFingerCommand;
     private IntakeCommand intakeCommand;
 
@@ -104,12 +101,12 @@ public class DriveCommandOpMode extends CommandOpMode {
             return end;
         };
 
+
+
         driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
         moveArmCommand = new MoveArmCommand(armSubsystem,
                 () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
-                () -> armerController.getButton(GamepadKeys.Button.LEFT_BUMPER),
-                () -> armerController.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+                () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
                 forwardWristSupplier, backwardWristSupplier);
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
@@ -135,6 +132,11 @@ public class DriveCommandOpMode extends CommandOpMode {
                 .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.OPEN));
         armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.CLOSED));
+        armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new WristPositionCommand(wristSubsystem, true, moveWristCommand));
+        armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new WristPositionCommand(wristSubsystem, false, moveWristCommand));
+
 
         register(driveSubsystem);
         register(armSubsystem);

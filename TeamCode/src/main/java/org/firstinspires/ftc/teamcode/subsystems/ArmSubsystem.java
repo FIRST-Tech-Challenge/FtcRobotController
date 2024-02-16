@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
         armMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.armMotor2 = ARM.get(ARM.get(RobotHardwareInitializer.Arm.ARM2));
+        this.armMotor2 = ARM.get(RobotHardwareInitializer.Arm.ARM2);
         assert armMotor2 != null;
         armMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

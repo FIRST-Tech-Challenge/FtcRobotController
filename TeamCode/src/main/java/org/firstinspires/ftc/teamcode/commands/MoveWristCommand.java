@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
+import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 
 import java.util.function.DoubleSupplier;
 
 public class MoveWristCommand extends CommandBase {
 
-    private DoubleSupplier frontward, backward;
+    public DoubleSupplier frontward, backward;
     private WristSubsystem subsystem;
 
     public MoveWristCommand(WristSubsystem subsystem, DoubleSupplier frontward, DoubleSupplier backward) {
@@ -21,6 +22,8 @@ public class MoveWristCommand extends CommandBase {
     public MoveWristCommand(WristSubsystem subsystem, DoubleSupplier directionSupplier) {
         this(subsystem, directionSupplier, () -> 0);
     }
+
+    FTCDashboardPackets packets = new FTCDashboardPackets();
 
     @Override
     public void execute() {

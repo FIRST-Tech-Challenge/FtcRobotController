@@ -13,33 +13,14 @@ public class MoveArmCommand extends CommandBase {
 
     ArmSubsystem subsystem;
     DoubleSupplier frontwardSupplier, backwardSupplier;
-    BooleanSupplier moveArmToZero, moveArmToBoard;
 
     public MoveArmCommand(ArmSubsystem subsystem, DoubleSupplier frontwardSupplier,
                           DoubleSupplier backwardSupplier) {
         Objects.requireNonNull(subsystem);
-        this.subsystem = subsystem;
-        this.frontwardSupplier = frontwardSupplier;
-        this.backwardSupplier = backwardSupplier;
-
-        final BooleanSupplier ZERO = () -> false;
-
-        this.moveArmToZero = ZERO;
-        this.moveArmToBoard = ZERO;
-
-        addRequirements(subsystem);
-    }
-
-    public MoveArmCommand(ArmSubsystem subsystem, DoubleSupplier frontwardSupplier,
-                          DoubleSupplier backwardSupplier, BooleanSupplier moveArmToZero,
-                          BooleanSupplier moveArmToBoard) {
-        Objects.requireNonNull(subsystem);
 
         this.subsystem = subsystem;
         this.frontwardSupplier = frontwardSupplier;
         this.backwardSupplier = backwardSupplier;
-        this.moveArmToZero = moveArmToZero;
-        this.moveArmToBoard = moveArmToBoard;
 
         addRequirements(subsystem);
     }
@@ -49,15 +30,7 @@ public class MoveArmCommand extends CommandBase {
 
         double power = frontwardSupplier.getAsDouble()-backwardSupplier.getAsDouble();
 
-        if (moveArmToZero.getAsBoolean()) {
-            subsystem.positionMoveArm(FLOOR);
-            return;
-        } else if (moveArmToBoard.getAsBoolean()) {
-            subsystem.positionMoveArm(BOARD);
-            return;
-        }
-
-        if(power == 0) {
+        if (power == 0) {
             subsystem.haltArm();
         } else {
             subsystem.manualMoveArm(power);
