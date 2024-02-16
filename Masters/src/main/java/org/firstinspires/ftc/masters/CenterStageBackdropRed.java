@@ -90,15 +90,15 @@ public class CenterStageBackdropRed extends LinearOpMode {
         State currentState;
 
         Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, -36.5), Math.toRadians(150)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(10, -38.5), Math.toRadians(150)))
                 .build();
 
         Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false) // misses every time
-                .lineToSplineHeading(new Pose2d(new Vector2d(13, -31), Math.toRadians(60)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(10, -31), Math.toRadians(60)))
                 .build();
 
         Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, -37), Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(12, -36), Math.toRadians(90)))
                 .build();
 
         Trajectory purpleBackUpC = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
@@ -119,15 +119,15 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
 
         Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(44, -26), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -30), Math.toRadians(180)), Math.toRadians(60))
                 .build();
 
         Trajectory yellowDepositPathL = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(44, -16), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -23), Math.toRadians(180)), Math.toRadians(60))
                 .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(45, -30), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -34), Math.toRadians(180)), Math.toRadians(60))
                 .build();
 
         Trajectory parkC = drive.trajectoryBuilder(yellowDepositPathC.end())
@@ -260,8 +260,12 @@ public class CenterStageBackdropRed extends LinearOpMode {
                             //if april tag is aligned drop and
                             if (depositTime.milliseconds() > 500) {
                                 drive.dropPixel();
+
                             }
-                            if (depositTime.milliseconds() > 700) {
+                            if (depositTime.milliseconds()>800){
+                                target = CSCons.OuttakePosition.LOW_AUTO.getTarget()+200;
+                            }
+                            if (depositTime.milliseconds() > 1100) {
                                 if (propPos== PropFindRight.pos.LEFT){
                                     drive.followTrajectoryAsync(parkL);
                                 } else if (propPos== PropFindRight.pos.RIGHT){

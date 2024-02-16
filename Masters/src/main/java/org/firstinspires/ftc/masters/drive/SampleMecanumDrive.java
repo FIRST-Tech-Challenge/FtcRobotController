@@ -96,6 +96,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     Servo outtakeHook;
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo microHook;
 
     TouchSensor touchSensor;
     RevColorSensorV3 colorSensor;
@@ -107,11 +108,18 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     PIDController controller;
+    PIDController icontroller;
 
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
 
     private final double ticks_in_degrees = 384.5 / 180;
+
+    public final double iticks_in_degree = 384.5 / 180;
+
+    public static double ip = 0.01, ii = 0, iid = 0.00;
+    public static double iif = 0.05;
+
 
     Telemetry telemetry;
 
@@ -187,6 +195,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         clawAngle = hardwareMap.servo.get("clawAngle");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
+        microHook = hardwareMap.servo.get("microHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchSensor = hardwareMap.touchSensor.get("touchBucket");
@@ -194,6 +203,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
+
+        icontroller = new PIDController(ip, ii, iid);
+        icontroller.setPID(ip, ii, iid);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -272,6 +284,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void closeHook(){
+        microHook.setPosition(CSCons.closeMicroHook);
         outtakeHook.setPosition(CSCons.closeHook);
     }
 
@@ -289,6 +302,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void dropPixel() {
         outtakeHook.setPosition(CSCons.openHook);
+        microHook.setPosition(CSCons.openMicroHook);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
@@ -482,6 +496,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
         backSlides.setPower(liftPower);
         otherBackSlides.setPower(liftPower);
+    }
+
+    public void intakeSlidesMove(int itarget) {
+
+
+        int islidePos = intakeSlides.getCurrentPosition();
+        double ipid = icontroller.calculate(islidePos, itarget);
+        double iff = Math.cos(Math.toRadians(itarget / iticks_in_degree)) * iif;
+
+        double iliftPower = ipid + iff;
+
+        intakeSlides.setPower(iliftPower);
+
     }
 
     public DcMotor getBackSlides(){
