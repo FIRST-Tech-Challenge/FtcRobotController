@@ -128,7 +128,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backRight.setPower(pwr*-1*dir);
     }
     public void driveTurn(double pwr, int dir) {
-        double rightSideDecrementCoefficent = 0.5; // 0.5 half
+        double rightSideDecrementCoefficent = 0.75; // 0.5 half
         // dir must be -1 to 1 (to specify direction)
         frontLeft.setPower(pwr*-0.5*dir);
         frontRight.setPower(pwr*rightSideDecrementCoefficent*dir);
