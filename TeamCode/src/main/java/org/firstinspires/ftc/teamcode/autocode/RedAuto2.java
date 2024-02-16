@@ -42,7 +42,7 @@ public class RedAuto2 extends PlaceLinePixel {
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,15 +53,28 @@ public class RedAuto2 extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location3 = true;
-                    PixelLocation3();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
+                Break();
+
+                RobotStop();
+
+                Float();
+
                 TimeUnit.MILLISECONDS.sleep(500);
-
-                RedLocation2();
-
-                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

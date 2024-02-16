@@ -42,7 +42,7 @@ public class BlueAuto2Spike extends PlaceLinePixel {
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,23 +53,28 @@ public class BlueAuto2Spike extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location3 = true;
-                    PixelLocation3();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
+                Break();
+
+                RobotStop();
+
+                Float();
+
                 TimeUnit.MILLISECONDS.sleep(500);
-
-                BlueLocation2Spike();
-
-                TimeUnit.MILLISECONDS.sleep(100);
-
-                armBrace.setPower(-.2);
-                armRotate.setPower(-.2);
-                TimeUnit.MILLISECONDS.sleep(500);
-
-                armRotate.setPower(0);
-                armBrace.setPower(0);
-                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing
