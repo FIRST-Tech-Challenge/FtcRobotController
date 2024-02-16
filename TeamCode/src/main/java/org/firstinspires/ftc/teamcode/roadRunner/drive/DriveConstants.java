@@ -48,16 +48,15 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 0.3076923076923077; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 9; // in
-
+    public static double TRACK_WIDTH = 12.85; // in
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
      * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.085402056688614 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0.005;
+    public static double kV = 0.015 ;//* rpmToVelocity(MAX_RPM); // 1.085402056688614
+    public static double kA = 0.0033;
     public static double kStatic = 0;
 
     /*
@@ -100,10 +99,10 @@ public class DriveConstants {
      * https://github.com/acmerobotics/road-runner-quickstart/issues/91
      
      */
-    public static double MAX_VEL = 30;//60
-    public static double MAX_ACCEL = 30;//60
-    public static double MAX_ANG_VEL = Math.toRadians(308.3301087536676);
-    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+    public static double MAX_VEL = 40;//60
+    public static double MAX_ACCEL = 40;//60
+    public static double MAX_ANG_VEL = Math.toRadians(305);
+    public static double MAX_ANG_ACCEL = Math.toRadians(305);
 
 
     public static double encoderTicksToInches(double ticks) {

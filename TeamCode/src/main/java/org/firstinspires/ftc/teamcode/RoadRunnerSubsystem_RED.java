@@ -33,11 +33,11 @@ public class RoadRunnerSubsystem_RED {
     /*-------------------------------------------------------
     -Params-
     -------------------------------------------------------*/
-    public final double Tile = 24; /*-inches-*/
-    public final double TileInverted = -24; /*-inches-*/
-    public final double RobotX = 12.6; /*-inches-*/
-    public final double RobotY = 18; /*-inches-*/
-    public final double BackdropDistance = 0; /*-inches-*/
+    public static double Tile = 24; /*-inches-*/
+    public static double TileInverted = -24; /*-inches-*/
+    public static double RobotX = 12.6; /*-inches-*/
+    public static double RobotY = 18; /*-inches-*/
+    public static double BackdropDistance = 0; /*-inches-*/
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
@@ -199,11 +199,11 @@ public class RoadRunnerSubsystem_RED {
     /*-------------------------------------------------------
     -La program-
     -------------------------------------------------------*/
-    RoadRunnerSubsystem_RED(HardwareMap hardwareMap, Pose2d HomePose,
+    RoadRunnerSubsystem_RED(SampleMecanumDrive sampleDrive,HardwareMap hardwareMap, Pose2d HomePose,
                         StartingPosition startingPosition, Path path,PixelStack pixelStack,
                         ParkingPosition parkingPosition){
 
-        this.drive = new SampleMecanumDrive(hardwareMap);
+        this.drive = sampleDrive;
         this.startingPosition = startingPosition;
         this.path = path;
         this.pixelStack = pixelStack;
@@ -218,6 +218,8 @@ public class RoadRunnerSubsystem_RED {
         pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
         /*-----------------------------------------------------*/
+
+        drive.setPoseEstimate(HomePose);
 
         /*-----------------------------------------------------*/
         test = drive.trajectorySequenceBuilder(HomePose)

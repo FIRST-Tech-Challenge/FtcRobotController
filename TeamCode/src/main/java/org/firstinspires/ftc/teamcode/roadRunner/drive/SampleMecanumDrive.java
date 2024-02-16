@@ -53,8 +53,8 @@ import static org.firstinspires.ftc.teamcode.roadRunner.drive.StandardTrackingWh
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 0, 0.2);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(11, 0, 1.3);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 0.8);
 
     public static double LATERAL_MULTIPLIER = 1.638717430491069;
 

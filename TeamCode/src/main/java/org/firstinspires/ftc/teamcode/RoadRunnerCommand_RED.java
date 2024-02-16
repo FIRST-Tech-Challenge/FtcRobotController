@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySe
 
 public class RoadRunnerCommand_RED extends RoadRunnerSubsystem_RED {
 
-    RoadRunnerCommand_RED(HardwareMap hardwareMap, Pose2d HomePose, StartingPosition startingPosition, Path path, PixelStack pixelStack, ParkingPosition parkingPosition) {
-        super(hardwareMap, HomePose, startingPosition, path, pixelStack, parkingPosition);
+    RoadRunnerCommand_RED(SampleMecanumDrive sampleDrive, HardwareMap hardwareMap, Pose2d HomePose, StartingPosition startingPosition, Path path, PixelStack pixelStack, ParkingPosition parkingPosition) {
+        super(sampleDrive, hardwareMap, HomePose, startingPosition, path, pixelStack, parkingPosition);
     }
 
     public TrajectorySequenceBuilder spikeRandomizationPath(RoadRunnerSubsystem_RED.Randomization randomization){
