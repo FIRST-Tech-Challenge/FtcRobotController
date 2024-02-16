@@ -105,7 +105,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         if (targetFound) {
 
             driveToTarget();
-            //placePixelOnBackboard();
+            placePixelOnBackboard();
 
         }
     }
