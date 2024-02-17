@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 //speed up everything
 //faster when driving regularly, slower when picking up and dropping pixel
 //make the cascade go up when driving and get rid of the bug with the encoders and the claw/wrist
+//delivery reliability
 @TeleOp(name = "encoderRedTeleop")
 public class teleopRedEncoderMode extends LinearOpMode {
     double cascadeMotorPower;
@@ -54,8 +55,8 @@ public class teleopRedEncoderMode extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(.3);
-        robot.claw.setPosition(0);
+        robot.arm.setPower(.5);
+        robot.claw.setPosition(0.3);
         sleep(500);
         robot.wrist.setPosition(0.675);
         robot.resetEncodersCascade();
@@ -65,8 +66,8 @@ public class teleopRedEncoderMode extends LinearOpMode {
         robot.cascadeMotorLeft.setTargetPosition(0);
         robot.cascadeMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.cascadeMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.cascadeMotorLeft.setPower(.6);
-        robot.cascadeMotorRight.setPower(.6);
+        robot.cascadeMotorLeft.setPower(.8);
+        robot.cascadeMotorRight.setPower(.8);
         robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -110,7 +111,7 @@ public class teleopRedEncoderMode extends LinearOpMode {
             telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition()); //800
 
             telemetry.update();
-            if (gamepad1.left_bumper && targetFound) {
+            if (gamepad1.right_stick_button && targetFound) {
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
                 double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
                 double headingError = desiredTag.ftcPose.bearing;
@@ -123,13 +124,28 @@ public class teleopRedEncoderMode extends LinearOpMode {
 //                telemetry.update();
                 // Apply desired axes motions to the drivetrain.
             } else {
+                if (robot.wrist.getPosition() <= .44 && robot.wrist.getPosition() >= .42) {
+                    drive = gamepad1.left_stick_y / 5;
+                    strafe = gamepad1.left_stick_x / 5;
+                    turn = -gamepad1.right_stick_x / 4;
+                }
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive = gamepad1.left_stick_y / 1;  // Reduce drive rate to 50%.
-                strafe = gamepad1.left_stick_x / 1;  // Reduce strafe rate to 50%.
-                turn = -gamepad1.right_stick_x / 1.5;  // Reduce turn rate to 33%.
-//                if (robot.wrist.getPosition() == .385) {
-//                    drive = gamepad1.left_stick_x
-//                }
+                else if (robot.arm.getCurrentPosition() >= 520) {
+                    drive = gamepad1.left_stick_y / 4;
+                    strafe = gamepad1.left_stick_x / 4;
+                    turn = -gamepad1.right_stick_x / 3;
+                }
+                else if (robot.cascadeMotorRight.getCurrentPosition() > 200) {
+                    drive = gamepad1.left_stick_y / 4;
+                    strafe = gamepad1.left_stick_x / 4;
+                    turn = -gamepad1.right_stick_x / 3;
+                }
+
+                else {
+                    drive = gamepad1.left_stick_y / 0.75;  // Reduce drive rate to 50%.
+                    strafe = gamepad1.left_stick_x / 0.75;  // Reduce strafe rate to 50%.
+                    turn = -gamepad1.right_stick_x / 2;  // Reduce turn rate to 33%.
+                }
 //                telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             }
 
@@ -143,8 +159,14 @@ public class teleopRedEncoderMode extends LinearOpMode {
                 robot.cascadeMotorLeft.setTargetPosition(cascadePosition);
                 sleep(15);
             }
+            if (gamepad1.right_bumper) {
+                robot.claw.setPosition(0.3);
+            }
+            else if (gamepad1.left_bumper) {
+                robot.claw.setPosition(0.58);
+            }
             if (gamepad2.right_bumper) {
-                robot.claw.setPosition(0);
+                robot.claw.setPosition(0.3);
             }
             else if (gamepad2.left_bumper) {
                 robot.claw.setPosition(0.58);
@@ -172,47 +194,67 @@ public class teleopRedEncoderMode extends LinearOpMode {
 
                 robot.arm.setTargetPosition(540);
                 robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm.setPower(.3);
+                robot.arm.setPower(.5);
 
 
             }
             else if (gamepad2.b && robot.cascadeMotorLeft.getCurrentPosition() > 940) {
                 robot.arm.setTargetPosition(0);
                 robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm.setPower(.3);
+                robot.arm.setPower(.5);
             }
             else if (gamepad2.y) {
-                robot.claw.setPosition(0.47);
+                robot.claw.setPosition(0.46);
+                sleep(200);
+                robot.timer.reset();
+                while (robot.timer.seconds() < 0.2)
+                    robot.setPowerOfAllMotorsTo(-0.15);
+                robot.setPowerOfAllMotorsTo(0);
 //                sleep(125);
 //                robot.claw.setPosition(0);
             }
 
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
+                robot.cascadeMotorLeft.setTargetPosition(0);
+                robot.cascadeMotorRight.setTargetPosition(0);
                 robot.wrist.setPosition(.675);
             }
-            else if (gamepad2.dpad_down) {
-                robot.wrist.setPosition(.385);
+            else if (gamepad1.dpad_down) {
+                robot.cascadeMotorLeft.setTargetPosition(40);
+                robot.cascadeMotorRight.setTargetPosition(40);
+                robot.wrist.setPosition(.430);
             }
-//            if (gamepad2.left_trigger > .3) {
-//            robot.wrist.setPosition(robot.wrist.getPosition() - 0.01);
-//            sleep(200);
-//            }
-//            else if (gamepad2.right_trigger > .3) {
-//                robot.wrist.setPosition(robot.wrist.getPosition() + 0.01);
-//                sleep(200);
-//            }
-            else if (gamepad1.dpad_up) {
+            if (gamepad1.left_trigger > .3) {
+            robot.wrist.setPosition(robot.wrist.getPosition() - 0.01);
+            sleep(200);
+            }
+            else if (gamepad1.right_trigger > .3) {
+                robot.wrist.setPosition(robot.wrist.getPosition() + 0.01);
+                sleep(200);
+            }
+
+            else if (gamepad1.dpad_right) {
                 robot.launch.setPosition(1);
             }
-            else if (gamepad2.dpad_left) {
+            else if (gamepad1.dpad_left) {
                 robot.wrist.setPosition(.485);
             }
-            else if (gamepad1.dpad_right) {
-                robot.dropper.setPosition(.3);
+            else if (gamepad1.a) {
+                robot.cascadeMotorLeft.setTargetPosition(5);
+                robot.cascadeMotorRight.setTargetPosition(5);
+                sleep(500);
+                robot.claw.setPosition(0);
+                sleep(500);
+                robot.wrist.setPosition(0.675);
+                robot.cascadeMotorLeft.setTargetPosition(0);
+                robot.cascadeMotorRight.setTargetPosition(0);
             }
-            else if (gamepad1.dpad_left) {
-                robot.dropper.setPosition(.8);
-            }
+//            else if (gamepad1.dpad_right) {
+//                robot.dropper.setPosition(.3);
+//            }
+//            else if (gamepad1.dpad_left) {
+//                robot.dropper.setPosition(.8);
+//            }
         }
     }
 

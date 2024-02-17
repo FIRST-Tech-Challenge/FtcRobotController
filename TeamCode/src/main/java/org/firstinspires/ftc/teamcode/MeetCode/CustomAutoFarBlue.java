@@ -79,7 +79,7 @@ public class CustomAutoFarBlue extends LinearOpMode {
     final double MAX_AUTO_TURN  = 0.5;
 
     private  int DESIRED_TAG_ID = -1;
-    private int ticksForCascade = 820;
+    private int ticksForCascade = 1020;
     private double DESIRED_STRAFE = 0;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
@@ -125,7 +125,7 @@ public class CustomAutoFarBlue extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(.3);
+        robot.arm.setPower(.4);
         robot.wrist.setPosition(1);
         robot.claw.setPosition(0);
 
@@ -184,7 +184,7 @@ public class CustomAutoFarBlue extends LinearOpMode {
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
+            while (robot.timer.seconds() < 2.5){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -195,21 +195,23 @@ public class CustomAutoFarBlue extends LinearOpMode {
             robot.timer.reset();
 //
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(750);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -254,21 +256,23 @@ public class CustomAutoFarBlue extends LinearOpMode {
             robot.encoderStrafeRight(desiredTag.ftcPose.x + 1);
             robot.timer.reset();
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(750);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -322,21 +326,23 @@ public class CustomAutoFarBlue extends LinearOpMode {
             robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
             robot.timer.reset();
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(750);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);

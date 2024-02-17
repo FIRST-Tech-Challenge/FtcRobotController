@@ -86,7 +86,7 @@ public class CustomAutoFarRed extends LinearOpMode {
     double drive = 0;        // Desired forward power/speed (-1 to +1)
     double strafe = 0;        // Desired strafe power/speed (-1 to +1)
     double turn = 0;        // Desired turning power/speed (-1 to +1)
-    private int ticksForCascade = 820;
+    private int ticksForCascade = 1020;
     private double DESIRED_STRAFE = 0;
 
     private long timeAdd = 0;
@@ -119,7 +119,7 @@ public class CustomAutoFarRed extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(.3);
+        robot.arm.setPower(.4);
         robot.wrist.setPosition(1);
         robot.claw.setPosition(0);
 
@@ -162,7 +162,7 @@ public class CustomAutoFarRed extends LinearOpMode {
         robot.encoderStrafeLeft(5);
         if(position.equals("Center")) {
             DESIRED_TAG_ID = 5;
-            robot.encoderDrive(29.5);
+            robot.encoderDrive(30);
             sleep(50);
             robot.encoderStrafeRight(2);
             robot.dropper.setPosition(1);
@@ -178,7 +178,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 3.5){
+            while (robot.timer.seconds() < 2.5){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -187,25 +187,24 @@ public class CustomAutoFarRed extends LinearOpMode {
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
             robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
-//
-
-
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(500);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -257,21 +256,23 @@ public class CustomAutoFarRed extends LinearOpMode {
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(500);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -321,21 +322,23 @@ public class CustomAutoFarRed extends LinearOpMode {
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 800)
+            while (robot.cascadeMotorLeft.getCurrentPosition() < 900)
                 sleep(100);
-            robot.arm.setTargetPosition(600);
-            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(.3);
+            robot.arm.setTargetPosition(450);
             sleep(1000);
-            robot.encoderDrive(4);
-            sleep(500);
-            robot.claw.setPosition(.6);
-            sleep(500);
+            robot.wrist.setPosition(0.58);
+            sleep(250);
+            robot.encoderDrive(3.5);
+            sleep(250);
+            robot.claw.setPosition(.47);
+            sleep(250);
+            robot.claw.setPosition(0.8);
+            sleep(250);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1500);
+            sleep(1250);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);

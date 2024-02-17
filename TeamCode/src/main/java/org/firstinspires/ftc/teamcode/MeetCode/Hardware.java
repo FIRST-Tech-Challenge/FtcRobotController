@@ -237,8 +237,8 @@
                 //            telemetry.addData("CascadeLeft: ", cascadeMotorLeft.getCurrentPosition());
                 //            telemetry.addData("CascadeRight: ", cascadeMotorRight.getCurrentPosition());
                 //            telemetry.update();
-                cascadeMotorRight.setPower(.6);
-                cascadeMotorLeft.setPower(.6);
+                cascadeMotorRight.setPower(.75);
+                cascadeMotorLeft.setPower(.75);
 
 
 
