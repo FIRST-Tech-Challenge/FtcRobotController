@@ -114,6 +114,7 @@ public class DriveTrain extends OpMode
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        door.setPosition(0);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -207,8 +208,8 @@ public class DriveTrain extends OpMode
 //            liftMotor2.setPower(-1);
             lift1Position = liftMotor1.getCurrentPosition();
             if (lift1Position < 200) {
-                liftMotor1.setPower(-0.7);
-                liftMotor2.setPower(-0.7);
+                liftMotor1.setPower(-0.4);
+                liftMotor2.setPower(-0.4);
             } else {
                 liftMotor1.setPower(-1);
                 liftMotor2.setPower(-1);
@@ -238,18 +239,17 @@ public class DriveTrain extends OpMode
         }
 
         if (gamepad2.y) {
-            //rightLiftServo.setPosition(0);
-            leftLiftServo.setPosition(0);
+            rightLiftServo.setPosition(1);
+//            leftLiftServo.setPosition(0);
         } else if (gamepad2.a) {
-            //rightLiftServo.setPosition(1);
-            leftLiftServo.setPosition(0.82);
+            rightLiftServo.setPosition(0.43);
+//            leftLiftServo.setPosition(0.82);
         }
 
         if (gamepad2.left_bumper) {
             door.setPosition(0.7);
         } else if (gamepad2.right_bumper) {
             door.setPosition(0);
-//            leftLiftServo.setPosition(0);
         }
 
         if (gamepad2.b) {
@@ -259,18 +259,23 @@ public class DriveTrain extends OpMode
         }
 
         if (gamepad2.dpad_up) {
-            plane.setPosition(0);
+            plane.setPosition(1);
         }
         else if (gamepad2.dpad_down) {
-            plane.setPosition(1);
+            plane.setPosition(0.7);
+        }
+        else if (gamepad2.dpad_left) {
+            while (true) {
+                liftMotor1.setPower(-1);
+                liftMotor2.setPower(-1);
+            }
         }
 
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "frontLeft (%.2f), rearLeft (%.2f), frontRight (%.2f), rearRight (%.2f)", frontLeftPower, rearLeftPower, frontRightPower, rearRightPower);
-        telemetry.addData("Motor 1", lift1Position);
-        telemetry.addData("Motor 2", liftMotor2.getCurrentPosition());
+        telemetry.addData("Lift position", liftMotor1.getCurrentPosition());
         telemetry.addData("Servo1", rightLiftServo.getPosition());
         telemetry.addData("Servo2", leftLiftServo.getPosition());
 

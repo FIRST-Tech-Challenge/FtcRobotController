@@ -77,8 +77,7 @@ public class AutoTemplate extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()) {
-            /*
-            if (detection == "left") {
+            if (detection == "left" && !drive.isBusy()) {
                 drive.setPoseEstimate(startingPose);
                 TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(5, -30), Math.toRadians(180))
@@ -101,9 +100,9 @@ public class AutoTemplate extends LinearOpMode{
                         })
                         .build();
                 drive.followTrajectorySequenceAsync(left);
-//                drive.breakFollowing();
+                stop();
             }
-            else if (detection == "middle") {
+            else if (detection == "middle" && !drive.isBusy()) {
                 TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
                         .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
                         .addTemporalMarker(() -> {
@@ -126,9 +125,9 @@ public class AutoTemplate extends LinearOpMode{
                         .build();
                 drive.followTrajectorySequenceAsync(middle);
                 drive.breakFollowing();
-                break;
+                stop();
             }
-            else {
+            else if (detection == "right" && !drive.isBusy()) {
                 TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(16, -30), Math.toRadians(0))
                         .addTemporalMarker(() -> {
@@ -154,9 +153,9 @@ public class AutoTemplate extends LinearOpMode{
                         .build();
                 drive.followTrajectorySequenceAsync(right);
                 drive.breakFollowing();
+                stop();
             }
 
-             */
             drive.update();
             liftUpdate(drive);
         }
