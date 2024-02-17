@@ -21,13 +21,13 @@ public class Controller extends LinearOpMode {
     // Roller
     final double ROLLER_FLAT = 0.29;
     final double ROLLER_UPSIDEDOWN = 0.97;
-    final double ROLLER_ARM_LIMIT = 450;
+    final double ROLLER_ARM_LIMIT = 400;
 
     // Arm
     final double ARM_EXTEND_SPEED = 0.5;
-    final double ARM_LIFT_SPEED = 10;
+    final double ARM_LIFT_SPEED = 7;
     final double ARM_LIFT_POWER = 0.8;
-    final int ARM_MAX_POSITION = 2950;
+    final int ARM_MAX_POSITION = 3200;
     final int ARM_MIN_POSITION = -100;
     final int ARM_EXTEND_LIMIT = 3600;
 
@@ -38,7 +38,7 @@ public class Controller extends LinearOpMode {
 
     // Startup Sequence
     final int ARM_LIFT_POSITION = 600;
-    final int ROLLER_WAIT_TIME = 1000;
+    //final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
     final int PICKUP_EXTEND_TARGET = 1600;
@@ -271,10 +271,10 @@ public class Controller extends LinearOpMode {
 
             // Debugging
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("arm extend position", -armExtend.getCurrentPosition());
-            telemetry.addData("arm extend switch", armExtendSwitch.getState());
-            telemetry.addData("arm lift position", currentArmLiftPos);
+            telemetry.addData("Override Mode:", overrideMode);
+            //telemetry.addData("arm extend position", -armExtend.getCurrentPosition());
+            //telemetry.addData("arm lift position", currentArmLiftPos);
             telemetry.update();
         }
     }
-}   
+}
