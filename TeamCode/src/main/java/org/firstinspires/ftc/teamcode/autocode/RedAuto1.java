@@ -88,19 +88,19 @@ public class RedAuto1 extends PlaceLinePixel {
                     BoardPixel1();
                     RobotMoveBackwardHalf();
                     RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(900);
+                    TimeUnit.MILLISECONDS.sleep(1000);
                     RobotMoveFarwardHalf();
                 } else if (Location2 == true) {
                     BoardPixel2();
                     RobotMoveBackwardHalf();
                     RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(800);
+                    TimeUnit.MILLISECONDS.sleep(900);
                     RobotMoveFarwardHalf();
                 } else if (Location3 == true) {
                     BoardPixel3();
                     RobotMoveBackwardHalf();
                     RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(500);
+                    TimeUnit.MILLISECONDS.sleep(700);
                     RobotMoveFarwardHalf();
                 }
 
