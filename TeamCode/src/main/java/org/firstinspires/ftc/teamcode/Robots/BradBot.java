@@ -77,6 +77,7 @@ public class BradBot extends BasicRobot {
 
   PPUI ppui;
   double voltage=12;
+  boolean intaked = false;
 
   MecanumDrive drive;
 
@@ -87,13 +88,13 @@ public class BradBot extends BasicRobot {
    * @param p_op opMode
    * @param p_is_Teleop is the program a teleop program
    */
-  public BradBot(LinearOpMode p_op, boolean p_is_Teleop) {
+  public BradBot(LinearOpMode p_op, boolean p_is_Teleop, boolean isLogi) {
     super(p_op, p_is_Teleop);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Components!");
     arm = new Arm();
     if (!isTeleop) {
-      cv = new CVMaster();
+      cv = new CVMaster(isLogi);
     }
     claw = new Claw();
     magazine = new Magazine();
@@ -110,7 +111,11 @@ public class BradBot extends BasicRobot {
     purped = false;
     ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
+    //12.4,12.2
     update();
+  }
+  public BradBot(LinearOpMode p_op, boolean p_isTeleop){
+    this(p_op, p_isTeleop, false);
   }
 
   public int getSpikePos() {
@@ -154,8 +159,10 @@ public class BradBot extends BasicRobot {
   public void purpurAuto() {
     if (queuer.queue(
         true, purped)) {
-      if (DROP.state) {
+      if(lift.getCurrentPosition()>600){
         arm.purpurPigzl();
+      }
+      if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
         lift.setPosition(300);
         wrist.purpur();
@@ -170,6 +177,25 @@ public class BradBot extends BasicRobot {
     }
     else{
       claw.moveTwo(false);
+    }
+  }
+
+  public void yellowAuto(boolean left){
+    if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.LEFT_TILT.getState())) {
+      if (currentPose.getX() > 9 && DROP.getState()) {
+        lift.setPosition(780);
+        if(left){
+          twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
+        }
+        else{
+          twrist.flipTo(Twrist.twristTargetStates.DROP);
+        }
+        //        if(Wrist.WristStates.LOCK.getState()){
+        //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
+        //        }
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        LOGGER.log("ocook");
+      }
     }
   }
 
@@ -196,8 +222,12 @@ public class BradBot extends BasicRobot {
     //    }
   }
 
+  public void hoverArm(){
+    arm.flipTo(HOVER);
+  }
+
   public void upAuto() {
-    if (queuer.queue(true, lift.getCurrentPosition()>600)) {
+    if (queuer.queue(true, lift.getCurrentPosition()>500)) {
       if (!Lift.LiftMovingStates.LOW.state) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         intake.stopIntake();
@@ -212,31 +242,29 @@ public class BradBot extends BasicRobot {
   }
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-      if (currentPose.getX() > 10 && DROP.state || Lift.LiftPositionStates.LOW_SET_LINE.getState()) {
-        lift.setPosition(730);
+      if (currentPose.getX() > 9) {
+        lift.setPosition(880);
         intake.stopIntake();
         arm.flipTo(DROP);
         //        if(Wrist.WristStates.LOCK.getState()){
         //          wrist.flipTo(Wrist.WristTargetStates.GRAB);
         //        }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
       }
   }
 
   public void lowAuto() {
-    if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
-      if (currentPose.getX() > 9) {
-        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==1000)) {
+      if (currentPose.getX() > 0) {
+        lift.setPosition(1000);
         intake.stopIntake();
         arm.flipTo(DROP);
         if(Wrist.WristStates.LOCK.getState()){
           wrist.flipTo(Wrist.WristTargetStates.GRAB);
         }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-        twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
         LOGGER.log("ocook");
       }
     }
@@ -322,7 +350,7 @@ public class BradBot extends BasicRobot {
       if (!queuer.isExecuted()) {
         twrist.flipTo(Twrist.twristTargetStates.GRAB);
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
-        arm.flipTo(HOVER, -.04);
+        arm.flipTo(HOVER, -.04, false);
         lift.update();
         wrist.update();
         twrist.update();
@@ -335,11 +363,13 @@ public class BradBot extends BasicRobot {
   }
 
   public void intakeAuto(int height) {
-    if (queuer.queue(true, Magazine.pixels==2)) {
+    if (queuer.queue(true, Magazine.pixels==2&&intaked)) {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
       if (currentPose.getX()<-49 || intake.intakePath()) {
+        intaked=true;
+        magazine.updateSensors();
         if(intake.intakeAutoHeight(height)){
 
         } else if (!intake.intakePath()) {
@@ -359,7 +389,9 @@ public class BradBot extends BasicRobot {
           }
         }
       }
-      loopPPPath(new Path(), false);
+      if (intake.intakePath()) {
+        loopPPPath(new Path(), false);
+      }
 
     }
   }
@@ -389,6 +421,7 @@ public class BradBot extends BasicRobot {
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
         gapped = false;
+        intaked = false;
 //      }
     }
   }
@@ -546,6 +579,12 @@ public class BradBot extends BasicRobot {
     }
   }
 
+  public void hangerTele(){
+    float hangUp = op.gamepad2.right_trigger;
+    float hangDown = op.gamepad2.left_trigger;
+    hanger.setRawPower(hangDown-hangUp);
+  }
+
   /** What is run each loop in teleOp Logs that this function is being called to general surface */
   public void teleOp() {
     boolean isA = gampad.readGamepad(op.gamepad2.a, "gamepad1_a", "resetOuttake");
@@ -581,7 +620,7 @@ public class BradBot extends BasicRobot {
     if (isA) {
       twrist.flipTo(Twrist.twristTargetStates.GRAB);
       wrist.flipTo(Wrist.WristTargetStates.GRAB);
-      arm.flipTo(HOVER, -.04);
+      arm.flipTo(HOVER, -.04, false);
       lift.update();
       wrist.update();
       twrist.update();
@@ -684,9 +723,7 @@ public class BradBot extends BasicRobot {
     if (isX2) {
 //      preloader.deposit();
     }
-    if (isY2) {
-      hanger.up();
-    }
+
 
     roadrun.setWeightedDrivePower(
         new Pose2d(
@@ -719,8 +756,8 @@ public class BradBot extends BasicRobot {
    * general log All else is logged in each respective function
    */
   public void update() {
-    LOGGER.setLogLevel(RFLogger.Severity.FINER);
-    LOGGER.log("updating each component");
+//    LOGGER.setLogLevel(RFLogger.Severity.FINER);
+//    LOGGER.log("updating each component");
     super.update();
     arm.update();
     if (!isTeleop) {

@@ -20,7 +20,7 @@ public class
 RFLogger {
     public Logger LOGGER;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
-    Severity logLevel = Severity.ALL;
+    Severity logLevel = Severity.INFO;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
     public static Severity FILTER = Severity.INFO;
 
@@ -46,6 +46,7 @@ RFLogger {
         ALL(Level.SEVERE),
         SEVERE(Level.SEVERE),
         WARNING(Level.WARNING),
+
         INFO(Level.INFO),
         CONFIG(Level.CONFIG),
         FINE(Level.FINE),

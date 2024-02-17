@@ -46,13 +46,13 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 10; // in
+    public static double TRACK_WIDTH = 12; // in
 
     public static double kPTrans = 0.00;
     public static double kDTrans = 0.000;
 
-    public static double kPHead = 6.00;
-    public static double kDHead = 2.000;
+    public static double kPHead = 8.00;
+    public static double kDHead = 3.000;
 
     public static double kIHead = 0.1;
 
@@ -63,7 +63,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.012;
-    public static double kA = 0.0003 ;
+    public static double kA = 0.005 ;
     public static double kStatic = 0.11;
 
     /*
@@ -73,9 +73,9 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 5;
+    public static double MAX_VEL = 55;
+    public static double MAX_ACCEL = 35;
+    public static double MAX_ANG_VEL = 4;
     public static double MAX_ANG_ACCEL = 3;
 
 

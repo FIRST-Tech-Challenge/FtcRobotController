@@ -21,9 +21,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Autonomous(name = "BlueRight2+0")
+@Autonomous(name = "logiBlueRight2+0")
 @Config
-public class BRRR extends LinearOpMode {
+public class logiBRRR extends LinearOpMode {
 //    int bark = 1;
 
 
@@ -71,7 +71,7 @@ public class BRRR extends LinearOpMode {
 //        robot.setRight(false);
 //        robot.setBlue(false);
 //        robot.observeSpike();
-        BR20 aut = new BR20(this, false);
+        BR20 aut = new BR20(this, true);
 //        while (!isStarted() && !isStopRequested()) {
 //            bark = robot.getSpikePos();
 //            telemetry.addData("pixel", bark);

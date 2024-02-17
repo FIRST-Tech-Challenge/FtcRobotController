@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.56, TWO=0.58, THREE = 0.60, FOUR = 0.62, FIVE =0.635, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
+  public static double ONE=0.56, TWO=0.6, THREE = 0.62, FOUR = 0.64, FIVE =0.66, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -55,6 +55,8 @@ public class Intake extends RFMotor {
   double intakePathTIme = -100;
   double lastHeightTime=-5;
   double TICKS_PER_REV = 52;
+
+  double curPower=0;
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
@@ -76,6 +78,7 @@ public class Intake extends RFMotor {
 
     reverseTime=-100;
     pixeled = !isTeleop;
+    curPower=0;
 
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
@@ -115,7 +118,7 @@ public class Intake extends RFMotor {
    */
   public void intake() {
     LOGGER.log("starting intake, power : " + INTAKE_POWER);
-    setRawPower(-INTAKE_POWER-100);
+    if(curPower!=-1){setRawPower(-INTAKE_POWER);curPower=-1;}
     IntakeStates.INTAKING.setStateTrue();
     if (isTeleop) {
       downy();
@@ -161,7 +164,7 @@ public class Intake extends RFMotor {
   public void reverseIntake() {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
-    setRawPower(- REVERSE_POWER);
+    if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=1;}
     IntakeStates.REVERSING.setStateTrue();
   }
 
@@ -183,21 +186,24 @@ public class Intake extends RFMotor {
 
   /** Sets intake power 0, logs that intake is stopped to general and intake surface level */
   public void stopIntake() {
-      LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", " );
-      double pos = this.getVelocity()*0.1+this.getCurrentPosition();
-      pos%=TICKS_PER_REV;
-      if(pos>TICKS_PER_REV/2){
+    if (curPower != 0) {
+      LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", ");
+      double pos = this.getVelocity() * 0.1 + this.getCurrentPosition();
+      pos %= TICKS_PER_REV;
+      if (pos > TICKS_PER_REV / 2) {
         pos -= TICKS_PER_REV;
       }
-    if (abs(pos) < TICKS_PER_REV/4) {
-      setRawPower(0);
-    }
-    uppies();
-    IntakeStates.STOPPED.setStateTrue();
-      pixeled1=false;
+      if (abs(pos) < TICKS_PER_REV / 4) {
+        setRawPower(0);
+        curPower=0;
+      }
+      uppies();
+      IntakeStates.STOPPED.setStateTrue();
+      pixeled1 = false;
 
-    //        }
-    //        LOGGER.log("position" + pos);
+      //        }
+      //        LOGGER.log("position" + pos);
+    }
   }
 
   /**
@@ -243,7 +249,7 @@ public class Intake extends RFMotor {
       setHeight(height);
       lastHeightTime = BasicRobot.time;
     }
-    if (BasicRobot.time - lastHeightTime > 2) {
+    if (BasicRobot.time - lastHeightTime > 0.8) {
       height--;
       if(height<=p_height-2){
         return false;
@@ -307,12 +313,12 @@ public class Intake extends RFMotor {
    * triggers following action to reverse/stop intaking
    */
   public void update() {
-    LOGGER.log("intake speed:"+ this.getVelocity());
-    packet.put("intakespeed", this.getVelocity());
-    double power = this.getPower();
-    LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-    LOGGER.log("intake power:" + power);
-    packet.put("intakePos", this.getCurrentPosition());
+//    LOGGER.log("intake speed:"+ this.getVelocity());
+//    packet.put("intakespeed", this.getVelocity());
+////    double power = this.getPower();
+//    LOGGER.setLogLevel(RFLogger.Severity.FINEST);
+//    LOGGER.log("intake power:" + power);
+//    packet.put("intakePos", this.getCurrentPosition());
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();

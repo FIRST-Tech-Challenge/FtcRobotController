@@ -27,6 +27,7 @@ public class Arm extends RFServo {
       ArmStates.GRAB.setStateTrue();
       ArmTargetStates.GRAB.setStateTrue();
       ArmTargetStates.GRAB.state = false;
+      position = GRAB_POS;
 
     } else {
       super.setPosition(HOVER_POS);
@@ -34,6 +35,7 @@ public class Arm extends RFServo {
       ArmStates.HOVER.setStateTrue();
       ArmTargetStates.HOVER.setStateTrue();
       ArmTargetStates.HOVER.state = false;
+      position = HOVER_POS;
     }
     lastTime = -100;
     super.setLastTime(-100);
@@ -104,16 +106,16 @@ public class Arm extends RFServo {
   }
 
   public void purpurPigzl() {
-    ArmStates.DROP.state = true;
-    ArmTargetStates.DROP.state = false;
-    ArmStates.GRAB.state = false;
-    super.setPosition(0.02);
-    LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
-    lastTime = time;
+    if (position != DROP_POS) {
+      ArmTargetStates.DROP.state = true;
+      flipTo(ArmStates.DROP, 0.02, true);
+      LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
+      lastTime = time;
+    }
   }
 
   public void flipTo(ArmStates p_state) {
-    flipTo(p_state, 0);
+    flipTo(p_state, 0, false);
   }
   public void arm(){
     ArmTargetStates.HOVER.state = true;
@@ -122,8 +124,8 @@ public class Arm extends RFServo {
     LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
     lastTime = time;
   }
-  public void flipTo(ArmStates p_state, double offset) {
-    if (time - lastTime > FLIP_TIME) {
+  public void flipTo(ArmStates p_state, double offset, boolean override) {
+    if (time - lastTime > FLIP_TIME || override) {
       if ((p_state == ArmStates.DROP || p_state == ArmStates.HOVER)
               && super.getPosition() != p_state.pos) {
         if (p_state == ArmStates.DROP) {
@@ -132,9 +134,9 @@ public class Arm extends RFServo {
             flipTo(ArmStates.HOVER);
             return;
           }
-          if (super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state ||(ArmStates.HOVER.state&& Lift.LiftPositionStates.AT_ZERO.state))) {
+          if ((super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state ||(ArmStates.HOVER.state&& Lift.LiftPositionStates.AT_ZERO.state)))||override) {
             super.setPosition(DROP_POS+offset);
-            position -=offset;
+            position = DROP_POS;
 
 //            Wrist.WristTargetStates.DROP.setStateTrue();
 //            Twrist.twristTargetStates.DROP.setStateTrue();
@@ -198,12 +200,12 @@ public class Arm extends RFServo {
               "Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
         }
       }
-      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.2){
+      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.5){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
-      if(super.getPosition() == i.pos && i==ArmStates.GRAB && ArmStates.HOVER.getState() && time > lastTime + 0.2){
+      if(super.getPosition() == i.pos && i==ArmStates.GRAB && ArmStates.HOVER.getState() && time > lastTime + 0.5){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());

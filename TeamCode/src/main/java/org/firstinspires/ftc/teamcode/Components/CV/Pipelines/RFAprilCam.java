@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -3.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 8;
+  public static double X_OFFSET = 6.5, Y_OFFSET = -4.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 10;
   public static int EXPOSURE_MS = 3, GAIN = 5;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
@@ -86,6 +86,8 @@ public class RFAprilCam {
   private Pose2d camPoseError = new Pose2d(0, 0, 0);
   private double poseCount = 0;
 
+  boolean isLogi=false;
+
   ArrayList<Pose2d> poseHistory = new ArrayList<>();
   private double[][] directions = {
     {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}
@@ -96,11 +98,17 @@ public class RFAprilCam {
    * Initialize apriltag camera Logs that function is called and camera is aprilTag general surface
    * level
    */
-  public RFAprilCam() {
+  public RFAprilCam(boolean isLogi) {
+    this.isLogi = isLogi;
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("initializing Apriltag processor ");
     aprilTagGameDatabase = AprilTagGameDatabase.getCenterStageTagLibrary();
     /*
+    logi 270
+     size="640 480"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
     size="640 360"
         focalLength="463.566f, 463.566f"
         principalPoint="316.402f, 176.412f"
@@ -126,34 +134,64 @@ public class RFAprilCam {
         principalPoint="951.982f , 534.084f"
         distortionCoefficients="0.117627, -0.248549, 0, 0, 0.107441, 0, 0, 0"
      */
-    aprilTag =
-        new AprilTagProcessor.Builder()
-            .setDrawAxes(false)
-            .setDrawCubeProjection(false)
-            .setDrawTagOutline(true)
-            .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-            .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-            .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-            .setLensIntrinsics(FOCAL_LENGTH, FOCAL_LENGTH, 640f, 400f)
-            .build();
-    aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
-    aprilTag.setDecimation((float) UPSAMPLE);
+    if (!isLogi) {
+      aprilTag =
+          new AprilTagProcessor.Builder()
+              .setDrawAxes(false)
+              .setDrawCubeProjection(false)
+              .setDrawTagOutline(true)
+              .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+              .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+              .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+              .setLensIntrinsics(FOCAL_LENGTH, FOCAL_LENGTH, 640f, 400f)
+              .build();
+      aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
+      aprilTag.setDecimation((float) UPSAMPLE);
 
-    // Create the WEBCAM vision portal by using a builder.
-//    visionPortal = new RFVisionPortalImpl.Builder()
-//                .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
-//                .addProcessor(aprilTag)
-//                .enableLiveView(true)
-//                .setStreamFormat(RFVisionPortalImpl.StreamFormat.MJPEG)
-//                .setCameraResolution(new Size(1280, 800))
-//                .build();
-    visionPortal = new RFVisionPortal.Builder()
-            .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
-            .setCameraResolution(new Size(1280, 800))
-            .addProcessor(aprilTag)
-            .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-            .build();
-    tuned = false;
+      // Create the WEBCAM vision portal by using a builder.
+      //    visionPortal = new RFVisionPortalImpl.Builder()
+      //                .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
+      //                .addProcessor(aprilTag)
+      //                .enableLiveView(true)
+      //                .setStreamFormat(RFVisionPortalImpl.StreamFormat.MJPEG)
+      //                .setCameraResolution(new Size(1280, 800))
+      //                .build();
+      visionPortal =
+          new RFVisionPortal.Builder()
+              .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 2"))
+              .setCameraResolution(new Size(1280, 800))
+              .addProcessor(aprilTag)
+              .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
+              .build();
+      tuned = false;
+      Y_OFFSET=-4.75;
+      X_OFFSET = 6.5;
+    }
+    else{
+      aprilTag =
+              new AprilTagProcessor.Builder()
+                      .setDrawAxes(false)
+                      .setDrawCubeProjection(false)
+                      .setDrawTagOutline(true)
+                      .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                      .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                      .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                      .setLensIntrinsics(822.317f, 822.317f, 319.495f, 242.502f)
+                      .build();
+      aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
+      aprilTag.setDecimation((float) UPSAMPLE);
+
+      visionPortal =
+              new RFVisionPortal.Builder()
+                      .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 1"))
+                      .setCameraResolution(new Size(640, 480))
+                      .addProcessor(aprilTag)
+                      .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
+                      .build();
+      tuned = true;
+      Y_OFFSET=3.0;
+      X_OFFSET = 5.1;
+    }
   }
 
   /**
@@ -167,8 +205,8 @@ public class RFAprilCam {
       exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MILLISECONDS);
       tuned=true;
       packet.put("tuned", true);
-      gainControl = visionPortal.getCameraControl(GainControl.class);
-      gainControl.setGain(GAIN);
+//      gainControl = visionPortal.getCameraControl(GainControl.class);
+//      gainControl.setGain(GAIN);
     }
 
     ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
@@ -198,8 +236,13 @@ public class RFAprilCam {
                       new Vector2d(
                           -(p_x) * directions[p_ind][0] - offset.getX(),
                           -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
-                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(6)+ PI);
-          if (poseFtc.range < UPSAMPLE_THRESHOLD /*&& camPose.vec().distTo(currentPose.vec())<5*/) {
+                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(5.2)+ PI);
+          if(isLogi){
+            camPose =
+                    new Pose2d(
+                            camPose.getX(),camPose.getY(),camPose.getHeading()-toRadians(8.1));
+          }
+          if (poseFtc.range < UPSAMPLE_THRESHOLD && (!isLogi||currentVelocity.vec().norm()<1)/*camPose.vec().distTo(currentPose.vec())<5*/) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }
@@ -232,7 +275,7 @@ public class RFAprilCam {
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), camPoseError.getHeading());
+          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), 0/*camPoseError.getHeading()*/);
           LOGGER.log("oldPose" + currentPose);
           poseHeadOffset += camPoseError.getHeading()/poseCount;
           currentPose = currentPose.plus(camPoseError.div(poseCount));

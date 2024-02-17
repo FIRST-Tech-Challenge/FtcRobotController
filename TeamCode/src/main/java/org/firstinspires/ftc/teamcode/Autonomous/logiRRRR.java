@@ -21,9 +21,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RedRight2+0")
+@Autonomous(name = "logiRedRight2+0")
 @Config
-public class RRRR extends LinearOpMode {
+public class logiRRRR extends LinearOpMode {
     int bark = 1;
     public static double followRad1=5, followRad2 = 5, followRad3 =5, x1 = 7.5, y1 = -44, x2 = -95, y2 = -30, x3 = 48, y3= 0.0005,
             pow1 = 0.3, pow2 = 0.55, pow3 = 0.55, buff1 = 4, buff2 = 3, buff3 = 3,
@@ -31,7 +31,7 @@ public class RRRR extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RR20 aut = new RR20(this, false);
+        RR20 aut = new RR20(this, true);
 //        BradBot robot = new BradBot(this, false);
 //        robot.roadrun.setPoseEstimate(new Pose2d(17, -61, Math.toRadians(-90)));
 //        robot.update();
@@ -80,10 +80,10 @@ public class RRRR extends LinearOpMode {
         aut.waitForStart();
 //    bark=0;
         while (!isStopRequested() && opModeIsActive()&&aut.isAutDone()) {
-           aut.purp();
-           aut.pre();
-           aut.park();
-           aut.update();
+            aut.purp();
+            aut.pre();
+            aut.park();
+            aut.update();
         }
     }
 }
