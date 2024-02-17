@@ -16,7 +16,7 @@ public class Ultrasonics {
 
     private double lastFlipTime = 0;
 
-    Line allianceLine = new Line(1,0,56, new Vector2d(56,-54), new Vector2d(56,-18));
+    Line allianceLine = new Line(1,0,56, new Vector2d(50,-48), new Vector2d(50,-24));
 
     Line oppLine = new Line(1, 0, 56, new Vector2d(24, 0),
             new Vector2d(0, 0));
@@ -39,7 +39,7 @@ public class Ultrasonics {
      */
     public boolean checkAlliance() {
         backRight.setLine(allianceLine);
-        op.telemetry.addData("dist", backRight.getDist());
+//        op.telemetry.addData("dist", backRight.getDist());
 //        frontRight.setLine(allianceLine);
         op.telemetry.addData("detected2", backRight.isDetected());
         return backRight.isDetected();

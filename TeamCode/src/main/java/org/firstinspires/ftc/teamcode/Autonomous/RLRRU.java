@@ -52,7 +52,7 @@ public class RLRRU extends LinearOpMode {
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-40,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,-58.5, toRadians(-145)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-145)))
                 .build();
 
         pathy[1] = robot.roadrun
@@ -60,7 +60,7 @@ public class RLRRU extends LinearOpMode {
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,-58.5, toRadians(-145)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-145)))
                 .build();
 
         pathy[2] = robot.roadrun
@@ -68,24 +68,24 @@ public class RLRRU extends LinearOpMode {
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,-58.5, toRadians(-145)))
+                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-145)))
                 .build();
 
         TrajectorySequence[] detecty = new TrajectorySequence[3];
 
         detecty[0] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[0].end())
-                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(21,-58.5, toRadians(-180)))
                 .build();
 
         detecty[1] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[1].end())
-                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(21,-58.5, toRadians(-180)))
                 .build();
 
         detecty[2] = robot.roadrun
                 .trajectorySequenceBuilder(pathy[1].end())
-                .lineToLinearHeading(new Pose2d(20,-58.5, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(21,-58.5, toRadians(-180)))
                 .build();
 
         TrajectorySequence[] droppy = new TrajectorySequence[3];
@@ -141,8 +141,8 @@ public class RLRRU extends LinearOpMode {
             previousCheck = robot.checkAlliance();
             op.telemetry.addData("check", previousCheck);
             robot.queuer.queue(false, true);
-            robot.upAuto();
-            robot.purpurAuto();
+//            robot.upAuto();
+//            robot.purpurAuto();
             robot.queuer.addDelay(1.0);
             robot.followTrajSeq(spikey[bark]);
             robot.queuer.addDelay(0.2);
@@ -150,17 +150,17 @@ public class RLRRU extends LinearOpMode {
             robot.queuer.addDelay(0.3);
             robot.followTrajSeq(pathy[bark]);
             robot.queuer.addDelay(.6);
-            robot.resetAuto();
-            robot.grabSupAuto();
+//            robot.resetAuto();
+//            robot.grabSupAuto();
             robot.followTrajSeq(detecty[bark], !previousCheck);
             robot.followTrajSeq(droppy[bark]);
             robot.queuer.addDelay(.5);
-            robot.lowAuto();
+//            robot.lowAuto();
             robot.queuer.addDelay(1.5);
-            robot.veryLowAuto();
-            robot.drop();
+//            robot.veryLowAuto();
+//            robot.drop();
             robot.queuer.addDelay(.5);
-            robot.resetAuto();
+//            robot.resetAuto();
             robot.followTrajSeq(parky[bark]);
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);
