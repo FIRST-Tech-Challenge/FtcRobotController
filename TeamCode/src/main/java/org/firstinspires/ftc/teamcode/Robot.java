@@ -181,7 +181,7 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(startingPosition + 1650); //1700
+            moveLinearSlideByTicksBlocking(startingPosition + 1600); //1700
             trayToOuttakePos(true); // pivot tray to outtake position
             opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
@@ -768,7 +768,7 @@ public class Robot {
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
-        double PIXEL_SIZE = 6.5;
+        double PIXEL_SIZE = 6;
         int numberOfDetectionsProcessed = 0;
         double distanceToMove;
         double distanceBetweenId = 6;
@@ -998,7 +998,7 @@ public class Robot {
     }
 
     public void closeClamp(boolean blocking) {
-        setServoPosBlocking(clamp, 0.55);
+        setServoPosBlocking(clamp, 0.57);
         if (blocking) {
             opMode.sleep(300);
         }
@@ -2119,7 +2119,7 @@ public class Robot {
                 mecanumBlocking2(17);
                 break;
             case 2:
-                mecanumBlocking2(22.5);
+                mecanumBlocking2(22);
                 break;
             case 3:
                 mecanumBlocking2(27);
@@ -2148,7 +2148,7 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(101);
         } else {
-            straightBlocking2FixHeading(103);
+            straightBlocking2FixHeading(104);
         }
 
         intake.setPower(-1);
@@ -2156,7 +2156,7 @@ public class Robot {
         if (isRedAlliance) {
             mecanumBlocking2(23);
         } else {
-            mecanumBlocking2(-32);
+            mecanumBlocking2(-33);
         }
 
         if (isRedAlliance) {
@@ -2169,26 +2169,28 @@ public class Robot {
 
             straightBlocking(1, false, 1);
         } else {
-            straightBlocking(2, false, 1); //back
+            mecanumBlocking2(8);
 
             stackAttachmentIn();
 
-            straightBlockingWithTimer(4, true, 1, 0.7); //forward
-
             straightBlocking(2, false, 1); //back
 
-            closeClamp(true);
+            straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
+
+            straightBlocking(4, false, 1); //back
+
+            //closeClamp(true);
 
             //sideways to get second pixel
-            mecanumBlocking2(-2); //sideway
+            //mecanumBlocking2(-2); //sideway
 
             openClamp(true, true, true);
 
-            straightBlockingWithTimer(4.5, true, 1, 0.5); // forward
+            straightBlockingWithTimer(5.5, true, 0.5, 0.5); // forward
 
-            closeClamp(true);
+            //closeClamp(true);
 
-            straightBlocking(2, false, 1); //backward
+            straightBlocking(4, false, 1); //backward
 
             setHeadingRelativeToBoard(0, 0.7);
         }
@@ -2206,7 +2208,11 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(polarity * 31);
+        closeClamp(true);
+
+        mecanumBlocking2(polarity * 24);
+
+        closeClamp(true);
 
         intake.setPower(1);
         opMode.sleep(100);
