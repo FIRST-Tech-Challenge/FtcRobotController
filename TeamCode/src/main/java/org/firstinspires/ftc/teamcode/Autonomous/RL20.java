@@ -160,7 +160,8 @@ public class RL20 {
             robot.update();
         }
         op.resetRuntime();
-        time=0;    }
+        time=0;
+    }
     public void purp()
     {
         robot.queuer.queue(false, true);
@@ -200,7 +201,7 @@ public class RL20 {
     }
 
     public boolean isAutDone(){
-        return !robot.queuer.isFullfilled()&&op.time<29.8;
+        return !robot.queuer.isFullfilled()&&time<29.8;
     }
 
 

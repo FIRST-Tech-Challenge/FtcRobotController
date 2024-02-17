@@ -184,9 +184,14 @@ public class BradBot extends BasicRobot {
   public void yellowAuto(boolean left){
     if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.LEFT_TILT.getState())) {
       if (currentPose.getX() > 9 && DROP.getState()) {
-        lift.setPosition(780);
+        if (left) {
+          lift.setPosition(760);
+        }
+        else{
+          lift.setPosition(760);
+        }
         if(left){
-          twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
+          twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
         }
         else{
           twrist.flipTo(Twrist.twristTargetStates.DROP);
@@ -259,7 +264,7 @@ public class BradBot extends BasicRobot {
   public void lowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==1000)) {
       if (currentPose.getX() > 0) {
-        lift.setPosition(1000);
+        lift.setPosition(900);
         intake.stopIntake();
         arm.flipTo(DROP);
         if(Wrist.WristStates.LOCK.getState()){
@@ -374,12 +379,12 @@ public class BradBot extends BasicRobot {
         if(intake.intakeAutoHeight(height)){
 
         } else if (!intake.intakePath()) {
-          Path back = new Path();
-          back.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
-          back.add(new EndWaypoint(currentPose.getX()+cos(currentPose.getHeading())*-3.5, currentPose.getY()+sin(currentPose.getHeading())*-3.5,currentPose.getHeading(),
-                  0.3,0.1,4, 1,toRadians(3)));
-
-          loopPPPath(back, true);
+          TrajectorySequence traj =
+              roadrun
+                  .trajectorySequenceBuilder(currentPose)
+                  .lineTo(new Vector2d(currentPose.getX() + 2, currentPose.getY()))
+                      .build();
+          roadrun.followTrajectorySequenceAsync(traj);
           intake.stopIntake();
           intake.setIntakePath(true);
         }
@@ -391,7 +396,7 @@ public class BradBot extends BasicRobot {
         }
       }
       if (intake.intakePath()) {
-        loopPPPath(new Path(), false);
+//        roadrun.followTrajectorySequenceAsync(traj);
       }
 
     }

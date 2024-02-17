@@ -5,13 +5,14 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.secret.Waypoint;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous
 public class TestPPUI extends LinearOpMode {
 

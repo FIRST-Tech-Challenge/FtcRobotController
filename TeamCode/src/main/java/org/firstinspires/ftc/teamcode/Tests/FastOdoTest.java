@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 //@Disabled
 //@Disabled
 //@Photon
+@Disabled
 @Autonomous
 public class FastOdoTest extends LinearOpMode {
     Queuer queuer;

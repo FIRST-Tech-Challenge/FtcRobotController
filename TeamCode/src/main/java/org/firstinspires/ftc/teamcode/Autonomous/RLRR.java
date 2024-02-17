@@ -119,7 +119,7 @@ public class RLRR extends LinearOpMode {
 //        robot.observeSpike();
         RL20 aut = new RL20(this, false);
 
-       waitForStart();
+       aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.purp();
             aut.pre();

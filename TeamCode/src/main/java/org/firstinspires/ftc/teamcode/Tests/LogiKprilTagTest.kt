@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * 9/6/23
  * Odom localizer 8 24x24 squares...but Kotlin!
  */
-
+@Disabled
 @Autonomous(name = "LogiKprilTagRRTest")
 
 class LogiKprilTagTest : LinearOpMode() {

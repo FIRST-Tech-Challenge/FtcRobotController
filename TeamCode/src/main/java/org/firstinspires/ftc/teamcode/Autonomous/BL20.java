@@ -205,9 +205,8 @@ public class BL20 {
     }
 
     public boolean isAutDone(){
-        return !robot.queuer.isFullfilled()&&op.time<29.8;
+        return !robot.queuer.isFullfilled()&&time<29.8;
     }
-
 
 
 }

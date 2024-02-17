@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.56, TWO=0.6, THREE = 0.62, FOUR = 0.64, FIVE =0.66, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
+  public static double ONE=0.53, TWO=0.57, THREE = 0.59, FOUR = 0.605, FIVE =0.625, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -169,7 +169,7 @@ public class Intake extends RFMotor {
   }
 
   public void uppies(){
-    if (IntakeStates.INTAKING.state || IntakeStates.REVERSING.getState()) {
+    if (IntakeStates.STOPPED.getState() && curPower!=0) {
       intakeServo.setPosition(UPPIES);
       height =1;
     }
@@ -186,7 +186,9 @@ public class Intake extends RFMotor {
 
   /** Sets intake power 0, logs that intake is stopped to general and intake surface level */
   public void stopIntake() {
+    IntakeStates.STOPPED.setStateTrue();
     if (curPower != 0) {
+      uppies();
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", ");
       double pos = this.getVelocity() * 0.1 + this.getCurrentPosition();
       pos %= TICKS_PER_REV;
@@ -197,8 +199,6 @@ public class Intake extends RFMotor {
         setRawPower(0);
         curPower=0;
       }
-      uppies();
-      IntakeStates.STOPPED.setStateTrue();
       pixeled1 = false;
 
       //        }
@@ -232,9 +232,6 @@ public class Intake extends RFMotor {
   }
 
   public boolean intakeAutoHeight(int p_height) {
-    if(height == p_height-2){
-      return false;
-    }
     if( IntakeStates.STOPPED.getState()){
       startIntakeTime=BasicRobot.time;
       storPixel=Magazine.pixels;
@@ -246,16 +243,16 @@ public class Intake extends RFMotor {
 
     if (BasicRobot.time - lastHeightTime > 5) {
       height = p_height;
-      setHeight(height);
+      setHeight(max(height, p_height-2));
       lastHeightTime = BasicRobot.time;
     }
-    if (BasicRobot.time - lastHeightTime > 0.8) {
+    if (BasicRobot.time - lastHeightTime > 1) {
       height--;
       if(height<=p_height-2){
         return false;
       }
       height=max(height,1);
-      setHeight(height);
+      setHeight(max(height, p_height-2));
       lastHeightTime = BasicRobot.time;
     }
     if(Magazine.pixels==1&&storPixel==0&&BasicRobot.time - lastHeightTime > 1){
@@ -284,7 +281,7 @@ public class Intake extends RFMotor {
 
 
   public void setHeight(int height){
-    double autoOff = 0.02;
+    double autoOff = 0;
     if(isTeleop){
       autoOff=0;
     }
