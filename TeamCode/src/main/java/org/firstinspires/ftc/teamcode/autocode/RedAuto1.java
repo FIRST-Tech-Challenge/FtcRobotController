@@ -50,6 +50,12 @@ public class RedAuto1 extends PlaceLinePixel {
                     PixelLocation1();
                 } else if (Location2 == true) {
                     PixelLocation2();
+                    frontLeftMotor.setPower(.2);
+                    frontRightMotor.setPower(.2);
+                    backLeftMotor.setPower(.2);
+                    backRightMotor.setPower(.2);
+                    TimeUnit.MILLISECONDS.sleep(200);
+                    RobotStop();
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
@@ -60,6 +66,12 @@ public class RedAuto1 extends PlaceLinePixel {
                         PixelLocation1();
                     } else if (Location2 == true) {
                         PixelLocation2();
+                        frontLeftMotor.setPower(.2);
+                        frontRightMotor.setPower(.2);
+                        backLeftMotor.setPower(.2);
+                        backRightMotor.setPower(.2);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        RobotStop();
                     } else if (Location3 == true) {
                         PixelLocation3();
                     } else {
