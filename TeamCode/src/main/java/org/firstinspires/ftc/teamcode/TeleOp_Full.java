@@ -33,6 +33,7 @@ public class TeleOp_Full extends CSBase {
 
         while (opModeIsActive()) {
             slowdownMultiplier = (1.0 - gamepad1.right_trigger);
+//            if (gamepad1.left_stick_button || gamepad1.right_stick_button) { slowdownMultiplier *= 0.5; }
 
             axial = ((-gamepad1.left_stick_y * SPEED_MULTIPLIER) * slowdownMultiplier);
             lateral = ((gamepad1.left_stick_x * SPEED_MULTIPLIER) * slowdownMultiplier);
