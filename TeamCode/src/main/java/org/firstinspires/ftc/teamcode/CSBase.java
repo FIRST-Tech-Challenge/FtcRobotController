@@ -628,7 +628,7 @@ public abstract class CSBase extends LinearOpMode {
 
     /** Place the purple pixel. **/
     public void purplePixel() {
-        s(2);
+        s(1);
         drive(-18);
         s(.5);
         if (pos == spike.left) {
@@ -642,8 +642,8 @@ public abstract class CSBase extends LinearOpMode {
             turn(0);
         } else if (pos == spike.right) {
             turn(35);
-            drive(-14);
-            drive(14);
+            drive(-13);
+            drive(13);
             turn(-35);
         }
         s(.5);
