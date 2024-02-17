@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "Distance Sensor Test", group = "Tests")
+//@Autonomous(name = "Distance Sensor Test", group = "Tests")
+@Disabled
 public class Test_DistanceSensor extends LinearOpMode {
 
 

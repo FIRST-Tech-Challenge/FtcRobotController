@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 
-@Autonomous(name = "Blue Back Full", group = "CenterStage", preselectTeleOp = "Full")
-//@Disabled
+//@Autonomous(name = "Blue Back 50", group = "CenterStage", preselectTeleOp = "Full")
+@Disabled
 public class Auto_BlueBackFull extends CSBase {
 
     @Override

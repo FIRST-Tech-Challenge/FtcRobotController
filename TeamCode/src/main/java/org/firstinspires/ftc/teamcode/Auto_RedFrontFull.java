@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Full")
+//@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Full")
+@Disabled
 public class Auto_RedFrontFull extends CSBase {
     @Override
     public void runOpMode() {

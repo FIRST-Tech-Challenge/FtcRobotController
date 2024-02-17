@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "One Gamepad", group = "CenterStage")
+//@TeleOp(name = "One Gamepad", group = "CenterStage")
+@Disabled
 public class TeleOp_OneGamepad extends CSBase {
 
     // Declare OpMode members for each of the 4 motors.
