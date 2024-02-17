@@ -77,6 +77,7 @@ public class AutoTemplate extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()) {
+            /*
             if (detection == "left") {
                 drive.setPoseEstimate(startingPose);
                 TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
@@ -154,6 +155,8 @@ public class AutoTemplate extends LinearOpMode{
                 drive.followTrajectorySequenceAsync(right);
                 drive.breakFollowing();
             }
+
+             */
             drive.update();
             liftUpdate(drive);
         }

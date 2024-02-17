@@ -64,6 +64,7 @@ public class DriveTrain extends OpMode
     private Servo rightLiftServo = null;
     private Servo leftLiftServo = null;
     private Servo door = null;
+    private Servo plane = null;
     private Servo pixelHolder = null;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
@@ -93,6 +94,7 @@ public class DriveTrain extends OpMode
         leftLiftServo = hardwareMap.servo.get("leftLiftServo");
         door = hardwareMap.servo.get("door");
         pixelHolder = hardwareMap.servo.get("pixel");
+        plane = hardwareMap.servo.get("plane");
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -115,6 +117,7 @@ public class DriveTrain extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -164,10 +167,10 @@ public class DriveTrain extends OpMode
         }
 
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(0.85);
         }
         else if (gamepad1.x) {
-            intakeMotor.setPower(-0.4);
+            intakeMotor.setPower(-0.7);
         }
         else {
             intakeMotor.setPower(0);
@@ -203,9 +206,9 @@ public class DriveTrain extends OpMode
 //            liftMotor1.setPower(-1);
 //            liftMotor2.setPower(-1);
             lift1Position = liftMotor1.getCurrentPosition();
-            if (lift1Position < 500) {
-                liftMotor1.setPower(-0.5);
-                liftMotor2.setPower(-0.5);
+            if (lift1Position < 200) {
+                liftMotor1.setPower(-0.7);
+                liftMotor2.setPower(-0.7);
             } else {
                 liftMotor1.setPower(-1);
                 liftMotor2.setPower(-1);
@@ -229,13 +232,16 @@ public class DriveTrain extends OpMode
         } else if (gamepad2.right_stick_y < -0.8) {
             liftMotor1.setPower(1);
             liftMotor2.setPower(1);
+        } else {
+            liftMotor1.setPower(0.05);
+            liftMotor2.setPower(0.05);
         }
 
         if (gamepad2.y) {
-//            rightLiftServo.setPosition(0);
+            //rightLiftServo.setPosition(0);
             leftLiftServo.setPosition(0);
         } else if (gamepad2.a) {
-//            rightLiftServo.setPosition(1);
+            //rightLiftServo.setPosition(1);
             leftLiftServo.setPosition(0.82);
         }
 
@@ -243,12 +249,20 @@ public class DriveTrain extends OpMode
             door.setPosition(0.7);
         } else if (gamepad2.right_bumper) {
             door.setPosition(0);
+//            leftLiftServo.setPosition(0);
         }
 
         if (gamepad2.b) {
             pixelHolder.setPosition(1);
         } else if (gamepad2.x) {
             pixelHolder.setPosition(0);
+        }
+
+        if (gamepad2.dpad_up) {
+            plane.setPosition(0);
+        }
+        else if (gamepad2.dpad_down) {
+            plane.setPosition(1);
         }
 
 
