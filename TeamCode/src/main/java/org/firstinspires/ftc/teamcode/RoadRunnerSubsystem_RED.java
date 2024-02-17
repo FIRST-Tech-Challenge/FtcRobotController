@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.profile.VelocityConstraint;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -41,6 +42,8 @@ public class RoadRunnerSubsystem_RED {
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
+    public Pose2d HomePose;
+
     protected TrajectorySequenceBuilder test;
 
     protected TrajectorySequenceBuilder leftSpike;
@@ -102,13 +105,13 @@ public class RoadRunnerSubsystem_RED {
 
     protected Pose2d leftPixel_SHORT = new Pose2d((RobotY/2), TileInverted - (RobotX/2), Math.toRadians(180));
     protected Pose2d centerPixel_SHORT = new Pose2d(Tile/2, TileInverted - (RobotY/2), Math.toRadians(90));
-    protected Pose2d rightPixel_SHORT = new Pose2d(Tile, 1.5 * TileInverted, Math.toRadians(0));
+    protected Pose2d rightPixel_SHORT = new Pose2d(Tile, 1.5 * TileInverted, Math.toRadians(90));
 
     protected Pose2d leftPixel_LONG = new Pose2d(2 * TileInverted,1.5 * TileInverted, Math.toRadians(180));
     protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, TileInverted - (RobotY/2), Math.toRadians(90));
-    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), TileInverted - (RobotX/2), Math.toRadians(0));
+    protected Pose2d rightPixel_LONG = new Pose2d(TileInverted - (RobotY/2), TileInverted - (RobotX/2), Math.toRadians(90));
 
-    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2),1.25 * TileInverted, Math.toRadians(180)); // Default
+    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2),1.3 * TileInverted, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * TileInverted, Math.toRadians(180));
     protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * TileInverted, Math.toRadians(180)); // Default
 
@@ -126,17 +129,17 @@ public class RoadRunnerSubsystem_RED {
     protected Vector2d stationClose_Outer = new Vector2d(Tile, 2.5 * TileInverted);
     protected Vector2d stationFar_Outer = new Vector2d(1.5 * TileInverted,2.5 * TileInverted);
 
-    protected Pose2d pixel_cycle_PoseTransfer = centerPixel_SHORT;
-    protected Pose2d leftPixelSpike = leftPixel_SHORT;
-    protected Pose2d centerPixelSpike = centerPixel_SHORT;
-    protected Pose2d rightPixelSpike = rightPixel_SHORT;
-    protected Pose2d randomizedBackdrop = backdropCenter;
-    protected Vector2d stationClose = stationClose_Inner;
-    protected Vector2d stationFar = stationFar_Inner;
-    protected Pose2d backdrop_Unload = backdropLeft;
-    protected Pose2d stackStation = stationInner;
-    protected Pose2d parkingPose = parkingMiddle;
-    
+    public Pose2d pixel_cycle_PoseTransfer = rightPixel_SHORT;
+    public Pose2d leftPixelSpike = leftPixel_SHORT;
+    public Pose2d centerPixelSpike = centerPixel_SHORT;
+    public Pose2d rightPixelSpike = rightPixel_SHORT;
+    public Pose2d randomizedBackdrop = backdropRight;
+    public Vector2d stationClose = stationClose_Inner;
+    public Vector2d stationFar = stationFar_Inner;
+    public Pose2d backdrop_Unload = backdropLeft;
+    public Pose2d stackStation = stationInner;
+    public Pose2d parkingPose = parkingMiddle;
+
     /*-------------------------------------------------------
     -FTCLib Commands-
     -------------------------------------------------------*/
@@ -203,6 +206,7 @@ public class RoadRunnerSubsystem_RED {
                         StartingPosition startingPosition, Path path,PixelStack pixelStack,
                         ParkingPosition parkingPosition){
 
+        this.HomePose = HomePose;
         this.drive = sampleDrive;
         this.startingPosition = startingPosition;
         this.path = path;
@@ -220,6 +224,9 @@ public class RoadRunnerSubsystem_RED {
         /*-----------------------------------------------------*/
 
         drive.setPoseEstimate(HomePose);
+    }
+
+    public void TrajectoryInit(){
 
         /*-----------------------------------------------------*/
         test = drive.trajectorySequenceBuilder(HomePose)
@@ -264,7 +271,10 @@ public class RoadRunnerSubsystem_RED {
                 /*----2+2----*/
                 /*-------------------------------------------------------------------*/
                 .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(stationClose, Math.toRadians(180))
+                .splineToConstantHeading(stationClose, Math.toRadians(180),
+                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
 //                .addDisplacementMarker(() -> {
@@ -285,7 +295,10 @@ public class RoadRunnerSubsystem_RED {
                 /*----2+4----*/
                 /*-------------------------------------------------------------------*/
                 .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(stationClose, Math.toRadians(180))
+                .splineToConstantHeading(stationClose, Math.toRadians(180),
+                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(15)
+                )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
 //                .addDisplacementMarker(() -> {

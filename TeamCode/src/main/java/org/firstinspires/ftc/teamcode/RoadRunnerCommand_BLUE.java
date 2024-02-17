@@ -1,22 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
-public class RoadRunnerCommand_RED extends RoadRunnerSubsystem_RED {
+public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     Telemetry telemetry;
-    RoadRunnerCommand_RED(
+    RoadRunnerCommand_BLUE(
             SampleMecanumDrive sampleDrive, HardwareMap hardwareMap, Pose2d HomePose,
             StartingPosition startingPosition, Path path, PixelStack pixelStack,
             ParkingPosition parkingPosition, Telemetry telemetry
@@ -25,44 +18,44 @@ public class RoadRunnerCommand_RED extends RoadRunnerSubsystem_RED {
         this.telemetry = telemetry;
     }
 
-    public void spikeRandomizationPath(RoadRunnerSubsystem_RED.Randomization randomization){
+    public void spikeRandomizationPath(Randomization randomization){
 
-        if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.SHORT){
-            if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
+        if (startingPosition == StartingPosition.SHORT){
+            if (randomization == Randomization.LEFT){
                 randomizedBackdrop = backdropLeft;
                 leftPixelSpike = leftPixel_SHORT;
                 pixel_cycle_PoseTransfer = leftPixel_SHORT;
-                leftSpikeStartingTangetValue = 0;
-                leftSpikeFinalTangetValue = 0;
+                rightSpikeStartingTangetValue = 0;
+                rightSpikeFinalTangetValue = 0;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
+            else if (randomization == Randomization.CENTER){
                 randomizedBackdrop = backdropCenter;
                 centerPixelSpike = centerPixel_SHORT;
                 pixel_cycle_PoseTransfer = centerPixel_SHORT;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
+            else if (randomization == Randomization.RIGHT){
                 randomizedBackdrop = backdropRight;
                 rightPixelSpike = rightPixel_SHORT;
                 pixel_cycle_PoseTransfer = rightPixel_SHORT;
             }
         }
-        else if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.LONG){
-            if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
+        else if (startingPosition == StartingPosition.LONG){
+            if (randomization == Randomization.LEFT){
                 randomizedBackdrop = backdropLeft;
                 rightPixelSpike = leftPixel_LONG;
                 pixel_cycle_PoseTransfer = leftPixel_LONG;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
+            else if (randomization == Randomization.CENTER){
                 randomizedBackdrop = backdropCenter;
                 centerPixelSpike = centerPixel_LONG;
                 pixel_cycle_PoseTransfer = centerPixel_LONG;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
+            else if (randomization == Randomization.RIGHT){
                 randomizedBackdrop = backdropRight;
                 leftPixelSpike = rightPixel_LONG;
                 pixel_cycle_PoseTransfer = rightPixel_LONG;
-                leftSpikeStartingTangetValue = 1;
-                leftSpikeFinalTangetValue = 1;
+                rightSpikeStartingTangetValue = 1;
+                rightSpikeFinalTangetValue = 1;
             }
         }
     }
@@ -72,54 +65,54 @@ public class RoadRunnerCommand_RED extends RoadRunnerSubsystem_RED {
         if (path == Path.INNER){
             stationClose = stationClose_Inner;
             stationFar = stationFar_Inner;
-            backdrop_Unload = backdropLeft;
+            backdrop_Unload = backdropRight;
             stackStation = stationInner;
             stackStationTangetValue = 0;
         }
         else if (path == Path.OUTER){
             stationClose = stationClose_Outer;
             stationFar = stationFar_Outer;
-            backdrop_Unload = backdropRight;
+            backdrop_Unload = backdropLeft;
             stackStation = stationOuter;
             stackStationTangetValue = 2;
         }
     }
 
     public void parking(){
-        if (parkingPosition == RoadRunnerSubsystem_RED.ParkingPosition.INNER){
+        if (parkingPosition == ParkingPosition.INNER){
             parkingTangetValue = 0;
             parkingPose = parkingInner;
         }
-        else if (parkingPosition == RoadRunnerSubsystem_RED.ParkingPosition.MID){
+        else if (parkingPosition == ParkingPosition.MID){
             parkingTangetValue = 1;
             parkingPose = parkingMiddle;
         }
-        else if (parkingPosition == RoadRunnerSubsystem_RED.ParkingPosition.OUTER){
+        else if (parkingPosition == ParkingPosition.OUTER){
             parkingTangetValue = 1;
             parkingPose = parkingOuter;
         }
     }
 
-    public TrajectorySequenceBuilder getSpike(RoadRunnerSubsystem_RED.Randomization randomization){
-        if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.SHORT){
-            if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
+    public TrajectorySequenceBuilder getSpike(Randomization randomization){
+        if (startingPosition == StartingPosition.SHORT){
+            if (randomization == Randomization.LEFT){
                 return leftSpike;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
+            else if (randomization == Randomization.CENTER){
                 return centerSpike;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
+            else if (randomization == Randomization.RIGHT){
                 return rightSpike;
             }
         }
-        else if (startingPosition == RoadRunnerSubsystem_RED.StartingPosition.LONG){
-            if (randomization == RoadRunnerSubsystem_RED.Randomization.LEFT){
+        else if (startingPosition == StartingPosition.LONG){
+            if (randomization == Randomization.LEFT){
                 return rightSpike;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.CENTER){
+            else if (randomization == Randomization.CENTER){
                 return centerSpike;
             }
-            else if (randomization == RoadRunnerSubsystem_RED.Randomization.RIGHT){
+            else if (randomization == Randomization.RIGHT){
                 return leftSpike;
             }
         }
