@@ -547,6 +547,61 @@ public class Robot {
         opMode.sleep(100);
     }
 
+    public void straightBlockingWithTimer(double inches, boolean forward, double maxPower, double seconds) {
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double ERROR_TOLERANCE = 10;
+        double power;
+        double endTick;
+        final double KP = 0.01;
+        final double KD = 500_000;
+        final double minPower = 0.2;
+        double currentTick = fLeft.getCurrentPosition();
+        double errorDer;
+        double currentTime;
+
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = Math.PI;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537 / wheelCircIn;
+
+        if (forward) {
+            endTick = currentTick + inches * IN_TO_TICK;
+        } else {
+            endTick = currentTick - inches * IN_TO_TICK;
+        }
+
+        double error = endTick - currentTick;
+        ElapsedTime elapsedTime = new ElapsedTime();
+        elapsedTime.reset();
+
+        while ((Math.abs(error) >= ERROR_TOLERANCE || elapsedTime.milliseconds() < seconds*1000) && opMode.opModeIsActive()) {
+
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = endTick - currentTick;
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
+
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1 * maxPower, maxPower);
+
+            setMotorPower(power, power, power, power);
+
+            currentTick = fLeft.getCurrentPosition();
+            prevTime = currentTime;
+            prevError = error;
+        }
+        setMotorPower(0, 0, 0, 0);
+        opMode.sleep(100);
+    }
+
     public void detectMarkerPosition() {
 
         //boolean isTesting = false;
@@ -561,18 +616,16 @@ public class Robot {
         elapsedTime.reset();
         time = elapsedTime.seconds();
 
-        while (opMode.opModeIsActive()) {
-            while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
-                Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
-                position = markerProcessor.getPosition();
-                if (elapsedTime.seconds() > time + visionTimeout) {
-                    position = MarkerDetector.MARKER_POSITION.CENTER;
-                    Log.d("vision", "detected time out. Picking CENTER");
-                    break;
-                }
+        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
+            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
+            position = markerProcessor.getPosition();
+            if (elapsedTime.seconds() > time + visionTimeout) {
+                position = MarkerDetector.MARKER_POSITION.CENTER;
+                Log.d("vision", "detected time out. Picking CENTER");
+                break;
             }
-            break;
         }
+
         //save marker position and apriltag position in robot class
         setMarkerPos(position);
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
@@ -745,7 +798,7 @@ public class Robot {
                     Log.d("apriltag", "found tag" + detection.id);
                     distanceToMove = ((tagId - detection.id) * distanceBetweenId) + detection.ftcPose.x;
                     Log.d("apriltag", "calculated, distance to move: " + distanceToMove);
-                    mecanumBlocking(distanceToMove - 1, false, 0.7); //-1 to fix too much movement
+                    mecanumBlocking(distanceToMove, false, 0.7); //-1 to fix too much movement
                     Log.d("apriltag", "moved");
                     movedToDesired = true;
                 }
@@ -2095,14 +2148,15 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(101);
         } else {
-            straightBlocking2FixHeading(106);
+            straightBlocking2FixHeading(103);
         }
+
         intake.setPower(-1);
 
         if (isRedAlliance) {
             mecanumBlocking2(23);
         } else {
-            mecanumBlocking2(-26);
+            mecanumBlocking2(-32);
         }
 
         if (isRedAlliance) {
@@ -2118,18 +2172,25 @@ public class Robot {
             straightBlocking(2, false, 1); //back
 
             stackAttachmentIn();
-            opMode.sleep(500);
 
-            straightBlocking(2.5, true, 1); //forward
+            straightBlockingWithTimer(4, true, 1, 0.7); //forward
 
             straightBlocking(2, false, 1); //back
 
-            //sideways to get second pixel
-            mecanumBlocking2(-3); //sideway
+            closeClamp(true);
 
-            straightBlocking(2, true, 1); // forward
+            //sideways to get second pixel
+            mecanumBlocking2(-2); //sideway
+
+            openClamp(true, true, true);
+
+            straightBlockingWithTimer(4.5, true, 1, 0.5); // forward
+
+            closeClamp(true);
 
             straightBlocking(2, false, 1); //backward
+
+            setHeadingRelativeToBoard(0, 0.7);
         }
 
         //straightBlocking(1.5, true, 1); //forward
@@ -2138,16 +2199,19 @@ public class Robot {
         closeClamp(true);
         opMode.sleep(100);
 
-        intake.setPower(1);
-        opMode.sleep(100);
+
     }
 
     public void stackToBoardTruss() {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(polarity * 25);
-        straightBlocking2FixHeading(-93);
+        mecanumBlocking2(polarity * 31);
+
+        intake.setPower(1);
+        opMode.sleep(100);
+
+        straightBlocking2FixHeading(-91);
 
         switch (wantedAprTagId) {
             case 1:
