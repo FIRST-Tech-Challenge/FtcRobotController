@@ -60,7 +60,7 @@ public class Controller extends LinearOpMode {
 
     DigitalChannel armExtendSwitch = null;
     DigitalChannel digital1 = null;
-    
+
     int currentArmLiftPos = 0;
     boolean slowModeActive = false;
     boolean pickupSequenceActive = false;
@@ -228,14 +228,15 @@ public class Controller extends LinearOpMode {
             }
 
             // Arm Extend
-            if (-armExtend.getCurrentPosition() < ARM_EXTEND_LIMIT || overrideMode) {
+            if (-armExtend.getCurrentPosition() < ARM_EXTEND_LIMIT || overrideMode || -gamepad2.right_stick_y < 0) {
                 armExtend.setPower(-gamepad2.right_stick_y * ARM_EXTEND_SPEED);
             }
+            else armExtend.setPower(0);
 
             // Arm Lift
             currentArmLiftPos -= (int)(gamepad2.left_stick_y * ARM_LIFT_SPEED);
-            if (currentArmLiftPos < ARM_MIN_POSITION) currentArmLiftPos = ARM_MIN_POSITION;
-            if (currentArmLiftPos > ARM_MAX_POSITION && !overrideMode) currentArmLiftPos = ARM_MAX_POSITION;
+            if (currentArmLiftPos < ARM_MIN_POSITION && !overrideMode && -gamepad2.left_stick_y < 0) currentArmLiftPos = ARM_MIN_POSITION;
+            if (currentArmLiftPos > ARM_MAX_POSITION && !overrideMode && -gamepad2.left_stick_y > 0) currentArmLiftPos = ARM_MAX_POSITION;
 
             armLift.setTargetPosition(currentArmLiftPos);
 
