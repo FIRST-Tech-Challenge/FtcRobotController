@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFUltrasonic;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
 
 @Config
 @Autonomous(name = "Ultrasonics Test")
@@ -26,8 +25,8 @@ public class RFUltrasonicTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 //        BradBot robot = new BradBot(this, false);
-        BasicRobot robot = new BasicRobot(this, false);
-        RFUltrasonic ultra = new RFUltrasonic("newUltra");
+        BradBot robot = new BradBot(this, false);
+        RFUltrasonic ultra = new RFUltrasonic("backRightUltraAnalog");
 //        robot.roadrun.setPoseEstimate(new Pose2d(-38.5, -56, Math.toRadians(-90)));
 
         while (!isStarted()) {
@@ -38,6 +37,7 @@ public class RFUltrasonicTest extends LinearOpMode {
 //            ultra.check();
 //            op.telemetry.addData("moving closer: ", ultra.getMovingCloser());
             op.telemetry.update();
+            op.telemetry.addData("check alliance", robot.checkAlliance());
 //            packet.put("dist", ultra.getLinearRegressionDist());
             packet.put("rawDist", ultra.getDist());
 //            op.telemetry.addData("check", ultra.detected);

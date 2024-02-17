@@ -25,8 +25,8 @@ public class Ultrasonics {
      * Constructor
      */
     public Ultrasonics(){
-        backLeft = new RFUltrasonic("backLeftUltraAnalog", "backLeftUltraLED");
-//        backRight = new RFUltrasonic("backRightUltra");
+//        backLeft = new RFUltrasonic("backRightUltraAnalog");
+        backRight = new RFUltrasonic("backRightUltraAnalog");
 //        frontLeft = new RFUltrasonic("frontLeftUltra");
 //        frontRight = new RFUltrasonic("frontRightUltra");
     }
@@ -38,10 +38,11 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkAlliance() {
-        backLeft.setLine(allianceLine);
-        op.telemetry.addData("dist", backLeft.getDist());
+        backRight.setLine(allianceLine);
+        op.telemetry.addData("dist", backRight.getDist());
 //        frontRight.setLine(allianceLine);
-        return backLeft.isDetected();
+        op.telemetry.addData("detected2", backRight.isDetected());
+        return backRight.isDetected();
 //                && frontRight.isDetected();
     }
     /**
@@ -52,14 +53,14 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkOpp() {
-        backLeft.setLine(oppLine);
+        backRight.setLine(oppLine);
 //        frontRight.setLine(oppLine);
-        return backLeft.isDetected();
+        return backRight.isDetected();
 //        frontRight.isDetected();
     }
 
     public boolean movingCloser() {
-        return backLeft.getMovingCloser();
+        return backRight.getMovingCloser();
     }
     /**
      * Updates if the pins on the ultrasonics have been flipped.
@@ -69,6 +70,6 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public void update() {
-        backLeft.check();
+        backRight.check();
     }
 }

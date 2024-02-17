@@ -61,20 +61,21 @@ public class RFUltrasonic {
     public void check() {
         double robotDist = targetLine.distToLine();
         double ultraDist;
-        if (op.getRuntime() - lastEnabled >= 0.05) {
-            ultrasonicLED.enable(ultrasonicLED.isLightOn());
-        }
+//        if (op.getRuntime() - lastEnabled >= 0.05) {
+//            ultrasonicLED.enable(ultrasonicLED.isLightOn());
+//        }
 
         if (op.getRuntime() - lastEnabled >= 0.1) {
 
-            if (ultrasonicLED.isLightOn()) {
+//            if (ultrasonicLED.isLightOn()) {
                 ultraDist = getDist();
 
                 difference = robotDist - ultraDist;
                 detected = ultraDist < robotDist;
-            }
+                op.telemetry.addData("detected", detected);
+//            }
 
-            ultrasonicLED.enable(ultrasonicLED.isLightOn());
+//            ultrasonicLED.enable(ultrasonicLED.isLightOn());
             lastEnabled = op.getRuntime();
         }
     }

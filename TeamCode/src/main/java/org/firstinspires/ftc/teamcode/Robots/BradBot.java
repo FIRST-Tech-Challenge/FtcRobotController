@@ -104,8 +104,7 @@ public class BradBot extends BasicRobot {
 //    preloader = new Preloader();
     roadrun = new SampleMecanumDrive(p_op.hardwareMap);
     twrist = new Twrist();
-    //        ultras = new Ultrasonics();
-//    ultras = new Ultrasonics();
+    ultras = new Ultrasonics();
     wrist = new Wrist();
     path = new Path();
     purped = false;
@@ -427,7 +426,9 @@ public class BradBot extends BasicRobot {
 
   public boolean checkAlliance() {
     if (currentPose.getX() > 27) {
+      op.telemetry.addData("hi", "hi");
       if (ultras.checkAlliance()) {
+        op.telemetry.addData("hi2", "hi2");
         roadrun.breakFollowing();
         roadrun.setMotorPowers(0, 0, 0, 0);
     }
@@ -730,7 +731,7 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
-//    ultras.update();
+    ultras.update();
     twrist.update();
     claw.update();
     magazine.update();
