@@ -29,7 +29,7 @@ public class Controller extends LinearOpMode {
     final double ARM_LIFT_POWER = 0.8;
     final int ARM_MAX_POSITION = 2950;
     final int ARM_MIN_POSITION = -100;
-    final int ARM_EXTEND_LIMIT = 1500; //3600
+    final int ARM_EXTEND_LIMIT = 3600;
 
     // Grip
     final double GRIP_OPEN = 0.5;
@@ -41,10 +41,10 @@ public class Controller extends LinearOpMode {
     final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
-    final int PICKUP_EXTEND_TARGET = 1000;
+    final int PICKUP_EXTEND_TARGET = 1600;
 
     // Pixel Backdrop Sequence
-    final int BACKDROP_EXTEND_TARGET = 1000;
+    final int BACKDROP_EXTEND_TARGET = 2000;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -277,4 +277,4 @@ public class Controller extends LinearOpMode {
             telemetry.update();
         }
     }
-}
+}   
