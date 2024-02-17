@@ -181,19 +181,19 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
-            moveLinearSlideByTicksBlocking(startingPosition + 1600); //1700
+            moveLinearSlideByTicksBlocking(startingPosition + 1550); //1700
             trayToOuttakePos(true); // pivot tray to outtake position
             opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
-            moveLinearSlideByTicksBlocking(startingPosition + 2000);
+            moveLinearSlideByTicksBlocking(startingPosition + 1950);
         } else {
-            moveLinearSlideByTicksBlocking(startingPosition + 2000);
+            moveLinearSlideByTicksBlocking(startingPosition + 1900);
             trayToOuttakePos(true); // pivot tray to outtake position
             opMode.sleep(100);
             openClamp(true, true, true); // drop pixel
             opMode.sleep(100);
-            moveLinearSlideByTicksBlocking(startingPosition + 2350);
+            moveLinearSlideByTicksBlocking(startingPosition + 2300);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
@@ -1947,7 +1947,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-2);
+                straightBlocking2(-3);
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -1955,7 +1955,7 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(2);
+                straightBlocking2(3);
 
                 // P3: (43.5, 35.5)
 
@@ -1968,7 +1968,7 @@ public class Robot {
 
                 // P4: (43.5, 60)
 
-                straightBlocking2FixHeading(-73.5);
+                straightBlocking2FixHeading(-74.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (120, 60)
@@ -2036,7 +2036,7 @@ public class Robot {
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(30);
+                    mecanumBlocking2(27);
                 } else {
                     mecanumBlocking2(-30);
                 }
@@ -2087,7 +2087,7 @@ public class Robot {
 
                 // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-85.5); // subtracted 4 here
+                straightBlocking2FixHeading(-86.5); // subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -2095,7 +2095,7 @@ public class Robot {
                 // visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(26);
+                    mecanumBlocking2(23);
                 } else {
                     mecanumBlocking2(-26);
                 }
@@ -2125,10 +2125,10 @@ public class Robot {
                 mecanumBlocking2(27);
                 break;
             case 4:
-                mecanumBlocking2(-32);
+                mecanumBlocking2(-34);
                 break;
             case 5:
-                mecanumBlocking2(-26.5);
+                mecanumBlocking2(-25.5);
                 break;
             case 6:
                 mecanumBlocking2(-21);
@@ -2146,7 +2146,7 @@ public class Robot {
         openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(101);
+            straightBlocking2FixHeading(103);
         } else {
             straightBlocking2FixHeading(104);
         }
@@ -2154,20 +2154,22 @@ public class Robot {
         intake.setPower(-1);
 
         if (isRedAlliance) {
-            mecanumBlocking2(23);
+            mecanumBlocking2(26);
         } else {
             mecanumBlocking2(-33);
         }
 
         if (isRedAlliance) {
-            straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
+            straightBlockingWithTimer(5, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
             straightBlocking(1.5, false, 1);
-            straightBlocking(1, true, 1);
 
-            straightBlocking(1.5, false, 1);
-            straightBlocking(1, true, 1);
+            straightBlockingWithTimer(3, true, 1, 0.4);
+            straightBlocking(3, false, 1);
 
-            straightBlocking(1, false, 1);
+            straightBlockingWithTimer(3, true, 1, 0.4);
+            straightBlocking(3, false, 1);
+
+            closeClamp(true);
         } else {
             mecanumBlocking2(8);
 
@@ -2217,7 +2219,7 @@ public class Robot {
         intake.setPower(1);
         opMode.sleep(100);
 
-        straightBlocking2FixHeading(-91);
+        straightBlocking2FixHeading(-96);
 
         switch (wantedAprTagId) {
             case 1:
