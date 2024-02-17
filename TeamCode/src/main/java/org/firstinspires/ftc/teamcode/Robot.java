@@ -715,7 +715,7 @@ public class Robot {
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 12;
-        double PIXEL_SIZE = 4.5;
+        double PIXEL_SIZE = 6.5;
         int numberOfDetectionsProcessed = 0;
         double distanceToMove;
         double distanceBetweenId = 6;
@@ -975,6 +975,20 @@ public class Robot {
     public void closeHook() {
         hook.setPosition(0.27);
     }
+
+    //0 is aligned to board
+    public void setHeadingRelativeToBoard(double relativeHeading, double maxPower) {
+        double absoluteHeading;
+
+        if (isRedAlliance) {
+            absoluteHeading = relativeHeading - 90;
+        } else {
+            absoluteHeading = relativeHeading + 90;
+        }
+
+        setHeading(absoluteHeading, maxPower);
+    }
+
     public double getHeadingRelativeToBoard() {
         double absoluteHeading = getCurrentHeading();
         double relativeHeading;
@@ -2052,7 +2066,7 @@ public class Robot {
                 mecanumBlocking2(17);
                 break;
             case 2:
-                mecanumBlocking2(23.5);
+                mecanumBlocking2(22.5);
                 break;
             case 3:
                 mecanumBlocking2(27);
@@ -2081,25 +2095,45 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(101);
         } else {
-            straightBlocking2FixHeading(105);
+            straightBlocking2FixHeading(106);
         }
         intake.setPower(-1);
 
         if (isRedAlliance) {
             mecanumBlocking2(23);
         } else {
-            mecanumBlocking2(-27);
+            mecanumBlocking2(-26);
         }
 
-        //straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
-        straightBlocking(2, false, 1);
-        straightBlocking(1.5, true, 1);
-        straightBlocking(1.5, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
-        mecanumBlocking2(1);
-        straightBlocking(1.5, true, 1);
-        straightBlocking(1.5, false, 1);
+        if (isRedAlliance) {
+            straightBlocking(3, true, 1); // 3 knocks stack, 6 knocks pixel!!
+            straightBlocking(1.5, false, 1);
+            straightBlocking(1, true, 1);
+
+            straightBlocking(1.5, false, 1);
+            straightBlocking(1, true, 1);
+
+            straightBlocking(1, false, 1);
+        } else {
+            straightBlocking(2, false, 1); //back
+
+            stackAttachmentIn();
+            opMode.sleep(500);
+
+            straightBlocking(2.5, true, 1); //forward
+
+            straightBlocking(2, false, 1); //back
+
+            //sideways to get second pixel
+            mecanumBlocking2(-3); //sideway
+
+            straightBlocking(2, true, 1); // forward
+
+            straightBlocking(2, false, 1); //backward
+        }
+
+        //straightBlocking(1.5, true, 1); //forward
+        //straightBlocking(1.5, false, 1); //backward
 
         closeClamp(true);
         opMode.sleep(100);
@@ -2112,7 +2146,7 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        mecanumBlocking2(polarity * 24);
+        mecanumBlocking2(polarity * 25);
         straightBlocking2FixHeading(-93);
 
         switch (wantedAprTagId) {
@@ -2137,9 +2171,8 @@ public class Robot {
             default:
                 break;
         }
-
-        setHeading(0, 0.7);
-        // todo fix this - setHeading(90 * polarity, 0.7);
+        //0 is aligned to board
+        setHeadingRelativeToBoard(0, 0.7);
     }
 
     public static double angleWrap (double angle) {
