@@ -1840,7 +1840,7 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        straightBlocking2FixHeading(104);
+        straightBlocking2FixHeading(100);
         intake.setPower(-1);
 
         straightBlocking(5, true, 1);
