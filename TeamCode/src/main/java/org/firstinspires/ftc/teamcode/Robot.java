@@ -1992,7 +1992,7 @@ public class Robot {
                 // P1: (35, 17)
 
                 if (isRedAlliance) {
-                    mecanumBlocking2(21);
+                    mecanumBlocking2(20);
                 } else {
                     mecanumBlocking2(-24);
                 }
@@ -2119,7 +2119,7 @@ public class Robot {
                 mecanumBlocking2(17);
                 break;
             case 2:
-                mecanumBlocking2(22);
+                mecanumBlocking2(22); //center blue
                 break;
             case 3:
                 mecanumBlocking2(27);
@@ -2128,13 +2128,18 @@ public class Robot {
                 mecanumBlocking2(-34);
                 break;
             case 5:
-                mecanumBlocking2(-25.5);
+                mecanumBlocking2(-25.5); //center red
                 break;
             case 6:
                 mecanumBlocking2(-21);
                 break;
-            default:
-                break;
+            default: {
+                if (isRedAlliance) {
+                    mecanumBlocking2(-25.5);
+                } else {
+                    mecanumBlocking2(22);
+                }
+            }
         }
 
         setHeading(90 * polarity, 0.7);
@@ -2146,7 +2151,7 @@ public class Robot {
         openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(103);
+            straightBlocking2FixHeading(98);
         } else {
             straightBlocking2FixHeading(104);
         }
@@ -2154,22 +2159,31 @@ public class Robot {
         intake.setPower(-1);
 
         if (isRedAlliance) {
-            mecanumBlocking2(26);
+            mecanumBlocking2(22);
         } else {
             mecanumBlocking2(-33);
         }
 
         if (isRedAlliance) {
-            straightBlockingWithTimer(5, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
+            setHeadingRelativeToBoard(-20, 0.7);
+        }
+
+        if (isRedAlliance) {
+            straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
             straightBlocking(1.5, false, 1);
 
-            straightBlockingWithTimer(3, true, 1, 0.4);
+            stackAttachmentIn();
+            opMode.sleep(500);
+
+            straightBlockingWithTimer(4, true, 1, 0.4);
             straightBlocking(3, false, 1);
 
-            straightBlockingWithTimer(3, true, 1, 0.4);
-            straightBlocking(3, false, 1);
+            //straightBlockingWithTimer(3, true, 1, 0.4);
+            //.        straightBlocking(3, false, 1);
 
             closeClamp(true);
+
+            setHeadingRelativeToBoard(0, 0.7);
         } else {
             mecanumBlocking2(8);
 
@@ -2221,12 +2235,13 @@ public class Robot {
 
         straightBlocking2FixHeading(-96);
 
+        Log.d("wanted tag", "wanted tag" + wantedAprTagId);
         switch (wantedAprTagId) {
             case 1:
                 mecanumBlocking2(-33);
                 break;
             case 2:
-                mecanumBlocking2(-24);
+                mecanumBlocking2(-24); //center blue
                 break;
             case 3:
                 mecanumBlocking2(-24);
@@ -2235,14 +2250,24 @@ public class Robot {
                 mecanumBlocking2(24);
                 break;
             case 5:
-                mecanumBlocking2(24);
+                mecanumBlocking2(24); //center red
                 break;
             case 6:
                 mecanumBlocking2(33);
                 break;
-            default:
+            default: {
+                if (isRedAlliance) {
+                    mecanumBlocking2(24);
+                    Log.d("double mec", "red");
+                } else {
+                    mecanumBlocking2(-24);
+                    Log.d("double mec", "blue");
+                }
                 break;
+            }
+
         }
+
         //0 is aligned to board
         setHeadingRelativeToBoard(0, 0.7);
     }

@@ -20,10 +20,6 @@ public class ShortBlueWall22 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.setMarkerPos(MarkerDetector.MARKER_POSITION.RIGHT);
-            robot.setWantedAprTagId(MarkerDetector.MARKER_POSITION.RIGHT, robot.isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
-            robot.setSecondWantedTagId();
-
             robot.detectMarkerPosition();
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
