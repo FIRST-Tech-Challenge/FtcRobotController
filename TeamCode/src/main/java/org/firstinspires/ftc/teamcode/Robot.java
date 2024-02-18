@@ -891,7 +891,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(21);
                 } else {
-                    mecanumBlocking2(-24);
+                    mecanumBlocking2(-21);
                 }
                 setHeading(0, 0.7);
 
