@@ -85,8 +85,9 @@ public class AutonomousRightBlue extends AutonomousBase {
         } // !isStarted
 
         // Ensure any movement during robot setup is reset to zero
-        globalCoordinatePositionReset();
-        
+        setGlobalCoordinatePosition(0.0, 0.0, 0.0);
+        setCorrectedGlobalCoordinatePosition(0.0, 0.0, 0.0);
+
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 

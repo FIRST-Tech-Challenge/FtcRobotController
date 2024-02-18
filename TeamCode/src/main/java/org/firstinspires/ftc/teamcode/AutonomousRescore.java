@@ -2,12 +2,16 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.vision.apriltag.AprilTagProcessor.THREADS_DEFAULT;
+
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -60,10 +64,15 @@ public class AutonomousRescore extends AutonomousBase {
         // This is the line that determined what auto is run.
         // This is right side red alliance.
         pipelineBack = new CenterstageSuperPipeline(false, true );
-        aprilTag = new AprilTagProcessor.Builder()
-                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .setLensIntrinsics(904.214,904.214,696.3,362.796)
-                .build();
+//        aprilTag = new AprilTagProcessor.Builder()
+//                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+//                .setLensIntrinsics(904.214,904.214,696.3,362.796)
+//                .build();
+        aprilTag = new AprilTagProcessorImplCallback(904.214, 904.214, 696.3, 362.796,
+                DistanceUnit.INCH, AngleUnit.DEGREES, AprilTagGameDatabase.getCenterStageTagLibrary(),
+                false, false, true, true,
+                AprilTagProcessor.TagFamily.TAG_36h11, THREADS_DEFAULT,
+                robotGlobalCoordinateCorrectedPosition);
         visionPortalBack = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"))
                 .addProcessors(pipelineBack, aprilTag)
@@ -84,8 +93,9 @@ public class AutonomousRescore extends AutonomousBase {
         } // !isStarted
 
         // Ensure any movement during robot setup is reset to zero
-        globalCoordinatePositionReset();
-        
+        setGlobalCoordinatePosition(0.0, 0.0, 0.0);
+        setCorrectedGlobalCoordinatePosition(0.0, 0.0, 0.0);
+
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 

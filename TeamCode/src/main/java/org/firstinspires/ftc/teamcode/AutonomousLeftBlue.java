@@ -2,6 +2,8 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.vision.apriltag.AprilTagProcessor.THREADS_DEFAULT;
+
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,9 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessorImpl;
 
 /**
  * This program implements robot movement based on Gyro heading and encoder counts.
@@ -70,8 +76,8 @@ public class AutonomousLeftBlue extends AutonomousBase {
                 .addProcessors(pipelineBack, aprilTag)
                 .setCameraResolution(new Size(1280, 800))
                 .build();
-        //
-//     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
+
+        //     setWebcamManualExposure( 6, 250);  // Use low exposure time to reduce motion blur (screws with Prop hue-detection!!)
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         parkLocation = PARK_RIGHT;  // blue-left normally parks on the right
@@ -85,8 +91,9 @@ public class AutonomousLeftBlue extends AutonomousBase {
         } // !isStarted
 
         // Ensure any movement during robot setup is reset to zero
-        globalCoordinatePositionReset();
-        
+        setGlobalCoordinatePosition(0.0, 0.0, 0.0);
+        setCorrectedGlobalCoordinatePosition(0.0, 0.0, 0.0);
+
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 

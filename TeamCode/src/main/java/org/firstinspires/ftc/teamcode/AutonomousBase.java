@@ -77,7 +77,10 @@ public abstract class AutonomousBase extends LinearOpMode {
     double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
     double robotGlobalYCoordinatePosition       = 0.0;
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
-    
+
+    // Odometry values corrected by external source, IE AprilTags
+    FieldCoordinate robotGlobalCoordinateCorrectedPosition = new FieldCoordinate(0.0, 0.0, 0.0);
+
     double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands. 
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
@@ -163,6 +166,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     // AprilTag variables
     protected AprilTagProcessor aprilTag;
+    protected AprilTagProcessorImplCallback aprilTagCallback;
     protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
     
     protected boolean atBackdropLeftDetected   = false;
@@ -1563,17 +1567,33 @@ public abstract class AutonomousBase extends LinearOpMode {
         //Calculate and update the position values
         robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
+
+        synchronized(robotGlobalCoordinateCorrectedPosition.lock) {
+            robotGlobalCoordinateCorrectedPosition.setAngleRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians() + changeInRobotOrientation);
+            robotGlobalCoordinateCorrectedPosition.setAngleRadians(AngleWrapRadians(robotGlobalCoordinateCorrectedPosition.getAngleRadians()));   // Keep between -PI and +PI
+            robotGlobalCoordinateCorrectedPosition.setX(robotGlobalCoordinateCorrectedPosition.getX() + (p * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) + n * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
+            robotGlobalCoordinateCorrectedPosition.setY(robotGlobalCoordinateCorrectedPosition.getY() + (p * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) - n * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
+        }
     } // globalCoordinatePositionUpdate
 
     /*--------------------------------------------------------------------------------------------*/
-    // Resets odometry global position to 0/0/0 and ensures zero accumulated encoder counts
-    public void globalCoordinatePositionReset(){
+    // Sets odometry starting position and ensures zero accumulated encoder counts
+    public void setGlobalCoordinatePosition(double robotRadians,
+                                            double robotGlobalX, double robotGlobalY){
         // Read starting odomentry counts (so "prev" becomes "this" on next cycle)
         robot.readBulkData();
-        // Zero our starting position (x/y & angle) 
-        robotOrientationRadians        = 0.0;   // 0deg (straight forward)
-        robotGlobalXCoordinatePosition = 0.0;   // in odometer counts
-        robotGlobalYCoordinatePosition = 0.0;
-    } // globalCoordinatePositionReset
+        // Set our starting position (x/y & angle)
+        robotOrientationRadians        = robotRadians;   // 0deg (straight forward)
+        robotGlobalXCoordinatePosition = robotGlobalX;   // in odometer counts
+        robotGlobalYCoordinatePosition = robotGlobalY;
+    } // setGlobalCoordinatePosition
 
+    /*--------------------------------------------------------------------------------------------*/
+    // Sets odometry corrected position values
+    public void setCorrectedGlobalCoordinatePosition(double robotRadians,
+                                            double robotGlobalX, double robotGlobalY){
+        synchronized(robotGlobalCoordinateCorrectedPosition.lock) {
+            robotGlobalCoordinateCorrectedPosition.setLocation(robotGlobalX, robotGlobalY, robotRadians);
+        }
+    } // setCorrectedGlobalCoordinatePosition
 } // AutonomousBase
