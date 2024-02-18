@@ -27,13 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private boolean isAutoEnabled = true;
 
-    private PIDFController controller;
-    private double calculation = 0.0;
-
-    private ElevatorFeedforward feedforward;
-    public double feedforwardCalc = 0;
-
-    public double MAX_SPEED = 0.9; // TODO: Speed Value Might Change
+    public double MAX_SPEED = 0.9;
 
     public enum Level {
         LOADING, HANGING, AUTO, LOW, MID, HIGH
@@ -41,7 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private Level level;
 
-    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750}; // TODO: Level Values Might Change
+    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750};
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
@@ -58,8 +52,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         motors = new MotorGroup(leftMotor, rightMotor);
 
         motors.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        motors.setPositionTolerance(30); // TODO: allowed maximum error value might change
-        motors.setPositionCoefficient(0.014); // TODO: Kp Value might change
+        motors.setPositionTolerance(30);
+        motors.setPositionCoefficient(0.014);
 
         motors.resetEncoder();
 
@@ -70,14 +64,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-////        feedforwardCalc = feedforward.calculate(motors.getVelocity());
-//        telemetry.addData("Height", getHeight());
-//        telemetry.addData("Stick", leftY.getAsDouble());
-//        if (isAuto) {
-//            telemetry.addData("Auto", "");
-//        } else {
-//            telemetry.addData("Manual", "");
-//        }
         if(getHeight() > 600) {
 //            openOuttake.get().schedule();
         } else {
@@ -121,7 +107,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setAuto() {
         motors.setRunMode(Motor.RunMode.PositionControl);
         isAuto = true;
-//        motors.setTargetPosition(getHeight().intValue());
     }
 
     public void setPower(double power) {

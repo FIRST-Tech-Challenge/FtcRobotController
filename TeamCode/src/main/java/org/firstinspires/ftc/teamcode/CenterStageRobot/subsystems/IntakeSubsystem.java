@@ -8,18 +8,27 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeProcCommand;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.concurrent.TimeUnit;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final MotorExEx motor;
-    public double speed = 0.9;  // TODO: Speed Value Might Change
+    public double speed = 0.9;
     private final double ampThreshold = 1.4;
     private Telemetry telemetry;
 
     private boolean isStalled = false;
     private final Timing.Timer timer;
+
+    public enum State {
+        LOADING,
+        REVERSING,
+        RESTING
+    }
+
+    private State state;
 
     public IntakeSubsystem(HardwareMap hm, Telemetry telemetry) {
         this.motor = new MotorExEx(hm, "intake");
@@ -28,6 +37,8 @@ public class IntakeSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
 
         this.timer = new Timing.Timer(2500, TimeUnit.MILLISECONDS);
+
+        this.state = State.RESTING;
     }
 
     public double getCurrent() {
@@ -36,14 +47,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        telemetry.addData("Amps: ", getCurrent());
-//        if(isStalled()) {
-//            telemetry.addData("Stalled", "");
-//            isStalled = false;
-//        } else {
-//            telemetry.addData("not Stalled", "");
-//        }
-
         if(getCurrent() > ampThreshold && !timer.isTimerOn()) {
             timer.start();
         }
@@ -51,9 +54,12 @@ public class IntakeSubsystem extends SubsystemBase {
         if(timer.done() && getCurrent() > ampThreshold){
             isStalled = true;
         }
+
+        telemetry.addData("Intake State: ", state);
     }
 
     public void run() {
+        state = State.LOADING;
         motor.set(speed);
     }
 
@@ -62,14 +68,19 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void reverse() {
+        state = State.RESTING;
         motor.set(-speed);
     }
 
     public void setPower(double power) {
+        if (power > 0) state = State.LOADING;
+        else if (power < 0) state = State.REVERSING;
+        else if (power == 0) state = State.RESTING;
         motor.set(power);
     }
 
     public void stop() {
+        state = State.RESTING;
         motor.set(0);
     }
 
@@ -79,5 +90,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public boolean isStalled() {
         return isStalled;
+    }
+
+    public State getState() {
+        return state;
     }
 }

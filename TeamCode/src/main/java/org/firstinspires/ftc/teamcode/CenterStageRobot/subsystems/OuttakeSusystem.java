@@ -9,16 +9,17 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class OuttakeSusystem extends SubsystemBase {
 
-    enum State {
+    public enum State {
         INTAKE,
         OUTTAKE,
         EXTREME
     }
+
     private State state;
     private ServoImplEx firstLinkServo, secondLinkServo; // First: Whole Arm, Second: Only Outtake
     private CRServoImpl wheelServo;
 
-    private final double FIRST_MIN = 0.61, FIRST_MID = 0.28, FIRST_MAX = 0;
+    private final double FIRST_MIN = 0.58, FIRST_MID = 0.28, FIRST_MAX = 0;
     private final double SECOND_MIN = 0.43, SECOND_MID = 0.75, SECOND_MAX = 1;
     private final double WHEEL_POWER = 0.9;
 
@@ -62,11 +63,11 @@ public class OuttakeSusystem extends SubsystemBase {
     }
 
     public void wheel_grab() {
-        wheelServo.setPower(-WHEEL_POWER);
+        wheelServo.setPower(WHEEL_POWER);
     }
 
     public void wheel_release() {
-        wheelServo.setPower(WHEEL_POWER);
+        wheelServo.setPower(-WHEEL_POWER);
     }
 
     public void wheel_stop() {
