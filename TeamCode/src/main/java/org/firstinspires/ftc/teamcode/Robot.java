@@ -2123,10 +2123,10 @@ public class Robot {
                 mecanumBlocking2(27);
                 break;
             case 4:
-                mecanumBlocking2(-34);
+                mecanumBlocking2(-31);
                 break;
             case 5:
-                mecanumBlocking2(-24.5); //center red
+                mecanumBlocking2(-23.5); //center red
                 break;
             case 6:
                 mecanumBlocking2(-19);
