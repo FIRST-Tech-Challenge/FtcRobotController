@@ -2026,7 +2026,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-96);
+                straightBlocking2FixHeading(-95);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -2123,7 +2123,7 @@ public class Robot {
                 mecanumBlocking2(27);
                 break;
             case 4:
-                mecanumBlocking2(-31);
+                mecanumBlocking2(-32);
                 break;
             case 5:
                 mecanumBlocking2(-23.5); //center red
@@ -2133,7 +2133,7 @@ public class Robot {
                 break;
             default: {
                 if (isRedAlliance) {
-                    mecanumBlocking2(-25.5);
+                    mecanumBlocking2(-24.5);
                 } else {
                     mecanumBlocking2(22);
                 }
@@ -2149,7 +2149,7 @@ public class Robot {
         openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(100);
+            straightBlocking2FixHeading(102);
         } else {
             straightBlocking2FixHeading(104);
         }
@@ -2165,12 +2165,12 @@ public class Robot {
         if (isRedAlliance) {
             setHeadingRelativeToBoard(-20, 0.7);
             straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
-            straightBlocking(1.5, false, 1);
+            straightBlocking(2.5, false, 1);
 
             stackAttachmentIn();
-            opMode.sleep(500);
+            opMode.sleep(600);
 
-            straightBlockingWithTimer(4, true, 1, 0.4);
+            straightBlockingWithTimer(5, true, 1, 0.4);
             straightBlocking(3, false, 1);
 
             //straightBlockingWithTimer(3, true, 1, 0.4);
@@ -2241,7 +2241,7 @@ public class Robot {
                 mecanumBlocking2(-24);
                 break;
             case 4:
-                mecanumBlocking2(24);
+                mecanumBlocking2(18);
                 break;
             case 5:
                 mecanumBlocking2(24); //center red
