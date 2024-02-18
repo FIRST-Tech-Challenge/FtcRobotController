@@ -2129,7 +2129,7 @@ public class Robot {
                 mecanumBlocking2(-24.5); //center red
                 break;
             case 6:
-                mecanumBlocking2(-21);
+                mecanumBlocking2(-19);
                 break;
             default: {
                 if (isRedAlliance) {
@@ -2219,7 +2219,7 @@ public class Robot {
 
         closeClamp(true);
 
-        mecanumBlocking2(polarity * 23);
+        mecanumBlocking2(polarity * 22);
 
         closeClamp(true);
 
