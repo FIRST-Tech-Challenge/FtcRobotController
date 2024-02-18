@@ -197,11 +197,11 @@ public class Robot {
             moveLinearSlideByTicksBlocking(startingPosition + 1950);
         } else {
             trayToOuttakeSplitEditionOne();
-            moveLinearSlideByTicksBlocking(startingPosition + 1700);//1900
+            moveLinearSlideByTicksBlocking(startingPosition + 1750);//1900
             trayToOuttakeSplitEditionTwo();
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
-            moveLinearSlideByTicksBlocking(startingPosition + 2300);
+            moveLinearSlideByTicksBlocking(startingPosition + 2350);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
@@ -1955,7 +1955,11 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-3);
+                if(isRedAlliance) {
+                    straightBlocking2(-3);
+                } else {
+                    straightBlocking2(-2);
+                }
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
