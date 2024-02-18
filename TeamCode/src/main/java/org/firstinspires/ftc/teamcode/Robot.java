@@ -1992,7 +1992,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(20);
                 } else {
-                    mecanumBlocking2(-24);
+                    mecanumBlocking2(-22);
                 }
 
                 setHeading(0, 0.7);
@@ -2007,6 +2007,7 @@ public class Robot {
 
                 // P4: (22.5, 39.5)
 
+                //spike
                 if (!testingOnBert) {
                     moveFingerUp();
                     opMode.sleep(200);
@@ -2020,7 +2021,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(-31);
                 } else {
-                    mecanumBlocking2(31);
+                    mecanumBlocking2(30);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -2120,7 +2121,7 @@ public class Robot {
                 mecanumBlocking2(22); //center blue
                 break;
             case 3:
-                mecanumBlocking2(27);
+                mecanumBlocking2(29);
                 break;
             case 4:
                 mecanumBlocking2(-32);
@@ -2151,7 +2152,7 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(102);
         } else {
-            straightBlocking2FixHeading(104);
+            straightBlocking2FixHeading(105);
         }
 
         intake.setPower(-1);
@@ -2159,7 +2160,7 @@ public class Robot {
         if (isRedAlliance) {
             mecanumBlocking2(20);
         } else {
-            mecanumBlocking2(-33);
+            mecanumBlocking2(-22);
         }
 
         if (isRedAlliance) {
@@ -2178,13 +2179,15 @@ public class Robot {
 
             setHeadingRelativeToBoard(0, 0.7);
         } else {
-            mecanumBlocking2(8);
-
-            stackAttachmentIn();
 
             straightBlocking(2, false, 1); //back
 
-            straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
+            stackAttachmentIn();
+            opMode.sleep(500);
+
+            //straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
+
+            straightBlocking(4, true, 0.5);
 
             straightBlocking(4, false, 1); //back
 
@@ -2193,13 +2196,7 @@ public class Robot {
             //sideways to get second pixel
             //mecanumBlocking2(-2); //sideway
 
-            openClamp(true, true, true);
-
-            straightBlockingWithTimer(5.5, true, 0.5, 0.5); // forward
-
             //closeClamp(true);
-
-            straightBlocking(4, false, 1); //backward
 
             setHeadingRelativeToBoard(0, 0.7);
         }
