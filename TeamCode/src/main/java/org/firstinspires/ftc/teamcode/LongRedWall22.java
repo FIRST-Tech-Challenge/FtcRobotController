@@ -23,7 +23,12 @@ public class LongRedWall22 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(true, true, robot.markerPos);
+            robot.setMarkerLocation(false, false, robot.markerPos);
+
+
+            /*robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
+
+            robot.setMarkerLocation(true, true, robot.markerPos);*/
             robot.servoToInitPositions();
 
             robot.longMoveToBoardTruss();
