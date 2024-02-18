@@ -2059,7 +2059,7 @@ public class Robot {
 
                 // P2: (23, 17)
 
-                straightBlocking2(-35);
+                straightBlocking2(-36);
 
                 // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
