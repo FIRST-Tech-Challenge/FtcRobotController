@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.Preloader;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Twrist;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
@@ -165,7 +166,22 @@ public class BradBot extends BasicRobot {
       }
       if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(300);
+        lift.setPosition(290);
+        wrist.purpur();
+        purped = true;
+        LOGGER.log("purpuring");
+      }
+    }
+  }
+  public void purpurAuto2() {
+    if (queuer.queue(
+            true, purped)) {
+      if(lift.getCurrentPosition()>600){
+        arm.purpurPigzl2();
+      }
+      if (DROP.state) {
+        Lift.LiftMovingStates.LOW.state = false;
+        lift.setPosition(290);
         wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
@@ -182,16 +198,16 @@ public class BradBot extends BasicRobot {
   }
 
   public void yellowAuto(boolean left){
-    if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.LEFT_TILT.getState())) {
+    if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.OT.getState())) {
       if (currentPose.getX() > 9 && DROP.getState()) {
         if (left) {
-          lift.setPosition(760);
+          lift.setPosition(730);
         }
         else{
-          lift.setPosition(760);
+          lift.setPosition(730);
         }
         if(left){
-          twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
+          twrist.flipTo(Twrist.twristTargetStates.OT);
         }
         else{
           twrist.flipTo(Twrist.twristTargetStates.DROP);
@@ -356,10 +372,7 @@ public class BradBot extends BasicRobot {
       if (!queuer.isExecuted()) {
         twrist.flipTo(Twrist.twristTargetStates.GRAB);
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
-        arm.flipTo(HOVER, -.04, false);
-        lift.update();
-        wrist.update();
-        twrist.update();
+        arm.flipTo(HOVER, -.03, false);
         lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
         LOGGER.log("buh");
       }
@@ -369,7 +382,8 @@ public class BradBot extends BasicRobot {
   }
 
   public void intakeAuto(int height) {
-    if (queuer.queue(true, Magazine.pixels==2&&intaked)) {
+    if (queuer.queue(
+        true, (magazine.solidTwoPixels() || Intake.IntakeStates.REVERSING.getState()) && intaked)) {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
@@ -766,7 +780,6 @@ public class BradBot extends BasicRobot {
     arm.update();
     if (!isTeleop) {
       cv.update();
-      if (op.isStarted()) queuer.setFirstLoop(false);
     }
     intake.update();
     lift.update();
@@ -775,6 +788,7 @@ public class BradBot extends BasicRobot {
 //    ultras.update();
     twrist.update();
     claw.update();
+    magazine.update();
     magazine.update();
     hanger.update();
   }

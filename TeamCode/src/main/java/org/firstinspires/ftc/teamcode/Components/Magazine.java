@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.LED;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFColorSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLEDStrip;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @Config
 public class Magazine {
@@ -20,6 +21,7 @@ public class Magazine {
   private RFColorSensor colorSensor1, colorSensor2;
 
   public static int pixels = 0;
+  double twoPixelTime = 0.0;
 
   public Magazine() {
     rf = op.hardwareMap.get(LED.class, "rf");
@@ -78,6 +80,18 @@ public class Magazine {
       pixels++;
     } else if (dist2 > 1) {
       MagStates.BACK.setState(false);
+    }
+    if(pixels!=2){
+      twoPixelTime = BasicRobot.time;
+    }
+  }
+
+  public boolean solidTwoPixels(){
+    if (Magazine.pixels == 2) {
+      return BasicRobot.time - twoPixelTime > 0.15;
+    }
+    else{
+      return false;
     }
   }
 

@@ -113,6 +113,14 @@ public class Arm extends RFServo {
       lastTime = time;
     }
   }
+  public void purpurPigzl2() {
+    if (position != DROP_POS) {
+      ArmTargetStates.DROP.state = true;
+      flipTo(ArmStates.DROP, 0.06, true);
+      LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
+      lastTime = time;
+    }
+  }
 
   public void flipTo(ArmStates p_state) {
     flipTo(p_state, 0, false);

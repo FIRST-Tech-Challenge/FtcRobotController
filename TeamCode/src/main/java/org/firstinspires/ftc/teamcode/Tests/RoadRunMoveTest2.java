@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * Odom localizer 8 24x24 squares
  */
 //@Disabled
-//@Disabled
+@Disabled
 
 @Autonomous(name = "OdomMoveTest2")
 public class RoadRunMoveTest2 extends LinearOpMode {

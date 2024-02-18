@@ -11,9 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "RedLeft2+3")
+@Autonomous(name = "BlueLeft2+3")
 @Config
-public class RedLeft23 extends LinearOpMode {
+public class BlueLeft23 extends LinearOpMode {
 //    int bark = 1;
 
     @Override
@@ -117,7 +117,7 @@ public class RedLeft23 extends LinearOpMode {
 //        robot.setRight(false);
 //        robot.setBlue(false);
 //        robot.observeSpike();
-        RL23 aut = new RL23(this, false);
+        BL23 aut = new BL23(this, false);
 
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {

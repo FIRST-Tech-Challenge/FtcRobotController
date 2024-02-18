@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,7 +13,8 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class BL20 {
-    boolean logi=false;
+    boolean logi=false, isRight = false;
+    int delaySec = 0;
     LinearOpMode op;
     BradBot robot;
     int bark = 0;
@@ -19,7 +22,7 @@ public class BL20 {
     TrajectorySequence[] pathy = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
 
-    TrajectorySequence[] parky = new TrajectorySequence[3];
+    TrajectorySequence[] parky = new TrajectorySequence[3], parkLeft = new TrajectorySequence[3];
 
 
 
@@ -153,6 +156,25 @@ public class BL20 {
                 .lineToLinearHeading(new Pose2d(43.3,29.5,toRadians(180)))
                 .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
                 .build();
+
+        parkLeft[0] = robot.roadrun
+                .trajectorySequenceBuilder(droppy[0].end())
+                .lineToLinearHeading(new Pose2d(43.3,41.5,toRadians(180)))
+
+                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .build();
+
+        parkLeft[1] = robot.roadrun
+                .trajectorySequenceBuilder(droppy[1].end())
+                .lineToLinearHeading(new Pose2d(43.3,35.5,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .build();
+
+        parkLeft[2] = robot.roadrun
+                .trajectorySequenceBuilder(droppy[2].end())
+                .lineToLinearHeading(new Pose2d(43.3,29.5,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .build();
         robot.dropServo(1);
         robot.setRight(true);
         robot.setBlue(false);
@@ -163,13 +185,28 @@ public class BL20 {
             bark = robot.getSpikePos();
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
+            op.telemetry.addData("delaySec", delaySec);
+            op.telemetry.addData("isRight", isRight);
+            if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
+                delaySec++;
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")) {
+                delaySec = min(0, delaySec - 1);
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
+                isRight = true;
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
+                isRight = false;
+            }
             robot.update();
         }
         op.resetRuntime();
-        time=0;    }
+        time=0;
+    }
     public void purp()
     {
-        robot.queuer.addDelay(3.0);
+        robot.queuer.addDelay(2.0 + delaySec);
         robot.queuer.queue(false, true);
         robot.upAuto();
         robot.purpurAuto();
@@ -195,7 +232,12 @@ public class BL20 {
     public void park(){
         robot.queuer.addDelay(.5);
         robot.resetAuto();
-        robot.followTrajSeq(parky[bark]);
+    if (isRight) {
+      robot.followTrajSeq(parky[bark]);
+        }
+    else{
+        robot.followTrajSeq(parkLeft[bark]);
+    }
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }
