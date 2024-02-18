@@ -2058,8 +2058,11 @@ public class Robot {
                 setHeading(0, 0.7);
 
                 // P2: (23, 17)
-
-                straightBlocking2(-36);
+                if (isRedAlliance) {
+                    straightBlocking2(-36);
+                } else {
+                    straightBlocking2(-35);
+                }
 
                 // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
@@ -2085,8 +2088,11 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 // P6: (27.5, 60)
-
-                straightBlocking2FixHeading(-86.5); // subtracted 4 here
+                if (isRedAlliance) {
+                    straightBlocking2FixHeading(-86.5); // subtracted 4 here
+                } else {
+                    straightBlocking2FixHeading(-83.5);
+                }
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
