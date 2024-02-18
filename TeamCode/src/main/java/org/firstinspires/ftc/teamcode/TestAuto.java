@@ -39,7 +39,7 @@ public class TestAuto extends LinearOpMode {
 
     private final boolean debug = true;
 
-    private void setPower(double axial, double lateral, double yaw) {
+    public void setPower(double axial, double lateral, double yaw) {
         double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
@@ -64,7 +64,7 @@ public class TestAuto extends LinearOpMode {
         backRightMotor.setPower(rightBackPower);
     }
 
-    private void setPowerWithTime(double axial, double lateral, double yaw, double time) {
+    public void setPowerWithTime(double axial, double lateral, double yaw, double time) {
         double startTime = runtime.seconds();
         while (runtime.seconds() < startTime + time) {
             setPower(axial, lateral, yaw);
@@ -74,17 +74,15 @@ public class TestAuto extends LinearOpMode {
         sleep(100); // Resting
     }
 
-    private double calculatePower(double minPower, double maxPower, double startAngle, double targetAngle, double c, double currentPower) {
+    public double calculatePower(double minPower, double maxPower, double startAngle, double targetAngle, double c, double currentPower) {
         double slowDownAngle = targetAngle - c;
-
 
         double accelerationPower = minPower + ((currentAngle - startAngle) / c) * (maxPower - minPower);
         double slowDownPower = (currentAngle - slowDownAngle) * maxPower / c;
         double retPower = 0;
 
 
-
-        if (part < 2 && currentAngle < startAngle + c){
+        if (part < 2 && (currentAngle < startAngle + c)){
             part = 1;
             retPower = accelerationPower;
         }
@@ -93,7 +91,7 @@ public class TestAuto extends LinearOpMode {
             retPower = maxPower;
         } else if (currentAngle < targetAngle) {
             part = 3;
-            retPower = Math.min( Math.max(currentPower, 0.1), slowDownPower);
+            retPower = Math.min( Math.max(currentPower, 0.2), slowDownPower);
         }
 
         telemetry.addData("current angle", currentAngle);
@@ -102,7 +100,36 @@ public class TestAuto extends LinearOpMode {
         return retPower;
     }
 
-    private void turnRight(double minPower, double maxPower, double targetAngle, double c) {
+    private double calculatePowerLeft(double minPower, double maxPower, double startAngle, double targetAngle, double c, double currentPower) {
+            double slowDownAngle = targetAngle - c;
+
+        double accelerationPower = minPower + ((currentAngle - startAngle) / c) * (maxPower - minPower);
+        double slowDownPower = (currentAngle - slowDownAngle) * maxPower / c;
+        double retPower = 0;
+
+
+        if (part < 2 && (currentAngle > startAngle + c)){
+            part = 1;
+            retPower = accelerationPower;
+
+        }
+        else if (part < 3 && currentAngle < startAngle + c && currentAngle > slowDownAngle) {
+            part = 2;
+            retPower = maxPower;
+        } else if (currentAngle > targetAngle) {
+            part = 3;
+            retPower = Math.min( Math.max(currentPower, 0.2), slowDownPower);
+        }
+
+        telemetry.addData("current angle", currentAngle);
+        telemetry.addData("current part", part);
+        telemetry.addData("current speed: ", retPower);
+        telemetry.update();
+
+        return retPower;
+    }
+
+    public void turnRight(double minPower, double maxPower, double targetAngle, double c) {
         currentAngle = getIntegratedHeading();
 
         double startAngle = currentAngle;
@@ -125,11 +152,11 @@ public class TestAuto extends LinearOpMode {
 
     }
 
-    private void turnLeft(double minPower, double maxPower, double targetAngle, double c) {
+    public void turnLeft(double minPower, double maxPower, double targetAngle, double c) {
         currentAngle = getIntegratedHeading();
         double startAngle = currentAngle;
         double power = 0;
-
+        part = 0;
 
         while (currentAngle > targetAngle) {
             currentAngle = getIntegratedHeading();
@@ -137,7 +164,7 @@ public class TestAuto extends LinearOpMode {
             // for debugging
             //System.out.println("Turning counterclockwise. Current angle: " + currentAngle + ", Target: " + targetAngle);
 
-            power = calculatePower(minPower, maxPower, startAngle, targetAngle, c, power);
+            power = calculatePowerLeft(minPower, maxPower, startAngle, targetAngle, c, power);
 
             setPower(0, 0, -power);
         }
@@ -147,7 +174,7 @@ public class TestAuto extends LinearOpMode {
 
     }
 
-    // transform the angles from (180,-179) to (inf, -inf)w
+    // transform the angles from (180,-179) to (inf, -inf)
     private double getIntegratedHeading() {
         double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         //double currentHeading = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
@@ -260,16 +287,19 @@ public class TestAuto extends LinearOpMode {
 
     public void straight(double speed,
                          double distance) {
-                             
-        
-        double startFrontLeft = frontLeftMotor.getCurrentPosition();
-        double startFrontRight = frontLeftMotor.getCurrentPosition();
-        
-        double newLeftTarget = Math.abs(frontLeftMotor.getCurrentPosition()) - (int)(distance * COUNTS_PER_INCH);
-        double newRightTarget = Math.abs(frontRightMotor.getCurrentPosition()) - (int)(distance * COUNTS_PER_INCH);
+
+
+        double startFrontLeft = Math.abs(frontLeftMotor.getCurrentPosition());
+        double startFrontRight = Math.abs(frontRightMotor.getCurrentPosition());
+
+        double newLeftTarget = startFrontLeft + (int)(distance * COUNTS_PER_INCH);
+        double newRightTarget = startFrontRight + (int)(distance * COUNTS_PER_INCH);
+
+        System.out.println(Math.abs(frontRightMotor.getCurrentPosition()) + startFrontRight);
+        System.out.println(Math.abs(newRightTarget));
 
         if(opModeIsActive()) {
-            while ((frontLeftMotor.getCurrentPosition()) > newLeftTarget && ((frontRightMotor.getCurrentPosition()) > newRightTarget)) {
+            while ((Math.abs(frontLeftMotor.getCurrentPosition()) < Math.abs(newLeftTarget) + startFrontLeft) && Math.abs(frontRightMotor.getCurrentPosition()) < Math.abs(newRightTarget) + startFrontRight) {
                 frontLeftMotor.setPower(-(speed));
                 frontRightMotor.setPower(-(speed));
                 backRightMotor.setPower(-(speed));
@@ -282,6 +312,11 @@ public class TestAuto extends LinearOpMode {
                 //System.out.print(imu.getRobotOrientationAsQuaternion());
             }
 
+            telemetry.addData("running to: ", newRightTarget);
+            telemetry.addData("currently at: ", frontRightMotor.getCurrentPosition());
+
+            telemetry.update();
+
             frontLeftMotor.setPower(0);
             frontRightMotor.setPower(0);
             backLeftMotor.setPower(0);
@@ -292,14 +327,14 @@ public class TestAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Set motors
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
-        backRightMotor = hardwareMap.get(DcMotor.class, "motor3");
-        //frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
-        //backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
-        //frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
-        //backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+        //frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
+        //backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
+        //frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
+        //backRightMotor = hardwareMap.get(DcMotor.class, "motor3");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
+        backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
 
         //digital1 = hardwareMap.get(DigitalChannel.class, "digital1");
 
@@ -339,8 +374,22 @@ public class TestAuto extends LinearOpMode {
             //unitTestTurn();
 
             //encoderDrive(0.3,10,10,2.0);
-            straight(0.4, 50);
-            straight(0.4,50);
+            //turnRight(0.5, 0.8, 90, 20);
+            //sleep(1000);
+            //turnLeft(0.5, 0.8, 90, 20);
+            //straight(0.4, 40);
+            //sleep(1000);
+            //straight(0.4, 80);
+            //sleep(150);
+            //turnRight(0.5, 0.8, 90, 20);
+            //sleep(500);
+            //straight(0.4, 50);
+            //turnLeft(0.5, 0.8, -90, 90);
+            //sleep(500);
+            //straight(0.4, 50);
+            turnRight(0.5, 0.8, 90, 20);
+            sleep(150);
+            //turnLeft(0.6, 0.8, -90, -15);
             telemetry.addData("current angle", currentAngle);
             telemetry.update();
 
