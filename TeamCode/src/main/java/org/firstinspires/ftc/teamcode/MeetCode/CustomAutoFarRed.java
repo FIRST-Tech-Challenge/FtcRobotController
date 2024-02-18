@@ -116,6 +116,7 @@ public class CustomAutoFarRed extends LinearOpMode {
         initTfod();
         robot.init(hardwareMap);
         robot.resetEncodersCascade();
+//        robot.launch.setPosition(0.65);
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -200,7 +201,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.claw.setPosition(0.8);
             sleep(250);
-            robot.encoderDrive(-6);
+            robot.encoderDrive(-4);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
@@ -238,7 +239,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(timeAdd * 1000);
             robot.encoderStrafeRight(92);
             sleep(250);
-            robot.encoderDrive(17);
+            robot.encoderDrive(19);
             robot.encoderTurnRight(23);
             //robot.squareUp();
             sleep(50);
@@ -252,7 +253,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
             telemetry.update();
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
+            robot.encoderStrafeRight(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
@@ -268,7 +269,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.claw.setPosition(0.8);
             sleep(250);
-            robot.encoderDrive(-6);
+            robot.encoderDrive(-4);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
@@ -318,7 +319,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             telemetry.addData("Strafe Error: ", desiredTag.ftcPose.x);
             telemetry.update();
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE + 1);
+            robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 
             robot.cascadeLock(ticksForCascade);
@@ -334,7 +335,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.claw.setPosition(0.8);
             sleep(250);
-            robot.encoderDrive(-6);
+            robot.encoderDrive(-4);
             robot.claw.setPosition(0);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);

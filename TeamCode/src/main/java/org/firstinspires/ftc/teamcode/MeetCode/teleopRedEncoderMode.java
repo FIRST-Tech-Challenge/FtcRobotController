@@ -68,11 +68,13 @@ public class teleopRedEncoderMode extends LinearOpMode {
         robot.cascadeMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.cascadeMotorLeft.setPower(.8);
         robot.cascadeMotorRight.setPower(.8);
+        robot.launch.setPosition(0.65);
         robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        telemetry.addData("Launch Position: ", robot.launch.getPosition());
+        telemetry.update();
         if (USE_WEBCAM)
             setManualExposure(6, 250);
 
@@ -99,11 +101,6 @@ public class teleopRedEncoderMode extends LinearOpMode {
                 }
             }
             cascadeMotorPower = Range.clip(cascadeMotorPower, -.1, .8);
-//            robot.frontRight.setPower(.8 * ((gamepad1.left_stick_y + gamepad1.right_stick_x) + gamepad1.left_stick_x));
-//            robot.frontLeft.setPower(.8 * ((gamepad1.left_stick_y - gamepad1.right_stick_x) - gamepad1.left_stick_x));
-//            robot.backRight.setPower(.8 * ((gamepad1.left_stick_y + gamepad1.right_stick_x) - gamepad1.left_stick_x));
-//            robot.backLeft.setPower(.8 * ((gamepad1.left_stick_y - gamepad1.right_stick_x) + gamepad1.left_stick_x));
-
             telemetry.addData("Cascade power: ", robot.cascadeMotorLeft.getPower());
             telemetry.addData("arm: ", robot.arm.getCurrentPosition());
             telemetry.addData("Wrist: ", robot.wrist.getPosition());
@@ -234,7 +231,7 @@ public class teleopRedEncoderMode extends LinearOpMode {
             }
 
             else if (gamepad1.dpad_right) {
-                robot.launch.setPosition(1);
+                robot.launch.setPosition(0);
             }
             else if (gamepad1.dpad_left) {
                 robot.wrist.setPosition(.485);

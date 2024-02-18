@@ -117,6 +117,7 @@ public class CustomAutoCloseBlue extends LinearOpMode {
         initTfod();
         robot.init(hardwareMap);
         robot.resetEncodersCascade();
+//        robot.launch.setPosition(0.65);
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
