@@ -2170,7 +2170,7 @@ public class Robot {
             straightBlocking(1.5, false, 1);
 
             stackAttachmentIn();
-            opMode.sleep(500);
+            opMode.sleep(200);
 
             straightBlockingWithTimer(4, true, 1, 0.4);
             straightBlocking(3, false, 1);
