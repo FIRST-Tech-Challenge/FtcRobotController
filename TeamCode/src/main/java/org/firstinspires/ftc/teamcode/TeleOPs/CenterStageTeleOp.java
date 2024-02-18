@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOPs;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -109,16 +109,15 @@ public class CenterStageTeleOp extends CommandOpMode {
 
         pose = PoseStorage.currentPose;
 
-        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true, true);
+        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true, false, pose);
     }
 
     @Override
     public void run() {
         super.run();
-//        telemetry.addData("X: ", pose.position.x);
-//        telemetry.addData("Y: ", pose.position.y);
-//        telemetry.addData("Heading: ", Math.toDegrees(pose.heading.imag));
-        telemetry.addData("pose: ", Math.toDegrees(pose.heading.component1()));
-//        telemetry.update();
+        telemetry.addData("Init X: ", pose.getX());
+        telemetry.addData("Init Y: ", pose.getY());
+        telemetry.addData("Init Heading: ", Math.toDegrees(pose.getHeading()));
+        telemetry.update();
     }
 }

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.CenterStageRobot;
 
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsys
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelColorDetectorSubsystem;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 import org.inventors.ftc.robotbase.RobotEx;
@@ -27,11 +28,12 @@ import org.inventors.ftc.robotbase.RobotEx;
 public class CenterStageRobot extends RobotEx {
     //----------------------------------- Initialize Subsystems -----------------------------------//
     private IntakeArmSubsystem intakeArmSubsystem;
-    private IntakeSubsystem intakeSubsystem;
+//    private IntakeSubsystem intakeSubsystem;
     private OuttakeSusystem outtakeSusystem;
-    private ElevatorSubsystem elevatorSubsystem;
+//    private ElevatorSubsystem elevatorSubsystem;
 
-    private DroneSubsystem droneSubsystem;
+//    private DroneSubsystem droneSubsystem;
+    private PixelColorDetectorSubsystem pixelColorDetectorSubsystem;
 
     //----------------------------------- Initialize Commands ------------------------------------//
 
@@ -61,12 +63,13 @@ public class CenterStageRobot extends RobotEx {
 
     public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                             GamepadExEx toolOp) {
-        super(hm, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
+        super(hm, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, new Pose2d(0, 0, 0));
     }
 
     public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                            GamepadExEx toolOp, OpModeType opModeType, boolean camera, boolean distance_sensor) {
-        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera, distance_sensor);
+                            GamepadExEx toolOp, OpModeType opModeType, boolean camera, boolean distance_sensor,
+                            Pose2d startingPose) {
+        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera, distance_sensor, startingPose);
     }
 
     @Override
@@ -77,10 +80,11 @@ public class CenterStageRobot extends RobotEx {
     @Override
     public void initMechanismsTeleOp(HardwareMap hardwareMap) {
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
-        intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
+//        intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
-        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY());
-        droneSubsystem = new DroneSubsystem(hardwareMap);
+//        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY());
+//        droneSubsystem = new DroneSubsystem(hardwareMap);
+        pixelColorDetectorSubsystem = new PixelColorDetectorSubsystem(hardwareMap, telemetry);
 
 //        CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
@@ -105,63 +109,50 @@ public class CenterStageRobot extends RobotEx {
                         new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
                 );
 
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOW));
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.MID));
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HIGH));
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HANGING));
-
-        CommandScheduler.getInstance().registerSubsystem(elevatorSubsystem);
-        elevatorSubsystem.setDefaultCommand(new ElevatorManualCommand(elevatorSubsystem, toolOp::getLeftY));
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOW));
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.MID));
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HIGH));
+//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HANGING));
+//
+//        CommandScheduler.getInstance().registerSubsystem(elevatorSubsystem);
+//        elevatorSubsystem.setDefaultCommand(new ElevatorManualCommand(elevatorSubsystem, toolOp::getLeftY));
 
         //Intake
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .toggleWhenPressed(
-                        new SequentialCommandGroup(
-                                new ParallelCommandGroup(
-                                        new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
-                                        closeOuttake()
-                                ),
-                                new ParallelCommandGroup(
-                                        new InstantCommand(intakeSubsystem::run, intakeSubsystem),
-                                        new InstantCommand(outtakeSusystem::wheel_grab)
-                                )
-                        ),
-                        new SequentialCommandGroup(
-                                new InstantCommand(outtakeSusystem::wheel_stop),
-                                new InstantCommand(intakeArmSubsystem::raiseArm),
-                                new InstantCommand(intakeSubsystem::reverse),
-                                new WaitCommand(1000),
-                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
-                        )
-                );
+//        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .toggleWhenPressed(
+//                        new SequentialCommandGroup(
+//                                new ParallelCommandGroup(
+//                                        new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
+//                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+//                                        closeOuttake()
+//                                ),
+//                                new ParallelCommandGroup(
+//                                        new InstantCommand(intakeSubsystem::run, intakeSubsystem),
+//                                        new InstantCommand(outtakeSusystem::wheel_grab)
+//                                )
+//                        ),
+//                        new SequentialCommandGroup(
+//                                new InstantCommand(outtakeSusystem::wheel_stop),
+//                                new InstantCommand(intakeArmSubsystem::raiseArm),
+//                                new InstantCommand(intakeSubsystem::reverse),
+//                                new WaitCommand(1000),
+//                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
+//                        )
+//                );
 
 
 
         // Outtake
-//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.8)
-//                .whenActive(new SequentialCommandGroup(
-//                        new InstantCommand(outtakeSusystem::wheel_release),
-//                        new WaitCommand(1400),
-//                        new InstantCommand(outtakeSusystem::wheel_stop)
-//                ));
-//
-//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
-//                .whenActive(new SequentialCommandGroup(
-//                        new InstantCommand(outtakeSusystem::wheel_release),
-//                        new WaitCommand(700),
-//                        new InstantCommand(outtakeSusystem::wheel_stop)
-//                ));
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.8)
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_release));
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.8)
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_stop));
 
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
-                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
+//                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
     }
 }
