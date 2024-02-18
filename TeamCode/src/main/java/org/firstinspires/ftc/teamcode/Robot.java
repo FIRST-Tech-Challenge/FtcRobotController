@@ -197,7 +197,7 @@ public class Robot {
             moveLinearSlideByTicksBlocking(startingPosition + 1950);
         } else {
             trayToOuttakeSplitEditionOne();
-            moveLinearSlideByTicksBlocking(startingPosition + 1700);
+            moveLinearSlideByTicksBlocking(startingPosition + 1700);//1900
             trayToOuttakeSplitEditionTwo();
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
