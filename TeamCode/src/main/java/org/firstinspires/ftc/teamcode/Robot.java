@@ -177,6 +177,15 @@ public class Robot {
         }
     }
 
+    public void trayToOuttakeSplitEditionOne() {
+        setServoPos(tray, 0.35);
+    }
+
+    public void trayToOuttakeSplitEditionTwo() {
+        setServoPos(tray, 0.15);
+        opMode.sleep(100);
+    }
+
     public void autoOuttake(boolean lowOuttake, double startingPosition) {
 
         // move linear slide up
@@ -187,8 +196,9 @@ public class Robot {
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 1950);
         } else {
-            trayToOuttakePos(false); // pivot tray to outtake position
+            trayToOuttakeSplitEditionOne();
             moveLinearSlideByTicksBlocking(startingPosition + 1900);
+            trayToOuttakeSplitEditionTwo();
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 2300);
