@@ -16,7 +16,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "red close", group = "Concept")
+@Autonomous(name = "AutoTemplate", group = "Concept")
+
 public class AutoTemplate extends LinearOpMode{
     // tensorflow object detection
     private static final String TFOD_MODEL_ASSET = "model.tflite";
@@ -38,6 +39,7 @@ public class AutoTemplate extends LinearOpMode{
     int targetPosition = 1;
     int currentPosition;
     boolean direction = true; //true == up
+
     boolean done = false;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
@@ -52,13 +54,16 @@ public class AutoTemplate extends LinearOpMode{
 
         // Tfod processor
         initTfod();
+
         tfod.setMinResultConfidence((float) 0.65);
         tfod.setZoom(1.1);
+
 
         // create visionportal with two processors
         VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults(drive.camera, tfod); // initialize visionportal
 
         // starting position
+
         Pose2d startingPose = new Pose2d();
         drive.setPoseEstimate(startingPose);
 
@@ -249,6 +254,85 @@ public class AutoTemplate extends LinearOpMode{
             if (!drive.isBusy() && loop == 1) {
                 break;
             }
+            if (detection == "left" && !drive.isBusy()) {
+                drive.setPoseEstimate(startingPose);
+                TrajectorySequence left = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(5, -30), Math.toRadians(180))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .waitSeconds(1)
+//                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(180)))
+                        .back(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
+                        .build();
+                drive.followTrajectorySequenceAsync(left);
+                stop();
+            }
+            else if (detection == "middle" && !drive.isBusy()) {
+                TrajectorySequence middle = drive.trajectorySequenceBuilder(startingPose)
+                        .lineToLinearHeading(new Pose2d(12, -30, Math.toRadians(90)))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .waitSeconds(1)
+                        .back(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .lineToLinearHeading(new Pose2d(50, -30, Math.toRadians(0)))
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
+                        .build();
+                drive.followTrajectorySequenceAsync(middle);
+                drive.breakFollowing();
+                stop();
+            }
+            else if (detection == "right" && !drive.isBusy()) {
+                TrajectorySequence right = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(16, -30), Math.toRadians(0))
+                        .addTemporalMarker(() -> {
+                            drive.pixelServo.setPosition(1);
+                        })
+                        .back(8, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .strafeRight(15, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .forward(40, SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(60))
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            targetPosition = 1000;
+                            direction = true;
+                        })
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> {
+                            drive.rightLiftServo.setPosition(1);
+                            drive.leftLiftServo.setPosition(1);
+                            drive.doorServo.setPosition(1);
+                        })
+                        .build();
+                drive.followTrajectorySequenceAsync(right);
+                drive.breakFollowing();
+                stop();
+            }
+
             drive.update();
             liftUpdate(drive);
         }
@@ -271,6 +355,7 @@ public class AutoTemplate extends LinearOpMode{
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
             xCoordinate = x;
             yCoordinate = y;
+
             if (recognition.getRight() - recognition.getLeft() < 200) {
                 if (xCoordinate < 200) {
                     detection = "left";
@@ -294,6 +379,15 @@ public class AutoTemplate extends LinearOpMode{
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f / %s", x, y, detection);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }
+        if (xCoordinate < 200) {
+            detection = "left";
+        }
+        else if (xCoordinate < 500) {
+            detection = "middle";
+        }
+        else {
+            detection = "right";
         }
     }
 
