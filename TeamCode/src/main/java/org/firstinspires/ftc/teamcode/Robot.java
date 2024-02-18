@@ -2151,7 +2151,7 @@ public class Robot {
         openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(98);
+            straightBlocking2FixHeading(100);
         } else {
             straightBlocking2FixHeading(104);
         }
@@ -2159,16 +2159,13 @@ public class Robot {
         intake.setPower(-1);
 
         if (isRedAlliance) {
-            mecanumBlocking2(22);
+            mecanumBlocking2(21);
         } else {
             mecanumBlocking2(-33);
         }
 
         if (isRedAlliance) {
             setHeadingRelativeToBoard(-20, 0.7);
-        }
-
-        if (isRedAlliance) {
             straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
             straightBlocking(1.5, false, 1);
 
