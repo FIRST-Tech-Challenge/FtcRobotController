@@ -37,7 +37,7 @@ public class LongRedWall20 extends LinearOpMode {
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
-            robot.autoOuttake(true, slideStartingPosition);
+            robot.autoOuttake(false, slideStartingPosition);
 
             // parking here
             robot.boardToTruss();
