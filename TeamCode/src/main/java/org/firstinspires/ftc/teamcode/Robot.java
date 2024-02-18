@@ -158,20 +158,20 @@ public class Robot {
         telemetry.update();
     }
 
-    public void setServoPosBlocking(Servo servo, double targetServoPos) {
+    public void setServoPos(Servo servo, double targetServoPos) {
 
         servo.setPosition(targetServoPos);
     }
 
     public void trayToIntakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.45);
+        setServoPos(tray, 0.45);
         if (blocking) {
             opMode.sleep(500);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
-        setServoPosBlocking(tray, 0.15);
+        setServoPos(tray, 0.15);
         if (blocking) {
             opMode.sleep(100);
         }
@@ -181,24 +181,22 @@ public class Robot {
 
         // move linear slide up
         if (lowOuttake) {
+            trayToOuttakePos(false); // pivot tray to outtake position
             moveLinearSlideByTicksBlocking(startingPosition + 1550); //1700
-            trayToOuttakePos(true); // pivot tray to outtake position
-            opMode.sleep(100);
-            openClamp(true, true, true); // drop pixel
-            opMode.sleep(100);
+            openClamp(true, true, false); // drop pixel
+            opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 1950);
         } else {
+            trayToOuttakePos(false); // pivot tray to outtake position
             moveLinearSlideByTicksBlocking(startingPosition + 1900);
-            trayToOuttakePos(true); // pivot tray to outtake position
-            opMode.sleep(100);
-            openClamp(true, true, true); // drop pixel
-            opMode.sleep(100);
+            openClamp(true, true, false); // drop pixel
+            opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 2300);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
 
-        setServoPosBlocking(trayAngle, 0.5);
+        setServoPos(trayAngle, 0.5);
         trayToIntakePos(true); //intake pos
         moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
     }
@@ -998,7 +996,7 @@ public class Robot {
     }
 
     public void closeClamp(boolean blocking) {
-        setServoPosBlocking(clamp, 0.57);
+        setServoPos(clamp, 0.57);
         if (blocking) {
             opMode.sleep(300);
         }
@@ -1007,13 +1005,13 @@ public class Robot {
     public void openClamp(boolean wide, boolean auto, boolean blocking) {
         if (wide) {
             if (auto) {
-                setServoPosBlocking(clamp, 0.471);
+                setServoPos(clamp, 0.471);
             }
             else {
-                setServoPosBlocking(clamp, 0.471);
+                setServoPos(clamp, 0.471);
             }
         } else {
-            setServoPosBlocking(clamp, 0.51);
+            setServoPos(clamp, 0.51);
         }
 
         if (blocking) {
@@ -2128,7 +2126,7 @@ public class Robot {
                 mecanumBlocking2(-34);
                 break;
             case 5:
-                mecanumBlocking2(-25.5); //center red
+                mecanumBlocking2(-24.5); //center red
                 break;
             case 6:
                 mecanumBlocking2(-21);
@@ -2159,7 +2157,7 @@ public class Robot {
         intake.setPower(-1);
 
         if (isRedAlliance) {
-            mecanumBlocking2(21);
+            mecanumBlocking2(20);
         } else {
             mecanumBlocking2(-33);
         }
@@ -2170,15 +2168,13 @@ public class Robot {
             straightBlocking(1.5, false, 1);
 
             stackAttachmentIn();
-            opMode.sleep(200);
+            opMode.sleep(500);
 
             straightBlockingWithTimer(4, true, 1, 0.4);
             straightBlocking(3, false, 1);
 
             //straightBlockingWithTimer(3, true, 1, 0.4);
             //.        straightBlocking(3, false, 1);
-
-            closeClamp(true);
 
             setHeadingRelativeToBoard(0, 0.7);
         } else {
@@ -2211,8 +2207,8 @@ public class Robot {
         //straightBlocking(1.5, true, 1); //forward
         //straightBlocking(1.5, false, 1); //backward
 
-        closeClamp(true);
-        opMode.sleep(100);
+        //closeClamp(true);
+        //opMode.sleep(100);
 
 
     }
@@ -2223,10 +2219,11 @@ public class Robot {
 
         closeClamp(true);
 
-        mecanumBlocking2(polarity * 24);
+        mecanumBlocking2(polarity * 23);
 
         closeClamp(true);
 
+        //regurgitate
         intake.setPower(1);
         opMode.sleep(100);
 
@@ -2280,11 +2277,11 @@ public class Robot {
     }
 
     public void moveFingerUp() {
-        setServoPosBlocking(spikeServo, 0.5);
+        setServoPos(spikeServo, 0.5);
     }
 
     public void moveFingerDown () {
-        setServoPosBlocking(spikeServo, 0.68);
+        setServoPos(spikeServo, 0.68);
     }
 
 }
