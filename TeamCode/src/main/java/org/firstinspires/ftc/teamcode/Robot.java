@@ -2168,7 +2168,7 @@ public class Robot {
             straightBlocking(2.5, false, 1);
 
             stackAttachmentIn();
-            opMode.sleep(600);
+            opMode.sleep(500);
 
             straightBlockingWithTimer(5, true, 1, 0.4);
             straightBlocking(3, false, 1);
@@ -2247,7 +2247,7 @@ public class Robot {
                 mecanumBlocking2(24); //center red
                 break;
             case 6:
-                mecanumBlocking2(33);
+                mecanumBlocking2(30);
                 break;
             default: {
                 if (isRedAlliance) {
