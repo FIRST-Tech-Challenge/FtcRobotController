@@ -22,7 +22,7 @@ public class DriveTrain {
     private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
     private ElapsedTime runtime = new ElapsedTime();
 
-    boolean directionToggle = false;
+    boolean directionToggle = true;
 
     // All subsystems should have a hardware function that labels all of the hardware required of it.
     public DriveTrain(HardwareMap hwMap) {
@@ -94,10 +94,47 @@ public class DriveTrain {
             leftBackDrive.setPower(-leftBackPower/2);
             rightBackDrive.setPower(-rightBackPower/2);
         }
-
-
     }
 
+    public void driveAutonomously(double axial, double lateral, double yaw) {
+
+        double leftFrontPower = 0;
+        double rightFrontPower = 0;
+        double leftBackPower = 0;
+        double rightBackPower = 0;
+
+        double max;
+
+        // This code calculates the power to give to each motor.
+        leftFrontPower = axial + lateral + yaw;
+        rightFrontPower = axial - lateral - yaw;
+        leftBackPower = axial - lateral + yaw;
+        rightBackPower = axial + lateral - yaw;
+
+        // All code below this comment normalizes the values so no wheel power exceeds 100%.
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // The next four lines gives the calculated power to each motor.
+        leftFrontDrive.setPower(leftFrontPower/2);
+        rightFrontDrive.setPower(rightFrontPower/2);
+        leftBackDrive.setPower(leftBackPower/2);
+        rightBackDrive.setPower(rightBackPower/2);
+    }
+    public void stop() { // Makes the robot stop whenever this function is called
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
     public void moveForward(int howMuch, double speed) {
         // "howMuch" is in inches. A negative howMuch moves backward.
 

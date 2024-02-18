@@ -42,12 +42,12 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
     // backboard to score a second pixel in autonomy mode
     private static final boolean hasSecondCamera = false;
 
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    final double SPEED_GAIN  =  0.1; //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.1; //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.1; //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double MAX_AUTO_SPEED = 0.5; //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5; //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3; //  Clip the turn speed to this max value (adjust for your robot)
 
     Gobbler gobbler = null;
 
@@ -105,7 +105,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         if (targetFound) {
 
             driveToTarget();
-            placePixelOnBackboard();
+            //placePixelOnBackboard();
 
         }
     }
@@ -177,8 +177,8 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         // as possible.  To that extent, we'll position the robot in such a way that it will only
         // need to drive forward.
 
-        //driveToIntermediatePosition();
-        driveToFinalPosition();
+        driveToIntermediatePosition();
+        //driveToFinalPosition();
 
         if (hasSecondCamera) {
             fineTunePositioning();
@@ -196,11 +196,9 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         // What is our desired intermediate position? This can and should be independent of which
         // april tag we're moving toward.  Probably needs to be determined through testing, but a
         // reasonable approximation could be calculated from the geometry of the field/robot.
-        double desiredDistance = 21.6;
+        double desiredDistance = 30.0;
         // double desiredHeading = 20.0;
         // double desiredYaw = 20.0;
-
-
 
         while (opModeIsActive()) {
             LocateTargetAprilTag();
@@ -209,6 +207,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
             // Might want to build in some mechanism to prevent getting stuck here, such as only
             // spending a certain amount of time here.
             if (desiredTag == null) {
+                gobbler.driveTrain.stop();
                 continue;
             }
 
@@ -217,19 +216,20 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
             double yawError = desiredTag.ftcPose.yaw;   // - desiredYaw;
 
             double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
             double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
 
             if (!errorIsAcceptable(rangeError, headingError, yawError)) {
+                gobbler.driveTrain.driveAutonomously(-drive, strafe, turn);
 
-                gobbler.driveTrain.drive(-drive, -strafe, turn, true, runtimeTimer);
-
-                telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+                //telemetry.addData("strafe", "%5.1f", strafe);
+                telemetry.addData("Range", "%5.2f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%3.2f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw", "%3.2f degrees", desiredTag.ftcPose.yaw);
                 telemetry.update();
             }
             else {
+                gobbler.driveTrain.stop();
                 telemetry.addData("Made it to the intermediate position", "");
                 telemetry.update();
                 break;
@@ -238,7 +238,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
     }
 
     private boolean errorIsAcceptable(double rangeError, double headingError, double yawError) {
-        double epsilon = 0.1;
+        double epsilon = 1.0;
         return ((Math.abs(rangeError) <= epsilon) && (Math.abs(headingError) < epsilon) && (Math.abs(yawError) < epsilon));
     }
 
