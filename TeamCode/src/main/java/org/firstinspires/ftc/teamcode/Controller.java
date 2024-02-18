@@ -46,6 +46,8 @@ public class Controller extends LinearOpMode {
     // Pixel Backdrop Sequence
     final int BACKDROP_EXTEND_TARGET = 2000;
 
+    final double SEQUENCE_ARM_POWER = 0.5;
+
     ElapsedTime runtime = new ElapsedTime();
 
     DcMotor frontLeftMotor = null;
@@ -106,17 +108,19 @@ public class Controller extends LinearOpMode {
     }
 
     public void startupSequence() {
+        armLift.setPower(SEQUENCE_ARM_POWER);
         currentArmLiftPos = ARM_LIFT_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
         armExtend.setPower(-ARM_EXTEND_SPEED);
 
         while (armLift.isBusy()) {}
 
+        armLift.setPower(ARM_LIFT_POWER);
         armExtend.setPower(0);
 
         roller.setPosition(ROLLER_FLAT);
-        leftGrip.setPosition(GRIP_OPEN);
-        rightGrip.setPosition(GRIP_OPEN);
+        leftGrip.setPosition(GRIP_CLOSED);
+        rightGrip.setPosition(GRIP_CLOSED);
 
         //sleep(ROLLER_WAIT_TIME);
 
@@ -127,6 +131,7 @@ public class Controller extends LinearOpMode {
     public void pixelPickupSequence() {
         pickupSequenceActive = true;
 
+        armLift.setPower(SEQUENCE_ARM_POWER);
         currentArmLiftPos = ARM_MIN_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
         leftGrip.setPosition(GRIP_OPEN);
@@ -141,15 +146,20 @@ public class Controller extends LinearOpMode {
             armExtend.setPower(-ARM_EXTEND_SPEED);
             while (-armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {}
         }
-
+        
         armExtend.setPower(0);
+        
+        while (armLift.isBusy()) {}
+
+        armLift.setPower(ARM_LIFT_POWER);
 
         pickupSequenceActive = false;
     }
 
     public void pixelBackdropSequence() {
         backdropSequenceActive = true;
-
+        
+        armLift.setPower(SEQUENCE_ARM_POWER);
         currentArmLiftPos = ARM_MAX_POSITION;
         armLift.setTargetPosition(currentArmLiftPos);
         roller.setPosition(ROLLER_UPSIDEDOWN);
@@ -162,8 +172,12 @@ public class Controller extends LinearOpMode {
             armExtend.setPower(-ARM_EXTEND_SPEED);
             while (-armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {}
         }
-
+        
         armExtend.setPower(0);
+        
+        while (armLift.isBusy()) {}
+        
+        armLift.setPower(ARM_LIFT_POWER);
 
         backdropSequenceActive = false;
     }
