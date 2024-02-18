@@ -452,7 +452,7 @@ public class Robot {
         double power;
         double targetTick;
         final double KP_MECANUM = 0.002;
-        final double minPower = 0.3;
+        final double minPower = 0.4;
         final double IN_TO_TICK = 56.3;
 
         assert maxPower >= minPower;
@@ -679,12 +679,12 @@ public class Robot {
 
                 // P1: (35, 17)
 
-                straightBlocking2(-2);
+                //straightBlocking2(-2);
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-23);
                 } else {
-                    mecanumBlocking2(21);
+                    mecanumBlocking2(19);
                 }
                 setHeading(0, 0.7);
 
