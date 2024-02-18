@@ -2160,7 +2160,7 @@ public class Robot {
         if (isRedAlliance) {
             mecanumBlocking2(20);
         } else {
-            mecanumBlocking2(-22);
+            mecanumBlocking2(-30);
         }
 
         if (isRedAlliance) {
@@ -2179,6 +2179,7 @@ public class Robot {
 
             setHeadingRelativeToBoard(0, 0.7);
         } else {
+            mecanumBlocking2(6);
 
             straightBlocking(2, false, 1); //back
 
@@ -2187,9 +2188,9 @@ public class Robot {
 
             //straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
 
-            straightBlocking(4, true, 0.5);
+            straightBlocking(5, true, 0.5);
 
-            straightBlocking(4, false, 1); //back
+            straightBlocking(5, false, 1); //back
 
             //closeClamp(true);
 
@@ -2216,7 +2217,7 @@ public class Robot {
 
         closeClamp(true);
 
-        mecanumBlocking2(polarity * 22);
+        mecanumBlocking2(polarity * 24);
 
         closeClamp(true);
 
