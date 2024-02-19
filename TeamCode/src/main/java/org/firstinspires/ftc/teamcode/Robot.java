@@ -1512,6 +1512,7 @@ public class Robot {
         double targetHeading = botHeading;
         double leftPower = 0;
         double rightPower = 0;
+        double headingCorrectionBigginator = 1.5;
 
         while (opMode.opModeIsActive() && counter < 3) {
 
@@ -1540,20 +1541,20 @@ public class Robot {
                 if (headingError < 0) {
                     //turn left
                     if (currentPos < targetPos) {
-                        leftPower = 0.2;
-                        rightPower = 0.4;
+                        leftPower = 0.2 * headingCorrectionBigginator;
+                        rightPower = 0.4 * headingCorrectionBigginator;
                     } else {
-                        leftPower = -0.4;
-                        rightPower = -0.2;
+                        leftPower = -0.4 * headingCorrectionBigginator;
+                        rightPower = -0.2 * headingCorrectionBigginator;
                     }
                 } else if (headingError > 0) {
                     //turn right
                     if (currentPos < targetPos) {
-                        leftPower = 0.4;
-                        rightPower = 0.2;
+                        leftPower = 0.4 * headingCorrectionBigginator;
+                        rightPower = 0.2 * headingCorrectionBigginator;
                     } else {
-                        leftPower = -0.2;
-                        rightPower = -0.4;
+                        leftPower = -0.2 * headingCorrectionBigginator;
+                        rightPower = -0.4 * headingCorrectionBigginator;
                     }
                 }
                 Log.d("fixHeading", "straightBlocking2FixHeading: power is " + power);
@@ -2172,7 +2173,7 @@ public class Robot {
         if (isRedAlliance) {
             straightBlocking2FixHeading(102);
         } else {
-            straightBlocking2FixHeading(105);
+            straightBlocking2FixHeading(102.5);
         }
 
         intake.setPower(-1);
@@ -2208,9 +2209,9 @@ public class Robot {
 
             //straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
 
-            straightBlocking(5, true, 0.5);
+            straightBlocking(6, true, 0.5);
 
-            straightBlocking(5, false, 1); //back
+            straightBlocking(6, false, 1); //back
 
             //closeClamp(true);
 
@@ -2245,7 +2246,7 @@ public class Robot {
         intake.setPower(1);
         opMode.sleep(100);
 
-        straightBlocking2FixHeading(-96);
+        straightBlocking2FixHeading(-94.5);
 
         Log.d("wanted tag", "wanted tag" + wantedAprTagId);
         switch (wantedAprTagId) {
