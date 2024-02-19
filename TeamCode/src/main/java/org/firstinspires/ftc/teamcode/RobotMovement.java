@@ -29,12 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.RobotHardware;
 
 /*
  * This OpMode illustrates how to use an external "hardware" class to modularize all the robot's sensors and actuators.
@@ -51,7 +48,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
  * OpMode object when it's created, so it can access all core OpMode functions.  This is illustrated below.
  *
  * In this concept sample, the hardware class file is called RobotHardware.java and it must accompany this sample OpMode.
- * So, if you copy ConceptExternalHardwareClass.java into TeamCode (using Android Studio or OnBotJava) then RobotHardware.java
+ * So, if you copy RobotMovement.java into TeamCode (using Android Studio or OnBotJava) then RobotHardware.java
  * must also be copied to the same location (maintaining its name).
  *
  * For comparison purposes, this sample and its accompanying hardware class duplicates the functionality of the
@@ -66,8 +63,8 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
  *  Also add another new file named RobotHardware.java, select the sample with that name, and select Not an OpMode.
  */
 
-@TeleOp(name="Concept: Robot Hardware Class", group="Robot")
-public class ConceptExternalHardwareClass extends LinearOpMode {
+@TeleOp(name="TeleOp - RobotMovement", group="Robot")
+public class RobotMovement extends LinearOpMode {
 
     // Create a RobotHardware object to be used to access robot hardware.
     // Prefix any hardware functions with "robot." to access this class.
