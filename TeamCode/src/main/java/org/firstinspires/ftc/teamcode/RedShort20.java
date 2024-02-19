@@ -41,7 +41,7 @@ public class RedShort20 extends LinearOpMode {
             robot.autoOuttake(true, slideStartingPosition);
 
             // parking here
-            robot.boardToTruss();
+            robot.boardToTruss(slideStartingPosition);
             robot.straightBlocking2(-10);
 
             break;

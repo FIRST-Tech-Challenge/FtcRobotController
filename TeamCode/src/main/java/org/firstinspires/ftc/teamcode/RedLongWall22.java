@@ -40,7 +40,7 @@ public class RedLongWall22 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false, slideStartingPosition);
 
-            robot.boardToTruss();
+            robot.boardToTruss(slideStartingPosition);
             robot.trussToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoardTruss();
