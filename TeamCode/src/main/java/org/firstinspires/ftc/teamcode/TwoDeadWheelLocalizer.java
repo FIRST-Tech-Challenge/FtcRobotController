@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
@@ -17,6 +18,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.messages.TwoDeadWheelInputsMessage;
 
 @Config
 public final class TwoDeadWheelLocalizer implements Localizer {
@@ -36,6 +40,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     private final double inPerTick;
 
     private double lastRawHeadingVel, headingVelOffset;
+    private boolean initialized;
 
     public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick) {
         // TODO: make sure your config has **motors** with these names (or change them)
@@ -49,35 +54,46 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         this.imu = imu;
 
-        lastParPos = par.getPositionAndVelocity().position;
-        lastPerpPos = perp.getPositionAndVelocity().position;
-        lastHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-
         this.inPerTick = inPerTick;
 
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
-    // see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
-    private double getHeadingVelocity() {
-        double rawHeadingVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+    public Twist2dDual<Time> update() {
+        PositionVelocityPair parPosVel = par.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+
+        YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
+        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
+
+        FlightRecorder.write("TWO_DEAD_WHEEL_INPUTS", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
+
+        Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
+
+        // see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
+        double rawHeadingVel = angularVelocity.zRotationRate;
         if (Math.abs(rawHeadingVel - lastRawHeadingVel) > Math.PI) {
             headingVelOffset -= Math.signum(rawHeadingVel) * 2 * Math.PI;
         }
         lastRawHeadingVel = rawHeadingVel;
-        return headingVelOffset + rawHeadingVel;
-    }
+        double headingVel = headingVelOffset + rawHeadingVel;
 
-    public Twist2dDual<Time> update() {
-        PositionVelocityPair parPosVel = par.getPositionAndVelocity();
-        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-        Rotation2d heading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        if (!initialized) {
+            initialized = true;
+
+            lastParPos = parPosVel.position;
+            lastPerpPos = perpPosVel.position;
+            lastHeading = heading;
+
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
+                    DualNum.constant(0.0, 2)
+            );
+        }
 
         int parPosDelta = parPosVel.position - lastParPos;
         int perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
-
-        double headingVel = getHeadingVelocity();
 
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
