@@ -160,6 +160,7 @@ public class RR20 {
 
     public void update(){
         robot.update();
+        robot.queuer.setFirstLoop(false);
     }
 
     public boolean isAutDone(){
