@@ -40,7 +40,7 @@ public class RedLongWall20 extends LinearOpMode {
             robot.autoOuttake(false, slideStartingPosition);
 
             // parking here
-            robot.boardToTruss();
+            robot.boardToTruss(slideStartingPosition);
             robot.straightBlocking2(-10);
             break;
 

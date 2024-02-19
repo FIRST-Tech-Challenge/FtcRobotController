@@ -183,7 +183,7 @@ public class Robot {
 
     public void trayToOuttakeSplitEditionTwo() {
         setServoPos(tray, 0.15);
-        opMode.sleep(100);
+        opMode.sleep(200);
     }
 
     public void autoOuttake(boolean lowOuttake, double startingPosition) {
@@ -1999,7 +1999,7 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 if(isRedAlliance) {
-                    straightBlocking2(-3);
+                    straightBlocking2(-2);
                 } else {
                     straightBlocking2(-2);
                 }
@@ -2132,7 +2132,7 @@ public class Robot {
         }
     }
 
-    public void boardToTruss () {
+    public void boardToTruss (double slideStartingPosition) {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
@@ -2147,13 +2147,13 @@ public class Robot {
                 mecanumBlocking2(29);
                 break;
             case 4:
-                mecanumAndSlidesDownToZero(-32, 0);
+                mecanumAndSlidesDownToZero(-32, slideStartingPosition);
                 break;
             case 5:
-                mecanumBlocking2(-23.5); //center red
+                mecanumAndSlidesDownToZero(-25.5, slideStartingPosition); //center red
                 break;
             case 6:
-                mecanumBlocking2(-19);
+                mecanumAndSlidesDownToZero(-19, slideStartingPosition);
                 break;
             default: {
                 if (isRedAlliance) {
@@ -2240,7 +2240,7 @@ public class Robot {
 
         //closeClamp(true);
 
-        mecanumBlocking2(polarity * 24);
+        mecanumBlocking2(polarity * 23);
 
         closeClamp(true);
 
@@ -2248,7 +2248,7 @@ public class Robot {
         intake.setPower(1);
         opMode.sleep(100);
 
-        straightBlocking2FixHeading(-94.5);
+        straightBlocking2FixHeading(-99.5);
 
         Log.d("wanted tag", "wanted tag" + wantedAprTagId);
         switch (wantedAprTagId) {
