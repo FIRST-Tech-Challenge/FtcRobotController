@@ -34,7 +34,7 @@ public class BlueShortFreeway22 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(true, slideStartingPosition);
 
-            robot.boardToMiddle();
+            robot.boardToMiddle(slideStartingPosition);
             robot.middleToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
