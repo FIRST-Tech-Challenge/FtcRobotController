@@ -28,18 +28,28 @@ public class WristPositionCommand extends CommandBase {
         if (zero) {
             return 0;
         }
-        return 1;
+        return 360;
     }
 
     @Override
     public void execute() {
         int position = getTargetPos();
         subsystem.setWristPosition(position);
+        for (int i = 0; i < 10; i++) {
+            // Flood the console
+            System.out.println(position + " : CURRENT IS " + subsystem.getPosition());
+        }
     }
 
     @Override
     public boolean isFinished() {
-        if (((int) subsystem.getPosition()) == getTargetPos()) {
+        /* (((int) subsystem.getPosition()) == getTargetPos()) {
+            return true;
+        }*/
+        System.out.println("DATA: "+subsystem.isBusy()+", "+subsystem.getPosition()+", "+getTargetPos());
+        if (!subsystem.isBusy() || ((int) subsystem.getPosition()) == getTargetPos()) {
+            subsystem.getWrist().setVelocity(0);
+            subsystem.getWrist().setPower(0);
             return true;
         }
         if (defaultCommand.frontward.getAsDouble() != 0 || defaultCommand.backward.getAsDouble() != 0) {
