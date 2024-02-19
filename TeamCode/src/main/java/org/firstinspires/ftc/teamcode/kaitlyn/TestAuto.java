@@ -19,7 +19,7 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //robot.mecanumBlocking(24,true,0.7);
+            robot.mecanumBlocking2(-24);
             break;
         }
     }
