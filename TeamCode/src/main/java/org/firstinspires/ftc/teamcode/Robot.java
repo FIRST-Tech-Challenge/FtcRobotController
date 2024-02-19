@@ -210,7 +210,7 @@ public class Robot {
 
         setServoPos(trayAngle, 0.5);
         trayToIntakePos(true); //intake pos
-        moveLinearSlideByTicksBlocking(startingPosition); // linear slide down
+        //moveLinearSlideByTicksBlocking(startingPosition); // linear slide down//TODO UNCOMMET IF NOT WORKING
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -1627,7 +1627,7 @@ public class Robot {
 
         while(opMode.opModeIsActive() && distanceToMove < -10) {
             distanceToMove = 0 - lsFront.getCurrentPosition();
-            linearSlidesMoveToZeroParallel();
+            linearSlidesMoveToZeroParallel(0);
 
             boolean hangingMode = false;
             int TRIGGER_PRESSED = 0; // TODO: test
@@ -1793,12 +1793,12 @@ public class Robot {
 
     }
 
-    public void linearSlidesMoveToZeroParallel() {
-        double distanceToMove = 0 - lsFront.getCurrentPosition();
+    public void linearSlidesMoveToZeroParallel(double slideStartingPos) {
+        double distanceToMove = slideStartingPos - lsFront.getCurrentPosition();
         Log.d("ls", String.valueOf(distanceToMove));
         double p_constant = 0.001;
 
-        if (distanceToMove > 10) {
+        if (distanceToMove < -10) {
             lsFront.setPower(distanceToMove * p_constant);
             lsBack.setPower(distanceToMove * p_constant);
         } else {
@@ -2147,7 +2147,7 @@ public class Robot {
                 mecanumBlocking2(29);
                 break;
             case 4:
-                mecanumBlocking2(-32);
+                mecanumAndSlidesDownToZero(-32, 0);
                 break;
             case 5:
                 mecanumBlocking2(-23.5); //center red
@@ -2297,7 +2297,7 @@ public class Robot {
         return moddedAngle;
     }
 
-    public void mecanumAndSlidesDownToZero(double inchesMove) {
+    public void mecanumAndSlidesDownToZero(double inchesMove, double slideStartingPos) {
         resetDrivetrainEncoders();
         fLeftMecanumController.integral = 0;
         fLeftMecanumController.lastError = 0;
@@ -2315,7 +2315,7 @@ public class Robot {
                 counter = 0;
             }
 
-            linearSlidesMoveToZeroParallel();
+            linearSlidesMoveToZeroParallel(slideStartingPos);
 
             currentPos = fLeft.getCurrentPosition();
             power = fLeftMecanumController.calculatePID(currentPos, targetPos);
