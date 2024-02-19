@@ -940,7 +940,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(-21);
                 } else {
-                    mecanumBlocking2(21);
+                    mecanumBlocking2(17);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -1814,21 +1814,27 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
+                //blue left
                 mecanumBlocking2(-35);
                 break;
             case 2:
-                mecanumBlocking2(-26);
+                //blue center
+                mecanumBlocking2(-28);
                 break;
             case 3:
+                //blue right
                 mecanumBlocking2(-23);
                 break;
             case 4:
+                // red left
                 mecanumBlocking2(19);
                 break;
             case 5:
+                //red center
                 mecanumBlocking2(23);
                 break;
             case 6:
+                //red right
                 mecanumBlocking2(29);
                 break;
             default:
@@ -1875,13 +1881,13 @@ public class Robot {
 
             straightBlockingWithTimer(5, true, 1, 0.4);
             straightBlocking(3, false, 1);
+            setHeadingRelativeToBoard(0, 0.7);
         }
 
         closeClamp(true);
         opMode.sleep(100);
 
         intake.setPower(1);
-        opMode.sleep(100);
 
         if (!isRedAlliance) {
             mecanumBlocking2(-1);
@@ -1898,21 +1904,27 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
+                //blue left
                 mecanumBlocking2(23);
                 break;
             case 2:
-                mecanumBlocking2(23);
+                //blue center
+                mecanumBlocking2(21);
                 break;
             case 3:
+                //blue right
                 mecanumBlocking2(30);
                 break;
             case 4:
+                //red left
                 mecanumBlocking2(-30);
                 break;
             case 5:
+                //red center
                 mecanumBlocking2(-21);
                 break;
             case 6:
+                // red right
                 mecanumBlocking2(-21);
                 break;
             default:
