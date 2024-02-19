@@ -930,7 +930,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-94);
+                straightBlocking2FixHeading(-91);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -1873,7 +1873,6 @@ public class Robot {
         straightBlocking(1.5, false, 1);*/
 
         if (isRedAlliance) {
-            // TODO have to code for red
             Log.d("freeway", "free");
             setHeadingRelativeToBoard(-20, 0.7);
             straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
