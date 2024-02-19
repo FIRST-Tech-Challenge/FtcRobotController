@@ -977,6 +977,7 @@ public class Robot {
                     mecanumBlocking2(12);
                 } else {
                     mecanumBlocking2(-15);
+                    Log.d("path", "hi");
                 }
 
                 setHeading(90 * polarity, 0.7);
@@ -1809,7 +1810,7 @@ public class Robot {
                 mecanumBlocking2(-35);
                 break;
             case 2:
-                mecanumBlocking2(-29);
+                mecanumBlocking2(-26);
                 break;
             case 3:
                 mecanumBlocking2(-23);
@@ -2097,7 +2098,7 @@ public class Robot {
                 if (isRedAlliance) {
                     mecanumBlocking2(-36);
                 } else {
-                    mecanumBlocking2(36);
+                    mecanumBlocking2(33);
                 }
 
                 setHeading(90 * polarity, 0.7);
