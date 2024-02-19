@@ -1855,7 +1855,11 @@ public class Robot {
 
         openClamp(true, true, false);
         stackAttachmentOut();
-        straightBlocking2FixHeading(100);
+        if (isRedAlliance) {
+            straightBlocking2FixHeading(107);
+        } else {
+            straightBlocking2FixHeading(100);
+        }
         intake.setPower(-1);
 
         /*straightBlocking(5, true, 1);
@@ -1871,6 +1875,16 @@ public class Robot {
         if (isRedAlliance) {
             // TODO have to code for red
             Log.d("freeway", "free");
+            setHeadingRelativeToBoard(-20, 0.7);
+            straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
+            straightBlocking(2.5, false, 1);
+
+            stackAttachmentIn();
+            opMode.sleep(500);
+
+            straightBlockingWithTimer(5, true, 1, 0.4);
+            straightBlocking(3, false, 1);
+            setHeadingRelativeToBoard(0, 0.7);
         } else {
             setHeadingRelativeToBoard(-20, 0.7);
             straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
