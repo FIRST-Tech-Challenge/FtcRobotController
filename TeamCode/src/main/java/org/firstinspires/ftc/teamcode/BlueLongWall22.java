@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedWall22 extends LinearOpMode {
+public class BlueLongWall22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
@@ -23,12 +23,7 @@ public class LongRedWall22 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(false, false, robot.markerPos);
-
-
-            /*robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
-
-            robot.setMarkerLocation(true, true, robot.markerPos);*/
+            robot.setMarkerLocation(false, true, robot.markerPos);
             robot.servoToInitPositions();
 
             robot.longMoveToBoardTruss();
