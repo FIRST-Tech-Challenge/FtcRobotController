@@ -4,16 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongBlueWall22 extends LinearOpMode {
+public class RedLongWall20 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
+        int delay = 12000;  // Max delay is 12000
+
 
         waitForStart();
 
@@ -23,8 +25,10 @@ public class LongBlueWall22 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.markerProcessor, false);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.setMarkerLocation(false, true, robot.markerPos);
+            robot.setMarkerLocation(true, true, robot.markerPos);
             robot.servoToInitPositions();
+
+            this.sleep(delay);
 
             robot.longMoveToBoardTruss();
 
@@ -35,17 +39,9 @@ public class LongBlueWall22 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false, slideStartingPosition);
 
+            // parking here
             robot.boardToTruss();
-            robot.trussToStackAndIntake();
-            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
-            robot.stackToBoardTruss();
-            robot.intake.setPower(0);
-
-            robot.alignToBoardFast(robot.secondWantedTagId);
-            robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
-
-            robot.autoOuttake(false, slideStartingPosition);
-
+            robot.straightBlocking2(-10);
             break;
 
         }
