@@ -1852,7 +1852,7 @@ public class Robot {
         straightBlocking2FixHeading(100);
         intake.setPower(-1);
 
-        straightBlocking(5, true, 1);
+        /*straightBlocking(5, true, 1);
         straightBlocking(1, false, 1);
         straightBlocking(1.5, true, 1);
         straightBlocking(1.5, false, 1);
@@ -1860,7 +1860,22 @@ public class Robot {
         straightBlocking(1, false, 1);
         mecanumBlocking2(1);
         straightBlocking(1.5, true, 1);
-        straightBlocking(1.5, false, 1);
+        straightBlocking(1.5, false, 1);*/
+
+        if (isRedAlliance) {
+            // TODO have to code for red
+            Log.d("freeway", "free");
+        } else {
+            setHeadingRelativeToBoard(-20, 0.7);
+            straightBlockingWithTimer(8, true, 1, 0.7); // 3 knocks stack, 6 knocks pixel!!
+            straightBlocking(2.5, false, 1);
+
+            stackAttachmentIn();
+            opMode.sleep(500);
+
+            straightBlockingWithTimer(5, true, 1, 0.4);
+            straightBlocking(3, false, 1);
+        }
 
         closeClamp(true);
         opMode.sleep(100);
