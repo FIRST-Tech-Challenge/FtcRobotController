@@ -85,6 +85,9 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
+    //  ticks  = degrees * (ticks / revolution) * (revolution / degrees)
+    // ticks = degrees * COUNTS_PER_MOTOR_REV * (1 / 360)
+
     @Override
     public void runOpMode() {
 
