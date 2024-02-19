@@ -633,8 +633,8 @@ public abstract class CSBase extends LinearOpMode {
         s(.5);
         if (pos == spike.left) {
             turn(-35);
-            drive(-10);
-            drive(10);
+            drive(-11);
+            drive(11);
             turn(35);
         } else if (pos == spike.middle) {
             drive(-15);
