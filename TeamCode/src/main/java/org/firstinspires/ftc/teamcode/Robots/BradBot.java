@@ -67,6 +67,7 @@ public class BradBot extends BasicRobot {
   boolean purped = false;
   boolean pathFin = false;
   boolean gapped = false;
+  boolean brokenFollowing = false;
 //  double startIntake = -100;
 //  Preloader preloader;
   public SampleMecanumDrive roadrun;
@@ -458,13 +459,10 @@ public class BradBot extends BasicRobot {
   }
 
   public boolean checkAlliance() {
-    if (currentPose.getX() > 5) {
-      op.telemetry.addData("hi", "hi :3");
-      if (ultras.checkAlliance()) {
-        op.telemetry.addData("hi2", "hi2");
-        roadrun.breakFollowing();
-        roadrun.setMotorPowers(0, 0, 0, 0);
-    }
+    if (currentPose.getX() > 5 && currentPose.getX() < 15) {
+//      if (ultras.checkAlliance()) {
+//        roadrun.setMotorPowers(0, 0, 0, 0);
+//      }
       return ultras.checkAlliance();
     }
     return false;
@@ -577,6 +575,20 @@ public class BradBot extends BasicRobot {
         }
       }
     }
+  }
+
+  public void followTrajSeqUltra(boolean check) {
+//    if (queuer.isFirstLoop()) {
+//      queuer.queue(true, false, true);
+//    } else {
+      if (queuer.queue(true, !check)) {
+        if (queuer.isExecuted()) {
+          brokenFollowing = true;
+          roadrun.breakFollowing();
+          roadrun.setMotorPowers(0, 0, 0, 0);
+        }
+      }
+//    }
   }
 
   public void hangerTele(){
