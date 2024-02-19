@@ -100,8 +100,8 @@ public class RobotHardware {
         a2ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a2");
         planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
 
-        a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -110,8 +110,10 @@ public class RobotHardware {
         planeLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         // Define and initialize ALL installed servos.
 //        leftWrist = myOpMode.hardwareMap.get(Servo.class, "left_wrist");
@@ -165,10 +167,13 @@ public class RobotHardware {
      */
     public void setA1Power(double power)
     {
+
         a1ArmMotor.setPower(power);
     }
-    public void setA2Power(double power){
+    public void setA2Power(double power)
+    {
         a2ArmMotor.setPower(power);
+
     }
 
 //    public void setWristPositions(double offset) {

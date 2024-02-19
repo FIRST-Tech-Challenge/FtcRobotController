@@ -118,26 +118,18 @@ public class ConceptExternalHardwareClass extends LinearOpMode {
             // Use the MOTOR constants defined in RobotHardware class.
 
             //A1 CONTROL
-            if (-gamepad2.left_stick_y > 0)
+            if (-gamepad2.left_stick_y != 0)
             {
-                a2 =  0.4 * 1 - ( 0.5 * (gamepad2.right_trigger + gamepad2.left_trigger) * -gamepad2.left_stick_y);
-            }
-            else if(-gamepad2.left_stick_y < 0)
-            {
-                a2 = 0.4 * -1 - (0.5 * (gamepad2.right_trigger + gamepad2.left_trigger) * -gamepad2.left_stick_y);
+                a2 =  0.4 * -gamepad2.right_stick_y;
             }
             else {
                 a2 = 0;
             }
 
             //A2 CONTROL
-            if (-gamepad2.right_stick_y > 0)
+            if (-gamepad2.right_stick_y != 0)
             {
-                a1 = 1 - (0.5 * (gamepad2.right_trigger + gamepad2.left_trigger) * -gamepad2.right_stick_y);
-            }
-            else if(-gamepad2.right_stick_y < 0)
-            {
-                a1 = -1 - ( 0.5 * (gamepad2.right_trigger + gamepad2.left_trigger) * -gamepad2.right_stick_y);
+                a1 = 0.9 * -gamepad2.right_stick_y;
             }
             else {
                 a1 = 0;
