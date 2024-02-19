@@ -19,7 +19,14 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.mecanumBlocking2(-24);
+            robot.moveLinearSlideByTicksBlocking(-2000);
+            robot.trayToOuttakePos(true);
+            this.sleep(1000);
+
+            robot.trayToIntakePos(true);
+            this.sleep(2500);
+
+            robot.mecanumAndSlidesDownToZero(-24);
             break;
         }
     }
