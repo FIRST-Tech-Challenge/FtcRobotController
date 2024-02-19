@@ -93,54 +93,54 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
             // TODO: Do the math to convert an april tag detection to a coordinate
             double errorX = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
             double errorY = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
-            double errorAngleRadians;
+            double errorAngleRadians = Math.toRadians(detection.ftcPose.yaw);
             switch(detection.id) {
                 case 1:
                     errorX = APRIL_TAG_1.getX() - errorX;
                     errorY = APRIL_TAG_1.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_1.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_1.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 2:
                     errorX = APRIL_TAG_2.getX() - errorX;
                     errorY = APRIL_TAG_2.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_2.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_2.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 3:
                     errorX = APRIL_TAG_3.getX() - errorX;
                     errorY = APRIL_TAG_3.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_3.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_3.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 4:
                     errorX = APRIL_TAG_4.getX() - errorX;
                     errorY = APRIL_TAG_4.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_4.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_4.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 5:
                     errorX = APRIL_TAG_5.getX() - errorX;
                     errorY = APRIL_TAG_5.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_5.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_5.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 6:
                     errorX = APRIL_TAG_6.getX() - errorX;
                     errorY = APRIL_TAG_6.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_6.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_6.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 7:
                     errorX = APRIL_TAG_7.getX() - errorX;
                     errorY = APRIL_TAG_7.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_7.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_7.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 case 8:
                     errorX = APRIL_TAG_8.getX() - errorX;
                     errorY = APRIL_TAG_8.getY() - errorY;
-                    errorAngleRadians = APRIL_TAG_8.getAngleRadians() - detection.ftcPose.yaw;
+                    errorAngleRadians = APRIL_TAG_8.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
                 default:
