@@ -185,7 +185,6 @@ public class BR20 {
 
     public void update(){
         robot.update();
-        robot.update();
         robot.queuer.setFirstLoop(false);
     }
 

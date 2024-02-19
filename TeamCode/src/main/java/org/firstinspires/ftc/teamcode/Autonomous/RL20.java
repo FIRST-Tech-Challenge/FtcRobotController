@@ -257,7 +257,6 @@ public class RL20 {
 
   public void update() {
     robot.update();
-    robot.update();
     robot.queuer.setFirstLoop(false);
   }
 
