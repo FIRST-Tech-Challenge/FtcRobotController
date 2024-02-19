@@ -76,6 +76,8 @@ public class Robot {
     private double trayAngleSlope;
     private double teleOpTuneValueTrayAngle;
 
+    boolean isLong;
+
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
     }
@@ -94,9 +96,12 @@ public class Robot {
         if (isLong) {
             robotX = 35;
             robotY = 17;
+            isLong = true;
+
         } else if (!isLong) {
             robotX = 83;
             robotY = 17;
+            isLong = false;
         }
 
         if (!testingOnBert) {
@@ -2172,9 +2177,15 @@ public class Robot {
     public void trussToStackAndIntake() {
 
         openClamp(true, true, false);
+        setHeadingRelativeToBoard(0, 0.7);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(102);
+            if (isLong) {
+                straightBlocking2FixHeading(102);
+            } else {
+                straightBlocking2FixHeading(100);
+            }
+
         } else {
             straightBlocking2FixHeading(102.5);
         }
@@ -2182,7 +2193,11 @@ public class Robot {
         intake.setPower(-1);
 
         if (isRedAlliance) {
-            mecanumBlocking2(20);
+            if (isLong) {
+                mecanumBlocking2(20);
+            } else {
+                mecanumBlocking2(22);
+            }
         } else {
             mecanumBlocking2(-30);
         }
