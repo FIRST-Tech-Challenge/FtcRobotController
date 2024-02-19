@@ -826,7 +826,7 @@ public class Robot {
                 }
             }
         }
-        straightBlocking(distanceToBoard, false, 0.4);
+        straightBlockingWithTimer(distanceToBoard, false, 0.4, 1);
     }
 
     public void longMoveToBoard(boolean isJuice) {
@@ -1808,14 +1808,13 @@ public class Robot {
 
     }
 
-    public void boardToMiddle () {
+    public void boardToMiddle (double slidesStartingPos) {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
         switch (wantedAprTagId) {
             case 1:
-                //blue left
-                mecanumBlocking2(-35);
+                mecanumAndSlidesDownToZero(-35, slidesStartingPos);
                 break;
             case 2:
                 //blue center
@@ -2064,7 +2063,9 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                straightBlocking2FixHeading(-95);
+
+                straightBlocking2FixHeading(-97);
+
                 setHeading(90 * polarity, 0.7);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
@@ -2112,7 +2113,7 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 if (isRedAlliance) {
-                    straightBlocking2FixHeading(-86.5); // subtracted 4 here
+                    straightBlocking2FixHeading(-87.5); // subtracted 4 here
                 } else {
                     straightBlocking2FixHeading(-83.5);
                 }
@@ -2138,13 +2139,13 @@ public class Robot {
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumBlocking2(17);
+                mecanumAndSlidesDownToZero(17, slideStartingPosition);
                 break;
             case 2:
-                mecanumBlocking2(22); //center blue
+                mecanumAndSlidesDownToZero(22, slideStartingPosition); //center blue
                 break;
             case 3:
-                mecanumBlocking2(29);
+                mecanumAndSlidesDownToZero(29, slideStartingPosition);
                 break;
             case 4:
                 mecanumAndSlidesDownToZero(-32, slideStartingPosition);

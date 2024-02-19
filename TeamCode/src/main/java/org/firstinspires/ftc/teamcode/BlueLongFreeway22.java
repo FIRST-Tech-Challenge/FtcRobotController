@@ -35,7 +35,7 @@ public class BlueLongFreeway22 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false, slideStartingPosition);
 
-            robot.boardToMiddle();
+            robot.boardToMiddle(slideStartingPosition);
 
             robot.middleToStackAndIntake();
 
