@@ -78,11 +78,20 @@ public class Queuer {
     if (!firstLoop && currentlyQueueing >= queueElements.size() - 1) {
       currentlyQueueing = -1;
     }
+    if(!firstLoop){
     return queue(
         p_asyncrhonous,
         p_done_condition,
-        !firstLoop && time - queueElements.get(currentlyQueueing + 1).getReadyTime() > p_delay,
+         time - queueElements.get(currentlyQueueing + 1).getReadyTime() > p_delay,
         false);
+    }else{
+      return queue(
+              p_asyncrhonous,
+              p_done_condition,
+              false,
+              false);
+    }
+
   }
 
   /**

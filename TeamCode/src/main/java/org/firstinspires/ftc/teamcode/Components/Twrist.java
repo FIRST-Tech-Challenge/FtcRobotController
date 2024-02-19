@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -11,7 +12,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.575, LEFT_TILTY = 0.35, RIGHT_TILTY = 0.79, DROPPY = 0.013, FLIP_TIME=0.3;
+    public static double GRABBY = 0.585, LEFT_TILTY = 0.35, RIGHT_TILTY = 0.79, DROPPY = 0.013, POPP = 1.0, FLIP_TIME=0.3;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
@@ -24,12 +25,19 @@ public class Twrist extends RFServo {
         twristTargetStates.GRAB.state = false;
         lastTime = -100;
         super.setLastTime(-100);
+//        if(!isTeleop){
+//            RIGHT_TILTY = 1.0;
+//        }
+//        else{
+//            RIGHT_TILTY=0.79;
+//        }
     }
     public enum twristStates{
         DROP(false, DROPPY),
         GRAB(true, GRABBY),
         LEFT_TILT(false, LEFT_TILTY),
-        RIGHT_TILT(false, RIGHT_TILTY);
+        RIGHT_TILT(false, RIGHT_TILTY),
+        OT(false, 1.0);
 
         boolean state;
         double pos;
@@ -51,7 +59,8 @@ public class Twrist extends RFServo {
         DROP(false, DROPPY),
         GRAB(false, GRABBY),
         LEFT_TILT(false, LEFT_TILTY),
-        RIGHT_TILT(false, RIGHT_TILTY);
+        RIGHT_TILT(false, RIGHT_TILTY),
+        OT(false, 1.0);
         boolean state;
         double pos;
         twristTargetStates(boolean p_state, double p_pos){
@@ -103,6 +112,16 @@ public class Twrist extends RFServo {
                 }
                 twristTargetStates.RIGHT_TILT.state = true;
             }
+            else if(p_state == twristTargetStates.OT) {
+
+                if((Arm.ArmStates.DROP.state) && super.getPosition() != 1.0){
+                    super.setPosition(1.0);
+                    LOGGER.log("OT claw");
+                    lastTime = time;
+                }
+                twristTargetStates.OT.state = true;
+            }
+
         }
         p_state.state=true;
     }

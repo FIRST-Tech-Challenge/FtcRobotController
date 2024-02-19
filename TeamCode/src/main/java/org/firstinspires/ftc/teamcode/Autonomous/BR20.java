@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.gampad;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static java.lang.Math.min;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,15 +13,15 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class BR20 {
-    boolean logi=false;
+    boolean logi=false, isRight = false;
     LinearOpMode op;
     BradBot robot;
-    int bark = 0;
+    int bark = 0, delaySec = 0;
     TrajectorySequence[] preload = new TrajectorySequence[3];
     TrajectorySequence[] preToStack = new TrajectorySequence[3];
 //    TrajectorySequence[] droppy = new TrajectorySequence[3];
 
-    TrajectorySequence[] park = new TrajectorySequence[3];
+    TrajectorySequence[] park = new TrajectorySequence[3], parkRight = new TrajectorySequence[3];
 
 
 
@@ -104,6 +106,21 @@ public class BR20 {
                 .lineToLinearHeading(new Pose2d(43, 58, toRadians(180)))
                 .lineToLinearHeading(new Pose2d(58, 58, toRadians(180)))
                 .build();
+        parkRight[0] = robot.roadrun.trajectorySequenceBuilder(preToStack[0].end())
+                .lineToLinearHeading(new Pose2d(43, 41.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(43, 8, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58, 8, toRadians(180)))
+                .build();
+        parkRight[1] = robot.roadrun.trajectorySequenceBuilder(preToStack[1].end())
+                .lineToLinearHeading(new Pose2d(43, 35.25, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(43, 8, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58, 8, toRadians(180)))
+                .build();
+        parkRight[2] = robot.roadrun.trajectorySequenceBuilder(preToStack[2].end())
+                .lineToLinearHeading(new Pose2d(43, 29, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(43, 8, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58, 8, toRadians(180)))
+                .build();
 
         robot.setRight(false);
         robot.setBlue(false);
@@ -114,6 +131,20 @@ public class BR20 {
             bark = robot.getSpikePos();
             op.telemetry.addData("pixel", bark);
             packet.put("spike", bark);
+            op.telemetry.addData("delaySec", delaySec);
+            op.telemetry.addData("isRight", isRight);
+            if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
+                delaySec++;
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "minusSecs")) {
+                delaySec = min(0, delaySec - 1);
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "parkRight")) {
+                isRight = true;
+            }
+            if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
+                isRight = false;
+            }
             robot.update();
         }
         op.resetRuntime();
@@ -124,7 +155,7 @@ public class BR20 {
         robot.queuer.queue(false, true);
         robot.upAuto();
         robot.purpurAuto();
-        robot.queuer.addDelay(3.5);
+        robot.queuer.addDelay(2.0+delaySec);
         robot.followTrajSeq(preload[bark]);
         robot.queuer.addDelay(0.9);
         robot.dropAuto(0);
@@ -139,7 +170,12 @@ public class BR20 {
     }
 
     public void park(){
-        robot.followTrajSeq(park[bark]);
+    if (!isRight) {
+      robot.followTrajSeq(park[bark]);
+        }
+    else{
+        robot.followTrajSeq(parkRight[bark]);
+    }
         robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.8);
@@ -149,9 +185,9 @@ public class BR20 {
 
     public void update(){
         robot.update();
+        robot.queuer.setFirstLoop(false);
     }
 
     public boolean isAutDone(){
-        return !robot.queuer.isFullfilled()&&op.time<29.8;
-    }
-}
+        return !robot.queuer.isFullfilled()&&time<29.8;
+    }}

@@ -11,8 +11,8 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
-  public static double GRABBY = 0.35
-          , DROPPY = .616, FLIP_TIME=0.4, LOCKY=0.4;
+  public static double GRABBY = 0.38
+          , DROPPY = .616, FLIP_TIME=0.4, LOCKY=0.42;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);
@@ -77,9 +77,9 @@ public class Wrist extends RFServo {
     }
   }
   public void purpur(){
-    if (this.getPosition() != 0.4) {
+    if (this.getPosition() != 0.3) {
       super.setLastTime(0);
-      this.setPosition(0.4);
+      this.setPosition(0.2);
       WristTargetStates.DROP.setStateTrue();
       WristTargetStates.DROP.state = false;
       WristStates.GRAB.setStateTrue();

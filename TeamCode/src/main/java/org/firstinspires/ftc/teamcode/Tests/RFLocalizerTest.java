@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  */
 //@Disabled
 //@Disabled
-
+@Disabled
 @Config
 @Autonomous(name = "OdometryLocalizerTest")
 public class RFLocalizerTest extends LinearOpMode {
