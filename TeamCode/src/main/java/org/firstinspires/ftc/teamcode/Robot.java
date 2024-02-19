@@ -613,26 +613,32 @@ public class Robot {
     public void detectMarkerPosition() {
 
         //boolean isTesting = false;
-        int visionTimeout = 2; // timeout detection after 2 seconds
+        int visionTimeout = 500; // timeout detection after 2 seconds
         double time;
         MarkerDetector.MARKER_POSITION position;
 
+        elapsedTime.reset();
+        time = elapsedTime.milliseconds();
 
         //detect marker position
-        position = markerProcessor.getPosition();
-
-        elapsedTime.reset();
-        time = elapsedTime.seconds();
-
+        position = MarkerDetector.MARKER_POSITION.UNDETECTED;
+        int i =  0;
         while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
-            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
+            i++;
+            Log.d("vision", i + " undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
-            if (elapsedTime.seconds() > time + visionTimeout) {
+            Log.d("color detection", String.valueOf(markerProcessor.avgCenterCb));
+            //Log.d("color detection", String.valueOf(markerProcessor.avgRightCb));
+            Log.d("color detection", String.valueOf(markerProcessor.avgCenterCr));
+            Log.d("elapsed time", String.valueOf(elapsedTime.milliseconds()));
+            if (elapsedTime.milliseconds() > time + visionTimeout && position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
                 position = MarkerDetector.MARKER_POSITION.CENTER;
                 Log.d("vision", "detected time out. Picking CENTER");
                 break;
             }
         }
+
+        Log.d("done process", "detected at" + String.valueOf(elapsedTime.milliseconds()));
 
         //save marker position and apriltag position in robot class
         setMarkerPos(position);
@@ -640,7 +646,7 @@ public class Robot {
         setSecondWantedTagId();
 
         //print position
-        Log.d("vision", "detected position: " + position);
+        Log.d("done process", "detected position: " + position);
         telemetry.addData("position ", markerPos);
         telemetry.update();
     }
@@ -1789,9 +1795,10 @@ public class Robot {
 
     public void linearSlidesMoveToZeroParallel() {
         double distanceToMove = 0 - lsFront.getCurrentPosition();
+        Log.d("ls", String.valueOf(distanceToMove));
         double p_constant = 0.001;
 
-        if (distanceToMove < -10) {
+        if (distanceToMove > 10) {
             lsFront.setPower(distanceToMove * p_constant);
             lsBack.setPower(distanceToMove * p_constant);
         } else {
@@ -2237,7 +2244,7 @@ public class Robot {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
-        closeClamp(true);
+        //closeClamp(true);
 
         mecanumBlocking2(polarity * 24);
 
@@ -2294,6 +2301,35 @@ public class Robot {
             return moddedAngle + 360;
         }
         return moddedAngle;
+    }
+
+    public void mecanumAndSlidesDownToZero(double inchesMove) {
+        resetDrivetrainEncoders();
+        fLeftMecanumController.integral = 0;
+        fLeftMecanumController.lastError = 0;
+        fLeftMecanumController.lastTime = 0;
+        double currentPos = fLeft.getCurrentPosition();
+        double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inchesMove));
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        int counter = 0;
+
+        while (opMode.opModeIsActive() && (counter < 3 || lsFront.getCurrentPosition() > 30)) {
+            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            linearSlidesMoveToZeroParallel();
+
+            currentPos = fLeft.getCurrentPosition();
+            power = fLeftMecanumController.calculatePID(currentPos, targetPos);
+            setMotorPower(power, -1 * power, -1 * power, power);
+        }
+
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
     }
 
     public void moveFingerUp() {

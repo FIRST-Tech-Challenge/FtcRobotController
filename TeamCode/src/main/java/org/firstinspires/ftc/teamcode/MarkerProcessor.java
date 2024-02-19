@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -23,6 +25,8 @@ public class MarkerProcessor implements VisionProcessor {
     double avgLeftY;
     double avgCenterY;
     double avgRightY;
+
+    double counter;
 
     public MarkerProcessor(Telemetry telemetry, MarkerDetector.ALLIANCE_COLOR allianceColor) {
 
@@ -56,6 +60,8 @@ public class MarkerProcessor implements VisionProcessor {
         telemetry.addLine("process frame");
 //        telemetry.update();
         workingMatrix = detector.processFrame(input);
+        counter++;
+        Log.d("vision", String.valueOf(counter));
         return workingMatrix;
     }
 
