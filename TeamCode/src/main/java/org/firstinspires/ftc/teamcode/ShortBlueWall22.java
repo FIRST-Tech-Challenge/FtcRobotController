@@ -27,7 +27,6 @@ public class ShortBlueWall22 extends LinearOpMode {
             robot.setMarkerLocation(false, false, robot.markerPos);
             robot.servoToInitPositions();
 
-
             robot.shortMoveToBoard2();
 
             robot.alignToBoardFast(robot.wantedAprTagId);

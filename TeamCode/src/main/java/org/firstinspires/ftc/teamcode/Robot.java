@@ -192,6 +192,7 @@ public class Robot {
         if (lowOuttake) {
             trayToOuttakePos(false); // pivot tray to outtake position
             moveLinearSlideByTicksBlocking(startingPosition + 1550); //1700
+            opMode.sleep(100);
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 1950);
@@ -199,6 +200,7 @@ public class Robot {
             trayToOuttakeSplitEditionOne();
             moveLinearSlideByTicksBlocking(startingPosition + 1750);//1900
             trayToOuttakeSplitEditionTwo();
+            opMode.sleep(100);
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(startingPosition + 2350);
@@ -682,8 +684,6 @@ public class Robot {
 
                 straightBlocking2(31);
 
-                setHeading(90 * polarity, 0.7); //TODO: the robot couldn't terminate this in one run
-
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
                 setHeading(90 * polarity, 0.7);
@@ -691,7 +691,7 @@ public class Robot {
                 break;
 
             } else if (markerLocation == MARKER_LOCATION.OUTER) {
-                Log.d("vision", "path: Outer Spike");
+                Log.d("vision","path: Outer Spike");
 
                 // P1: (35, 17)
 
@@ -1994,15 +1994,9 @@ public class Robot {
             if (markerLocation == MARKER_LOCATION.INNER) {
                 Log.d("vision", "path: Inner Spike");
 
-                // P1: (35, 17)
-
                 straightBlocking2(-27);
 
-                // P2: (35, 44)
-
                 setHeading(90 * polarity, 0.7);
-
-                // P3: (43.5, 35.5)
 
                 if(isRedAlliance) {
                     straightBlocking2(-3);
@@ -2012,13 +2006,11 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
-                     moveFingerUp();
+                    moveFingerUp();
                     opMode.sleep(200);
                 }
 
                 straightBlocking2(3);
-
-                // P3: (43.5, 35.5)
 
                 if (isRedAlliance) { //
                     mecanumBlocking2(-24.5);
@@ -2027,12 +2019,8 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P4: (43.5, 60)
-
                 straightBlocking2FixHeading(-74.5);
                 setHeading(90 * polarity, 0.7);
-
-                // P5: (120, 60)
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -2043,14 +2031,10 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (120, 30)
-
                 break;
 
             } else if (markerLocation == MARKER_LOCATION.OUTER) {
                 Log.d("vision", "path: Outer Spike");
-
-                // P1: (35, 17)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(20);
@@ -2060,15 +2044,9 @@ public class Robot {
 
                 setHeading(0, 0.7);
 
-                // P2: (14, 17)
-
                 straightBlocking2(-31);
 
-                // P3: (14, 48)
-
                 setHeading(90 * polarity, 0.7);
-
-                // P4: (22.5, 39.5)
 
                 //spike
                 if (!testingOnBert) {
@@ -2079,8 +2057,6 @@ public class Robot {
                 straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
-                // P5: (19.5, 39.5)
-
                 if (isRedAlliance) {
                     mecanumBlocking2(-31);
                 } else {
@@ -2088,12 +2064,8 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (19.5, 57.5)
-
                 straightBlocking2FixHeading(-95);
                 setHeading(90 * polarity, 0.7);
-
-                // P7: (117.5, 57.5)
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -2104,14 +2076,10 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P8: (117.5, 36.5)
-
                 break;
 
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
-
-                // P1: (36, 17)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(13);
@@ -2120,17 +2088,13 @@ public class Robot {
                 }
                 setHeading(0, 0.7);
 
-                // P2: (23, 17)
                 if (isRedAlliance) {
                     straightBlocking2(-36);
                 } else {
                     straightBlocking2(-35);
                 }
 
-                // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
-
-                // P4: (31.5, 44)
 
                 if (!testingOnBert) {
                     moveFingerUp();
@@ -2138,9 +2102,6 @@ public class Robot {
                 }
 
                 straightBlocking(3, true, 0.7);
-
-                // P5: (27.5, 44)
-                // actually ending up at around 48 here
 
                 if (isRedAlliance) {
                     mecanumBlocking2(-36);
@@ -2150,7 +2111,6 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                // P6: (27.5, 60)
                 if (isRedAlliance) {
                     straightBlocking2FixHeading(-86.5); // subtracted 4 here
                 } else {
@@ -2158,18 +2118,12 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-                // P7: (120, 60)
-
-                // visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
                 if (isRedAlliance) {
                     mecanumBlocking2(23);
                 } else {
                     mecanumBlocking2(-26);
                 }
                 setHeading(90 * polarity, 0.7);
-
-                // P8: (120, 35)
 
                 break;
 
