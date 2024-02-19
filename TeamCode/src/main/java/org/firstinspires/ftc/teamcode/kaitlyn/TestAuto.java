@@ -26,7 +26,7 @@ public class TestAuto extends LinearOpMode {
             robot.trayToIntakePos(true);
             this.sleep(2500);
 
-            robot.mecanumAndSlidesDownToZero(-24);
+            //robot.mecanumAndSlidesDownToZero(-24);
             break;
         }
     }
