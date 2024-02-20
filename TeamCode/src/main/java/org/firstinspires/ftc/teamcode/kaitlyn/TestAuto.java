@@ -58,12 +58,30 @@ public class TestAuto extends LinearOpMode {
             }
             wasPressedDPadUp = gamepad1.dpad_up;
 
+            if(gamepad1.left_bumper == true && gamepad1.right_bumper == true){
+                telemetry.addLine("CONFIRMED");
+                telemetry.addLine("");
+
+                telemetry.addLine("+/- WAIT: B/X");
+                telemetry.addData("WAIT TIME: ", waitCounter);
+                telemetry.addLine("");
+
+                telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
+                telemetry.addData("PARKING POS: ", parkingposition);
+                telemetry.update();
+                break;
+            }
+
             telemetry.addLine("+/- WAIT: B/X");
             telemetry.addData("WAIT TIME: ", waitCounter);
             telemetry.addLine("");
 
             telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
             telemetry.addData("PARKING POS: ", parkingposition);
+            telemetry.addLine("");
+
+            telemetry.addLine("PRESS BOTH BUMPERS TO CONFIRM");
+
             telemetry.update();
         }
 
