@@ -159,13 +159,144 @@ class Backdrop {
             return false;
         }
 
-        if (row % 2 != 0) {
+        if (row % 2 != 0) { // Odd row
             Pixel pixelLeft = col > 0 ? backdrop.get(row - 1).get(col - 1) : new Pixel("board");
             Pixel pixelRight = col < 6 ? backdrop.get(row - 1).get(col) : new Pixel("board");
 
             if (pixelLeft.identity() == null || pixelRight.identity() == null) {
                 return false;
             }
+        } else { // Even row (starts at 0)
+            if (row != 0) { // Row at 0 will always be supported
+                Pixel pixelLeft = backdrop.get(row - 1).get(col);
+                Pixel pixelRight = backdrop.get(row - 1).get(col + 1);
+
+                if (pixelLeft.identity() == null || pixelRight.identity() == null) {
+                    return false;
+                }
+            }
+        }
+
+        // Check to make sure there's an opening above
+        if (row == 11) {
+            return true;
+        }
+        if (row % 2 == 0) {
+            if (backdrop.get(row + 1).get(col).identity() == null && backdrop.get(row + 1).get(col + 1).identity() == null) {
+                return true;
+            }
         } else {
-            if (row != 0) {
-                Pixel pixelLeft = backdrop.get(row - 1
+            Pixel leftAbove = col > 0 ? backdrop.get(row + 1).get(col - 1) : new Pixel(null);
+            Pixel rightAbove = col < 6 ? backdrop.get(row + 1).get(col) : new Pixel(null);
+
+            if (leftAbove.identity() == null && rightAbove.identity() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean setPixel(int row, int col, Pixel pixel) {
+        if (isLegalMove(row, col)) {
+            backdrop.get(row).set(col, pixel);
+            return true;
+        }
+        return false;
+    }
+
+    public Pixel getPixel(int row, int col) {
+        try {
+            return backdrop.get(row).get(col);
+        } catch (IndexOutOfBoundsException e) {
+            return new Pixel(null);
+        }
+    }
+
+    public List<Integer> generateLegalMoves() {
+        legalMoves.clear();
+        for (int row = 0; row < 12; row++) {
+            for (int col = 0; col < (row % 2 == 0 ? 6 : 7); col++) {
+                if (isLegalMove(row, col)) {
+                    legalMoves.add(row * 10 + col);
+                }
+            }
+        }
+        return legalMoves;
+    }
+
+    public List<Integer> getLegalMoves() {
+        return legalMoves;
+    }
+
+    public List<Integer> getState() {
+        List<Integer> state = new ArrayList<>();
+        Map<String, Integer> colorToId = Map.of(
+            "white", 0,
+            "yellow", 1,
+            "purple", 2,
+            "green", 3
+        );
+
+        for (int row = 0; row < 12; row++) {
+            for (int col = 0; col < (row % 2 == 0 ? 6 : 7); col++) {
+                Pixel pixel = getPixel(row, col);
+                int pixelId = pixel.identity() != null ? colorToId.getOrDefault(pixel.identity(), -1) : -1;
+                state.add(pixelId);
+            }
+        }
+
+        return state;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder retStr = new StringBuilder("#".repeat(15) + "\n");
+        for (int n = backdrop.size() - 1; n >= 0; n--) {
+            if (n % 2 == 0) {
+                retStr.append(" ").append(backdrop.get(n).get(0)).append(" ").append(backdrop.get(n).get(1)).append(" ")
+                        .append(backdrop.get(n).get(2)).append(" ").append(backdrop.get(n).get(3)).append(" ")
+                        .append(backdrop.get(n).get(4)).append(" ").append(backdrop.get(n).get(5)).append("\n");
+            } else {
+                retStr.append(backdrop.get(n).get(0)).append(" ").append(backdrop.get(n).get(1)).append(" ")
+                        .append(backdrop.get(n).get(2)).append(" ").append(backdrop.get(n).get(3)).append(" ")
+                        .append(backdrop.get(n).get(4)).append(" ").append(backdrop.get(n).get(5)).append(" ")
+                        .append(backdrop.get(n).get(6)).append("\n");
+            }
+        }
+        retStr.append("#".repeat(14));
+        return retStr.toString();
+    }
+
+    public int getNumPlacedPixels() {
+        int placedPixels = 0;
+        for (List<Pixel> row : backdrop) {
+            for (Pixel pixel : row) {
+                if (pixel.identity() != null) {
+                    placedPixels++;
+                }
+            }
+        }
+        return placedPixels;
+    }
+
+    public List<Pixel> getPlacedPixels() {
+        List<Pixel> placedPixels = new ArrayList<>();
+        for (List<Pixel> row : backdrop) {
+            for (Pixel pixel : row) {
+                if (pixel.identity() != null) {
+                    placedPixels.add(pixel);
+                }
+            }
+        }
+        return placedPixels;
+    }
+
+    private boolean containsFalse(boolean[] arr) {
+        for (boolean val : arr) {
+            if (!val) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
