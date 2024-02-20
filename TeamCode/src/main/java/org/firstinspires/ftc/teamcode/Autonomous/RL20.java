@@ -13,13 +13,15 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class RL20 {
-  boolean logi = false, isRight = false;
+  boolean logi = false, isRight = false, ultras = false, check = false;
   LinearOpMode op;
   BradBot robot;
   int bark = 0;
   int delaySec = 0;
   TrajectorySequence[] spikey = new TrajectorySequence[3];
   TrajectorySequence[] pathy = new TrajectorySequence[3];
+  TrajectorySequence[] pathyUltra = new TrajectorySequence[3];
+
   TrajectorySequence[] droppy = new TrajectorySequence[3];
   TrajectorySequence[] parky = new TrajectorySequence[3];
   TrajectorySequence[] parkyLeft = new TrajectorySequence[3];
@@ -45,7 +47,7 @@ public class RL20 {
             .roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-34, -36, toRadians(-90)))
+            .lineToLinearHeading(new Pose2d(-37, -36, toRadians(-90)))
             .build();
 
     spikey[2] =
@@ -58,35 +60,60 @@ public class RL20 {
             .lineToLinearHeading(new Pose2d(-33.5, -33, toRadians(-180)))
             .build();
 
-    pathy[0] =
-        robot
-            .roadrun
+    pathyUltra[0] = robot.roadrun
             .trajectorySequenceBuilder(spikey[0].end())
             .setReversed(false)
-            .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
+            .lineToLinearHeading(new Pose2d(-40,-58.5, toRadians(-180)))
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
+            .lineToLinearHeading(new Pose2d(10,-57, toRadians(-160)))
             .build();
+
+    pathyUltra[1] = robot.roadrun
+            .trajectorySequenceBuilder(spikey[1].end())
+            .setReversed(false)
+            .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
+            .setReversed(true)
+            .lineToLinearHeading(new Pose2d(10,-57, toRadians(-160)))
+            .build();
+
+    pathyUltra[2] = robot.roadrun
+            .trajectorySequenceBuilder(spikey[2].end())
+            .setReversed(false)
+            .lineToLinearHeading(new Pose2d(-46,-58.5, toRadians(-180)))
+            .setReversed(true)
+            .lineToLinearHeading(new Pose2d(10,-57, toRadians(-160)))
+            .build();
+
+    pathy[0] =
+            robot
+                    .roadrun
+                    .trajectorySequenceBuilder(spikey[0].end())
+                    .setReversed(false)
+                    .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
+                    .build();
 
     pathy[1] =
-        robot
-            .roadrun
-            .trajectorySequenceBuilder(spikey[1].end())
-            .setReversed(false)
-            .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
-            .build();
+            robot
+                    .roadrun
+                    .trajectorySequenceBuilder(spikey[1].end())
+                    .setReversed(false)
+                    .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
+                    .build();
 
     pathy[2] =
-        robot
-            .roadrun
-            .trajectorySequenceBuilder(spikey[1].end())
-            .setReversed(false)
-            .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
-            .build();
+            robot
+                    .roadrun
+                    .trajectorySequenceBuilder(spikey[1].end())
+                    .setReversed(false)
+                    .lineToLinearHeading(new Pose2d(-38, -58.5, toRadians(-180)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(42, -58.5, toRadians(-180)))
+                    .build();
+
     if (!isLogi) {
       droppy[0] =
           robot
@@ -168,7 +195,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[0].end())
                     .lineToLinearHeading(new Pose2d(43.3, -29, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(10, -60, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
                     .build();
 
     parkyLeft[1] =
@@ -176,7 +203,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[1].end())
                     .lineToLinearHeading(new Pose2d(43.3, -35.5, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(10, -60, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
                     .build();
 
     parkyLeft[2] =
@@ -184,7 +211,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[2].end())
                     .lineToLinearHeading(new Pose2d(43.3, -41.5, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(10, -60, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
                     .build();
     robot.dropServo(1);
     robot.setRight(false);
@@ -199,6 +226,7 @@ public class RL20 {
       packet.put("spike", bark);
       op.telemetry.addData("delaySec", delaySec);
       op.telemetry.addData("isRight", isRight);
+      op.telemetry.addData("ultras", ultras);
       if (gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "addSecs")) {
         delaySec++;
       }
@@ -210,6 +238,9 @@ public class RL20 {
       }
       if (gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "parkLeft")) {
         isRight = false;
+      }
+      if (gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "ultras")) {
+        ultras = !ultras;
       }
       robot.update();
     }
@@ -231,21 +262,36 @@ public class RL20 {
 
   public void pre() {
     robot.queuer.addDelay(0.3);
-    robot.followTrajSeq(pathy[bark]);
+    if (ultras) {
+      robot.followTrajSeq(pathyUltra[bark]);
+    }
+    else {
+      robot.followTrajSeq(pathy[bark]);
+    }
     robot.queuer.addDelay(.6);
     robot.resetAuto();
     robot.grabSupAuto();
     robot.followTrajSeq(droppy[bark]);
+    if (ultras) {
+      robot.followTrajSeqUltra(check);
+      robot.followTrajSeq(droppy[bark], !check);
+      robot.queuer.waitForFinish();
+      robot.queuer.queue(false, true);
+    }
     robot.queuer.addDelay(.5);
     robot.lowAuto();
     robot.queuer.addDelay(1.5);
     robot.veryLowAuto();
+    robot.queuer.waitForFinish();
     robot.drop();
   }
 
   public void park() {
     robot.queuer.addDelay(.5);
     robot.resetAuto();
+    if (ultras) {
+      robot.queuer.waitForFinish();
+    }
     if(isRight){
       robot.followTrajSeq(parky[bark]);
     } else{
@@ -256,6 +302,9 @@ public class RL20 {
   }
 
   public void update() {
+    if (ultras) {
+      check = robot.checkAlliance();
+    }
     robot.update();
     robot.queuer.setFirstLoop(false);
   }
