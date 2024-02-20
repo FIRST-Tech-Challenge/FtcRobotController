@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,13 +21,12 @@ public class CenterStageAutnomous_BLUE extends LinearOpMode {
     protected SampleMecanumDrive drive;
     protected RoadRunnerCommand_BLUE RR_Blue;
     protected RoadRunnerSubsystem_BLUE.Randomization rand;
-    protected TrajectorySequenceBuilder spike;
 
     public Pose2d HomePose_SHORT = new Pose2d(RoadRunnerSubsystem_BLUE.Tile/2, 3 * RoadRunnerSubsystem_BLUE.Tile - 6.93 - 2.56, Math.toRadians(270));
     public Pose2d HomePose_LONG = new Pose2d(1.5 * RoadRunnerSubsystem_BLUE.TileInverted, 3 * RoadRunnerSubsystem_BLUE.TileInverted + (RoadRunnerSubsystem_BLUE.RobotY/2), Math.toRadians(90));
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new SampleMecanumDrive(hardwareMap);
         RR_Blue = new RoadRunnerCommand_BLUE(drive, hardwareMap, HomePose_SHORT, RoadRunnerSubsystem_BLUE.StartingPosition.SHORT,
@@ -40,6 +44,5 @@ public class CenterStageAutnomous_BLUE extends LinearOpMode {
         drive.followTrajectorySequence(RR_Blue.getSpike(rand).build());
         drive.followTrajectorySequence(RR_Blue.getCycle().build());
         drive.followTrajectorySequence(RR_Blue.getParking().build());
-
     }
 }

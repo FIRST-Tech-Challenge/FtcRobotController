@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
@@ -180,21 +181,20 @@ public class RoadRunnerSubsystem_RED {
         );
     }
 
-    public SequentialCommandGroup stackStationIntake() {
+    public SequentialCommandGroup stackStationIntake(int index) {
         return new SequentialCommandGroup(
-                new SequentialCommandGroup(
-                        new ParallelCommandGroup(
-                                new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
-                                new InstantCommand(outtakeSusystem::wheel_grab)
-                        ),
-                        new WaitCommand(1000)
+                new ParallelCommandGroup(
+                        new InstantCommand(intakeSubsystem::run, intakeSubsystem),
+                        new SequentialCommandGroup(
+                                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
+                                new WaitCommand(300),
+                                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1), intakeArmSubsystem),
+                                new WaitCommand(300)
+                        )
                 ),
-                new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_stop),
-                        new InstantCommand(intakeArmSubsystem::raiseArm),
-                        new InstantCommand(intakeSubsystem::reverse),
-                        new WaitCommand(1000),
-                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
+                new ParallelCommandGroup(
+                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+                        new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
                 )
         );
     }
@@ -277,9 +277,9 @@ public class RoadRunnerSubsystem_RED {
                 )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
-//                })
+                .addDisplacementMarker(() -> {
+                    stackStationIntake(5).schedule();
+                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
@@ -301,9 +301,9 @@ public class RoadRunnerSubsystem_RED {
                 )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
-//                })
+                .addDisplacementMarker(() -> {
+                    stackStationIntake(3).schedule();
+                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))

@@ -4,9 +4,12 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -179,22 +182,22 @@ public class RoadRunnerSubsystem_BLUE {
         );
     }
 
-    public SequentialCommandGroup stackStationIntake() {
+    public SequentialCommandGroup stackStationIntake(int index) {
         return new SequentialCommandGroup(
+                new InstantCommand(intakeSubsystem::run, intakeSubsystem),
+                new WaitCommand(150),
                 new SequentialCommandGroup(
-                        new ParallelCommandGroup(
-                                new InstantCommand(intakeSubsystem::run_auto, intakeSubsystem),
-                                new InstantCommand(outtakeSusystem::wheel_grab)
-                        ),
+                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
+                        new WaitCommand(1000),
+                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1), intakeArmSubsystem),
                         new WaitCommand(1000)
                 ),
-                new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_stop),
-                        new InstantCommand(intakeArmSubsystem::raiseArm),
-                        new InstantCommand(intakeSubsystem::reverse),
-                        new WaitCommand(1000),
-                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
-                )
+                new ParallelCommandGroup(
+                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+                        new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
+                ),
+
+                new WaitCommand(2000)
         );
     }
 
@@ -214,8 +217,8 @@ public class RoadRunnerSubsystem_BLUE {
 
         /*-----------------------------------------------------*/
 
-        outtakeSusystem = new OuttakeSusystem(hardwareMap);
-        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
+//        outtakeSusystem = new OuttakeSusystem(hardwareMap);
+//        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
         pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
@@ -276,9 +279,9 @@ public class RoadRunnerSubsystem_BLUE {
                 )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
-//                })
+                .addDisplacementMarker(() -> {
+                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
+                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
@@ -300,9 +303,9 @@ public class RoadRunnerSubsystem_BLUE {
                 )
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
-//                })
+                .addDisplacementMarker(() -> {
+                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
+                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))

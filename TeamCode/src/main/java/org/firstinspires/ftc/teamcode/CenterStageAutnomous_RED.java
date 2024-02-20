@@ -18,7 +18,6 @@ public class CenterStageAutnomous_RED extends LinearOpMode {
     protected SampleMecanumDrive drive;
     protected RoadRunnerCommand_RED RR_Red;
     protected RoadRunnerSubsystem_RED.Randomization rand;
-    protected TrajectorySequenceBuilder spike;
 
     public Pose2d HomePose_SHORT = new Pose2d(RoadRunnerSubsystem_RED.Tile/2, 3 * RoadRunnerSubsystem_RED.TileInverted + 6.93 + 2.56, Math.toRadians(90));
     public Pose2d HomePose_LONG = new Pose2d(1.5 * RoadRunnerSubsystem_RED.TileInverted, 3 * RoadRunnerSubsystem_RED.TileInverted + 6.93 + 2.56, Math.toRadians(90));
