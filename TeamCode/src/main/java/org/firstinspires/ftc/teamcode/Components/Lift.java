@@ -28,7 +28,7 @@ public class Lift extends RFDualMotor {
       RESISTANCE = 550,
       kS = 0.03,
       kV = 3.2786E-4,
-      kA = 5E-5,
+      kA = 2E-5,
       MAX_UP_VELO = 3000,
       MAX_DOWN_VELO = -1080,
       MAX_ACCEL = 10000,

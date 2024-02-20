@@ -487,7 +487,7 @@ public class BradBot extends BasicRobot {
   }
 
   public boolean checkAlliance() {
-    if (currentPose.getX() > 5 && currentPose.getX() < 15) {
+    if (currentPose.getX() > 5 && currentPose.getX() < 40 ) {
 //      if (ultras.checkAlliance()) {
 //        roadrun.setMotorPowers(0, 0, 0, 0);
 //      }
@@ -596,8 +596,8 @@ public class BradBot extends BasicRobot {
     if (queuer.isFirstLoop()) {
       queuer.queue(false, false, true);
     } else {
-      if (queuer.queue(false, queuer.isStarted() && (!roadrun.isBusy()), isOptional)) {
-        if (!roadrun.isBusy()) {
+      if (queuer.queue(false, (!roadrun.isBusy()), isOptional)) {
+        if (!roadrun.isBusy()&&!queuer.isExecuted()) {
           roadrun.followTrajectorySequenceAsync(p_traj);
           LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
         }
@@ -609,8 +609,11 @@ public class BradBot extends BasicRobot {
 //    if (queuer.isFirstLoop()) {
 //      queuer.queue(true, false, true);
 //    } else {
-      if (queuer.queue(true, !check)) {
-        if (queuer.isExecuted()) {
+      if (queuer.queue(true, !roadrun.isBusy()&&!check)) {
+        if (check) {
+          op.telemetry.addData("UTLRADETECT", "ULTRADETECT");
+          op.telemetry.update();
+
           brokenFollowing = true;
           roadrun.breakFollowing();
           roadrun.setMotorPowers(0, 0, 0, 0);

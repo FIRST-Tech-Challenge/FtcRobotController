@@ -212,7 +212,7 @@ public class Queuer {
     boolean isReady;
     // is currently queued event optional and should be running for first time
     if (queueElements.get(currentlyQueueing).isOptional()
-        && p_isOptional
+        && !p_isOptional
         && !queueElements.get(currentlyQueueing).isDone()
         && !firstLoop) {
       // make this optional event have to run
@@ -240,8 +240,9 @@ public class Queuer {
     // set queueElement internal value
     if (isReady) {
       // skip if event is optional
-      if (queueElements.get(currentlyQueueing).isOptional() && !p_isOptional) {
+      if (queueElements.get(currentlyQueueing).isOptional() && p_isOptional) {
         isReady = false;
+        queueElements.get(currentlyQueueing).setStarted(true);
       }
       // set queueElement internal value
       else {
@@ -250,7 +251,7 @@ public class Queuer {
     }
     // return value
     return isReady
-        || queueElements.get(currentlyQueueing).isStarted()
+        || (queueElements.get(currentlyQueueing).isStarted()&&(!queueElements.get(currentlyQueueing).isOptional()||!p_isOptional))
             && !queueElements.get(currentlyQueueing).isDone();
   }
 
@@ -412,7 +413,7 @@ public class Queuer {
   /** calculate current event for must finish */
   private void calculateCompleteCurrentEvent() {
     for (int i = 0; i < queueElements.size(); i++) {
-      if (queueElements.get(i).isDone()) {
+      if (queueElements.get(i).isDone()||(queueElements.get(i).isOptional()&&!queueElements.get(i).getSkipOption())) {
         completeCurrentEvent = i;
         if (currentEvent < completeCurrentEvent) {
           currentEvent = completeCurrentEvent;

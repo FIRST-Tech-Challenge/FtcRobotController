@@ -71,8 +71,9 @@ public class RFUltrasonic {
                 ultraDist = getDist();
 
                 difference = robotDist - ultraDist;
+                op.telemetry.addData("robotDist", robotDist);
                 detected = ultraDist < robotDist;
-                op.telemetry.addData("detected", detected);
+//                op.telemetry.addData("detected", detected);
 //            }
 
 //            ultrasonicLED.enable(ultrasonicLED.isLightOn());
@@ -109,7 +110,9 @@ public class RFUltrasonic {
     public double getDist() {
         lastCheckedDist = op.getRuntime();
 //        return getVoltage()*ULTRA_FACTOR - ULTRA_ADJUSTMENT;
-        return getVoltage()*NEW_ULTRA_FACTOR - NEW_ULTRA_ADJUSTMENT;
+        double voltage = getVoltage();
+        op.telemetry.addData("dist", voltage*NEW_ULTRA_FACTOR - NEW_ULTRA_ADJUSTMENT);
+        return voltage * NEW_ULTRA_FACTOR - NEW_ULTRA_ADJUSTMENT;
     }
 
     public double getLinearRegressionDist() {

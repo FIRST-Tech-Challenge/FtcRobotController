@@ -41,7 +41,7 @@ public class Ultrasonics {
         backRight.setLine(allianceLine);
 //        op.telemetry.addData("dist", backRight.getDist());
 //        frontRight.setLine(allianceLine);
-        op.telemetry.addData("detected2", backRight.isDetected());
+//        op.telemetry.addData("detected2", backRight.isDetected());
         return backRight.isDetected();
 //                && frontRight.isDetected();
     }
