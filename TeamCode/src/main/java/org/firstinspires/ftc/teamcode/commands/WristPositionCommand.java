@@ -26,9 +26,9 @@ public class WristPositionCommand extends CommandBase {
 
     private int getTargetPos() {
         if (zero) {
-            return 0;
+            return 0; // Slightly off from straight down
         }
-        return 360;
+        return 45; // TODO: tune this
     }
 
     @Override

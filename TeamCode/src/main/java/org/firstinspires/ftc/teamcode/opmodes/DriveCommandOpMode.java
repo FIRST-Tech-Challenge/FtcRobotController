@@ -108,7 +108,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                 () -> armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                 () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
         moveWristCommand = new MoveWristCommand(wristSubsystem,
-                forwardWristSupplier, backwardWristSupplier);
+                backwardWristSupplier, forwardWristSupplier);
         moveFingerCommand = new MoveFingerCommand(fingerSubsystem,
                 () -> {
                     double quantity = (armerController.getButton(GamepadKeys.Button.A) ? 1 : 0) +

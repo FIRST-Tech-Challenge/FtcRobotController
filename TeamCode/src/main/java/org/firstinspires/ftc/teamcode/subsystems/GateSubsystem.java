@@ -21,8 +21,8 @@ public class GateSubsystem extends SubsystemBase {
     }
 
     public enum GateState {
-        OPEN(.1),
-        CLOSED(.9);
+        OPEN(0),
+        CLOSED(1);
 
         public final double position;
         GateState(double position) {
