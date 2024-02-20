@@ -151,7 +151,7 @@ public class RedLeftUltraAuto extends LinearOpMode {
 //            robot.queuer.addDelay(4.5);
             robot.followTrajSeq(spikePosition[pos]);
 //            robot.queuer.addDelay(5);
-            robot.preloadAuto();
+//            robot.preloadAuto();
             robot.queuer.addDelay(1.5);
             robot.followTrajSeq(throughTruss[pos]);
             robot.followTrajSeq(detect[pos], !previousCheck);
@@ -165,9 +165,9 @@ public class RedLeftUltraAuto extends LinearOpMode {
             robot.queuer.addDelay(2.5);
             robot.followTrajSeq(dropAndPark[pos]);
             robot.queuer.addDelay(1.0);
-            robot.resetAuto();
+//            robot.resetAuto();
             robot.queuer.addDelay(3.5);
-            robot.resetLift();
+//            robot.resetLift();
             robot.queuer.setFirstLoop(false);
             robot.update();
         }

@@ -44,8 +44,7 @@ public class BL20 {
 
         spikey[1] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-34,29,toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-34,34,toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-37,34,toRadians(90)))
 
                 .build();
 

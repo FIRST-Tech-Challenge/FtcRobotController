@@ -180,7 +180,6 @@ public class BR20 {
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.8);
         robot.queuer.queue(false,true);
-        robot.update();
     }
 
     public void update(){

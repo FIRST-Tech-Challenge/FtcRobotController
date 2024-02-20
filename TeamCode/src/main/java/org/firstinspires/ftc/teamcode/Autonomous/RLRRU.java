@@ -146,34 +146,35 @@ public class RLRRU extends LinearOpMode {
             op.telemetry.addData("previousCheck", previousCheck);
             op.telemetry.addData("currentCheck", currentCheck);
             robot.queuer.queue(false, true);
-            robot.upAuto();
-            robot.purpurAuto();
+//            robot.upAuto();
+//            robot.purpurAuto();
             robot.queuer.addDelay(1.0);
             robot.followTrajSeq(spikey[bark]);
             robot.queuer.addDelay(0.2);
-            robot.dropAuto(0);
+//            robot.dropAuto(0);
             robot.queuer.addDelay(0.3);
             robot.followTrajSeq(pathy[bark]);
             robot.queuer.addDelay(.6);
             robot.resetAuto();
-            robot.grabSupAuto();
+//            robot.grabSupAuto();
 //            robot.followTrajSeq(detecty[bark], !previousCheck);
             robot.followTrajSeq(droppy[bark]);
             robot.followTrajSeqUltra(currentCheck);
             robot.followTrajSeq(droppy[bark], !currentCheck);
             robot.queuer.queue(false, true);
             robot.queuer.addDelay(.5);
-            robot.lowAuto();
+//            robot.lowAuto();
             robot.queuer.addDelay(1.5);
-            robot.veryLowAuto();
-            robot.drop();
+//            robot.veryLowAuto();
+//            robot.drop();
             robot.queuer.addDelay(.5);
-            robot.resetAuto();
+//            robot.resetAuto();
             robot.queuer.waitForFinish();
             robot.followTrajSeq(parky[bark]);
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);
             robot.update();
+            robot.queuer.setFirstLoop(false );
         }
     }
 }

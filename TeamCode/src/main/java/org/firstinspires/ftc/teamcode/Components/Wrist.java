@@ -79,7 +79,16 @@ public class Wrist extends RFServo {
   public void purpur(){
     if (this.getPosition() != 0.3) {
       super.setLastTime(0);
-      this.setPosition(0.2);
+      this.setPosition(0.4);
+      WristTargetStates.DROP.setStateTrue();
+      WristTargetStates.DROP.state = false;
+      WristStates.GRAB.setStateTrue();
+    }
+  }
+  public void purpur2(){
+    if (this.getPosition() != 0.3) {
+      super.setLastTime(0);
+      this.setPosition(0.3);
       WristTargetStates.DROP.setStateTrue();
       WristTargetStates.DROP.state = false;
       WristStates.GRAB.setStateTrue();

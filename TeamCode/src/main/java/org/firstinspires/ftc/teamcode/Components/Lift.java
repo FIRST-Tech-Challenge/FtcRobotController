@@ -52,7 +52,7 @@ public class Lift extends RFDualMotor {
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
-    HIGH_SET_LINE(1540, false),
+    HIGH_SET_LINE(1500, false),
     MID_SET_LINE(1200, false),
     LOW_SET_LINE(800, false),
     AT_ZERO(0, true);
@@ -188,6 +188,10 @@ public class Lift extends RFDualMotor {
   public void setPosition(LiftPositionStates p_state) {
     LOGGER.log("lifting to: " + p_state.name());
     if (p_state.equals(LiftPositionStates.AT_ZERO)) {
+      if (LiftPositionStates.HIGH_SET_LINE.state) {
+        setPosition(LiftPositionStates.MID_SET_LINE);
+        return;
+      }
       if (!Arm.ArmStates.DROP.state && (Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.state)
           && (!Arm.ArmTargetStates.DROP.state || !Arm.ArmTargetStates.GRAB.getState())) {
         super.setPosition(p_state.position-10, 0);

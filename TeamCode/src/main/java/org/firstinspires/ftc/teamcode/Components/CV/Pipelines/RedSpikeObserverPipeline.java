@@ -25,7 +25,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
       p1y = 240,
       p2x = 80,
       p2y = 390,
-      p21x = 30,
+      p21x = 90,
       p21y = 400,
       p22x = 150,
       p22y = 460,

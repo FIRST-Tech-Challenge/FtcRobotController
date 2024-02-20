@@ -57,9 +57,9 @@ public class BR24 {
         }
         intake = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(17, 3), toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-30, 3), toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-52, 3), toRadians(-180))
+                .splineToConstantHeading(new Vector2d(17, 3), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, 3), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52, 3), toRadians(180))
                 .build();
         drop = robot.roadrun.trajectorySequenceBuilder(intake.end())
                 .setReversed(true)
@@ -69,8 +69,8 @@ public class BR24 {
                 .addTemporalMarker(robot::done)
                 .build();
         park = robot.roadrun.trajectorySequenceBuilder(drop.end())
-                .lineToLinearHeading(new Pose2d(43.8,40, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(45, 60,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(43.8,40, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(45, 60,toRadians(180)))
                 .build();
 
         robot.setRight(true);

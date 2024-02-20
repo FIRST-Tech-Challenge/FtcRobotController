@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.53, TWO=0.57, THREE = 0.57, FOUR = 0.605, FIVE =0.625, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
+  public static double ONE=0.53, TWO=0.565, THREE = 0.585, FOUR = 0.595, FIVE =0.615, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -267,7 +267,7 @@ public class Intake extends RFMotor {
       intake();
     }
     storPixel=Magazine.pixels;
-    return true;
+    return false;
   }
   public void setIntakePath(boolean p_intakePath){
     intakePath = p_intakePath;
@@ -281,12 +281,12 @@ public class Intake extends RFMotor {
 
 
   public void setHeight(int height){
-    double autoOff = 0;
+    double autoOff = -0.00;
     if(isTeleop){
       autoOff=0;
     }
     if(height==1){
-      intakeServo.setPosition(ONE-autoOff);
+      intakeServo.setPosition(ONE);
     }
     else if(height ==2){
       intakeServo.setPosition(TWO-autoOff);
@@ -343,7 +343,7 @@ public class Intake extends RFMotor {
       pixeled = false;
       stopped = false;
     }
-    if(stopped&& time-reverseTime>0.2){
+    if(stopped&& time-reverseTime>0.3){
       stopIntake();
       intakePath=false;
     }

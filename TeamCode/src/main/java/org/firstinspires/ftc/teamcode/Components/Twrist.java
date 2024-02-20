@@ -12,7 +12,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Twrist extends RFServo {
-    public static double GRABBY = 0.585, LEFT_TILTY = 0.35, RIGHT_TILTY = 0.79, DROPPY = 0.013, POPP = 1.0, FLIP_TIME=0.3;
+    public static double GRABBY = 0.585, LEFT_TILTY = 0.35, RIGHT_TILTY = 0.79, DROPPY = 0.013, VERT = 0.58,  POPP = 1.0, FLIP_TIME=0.3;
     private double lastTime=-100;
     public Twrist(){
         super("twistServo", 1.0);
@@ -37,6 +37,7 @@ public class Twrist extends RFServo {
         GRAB(true, GRABBY),
         LEFT_TILT(false, LEFT_TILTY),
         RIGHT_TILT(false, RIGHT_TILTY),
+        VERT(false, Twrist.VERT),
         OT(false, 1.0);
 
         boolean state;
@@ -60,6 +61,7 @@ public class Twrist extends RFServo {
         GRAB(false, GRABBY),
         LEFT_TILT(false, LEFT_TILTY),
         RIGHT_TILT(false, RIGHT_TILTY),
+        VERT(false, Twrist.VERT),
         OT(false, 1.0);
         boolean state;
         double pos;
@@ -120,6 +122,15 @@ public class Twrist extends RFServo {
                     lastTime = time;
                 }
                 twristTargetStates.OT.state = true;
+            }
+            else if(p_state == twristTargetStates.VERT) {
+
+                if((Arm.ArmStates.DROP.state) && super.getPosition() != VERT){
+                    super.setPosition(VERT);
+                    LOGGER.log("VERT claw");
+                    lastTime = time;
+                }
+                twristTargetStates.VERT.state = true;
             }
 
         }

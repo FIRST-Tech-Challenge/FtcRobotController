@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  * Launcher class, shoot plane, pls zone 1
  */
 public class Launcher extends RFServo {
-    private final double SHOOT_POSITION = 0.6, OTHER_POSITION = 0.8;
+    private final double SHOOT_POSITION = 0.6, OTHER_POSITION = 1.0;
     boolean isLoaded = false;
 
     /**

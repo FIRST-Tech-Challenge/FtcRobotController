@@ -23,7 +23,7 @@ public class BL23 {
     TrajectorySequence[] backToStack = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence[] drop = new TrajectorySequence[3];
-    TrajectorySequence park;
+    TrajectorySequence park, parkRight;
 
 
 
@@ -36,11 +36,11 @@ public class BL23 {
         Pose2d startPose = new Pose2d(-36,60.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
 
-        spikey[2] = robot.roadrun
+        spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-49, 26.5,toRadians(120)), toRadians(-90))
-                .lineToLinearHeading(new Pose2d(-49, 33.5,toRadians(120)))
+                .splineToLinearHeading(new Pose2d(-48, 27.5,toRadians(120)), toRadians(-90))
+                .lineToLinearHeading(new Pose2d(-49, 34.5,toRadians(120)))
 
                 .build();
 
@@ -51,23 +51,23 @@ public class BL23 {
                 .addTemporalMarker(robot::done)
                 .build();
 
-        spikey[0] = robot.roadrun
+        spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(-33,38, toRadians(180)), toRadians(0))
                 .build();
-        intake[2] = robot.roadrun
+        intake[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
-//                .lineToLinearHeading(new Pose2d(-49, 37.5,toRadians(120)))
-                .lineToLinearHeading(new Pose2d(-51,35.25, toRadians(190)))
+                .lineToLinearHeading(new Pose2d(-51, 37.5,toRadians(120)))
+                .lineToLinearHeading(new Pose2d(-50.5,34.25, toRadians(190)))
                 .build();
         intake[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
                 .lineToLinearHeading(new Pose2d(-51.5,32.25, toRadians(185)))
                 .addTemporalMarker(robot::done)
                 .build();
-        intake[0] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[0].end())
+        intake[2] = robot.roadrun
+                .trajectorySequenceBuilder(spikey[2].end())
                 .lineToLinearHeading(new Pose2d(-50.5,32.25, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
@@ -77,12 +77,12 @@ public class BL23 {
             droppy[0] =
                     robot
                             .roadrun
-                            .trajectorySequenceBuilder(new Pose2d(intake[0].end().vec(), toRadians(180)))
+                            .trajectorySequenceBuilder(intake[1].end())
                             .setReversed(true)
                             .splineToConstantHeading(new Vector2d(-40, 56.5), toRadians(15))
-                            .splineToConstantHeading(new Vector2d(-20, 58.5), toRadians(0))
-                            .splineToConstantHeading(new Vector2d(25, 58.5), toRadians(-2))
-                            .splineToConstantHeading(new Vector2d(47, 30), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(-20, 57.5), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(25, 57.5), toRadians(-2))
+                            .splineToConstantHeading(new Vector2d(47, 29), toRadians(0))
 //                            .addTemporalMarker(robot::done)
                             .build();
 
@@ -95,18 +95,18 @@ public class BL23 {
                             .splineToConstantHeading(new Vector2d(-40, 56.5), toRadians(15))
                             .splineToConstantHeading(new Vector2d(-20, 57.5), toRadians(0))
                             .splineToConstantHeading(new Vector2d(20, 57.5), toRadians(-2))
-                            .splineToConstantHeading(new Vector2d(46.8, 35), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(47, 35), toRadians(0))
 //                            .addTemporalMarker(robot::done)
                             .build();
 
             droppy[2] =
                     robot
                             .roadrun
-                            .trajectorySequenceBuilder(new Pose2d(intake[2].end().vec(), toRadians(185)))
+                            .trajectorySequenceBuilder(intake[1].end())
                             .setReversed(true)
-                            .splineToConstantHeading(new Vector2d(-40, 55.5), toRadians(15))
-                            .splineToConstantHeading(new Vector2d(-20, 56.5), toRadians(0))
-                            .splineToConstantHeading(new Vector2d(20, 56.5), toRadians(-2))
+                            .splineToConstantHeading(new Vector2d(-40, 56.5), toRadians(15))
+                            .splineToConstantHeading(new Vector2d(-20, 57.5), toRadians(0))
+                            .splineToConstantHeading(new Vector2d(20, 57.5), toRadians(-2))
                             .splineToConstantHeading(new Vector2d(46, 38), toRadians(0))
 //                            .addTemporalMarker(robot::done)
                             .build();
@@ -116,41 +116,41 @@ public class BL23 {
 
         }
 
-        backToStack[2] = robot.roadrun
-                .trajectorySequenceBuilder(new Pose2d(droppy[2].end().vec(), toRadians(185)))
+        backToStack[0] = robot.roadrun
+                .trajectorySequenceBuilder(droppy[0].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(20, 55.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(20, 57.5), toRadians(180))
 //                .splineTo(new Vector2d(10, -57.5), toRadians(186))
-                .splineToConstantHeading(new Vector2d(-25, 53), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-54, 29), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-25, 58), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51, 27.25), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         backToStack[1] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[1].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(20, 57), toRadians(180))
+                .splineToConstantHeading(new Vector2d(20, 57.5), toRadians(180))
 //                .splineTo(new Vector2d(10, -57.5), toRadians(186))
-                .splineToConstantHeading(new Vector2d(-25, 57.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.5, 29.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-25, 58), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51, 30.25), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
-        backToStack[0] = robot.roadrun
-                .trajectorySequenceBuilder(new Pose2d(droppy[0].end().vec(), toRadians(185)))
+        backToStack[2] = robot.roadrun
+                .trajectorySequenceBuilder(droppy[2].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(20, 56.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(20, 57.5), toRadians(180))
 //                .splineTo(new Vector2d(10, -57.5), toRadians(186))
-                .splineToConstantHeading(new Vector2d(0, 56.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(0, 58), toRadians(180))
 
-                .splineToConstantHeading(new Vector2d(-26, 56), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-54, 28.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-26, 57), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51, 30.25), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
-        drop[2] = robot.roadrun.trajectorySequenceBuilder(backToStack[2].end())
+        drop[0] = robot.roadrun.trajectorySequenceBuilder(backToStack[0].end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, 52.5), toRadians(15))
+                .splineToConstantHeading(new Vector2d(-40, 53.5), toRadians(15))
                 .splineToConstantHeading(new Vector2d(-20, 53.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(6, 54.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(47, 40), toRadians(0))
+                .splineToConstantHeading(new Vector2d(6, 56.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(47, 38), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         drop[1] = robot.roadrun.trajectorySequenceBuilder(backToStack[1].end())
@@ -158,20 +158,24 @@ public class BL23 {
                 .splineToConstantHeading(new Vector2d(-40, 53.5), toRadians(15))
                 .splineToConstantHeading(new Vector2d(-20, 55.5), toRadians(0))
                 .splineToConstantHeading(new Vector2d(6, 56.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(47, 40), toRadians(0))
+                .splineToConstantHeading(new Vector2d(47.5, 38), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
-        drop[0] = robot.roadrun.trajectorySequenceBuilder(backToStack[0].end())
+        drop[2] = robot.roadrun.trajectorySequenceBuilder(backToStack[2].end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-40, 52.5), toRadians(15))
-                .splineToConstantHeading(new Vector2d(-20, 54.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(6, 54.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(47, 40), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-40, 53.5), toRadians(15))
+                .splineToConstantHeading(new Vector2d(-20, 55.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(6, 56.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(47, 37), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         park = robot.roadrun.trajectorySequenceBuilder(drop[1].end())
-                .lineToLinearHeading(new Pose2d(43.8,40, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(45, 60,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(43.8,40, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(45, 60,toRadians(-180)))
+                .build();
+        parkRight = robot.roadrun.trajectorySequenceBuilder(drop[1].end())
+                .lineToLinearHeading(new Pose2d(43.8,20, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(45, 6,toRadians(-180)))
                 .build();
 //
 //
@@ -198,7 +202,7 @@ public class BL23 {
 //                .build();/
 
         robot.dropServo(1);
-        robot.setRight(true);
+        robot.setRight(false);
         robot.setBlue(false);
         robot.observeSpike();
         robot.hoverArm();
@@ -231,16 +235,18 @@ public class BL23 {
     {
         robot.queuer.queue(false, true);
         robot.upAuto();
-        if (bark != 2) {
+        if (bark != 0) {
             robot.purpurAuto();
         }
         else{
             robot.purpurAuto2();
-        }        if (bark == 2) {
-            robot.queuer.addDelay(0.9+delaySec);
-    } else {
-      robot.queuer.addDelay(delaySec);
         }
+        if (bark == 0) {
+            robot.queuer.addDelay(0.4+delaySec);
+        } else {
+            robot.queuer.addDelay(delaySec);
+        }
+
         robot.followTrajSeq(spikey[bark]);
         robot.queuer.addDelay(0.0);
         robot.dropAuto(0);
@@ -249,8 +255,8 @@ public class BL23 {
     public void intake(int height){
         robot.followTrajSeq(intake[bark]);
         robot.resetAuto();
-        if (bark == 3) {
-            robot.queuer.addDelay(1.5);
+        if (bark == 0) {
+            robot.queuer.addDelay(2.0);
         }
         robot.intakeAuto(height);
     }
@@ -273,7 +279,7 @@ public class BL23 {
         robot.followTrajSeq(droppy[bark]);
         robot.grabAuto();
         robot.lowAuto();
-        if (bark == 0) {
+        if (bark == 2) {
             robot.yellowAuto(true);
         }else{
             robot.yellowAuto(false);
@@ -284,9 +290,13 @@ public class BL23 {
     }
 
     public void park(){
-        robot.queuer.addDelay(.5);
+        robot.queuer.addDelay(.7);
         robot.resetAuto();
-        robot.followTrajSeq(park);
+        if(isRight){
+            robot.followTrajSeq(parkRight);
+    } else {
+      robot.followTrajSeq(park);
+        }
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }

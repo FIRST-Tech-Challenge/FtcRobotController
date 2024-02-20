@@ -151,11 +151,11 @@ public class RR20 {
         else{
             robot.followTrajSeq(parkLeft[bark]);
         }
+        robot.queuer.addDelay(0.8);
         robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.8);
         robot.queuer.queue(false,true);
-        robot.update();
     }
 
     public void update(){

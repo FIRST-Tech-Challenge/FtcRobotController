@@ -182,7 +182,7 @@ public class BradBot extends BasicRobot {
       if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
         lift.setPosition(290);
-        wrist.purpur();
+        wrist.purpur2();
         purped = true;
         LOGGER.log("purpuring");
       }
@@ -265,7 +265,7 @@ public class BradBot extends BasicRobot {
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
       if (currentPose.getX() > 9) {
-        lift.setPosition(880);
+        lift.setPosition(780);
         intake.stopIntake();
         arm.flipTo(DROP);
         //        if(Wrist.WristStates.LOCK.getState()){
@@ -382,21 +382,30 @@ public class BradBot extends BasicRobot {
   }
 
   public void intakeAuto(int height) {
+    if(intake.intakePath()&& Magazine.pixels==2){
+      roadrun.breakFollowing();
+      roadrun.setMotorPowers(0,0,0,0);
+      intake.setIntakePath(false);
+    }
     if (queuer.queue(
-        true, (magazine.solidTwoPixels() || Intake.IntakeStates.REVERSING.getState()) && intaked)) {
+        true, (Magazine.pixels==2|| Intake.IntakeStates.REVERSING.getState()) && (!roadrun.isBusy()||intake.intakePath()))) {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
-      if (currentPose.getX()<-49 || intake.intakePath()) {
+      if (currentPose.getX()<-49 || intaked) {
         intaked=true;
         magazine.updateSensors();
         if(intake.intakeAutoHeight(height)){
 
-        } else if (!intake.intakePath()) {
+        } else if (!intake.intakePath()&&!roadrun.isBusy()) {
           TrajectorySequence traj =
               roadrun
                   .trajectorySequenceBuilder(currentPose)
-                  .lineTo(new Vector2d(currentPose.getX() + 2, currentPose.getY()))
+                  .lineTo(new Vector2d(currentPose.getX() + 3, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()-2, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()+3, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()-2, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()+3, currentPose.getY()))
                       .build();
           roadrun.followTrajectorySequenceAsync(traj);
           intake.stopIntake();
@@ -696,10 +705,15 @@ public class BradBot extends BasicRobot {
     }
     if (left2) {
       if (Twrist.twristStates.LEFT_TILT.getState()){
-        twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
+        twrist.flipTo(Twrist.twristTargetStates.VERT);
       } else if (Twrist.twristStates.DROP.getState()) {
         twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
-        }
+      } else if (Twrist.twristStates.VERT.getState()) {
+        twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
+      }
+      else if (Twrist.twristStates.RIGHT_TILT.getState()) {
+        twrist.flipTo(Twrist.twristTargetStates.OT);
+      }
       else{
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       }
@@ -708,11 +722,16 @@ public class BradBot extends BasicRobot {
       if (Twrist.twristStates.LEFT_TILT.getState()){
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       } else if (Twrist.twristStates.DROP.getState()) {
-        twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
+        twrist.flipTo(Twrist.twristTargetStates.OT);
       }
-      else{
+      else if(Twrist.twristStates.OT.getState()){
+        twrist.flipTo(Twrist.twristTargetStates.RIGHT_TILT);
+      } else if (Twrist.twristStates.RIGHT_TILT.getState()) {
+        twrist.flipTo(Twrist.twristTargetStates.VERT);
+      }else{
         twrist.flipTo(Twrist.twristTargetStates.LEFT_TILT);
-      }    }
+      }
+    }
     if (up) {
       lift.iterateUp();
       intake.stopIntake();

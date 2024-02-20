@@ -59,27 +59,27 @@ public class RR24 {
         }
         intake = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(17, -2), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-30, -2), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52, -2), toRadians(180))
+                .splineToConstantHeading(new Vector2d(17, -12), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -12), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52, -12), toRadians(180))
                 .build();
         intake2 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(18.5, -3), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-31.5, -3), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-54.5, -3), toRadians(180))
+                .splineToConstantHeading(new Vector2d(18.5, -12), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-31.5, -12), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-54.5, -12), toRadians(180))
                 .build();
         drop = robot.roadrun.trajectorySequenceBuilder(intake.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-30, -4), toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -4), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-30, -12), toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -12), toRadians(0))
                 .splineToConstantHeading(droppos[bark], toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         drop2 = robot.roadrun.trajectorySequenceBuilder(intake2.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-30, -4), toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -4), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-30, -12), toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -12), toRadians(0))
                 .splineToConstantHeading(droppos[bark], toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
@@ -120,9 +120,9 @@ public class RR24 {
         robot.intakeAuto(height);
     }
     public void cycleIntake(int height){
-        robot.queuer.addDelay(0.2);
         robot.followTrajSeq(intake);
         robot.intakeAuto(height);
+        robot.queuer.addDelay(0.3);
         robot.resetAuto();
     }
     public void cycleIntake2(int height){
@@ -148,7 +148,6 @@ public class RR24 {
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
-        robot.grabAuto();
         robot.lowAuto();
         robot.yellowAuto(false);
         robot.drop();
