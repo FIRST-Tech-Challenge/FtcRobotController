@@ -280,7 +280,7 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
+                    stackStationIntake(5).schedule();
                 })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
@@ -304,7 +304,7 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
+                    stackStationIntake(3).schedule();
                 })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
