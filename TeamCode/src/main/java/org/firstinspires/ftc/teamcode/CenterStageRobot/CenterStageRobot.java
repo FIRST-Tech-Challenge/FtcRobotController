@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.CenterStageRobot;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -15,9 +13,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorManualCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeManualCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeProcCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
@@ -38,7 +33,21 @@ public class CenterStageRobot extends RobotEx {
     private DroneSubsystem droneSubsystem;
     private PixelColorDetectorSubsystem pixelColorDetectorSubsystem;
 
-    //----------------------------------- Initialize Commands ------------------------------------//
+    public SequentialCommandGroup openOuttake() {
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
+                new WaitCommand(80),
+                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
+        );
+    }
+
+    public SequentialCommandGroup closeOuttake() {
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                new WaitCommand(80),
+                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
+        );
+    }
 
     public SequentialCommandGroup openExtremeOuttake() {
         return new SequentialCommandGroup(
@@ -76,16 +85,8 @@ public class CenterStageRobot extends RobotEx {
 //        CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
 
-//        toolOp.getGamepadButton(GamepadKeys.Button.B)
-//                .toggleWhenPressed(
-//                        new InstantCommand(outtakeSusystem::go_outtake, outtakeSusystem),
-//                        new InstantCommand(outtakeSusystem::go_intake, outtakeSusystem)
-//                );
-
-
-
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(new OuttakeCommand(outtakeSusystem, OuttakeCommand.OuttakeAction.TOGGLE));
+                .toggleWhenPressed(openOuttake(), closeOuttake());
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(openExtremeOuttake());
@@ -109,32 +110,28 @@ public class CenterStageRobot extends RobotEx {
         elevatorSubsystem.setDefaultCommand(new ElevatorManualCommand(elevatorSubsystem, toolOp::getLeftY));
 
         //Intake
-//        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(new IntakeProcCommand(intakeSubsystem, intakeArmSubsystem, outtakeSusystem, elevatorSubsystem, pixelColorDetectorSubsystem)); Dont Use this
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
                         new SequentialCommandGroup(
-                                new ParallelCommandGroup(
-                                        new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
-//                                        new OuttakeCommand(outtakeSusystem, OuttakeCommand.OuttakeAction.CLOSE)
-                                        new SequentialCommandGroup(
-                                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                                new WaitCommand(80),
-                                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                                        )
-                                ),
-                                new ParallelCommandGroup(
-                                        new InstantCommand(outtakeSusystem::wheel_grab),
-                                        new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, outtakeSusystem, intakeArmSubsystem)
-                                )
-                        ),
-                        new SequentialCommandGroup(
+                                new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
+                                closeOuttake(),
+                                new WaitCommand(200),
+//                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+                                new InstantCommand(outtakeSusystem::wheel_grab),
+                                new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, telemetry),
                                 new InstantCommand(outtakeSusystem::wheel_stop),
                                 new InstantCommand(intakeArmSubsystem::raiseArm),
                                 new WaitCommand(200),
                                 new InstantCommand(intakeSubsystem::reverse, intakeSubsystem),
                                 new WaitCommand(600),
+                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
+                        ),
+                        new SequentialCommandGroup(
+                                new InstantCommand(outtakeSusystem::wheel_stop),
+                                new InstantCommand(intakeArmSubsystem::raiseArm),
+                                new WaitCommand(150),
+                                new InstantCommand(intakeSubsystem::reverse, intakeSubsystem),
+                                new WaitCommand(500),
                                 new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
                         )
                 );

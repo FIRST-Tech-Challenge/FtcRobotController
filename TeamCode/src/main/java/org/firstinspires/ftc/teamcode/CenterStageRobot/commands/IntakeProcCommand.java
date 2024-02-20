@@ -12,33 +12,7 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsy
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelColorDetectorSubsystem;
-//
-// Dont Use
-//
-//
-//
-// Dont Use
-//
-//
-//Dont Use
-//
-//
-// Dont Use
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//Dont Use
-//
-//
+
 public class IntakeProcCommand extends CommandBase {
     private IntakeSubsystem intakeSubsystem;
     private IntakeArmSubsystem intakeArmSubsystem;
@@ -55,7 +29,7 @@ public class IntakeProcCommand extends CommandBase {
         this.elevatorSubsystem = elevatorSubsystem;
         this.pixelColorDetectorSubsystem = pixelColorDetectorSubsystem;
 
-        addRequirements(this.intakeSubsystem, this.intakeArmSubsystem, this.outtakeSusystem);
+        addRequirements(this.intakeSubsystem, this.intakeArmSubsystem, this.outtakeSusystem, this.elevatorSubsystem, this.pixelColorDetectorSubsystem);
     }
 
     @Override
@@ -63,13 +37,13 @@ public class IntakeProcCommand extends CommandBase {
         if(intakeSubsystem.getState() == IntakeSubsystem.State.RESTING) {
             new ParallelCommandGroup(
                 new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
-                new OuttakeCommand(outtakeSusystem, OuttakeCommand.OuttakeAction.CLOSE)
+                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
+//                new OuttakeCommand(outtakeSusystem, OuttakeCommand.OuttakeAction.CLOSE)
             ).schedule();
 
             new ParallelCommandGroup(
-                    new InstantCommand(outtakeSusystem::wheel_grab),
-                    new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, outtakeSusystem, intakeArmSubsystem)
+                    new InstantCommand(outtakeSusystem::wheel_grab)
+//                    new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, )
             ).schedule();
         } else if(intakeSubsystem.getState() == IntakeSubsystem.State.LOADING) {
             new SequentialCommandGroup(

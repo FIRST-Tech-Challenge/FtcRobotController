@@ -60,6 +60,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void run() {
         state = State.LOADING;
+
+        telemetry.addData("Intake Running", "");
         motor.set(speed);
     }
 
