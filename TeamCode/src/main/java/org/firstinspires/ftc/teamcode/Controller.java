@@ -108,36 +108,6 @@ public class Controller extends LinearOpMode {
         backRightMotor.setPower(rightBackPower);
     }
 
-    public void VectorsMovement() {
-        double x = -gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
-
-        double theta = Math.atan2(y, x);
-        double power = Math.hypot(x, y);
-        
-        double sin = Math.sin(theta - Math.PI /4);
-        double cos = Math.cos(theta - Math.PI /4);
-        double max = Math.max(Math.abs(sin), Math.abs(cos));
-        
-        double frontLeftMotorPower = (power * cos/max + turn);
-        double frontRightMotorPower = (power * sin/max - turn);
-        double backLeftMotorPower = (power * sin/max + turn);
-        double backRightMotorPower = (power * cos/max - turn);
-        
-        if ((power + Math.abs(turn)) > 1) {
-            frontLeftMotorPower /= power + turn;
-            frontRightMotorPower /= power + turn;
-            backLeftMotorPower /= power + turn;
-            backRightMotorPower /= power + turn;
-        }
-        
-        frontLeftMotor.setPower(frontLeftMotorPower * 0.5);
-        frontRightMotor.setPower(frontRightMotorPower * 0.5);
-        backLeftMotor.setPower(backLeftMotorPower * 0.5);
-        backRightMotor.setPower(backRightMotorPower * 0.5);
-    }
-
     public void startupSequence() {
         leftGrip.setPosition(GRIP_CLOSED);
         rightGrip.setPosition(GRIP_CLOSED);
@@ -260,7 +230,6 @@ public class Controller extends LinearOpMode {
             slowModeActive = gamepad1.right_bumper;
 
             movement();
-            //VectorsMovement();
 
             // Roller
             if (currentArmLiftPos >= ROLLER_ARM_LIMIT || overrideMode) {
