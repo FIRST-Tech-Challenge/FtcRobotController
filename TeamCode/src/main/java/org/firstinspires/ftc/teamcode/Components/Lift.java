@@ -25,7 +25,7 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 750,
+      RESISTANCE = 550,
       kS = 0.03,
       kV = 3.2786E-4,
       kA = 5E-5,
