@@ -2363,9 +2363,6 @@ public class Robot {
 
     public void buttonConfigAtInit (Gamepad gamepad1) {
 
-        PARKING_POSITION parkingPosition = PARKING_POSITION.BOARD;
-
-        double waitCounter = 0;
         boolean wasPressedB = false;
         boolean wasPressedX = false;
         boolean wasPressedDPadLeft = false;
@@ -2376,19 +2373,19 @@ public class Robot {
 
             // b increases wait counter by 1
             if (wasPressedB && !gamepad1.b) {
-                waitCounter++;
+                autoDelayInSeconds++;
             }
             wasPressedB = gamepad1.b;
 
             // x decreases wait counter by 1
             if (wasPressedX && !gamepad1.x) {
-                waitCounter--;
+                autoDelayInSeconds--;
             }
             wasPressedX = gamepad1.x;
 
             // wait counter cannot be negative
-            if (waitCounter < 0) {
-                waitCounter = 0;
+            if (autoDelayInSeconds < 0) {
+                autoDelayInSeconds = 0;
             }
 
             // dpad left - park left
@@ -2410,11 +2407,14 @@ public class Robot {
             wasPressedDPadUp = gamepad1.dpad_up;
 
             if (gamepad1.left_bumper && gamepad1.right_bumper) {
+
+                this.autoDelayInSeconds = autoDelayInSeconds;
+
                 telemetry.addLine("CONFIRMED");
                 telemetry.addLine("");
 
                 telemetry.addLine("+/- WAIT: B/X");
-                telemetry.addData("WAIT TIME: ", waitCounter);
+                telemetry.addData("WAIT TIME: ", autoDelayInSeconds);
                 telemetry.addLine("");
 
                 telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
@@ -2424,7 +2424,7 @@ public class Robot {
             }
 
             telemetry.addLine("+/- WAIT: B/X");
-            telemetry.addData("WAIT TIME: ", waitCounter);
+            telemetry.addData("WAIT TIME: ", autoDelayInSeconds);
             telemetry.addLine("");
 
             telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
@@ -2436,7 +2436,6 @@ public class Robot {
             telemetry.update();
         }
 
-        opMode.waitForStart();
     }
 
     public void configuredParking() {
@@ -2446,14 +2445,11 @@ public class Robot {
         } else if (parkingPosition == PARKING_POSITION.TRUSS) {
             boardToTruss();
         }
+
+        straightBlocking2(-10);
         // else do nothing
     }
 }
 
 // todo write timeout for apriltag final forward
-// todo how to stop streaming
-// todo bring back to board
-// todo set complementary tag id
-// todo slide not high enough second time
 // todo turns need a timeout, and maybe other control loops
-// todo tune tray outtake pos/how close it is to board
