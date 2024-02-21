@@ -14,7 +14,7 @@ public class BlueLongFreeway20 extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 12000;
+        int maxDelayInSeconds = 12;
 
         waitForStart();
 
@@ -27,7 +27,11 @@ public class BlueLongFreeway20 extends LinearOpMode {
             robot.setMarkerLocation(false, true, robot.markerPos);
             robot.servoToInitPositions();
 
-            this.sleep(delay);
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                this.sleep(robot.autoDelayInSeconds * 1000);
+            } else {
+                this.sleep(maxDelayInSeconds * 1000);
+            }
 
             robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
@@ -36,6 +40,14 @@ public class BlueLongFreeway20 extends LinearOpMode {
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false, slideStartingPosition);
+
+            if (robot.parkFreeway) {
+                robot.boardToMiddle(slideStartingPosition);
+                robot.straightBlocking2(-10);
+            } else {
+                robot.boardToTruss(slideStartingPosition);
+                robot.straightBlocking2(-10);
+            }
 
             break;
 
