@@ -9,14 +9,14 @@ public class BlueLongWall20 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
+        int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
+        robot.setDelayAndParking(maxDelayInSeconds, false);
+
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int maxDelayInSeconds = 12;
-        int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
-
 
         waitForStart();
 

@@ -2353,4 +2353,9 @@ public class Robot {
         setServoPos(spikeServo, 0.68);
     }
 
+    public void setDelayAndParking (int delay, boolean parkAtFreeway) {
+        autoDelayInSeconds = delay;
+        parkFreeway = parkAtFreeway;
+    }
+
 }
