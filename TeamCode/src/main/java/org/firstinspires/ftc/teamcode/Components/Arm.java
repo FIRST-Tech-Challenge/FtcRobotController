@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.HOVER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.58, FLIP_TIME = 0.7;
+  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.58, FLIP_TIME = 0.9;
   private double lastTime = 0;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -32,7 +34,7 @@ public class Arm extends RFServo {
     } else {
       super.setPosition(HOVER_POS);
       super.setFlipTime(FLIP_TIME);
-      ArmStates.HOVER.setStateTrue();
+      HOVER.setStateTrue();
       ArmTargetStates.HOVER.setStateTrue();
       ArmTargetStates.HOVER.state = false;
       position = HOVER_POS;
@@ -116,7 +118,7 @@ public class Arm extends RFServo {
   public void purpurPigzl2() {
     if (position != DROP_POS) {
       ArmTargetStates.DROP.state = true;
-      flipTo(ArmStates.DROP, 0.06, true);
+      flipTo(ArmStates.DROP, 0.02, true);
       LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
       lastTime = time;
     }
@@ -134,15 +136,15 @@ public class Arm extends RFServo {
   }
   public void flipTo(ArmStates p_state, double offset, boolean override) {
     if (time - lastTime > FLIP_TIME || override) {
-      if ((p_state == ArmStates.DROP || p_state == ArmStates.HOVER)
+      if ((p_state == ArmStates.DROP || p_state == HOVER)
               && super.getPosition() != p_state.pos) {
         if (p_state == ArmStates.DROP) {
           ArmTargetStates.DROP.state = true;
           if (ArmStates.GRAB.getState()) {
-            flipTo(ArmStates.HOVER);
+            flipTo(HOVER);
             return;
           }
-          if ((super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state ||(ArmStates.HOVER.state&& Lift.LiftPositionStates.AT_ZERO.state)))||override) {
+          if ((super.getPosition() != DROP_POS && !(Lift.LiftMovingStates.AT_ZERO.state ||(HOVER.state&& Lift.LiftPositionStates.AT_ZERO.state)))||override) {
             super.setPosition(DROP_POS+offset);
             position = DROP_POS;
 
@@ -160,7 +162,7 @@ public class Arm extends RFServo {
             position = HOVER_POS;
             ArmTargetStates.HOVER.state = true;
             if (ArmStates.DROP.state){
-              ArmStates.HOVER.state = false;
+              HOVER.state = false;
             } LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
 //            Wrist.WristTargetStates.GRAB.setStateTrue();
 //            Twrist.twristTargetStates.GRAB.setStateTrue();
@@ -172,7 +174,7 @@ public class Arm extends RFServo {
         }
       }
       if (p_state == ArmStates.GRAB && super.getPosition() != p_state.pos) {
-        if (ArmStates.HOVER.state) {
+        if (HOVER.state) {
           super.setPosition(GRAB_POS+offset);
           position -=offset;
           LOGGER.log("flipping to GRAB");
@@ -199,8 +201,9 @@ public class Arm extends RFServo {
    * functions
    */
   public void update() {
+    packet.put("HOVER", HOVER.state);
     for (var i : ArmStates.values()) {
-      if (super.getPosition() ==  i.pos && time > lastTime + FLIP_TIME) {
+      if (position ==  i.pos && time > lastTime + FLIP_TIME) {
         i.setStateTrue();
         if (ArmTargetStates.values()[i.ordinal()].state) {
           ArmTargetStates.values()[i.ordinal()].state = false;
@@ -208,12 +211,12 @@ public class Arm extends RFServo {
               "Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
         }
       }
-      if(super.getPosition() == i.pos && i==ArmStates.HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.5){
+      if(position == i.pos && i== HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.5){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
-      if(super.getPosition() == i.pos && i==ArmStates.GRAB && ArmStates.HOVER.getState() && time > lastTime + 0.5){
+      if(position == i.pos && i==ArmStates.GRAB && HOVER.getState() && time > lastTime + 0.5){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());

@@ -181,8 +181,8 @@ public class BradBot extends BasicRobot {
       }
       if (DROP.state) {
         Lift.LiftMovingStates.LOW.state = false;
-        lift.setPosition(290);
-        wrist.purpur2();
+        lift.setPosition(400);
+        wrist.purpur();
         purped = true;
         LOGGER.log("purpuring");
       }
@@ -201,10 +201,10 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.OT.getState())) {
       if (currentPose.getX() > 9 && DROP.getState()) {
         if (left) {
-          lift.setPosition(730);
+          lift.setPosition(600);
         }
         else{
-          lift.setPosition(730);
+          lift.setPosition(600);
         }
         if(left){
           twrist.flipTo(Twrist.twristTargetStates.OT);
@@ -487,7 +487,7 @@ public class BradBot extends BasicRobot {
   }
 
   public boolean checkAlliance() {
-    if (currentPose.getX() > 5 && currentPose.getX() < 40 ) {
+    if (currentPose.getX() > 5 && currentPose.getX() < 30 ) {
 //      if (ultras.checkAlliance()) {
 //        roadrun.setMotorPowers(0, 0, 0, 0);
 //      }
@@ -664,9 +664,6 @@ public class BradBot extends BasicRobot {
       twrist.flipTo(Twrist.twristTargetStates.GRAB);
       wrist.flipTo(Wrist.WristTargetStates.GRAB);
       arm.flipTo(HOVER, -.04, false);
-      lift.update();
-      wrist.update();
-      twrist.update();
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       claw.flipTo(Claw.clawTargetStates.CLOSE);
       intake.stopIntake();
@@ -706,7 +703,7 @@ public class BradBot extends BasicRobot {
     if (leftBumper) {
       intake.reverseIntake();
     }
-    if (left2) {
+    if (right2) {
       if (Twrist.twristStates.LEFT_TILT.getState()){
         twrist.flipTo(Twrist.twristTargetStates.VERT);
       } else if (Twrist.twristStates.DROP.getState()) {
@@ -721,7 +718,7 @@ public class BradBot extends BasicRobot {
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       }
     }
-    if (right2) {
+    if (left2) {
       if (Twrist.twristStates.LEFT_TILT.getState()){
         twrist.flipTo(Twrist.twristTargetStates.DROP);
       } else if (Twrist.twristStates.DROP.getState()) {

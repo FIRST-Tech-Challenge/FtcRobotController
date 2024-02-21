@@ -45,7 +45,7 @@ public class BR20 {
               .roadrun
               .trajectorySequenceBuilder(preload[2].end())
               .lineToLinearHeading(new Pose2d(36.4, 35, toRadians(180)))
-              .lineToLinearHeading(new Pose2d(46.5, 29, toRadians(180)))
+              .lineToLinearHeading(new Pose2d(47, 28.5, toRadians(180)))
               .build();
       preToStack[1] =
           robot
@@ -53,13 +53,13 @@ public class BR20 {
               .trajectorySequenceBuilder(preload[1].end())
               .lineToLinearHeading(new Pose2d(16.5, 39.5, toRadians(91)))
               .lineToLinearHeading(new Pose2d(36.4, 37, toRadians(180)))
-              .lineToLinearHeading(new Pose2d(46.5, 35.25, toRadians(180)))
+              .lineToLinearHeading(new Pose2d(47, 35.25, toRadians(180)))
               .build();
       preToStack[0] =
           robot
               .roadrun
               .trajectorySequenceBuilder(preload[0].end())
-              .lineToLinearHeading(new Pose2d(46.5, 41.5, toRadians(180)))
+              .lineToLinearHeading(new Pose2d(46.5, 42, toRadians(180)))
               .build();
         }
     else{
@@ -175,7 +175,8 @@ public class BR20 {
         }
     else{
         robot.followTrajSeq(parkRight[bark]);
-    }
+    }        robot.queuer.addDelay(0.8);
+
         robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.8);

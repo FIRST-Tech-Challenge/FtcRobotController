@@ -28,10 +28,11 @@ public class Queuer {
     mustFinish = false;
     isFulfilled=false;
     currentlyQueueing = 0;
-    currentEvent = -1;
-    mustStartCondition = -1;
-    completeCurrentEvent = 0;
+            currentEvent = -1;
+            mustStartCondition = -1;
+            completeCurrentEvent = 0;
     delay = 0;
+    firstLoop = true; mustFinish = false;
   }
 
   public void setFirstLoop(boolean p_firstLoop) {
@@ -213,7 +214,7 @@ public class Queuer {
     // is currently queued event optional and should be running for first time
     if (queueElements.get(currentlyQueueing).isOptional()
         && !p_isOptional
-        && !queueElements.get(currentlyQueueing).isDone()
+            &&!queueElements.get(currentlyQueueing).isDone()
         && !firstLoop) {
       // make this optional event have to run
       queueElements.get(currentlyQueueing).setSkipOption(true);
@@ -241,8 +242,8 @@ public class Queuer {
     if (isReady) {
       // skip if event is optional
       if (queueElements.get(currentlyQueueing).isOptional() && p_isOptional) {
-        isReady = false;
-        queueElements.get(currentlyQueueing).setStarted(true);
+        queueElements.get(currentlyQueueing).setDone(true);
+//        queueElements.get(currentlyQueueing).setStarted(true);
       }
       // set queueElement internal value
       else {
@@ -250,9 +251,9 @@ public class Queuer {
       }
     }
     // return value
-    return isReady
-        || (queueElements.get(currentlyQueueing).isStarted()&&(!queueElements.get(currentlyQueueing).isOptional()||!p_isOptional))
-            && !queueElements.get(currentlyQueueing).isDone();
+    return (isReady
+        || (queueElements.get(currentlyQueueing).isStarted()&&(!queueElements.get(currentlyQueueing).isOptional()||!p_isOptional)))
+            && !queueElements.get(currentlyQueueing).isDone() && !p_isOptional;
   }
 
   /**

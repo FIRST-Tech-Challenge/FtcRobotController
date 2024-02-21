@@ -12,13 +12,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-public class BL20 {
-    boolean logi=false, isRight = false, ultras = false, check = false;
+public class BL21 {
+    boolean logi=false, isRight = false, ultras = true, check = false, everChecked = false;
     int delaySec = 0;
     LinearOpMode op;
     BradBot robot;
     int bark = 0;
     TrajectorySequence[] spikey = new TrajectorySequence[3];
+    TrajectorySequence[] intake = new TrajectorySequence[3];
+
     TrajectorySequence[] pathy = new TrajectorySequence[3], pathyUltra = new TrajectorySequence[3];
     TrajectorySequence[] droppy = new TrajectorySequence[3];
 
@@ -26,42 +28,52 @@ public class BL20 {
 
 
 
-    public BL20(LinearOpMode op, boolean isLogi){
+    public BL21(LinearOpMode op, boolean isLogi){
         logi = isLogi;
         this.op=op;
         robot = new BradBot(op, false, isLogi);
-        Pose2d startPose = new Pose2d(-36,59,toRadians(90));
+        Pose2d startPose = new Pose2d(-36,60.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
 
-        spikey[0] = robot.roadrun
+        spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-38, 38, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-31, 28, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-31, 31, toRadians(180)))
+                .splineToLinearHeading(new Pose2d(-50, 26.5,toRadians(120)), toRadians(-90))
+                .lineToLinearHeading(new Pose2d(-48, 36.5,toRadians(120)))
 
                 .build();
 
         spikey[1] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-37,34,toRadians(90)))
-
+                .setReversed(true)
+                .lineToLinearHeading(new Pose2d(-37,36,toRadians(90)))
+                .addTemporalMarker(robot::done)
                 .build();
 
-        spikey[2] = robot.roadrun
+        spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-44,39,toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-44,42,toRadians(90)))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-33,38, toRadians(180)), toRadians(0))
                 .build();
-//
-//        spikey[2] = robot.roadrun
-//                .trajectorySequenceBuilder(startPose)
-//                .lineToLinearHeading(new Pose2d(0,0,toRadians(0)))
-//                .build();
+        intake[2] = robot.roadrun
+                .trajectorySequenceBuilder(spikey[0].end())
+                .lineToLinearHeading(new Pose2d(-51, 37.5,toRadians(120)))
+                .lineToLinearHeading(new Pose2d(-50.5,34.25, toRadians(190)))
+                .build();
+        intake[1] = robot.roadrun
+                .trajectorySequenceBuilder(spikey[1].end())
+                .lineToLinearHeading(new Pose2d(-51.5,32.25, toRadians(185)))
+                .addTemporalMarker(robot::done)
+                .build();
+        intake[0] = robot.roadrun
+                .trajectorySequenceBuilder(spikey[2].end())
+                .lineToLinearHeading(new Pose2d(-50.5,32.25, toRadians(180)))
+                .addTemporalMarker(robot::done)
+                .build();
 
 
         pathy[0] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[0].end())
+                .trajectorySequenceBuilder(intake[0].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-43,31, toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
@@ -70,7 +82,7 @@ public class BL20 {
                 .build();
 
         pathy[1] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[1].end())
+                .trajectorySequenceBuilder(intake[1].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
                 .setReversed(true)
@@ -78,14 +90,14 @@ public class BL20 {
                 .build();
 
         pathy[2] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[2].end())
+                .trajectorySequenceBuilder(intake[2].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(10,57.5, toRadians(180)))
                 .build();
         pathyUltra[0] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[0].end())
+                .trajectorySequenceBuilder(intake[0].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-40,57.5, toRadians(180)))
                 .setReversed(true)
@@ -94,7 +106,7 @@ public class BL20 {
                 .build();
 
         pathyUltra[1] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[1].end())
+                .trajectorySequenceBuilder(intake[1].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-46,57.5, toRadians(180)))
                 .setReversed(true)
@@ -104,7 +116,7 @@ public class BL20 {
                 .build();
 
         pathyUltra[2] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[2].end())
+                .trajectorySequenceBuilder(intake[2].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-46,57.5, toRadians(180)))
                 .setReversed(true)
@@ -114,21 +126,21 @@ public class BL20 {
         if(!isLogi){
 
 
-        droppy[0] = robot.roadrun
-                .trajectorySequenceBuilder(pathy[0].end())
-                .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46,41.5,toRadians(180)))
-                .build();
-        droppy[1] = robot.roadrun
-                .trajectorySequenceBuilder(pathy[1].end())
-                .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46,35.25,toRadians(180)))
-                .build();
-        droppy[2] = robot.roadrun
-                .trajectorySequenceBuilder(pathy[2].end())
-                .lineToLinearHeading(new Pose2d(42.5,32,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(46,29,toRadians(180)))
-                .build();
+            droppy[0] = robot.roadrun
+                    .trajectorySequenceBuilder(pathy[0].end())
+                    .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(47,41.5,toRadians(180)))
+                    .build();
+            droppy[1] = robot.roadrun
+                    .trajectorySequenceBuilder(pathy[1].end())
+                    .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(47,35.25,toRadians(180)))
+                    .build();
+            droppy[2] = robot.roadrun
+                    .trajectorySequenceBuilder(pathy[2].end())
+                    .lineToLinearHeading(new Pose2d(42.5,32,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(47,30,toRadians(180)))
+                    .build();
         }
         else{
             droppy[0] = robot.roadrun
@@ -168,43 +180,45 @@ public class BL20 {
                 .trajectorySequenceBuilder(droppy[0].end())
                 .lineToLinearHeading(new Pose2d(43.3,41.5,toRadians(180)))
 
-                .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,9,toRadians(180)))
                 .build();
 
         parky[1] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[1].end())
                 .lineToLinearHeading(new Pose2d(43.3,35.5,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,9,toRadians(180)))
                 .build();
 
         parky[2] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[2].end())
                 .lineToLinearHeading(new Pose2d(43.3,29.5,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,9,toRadians(180)))
                 .build();
 
         parkLeft[0] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[0].end())
                 .lineToLinearHeading(new Pose2d(43.3,41.5,toRadians(180)))
 
-                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,9,toRadians(180)))
                 .build();
 
         parkLeft[1] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[1].end())
                 .lineToLinearHeading(new Pose2d(43.3,35.5,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
                 .build();
 
         parkLeft[2] = robot.roadrun
                 .trajectorySequenceBuilder(droppy[2].end())
                 .lineToLinearHeading(new Pose2d(43.3,29.5,toRadians(180)))
-                .lineToLinearHeading(new Pose2d(50,8,toRadians(180)))
+                .lineToLinearHeading(new Pose2d(50,60,toRadians(180)))
                 .build();
         robot.dropServo(1);
         robot.setRight(true);
         robot.setBlue(false);
         robot.observeSpike();
+        check = false;
+        everChecked = false;
     }
     public void waitForStart(){
         while (!op.isStarted() || op.isStopRequested()) {
@@ -226,7 +240,7 @@ public class BL20 {
                 isRight = false;
             }
             if (gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "ultras")) {
-                ultras = true;
+                ultras = !ultras;
             }
             robot.update();
         }
@@ -235,16 +249,36 @@ public class BL20 {
     }
     public void purp()
     {
-        robot.queuer.addDelay(2.0 + delaySec);
         robot.queuer.queue(false, true);
         robot.upAuto();
-        robot.purpurAuto();
-        robot.queuer.addDelay(1.0);
+        if (bark != 0) {
+            robot.purpurAuto();
+        }
+        else{
+            robot.queuer.addDelay(3.0);
+            robot.purpurAuto2();
+        }
+        if (bark == 0) {
+            robot.queuer.addDelay(0.4+delaySec);
+        } else {
+            robot.queuer.addDelay(delaySec);
+        }
+
         robot.followTrajSeq(spikey[bark]);
-        robot.queuer.addDelay(0.2);
+        robot.queuer.addDelay(0.0);
         robot.dropAuto(0);
     }
+
+    public void intake(int height){
+        robot.followTrajSeq(intake[bark]);
+        robot.resetAuto();
+        if (bark == 0) {
+            robot.queuer.addDelay(2.0);
+        }
+        robot.intakeAuto(height);
+    }
     public void pre(){
+        robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.3);
         if (ultras) {
             robot.followTrajSeq(pathyUltra[bark]);
@@ -260,15 +294,21 @@ public class BL20 {
             robot.queuer.addDelay(0.2);
             robot.followTrajSeqUltra(check);
             robot.queuer.waitForFinish();
-            robot.followTrajSeq(droppy[bark], !check);
+            if(check){
+                everChecked = true;
+            }
+            robot.followTrajSeq(droppy[bark], !everChecked);
             robot.queuer.queue(false, true);
         }
         robot.queuer.addDelay(.5);
         robot.lowAuto();
-        robot.queuer.addDelay(1.5);
-        robot.veryLowAuto();
+        if (bark == 2) {
+            robot.yellowAuto(true);
+        }else{
+            robot.yellowAuto(false);
+
+        }
         robot.queuer.waitForFinish();
-        robot.queuer.addDelay(0.3);
         robot.drop();
     }
 
@@ -278,12 +318,12 @@ public class BL20 {
         if (ultras) {
             robot.queuer.waitForFinish();
         }
-    if (isRight) {
-      robot.followTrajSeq(parky[bark]);
+        if (isRight) {
+            robot.followTrajSeq(parky[bark]);
         }
-    else{
-        robot.followTrajSeq(parkLeft[bark]);
-    }
+        else{
+            robot.followTrajSeq(parkLeft[bark]);
+        }
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }

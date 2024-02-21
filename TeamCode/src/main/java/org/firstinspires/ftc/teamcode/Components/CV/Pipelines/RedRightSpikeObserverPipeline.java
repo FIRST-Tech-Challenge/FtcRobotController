@@ -32,7 +32,7 @@ public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
             p2y = 490,
             p21x = 340,
             p21y = 380,
-            p22x = 440,
+            p22x = 400,
             p22y = 430,
             p31x = 715,
             p31y = 380,

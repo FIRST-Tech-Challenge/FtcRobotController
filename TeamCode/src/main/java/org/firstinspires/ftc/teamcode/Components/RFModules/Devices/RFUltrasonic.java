@@ -49,6 +49,8 @@ public class RFUltrasonic {
         ultrasonicAnalog = op.hardwareMap.get(AnalogInput.class, p_ultraAnalogName);
         targetLine = new Line(1,0,0, new Vector2d(0,-10), new Vector2d(0,10));
         leastSquaresFilter = new LineRegressionFilter(0, 5);
+        lastEnabled=-100;
+        lastEnabled=-100;
     }
 
     /**
@@ -72,7 +74,9 @@ public class RFUltrasonic {
 
                 difference = robotDist - ultraDist;
                 op.telemetry.addData("robotDist", robotDist);
-                detected = ultraDist < robotDist;
+                packet.put("robotDist", robotDist);
+            packet.put("ultraDist", ultraDist);
+            detected = ultraDist < robotDist;
 //                op.telemetry.addData("detected", detected);
 //            }
 

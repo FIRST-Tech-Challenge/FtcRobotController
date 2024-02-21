@@ -36,7 +36,7 @@ public class BL23 {
         Pose2d startPose = new Pose2d(-36,60.5,toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
 
-        spikey[0] = robot.roadrun
+        spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(-48, 27.5,toRadians(120)), toRadians(-90))
@@ -51,12 +51,12 @@ public class BL23 {
                 .addTemporalMarker(robot::done)
                 .build();
 
-        spikey[2] = robot.roadrun
+        spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(-33,38, toRadians(180)), toRadians(0))
                 .build();
-        intake[0] = robot.roadrun
+        intake[2] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[0].end())
                 .lineToLinearHeading(new Pose2d(-51, 37.5,toRadians(120)))
                 .lineToLinearHeading(new Pose2d(-50.5,34.25, toRadians(190)))
@@ -66,7 +66,7 @@ public class BL23 {
                 .lineToLinearHeading(new Pose2d(-51.5,32.25, toRadians(185)))
                 .addTemporalMarker(robot::done)
                 .build();
-        intake[2] = robot.roadrun
+        intake[0] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[2].end())
                 .lineToLinearHeading(new Pose2d(-50.5,32.25, toRadians(180)))
                 .addTemporalMarker(robot::done)
@@ -286,7 +286,6 @@ public class BL23 {
 
         }
         robot.drop();
-
     }
 
     public void park(){

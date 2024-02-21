@@ -107,7 +107,7 @@ public class Wrist extends RFServo {
   public void flipTo(WristTargetStates p_state){
     if (abs(time - lastTime) > FLIP_TIME) {
       if (p_state == WristTargetStates.GRAB){
-        if ((Arm.ArmStates.HOVER.state
+        if ((Arm.ArmTargetStates.HOVER.state
                 || Arm.ArmStates.GRAB.state)
             && super.getPosition() != GRABBY) {
           super.setPosition(GRABBY);

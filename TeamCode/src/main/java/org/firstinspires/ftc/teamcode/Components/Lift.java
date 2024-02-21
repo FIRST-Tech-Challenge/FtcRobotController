@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /** William */
+@Config
 public class Lift extends RFDualMotor {
   private double lastPower = 0.0;
   private double target = 0.0;
@@ -25,10 +26,10 @@ public class Lift extends RFDualMotor {
   private int iterateHeight = 3;
   public static double max = 1540,
       min = -15,
-      RESISTANCE = 550,
-      kS = 0.03,
-      kV = 3.2786E-4,
-      kA = 2E-5,
+      RESISTANCE = 650,
+      kS = 0.06,
+      kV = 4.2786E-4,
+      kA = 4E-5,
       MAX_UP_VELO = 3000,
       MAX_DOWN_VELO = -1080,
       MAX_ACCEL = 10000,
@@ -157,7 +158,7 @@ public class Lift extends RFDualMotor {
     }
       if (time - lastManualTime > MANUAL_TIME) {
         if(super.getCurrentPosition()<10 && super.getTarget()<10){
-          super.setRawPower(-0.2);
+          super.setRawPower(-0.3);
         } else {
           setPosition(super.getTarget(), 0);
         }
@@ -188,13 +189,9 @@ public class Lift extends RFDualMotor {
   public void setPosition(LiftPositionStates p_state) {
     LOGGER.log("lifting to: " + p_state.name());
     if (p_state.equals(LiftPositionStates.AT_ZERO)) {
-      if (LiftPositionStates.HIGH_SET_LINE.state) {
-        setPosition(LiftPositionStates.MID_SET_LINE);
-        return;
-      }
-      if (!Arm.ArmStates.DROP.state && (Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.state)
+      if ((Arm.ArmStates.HOVER.getState() || Arm.ArmStates.GRAB.state)
           && (!Arm.ArmTargetStates.DROP.state || !Arm.ArmTargetStates.GRAB.getState())) {
-        super.setPosition(p_state.position-10, 0);
+        super.setPosition(p_state.position, 0);
         LiftMovingStates.LOW.clearTargets();
         LiftMovingStates.AT_ZERO.setStateTrue();
         LOGGER.log("HOVER: "+Arm.ArmStates.HOVER.state);
