@@ -12,11 +12,11 @@ public class BlueLongWall20 extends LinearOpMode {
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
         robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.TRUSS);
+        robot.buttonConfigAtInit(gamepad1);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         waitForStart();
 
@@ -40,8 +40,6 @@ public class BlueLongWall20 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false);
 
             robot.configuredParking();
