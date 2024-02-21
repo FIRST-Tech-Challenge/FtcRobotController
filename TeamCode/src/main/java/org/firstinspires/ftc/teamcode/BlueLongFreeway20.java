@@ -40,7 +40,6 @@ public class BlueLongFreeway20 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            // note slide init position
             robot.autoOuttake(false);
 
             robot.configuredParking();

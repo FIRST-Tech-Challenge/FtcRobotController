@@ -927,6 +927,8 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
+                straightBlocking(2, false, 0.7);
+                setHeading(90 * polarity, 0.7);
                 straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
 
@@ -941,7 +943,7 @@ public class Robot {
 
                 // P6: (19.5, 57.5)
 
-                straightBlocking2FixHeading(-91);
+                straightBlocking2FixHeading(-93);
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (117.5, 57.5)
@@ -2442,11 +2444,14 @@ public class Robot {
 
         if (parkingPosition == PARKING_POSITION.FREEWAY) {
             boardToMiddle();
+            straightBlocking2(-14);
         } else if (parkingPosition == PARKING_POSITION.TRUSS) {
             boardToTruss();
+            straightBlocking2(-14);
+        } else {
+            moveLinearSlideByTicksBlocking(slideStartingPosition);
         }
 
-        straightBlocking2(-10);
         // else do nothing
     }
 }

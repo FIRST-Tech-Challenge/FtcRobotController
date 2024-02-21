@@ -39,7 +39,7 @@ public class RedLongFreeway20 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.autoOuttake(true);
+            robot.autoOuttake(false);
 
             robot.configuredParking();
 
