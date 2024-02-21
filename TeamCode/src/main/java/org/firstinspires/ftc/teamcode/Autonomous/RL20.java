@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class RL20 {
-  boolean logi = false, isRight = false, ultras = false, check = true;
+  boolean logi = false, isRight = false, ultras = false, check = true, everChecked = false;
   LinearOpMode op;
   BradBot robot;
   int bark = 0;
@@ -221,6 +221,8 @@ public class RL20 {
     robot.setRight(false);
     robot.setBlue(false);
     robot.observeSpike();
+    check = false;
+    everChecked = false;
   }
 
   public void waitForStart() {
@@ -280,7 +282,10 @@ public class RL20 {
       robot.queuer.addDelay(0.2);
       robot.followTrajSeqUltra(check);
       robot.queuer.waitForFinish();
-      robot.followTrajSeq(droppy[bark], !check);
+      if(check){
+        everChecked = true;
+      }
+      robot.followTrajSeq(droppy[bark], !everChecked);
       robot.queuer.queue(false, true);
     }
     robot.queuer.addDelay(.5);

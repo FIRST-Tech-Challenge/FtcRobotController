@@ -783,7 +783,7 @@ public class BradBot extends BasicRobot {
         && !GRAB.state
         && !Arm.ArmTargetStates.HOVER.getState()
         && lift.getCurrentPosition() < 10
-        && Intake.IntakeStates.STOPPED.getState()&&!gapped) {
+        && Intake.IntakeStates.REVERSING.getState()&&!gapped) {
       arm.flipTo(GRAB);
       wrist.flipTo(Wrist.WristTargetStates.LOCK);
       claw.flipTo(Claw.clawTargetStates.CLOSE);

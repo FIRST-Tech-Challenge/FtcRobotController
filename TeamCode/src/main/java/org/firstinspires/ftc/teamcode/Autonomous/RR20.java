@@ -38,7 +38,7 @@ public class RR20 {
                 .lineToLinearHeading(new Pose2d(11.5, -40, toRadians(-40)))
                 .build();
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61,toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(16.5, -36.5, toRadians(-91))).build();
+                .lineToLinearHeading(new Pose2d(19.5, -36.5, toRadians(-91))).build();
         preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(24.5,-43, toRadians(-90))).build();
         if(!isLogi){
