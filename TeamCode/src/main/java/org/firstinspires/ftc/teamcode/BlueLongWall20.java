@@ -14,6 +14,7 @@ public class BlueLongWall20 extends LinearOpMode {
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
+        int maxDelayInSeconds = 12;
         int delay = 12000;  // Max delay is 12 seconds, leaves 3 seconds for vision timeout
 
 
@@ -28,7 +29,11 @@ public class BlueLongWall20 extends LinearOpMode {
             robot.setMarkerLocation(false, true, robot.markerPos);
             robot.servoToInitPositions();
 
-            this.sleep(delay);
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                this.sleep(robot.autoDelayInSeconds * 1000);
+            } else {
+                this.sleep(maxDelayInSeconds * 1000);
+            }
 
             robot.longMoveToBoardTruss();
 
@@ -39,10 +44,13 @@ public class BlueLongWall20 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
             robot.autoOuttake(false, slideStartingPosition);
 
-            // parking here
-            robot.boardToTruss(slideStartingPosition);
-            robot.straightBlocking2(-10);
-            break;
+            if (robot.parkFreeway) {
+                robot.boardToMiddle(slideStartingPosition);
+                robot.straightBlocking2(-10);
+            } else {
+                robot.boardToTruss(slideStartingPosition);
+                robot.straightBlocking2(-10);
+            }
 
         }
     }

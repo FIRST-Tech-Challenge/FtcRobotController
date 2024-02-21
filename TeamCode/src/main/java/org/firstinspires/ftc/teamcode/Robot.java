@@ -83,6 +83,9 @@ public class Robot {
     }
     MARKER_LOCATION markerLocation;
 
+    int autoDelayInSeconds;
+    boolean parkFreeway;
+
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean isLong, boolean red, boolean isAutonomous) {
         this.hardwareMap = hardwareMap;
