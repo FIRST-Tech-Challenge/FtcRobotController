@@ -59,6 +59,45 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 9.1 (20240215-115542)
+
+### Enhancements
+* Fixes a problem with Blocks: if the user closes a Block's warning balloon, it will still be closed next time the project is opened in the Blocks editor.
+* In the Blocks editor, an alert concerning missing hardware devices is not shown if all the Blocks that use the missing hardware devices are disabled.
+* Adds Blocks to support comparing property values CRServo.Direction, DCMotor.Direction, DCMotor.Mode, DCMotor.ZeroPowerBehavior, DigitalChannel.Mode, GyroSensor.HeadingMode, IrSeekerSensor.Mode, and Servo.Direction, to the corresponding enum Block.
+* Improves OnBotJava auto-import to correctly import classes when used in certain situations.
+* Improves OnBotJava autocomplete to provide better completion options in most cases.
+  * This fixes an issue where autocomplete would fail if a method with two or more formal parameters was defined.
+* In OnBotJava, code folding support was added to expand and collapse code sections
+* In OnBotJava, the copyright header is now automatically collapsed loading new files
+* For all Blocks OpMode samples, intro comments have been moved to the RunOpMode comment balloon.
+* The Clean up Blocks command in the Blocks editor now positions function Blocks so their comment balloons don't overlap other function Blocks.
+* Added Blocks OpMode sample SensorTouch.
+* Added Java OpMode sample SensorDigitalTouch.
+* Several improvements to VisionPortal
+  * Adds option to control whether the stream is automatically started following a `.build()` call on a VisionPortal Builder
+  * Adds option to control whether the vision processing statistics overlay is rendered or not
+  * VisionPortals now implement the `CameraStreamSource` interface, allowing multiportal users to select which portal is routed to the DS in INIT by calling CameraStreamServer.getInstance().setSource(visionPortal). Can be selected via gamepad, between Camera Stream sessions.
+  * Add option to `AprilTagProcessor` to suppress calibration warnings
+  * Improves camera calibration warnings
+    * If a calibration is scaled, the resolution it was scaled from will be listed
+    * If calibrations exist with the wrong aspect ratio, the calibrated resolutions will be listed
+  * Fixes race condition which caused app crash when calling `stopStreaming()` immediately followed by `close()` on a VisionPortal
+  * Fixes IllegalStateException when calling `stopStreaming()` immediately after building a VisionPortal
+  * Added FTC Blocks counterparts to new Java methods:
+    * VisionPortal.Builder.setAutoStartStreamOnBuild
+    * VisionPortal.Builder.setShowStatsOverlay
+    * AprilTagProcessor.Builder.setSuppressCalibrationWarnings
+    * CameraStreamServer.setSource​
+
+### Bug Fixes
+* Fixes a problem where OnBotJava does not apply font size settings to the editor.
+* Updates EasyOpenCV dependency to v1.7.1
+  * Fixes inability to use EasyOpenCV CameraFactory in OnBotJava
+  * Fixes entire RC app crash when user pipeline throws an exception
+  * Fixes entire RC app crash when user user canvas annotator throws an exception
+  * Use the modern stacktrace display when handling user exceptions instead of the legacy ESTOP telemetry message
+
 ## Version 9.0.1 (20230929-083754)
 
 ### Enhancements
