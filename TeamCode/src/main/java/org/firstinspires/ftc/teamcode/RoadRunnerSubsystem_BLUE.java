@@ -122,9 +122,9 @@ public class RoadRunnerSubsystem_BLUE {
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(180));
     protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.3 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) + 5,Tile/2, Math.toRadians(172)); // Default
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + 3.5, Math.toRadians(165)); // Default
 
-    protected Pose2d stationInnerOff = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2 + 3, Math.toRadians(180)); // Default
+    protected Pose2d stationInnerOff = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2 + 3, Math.toRadians(165)); // Default
 
 
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
@@ -195,7 +195,8 @@ public class RoadRunnerSubsystem_BLUE {
 
     public SequentialCommandGroup stackStationIntake(int index) {
         return new SequentialCommandGroup(
-                new InstantCommand(intakeSubsystem::run, intakeSubsystem),
+                new InstantCommand(intakeSubsystem::run),
+                new InstantCommand(outtakeSusystem::wheel_grab),
                 new WaitCommand(150),
                 new SequentialCommandGroup(
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
@@ -210,51 +211,51 @@ public class RoadRunnerSubsystem_BLUE {
         );
     }
 
-    private Thread intakeFirst = new Thread(() -> {
-        intakeSubsystem.run();
-        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeArmSubsystem.auto_pixel(5);
-        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeArmSubsystem.auto_pixel(4);
-        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeSubsystem.stop();
-        intakeArmSubsystem.raiseArm();
-    });
-
-    private Thread intakeSecond = new Thread(() -> {
-        intakeSubsystem.run();
-        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeArmSubsystem.auto_pixel(3);
-        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeArmSubsystem.auto_pixel(2);
-        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-        timer.start();
-        while (!timer.done());
-        timer.pause();
-
-        intakeSubsystem.stop();
-        intakeArmSubsystem.raiseArm();
-    });
+//    private Thread intakeFirst = new Thread(() -> {
+//        intakeSubsystem.run();
+//        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeArmSubsystem.auto_pixel(5);
+//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeArmSubsystem.auto_pixel(4);
+//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeSubsystem.stop();
+//        intakeArmSubsystem.raiseArm();
+//    });
+//
+//    private Thread intakeSecond = new Thread(() -> {
+//        intakeSubsystem.run();
+//        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeArmSubsystem.auto_pixel(3);
+//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeArmSubsystem.auto_pixel(2);
+//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+//        timer.start();
+//        while (!timer.done());
+//        timer.pause();
+//
+//        intakeSubsystem.stop();
+//        intakeArmSubsystem.raiseArm();
+//    });
 
     /*-------------------------------------------------------
     -La program-
@@ -272,7 +273,7 @@ public class RoadRunnerSubsystem_BLUE {
 
         /*-----------------------------------------------------*/
 
-//        outtakeSusystem = new OuttakeSusystem(hardwareMap);
+        outtakeSusystem = new OuttakeSusystem(hardwareMap);
 //        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
@@ -335,10 +336,10 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-//                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
-                    intakeFirst.start();
+                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
                 })
-                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(85))
+                .waitSeconds(4)
+//                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(90))
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
@@ -361,10 +362,10 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-//                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
-                    intakeSecond.start();
+                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
                 })
-                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(90))
+                .waitSeconds(4)
+//                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(75))
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
