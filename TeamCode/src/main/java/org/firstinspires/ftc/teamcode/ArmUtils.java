@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmUtils {
     // Roller
@@ -29,13 +30,15 @@ public class ArmUtils {
     //final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
-    final int PICKUP_EXTEND_TARGET = 1600;
+    final int PICKUP_EXTEND_TARGET = 100;
 
     // Pixel Backdrop Sequence
     final int BACKDROP_EXTEND_TARGET = 2000;
     final int BACKDROP_ARM_TARGET = 3000;
 
     final double SEQUENCE_ARM_POWER = 0.5;
+
+    Controller controller;
 
     DcMotor armLift = null;
     DcMotor armExtend = null;
@@ -48,7 +51,9 @@ public class ArmUtils {
     boolean pickupSequenceActive = false;
     boolean backdropSequenceActive = false;
 
-    public ArmUtils(HardwareMap hardwareMap) {
+    public ArmUtils(Controller controller, HardwareMap hardwareMap) {
+        this.controller = controller;
+
         armLift = hardwareMap.dcMotor.get("armLift");
         armExtend = hardwareMap.dcMotor.get("armExtend");
         rightGrip = hardwareMap.servo.get("GripR");
@@ -99,6 +104,8 @@ public class ArmUtils {
         leftGrip.setPosition(GRIP_OPEN);
         rightGrip.setPosition(GRIP_OPEN);
         rollerServo.setPosition(ROLLER_FLAT);
+
+        controller.Debug("arm extend", -armExtend.getCurrentPosition());
 
         if (-armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
             armExtend.setPower(ARM_EXTEND_SPEED);
