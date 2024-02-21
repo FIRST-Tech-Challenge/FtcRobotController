@@ -110,7 +110,7 @@ public final class TankDrive {
 
     public final List<DcMotorEx> leftMotors, rightMotors;
 
-    public final LazyImu imu;
+    public final LazyImu lazyImu;
 
     public final VoltageSensor voltageSensor;
 
@@ -237,7 +237,7 @@ public final class TankDrive {
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
