@@ -9,12 +9,14 @@ public class RedLongWall20 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
+        int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        robot.setDelayAndParking(maxDelayInSeconds, false);
+
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int maxDelayInSeconds = 12;
 
         waitForStart();
 
