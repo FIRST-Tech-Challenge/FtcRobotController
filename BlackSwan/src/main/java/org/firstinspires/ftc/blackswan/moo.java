@@ -55,15 +55,15 @@ public class moo extends LinearOpMode {
 
 //        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double servoPosition = 0.5;
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        planeLauncher.setPosition(0.95 );
+        planeLauncher.setPosition(0.95);
         turnClaw.setPosition(0.47);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
@@ -97,14 +97,8 @@ public class moo extends LinearOpMode {
             } else if (gamepad2.dpad_left) {
                 turnClaw.setPosition(0.6);
             }
-            double drivePower = -gamepad1.left_stick_y * 0.8;
-            double rotatePower = gamepad1.right_stick_x * 0.8;
 
             // Flip these signs if the robot rotates the wrong way
-            frontLeft.setPower(drivePower + rotatePower);
-            frontRight.setPower(drivePower - rotatePower);
-            backLeft.setPower(drivePower + rotatePower);
-            backRight.setPower(drivePower - rotatePower);
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
@@ -125,20 +119,20 @@ public class moo extends LinearOpMode {
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
                 double max;
-//                max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-//                max = Math.max(max, Math.abs(rightFrontPower));
-//                max = Math.max(max, Math.abs(rightRearPower));
-//
-//                leftFrontPower /= max;
-//                leftRearPower /= max;
-//                rightFrontPower /= max;
-//                rightRearPower /= max;
-//            }
-//
-//            frontLeft.setPower(leftFrontPower);
-//            backLeft.setPower(leftRearPower);
-//            frontRight.setPower(rightFrontPower);
-//            backRight.setPower(rightRearPower);
+                max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+                max = Math.max(max, Math.abs(rightFrontPower));
+                max = Math.max(max, Math.abs(rightRearPower));
+
+                leftFrontPower /= max;
+                leftRearPower /= max;
+                rightFrontPower /= max;
+                rightRearPower /= max;
+            }
+
+            frontLeft.setPower(leftFrontPower);
+            backLeft.setPower(leftRearPower);
+            frontRight.setPower(rightFrontPower);
+            backRight.setPower(rightRearPower);
 
                 telemetry.addData("left slide", slideLeft.getCurrentPosition());
                 telemetry.addData("right slide", slideRight.getCurrentPosition());
@@ -168,8 +162,7 @@ public class moo extends LinearOpMode {
                     closeClaw.setPosition(0.2);
                 }
                 if (gamepad1.a) {
-                    planeLauncher.setPosition(1);
-
+                    planeLauncher.setPosition(0);
                 }
                 telemetry.update();
 
@@ -177,4 +170,3 @@ public class moo extends LinearOpMode {
 
         }
     }
-}

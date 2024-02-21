@@ -6,12 +6,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -25,8 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Red REWORK", group = "competition")
-public class CenterStageBackdropRedREWORK extends LinearOpMode {
+@Autonomous(name = "Center Stage Backdrop Red TESLA COILS", group = "competition")
+public class CenterStageBackdropRedTESLACOILS extends LinearOpMode {
     private OpenCvCamera webcam;
 
 
@@ -139,7 +136,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -40, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(46.5, -36.5, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
@@ -377,7 +374,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
                         drive.outtakeToTransfer();
 
                         target = 0;
-                        currentState = State.END;
+                            currentState = State.END;
 
 
                         }

@@ -49,7 +49,7 @@ public class CSCons {
 
     public enum OuttakePosition{
         BOTTOM (-10),
-        LOW_AUTO(1150),
+        LOW_AUTO(1050),
         LOW(1400),
         MID(2400),
         HIGH(3400);

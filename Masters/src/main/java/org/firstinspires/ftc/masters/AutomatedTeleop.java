@@ -245,10 +245,10 @@ public class AutomatedTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
 
-            if (gamepad1.right_trigger>0.5){
+            if (gamepad1.right_bumper){
                 driveMode= DriveMode.END_GAME;
             }
-            if (gamepad1.left_trigger>0.5){
+            if (gamepad1.left_bumper){
                 driveMode= DriveMode.NORMAL;
             }
             switch (driveMode) {
@@ -312,7 +312,8 @@ public class AutomatedTeleop extends LinearOpMode {
                                 clawServo.setPosition(clawOpen);
                                 claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
                             }
-                        } else {
+                        }
+                        if (!gamepad2.a){
                             buttonPushed = false;
                         }
 
@@ -347,13 +348,13 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawArm.setPosition(CSCons.clawArmTransition);
                         }
 
-                        if (gamepad1.dpad_up) {
+                        if (gamepad1.right_trigger>0.1) {
                             intakeSlides.setTargetPosition(1700);
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(1);
                         }
 
-                        if (gamepad1.dpad_down) {
+                        if (gamepad1.left_trigger>0.1) {
                             intakeSlides.setTargetPosition(0);
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(1);
@@ -546,11 +547,11 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
-                            target -= 30;
+                            target -= 15;
                         }
 
                         if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
-                            target += 30;
+                            target += 15;
                         }
 
                         //what button to mode back to transfer?

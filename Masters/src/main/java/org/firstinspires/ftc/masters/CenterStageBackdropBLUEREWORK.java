@@ -6,12 +6,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -25,8 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Red REWORK", group = "competition")
-public class CenterStageBackdropRedREWORK extends LinearOpMode {
+@Autonomous(name = "Center Stage Backdrop Blue REWORK", group = "competition")
+public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
     private OpenCvCamera webcam;
 
 
@@ -67,8 +64,8 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindRight myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindRight(telemetry,packet));
+        PropFindLeft myPipeline;
+        webcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -95,29 +92,29 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
 
 
-        PropFindRight.pos propPos = null;
+        PropFindLeft.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
         //PURPLE PIXEL
 
-        TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)))
-                .setTangent(Math.toRadians(40))
-                .splineToLinearHeading(new Pose2d(28.5, -25, Math.toRadians(180)), Math.toRadians(70))
+        TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+                .setTangent(Math.toRadians(-40))
+                .splineToLinearHeading(new Pose2d(32, 25, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
-        TrajectorySequence middlePurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)))
-                .setTangent(Math.toRadians(40))
-                .splineToLinearHeading(new Pose2d(26, -20, Math.toRadians(180)), Math.toRadians(70))
+        TrajectorySequence middlePurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+                .setTangent(Math.toRadians(-40))
+                .splineToLinearHeading(new Pose2d(26, 20, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
-        TrajectorySequence rightPurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)))
-                .setTangent(Math.toRadians(40))
-                .splineToLinearHeading(new Pose2d(34.5, -27, Math.toRadians(180)), Math.toRadians(70))
+        TrajectorySequence rightPurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+                .setTangent(Math.toRadians(-40))
+                .splineToLinearHeading(new Pose2d(29, 27, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
@@ -125,36 +122,36 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -23, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(44, 37, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence middleyellow = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -31.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(44, 31.5, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -40, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(44, 24.5, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
         //OTHER PATHS
 
         TrajectorySequence backAway = drive.trajectorySequenceBuilder(middleyellow.end())
-                .setTangent(Math.toRadians(-120))
-                .splineToLinearHeading(new Pose2d(36, -58, Math.toRadians(180)), Math.toRadians(-80))
+                .setTangent(Math.toRadians(120))
+                .splineToLinearHeading(new Pose2d(44, 58, Math.toRadians(180)), Math.toRadians(80))
 
                 .build();
 
 
         TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(42, -58, Math.toRadians(180)), Math.toRadians(00))
+                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
@@ -194,11 +191,11 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
             switch (currentState) {
                 case PURPLE_DEPOSIT_PATH:
 
-                    if (propPos == PropFindRight.pos.LEFT) {
+                    if (propPos == PropFindLeft.pos.LEFT) {
                         drive.followTrajectorySequenceAsync(leftPurple);
                         drive.intakeToGround();
                             currentState = State.PURPLE_DEPOSIT;
-                    } else if (propPos == PropFindRight.pos.RIGHT) {
+                    } else if (propPos == PropFindLeft.pos.RIGHT) {
                         drive.followTrajectorySequenceAsync(rightPurple);
                         drive.intakeToGround();
                         currentState = State.PURPLE_DEPOSIT;
@@ -211,7 +208,27 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
                     break;
 
                 case PURPLE_DEPOSIT:
-                    if(propPos == PropFindRight.pos.LEFT) {
+                    if(propPos == PropFindLeft.pos.LEFT) {
+                        if (preloadInt == 0) {
+                            if (!drive.isBusy()) {
+                                if (waitTime.milliseconds() > 300) {
+                                    preloadTime.reset();
+                                    preloadInt = 1;
+                                }
+
+                            }
+                        }
+                        if (preloadInt == 1) {
+
+
+                            if (preloadTime.milliseconds() > 100) {
+                                drive.openClaw();
+                                drive.closeHook();
+                                currentState = State.YELLOW_DEPOSIT_PATH;
+                            }
+
+                        }
+                    }else if(propPos == PropFindLeft.pos.RIGHT) {
                         if (preloadInt == 0) {
                             if (!drive.isBusy()) {
                                 if (waitTime.milliseconds() > 1100) {
@@ -233,26 +250,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
                             }
 
                         }
-                    }else if(propPos == PropFindRight.pos.RIGHT) {
-                        if (preloadInt == 0) {
-                            if (!drive.isBusy()) {
-                                if (waitTime.milliseconds() > 300) {
-                                    preloadTime.reset();
-                                    preloadInt = 1;
-                                }
 
-                            }
-                        }
-                        if (preloadInt == 1) {
-
-
-                            if (preloadTime.milliseconds() > 100) {
-                                drive.openClaw();
-                                drive.closeHook();
-                                currentState = State.YELLOW_DEPOSIT_PATH;
-                            }
-
-                        }
                     } else{
                         if (preloadInt == 0) {
                             if (!drive.isBusy()) {
@@ -279,7 +277,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
                 case YELLOW_DEPOSIT_PATH:
 
-                    if(propPos == PropFindRight.pos.LEFT) {
+                    if(propPos == PropFindLeft.pos.LEFT) {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
@@ -302,7 +300,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
                                 currentState = State.YELLOW_DEPOSIT;
                             }
                         }
-                    }else if(propPos == PropFindRight.pos.RIGHT) {
+                    }else if(propPos == PropFindLeft.pos.RIGHT) {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
