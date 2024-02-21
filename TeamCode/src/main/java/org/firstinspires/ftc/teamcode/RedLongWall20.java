@@ -11,7 +11,7 @@ public class RedLongWall20 extends LinearOpMode {
         //robot, dt motors, vision processing setup
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
-        robot.setDelayAndParking(maxDelayInSeconds, false);
+        robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.TRUSS);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
@@ -42,15 +42,9 @@ public class RedLongWall20 extends LinearOpMode {
 
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(false);
 
-            if (robot.parkFreeway) {
-                robot.boardToMiddle(slideStartingPosition);
-                robot.straightBlocking2(-10);
-            } else {
-                robot.boardToTruss(slideStartingPosition);
-                robot.straightBlocking2(-10);
-            }
+            robot.configuredParking();
 
             break;
 

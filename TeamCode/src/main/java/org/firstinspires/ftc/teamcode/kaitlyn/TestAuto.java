@@ -10,7 +10,7 @@ public class TestAuto extends LinearOpMode {
 
     public PARKING_POSITION parkingposition = PARKING_POSITION.BOARD;
     public enum PARKING_POSITION {
-        LEFT, RIGHT, BOARD
+        FREEWAY, TRUSS, BOARD
     }
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,6 +20,7 @@ public class TestAuto extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         //.setUpIntakeOuttake();
         robot.initVisionProcessing();
+
         double waitCounter = 0;
         boolean wasPressedB = false;
         boolean wasPressedX = false;
@@ -28,32 +29,38 @@ public class TestAuto extends LinearOpMode {
         boolean wasPressedDPadUp = false;
 
         while (!opModeIsActive()) {
-            if(wasPressedB == true && !gamepad1.b) {
+
+            // b increases wait counter by 1
+            if (wasPressedB == true && !gamepad1.b) {
                 waitCounter++;
             }
             wasPressedB = gamepad1.b;
 
-            if(wasPressedX == true && !gamepad1.x) {
+            // x decreases wait counter by 1
+            if (wasPressedX == true && !gamepad1.x) {
                 waitCounter--;
             }
             wasPressedX = gamepad1.x;
 
-            if(waitCounter<0){
+            // wait counter cannot be negative
+            if (waitCounter < 0) {
                 waitCounter = 0;
             }
 
-
-            if(wasPressedDPadLeft == true && !gamepad1.dpad_left) {
-                parkingposition = PARKING_POSITION.LEFT;
+            // dpad left - park left
+            if (wasPressedDPadLeft == true && !gamepad1.dpad_left) {
+                parkingposition = PARKING_POSITION.FREEWAY;
             }
             wasPressedDPadLeft = gamepad1.dpad_left;
 
-            if(wasPressedDPadRight == true && !gamepad1.dpad_right) {
-                parkingposition = PARKING_POSITION.RIGHT;
+            // dpad right - park right
+            if (wasPressedDPadRight == true && !gamepad1.dpad_right) {
+                parkingposition = PARKING_POSITION.TRUSS;
             }
             wasPressedDPadRight = gamepad1.dpad_right;
 
-            if(wasPressedDPadUp == true && !gamepad1.dpad_up) {
+            // dpad up - don't park
+            if (wasPressedDPadUp == true && !gamepad1.dpad_up) {
                 parkingposition = PARKING_POSITION.BOARD;
             }
             wasPressedDPadUp = gamepad1.dpad_up;

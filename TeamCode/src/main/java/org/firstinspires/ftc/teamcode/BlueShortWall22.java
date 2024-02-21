@@ -37,9 +37,9 @@ public class BlueShortWall22 extends LinearOpMode {
             slideStartingPosition = robot.lsFront.getCurrentPosition();
 
 
-            robot.autoOuttake(true, slideStartingPosition);
+            robot.autoOuttake(true);
 
-            robot.boardToTruss(slideStartingPosition);
+            robot.boardToTruss();
 
             robot.trussToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
@@ -47,7 +47,7 @@ public class BlueShortWall22 extends LinearOpMode {
             robot.intake.setPower(0);
 
             robot.alignToBoardFast(robot.secondWantedTagId);
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(false);
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 

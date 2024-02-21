@@ -38,10 +38,10 @@ public class BlueShort20 extends LinearOpMode {
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
 
-            robot.autoOuttake(true, slideStartingPosition);
+            robot.autoOuttake(true);
 
             // parking here
-            robot.boardToTruss(slideStartingPosition);
+            robot.boardToTruss();
             robot.straightBlocking2(-10);
 
             break;

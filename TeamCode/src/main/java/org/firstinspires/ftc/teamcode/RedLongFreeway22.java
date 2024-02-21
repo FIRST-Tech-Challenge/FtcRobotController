@@ -13,7 +13,6 @@ public class RedLongFreeway22 extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         waitForStart();
 
@@ -31,11 +30,9 @@ public class RedLongFreeway22 extends LinearOpMode {
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(false);
 
-            robot.boardToMiddle(slideStartingPosition);
+            robot.boardToMiddle();
             robot.middleToStackAndIntake();
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
@@ -45,18 +42,10 @@ public class RedLongFreeway22 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(false);
 
             break;
 
         }
     }
 }
-
-// todo write timeout for apriltag final forward
-// todo how to stop streaming
-// todo bring back to board
-// todo set complementary tag id
-// todo slide not high enough second time
-// todo turns need a timeout, and maybe other control loops
-// todo tune tray outtake pos/how close it is to board
