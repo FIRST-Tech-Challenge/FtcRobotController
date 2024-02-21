@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -17,24 +18,17 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsyste
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 
 @Autonomous(name = "AutonomousTesting", group = "Final Autonomous")
-public class AutonomousTesting extends CommandOpMode {
+public class AutonomousTesting extends LinearOpMode {
 
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
 
     @Override
-    public void initialize(){
+    public void runOpMode() {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
-    }
-
-    @Override
-    public void run() {
-        initialize();
-        waitForStart();
-
 //        schedule(new SequentialCommandGroup(
 //                new InstantCommand(intakeSubsystem::run, intakeSubsystem),
 //                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(5), intakeArmSubsystem),
@@ -48,14 +42,16 @@ public class AutonomousTesting extends CommandOpMode {
 //                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(1), intakeArmSubsystem)
 //        ));
 
-        schedule(new SequentialCommandGroup(
+        waitForStart();
+
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 new InstantCommand(intakeSubsystem::run, intakeSubsystem),
                 new WaitCommand(150),
                 new SequentialCommandGroup(
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(5), intakeArmSubsystem),
-                        new WaitCommand(1000),
+                        new WaitCommand(200),
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(4), intakeArmSubsystem),
-                        new WaitCommand(1000)
+                        new WaitCommand(200)
                 ),
                 new ParallelCommandGroup(
                         new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
@@ -66,9 +62,7 @@ public class AutonomousTesting extends CommandOpMode {
         ));
 
         while (!isStopRequested() && opModeIsActive()) {
-            run();
+            CommandScheduler.getInstance().run();
         }
-
-        reset();
     }
 }

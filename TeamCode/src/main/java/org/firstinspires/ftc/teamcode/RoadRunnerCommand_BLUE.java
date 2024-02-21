@@ -135,16 +135,4 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     public TrajectorySequenceBuilder getParking(){
         return parking;
     }
-
-    public void runSpike(Randomization rand){
-        drive.followTrajectorySequence(getSpike(rand).build());
-    }
-
-    public void runCycle(){
-        drive.followTrajectorySequence(getCycle().build());
-    }
-
-    public void runParking(){
-        drive.followTrajectorySequence(getParking().build());
-    }
 }

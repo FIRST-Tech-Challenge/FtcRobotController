@@ -10,12 +10,15 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
+
+import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "CenterStageAutonomous_BLUE", group = "Final Autonomous")
 public class CenterStageAutnomous_BLUE extends LinearOpMode {
@@ -27,6 +30,9 @@ public class CenterStageAutnomous_BLUE extends LinearOpMode {
     public Pose2d HomePose_SHORT = new Pose2d(RoadRunnerSubsystem_BLUE.Tile/2, 3 * RoadRunnerSubsystem_BLUE.Tile - 6.93 - 2.56, Math.toRadians(270));
     public Pose2d HomePose_LONG = new Pose2d(1.5 * RoadRunnerSubsystem_BLUE.TileInverted, 3 * RoadRunnerSubsystem_BLUE.TileInverted + (RoadRunnerSubsystem_BLUE.RobotY/2), Math.toRadians(90));
 
+    private Timing.Timer timer;
+
+    private double startTime = 0;
 
     @Override
     public void runOpMode() {
@@ -42,10 +48,33 @@ public class CenterStageAutnomous_BLUE extends LinearOpMode {
         RR_Blue.parking();
         RR_Blue.TrajectoryInit();
 
-        waitForStart();
+        timer = new Timing.Timer(30, TimeUnit.MILLISECONDS);
 
-        drive.followTrajectorySequence(RR_Blue.getSpike(rand).build());
-        drive.followTrajectorySequence(RR_Blue.getCycle().build());
-        drive.followTrajectorySequence(RR_Blue.getParking().build());
+        waitForStart();
+        timer.start();
+
+        drive.followTrajectorySequenceAsync(RR_Blue.getSpike(rand).build());
+        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
+            drive.update();
+            CommandScheduler.getInstance().run();
+        }
+        drive.setWeightedDrivePower(new Pose2d(0,0,0));
+
+        drive.followTrajectorySequenceAsync(RR_Blue.getCycle().build());
+        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
+            startTime = timer.elapsedTime();
+            drive.update();
+            CommandScheduler.getInstance().run();
+            telemetry.addData("Hz: ", (1/(timer.elapsedTime()-startTime))/1000);
+            telemetry.update();
+        }
+        drive.setWeightedDrivePower(new Pose2d(0,0,0));
+
+        drive.followTrajectorySequenceAsync(RR_Blue.getParking().build());
+        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
+            drive.update();
+            CommandScheduler.getInstance().run();
+        }
+        drive.setWeightedDrivePower(new Pose2d(0,0,0));
     }
 }

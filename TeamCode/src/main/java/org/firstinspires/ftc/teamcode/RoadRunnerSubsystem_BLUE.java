@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
@@ -22,8 +23,12 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSub
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 public class RoadRunnerSubsystem_BLUE {
     protected SampleMecanumDrive drive;
+
+    private Timing.Timer timer;
     /*-------------------------------------------------------
     -Mechanisms-
     -------------------------------------------------------*/
@@ -117,7 +122,11 @@ public class RoadRunnerSubsystem_BLUE {
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(180));
     protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.3 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2, Math.toRadians(180)); // Default
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) + 5,Tile/2, Math.toRadians(172)); // Default
+
+    protected Pose2d stationInnerOff = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2 + 3, Math.toRadians(180)); // Default
+
+
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
     protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile, Math.toRadians(180)); // Default
 
@@ -145,6 +154,8 @@ public class RoadRunnerSubsystem_BLUE {
     /*-------------------------------------------------------
     -FTCLib Commands-
     -------------------------------------------------------*/
+
+    boolean intakeIsEnded = false;
 
     public SequentialCommandGroup randomizationPixelElevator(){
         return new SequentialCommandGroup(
@@ -188,18 +199,62 @@ public class RoadRunnerSubsystem_BLUE {
                 new WaitCommand(150),
                 new SequentialCommandGroup(
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
-                        new WaitCommand(1000),
+                        new WaitCommand(500),
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1), intakeArmSubsystem),
-                        new WaitCommand(1000)
+                        new WaitCommand(500)
                 ),
                 new ParallelCommandGroup(
                         new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
                         new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
-                ),
-
-                new WaitCommand(2000)
+                )
         );
     }
+
+    private Thread intakeFirst = new Thread(() -> {
+        intakeSubsystem.run();
+        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeArmSubsystem.auto_pixel(5);
+        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeArmSubsystem.auto_pixel(4);
+        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeSubsystem.stop();
+        intakeArmSubsystem.raiseArm();
+    });
+
+    private Thread intakeSecond = new Thread(() -> {
+        intakeSubsystem.run();
+        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeArmSubsystem.auto_pixel(3);
+        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeArmSubsystem.auto_pixel(2);
+        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+        timer.start();
+        while (!timer.done());
+        timer.pause();
+
+        intakeSubsystem.stop();
+        intakeArmSubsystem.raiseArm();
+    });
 
     /*-------------------------------------------------------
     -La program-
@@ -238,7 +293,7 @@ public class RoadRunnerSubsystem_BLUE {
         leftSpike = drive.trajectorySequenceBuilder(HomePose)
                 .strafeTo(leftPixelSpike.vec());
 //                .addDisplacementMarker(() -> {
-////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
 //                });//tan pair 180/0
 
         /*------------------------------------------------------------------------*/
@@ -246,7 +301,7 @@ public class RoadRunnerSubsystem_BLUE {
         centerSpike = drive.trajectorySequenceBuilder(HomePose)
                 .lineTo(centerPixelSpike.vec());
 //                .addDisplacementMarker(() -> {
-////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
 //                });
 
         /*------------------------------------------------------------------------*/
@@ -255,19 +310,19 @@ public class RoadRunnerSubsystem_BLUE {
                 .setTangent(Math.toRadians(rightSpikeStartingTanget[rightSpikeStartingTangetValue])) //tan pair 45/135
                 .splineToLinearHeading(rightPixelSpike, Math.toRadians(rightSpikeFinalTanget[rightSpikeFinalTangetValue]));
 //                .addDisplacementMarker(() -> {
-////                    new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem);
+////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
 //                });
 
         /*----------------------------------------------------------------------------------------*/
 
         pixel_backdrop_Short = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
 //                .addDisplacementMarker(() -> {
-////                    randomizationPixelElevator();
+////                    CommandScheduler.getInstance().schedule(randomizationPixelElevator());
 //                })
                 .setTangent(Math.toRadians(90))
                 .splineToLinearHeading(randomizedBackdrop, Math.toRadians(300))
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                })
                 /*-------------------------------------------------------------------*/
                 /*----2+2----*/
@@ -280,18 +335,20 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-                    stackStationIntake(5).schedule();
+//                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
+                    intakeFirst.start();
                 })
+                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(85))
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
 //                .addDisplacementMarker(() -> {
-////                    elevator();
+////                    CommandScheduler.getInstance().schedule(elevator());
 //                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                })
                 /*-------------------------------------------------------------------*/
                 /*----2+4----*/
@@ -304,18 +361,20 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
                 .addDisplacementMarker(() -> {
-                    stackStationIntake(3).schedule();
+//                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
+                    intakeSecond.start();
                 })
+                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(90))
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
 //                .addDisplacementMarker(() -> {
-////                    elevator();
+////                    CommandScheduler.getInstance().schedule(elevator());
 //                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                });
         /*----------------------------------------------------------------------------------------*/
 
@@ -323,18 +382,18 @@ public class RoadRunnerSubsystem_BLUE {
                 .setTangent(Math.toRadians(180))
                 .splineToLinearHeading(stackStation, Math.toRadians(180))
 //                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
+////                    CommandScheduler.getInstance().schedule(stackStationIntake());
 //                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
 //                .addDisplacementMarker(() -> {
-////                    randomizationPixelElevator();
+////                    CommandScheduler.getInstance().schedule(randomizationPixelElevator());
 //                })
                 .splineToConstantHeading(randomizedBackdrop.vec(), Math.toRadians(0))
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                })
                 /*-------------------------------------------------------------------*/
                 /*----2+3----*/
@@ -344,18 +403,18 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
 //                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
+////                    CommandScheduler.getInstance().schedule(stackStationIntake());
 //                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
 //                .addDisplacementMarker(() -> {
-////                    elevator();
+////                    CommandScheduler.getInstance().schedule(elevator());
 //                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                })
                 /*-------------------------------------------------------------------*/
                 /*----2+5----*/
@@ -365,18 +424,18 @@ public class RoadRunnerSubsystem_BLUE {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
 //                .addDisplacementMarker(() -> {
-////                    stackStationIntake();
+////                    CommandScheduler.getInstance().schedule(stackStationIntake());
 //                })
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
 //                .addDisplacementMarker(() -> {
-////                    elevator();
+////                    CommandScheduler.getInstance().schedule(elevator());
 //                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 //                .addDisplacementMarker(() -> {
-////                    scoring();
+////                    CommandScheduler.getInstance().schedule(scoring());
 //                });
 
         /*----------------------------------------------------------------------------------------*/
