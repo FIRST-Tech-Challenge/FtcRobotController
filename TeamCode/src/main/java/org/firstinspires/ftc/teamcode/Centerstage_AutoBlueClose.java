@@ -71,12 +71,12 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
     // backboard to score a second pixel in autonomy mode
     private static final boolean hasSecondCamera = false;
 
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    final double SPEED_GAIN  =  0.1; //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.1; //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.1; //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double MAX_AUTO_SPEED = 0.5; //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5; //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3; //  Clip the turn speed to this max value (adjust for your robot)
 
     Gobbler gobbler = null;
 
@@ -134,7 +134,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         if (targetFound) {
 
             driveToTarget();
-           //placePixelOnBackboard();
+            //placePixelOnBackboard();
 
         }
     }
@@ -183,7 +183,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(2);
+        aprilTag.setDecimation(3);
 
         // Create the vision portal by using a builder.
         if (USE_WEBCAM) {
@@ -206,7 +206,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         // as possible.  To that extent, we'll position the robot in such a way that it will only
         // need to drive forward.
 
-        //driveToIntermediatePosition();
+        driveToIntermediatePosition();
         driveToFinalPosition();
 
         if (hasSecondCamera) {
@@ -225,11 +225,9 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         // What is our desired intermediate position? This can and should be independent of which
         // april tag we're moving toward.  Probably needs to be determined through testing, but a
         // reasonable approximation could be calculated from the geometry of the field/robot.
-        double desiredDistance = 21.6;
-       // double desiredHeading = 20.0;
+        double desiredDistance = 30.0;
+        // double desiredHeading = 20.0;
         // double desiredYaw = 20.0;
-
-
 
         while (opModeIsActive()) {
             LocateTargetAprilTag();
@@ -238,6 +236,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
             // Might want to build in some mechanism to prevent getting stuck here, such as only
             // spending a certain amount of time here.
             if (desiredTag == null) {
+                gobbler.driveTrain.stop();
                 continue;
             }
 
@@ -246,19 +245,20 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
             double yawError = desiredTag.ftcPose.yaw;   // - desiredYaw;
 
             double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
             double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+            double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
 
             if (!errorIsAcceptable(rangeError, headingError, yawError)) {
+                gobbler.driveTrain.driveAutonomously(-drive, strafe, turn);
 
-                gobbler.driveTrain.drive(-drive, -strafe, turn, true, runtimeTimer);
-
-                telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+                //telemetry.addData("strafe", "%5.1f", strafe);
+                telemetry.addData("Range", "%5.2f inches", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%3.2f degrees", desiredTag.ftcPose.bearing);
+                telemetry.addData("Yaw", "%3.2f degrees", desiredTag.ftcPose.yaw);
                 telemetry.update();
             }
             else {
+                gobbler.driveTrain.stop();
                 telemetry.addData("Made it to the intermediate position", "");
                 telemetry.update();
                 break;
@@ -267,7 +267,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
     }
 
     private boolean errorIsAcceptable(double rangeError, double headingError, double yawError) {
-        double epsilon = 0.1;
+        double epsilon = 1.0;
         return ((Math.abs(rangeError) <= epsilon) && (Math.abs(headingError) < epsilon) && (Math.abs(yawError) < epsilon));
     }
 
@@ -277,27 +277,27 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
 //        gobbler.driveTrain.strafe(6, 0.25);
 //        gobbler.driveTrain.moveForward(-20, 0.5);
         if (DESIRED_TAG_ID == 1) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeRight(4, 0.5);
-            gobbler.driveTrain.Wait(0.5);
-        }
-
-        else if (DESIRED_TAG_ID == 2) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
             gobbler.driveTrain.strafeLeft(2, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
-        else if (DESIRED_TAG_ID == 3) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
+        else if (DESIRED_TAG_ID == 2) {
+            gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(8, 0.5);
+            gobbler.driveTrain.strafeLeft(3, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
-        gobbler.driveTrain.moveBackward(7, 0.5);
+        else if (DESIRED_TAG_ID == 3) {
+            gobbler.driveTrain.moveBackward(12, 0.5);
+            gobbler.driveTrain.Wait(0.5);
+            gobbler.driveTrain.strafeLeft(6, 0.5);
+            gobbler.driveTrain.Wait(0.5);
+        }
+
+        gobbler.driveTrain.moveBackward(10, 0.5);
 
         // If using RoadRunner, can just directly put in a RR path to go from current position to
         // the desired final position in front of the backboard
