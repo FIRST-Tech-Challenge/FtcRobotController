@@ -30,7 +30,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    private static final int DESIRED_TAG_ID = 6;
+    private static final int DESIRED_TAG_ID = 4;
 
     private AprilTagProcessor aprilTag;
 
@@ -154,7 +154,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(2);
+        aprilTag.setDecimation(3);
 
         // Create the vision portal by using a builder.
         if (USE_WEBCAM) {
@@ -178,7 +178,7 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
         // need to drive forward.
 
         driveToIntermediatePosition();
-        //driveToFinalPosition();
+        driveToFinalPosition();
 
         if (hasSecondCamera) {
             fineTunePositioning();
@@ -248,27 +248,27 @@ public class Centerstage_AutoRedClose extends LinearOpMode {
 //        gobbler.driveTrain.strafe(6, 0.25);
 //        gobbler.driveTrain.moveForward(-20, 0.5);
         if (DESIRED_TAG_ID == 4) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeRight(4, 0.5);
+            gobbler.driveTrain.strafeLeft(2, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
         else if (DESIRED_TAG_ID == 5) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(4, 0.5);
+            gobbler.driveTrain.strafeLeft(3, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
         else if (DESIRED_TAG_ID == 6) {
-            gobbler.driveTrain.moveBackward(15, 0.5);
+            gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
-            gobbler.driveTrain.strafeLeft(8, 0.5);
+            gobbler.driveTrain.strafeLeft(6, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
-        gobbler.driveTrain.moveBackward(7, 0.5);
+        gobbler.driveTrain.moveBackward(10, 0.5);
 
         // If using RoadRunner, can just directly put in a RR path to go from current position to
         // the desired final position in front of the backboard
