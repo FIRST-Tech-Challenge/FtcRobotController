@@ -11,12 +11,11 @@ public class RedLongFreeway20 extends LinearOpMode {
         //robot, dt motors, vision processing setup
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
-        robot.setDelayAndParking(maxDelayInSeconds, true);
+        robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.FREEWAY);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         waitForStart();
 
@@ -39,17 +38,9 @@ public class RedLongFreeway20 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
-            robot.autoOuttake(true, slideStartingPosition);
+            robot.autoOuttake(true);
 
-            if (robot.parkFreeway) {
-                robot.boardToMiddle(slideStartingPosition);
-                robot.straightBlocking2(-10);
-            } else {
-                robot.boardToTruss(slideStartingPosition);
-                robot.straightBlocking2(-10);
-            }
+            robot.configuredParking();
 
             break;
 

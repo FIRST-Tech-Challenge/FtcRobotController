@@ -13,7 +13,6 @@ public class RedShortFreeway22 extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         waitForStart();
 
@@ -30,11 +29,9 @@ public class RedShortFreeway22 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
-            robot.autoOuttake(true, slideStartingPosition);
+            robot.autoOuttake(true);
 
-            robot.boardToMiddle(slideStartingPosition);
+            robot.boardToMiddle();
             robot.middleToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
@@ -43,7 +40,7 @@ public class RedShortFreeway22 extends LinearOpMode {
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
-            robot.autoOuttake(false, slideStartingPosition);
+            robot.autoOuttake(false);
 
             break;
 

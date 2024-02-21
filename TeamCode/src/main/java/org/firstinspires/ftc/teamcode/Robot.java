@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.kaitlyn.TestAuto;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -75,16 +76,20 @@ public class Robot {
     private boolean previousStackButtonValue;
     private double trayAngleSlope;
     private double teleOpTuneValueTrayAngle;
+    double slideStartingPosition;
 
     boolean isLong;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
     }
+    public enum PARKING_POSITION {
+        FREEWAY, TRUSS, BOARD
+    }
     MARKER_LOCATION markerLocation;
 
     int autoDelayInSeconds;
-    boolean parkFreeway;
+    PARKING_POSITION parkingPosition;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean isLong, boolean red, boolean isAutonomous) {
@@ -95,7 +100,6 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu(isAutonomous);
         isRedAlliance = red;
-
         if (isLong) {
             robotX = 35;
             robotY = 17;
@@ -194,31 +198,30 @@ public class Robot {
         opMode.sleep(200);
     }
 
-    public void autoOuttake(boolean lowOuttake, double startingPosition) {
+    public void autoOuttake(boolean lowOuttake) {
 
         // move linear slide up
         if (lowOuttake) {
             trayToOuttakePos(false); // pivot tray to outtake position
-            moveLinearSlideByTicksBlocking(startingPosition + 1550); //1700
+            moveLinearSlideByTicksBlocking(slideStartingPosition + 1550); //1700
             opMode.sleep(100);
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
-            moveLinearSlideByTicksBlocking(startingPosition + 1950);
+            moveLinearSlideByTicksBlocking(slideStartingPosition + 1950);
         } else {
             trayToOuttakeSplitEditionOne();
-            moveLinearSlideByTicksBlocking(startingPosition + 1750);//1900
+            moveLinearSlideByTicksBlocking(slideStartingPosition + 1750);//1900
             trayToOuttakeSplitEditionTwo();
             opMode.sleep(100);
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
-            moveLinearSlideByTicksBlocking(startingPosition + 2350);
+            moveLinearSlideByTicksBlocking(slideStartingPosition + 2350);
         }
 
         straightBlocking(4, true, 0.7); //move back 2
 
         setServoPos(trayAngle, 0.5);
         trayToIntakePos(true); //intake pos
-        //moveLinearSlideByTicksBlocking(startingPosition); // linear slide down//TODO UNCOMMET IF NOT WORKING
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -1816,13 +1819,13 @@ public class Robot {
 
     }
 
-    public void boardToMiddle (double slidesStartingPos) {
+    public void boardToMiddle () {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
         switch (wantedAprTagId) {
             case 1:
-                mecanumAndSlidesDownToZero(-35, slidesStartingPos);
+                mecanumAndSlidesDownToZero(-35, slideStartingPosition);
                 break;
             case 2:
                 //blue center
@@ -2141,7 +2144,7 @@ public class Robot {
         }
     }
 
-    public void boardToTruss (double slideStartingPosition) {
+    public void boardToTruss () {
 
         int polarity = (isRedAlliance) ? -1 : 1;
 
@@ -2353,9 +2356,104 @@ public class Robot {
         setServoPos(spikeServo, 0.68);
     }
 
-    public void setDelayAndParking (int delay, boolean parkAtFreeway) {
+    public void setDelayAndParking (int delay, PARKING_POSITION parkingPos) {
         autoDelayInSeconds = delay;
-        parkFreeway = parkAtFreeway;
+        parkingPosition = parkingPos;
     }
 
+    public void buttonConfigAtInit (Gamepad gamepad1) {
+
+        PARKING_POSITION parkingPosition = PARKING_POSITION.BOARD;
+
+        double waitCounter = 0;
+        boolean wasPressedB = false;
+        boolean wasPressedX = false;
+        boolean wasPressedDPadLeft = false;
+        boolean wasPressedDPadRight = false;
+        boolean wasPressedDPadUp = false;
+
+        while (!opMode.opModeIsActive()) {
+
+            // b increases wait counter by 1
+            if (wasPressedB && !gamepad1.b) {
+                waitCounter++;
+            }
+            wasPressedB = gamepad1.b;
+
+            // x decreases wait counter by 1
+            if (wasPressedX && !gamepad1.x) {
+                waitCounter--;
+            }
+            wasPressedX = gamepad1.x;
+
+            // wait counter cannot be negative
+            if (waitCounter < 0) {
+                waitCounter = 0;
+            }
+
+            // dpad left - park left
+            if (wasPressedDPadLeft && !gamepad1.dpad_left) {
+                parkingPosition = PARKING_POSITION.FREEWAY;
+            }
+            wasPressedDPadLeft = gamepad1.dpad_left;
+
+            // dpad right - park right
+            if (wasPressedDPadRight && !gamepad1.dpad_right) {
+                parkingPosition = PARKING_POSITION.TRUSS;
+            }
+            wasPressedDPadRight = gamepad1.dpad_right;
+
+            // dpad up - don't park
+            if (wasPressedDPadUp && !gamepad1.dpad_up) {
+                parkingPosition = PARKING_POSITION.BOARD;
+            }
+            wasPressedDPadUp = gamepad1.dpad_up;
+
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
+                telemetry.addLine("CONFIRMED");
+                telemetry.addLine("");
+
+                telemetry.addLine("+/- WAIT: B/X");
+                telemetry.addData("WAIT TIME: ", waitCounter);
+                telemetry.addLine("");
+
+                telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
+                telemetry.addData("PARKING POS: ", parkingPosition);
+                telemetry.update();
+                break;
+            }
+
+            telemetry.addLine("+/- WAIT: B/X");
+            telemetry.addData("WAIT TIME: ", waitCounter);
+            telemetry.addLine("");
+
+            telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
+            telemetry.addData("PARKING POS: ", parkingPosition);
+            telemetry.addLine("");
+
+            telemetry.addLine("PRESS BOTH BUMPERS TO CONFIRM");
+
+            telemetry.update();
+        }
+
+        opMode.waitForStart();
+    }
+
+    public void configuredParking() {
+
+        if (parkingPosition == PARKING_POSITION.FREEWAY) {
+            boardToMiddle();
+        } else if (parkingPosition == PARKING_POSITION.TRUSS) {
+            boardToTruss();
+        }
+        // else do nothing
+    }
 }
+
+// todo write timeout for apriltag final forward
+// todo how to stop streaming
+// todo bring back to board
+// todo set complementary tag id
+// todo slide not high enough second time
+// todo turns need a timeout, and maybe other control loops
+// todo tune tray outtake pos/how close it is to board
