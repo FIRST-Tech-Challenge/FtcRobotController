@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MovementUtils {
     final double AXIAL_SPEED = 0.5;
     final double LATERAL_SPEED = 0.6;
     final double YAW_SPEED = 0.5;
     final double SLOW_MODE_MULTIPLIER = 0.4;
+
+    Controller controller;
 
     DcMotor frontLeftMotor = null;
     DcMotor backLeftMotor = null;
@@ -20,7 +23,9 @@ public class MovementUtils {
     double yawMultiplier;
     boolean slowModeActive = false;
 
-    public MovementUtils(HardwareMap hardwareMap) {
+    public MovementUtils(Controller controller, HardwareMap hardwareMap) {
+        this.controller = controller;
+
         frontLeftMotor = hardwareMap.get(DcMotor.class, "motor0");
         backLeftMotor = hardwareMap.get(DcMotor.class, "motor1");
         frontRightMotor = hardwareMap.get(DcMotor.class, "motor2");
@@ -79,8 +84,8 @@ public class MovementUtils {
     public void vectorsMovement(Gamepad gamepad) {
         calculateMultipliers(gamepad);
 
-        double axial = gamepad.left_stick_y * axialMultiplier;
-        double lateral = -gamepad.left_stick_x * lateralMultiplier;
+        double axial = -gamepad.left_stick_x * lateralMultiplier;
+        double lateral = gamepad.left_stick_y * axialMultiplier;
         double yaw = gamepad.right_stick_x * yawMultiplier;
 
         double theta = Math.atan2(lateral, axial);
