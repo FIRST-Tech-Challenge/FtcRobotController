@@ -1239,7 +1239,7 @@ public class Robot {
             mecanuming = (gamepad1.left_stick_x)*(gamepad1.left_stick_x)*(gamepad1.left_stick_x) * frontFacing;
 
             //turning stays the same
-            turning = (gamepad1.right_stick_x) * (gamepad1.right_stick_x) * (gamepad1.right_stick_x;
+            turning = (gamepad1.right_stick_x) * (gamepad1.right_stick_x) * (gamepad1.right_stick_x);
 
             //Pure Mecanum overrides straight and turn
             if (gamepad1.right_trigger != 0) {
@@ -1829,23 +1829,23 @@ public class Robot {
                 break;
             case 2:
                 //blue center
-                mecanumAndSlidesDownToZero(-28, slidesStartingPos);
+                mecanumAndSlidesDownToZero(-28, slideStartingPosition);
                 break;
             case 3:
                 //blue right
-                mecanumAndSlidesDownToZero(-23, slidesStartingPos);
+                mecanumAndSlidesDownToZero(-23, slideStartingPosition);
                 break;
             case 4:
                 // red left
-                mecanumAndSlidesDownToZero(19, slidesStartingPos);
+                mecanumAndSlidesDownToZero(19, slideStartingPosition);
                 break;
             case 5:
                 //red center
-                mecanumAndSlidesDownToZero(23, slidesStartingPos);
+                mecanumAndSlidesDownToZero(23, slideStartingPosition);
                 break;
             case 6:
                 //red right
-                mecanumAndSlidesDownToZero(29, slidesStartingPos);
+                mecanumAndSlidesDownToZero(29, slideStartingPosition);
                 break;
             default:
                 break;
