@@ -12,11 +12,14 @@ public class RedLongFreeway20 extends LinearOpMode {
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
         robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.FREEWAY);
-        robot.buttonConfigAtInit(gamepad1);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
+
+        robot.buttonConfigAtInit(gamepad1);
+
+        // todo: where to init slide start pos?
 
         waitForStart();
 

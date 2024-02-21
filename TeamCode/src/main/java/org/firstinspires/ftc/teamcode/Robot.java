@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.kaitlyn.TestAuto;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -195,7 +194,7 @@ public class Robot {
 
     public void trayToOuttakeSplitEditionTwo() {
         setServoPos(tray, 0.15);
-        opMode.sleep(200);
+        opMode.sleep(400);
     }
 
     public void autoOuttake(boolean lowOuttake) {
@@ -212,7 +211,6 @@ public class Robot {
             trayToOuttakeSplitEditionOne();
             moveLinearSlideByTicksBlocking(slideStartingPosition + 1750);//1900
             trayToOuttakeSplitEditionTwo();
-            opMode.sleep(100);
             openClamp(true, true, false); // drop pixel
             opMode.sleep(200);
             moveLinearSlideByTicksBlocking(slideStartingPosition + 2350);
@@ -853,7 +851,7 @@ public class Robot {
 
                 // P1: (35, 17)
 
-                straightBlocking2(-27);
+                straightBlocking2(-28);
 
                 // P2: (35, 44)
 
@@ -861,7 +859,7 @@ public class Robot {
 
                 // P3: (43.5, 35.5)
 
-                straightBlocking2(-2);
+                straightBlocking2(-3);
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -869,7 +867,7 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(2);
+                straightBlocking2(5);
 
                 // P3: (43.5, 35.5)
 
@@ -882,7 +880,7 @@ public class Robot {
 
                 // P4: (43.5, 60)
 
-                straightBlocking2FixHeading(-73.5);
+                straightBlocking2FixHeading(-78.5);
                 setHeading(90 * polarity, 0.7);
 
                 // P5: (120, 60)
@@ -975,7 +973,7 @@ public class Robot {
 
                 // P2: (23, 17)
 
-                straightBlocking2(-35);
+                straightBlocking2(-36);
 
                 // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
@@ -996,14 +994,13 @@ public class Robot {
                     mecanumBlocking2(12);
                 } else {
                     mecanumBlocking2(-15);
-                    Log.d("path", "hi");
                 }
 
                 setHeading(90 * polarity, 0.7);
 
                 // P6: (27.5, 60)
 
-                straightBlocking2FixHeading(-85.5); // subtracted 4 here
+                straightBlocking2FixHeading(-89.5); // subtracted 4 here
                 setHeading(90 * polarity, 0.7);
 
                 // P7: (120, 60)
@@ -2458,3 +2455,4 @@ public class Robot {
 
 // todo write timeout for apriltag final forward
 // todo turns need a timeout, and maybe other control loops
+// todo tune tray pivot outtake pos
