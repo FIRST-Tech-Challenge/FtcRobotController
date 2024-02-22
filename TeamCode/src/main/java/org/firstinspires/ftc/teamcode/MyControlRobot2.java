@@ -1,24 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.openftc.easyopencv.OpenCvCamera;
 
 @TeleOp
-public class MyControlRobot1 extends LinearOpMode {
+public class MyControlRobot2 extends LinearOpMode {
     private DcMotor fr;
     private DcMotor fl;
     private DcMotor br;
@@ -62,8 +57,7 @@ public class MyControlRobot1 extends LinearOpMode {
         //br.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        TelemetryPacket packet = new TelemetryPacket();
-        FtcDashboard dashboard = FtcDashboard.getInstance();
+
         xOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         yOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -141,16 +135,6 @@ public class MyControlRobot1 extends LinearOpMode {
 
 
             telemetry.addData("Slowness: ", SLOW);
-            packet.put("X", val_to_squares(xOdometer.getCurrentPosition()) + x_offset);
-            packet.put("Y", val_to_squares(yOdometer.getCurrentPosition()) + y_offset);
-            packet.put("ODS", ods.getRawLightDetected());
-            packet.put("IMU", botHeading);
-            packet.put("Color Red", color.red());
-            packet.put("Color Green", color.green());
-            packet.put("Color Blue", color.blue());
-            packet.put("Lift", lift.getCurrentPosition());
-            packet.put("Gamepad 2Y", gamepad2.left_stick_y);
-            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
 
         }
