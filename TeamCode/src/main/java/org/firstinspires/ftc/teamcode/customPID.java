@@ -7,18 +7,18 @@ public class customPID {
     private double P;
     private double I;
     private double D;
-    private final double KP;
-    private final double KI;
-    private final double KD;
+    private double KP;
+    private double KI;
+    private double KD;
     private boolean clamp;
-    private final double maxValue;
-    private final double minValue;
-    private final double maxPosition;
+    private double maxValue;
+    private double minValue;
+    private double maxPosition;
     private double errorTotal;
     private double lastError;
     private double lastIntegral;
-    private static final TelemetryPacket packet = new TelemetryPacket();
-    private static final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private static TelemetryPacket packet;
+    private static FtcDashboard dashboard;
 
     public customPID(double KP, double KI, double KD, double maxValue, double minValue, double maxPosition){
         this.KP = KP;
@@ -48,7 +48,11 @@ public class customPID {
         this.D = KD * (lastError - error);
     }
     private void toClamp(double error){
-        clamp = (Math.abs((lastError - error)) < maxPosition * 0.004) && (Math.abs(this.lastIntegral - this.I) > lastError * 0.06);
+        if((Math.abs((lastError - error))<maxPosition * 0.004)&&(Math.abs(this.lastIntegral-this.I)>lastError*0.06)){
+            clamp = true;
+        }else{
+            clamp = false;
+        }
     }
     public double outputPID(double error){
         proportionality(error);
