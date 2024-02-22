@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /** Harry Class to contain all Arm functions */
 @Config
 public class Arm extends RFServo {
-  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.58, FLIP_TIME = 0.9;
+  public static double DROP_POS = 0.0, HOVER_POS = 0.8, GRAB_POS = 0.58, FLIP_TIME = 0.7;
   private double lastTime = 0;
 
   /** constructs arm servo, logs to general with CONFIG severity */
@@ -211,12 +211,12 @@ public class Arm extends RFServo {
               "Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
         }
       }
-      if(position == i.pos && i== HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.5){
+      if(position == i.pos && i== HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.3){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
-      if(position == i.pos && i==ArmStates.GRAB && HOVER.getState() && time > lastTime + 0.5){
+      if(position == i.pos && i==ArmStates.GRAB && HOVER.getState() && time > lastTime + 0.3){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());

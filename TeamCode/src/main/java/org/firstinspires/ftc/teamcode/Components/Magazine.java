@@ -69,10 +69,10 @@ public class Magazine {
     double dist1 = colorSensor1.getDist();
     double dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 1.5) {
+    if (dist1 < 1.7) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 > 1.5) {
+    } else if (dist1 > 1.7) {
       MagStates.FRONT.setState(false);
     }
     if (dist2 < 1) {
@@ -126,10 +126,10 @@ public class Magazine {
   }
 
   public void update() {
-//    LOGGER.log("front | back dist: " + frontdist() + " | " + backdist());
-//    LOGGER.log(
-//        "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
-//    LOGGER.log("# Pixels: " + getPixels());
+    LOGGER.log("front | back dist: " + frontdist() + " | " + backdist());
+    LOGGER.log(
+        "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
+    LOGGER.log("# Pixels: " + getPixels());
 
     if (isTeleop) {
       updateLEDs();

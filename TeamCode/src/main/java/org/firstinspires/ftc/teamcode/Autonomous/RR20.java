@@ -33,14 +33,14 @@ public class RR20 {
         robot.update();
 
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(16.5, -43, toRadians(-60)))
-                .lineToLinearHeading(new Pose2d(7.5, -40, toRadians(-40)))
-                .lineToLinearHeading(new Pose2d(11.5, -40, toRadians(-40)))
+                .splineToLinearHeading(new Pose2d(11.5, -37, toRadians(0)), toRadians(180))
                 .build();
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61,toRadians(-90)))
                 .lineToLinearHeading(new Pose2d(19.5, -36.5, toRadians(-91))).build();
         preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(24.5,-43, toRadians(-90))).build();
+                .lineToLinearHeading(new Pose2d(30.5,-36, toRadians(-90)))
+        .lineToLinearHeading(new Pose2d(23.5,-43, toRadians(-90))).build();
+
         if(!isLogi){
         preToStack[0] = robot.roadrun.trajectorySequenceBuilder(preload[0].end())
                 .lineToLinearHeading(new Pose2d(46.4, -29, toRadians(-180))).build();
@@ -81,18 +81,18 @@ public class RR20 {
                 .build();
         parkLeft[0] = robot.roadrun.trajectorySequenceBuilder(preToStack[0].end())
                 .lineToLinearHeading(new Pose2d(43, -29, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(43, -8, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(58, -8, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(43, -11, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(58, -11, toRadians(-180)))
                 .build();
         parkLeft[1] = robot.roadrun.trajectorySequenceBuilder(preToStack[1].end())
                 .lineToLinearHeading(new Pose2d(43, -35.25, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(43, -8, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(58, -8, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(43, -11, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(58, -11, toRadians(-180)))
                 .build();
         parkLeft[2] = robot.roadrun.trajectorySequenceBuilder(preToStack[2].end())
                 .lineToLinearHeading(new Pose2d(43, -41.5, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(43, -8, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(58, -8, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(43, -11, toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(58, -11, toRadians(-180)))
                 .build();
 
 

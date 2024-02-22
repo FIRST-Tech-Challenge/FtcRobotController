@@ -33,7 +33,7 @@ public class RL21 {
         this.op = op;
         robot = new BradBot(op, false, isLogi);
 
-        Pose2d startPose = new Pose2d(-36,-60.5,toRadians(-90));
+        Pose2d startPose = new Pose2d(-37,-60.5,toRadians(-90));
         robot.roadrun.setPoseEstimate(startPose);
 
         spikey[0] = robot.roadrun

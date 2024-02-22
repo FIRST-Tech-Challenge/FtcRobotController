@@ -190,7 +190,7 @@ public class Intake extends RFMotor {
     if (curPower != 0) {
       uppies();
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", ");
-      double pos = this.getVelocity() * 0.1 + this.getCurrentPosition();
+      double pos = this.getVelocity() * 0.3 + this.getCurrentPosition();
       pos %= TICKS_PER_REV;
       if (pos > TICKS_PER_REV / 2) {
         pos -= TICKS_PER_REV;
@@ -315,7 +315,7 @@ public class Intake extends RFMotor {
 ////    double power = this.getPower();
 //    LOGGER.setLogLevel(RFLogger.Severity.FINEST);
 //    LOGGER.log("intake power:" + power);
-//    packet.put("intakePos", this.getCurrentPosition());
+    packet.put("intakePos", this.getCurrentPosition());
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
@@ -332,7 +332,7 @@ public class Intake extends RFMotor {
         lastTime = time;
         pixeled=true;
       }
-      if (time - lastTime > STOP_DELAY && !stopped && IntakeStates.INTAKING.getState()) {
+      if (time - lastTime > STOP_DELAY && IntakeStates.INTAKING.getState()) {
         uppies();
         reverseIntake();
         reverseTime = time;
@@ -346,6 +346,7 @@ public class Intake extends RFMotor {
     if(stopped&& time-reverseTime>0.3){
       stopIntake();
       intakePath=false;
+      stopped = false;
     }
 
   }

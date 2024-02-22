@@ -201,10 +201,10 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.OT.getState())) {
       if (currentPose.getX() > 9 && DROP.getState()) {
         if (left) {
-          lift.setPosition(600);
+          lift.setPosition(550);
         }
         else{
-          lift.setPosition(600);
+          lift.setPosition(550);
         }
         if(left){
           twrist.flipTo(Twrist.twristTargetStates.OT);
@@ -612,7 +612,7 @@ public class BradBot extends BasicRobot {
       if (queuer.queue(true, !roadrun.isBusy()&&!check)) {
         if (check) {
           op.telemetry.addData("UTLRADETECT", "ULTRADETECT");
-          op.telemetry.update();
+//          op.telemetry.update();
 
           brokenFollowing = true;
           roadrun.breakFollowing();
@@ -689,7 +689,7 @@ public class BradBot extends BasicRobot {
     }
     if (left) {
       intake.stopIntake();
-      if (HOVER.getState() && !Arm.ArmTargetStates.GRAB.getState()) {
+      if (HOVER.getState() && !Arm.ArmTargetStates.GRAB.getState() && !DROP.getState()&&lift.getCurrentPosition()<40) {
         arm.flipTo(GRAB);
         wrist.flipTo(Wrist.WristTargetStates.LOCK);
       }
@@ -783,7 +783,8 @@ public class BradBot extends BasicRobot {
         && !GRAB.state
         && !Arm.ArmTargetStates.HOVER.getState()
         && lift.getCurrentPosition() < 10
-        && Intake.IntakeStates.REVERSING.getState()&&!gapped) {
+        && (Intake.IntakeStates.REVERSING.getState() || Intake.IntakeStates.STOPPED.getState())
+            &&!gapped) {
       arm.flipTo(GRAB);
       wrist.flipTo(Wrist.WristTargetStates.LOCK);
       claw.flipTo(Claw.clawTargetStates.CLOSE);
@@ -817,10 +818,11 @@ public class BradBot extends BasicRobot {
     lift.update();
     roadrun.update();
     wrist.update();
-    ultras.update();
+    if (!isTeleop) {
+      ultras.update();
+    }
     twrist.update();
     claw.update();
-    magazine.update();
     magazine.update();
     hanger.update();
   }

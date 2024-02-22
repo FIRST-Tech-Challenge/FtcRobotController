@@ -28,12 +28,12 @@ public class Lift extends RFDualMotor {
       min = -15,
       RESISTANCE = 650,
       kS = 0.06,
-      kV = 4.2786E-4,
-      kA = 4E-5,
+      kV = 3.2786E-4,
+      kA = 6E-5,
       MAX_UP_VELO = 3000,
-      MAX_DOWN_VELO = -1080,
-      MAX_ACCEL = 10000,
-      MAX_DECEL = -66974,
+      MAX_DOWN_VELO = -2080,
+      MAX_ACCEL = 6000,
+      MAX_DECEL = -6000,
       kP = 0,
       kD = 0;
 
@@ -157,7 +157,7 @@ public class Lift extends RFDualMotor {
       }
     }
       if (time - lastManualTime > MANUAL_TIME) {
-        if(super.getCurrentPosition()<10 && super.getTarget()<10){
+        if(super.getCurrentPosition()<30 && super.getTarget()<10){
           super.setRawPower(-0.3);
         } else {
           setPosition(super.getTarget(), 0);
@@ -254,7 +254,7 @@ public class Lift extends RFDualMotor {
       setPosition(LiftPositionStates.values()[iterateHeight]);
     }
     else{
-      setPosition(250);
+      setPosition(350);
     }
     LOGGER.log("iterated down to state: " + LiftPositionStates.values()[iterateHeight]);
     }

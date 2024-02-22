@@ -27,7 +27,8 @@ public class RFDualMotor extends RFMotor{
     public void setPower(double p_power){
         super.setPower(p_power);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setPower(p_power);
+        motor2.setPower(p_power - kP * -RESISTANCE);
+
 
     }
 }
