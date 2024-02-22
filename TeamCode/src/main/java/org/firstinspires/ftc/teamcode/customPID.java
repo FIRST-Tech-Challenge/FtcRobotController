@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 public class customPID {
     private double P;
     private double I;
@@ -48,6 +46,11 @@ public class customPID {
         this.D = KD * (lastError - error);
     }
     private void toClamp(double error){
+        if((Math.abs((lastError - error))<maxPosition * 0.004)&&(Math.abs(this.lastIntegral-this.I)>lastError*0.06)){
+            clamp = true;
+        }else{
+            clamp = false;
+        }
         clamp = (Math.abs((lastError - error)) < maxPosition * 0.004) && (Math.abs(this.lastIntegral - this.I) > lastError * 0.06);
     }
     public double outputPID(double error){
@@ -68,5 +71,4 @@ public class customPID {
             return output;
         }
     }
-
 }
