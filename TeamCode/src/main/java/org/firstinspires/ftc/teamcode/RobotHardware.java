@@ -29,13 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This file works in conjunction with the External Hardware Class sample called: RobotMovement.java
@@ -64,8 +62,8 @@ public class RobotHardware {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
 
     //ARM
-    private DcMotor a1ArmMotor = null;
-    private DcMotor a2ArmMotor = null;
+    private DcMotorEx a1ArmMotor = null;
+    private DcMotorEx a2ArmMotor = null;
     //private Servo claw = null;
     //private Servo leftWrist = null;
     //private Servo rightWrist = null;
@@ -79,8 +77,12 @@ public class RobotHardware {
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO =  0.5 ;
     public static final double WRIST_SERVO_SPEED =  0.02 ;  // sets rate to move servo
-    public static final double ARM_POWER  = 1;
+    public static double ARM_POWER  = 1;
 
+    public static double a1extraPowerNeeded = 0;
+    public static double a1powerApplied = 0;
+    public static double a2extraPowerNeeded = 0;
+    public static double a2powerApplied = 0;
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -96,30 +98,27 @@ public class RobotHardware {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
-        a1ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a1");
-        a2ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a2");
+        a1ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a1");
+        a2ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a2");
         planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
 
         a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+
+        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        a1ArmMotor.setTargetPositionTolerance(0);
+        a2ArmMotor.setTargetPositionTolerance(0);
+
+
+        a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
+
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         planeLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-//        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-        // Define and initialize ALL installed servos.
-//        leftWrist = myOpMode.hardwareMap.get(Servo.class, "left_wrist");
-//        rightWrist = myOpMode.hardwareMap.get(Servo.class, "right_wrist");
-//        leftWrist.setPosition(MID_SERVO);
-//        rightWrist.setPosition(MID_SERVO);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
@@ -156,24 +155,45 @@ public class RobotHardware {
         leftDrive.setPower(leftWheel);
         rightDrive.setPower(rightWheel);
     }
-    public void firePlaneLauncher(int planeLauncherStatus){
+    public void firePlaneLauncher(double planeLauncherStatus){
         planeLauncher.setPower(planeLauncherStatus);
     }
 
-    /**
-     * Pass the requested arm power to the appropriate hardware drive motor
-     *
-     * @param power driving power (-1.0 to 1.0)
-     */
     public void setA1Power(double power)
     {
-
-        a1ArmMotor.setPower(power);
+        if(a1ArmMotor.getVelocity() < 0){
+            a1extraPowerNeeded += 0.05;
+            a1powerApplied = power + a1extraPowerNeeded;
+            a1ArmMotor.setPower(a1powerApplied);
+        }
+        if(a1ArmMotor.getVelocity() > 0){
+            a1extraPowerNeeded -= 0.05;
+            a1powerApplied = power - a1extraPowerNeeded;
+            a1ArmMotor.setPower(a1powerApplied);
+        }
+        else{
+            a1ArmMotor.setPower(power);
+        }
+        a1ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void setA2Power(double power)
     {
-        a2ArmMotor.setPower(power);
-
+        if(a2ArmMotor.getVelocity() < 0){
+            a2extraPowerNeeded += a2ArmMotor.getCurrentPosition()/67;
+            a2powerApplied = power + a2extraPowerNeeded;
+            a2ArmMotor.setPower(a2powerApplied);
+        }
+        if(a2ArmMotor.getVelocity() > 0){
+            a2extraPowerNeeded -= a2ArmMotor.getCurrentPosition()/67;
+            a2powerApplied = power - a2extraPowerNeeded;
+            a2ArmMotor.setPower(a2powerApplied);
+        }
+        else{
+            a2ArmMotor.setPower(power);
+        }
+        a2ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 //    public void setWristPositions(double offset) {

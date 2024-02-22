@@ -72,12 +72,13 @@ public class RobotMovement extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        double left        = 0;
-        double right         = 0;
-        double a1          = 0;
+        double left = 0;
+        double right = 0;
+        double a1 = 0;
         double a2 = 0;
-        double wristOffset   = 0;
+        double wristOffset = 0;
         boolean clawOpen = false;
+        double armSpeed = 0.9;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
@@ -108,71 +109,65 @@ public class RobotMovement extends LinearOpMode {
                 wristOffset -= robot.WRIST_SERVO_SPEED;
             wristOffset = Range.clip(wristOffset, -0.5, 0.5);
 
-            // Move both servos to new position.  Use RobotHardware class
-            //robot.setWristPositions(wristOffset);
-
-            // Use gamepad buttons to move arm up (Y) and down (A)
-            // Use the MOTOR constants defined in RobotHardware class.
-
             //A1 CONTROL
-            if (-gamepad2.left_stick_y != 0)
+            if (gamepad2.left_stick_y != 0)
             {
-                a2 =  0.4 * -gamepad2.right_stick_y;
+                a1 = -gamepad2.left_stick_y * armSpeed;
             }
-            else {
+            else{
+                a1 = 0;
+            }
+
+
+            //A2 CONTROL
+            if (gamepad2.right_stick_y != 0)
+            {
+                a2 = -gamepad2.right_stick_y * armSpeed;
+            }
+            else{
                 a2 = 0;
             }
 
-            //A2 CONTROL
-            if (-gamepad2.right_stick_y != 0)
-            {
-                a1 = 0.9 * -gamepad2.right_stick_y;
-            }
-            else {
-                a1 = 0;
-            }
 
             //CLAW CONTROL
             if(gamepad2.y)
             {
-                if(!clawOpen){
-                    clawOpen = true;
-                }
-                else{
-                    clawOpen = false;
-                }
+                clawOpen = !clawOpen;
             }
 
             if(gamepad1.ps && gamepad2.ps){
-                robot.firePlaneLauncher(1);
+                robot.firePlaneLauncher(0.3);
             }
             else{
                 robot.firePlaneLauncher(0);
             }
 
             //SPEED CONTROLLER
-
+            if(gamepad1.left_bumper){
+                armSpeed = 0.3;
+            }
+            else{
+                armSpeed = 0.9;
+            }
 
             robot.setA1Power(a1);
             robot.setA2Power(a2);
             robot.setClaw(clawOpen);
 
             // Send telemetry messages to explain controls and show robot status
-            telemetry.addData("Drive", "GP1 Left Stick");
-            telemetry.addData("Turn", "GP1 Right Stick");
-            telemetry.addData("Arm Change", "GP2 Left Stick");
             telemetry.addData("-", "-------");
 
             telemetry.addData("Left", "%.2f", left);
             telemetry.addData("Right",  "%.2f", right);
-            telemetry.addData("Arm Power",  "%.2f", a1);
+            telemetry.addData("A1",  a1);
+            telemetry.addData("A2",  a2);
             telemetry.addData("Wrist Position",  "Offset = %.2f", wristOffset);
             telemetry.addData("Claw State",  "State = " + clawOpen);
-            telemetry.addData("Right trigger state", gamepad2.right_trigger);
+            telemetry.addData("Arm Speed", armSpeed);
             telemetry.update();
 
             // Pace this loop so hands move at a reasonable speed.
-            sleep(20);
+            sleep(15);
         }
     }
 }
