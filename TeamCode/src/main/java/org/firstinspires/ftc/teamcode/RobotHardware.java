@@ -179,21 +179,14 @@ public class RobotHardware {
     }
     public void setA2Power(double power)
     {
-        if(a2ArmMotor.getVelocity() < 0){
-            a2extraPowerNeeded += a2ArmMotor.getCurrentPosition()/67;
-            a2powerApplied = power + a2extraPowerNeeded;
-            a2ArmMotor.setPower(a2powerApplied);
+        if(power == 0){
+            if(a1ArmMotor.getVelocity() > 0){
+                power += 0.02;
+            }
+            if(a1ArmMotor.getVelocity() < 0){
+                power -= 0.02;
+            }
         }
-        if(a2ArmMotor.getVelocity() > 0){
-            a2extraPowerNeeded -= a2ArmMotor.getCurrentPosition()/67;
-            a2powerApplied = power - a2extraPowerNeeded;
-            a2ArmMotor.setPower(a2powerApplied);
-        }
-        else{
-            a2ArmMotor.setPower(power);
-        }
-        a2ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 //    public void setWristPositions(double offset) {
