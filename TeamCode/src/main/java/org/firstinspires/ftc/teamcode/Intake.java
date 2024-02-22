@@ -30,7 +30,7 @@ public class Intake {
             intakeToggle = true;
             time.reset();
 
-            intakeMotor.setPower(1.0);
+            intakeMotor.setPower(1.0);   
             conveyorMotor.setPower(1.0);
 
         }
@@ -42,6 +42,14 @@ public class Intake {
             conveyorMotor.setPower(0.0);
 
         }
+    }
+
+    public void turnOffConveyorBelt() {
+        conveyorMotor.setPower(0.0);
+    }
+
+    public void turnOnConveyorBelt() {
+        conveyorMotor.setPower(1.0);
     }
 
     public void intakeDown(boolean down) {
