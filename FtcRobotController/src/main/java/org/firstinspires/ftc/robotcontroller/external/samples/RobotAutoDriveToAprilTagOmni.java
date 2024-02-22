@@ -90,7 +90,7 @@ import java.util.concurrent.TimeUnit;
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 30.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -98,7 +98,6 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
@@ -109,13 +108,13 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 1;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
+
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
-    @Override public void runOpMode()
-    {
+    @Override public void runOpMode() {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -149,17 +148,16 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
         telemetry.update();
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             targetFound = false;
-            desiredTag  = null;
-
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
                 // Look to see if we have size info on this tag.
                 if (detection.metadata != null) {
                     //  Check to see if we want to track towards this tag.
+                    // **DESIRED TAG IS DETERMINED BY FIRST PIXEL CODE**
+
                     if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                         // Yes, we want to use this tag.
                         targetFound = true;
@@ -196,13 +194,13 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
                 drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
 
-                // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
+                // drive using manual POV Joystick mode.  Slow things down to make the robot more controllable.
                 drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
                 strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
                 turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
@@ -227,10 +225,10 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
      */
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
+        double leftFrontPower    =  -x +y -yaw;
+        double rightFrontPower   =  -x -y +yaw;
+        double leftBackPower     =  -x -y -yaw;
+        double rightBackPower    =  -x +y +yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));

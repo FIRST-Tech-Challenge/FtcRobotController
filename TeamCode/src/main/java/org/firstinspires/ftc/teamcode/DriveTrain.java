@@ -25,7 +25,9 @@ public class DriveTrain {
     private final double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
     private ElapsedTime runtime = new ElapsedTime();
 
-    private boolean directionToggle = false;
+
+    boolean directionToggle = true;
+
     private DistanceSensor BackWDRight;
     private DistanceSensor BackWDLeft;
     private double BackWDValueRight;
@@ -151,6 +153,52 @@ public class DriveTrain {
         if (howMuch < 0) {
            howMuch = Math.abs(howMuch);
         }
+
+    }
+
+    public void driveAutonomously(double axial, double lateral, double yaw) {
+
+        double leftFrontPower = 0;
+        double rightFrontPower = 0;
+        double leftBackPower = 0;
+        double rightBackPower = 0;
+
+        double max;
+
+        // This code calculates the power to give to each motor.
+        leftFrontPower = axial + lateral + yaw;
+        rightFrontPower = axial - lateral - yaw;
+        leftBackPower = axial - lateral + yaw;
+        rightBackPower = axial + lateral - yaw;
+
+        // All code below this comment normalizes the values so no wheel power exceeds 100%.
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // The next four lines gives the calculated power to each motor.
+        leftFrontDrive.setPower(leftFrontPower/2);
+        rightFrontDrive.setPower(rightFrontPower/2);
+        leftBackDrive.setPower(leftBackPower/2);
+        rightBackDrive.setPower(rightBackPower/2);
+    }
+  
+    public void stop() { // Makes the robot stop whenever this function is called
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+  
+    public void moveForward(int howMuch, double speed) {
+
         // Fetch Drive positions:
         lfPos = leftFrontDrive.getCurrentPosition();
         rfPos = rightFrontDrive.getCurrentPosition();
@@ -163,6 +211,59 @@ public class DriveTrain {
         lrPos += (int) (howMuch * clicksPerInch);
         rrPos += (int) (howMuch * clicksPerInch);
 
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+        }
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    public void moveBackward(int howMuch, double speed) {
+
+        // "howMuch" is in inches. A negative howMuch moves backward.
+        if (howMuch > 0) {
+            howMuch *= -1;
+        }
+
+        if (howMuch < 0) {
+            howMuch = Math.abs(howMuch);
+        }
+
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += (int) (howMuch * clicksPerInch);
+        rfPos += (int) (howMuch * clicksPerInch);
+        lrPos += (int) (howMuch * clicksPerInch);
+        rrPos += (int) (howMuch * clicksPerInch);
 
         // Move robot to new position:
         leftFrontDrive.setTargetPosition(lfPos);

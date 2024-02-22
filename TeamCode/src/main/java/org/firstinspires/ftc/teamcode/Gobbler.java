@@ -16,5 +16,4 @@ public class Gobbler {
         outtake = new Outtake(hwMap);
         planeHang = new PlaneHang(hwMap);
     }
-
 }
