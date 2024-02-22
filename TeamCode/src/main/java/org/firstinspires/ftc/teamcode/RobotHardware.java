@@ -159,32 +159,27 @@ public class RobotHardware {
         planeLauncher.setPower(planeLauncherStatus);
     }
 
-    public void setA1Power(double power)
-    {
-        if(a1ArmMotor.getVelocity() < 0){
-            a1extraPowerNeeded += 0.05;
-            a1powerApplied = power + a1extraPowerNeeded;
-            a1ArmMotor.setPower(a1powerApplied);
-        }
-        if(a1ArmMotor.getVelocity() > 0){
-            a1extraPowerNeeded -= 0.05;
-            a1powerApplied = power - a1extraPowerNeeded;
-            a1ArmMotor.setPower(a1powerApplied);
-        }
-        else{
-            a1ArmMotor.setPower(power);
-        }
-        a1ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
     public void setA2Power(double power)
     {
         if(power == 0){
-            if(a1ArmMotor.getVelocity() > 0){
-                power += 0.02;
+            if(a2ArmMotor.getVelocity() > 0){
+                power += a2ArmMotor.getVelocity()/100;
             }
-            if(a1ArmMotor.getVelocity() < 0){
-                power -= 0.02;
+            if(a2ArmMotor.getVelocity() < 0){
+                power -= a2ArmMotor.getVelocity()/100;
+            }
+        }
+    }
+    public void setA1Power(double power)
+    {
+        {
+            if(power == 0){
+                if(a1ArmMotor.getVelocity() > 0){
+                    power += a1ArmMotor.getVelocity()/100;
+                }
+                if(a1ArmMotor.getVelocity() < 0){
+                    power -= a1ArmMotor.getVelocity()/100;
+                }
             }
         }
     }
@@ -197,8 +192,8 @@ public class RobotHardware {
 
     //TODO BIG FAT RISK, DO NOT TRY THIS BEFORE CHECKING SERVO
     public void setClaw(boolean clawState){
+        //claw.setPosition(0.75);
         if(clawState){
-            //claw.setPosition(0.75);
         }
         else{
             //claw.setPosition((0.25));
