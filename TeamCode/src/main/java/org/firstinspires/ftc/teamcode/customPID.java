@@ -29,6 +29,7 @@ public class customPID {
         this.lastError = 0;
         this.lastIntegral = 0;
     }
+    //lolijmionihbu uh
     private void proportionality(double error){
         this.P = this.KP * error;
     }
