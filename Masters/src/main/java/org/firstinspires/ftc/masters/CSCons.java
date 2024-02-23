@@ -45,6 +45,7 @@ public class CSCons {
     public static long scoreToTransferOuttake = 200;
     public static long closingHook = 100;
 
+
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW(1400),
