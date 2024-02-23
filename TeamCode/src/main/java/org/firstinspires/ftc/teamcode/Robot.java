@@ -860,17 +860,14 @@ public class Robot {
 
                 // P1: (35, 17)
 
-                straightBlocking2(-28);
-
-                // P2: (35, 44)
+                straightBlocking2(-27);
 
                 setHeading(90 * polarity, 0.7);
 
-                // P3: (43.5, 35.5)
                 if (isRedAlliance) {
-                straightBlocking2(-5);
-                } else {
                     straightBlocking2(-3);
+                } else {
+                    straightBlocking2(-2);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -879,18 +876,14 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                if (isRedAlliance) {
-                    straightBlocking2(7);
-                } else {
-                    straightBlocking2(5);
-                }
+                straightBlocking2(6);
 
                 // P3: (43.5, 35.5)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(24.5);
                 } else {
-                    mecanumBlocking2(-27.5);
+                    mecanumBlocking2(-26.5);
                 }
                 setHeading(90 * polarity, 0.7);
 
@@ -916,9 +909,6 @@ public class Robot {
 
             } else if (markerLocation == MARKER_LOCATION.OUTER) {
                 Log.d("vision", "path: Outer Spike");
-
-                // P1: (35, 17)
-
 
                 if (isRedAlliance) {
                     mecanumBlocking2(20);
@@ -971,8 +961,6 @@ public class Robot {
             } else { //center, default
                 Log.d("vision", "path: Center Spike");
 
-                // P1: (36, 17)
-
                 if (isRedAlliance) {
                     mecanumBlocking2(13);
                 } else {
@@ -980,18 +968,13 @@ public class Robot {
                 }
                 setHeading(0, 0.7);
 
-                // P2: (23, 17)
-
                 if (isRedAlliance) {
                     straightBlocking2(-36);
                 } else {
-                    straightBlocking2(-34);
+                    straightBlocking2(-35);
                 }
 
-                // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
-
-                // P4: (31.5, 44)
 
                 if (!testingOnBert) {
                     moveFingerUp();
@@ -1849,7 +1832,7 @@ public class Robot {
                 break;
             case 4:
                 // red left
-                mecanumAndSlidesDownToZero(19, slideStartingPosition);
+                mecanumAndSlidesDownToZero(18, slideStartingPosition);
                 break;
             case 5:
                 //red center
@@ -2020,7 +2003,7 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
-                if(isRedAlliance) {
+                if (isRedAlliance) {
                     straightBlocking2(-2);
                 } else {
                     straightBlocking2(-2);
@@ -2129,11 +2112,14 @@ public class Robot {
                     straightBlocking(2, false, 0.7);
                 }
 
+                // todo why is this here ^^
+
                 if (isRedAlliance) {
                     straightBlocking(4, true, 0.7);
                 } else {
                     straightBlocking(3,true,0.7);
                 }
+
                 if (isRedAlliance) {
                     mecanumBlocking2(-36);
                 } else {
