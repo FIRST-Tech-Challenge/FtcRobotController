@@ -19,8 +19,6 @@ public class RedLongFreeway20 extends LinearOpMode {
 
         robot.buttonConfigAtInit(gamepad1);
 
-        // todo: where to init slide start pos?
-
         waitForStart();
 
         while (opModeIsActive()) {
