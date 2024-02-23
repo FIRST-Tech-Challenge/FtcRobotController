@@ -59,6 +59,19 @@ public class AutonomousCommands {
         );
     }
 
+    public SequentialCommandGroup scoring_randomization(){
+        return new SequentialCommandGroup(
+                new InstantCommand(outtakeSusystem::wheel_release, outtakeSusystem),
+                new WaitCommand(1000),
+                new InstantCommand(outtakeSusystem::wheel_stop, outtakeSusystem),
+                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                new WaitCommand(80),
+                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem),
+                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
+
+        );
+    }
+
     public SequentialCommandGroup scoring(){
         return new SequentialCommandGroup(
             new InstantCommand(outtakeSusystem::wheel_release, outtakeSusystem),
@@ -79,13 +92,13 @@ public class AutonomousCommands {
                 new WaitCommand(150),
                 new SequentialCommandGroup(
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
-                        new WaitCommand(500),
+                        new WaitCommand(300),
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1), intakeArmSubsystem),
-                        new WaitCommand(500)
+                        new WaitCommand(600)
                 ),
                 new ParallelCommandGroup(
-                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-                        new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
+                        new InstantCommand(intakeSubsystem::stop),
+                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(6), intakeArmSubsystem)
                 )
         );
     }

@@ -25,39 +25,36 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
 
         if (startingPosition == StartingPosition.SHORT){
             if (randomization == Randomization.LEFT){
-                randomizedBackdrop = backdropLeft;
+                randomizedBackdrop = randomizationBackdropLeft;
                 leftPixelSpike = leftPixel_SHORT;
                 pixel_cycle_PoseTransfer = leftPixel_SHORT;
                 rightSpikeStartingTangetValue = 0;
                 rightSpikeFinalTangetValue = 0;
             }
             else if (randomization == Randomization.CENTER){
-                randomizedBackdrop = backdropCenter;
+                randomizedBackdrop = randomizationBackdropCenter;
                 centerPixelSpike = centerPixel_SHORT;
                 pixel_cycle_PoseTransfer = centerPixel_SHORT;
             }
             else if (randomization == Randomization.RIGHT){
-                randomizedBackdrop = backdropRight;
+                randomizedBackdrop = randomizationBackdropRight;
                 rightPixelSpike = rightPixel_SHORT;
                 pixel_cycle_PoseTransfer = rightPixel_SHORT;
             }
         }
         else if (startingPosition == StartingPosition.LONG){
             if (randomization == Randomization.LEFT){
-                randomizedBackdrop = backdropLeft;
-                backdrop_Unload = randomizedBackdrop;
+                randomizedBackdrop = randomizationBackdropLeft;
                 rightPixelSpike = leftPixel_LONG;
                 pixel_cycle_PoseTransfer = leftPixel_LONG;
             }
             else if (randomization == Randomization.CENTER){
-                randomizedBackdrop = backdropCenter;
-                backdrop_Unload = randomizedBackdrop;
+                randomizedBackdrop = randomizationBackdropCenter;
                 centerPixelSpike = centerPixel_LONG;
                 pixel_cycle_PoseTransfer = centerPixel_LONG;
             }
             else if (randomization == Randomization.RIGHT){
-                randomizedBackdrop = backdropRight;
-                backdrop_Unload = randomizedBackdrop;
+                randomizedBackdrop = randomizationBackdropRight;
                 leftPixelSpike = rightPixel_LONG;
                 pixel_cycle_PoseTransfer = rightPixel_LONG;
                 rightSpikeStartingTangetValue = 1;
@@ -67,12 +64,12 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     }
 
     public void cycle(){
-
         if (path == Path.INNER){
             stationClose = stationClose_Inner;
             stationFar = stationFar_Inner;
             backdrop_Unload = backdropRight;
             stackStation = stationInner;
+            stackStationSecondCycle = stationInnerSecondCycle;
             stackStationTangetValue = 0;
         }
         else if (path == Path.OUTER){
@@ -80,6 +77,7 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
             stationFar = stationFar_Outer;
             backdrop_Unload = backdropLeft;
             stackStation = stationOuter;
+            stackStationSecondCycle = stationOuterSecondCycle;
             stackStationTangetValue = 2;
         }
     }
@@ -134,12 +132,20 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
         drive.followTrajectorySequence(spike_randomizedBackdrop.build());
     }
 
-    public void runBackdrop_Station(){
-        drive.followTrajectorySequence(backdrop_station.build());
+    public void runBackdrop_Station_First_Cycle(){
+        drive.followTrajectorySequence(backdrop_station_first_cycle.build());
     }
 
-    public void runStation_Backdrop(){
-        drive.followTrajectorySequence(station_backdrop.build());
+    public void runBackdrop_Station_Second_Cycle(){
+        drive.followTrajectorySequence(backdrop_station_second_cycle.build());
+    }
+
+    public void runStation_Backdrop_First_Cycle(){
+        drive.followTrajectorySequence(station_backdrop_first_cycle.build());
+    }
+
+    public void runStation_Backdrop_Second_Cycle(){
+        drive.followTrajectorySequence(station_backdrop_second_cycle.build());
     }
 
     public void runParking(){

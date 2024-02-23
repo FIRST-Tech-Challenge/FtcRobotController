@@ -1,26 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.util.Timing;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -36,6 +18,9 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     public static double RobotX = 12.6; /*-inches-*/
     public static double RobotY = 18; /*-inches-*/
     public static double BackdropDistance = 1.25; /*-inches-*/
+    public static double RandomizationBackdropDistance = 2; /*-inches-*/
+    public static double StackStationFirstCycleOffset = 2; /*-inches-*/
+    public static double StackStationSecondCycleOffset = 4; /*-inches-*/
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
@@ -45,8 +30,10 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected TrajectorySequenceBuilder centerSpike;
     protected TrajectorySequenceBuilder rightSpike;
     protected TrajectorySequenceBuilder spike_randomizedBackdrop;
-    protected TrajectorySequenceBuilder backdrop_station;
-    protected TrajectorySequenceBuilder station_backdrop;
+    protected TrajectorySequenceBuilder backdrop_station_first_cycle;
+    protected TrajectorySequenceBuilder backdrop_station_second_cycle;
+    protected TrajectorySequenceBuilder station_backdrop_first_cycle;
+    protected TrajectorySequenceBuilder station_backdrop_second_cycle;
     protected TrajectorySequenceBuilder spike_station;
     protected TrajectorySequenceBuilder parking;
     /*-------------------------------------------------------
@@ -106,14 +93,21 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, Tile + (RobotY/2), Math.toRadians(270));
     protected Pose2d rightPixel_LONG = new Pose2d(2 * TileInverted, Tile + (RobotX/2), Math.toRadians(180));
 
+    protected Pose2d randomizationBackdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d randomizationBackdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.5 * Tile, Math.toRadians(180));
+    protected Pose2d randomizationBackdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.3 * Tile, Math.toRadians(180)); // Default
+
     protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.5 * Tile, Math.toRadians(180));
     protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.3 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + 3.5, Math.toRadians(180)); // Default
+    protected Pose2d stationInnerSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationMiddleSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2),Tile + StackStationSecondCycleOffset, Math.toRadians(180));
+    protected Pose2d stationOuterSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
 
-    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
-    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile + StackStationFirstCycleOffset, Math.toRadians(180));
+    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
 
     protected Pose2d parkingInner = new Pose2d(2.5 * Tile, Tile/2, Math.toRadians(180));
     protected Pose2d parkingMiddle = new Pose2d(2 * Tile, 1.5 * Tile, Math.toRadians(180));
@@ -134,6 +128,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     public Vector2d stationFar = stationFar_Inner;
     public Pose2d backdrop_Unload = backdropLeft;
     public Pose2d stackStation = stationInner;
+    public Pose2d stackStationSecondCycle = stationInnerSecondCycle;
     public Pose2d parkingPose = parkingMiddle;
 
     /*-------------------------------------------------------
@@ -184,7 +179,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
 
         /*----------------------------------------------------------------------------------------*/
 
-        backdrop_station = drive.trajectorySequenceBuilder(randomizedBackdrop)
+        backdrop_station_first_cycle = drive.trajectorySequenceBuilder(randomizedBackdrop)
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -193,7 +188,23 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
                 .lineTo(stationFar)
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
 
-        station_backdrop = drive.trajectorySequenceBuilder(stackStation)
+        backdrop_station_second_cycle = drive.trajectorySequenceBuilder(backdrop_Unload)
+                .setTangent(Math.toRadians(180))
+                .splineToConstantHeading(stationClose, Math.toRadians(180),
+                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                )
+                .lineTo(stationFar)
+                .splineToConstantHeading(stackStationSecondCycle.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
+
+        station_backdrop_first_cycle = drive.trajectorySequenceBuilder(stackStation)
+                .setReversed(true)
+                .setTangent(Math.toRadians(0))
+                .splineToConstantHeading(stationFar, Math.toRadians(0))
+                .lineTo(stationClose)
+                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
+
+        station_backdrop_second_cycle = drive.trajectorySequenceBuilder(stackStationSecondCycle)
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
