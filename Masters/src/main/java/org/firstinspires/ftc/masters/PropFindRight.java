@@ -96,6 +96,7 @@ public class PropFindRight extends OpenCvPipeline {
             position = pos.LEFT;
         }
 
+        telemetry.addData("position", position);
         telemetry.update();
 
         Imgproc.rectangle(input, new Point(interestMid.x, interestMid.y), new Point(interestMid.x + interestMid.width, interestMid.y+ interestMid.height), new Scalar(0,255,0),1 );

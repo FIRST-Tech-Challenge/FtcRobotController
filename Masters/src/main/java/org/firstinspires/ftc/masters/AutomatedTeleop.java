@@ -62,6 +62,7 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo outtakeHook;
     Servo outtakeRotation;
     Servo outtakeMovement;
+    Servo microHook;
 
     TouchSensor touchBucket;
 
@@ -164,6 +165,7 @@ public class AutomatedTeleop extends LinearOpMode {
         clawAngle = hardwareMap.servo.get("clawAngle");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
         outtakeHook = hardwareMap.servo.get("outtakeHook");
+        microHook = hardwareMap.servo.get("microHook");
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchBucket = hardwareMap.touchSensor.get("touchBucket");
@@ -217,6 +219,7 @@ public class AutomatedTeleop extends LinearOpMode {
         outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
         outtakeHook.setPosition(CSCons.openHook);
+        microHook.setPosition(CSCons.openMicroHook);
         hookPosition = HookPosition.OPEN;
         planeRaise.setPosition(CSCons.droneFlat);
 
@@ -242,10 +245,10 @@ public class AutomatedTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
 
-            if (gamepad1.right_trigger>0.5){
+            if (gamepad1.right_bumper){
                 driveMode= DriveMode.END_GAME;
             }
-            if (gamepad1.left_trigger>0.5){
+            if (gamepad1.left_bumper){
                 driveMode= DriveMode.NORMAL;
             }
             switch (driveMode) {
@@ -309,7 +312,8 @@ public class AutomatedTeleop extends LinearOpMode {
                                 clawServo.setPosition(clawOpen);
                                 claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
                             }
-                        } else {
+                        }
+                        if (!gamepad2.a){
                             buttonPushed = false;
                         }
 
@@ -344,13 +348,13 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawArm.setPosition(CSCons.clawArmTransition);
                         }
 
-                        if (gamepad1.dpad_up) {
+                        if (gamepad1.right_trigger>0.1) {
                             intakeSlides.setTargetPosition(1700);
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(1);
                         }
 
-                        if (gamepad1.dpad_down) {
+                        if (gamepad1.left_trigger>0.1) {
                             intakeSlides.setTargetPosition(0);
                             intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             intakeSlides.setPower(1);
@@ -442,8 +446,10 @@ public class AutomatedTeleop extends LinearOpMode {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             } else {
                                 outtakeHook.setPosition(CSCons.closeHook);
+                                microHook.setPosition(CSCons.closeMicroHook);
                             }
                         }
                         if (gamepad2.x && hookPosition == HookPosition.OPEN) { // closes hook with x
@@ -451,6 +457,7 @@ public class AutomatedTeleop extends LinearOpMode {
                                 outtakeElapsedTime = closeHook();
                             } else {
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             }
                         }
 
@@ -471,6 +478,7 @@ public class AutomatedTeleop extends LinearOpMode {
                     case MoveToTransfer:
                         if (backSlides.getCurrentPosition() < 50) {
                             outtakeHook.setPosition(CSCons.openHook);
+                            microHook.setPosition(CSCons.openMicroHook);
                             outtakeState = OuttakeState.ReadyToTransfer;
                             target = 0;
                         }
@@ -479,15 +487,38 @@ public class AutomatedTeleop extends LinearOpMode {
                         //if touch sensor => ready to transfer
                         break;
                     case ReadyToDrop:
-                        if (gamepad2.x && hookPosition == HookPosition.CLOSED) {
+                        if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
                                 outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
                             } else {
                                 outtakeHook.setPosition(CSCons.closeHook);
+                                microHook.setPosition(CSCons.closeMicroHook);
+
                             }
                         }
+                        if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.HALF;
+                                outtakeHook.setPosition(CSCons.openHook);
+
+                            }
+                        }
+
+                        if (gamepad2.y && hookPosition == HookPosition.HALF) {
+                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                outtakeElapsedTime = new ElapsedTime();
+                                hookPosition = HookPosition.OPEN;
+                                outtakeHook.setPosition(CSCons.openHook);
+                                microHook.setPosition(CSCons.openMicroHook);
+
+                            }
+                        }
+
+
                         if (gamepad2.x && hookPosition == HookPosition.OPEN) {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = closeHook();
@@ -516,11 +547,11 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
-                            target -= 60;
+                            target -= 15;
                         }
 
                         if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
-                            target += 60;
+                            target += 15;
                         }
 
                         //what button to mode back to transfer?
@@ -627,11 +658,12 @@ public class AutomatedTeleop extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
         hookPosition = HookPosition.CLOSED;
         outtakeHook.setPosition(CSCons.closeHook);
+        microHook.setPosition(CSCons.closeMicroHook);
         return time;
     }
 
     protected boolean detectPixel(){
-        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 300){
+        if (colorSensor.getRawLightDetected() > CSCons.pixelDetectThreshold && runtime.time(TimeUnit.MILLISECONDS) > claw_last_opened + 1000){
             return true;
         } else {
             return false;

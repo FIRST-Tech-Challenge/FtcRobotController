@@ -34,6 +34,7 @@ public class CenterStageBackdropRed extends LinearOpMode {
     enum State {
         PURPLE_DEPOSIT_PATH,
         PURPLE_DEPOSIT,
+        PURPLE_BACKUP,
 
         UNTURN,
         BACKUP_FROM_SPIKES,
@@ -89,35 +90,54 @@ public class CenterStageBackdropRed extends LinearOpMode {
         State currentState;
 
         Trajectory purpleDepositPathL = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, -32.5), Math.toRadians(150)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(10, -38.5), Math.toRadians(150)))
                 .build();
 
         Trajectory purpleDepositPathR = drive.trajectoryBuilder(startPose,false) // misses every time
-                .lineToSplineHeading(new Pose2d(new Vector2d(13, -31), Math.toRadians(60)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(10, -31), Math.toRadians(60)))
                 .build();
 
         Trajectory purpleDepositPathC = drive.trajectoryBuilder(startPose,false)
-                .lineToSplineHeading(new Pose2d(new Vector2d(12, -37), Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(12, -36), Math.toRadians(90)))
                 .build();
 
-        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
+        Trajectory purpleBackUpC = drive.trajectoryBuilder(purpleDepositPathC.end(),false)
+                .back(3)
+                .build();
+
+        Trajectory purpleBackUpR = drive.trajectoryBuilder(purpleDepositPathR.end(), false)
                 .back(4)
                 .build();
 
-        Trajectory yellowDepositPath = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, -36), Math.toRadians(180)), Math.toRadians(60))
+        Trajectory purpleBackUpL = drive.trajectoryBuilder(purpleDepositPathL.end(), false)
+                .back(3)
                 .build();
 
+        Trajectory backUpFromSpikes = drive.trajectoryBuilder(purpleBackUpC.end(),false)
+                .back(3.3)
+                .build();
+
+
         Trajectory yellowDepositPathC = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, -26), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -30), Math.toRadians(180)), Math.toRadians(60))
                 .build();
 
         Trajectory yellowDepositPathL = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(46, -16), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -23), Math.toRadians(180)), Math.toRadians(60))
                 .build();
 
         Trajectory yellowDepositPathR = drive.trajectoryBuilder(backUpFromSpikes.end(),false)
-                .splineToLinearHeading(new Pose2d(new Vector2d(45, -30), Math.toRadians(180)), Math.toRadians(60))
+                .splineToLinearHeading(new Pose2d(new Vector2d(44, -34), Math.toRadians(180)), Math.toRadians(60))
+                .build();
+
+        Trajectory parkC = drive.trajectoryBuilder(yellowDepositPathC.end())
+                .back(4)
+                .build();
+        Trajectory parkL = drive.trajectoryBuilder(yellowDepositPathL.end())
+                .back(4)
+                .build();
+        Trajectory parkR = drive.trajectoryBuilder(yellowDepositPathR.end())
+                .back(4)
                 .build();
 
         Trajectory park;
@@ -127,8 +147,6 @@ public class CenterStageBackdropRed extends LinearOpMode {
         drive.closeClaw();
 
         propPos = myPipeline.position;
-        telemetry.addData("Position", propPos);
-        telemetry.update();
 
         waitForStart();
 
@@ -165,17 +183,27 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
                         drive.openClaw();
                         drive.closeHook();
-/*
-                            if (propPos == PropFindRed.pos.RIGHT) {
-                                drive.turn(Math.toRadians(30));
-                            } else
-                            if (propPos == PropFindRed.pos.LEFT) {
-                                drive.turn(Math.toRadians(-60));
-                            }*/
-
-                            currentState = State.UNTURN;
-
-
+                    sleep(500);
+                    if (propPos == PropFindRight.pos.LEFT){
+                        drive.followTrajectory(purpleBackUpL);
+                    } else if (propPos== PropFindRight.pos.RIGHT){
+                        drive.followTrajectory(purpleBackUpR);
+                    } else {
+                        drive.followTrajectoryAsync(purpleBackUpC);
+                    }
+                    currentState= CenterStageBackdropRed.State.PURPLE_BACKUP;
+                    break;
+                case PURPLE_BACKUP:
+                    if (!drive.isBusy()) {
+                        drive.intakeToTransfer();
+                        sleep(300);
+                        if (propPos == PropFindRight.pos.LEFT) {
+                            drive.turn(Math.toRadians(-45));
+                        } else if (propPos == PropFindRight.pos.RIGHT) {
+                            drive.turn(Math.toRadians(60));
+                        }
+                        currentState = CenterStageBackdropRed.State.UNTURN;
+                    }
                     break;
                 case UNTURN:
                     if (!drive.isBusy()) {
@@ -197,7 +225,7 @@ public class CenterStageBackdropRed extends LinearOpMode {
                         currentState = State.YELLOW_DEPOSIT_PATH;
                         //currentState = State.STOP;
                     } else {
-                        target= CSCons.OuttakePosition.LOW.getTarget();
+                        target= CSCons.OuttakePosition.LOW_AUTO.getTarget();
                         drive.intakeToTransfer();
                         drive.outtakeToBackdrop();
                     }
@@ -232,10 +260,20 @@ public class CenterStageBackdropRed extends LinearOpMode {
                             //if april tag is aligned drop and
                             if (depositTime.milliseconds() > 500) {
                                 drive.dropPixel();
+
                             }
-                            if (depositTime.milliseconds() > 700) {
-                                drive.followTrajectoryAsync(park);
-                                currentState = State.BACK;
+                            if (depositTime.milliseconds()>800){
+                                target = CSCons.OuttakePosition.LOW_AUTO.getTarget()+200;
+                            }
+                            if (depositTime.milliseconds() > 1100) {
+                                if (propPos== PropFindRight.pos.LEFT){
+                                    drive.followTrajectoryAsync(parkL);
+                                } else if (propPos== PropFindRight.pos.RIGHT){
+                                    drive.followTrajectoryAsync(parkR);
+                                } else{
+                                    drive.followTrajectoryAsync(parkC);
+                                }
+                                currentState = CenterStageBackdropRed.State.BACK;
 
                             }
                         }

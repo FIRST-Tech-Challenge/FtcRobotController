@@ -9,9 +9,9 @@ public class CSCons {
     public static double skewampus = 0;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     public static double pixelDetectThreshold = 350;
-    public static double clawOpen = 0.35;
-    public static double clawClosed = 0.7;
-    public static double clawTransfer = 0.54; // .65
+    public static double clawOpen = 0.05;
+    public static double clawClosed = 0.38;
+    public static double clawTransfer = 0.2; // .65
     public static double clawAngleGroundToThree = .98;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .34;
@@ -21,8 +21,8 @@ public class CSCons {
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
     public static double clawArm5 = .695;
-    public static double clawArmTransition = .22;
-    public static double clawArmTransfer = .22;
+    public static double clawArmTransition = .20;
+    public static double clawArmTransfer = .20;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0.08;
@@ -34,6 +34,8 @@ public class CSCons {
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
+    public static double openMicroHook =0.5;
+    public static double closeMicroHook =0;
 
     public static double droneFlat = 0.59;
     public static double droneShooting = 0.2;
@@ -48,6 +50,7 @@ public class CSCons {
 
     public enum OuttakePosition{
         BOTTOM (-10),
+        LOW_AUTO(1050),
         LOW(1400),
         MID(2400),
         HIGH(3400);
@@ -82,7 +85,7 @@ public class CSCons {
     }
 
     public enum  HookPosition{
-        OPEN, CLOSED
+        OPEN, CLOSED, HALF
     }
 
 /**

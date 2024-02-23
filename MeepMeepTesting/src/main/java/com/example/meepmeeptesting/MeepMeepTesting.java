@@ -68,10 +68,34 @@ public class MeepMeepTesting {
 
                                 .build()
                 );
-        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_KAI_DARK)
+
+        RoadRunnerBotEntity newmasters = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 15.00)
+                .setDimensions(15, 17)
+
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
+
+                                .setTangent(Math.toRadians(-40))
+                                .splineToLinearHeading(new Pose2d(36, 29, Math.toRadians(180)), Math.toRadians(-70))
+                                .waitSeconds(1)
+
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(46.5, 30, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(1)
+
+
+                                .setTangent(Math.toRadians(120))
+                                .splineToLinearHeading(new Pose2d(44, 58, Math.toRadians(-170)), Math.toRadians(80))
+
+                                .build()
+                );
+
+        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
+                .addEntity(newmasters)
                 .start();
     }
 }

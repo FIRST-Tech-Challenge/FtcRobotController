@@ -38,6 +38,9 @@ public class MeepMeepBackdropRed {
                             .splineToLinearHeading(new Pose2d(new Vector2d(56, -56), Math.toRadians(180)), Math.toRadians(0))
                             .build()
                 );
+
+
+
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
