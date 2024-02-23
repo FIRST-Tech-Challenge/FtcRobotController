@@ -68,6 +68,7 @@ public class MyControlRobot1 extends LinearOpMode {
         yOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -127,17 +128,18 @@ public class MyControlRobot1 extends LinearOpMode {
             if(Math.abs(lift.getCurrentPosition())<linMax){
                 if(gamepad2.left_stick_y!=0){
                     while((gamepad2.left_stick_y!=0)&&(Math.abs(lift.getCurrentPosition())<linMax)){
-                        lift.setPower(gamepad2.left_stick_y);
+                        lift.setPower(-1 * gamepad2.left_stick_y);
                     }
                     lift.setPower(0);
                 }
             }else{
                 lift.setPower(0);
                 telemetry.addData("Reached max Lin Height",0);
-                lift.setPower(0.2);
+                lift.setPower(-0.2);
                 sleep(250);
                 lift.setPower(0);
             }
+
 
 
             telemetry.addData("Slowness: ", SLOW);

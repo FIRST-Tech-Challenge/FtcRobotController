@@ -1,74 +1,67 @@
 package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-public class customPID {
-    private double P;
-    private double I;
-    private double D;
-    private final double KP;
-    private final double KI;
-    private final double KD;
-    private boolean clamp;
-    private final double maxValue;
-    private final double minValue;
-    private final double maxPosition;
-    private double errorTotal;
-    private double lastError;
-    private double lastIntegral;
-    private static final TelemetryPacket packet = new TelemetryPacket();
-    private static final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public customPID(double KP, double KI, double KD, double maxValue, double minValue, double maxPosition){
-        this.KP = KP;
-        this.KI = KI;
-        this.KD = KD;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.maxPosition = maxPosition;
-        this.errorTotal = 0;
-        this.lastError = 0;
-        this.lastIntegral = 0;
+public class customPID{
+    private final double kp;
+    private final double ki;
+    private final double kd;
+
+    private double setpoint;
+    private double integral = 0;
+    private double prevError = 0;
+
+    private long lastTime; // Time of the previous iteration in nanoseconds
+
+    public customPID(double kp, double ki, double kd) {
+        this.kp = kp;
+        this.ki = ki;
+        this.kd = kd;
+        this.lastTime = System.nanoTime();
     }
-    private void proportionality(double error){
-        this.P = this.KP * error;
+
+    public void setSetpoint(double setpoint) {
+        this.setpoint = setpoint;
     }
-    private void integrator(double error){
-        toClamp(error);
-        if(!clamp){
-            this.I = KI * (errorTotal + error);
-            this.lastIntegral = KI * (errorTotal + error);
-        }else{
-            this.I = 0;
-            this.lastIntegral = 0;
-        }
+
+    public double calculate(double processVariable) {
+        long currentTime = System.nanoTime();
+        double loopTime = (currentTime - lastTime) / 1e9; // Convert to seconds
+        lastTime = currentTime;
+
+        // Calculate error
+        double error = setpoint - processVariable;
+
+        // Proportional term
+        double proportional = kp * error;
+
+        // Integral term
+        integral += error * loopTime; // Adjust for loop time
+        double integralMin = -0.2;
+        double integralMax = 0.2;
+        integral = clamp(integral, integralMin, integralMax); // Apply clamping
+        double integralTerm = ki * integral;
+
+        // Derivative term
+        double derivative = kd * (error - prevError) / loopTime; // Adjust for loop time
+        prevError = error;
+
+        // Calculate the raw control signal
+        double rawControlSignal = proportional + integralTerm + derivative;
+
+        // Scale the output to fit within the specified range
+
+        double outputMin = -0.8;
+        double outputMax = 0.8;
+        return scaleToRange(rawControlSignal, outputMin, outputMax);
     }
-    private void derivative(double error){
-        this.D = KD * (lastError - error);
+
+    private double scaleToRange(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
     }
-    private void toClamp(double error){
-        if((Math.abs((lastError - error))<maxPosition * 0.004)&&(Math.abs(this.lastIntegral-this.I)>lastError*0.06)){
-            clamp = true;
-        }else{
-            clamp = false;
-        }
-        clamp = (Math.abs((lastError - error)) < maxPosition * 0.004) && (Math.abs(this.lastIntegral - this.I) > lastError * 0.06);
+
+    private double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
     }
-    public double outputPID(double error){
-        proportionality(error);
-        integrator(error);
-        derivative(error);
-        packet.put("P", this.P);
-        packet.put("I", this.I);
-        packet.put("D", this.D);
-        double output =  this.P + this.I + this.D;
-        this.lastError = error;
-        this.errorTotal = errorTotal + error;
-        if(output>(0.8*maxValue)){
-            return 0.8 * maxValue;
-        }else if(output<0.9 * minValue) {
-            return -0.8 * minValue;
-        }else{
-            return output;
-        }
-    }
+
 }
