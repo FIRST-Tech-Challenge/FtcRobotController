@@ -28,7 +28,7 @@ public class WristPositionCommand extends CommandBase {
         if (zero) {
             return 0; // Slightly off from straight down
         }
-        return 45; // TODO: tune this
+        return 52; // TODO: tune this
     }
 
     @Override
