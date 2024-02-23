@@ -38,8 +38,8 @@ public class RL20 {
             .roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-47, -38, toRadians(-90)))
-            .lineToLinearHeading(new Pose2d(-44, -45, toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(-48, -27.5,toRadians(-120)), toRadians(90))
+                .lineToLinearHeading(new Pose2d(-49, -36.5,toRadians(-120)))
             .build();
 
     spikey[1] =
@@ -47,17 +47,14 @@ public class RL20 {
             .roadrun
             .trajectorySequenceBuilder(startPose)
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-37, -36, toRadians(-90)))
+            .lineToLinearHeading(new Pose2d(-39, -34.5, toRadians(-90)))
             .build();
 
     spikey[2] =
         robot
             .roadrun
             .trajectorySequenceBuilder(startPose)
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-38, -38, toRadians(-90)))
-            .lineToLinearHeading(new Pose2d(-30, -38, toRadians(-180)))
-            .lineToLinearHeading(new Pose2d(-33.5, -33, toRadians(-180)))
+            .setReversed(true).splineToLinearHeading(new Pose2d(-31,-36.5, toRadians(-180)), toRadians(0))
             .build();
 
     pathyUltra[0] = robot.roadrun
