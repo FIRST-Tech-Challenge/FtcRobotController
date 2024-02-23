@@ -10,30 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
 public class MyControlRobot2 extends LinearOpMode {
-    private DcMotor fr;
-    private DcMotor fl;
-    private DcMotor br;
-    private DcMotor bl;
-    private DcMotor xOdometer = null;
-    private DcMotor yOdometer = null;
-    private DcMotor lift;
-    private OpticalDistanceSensor ods;
-    private ColorSensor color;
-
-    private double tolerance = 0.0; //offset for when to stop stopping | Unused as of now, but might be needed later (needs testing)
-    private double x_pos = 0.0;
-    private double y_pos = 0.0;
-    private double x_offset = 0.0;
-    private double y_offset = 0.0;
-    private double previous_x = 0.0;
-    private double previous_y = 0.0;
-    private final int linMax = 3900;
-    private double globalAngle;
-    private Orientation lastAngles = new Orientation();
 
     private double val_to_squares(int val) {
         return (val / 2048.) * 4.8 * Math.PI / 60.9; //by square
@@ -42,26 +21,26 @@ public class MyControlRobot2 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        fl = hardwareMap.dcMotor.get("fl");
-        bl = hardwareMap.dcMotor.get("bl");
-        fr = hardwareMap.dcMotor.get("fr");
-        br = hardwareMap.dcMotor.get("br");
-        xOdometer = hardwareMap.get(DcMotor.class, "odo1");
-        yOdometer = hardwareMap.get(DcMotor.class, "odo2");
-        ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
-        color = hardwareMap.get(ColorSensor.class, "color");
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        DcMotor fl = hardwareMap.dcMotor.get("fl");
+        DcMotor bl = hardwareMap.dcMotor.get("bl");
+        DcMotor fr = hardwareMap.dcMotor.get("fr");
+        DcMotor br = hardwareMap.dcMotor.get("br");
+        DcMotor xOdometer = hardwareMap.get(DcMotor.class, "odo1");
+        DcMotor yOdometer = hardwareMap.get(DcMotor.class, "odo2");
+        OpticalDistanceSensor ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
+        ColorSensor color = hardwareMap.get(ColorSensor.class, "color");
+        DcMotor lift = hardwareMap.get(DcMotor.class, "lift");
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         //fr.setDirection(DcMotorSimple.Direction.REVERSE);
         //br.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
-
         xOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         yOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -118,17 +97,18 @@ public class MyControlRobot2 extends LinearOpMode {
             if(gamepad1.right_trigger > 0.3) {
                 SLOW = 1.5;
             }
-            if(Math.abs(lift.getCurrentPosition())<linMax){
+            int linMax = 3900;
+            if(Math.abs(lift.getCurrentPosition())< linMax){
                 if(gamepad2.left_stick_y!=0){
-                    while((gamepad2.left_stick_y!=0)&&(Math.abs(lift.getCurrentPosition())<linMax)){
-                        lift.setPower(gamepad2.left_stick_y);
+                    while((gamepad2.left_stick_y!=0)&&(Math.abs(lift.getCurrentPosition())< linMax)){
+                        lift.setPower(-1 * gamepad2.left_stick_y);
                     }
                     lift.setPower(0);
                 }
             }else{
                 lift.setPower(0);
                 telemetry.addData("Reached max Lin Height",0);
-                lift.setPower(0.2);
+                lift.setPower(-0.2);
                 sleep(250);
                 lift.setPower(0);
             }
