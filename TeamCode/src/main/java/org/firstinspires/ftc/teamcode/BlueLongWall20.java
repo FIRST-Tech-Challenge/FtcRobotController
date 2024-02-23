@@ -45,6 +45,8 @@ public class BlueLongWall20 extends LinearOpMode {
 
             robot.configuredParking();
 
+            break;
+
         }
     }
 }
