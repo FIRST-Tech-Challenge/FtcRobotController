@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.util.Timing;
@@ -25,19 +26,8 @@ import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySe
 
 import java.util.concurrent.TimeUnit;
 
-public class RoadRunnerSubsystem_BLUE {
+public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected SampleMecanumDrive drive;
-
-    private Timing.Timer timer;
-    /*-------------------------------------------------------
-    -Mechanisms-
-    -------------------------------------------------------*/
-    protected OuttakeSusystem outtakeSusystem;
-    protected ElevatorSubsystem elevatorSubsystem;
-    protected ElevatorCommand elevatorCommand;
-    protected IntakeArmSubsystem intakeArmSubsystem;
-    protected IntakeSubsystem intakeSubsystem;
-    protected PixelFingerSubsystem pixelFingerSubsystem;
     /*-------------------------------------------------------
     -Params-
     -------------------------------------------------------*/
@@ -45,21 +35,19 @@ public class RoadRunnerSubsystem_BLUE {
     public static double TileInverted = -24; /*-inches-*/
     public static double RobotX = 12.6; /*-inches-*/
     public static double RobotY = 18; /*-inches-*/
-    public static double BackdropDistance = 0; /*-inches-*/
+    public static double BackdropDistance = 1.25; /*-inches-*/
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
     public Pose2d HomePose;
-
     protected TrajectorySequenceBuilder test;
-
     protected TrajectorySequenceBuilder leftSpike;
     protected TrajectorySequenceBuilder centerSpike;
     protected TrajectorySequenceBuilder rightSpike;
-
-    protected TrajectorySequenceBuilder pixel_backdrop_Short;
-    protected TrajectorySequenceBuilder pixel_backdrop_Long;
-
+    protected TrajectorySequenceBuilder spike_randomizedBackdrop;
+    protected TrajectorySequenceBuilder backdrop_station;
+    protected TrajectorySequenceBuilder station_backdrop;
+    protected TrajectorySequenceBuilder spike_station;
     protected TrajectorySequenceBuilder parking;
     /*-------------------------------------------------------
     -Enums-
@@ -118,14 +106,11 @@ public class RoadRunnerSubsystem_BLUE {
     protected Pose2d centerPixel_LONG = new Pose2d(1.5 * TileInverted, Tile + (RobotY/2), Math.toRadians(270));
     protected Pose2d rightPixel_LONG = new Pose2d(2 * TileInverted, Tile + (RobotX/2), Math.toRadians(180));
 
-    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2), 1.75 * Tile, Math.toRadians(180)); // Default
-    protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2), 1.5 * Tile, Math.toRadians(180));
-    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2), 1.3 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.5 * Tile, Math.toRadians(180));
+    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.3 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + 3.5, Math.toRadians(165)); // Default
-
-    protected Pose2d stationInnerOff = new Pose2d(3 * TileInverted + (RobotY/2),Tile/2 + 3, Math.toRadians(165)); // Default
-
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + 3.5, Math.toRadians(180)); // Default
 
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile, Math.toRadians(180));
     protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile, Math.toRadians(180)); // Default
@@ -152,115 +137,9 @@ public class RoadRunnerSubsystem_BLUE {
     public Pose2d parkingPose = parkingMiddle;
 
     /*-------------------------------------------------------
-    -FTCLib Commands-
-    -------------------------------------------------------*/
-
-    boolean intakeIsEnded = false;
-
-    public SequentialCommandGroup randomizationPixelElevator(){
-        return new SequentialCommandGroup(
-                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.AUTO),
-                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                new WaitCommand(80),
-                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-        );
-    }
-
-    public SequentialCommandGroup elevator(){
-        return new SequentialCommandGroup(
-                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOW),
-                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                new WaitCommand(80),
-                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-        );
-    }
-
-    public SequentialCommandGroup scoring(){
-        return new SequentialCommandGroup(
-                new SequentialCommandGroup(
-                        new InstantCommand(outtakeSusystem::wheel_release, outtakeSusystem),
-                        new WaitCommand(2000),
-                        new InstantCommand(outtakeSusystem::wheel_stop, outtakeSusystem)),
-
-                new SequentialCommandGroup(
-                        new SequentialCommandGroup(
-                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                                new WaitCommand(80),
-                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-                        ),
-                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
-                )
-        );
-    }
-
-    public SequentialCommandGroup stackStationIntake(int index) {
-        return new SequentialCommandGroup(
-                new InstantCommand(intakeSubsystem::run),
-                new InstantCommand(outtakeSusystem::wheel_grab),
-                new WaitCommand(150),
-                new SequentialCommandGroup(
-                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index), intakeArmSubsystem),
-                        new WaitCommand(500),
-                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1), intakeArmSubsystem),
-                        new WaitCommand(500)
-                ),
-                new ParallelCommandGroup(
-                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-                        new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
-                )
-        );
-    }
-
-//    private Thread intakeFirst = new Thread(() -> {
-//        intakeSubsystem.run();
-//        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeArmSubsystem.auto_pixel(5);
-//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeArmSubsystem.auto_pixel(4);
-//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeSubsystem.stop();
-//        intakeArmSubsystem.raiseArm();
-//    });
-//
-//    private Thread intakeSecond = new Thread(() -> {
-//        intakeSubsystem.run();
-//        timer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeArmSubsystem.auto_pixel(3);
-//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeArmSubsystem.auto_pixel(2);
-//        timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-//        timer.start();
-//        while (!timer.done());
-//        timer.pause();
-//
-//        intakeSubsystem.stop();
-//        intakeArmSubsystem.raiseArm();
-//    });
-
-    /*-------------------------------------------------------
     -La program-
     -------------------------------------------------------*/
-    RoadRunnerSubsystem_BLUE(SampleMecanumDrive sampleDrive,HardwareMap hardwareMap, Pose2d HomePose,
+    RoadRunnerSubsystem_BLUE(SampleMecanumDrive sampleDrive, Pose2d HomePose,
                             StartingPosition startingPosition, Path path,PixelStack pixelStack,
                             ParkingPosition parkingPosition){
 
@@ -270,14 +149,6 @@ public class RoadRunnerSubsystem_BLUE {
         this.path = path;
         this.pixelStack = pixelStack;
         this.parkingPosition = parkingPosition;
-
-        /*-----------------------------------------------------*/
-
-        outtakeSusystem = new OuttakeSusystem(hardwareMap);
-//        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
-        intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
-        intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
-        pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
         /*-----------------------------------------------------*/
 
@@ -293,151 +164,47 @@ public class RoadRunnerSubsystem_BLUE {
 
         leftSpike = drive.trajectorySequenceBuilder(HomePose)
                 .strafeTo(leftPixelSpike.vec());
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
-//                });//tan pair 180/0
 
         /*------------------------------------------------------------------------*/
 
         centerSpike = drive.trajectorySequenceBuilder(HomePose)
                 .lineTo(centerPixelSpike.vec());
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
-//                });
 
         /*------------------------------------------------------------------------*/
 
         rightSpike = drive.trajectorySequenceBuilder(HomePose)
                 .setTangent(Math.toRadians(rightSpikeStartingTanget[rightSpikeStartingTangetValue])) //tan pair 45/135
                 .splineToLinearHeading(rightPixelSpike, Math.toRadians(rightSpikeFinalTanget[rightSpikeFinalTangetValue]));
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(new InstantCommand(pixelFingerSubsystem::release, pixelFingerSubsystem));
-//                });
 
         /*----------------------------------------------------------------------------------------*/
 
-        pixel_backdrop_Short = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(randomizationPixelElevator());
-//                })
+        spike_randomizedBackdrop = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
                 .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(randomizedBackdrop, Math.toRadians(300))
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                })
-                /*-------------------------------------------------------------------*/
-                /*----2+2----*/
-                /*-------------------------------------------------------------------*/
+                .splineToLinearHeading(randomizedBackdrop, Math.toRadians(0));
+
+        /*----------------------------------------------------------------------------------------*/
+
+        backdrop_station = drive.trajectorySequenceBuilder(randomizedBackdrop)
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
                 .lineTo(stationFar)
-                .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(stackStationIntake(5));
-                })
-                .waitSeconds(4)
-//                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(90))
+                .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
+
+        station_backdrop = drive.trajectorySequenceBuilder(stackStation)
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(elevator());
-//                })
-                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                })
-                /*-------------------------------------------------------------------*/
-                /*----2+4----*/
-                /*-------------------------------------------------------------------*/
-                .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(stationClose, Math.toRadians(180),
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(15)
-                )
-                .lineTo(stationFar)
-                .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(stackStationIntake(3));
-                })
-                .waitSeconds(4)
-//                .splineToConstantHeading(stationInnerOff.vec(), Math.toRadians(75))
-                .setReversed(true)
-                .setTangent(Math.toRadians(0))
-                .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(elevator());
-//                })
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                });
+
         /*----------------------------------------------------------------------------------------*/
 
-        pixel_backdrop_Long = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
+        spike_station = drive.trajectorySequenceBuilder(pixel_cycle_PoseTransfer)
                 .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(stackStation, Math.toRadians(180))
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(stackStationIntake());
-//                })
-                .setReversed(true)
-                .setTangent(Math.toRadians(0))
-                .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(randomizationPixelElevator());
-//                })
-                .splineToConstantHeading(randomizedBackdrop.vec(), Math.toRadians(0))
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                })
-                /*-------------------------------------------------------------------*/
-                /*----2+3----*/
-                /*-------------------------------------------------------------------*/
-                .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(stationClose, Math.toRadians(180))
-                .lineTo(stationFar)
-                .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(stackStationIntake());
-//                })
-                .setReversed(true)
-                .setTangent(Math.toRadians(0))
-                .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(elevator());
-//                })
-                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0))
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                })
-                /*-------------------------------------------------------------------*/
-                /*----2+5----*/
-                /*-------------------------------------------------------------------*/
-                .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(stationClose, Math.toRadians(180))
-                .lineTo(stationFar)
-                .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])) //tan pair 180/225
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(stackStationIntake());
-//                })
-                .setReversed(true)
-                .setTangent(Math.toRadians(0))
-                .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(elevator());
-//                })
-                .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
-//                .addDisplacementMarker(() -> {
-////                    CommandScheduler.getInstance().schedule(scoring());
-//                });
+                .splineToLinearHeading(stackStation, Math.toRadians(270));
 
         /*----------------------------------------------------------------------------------------*/
 

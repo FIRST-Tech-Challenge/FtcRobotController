@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Pair;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,11 +13,11 @@ import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySe
 public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     Telemetry telemetry;
     RoadRunnerCommand_BLUE(
-            SampleMecanumDrive sampleDrive, HardwareMap hardwareMap, Pose2d HomePose,
+            SampleMecanumDrive sampleDrive, Pose2d HomePose,
             StartingPosition startingPosition, Path path, PixelStack pixelStack,
             ParkingPosition parkingPosition, Telemetry telemetry
     ) {
-        super(sampleDrive, hardwareMap, HomePose, startingPosition, path, pixelStack, parkingPosition);
+        super(sampleDrive, HomePose, startingPosition, path, pixelStack, parkingPosition);
         this.telemetry = telemetry;
     }
 
@@ -43,16 +45,19 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
         else if (startingPosition == StartingPosition.LONG){
             if (randomization == Randomization.LEFT){
                 randomizedBackdrop = backdropLeft;
+                backdrop_Unload = randomizedBackdrop;
                 rightPixelSpike = leftPixel_LONG;
                 pixel_cycle_PoseTransfer = leftPixel_LONG;
             }
             else if (randomization == Randomization.CENTER){
                 randomizedBackdrop = backdropCenter;
+                backdrop_Unload = randomizedBackdrop;
                 centerPixelSpike = centerPixel_LONG;
                 pixel_cycle_PoseTransfer = centerPixel_LONG;
             }
             else if (randomization == Randomization.RIGHT){
                 randomizedBackdrop = backdropRight;
+                backdrop_Unload = randomizedBackdrop;
                 leftPixelSpike = rightPixel_LONG;
                 pixel_cycle_PoseTransfer = rightPixel_LONG;
                 rightSpikeStartingTangetValue = 1;
@@ -121,18 +126,27 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
         return leftSpike;
     }
 
-    public TrajectorySequenceBuilder getCycle(){
-        if (startingPosition == StartingPosition.SHORT){
-            return pixel_backdrop_Short;
-        }
-        else if (startingPosition == StartingPosition.LONG){
-            return pixel_backdrop_Long;
-        }
-
-        return pixel_backdrop_Short;
+    public void runSpike(Randomization rand) {
+        drive.followTrajectorySequence(getSpike(rand).build());
     }
 
-    public TrajectorySequenceBuilder getParking(){
-        return parking;
+    public void runSpike_RandomizedBackdrop() {
+        drive.followTrajectorySequence(spike_randomizedBackdrop.build());
+    }
+
+    public void runBackdrop_Station(){
+        drive.followTrajectorySequence(backdrop_station.build());
+    }
+
+    public void runStation_Backdrop(){
+        drive.followTrajectorySequence(station_backdrop.build());
+    }
+
+    public void runParking(){
+        drive.followTrajectorySequence(parking.build());
+    }
+
+    public void runSpike_Station(){
+        drive.followTrajectorySequence(spike_station.build());
     }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -15,30 +17,32 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "CenterStageAutonomous_BLUE", group = "Final Autonomous")
-public class CenterStageAutnomous_BLUE extends LinearOpMode {
+public class CenterStageAutnomous_BLUE extends CommandOpMode {
 
-    protected SampleMecanumDrive drive;
-    protected RoadRunnerCommand_BLUE RR_Blue;
-    protected RoadRunnerSubsystem_BLUE.Randomization rand;
-
-    public Pose2d HomePose_SHORT = new Pose2d(RoadRunnerSubsystem_BLUE.Tile/2, 3 * RoadRunnerSubsystem_BLUE.Tile - 6.93 - 2.56, Math.toRadians(270));
-    public Pose2d HomePose_LONG = new Pose2d(1.5 * RoadRunnerSubsystem_BLUE.TileInverted, 3 * RoadRunnerSubsystem_BLUE.TileInverted + (RoadRunnerSubsystem_BLUE.RobotY/2), Math.toRadians(90));
-
-    private Timing.Timer timer;
-
-    private double startTime = 0;
+    private SampleMecanumDrive drive;
+    private RoadRunnerCommand_BLUE RR_Blue;
+    private RoadRunnerSubsystem_BLUE.Randomization rand;
+    private AutonomousCommands autonomousCommands;
+    private Pose2d HomePose_SHORT = new Pose2d(RoadRunnerSubsystem_BLUE.Tile/2, 3 * RoadRunnerSubsystem_BLUE.Tile - 6.93 - 2.56, Math.toRadians(270));
+    private Pose2d HomePose_LONG = new Pose2d(1.5 * RoadRunnerSubsystem_BLUE.TileInverted, 3 * RoadRunnerSubsystem_BLUE.TileInverted + (RoadRunnerSubsystem_BLUE.RobotY/2), Math.toRadians(90));
 
     @Override
-    public void runOpMode() {
+    public void initialize() {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new SampleMecanumDrive(hardwareMap);
-        RR_Blue = new RoadRunnerCommand_BLUE(drive, hardwareMap, HomePose_SHORT, RoadRunnerSubsystem_BLUE.StartingPosition.SHORT,
+        RR_Blue = new RoadRunnerCommand_BLUE(drive, HomePose_SHORT, RoadRunnerSubsystem_BLUE.StartingPosition.SHORT,
                 RoadRunnerSubsystem_BLUE.Path.INNER, RoadRunnerSubsystem_BLUE.PixelStack.INNER, RoadRunnerSubsystem_BLUE.ParkingPosition.OUTER, telemetry);
 
         rand = RoadRunnerSubsystem_BLUE.Randomization.LEFT;
@@ -48,33 +52,40 @@ public class CenterStageAutnomous_BLUE extends LinearOpMode {
         RR_Blue.parking();
         RR_Blue.TrajectoryInit();
 
-        timer = new Timing.Timer(30, TimeUnit.MILLISECONDS);
+        autonomousCommands = new AutonomousCommands(hardwareMap);
+    }
 
+    @Override
+    public void runOpMode() {
+        initialize();
         waitForStart();
-        timer.start();
 
-        drive.followTrajectorySequenceAsync(RR_Blue.getSpike(rand).build());
-        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
-            drive.update();
-            CommandScheduler.getInstance().run();
-        }
-        drive.setWeightedDrivePower(new Pose2d(0,0,0));
+        schedule(
+                new SequentialCommandGroup(
+                        autonomousCommands.spikePixelTake(),
+                        new InstantCommand(() -> RR_Blue.runSpike(rand), RR_Blue),
+                        autonomousCommands.spikeScoring(),
+                        autonomousCommands.randomizationPixelElevator(),
+                        new InstantCommand(() -> RR_Blue.runSpike_RandomizedBackdrop(), RR_Blue),
+                        autonomousCommands.scoring(),
+                        new InstantCommand(() -> RR_Blue.runBackdrop_Station(), RR_Blue),
+                        autonomousCommands.stackStationIntake(5),
+                        new InstantCommand(() -> RR_Blue.runStation_Backdrop(), RR_Blue),
+                        autonomousCommands.elevator(),
+                        autonomousCommands.scoring(),
+                        new InstantCommand(() -> RR_Blue.runBackdrop_Station(), RR_Blue),
+                        autonomousCommands.stackStationIntake(3),
+                        new InstantCommand(() -> RR_Blue.runStation_Backdrop(), RR_Blue),
+                        autonomousCommands.elevator(),
+                        autonomousCommands.scoring(),
+                        new InstantCommand(() -> RR_Blue.runParking(), RR_Blue)
+                )
+        );
 
-        drive.followTrajectorySequenceAsync(RR_Blue.getCycle().build());
-        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
-            startTime = timer.elapsedTime();
-            drive.update();
-            CommandScheduler.getInstance().run();
-            telemetry.addData("Hz: ", (1/(timer.elapsedTime()-startTime))/1000);
-            telemetry.update();
+        while (!isStopRequested() && opModeIsActive()) {
+            run();
         }
-        drive.setWeightedDrivePower(new Pose2d(0,0,0));
 
-        drive.followTrajectorySequenceAsync(RR_Blue.getParking().build());
-        while(opModeIsActive() && !isStopRequested() && drive.isBusy()){
-            drive.update();
-            CommandScheduler.getInstance().run();
-        }
-        drive.setWeightedDrivePower(new Pose2d(0,0,0));
+        reset();
     }
 }
