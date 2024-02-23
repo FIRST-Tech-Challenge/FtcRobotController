@@ -919,34 +919,27 @@ public class Robot {
 
                 // P1: (35, 17)
 
-                if (isRedAlliance) {
-                    mecanumBlocking2(21);
-                } else {
-                    mecanumBlocking2(-21);
-                }
-                setHeading(0, 0.7);
 
-                // P2: (14, 17)
+                if (isRedAlliance) {
+                    mecanumBlocking2(20);
+                } else {
+                    mecanumBlocking2(-23);
+                }
+
+                setHeading(0, 0.7);
 
                 straightBlocking2(-31);
 
-                // P3: (14, 48)
-
                 setHeading(90 * polarity, 0.7);
 
-                // P4: (22.5, 39.5)
-
+                //spike
                 if (!testingOnBert) {
                     moveFingerUp();
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, false, 0.7);
-                setHeading(90 * polarity, 0.7);
                 straightBlocking(2, true, 0.7);
                 setHeading(90 * polarity, 0.7);
-
-                // P5: (19.5, 39.5)
 
                 if (isRedAlliance) {
                     mecanumBlocking2(18);
@@ -989,7 +982,11 @@ public class Robot {
 
                 // P2: (23, 17)
 
-                straightBlocking2(-36);
+                if (isRedAlliance) {
+                    straightBlocking2(-36);
+                } else {
+                    straightBlocking2(-34);
+                }
 
                 // P3: (23, 52)
                 setHeading(90 * polarity, 0.7);
@@ -1844,7 +1841,7 @@ public class Robot {
                 break;
             case 2:
                 //blue center
-                mecanumAndSlidesDownToZero(-28, slideStartingPosition);
+                mecanumAndSlidesDownToZero(-30, slideStartingPosition);
                 break;
             case 3:
                 //blue right
