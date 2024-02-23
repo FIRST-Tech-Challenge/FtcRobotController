@@ -10,16 +10,15 @@ public class BlueShort20 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        int maxDelayInSeconds = 12;
+        int maxDelayInSeconds = 11;
         Robot robot = new Robot(hardwareMap, this, telemetry, false, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
         int delay = 0;  // Max delay is 12000
-        robot.lowOuttake = true;
-        robot.autoDelayInSeconds = 0;
-        robot.parkingPosition = Robot.PARKING_POSITION.TRUSS;
+        robot.setConfigPresets(delay, Robot.PARKING_POSITION.TRUSS, true );
+
         robot.buttonConfigAtInit(gamepad1);
 
         waitForStart();

@@ -11,7 +11,7 @@ public class BlueLongWall20 extends LinearOpMode {
         //robot, dt motors, vision processing setup
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, false, true);
-        robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.TRUSS);
+        robot.setConfigPresets(maxDelayInSeconds, Robot.PARKING_POSITION.TRUSS, false);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
@@ -41,7 +41,7 @@ public class BlueLongWall20 extends LinearOpMode {
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
-            robot.autoOuttake(false);
+            robot.autoOuttake(robot.lowOuttake);
 
             robot.configuredParking();
 
