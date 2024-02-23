@@ -11,11 +11,15 @@ public class RedShort20 extends LinearOpMode {
 
         //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
+        int delay = 0;  // Max delay is 12000
+        int maxDelayInSeconds = 11;
+        robot.setConfigPresets(delay, Robot.PARKING_POSITION.TRUSS, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
         double slideStartingPosition;
-        int delay = 0;  // Max delay is 12000
+
+        robot.buttonConfigAtInit(gamepad1);
 
         waitForStart();
 
@@ -28,8 +32,11 @@ public class RedShort20 extends LinearOpMode {
             robot.setMarkerLocation(true, false, robot.markerPos);
             robot.servoToInitPositions();
 
-            this.sleep(delay);
-
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                this.sleep(robot.autoDelayInSeconds * 1000);
+            } else {
+                this.sleep(maxDelayInSeconds * 1000);
+            }
             robot.shortMoveToBoard2();
 
             robot.alignToBoardFast(robot.wantedAprTagId);
@@ -38,11 +45,10 @@ public class RedShort20 extends LinearOpMode {
             // note slide init position
             slideStartingPosition = robot.lsFront.getCurrentPosition();
 
-            robot.autoOuttake(true);
+            robot.autoOuttake(robot.lowOuttake);
 
             // parking here
-            robot.boardToTruss();
-            robot.straightBlocking2(-10);
+            robot.configuredParking();
 
             break;
         }

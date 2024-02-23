@@ -683,8 +683,11 @@ public class Robot {
                 setHeading(-90 * polarity, 0.7);
 
                 // P3: (43.5, 35.5)
-
-                straightBlocking2(-3);
+                if (isRedAlliance) {
+                    straightBlocking2(-2);
+                } else  {
+                    straightBlocking2(-3);
+                }
                 setHeading(-90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -692,7 +695,12 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(31);
+                if (isRedAlliance) {
+                    straightBlocking2(32);
+                }
+                {
+                    straightBlocking2(31);
+                }
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
 
@@ -2356,9 +2364,10 @@ public class Robot {
         setServoPos(spikeServo, 0.68);
     }
 
-    public void setDelayAndParking (int delay, PARKING_POSITION parkingPos) {
+    public void setConfigPresets(int delay, PARKING_POSITION parkingPos, boolean lowOuttake) {
         autoDelayInSeconds = delay;
         parkingPosition = parkingPos;
+        this.lowOuttake = lowOuttake;
     }
 
     public void buttonConfigAtInit (Gamepad gamepad1) {

@@ -11,7 +11,7 @@ public class RedLongFreeway20 extends LinearOpMode {
         //robot, dt motors, vision processing setup
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
-        robot.setDelayAndParking(maxDelayInSeconds, Robot.PARKING_POSITION.FREEWAY);
+        robot.setConfigPresets(maxDelayInSeconds, Robot.PARKING_POSITION.FREEWAY, false);
 
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
