@@ -70,7 +70,7 @@ public class TELEOPtest1 extends LinearOpMode {
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // check the gamepad buttons and if pressed, increment the appropriate position
         // variable to change the servo location.
@@ -159,7 +159,7 @@ public class TELEOPtest1 extends LinearOpMode {
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     runtime.reset();
                     armMotor.setPower(Math.abs(1));
-
+                    while (armMotor.isBusy() && (gamepad1.y)){}
                     armMotor.setPower(0);
 
                     armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -169,7 +169,7 @@ public class TELEOPtest1 extends LinearOpMode {
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     runtime.reset();
                     armMotor.setPower(Math.abs(1));
-
+                    while (armMotor.isBusy() && (gamepad1.x)){}
                     armMotor.setPower(0);
 
                     armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

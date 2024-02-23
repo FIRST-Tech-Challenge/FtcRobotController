@@ -246,21 +246,20 @@ public class Driver extends LinearOpMode {
                     if (gamepad2.y) {
                         wristServo.setPosition(WRIST_DROP_POS_HIGH);
                         moveArmMotorToPosition(ARM_DROP_POS_HIGH, 2);
-                    }
-                    else if (gamepad2.dpad_down) {
+                    } else if (gamepad2.dpad_down) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     } else if (gamepad2.dpad_up) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
-                    }else if (gamepad2.x) {
+                    } else if (gamepad2.x) {
                         wristServo.setPosition(WRIST_DROP_POS_LOW);
                         moveArmMotorToPosition(ARM_DROP_POS_LOW, 2);
-                    }else if (gamepad1.b) {
+                    } else if (gamepad1.b) {
                         // move to 0 degrees.
                         wristServo.setPosition(WRIST_FORWARD_DROP_POS_HIGH);
                         moveArmMotorToPosition(ARM_DRIVE_POS, 2.6);
-                    }else if (gamepad1.a) {
+                    } else if (gamepad1.a) {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     }
@@ -285,31 +284,35 @@ public class Driver extends LinearOpMode {
                         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                     }
                     */
+
                     /*leftY = gamepad1.left_trigger * -1;
                     rightY = gamepad1.right_trigger * 1;
                     armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
                     armMotor.setPower(Range.clip(rightY, -1.0, 1.0));
                     //and here put your logic to move the arm up and down*/
-                    if (gamepad1.right_trigger>.5 && gamepad1.left_trigger==0) {
+                    if (gamepad1.right_trigger > .5 && gamepad1.left_trigger == 0.0) {
                         armMotor.setTargetPosition(-4185);
                         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         runtime.reset();
                         armMotor.setPower(Math.abs(1));
 
+
+                        while (armMotor.isBusy() && (gamepad1.right_trigger > .5)){}
+
                         armMotor.setPower(0);
 
                         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                    }
-                    else if (gamepad1.right_trigger<5 && gamepad1.left_trigger<5) {
+                    } else if (gamepad1.right_trigger < .5 && gamepad1.left_trigger == 0) {
                         armMotor.setPower(0);
 
                         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                    }
-                    else if (gamepad1.left_trigger>.5 && gamepad1.right_trigger==0) {
+                    } else if (gamepad1.left_trigger > .5 && gamepad1.right_trigger == 0) {
                         armMotor.setTargetPosition(1);
                         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         runtime.reset();
                         armMotor.setPower(Math.abs(1));
+
+                        while (armMotor.isBusy() && (gamepad1.left_trigger > .5)){}
 
                         armMotor.setPower(0);
 
