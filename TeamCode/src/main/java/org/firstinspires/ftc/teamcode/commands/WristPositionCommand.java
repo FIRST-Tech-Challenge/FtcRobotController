@@ -24,11 +24,16 @@ public class WristPositionCommand extends CommandBase {
         addRequirements(subsystem);
     }
 
+    public static int getBoardTargetPosition() {
+        // TODO: tune this
+        return 52;
+    }
+
     private int getTargetPos() {
         if (zero) {
             return 0; // Slightly off from straight down
         }
-        return 52; // TODO: tune this
+        return getBoardTargetPosition();
     }
 
     @Override

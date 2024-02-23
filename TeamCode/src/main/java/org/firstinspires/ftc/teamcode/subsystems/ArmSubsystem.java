@@ -110,6 +110,12 @@ public class ArmSubsystem extends SubsystemBase {
         return (int) (ticksPerRevolution*scale);
     }
 
+    public static int positionFromAngle(DcMotor motor, double angle, AngleUnit angleUnit) {
+        double ticksPerRevolution = motor.getMotorType().getTicksPerRev();
+        double scale = angleUnit.toDegrees(angle)/360;
+        return (int) (ticksPerRevolution*scale);
+    }
+
     /**
      * @param position The position that the arm will move towards.
      */
@@ -128,6 +134,14 @@ public class ArmSubsystem extends SubsystemBase {
     public void resetArm() {
         armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public DcMotor getArmMotor1() {
+        return armMotor1;
+    }
+
+    public DcMotor getArmMotor2() {
+        return armMotor2;
     }
 
     @Override

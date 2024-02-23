@@ -13,12 +13,22 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.commands.WristPositionCommand;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other;
 
 import java.util.HashMap;
@@ -442,6 +452,7 @@ public class CompTrajectoryGenerator {
         out.put(PixelStates.DETECT_RIGHT, DETECT_RIGHT);
         out.put(PixelStates.PLACE_RIGHT, PLACE_RIGHT);
 
+
         return out;
     }
 
@@ -466,8 +477,86 @@ public class CompTrajectoryGenerator {
         return null;
     }
 
+    private enum PlacePixelState {
+        START,
+        ROTATE_ARM_WRIST,
+        RELEASE_FINGERS,
+        RESET_ARM, // optional. can be used to move the arm down if we need to
+        FINISH
+    }
+
     public void placePixelOnBoard() {
-        // TODO: implement placing pixel on board
+        // TODO: test if placing pixel on board works
+        boolean running = true;
+        boolean keepFingerPinched = true;
+
+        HashMap<RobotHardwareInitializer.Arm, DcMotor> arms = new HashMap<>(2);
+        DcMotor[] armArray = (DcMotor[]) OTHER.get(Other.ARM).getValue();
+        arms.put(RobotHardwareInitializer.Arm.ARM1, armArray[0]);
+        arms.put(RobotHardwareInitializer.Arm.ARM2, armArray[0]);
+
+        WristSubsystem wristSubsystem = new WristSubsystem((DcMotorEx) OTHER.get(Other.WRIST).getValue(), false);
+        ArmSubsystem armSubsystem = new ArmSubsystem(arms);
+        FingerSubsystem fingerSubsystem = new FingerSubsystem((Servo) OTHER.get(Other.WRIST).getValue());
+
+        ElapsedTime elapsedTime = new ElapsedTime();
+        PlacePixelState state = PlacePixelState.START;
+        while (running) {
+
+            if (keepFingerPinched) {
+                fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.CLOSED);
+            } else {
+                fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.OPEN);
+            }
+
+            switch (state) {
+                case START:
+                    // Pinch Fingers
+                    keepFingerPinched = true;
+                    state = PlacePixelState.ROTATE_ARM_WRIST;
+                    elapsedTime.reset();
+                    break;
+                case ROTATE_ARM_WRIST:
+                    // Move wrist to the board position
+                    wristSubsystem.setWristPosition(WristPositionCommand.getBoardTargetPosition());
+
+                    // Move the arm to the back of the board
+                    armSubsystem.manualMoveArm(1);
+                    int targetPosition = ArmSubsystem.positionFromAngle(armSubsystem.getArmMotor1(), ArmSubsystem.ArmPosition.BOARD.getPosition(), AngleUnit.DEGREES);
+
+                    boolean atBack = false;
+
+                    // Check if it got to the board
+                    if (armSubsystem.getArmMotor1().getCurrentPosition() >= targetPosition) {
+                        // It reached the board
+                        atBack = true;
+                    }
+
+                    // If the arm is positioned at the back of the board, release the fingers
+                    if (atBack) {
+                        state = PlacePixelState.RELEASE_FINGERS;
+                        elapsedTime.reset();
+                    }
+                    break;
+                case RELEASE_FINGERS:
+                    // Drop the pixels on the board
+                    keepFingerPinched = false;
+
+                    // After the pixels have had time to drop, begin to parks
+                    if (elapsedTime.milliseconds() > 400) {
+                        state = PlacePixelState.RESET_ARM;
+                        elapsedTime.reset();
+                    }
+                    break;
+                case RESET_ARM:
+                    // optionally move the arm down a bit more so its not in a weird position
+                    state = PlacePixelState.FINISH;
+                    break;
+                case FINISH:
+                    running = false;
+                    break;
+            }
+        }
     }
 
     private enum SpikeMarkPlacement {
@@ -505,6 +594,8 @@ public class CompTrajectoryGenerator {
 
         SpikeMarkPlacement spikeMarkPlacement = SpikeMarkPlacement.ERROR;
         Pose2d lastPose;
+
+        //
 
         while (opModeIsActive.getAsBoolean() && !isStopRequested.getAsBoolean()) {
             switch (state) {
@@ -590,7 +681,6 @@ public class CompTrajectoryGenerator {
                 case PARK:
                     // TODO: implement parking
                     return;
-                    //break;
                 case IDLE:
                     return;
                 default:
