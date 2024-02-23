@@ -323,7 +323,7 @@ public class RL21 {
             robot.queuer.queue(false, true);
         }
         robot.queuer.addDelay(.5);
-        robot.lowAuto();
+        robot.lowAuto(false);
         if (bark == 2) {
             robot.yellowAuto(true);
         }else{

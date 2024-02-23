@@ -32,8 +32,8 @@ public class BR20 {
         robot.roadrun.setPoseEstimate(new Pose2d(17, 61, Math.toRadians(90)));
 
         preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61, toRadians(90)))
-                .lineToLinearHeading(new Pose2d(16.5, 43, toRadians(60)))
-                .lineToLinearHeading(new Pose2d(9.5, 40, toRadians(50))).build();
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(13.5, 37, toRadians(0)), toRadians(180)).build();
         preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61,toRadians(90)))
                 .lineToLinearHeading(new Pose2d(16.5, 36.5, toRadians(91))).build();
         preload[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,61, toRadians(90)))

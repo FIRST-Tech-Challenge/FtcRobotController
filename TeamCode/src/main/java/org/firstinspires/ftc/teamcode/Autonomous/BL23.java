@@ -271,17 +271,18 @@ public class BL23 {
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop[bark]);
         robot.grabAuto();
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.drop();
     }
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
         robot.grabAuto();
-        robot.lowAuto();
         if (bark == 2) {
+            robot.lowAuto(true);
             robot.yellowAuto(true);
         }else{
+            robot.lowAuto(false);
             robot.yellowAuto(false);
 
         }

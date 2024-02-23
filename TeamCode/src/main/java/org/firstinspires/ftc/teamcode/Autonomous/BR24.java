@@ -114,14 +114,14 @@ public class BR24 {
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop);
         robot.grabAuto();
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.drop();
     }
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
         robot.grabAuto();
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.yellowAuto(false);
         robot.drop();
     }

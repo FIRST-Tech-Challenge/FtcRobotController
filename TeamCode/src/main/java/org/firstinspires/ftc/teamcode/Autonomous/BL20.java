@@ -38,7 +38,7 @@ public class BL20 {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-38, 38, toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-31, 28, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-31, 31, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-31, 32, toRadians(180)))
 
                 .build();
 
@@ -269,8 +269,8 @@ public class BL20 {
             robot.queuer.queue(false, true);
         }
         robot.queuer.addDelay(.5);
-        robot.lowAuto();
-        robot.queuer.addDelay(1.5);
+//        robot.lowAuto(false);
+//        robot.queuer.addDelay(1.5);
         robot.veryLowAuto();
         robot.queuer.waitForFinish();
         robot.queuer.addDelay(0.3);
@@ -278,8 +278,7 @@ public class BL20 {
     }
 
     public void park(){
-        robot.queuer.addDelay(.5);
-        robot.resetAuto();
+
         if (ultras) {
             robot.queuer.waitForFinish();
         }
@@ -289,6 +288,8 @@ public class BL20 {
     else{
         robot.followTrajSeq(parkLeft[bark]);
     }
+        robot.queuer.addDelay(.6);
+        robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }

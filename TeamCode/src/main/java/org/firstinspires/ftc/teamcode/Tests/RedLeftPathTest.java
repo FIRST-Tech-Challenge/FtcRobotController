@@ -107,7 +107,7 @@ public class RedLeftPathTest extends LinearOpMode {
       robot.dropAuto(1);
 //      robot.queuer.addDelay(2.0);
 
-      robot.lowAuto();
+      robot.lowAuto(false);
 //      robot.queuer.addDelay(2.0);
 
       robot.drop();
@@ -122,7 +122,7 @@ public class RedLeftPathTest extends LinearOpMode {
       robot.grabAuto();
 //      robot.queuer.addDelay(2.0);
 
-      robot.lowAuto();
+      robot.lowAuto(false);
 //      robot.queuer.addDelay(2.0);
 
       robot.drop();
@@ -134,7 +134,7 @@ public class RedLeftPathTest extends LinearOpMode {
       robot.grabAuto();
 //      robot.queuer.addDelay(2.0);
 
-      robot.lowAuto();
+      robot.lowAuto(false);
 //      robot.queuer.addDelay(2.0);
 
       robot.drop();
@@ -145,7 +145,7 @@ public class RedLeftPathTest extends LinearOpMode {
       robot.grabAuto();
 //      robot.queuer.addDelay(2.0);
 
-      robot.lowAuto();
+      robot.lowAuto(false );
 //      robot.queuer.addDelay(2.0);
 
       robot.drop();

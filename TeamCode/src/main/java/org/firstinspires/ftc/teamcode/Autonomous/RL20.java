@@ -199,7 +199,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[0].end())
                     .lineToLinearHeading(new Pose2d(43.3, -29, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -11, toRadians(-180)))
                     .build();
 
     parkyLeft[1] =
@@ -207,7 +207,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[1].end())
                     .lineToLinearHeading(new Pose2d(43.3, -35.5, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -11, toRadians(-180)))
                     .build();
 
     parkyLeft[2] =
@@ -215,7 +215,7 @@ public class RL20 {
                     .roadrun
                     .trajectorySequenceBuilder(droppy[2].end())
                     .lineToLinearHeading(new Pose2d(43.3, -41.5, toRadians(-180)))
-                    .lineToLinearHeading(new Pose2d(50, -6, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(50, -11, toRadians(-180)))
                     .build();
     robot.dropServo(1);
     robot.setRight(false);
@@ -289,7 +289,7 @@ public class RL20 {
       robot.queuer.queue(false, true);
     }
     robot.queuer.addDelay(.5);
-    robot.lowAuto();
+//    robot.lowAuto(false);
     robot.queuer.addDelay(1.5);
     robot.veryLowAuto();
     robot.queuer.waitForFinish();
