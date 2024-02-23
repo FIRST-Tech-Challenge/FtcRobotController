@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 @TeleOp
-public class GoBuilda extends LinearOpMode {
+public class GoBilda extends LinearOpMode {
 
 
     private DcMotor armRotate;
@@ -205,12 +205,16 @@ public class GoBuilda extends LinearOpMode {
                 }
 
                 //Gripper
-                if (gamepad2.b) {
+                if (gamepad2.a) {
                     servoLeft.setPosition(0);
                     servoRight.setPosition(1);
-                } else if (gamepad2.a) {
+                } else if (gamepad2.b) {
                     servoLeft.setPosition(0.3);
                     servoRight.setPosition(0.7);
+                } else if (gamepad2.x) {
+                    servoLeft.setPosition(0);
+                } else if (gamepad2.y) {
+                    servoRight.setPosition(1);
                 }
 
                 if (gamepad2.dpad_left && gamepad1.dpad_left) {

@@ -33,16 +33,16 @@ public class BlueAuto2 extends PlaceLinePixel {
             waitForStart();
 
             if (opModeIsActive()) {
-
-                RobotMoveFarward();
+                Grab();
                 TimeUnit.MILLISECONDS.sleep(250);
+
+                RobotMoveFarwardHalf();
 
                 RobotStop();
-                TimeUnit.MILLISECONDS.sleep(250);
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(4);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,15 +53,28 @@ public class BlueAuto2 extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location2 = true;
-                    PixelLocation2();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
+                Break();
+
+                RobotStop();
+
+                Float();
+
                 TimeUnit.MILLISECONDS.sleep(500);
-
-                BlueLocation2();
-
-                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

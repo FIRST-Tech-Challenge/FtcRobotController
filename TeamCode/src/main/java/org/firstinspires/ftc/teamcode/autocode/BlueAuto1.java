@@ -42,7 +42,7 @@ public class BlueAuto1 extends PlaceLinePixel {
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,8 +53,19 @@ public class BlueAuto1 extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location2 = true;
-                    PixelLocation2();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
                 TimeUnit.MILLISECONDS.sleep(500);
@@ -63,10 +74,22 @@ public class BlueAuto1 extends PlaceLinePixel {
 
                 if (Location1 == true) {
                     BoardPixel1();
+                    RobotMoveBackwardHalf();
+                    RobotStrafeLeftHalf();
+                    TimeUnit.MILLISECONDS.sleep(500);
+                    RobotMoveFarwardHalf();
                 } else if (Location2 == true) {
                     BoardPixel2();
+                    RobotMoveBackwardHalf();
+                    RobotStrafeLeftHalf();
+                    TimeUnit.MILLISECONDS.sleep(800);
+                    RobotMoveFarwardHalf();
                 } else if (Location3 == true) {
                     BoardPixel3();
+                    RobotMoveBackwardHalf();
+                    RobotStrafeLeftHalf();
+                    TimeUnit.MILLISECONDS.sleep(900);
+                    RobotMoveFarwardHalf();
                 }
 
                 TimeUnit.MILLISECONDS.sleep(100);

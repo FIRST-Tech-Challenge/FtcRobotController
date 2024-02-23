@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RedAutoPlace", group = "BroomBots")
+@Autonomous(name = "BlueAuto2Spike", group = "Spike Mark")
 
-public class RedAutoPlace extends PlaceLinePixel {
+public class BlueAuto2Spike extends PlaceLinePixel {
 
     @Override
 
@@ -33,16 +33,16 @@ public class RedAutoPlace extends PlaceLinePixel {
             waitForStart();
 
             if (opModeIsActive()) {
-
-                RobotMoveFarward();
+                Grab();
                 TimeUnit.MILLISECONDS.sleep(250);
+
+                RobotMoveFarwardHalf();
 
                 RobotStop();
-                TimeUnit.MILLISECONDS.sleep(250);
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(4);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,23 +53,28 @@ public class RedAutoPlace extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location2 = true;
-                    PixelLocation2();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
+                Break();
+
+                RobotStop();
+
+                Float();
+
                 TimeUnit.MILLISECONDS.sleep(500);
-
-                RedLocationPlace();
-
-                TimeUnit.MILLISECONDS.sleep(100);
-
-                armBrace.setPower(-.2);
-                armRotate.setPower(-.2);
-                TimeUnit.MILLISECONDS.sleep(500);
-
-                armRotate.setPower(0);
-                armBrace.setPower(0);
-                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing

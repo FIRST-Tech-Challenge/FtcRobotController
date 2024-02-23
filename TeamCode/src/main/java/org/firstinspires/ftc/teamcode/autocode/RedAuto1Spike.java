@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "BlueAutoPlace", group = "BroomBots")
+@Autonomous(name = "RedAuto1Spike", group = "Spike Mark")
 
-public class BlueAutoPlace extends PlaceLinePixel {
+public class RedAuto1Spike extends PlaceLinePixel {
 
     @Override
 
@@ -33,16 +33,16 @@ public class BlueAutoPlace extends PlaceLinePixel {
             waitForStart();
 
             if (opModeIsActive()) {
-
-                RobotMoveFarward();
+                Grab();
                 TimeUnit.MILLISECONDS.sleep(250);
+
+                RobotMoveFarwardHalf();
 
                 RobotStop();
-                TimeUnit.MILLISECONDS.sleep(250);
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(4);
+                TimeUnit.SECONDS.sleep(2);
                 telemetryTfod();
                 telemetry.update();
 
@@ -53,13 +53,24 @@ public class BlueAutoPlace extends PlaceLinePixel {
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
-                    Location2 = true;
-                    PixelLocation2();
+                    TimeUnit.SECONDS.sleep(2);
+                    telemetryTfod();
+                    telemetry.update();
+                    if (Location1 == true) {
+                        PixelLocation1();
+                    } else if (Location2 == true) {
+                        PixelLocation2();
+                    } else if (Location3 == true) {
+                        PixelLocation3();
+                    } else {
+                        Location3 = true;
+                        PixelLocation3();
+                    }
                 }
 
                 TimeUnit.MILLISECONDS.sleep(500);
 
-                BlueLocationPlace();
+                RedLocation1Spike();
 
                 TimeUnit.MILLISECONDS.sleep(100);
 

@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.utils.PlaceLinePixel;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RedAuto1")
+@Autonomous(name = "RedAuto2Spike", group = "Spike Mark")
 
-public class RedAuto1 extends PlaceLinePixel {
+public class RedAuto2Spike extends PlaceLinePixel {
 
     @Override
 
@@ -42,7 +42,7 @@ public class RedAuto1 extends PlaceLinePixel {
 
                 armUp();
 
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(1);
                 telemetryTfod();
                 telemetry.update();
 
@@ -50,12 +50,6 @@ public class RedAuto1 extends PlaceLinePixel {
                     PixelLocation1();
                 } else if (Location2 == true) {
                     PixelLocation2();
-                    frontLeftMotor.setPower(.2);
-                    frontRightMotor.setPower(.2);
-                    backLeftMotor.setPower(.2);
-                    backRightMotor.setPower(.2);
-                    TimeUnit.MILLISECONDS.sleep(200);
-                    RobotStop();
                 } else if (Location3 == true) {
                     PixelLocation3();
                 } else {
@@ -66,12 +60,6 @@ public class RedAuto1 extends PlaceLinePixel {
                         PixelLocation1();
                     } else if (Location2 == true) {
                         PixelLocation2();
-                        frontLeftMotor.setPower(.2);
-                        frontRightMotor.setPower(.2);
-                        backLeftMotor.setPower(.2);
-                        backRightMotor.setPower(.2);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        RobotStop();
                     } else if (Location3 == true) {
                         PixelLocation3();
                     } else {
@@ -80,31 +68,13 @@ public class RedAuto1 extends PlaceLinePixel {
                     }
                 }
 
+                Break();
+
+                RobotStop();
+
+                Float();
+
                 TimeUnit.MILLISECONDS.sleep(500);
-
-                RedLocation1();
-
-                if (Location1 == true) {
-                    BoardPixel1();
-                    RobotMoveBackwardHalf();
-                    RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(1000);
-                    RobotMoveFarwardHalf();
-                } else if (Location2 == true) {
-                    BoardPixel2();
-                    RobotMoveBackwardHalf();
-                    RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(900);
-                    RobotMoveFarwardHalf();
-                } else if (Location3 == true) {
-                    BoardPixel3();
-                    RobotMoveBackwardHalf();
-                    RobotStrafeRightHalf();
-                    TimeUnit.MILLISECONDS.sleep(700);
-                    RobotMoveFarwardHalf();
-                }
-
-                TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             //Nothing
