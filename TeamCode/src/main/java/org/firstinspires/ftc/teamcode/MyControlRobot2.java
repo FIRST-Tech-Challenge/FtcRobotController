@@ -27,8 +27,6 @@ public class MyControlRobot2 extends LinearOpMode {
         DcMotor br = hardwareMap.dcMotor.get("br");
         DcMotor xOdometer = hardwareMap.get(DcMotor.class, "odo1");
         DcMotor yOdometer = hardwareMap.get(DcMotor.class, "odo2");
-        OpticalDistanceSensor ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
-        ColorSensor color = hardwareMap.get(ColorSensor.class, "color");
         DcMotor lift = hardwareMap.get(DcMotor.class, "lift");
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
