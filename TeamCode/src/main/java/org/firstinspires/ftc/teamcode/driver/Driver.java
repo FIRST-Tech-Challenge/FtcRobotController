@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+
 import org.firstinspires.ftc.teamcode.shared.MotionHardware;
 
 
@@ -26,15 +27,15 @@ public class Driver extends LinearOpMode {
     static final double ARM_SPEED = 1.0;
     static final int ARM_DROP_POS_LOW = -4520;
     static final int ARM_DROP_POS_HIGH = -3540;
-    static final int ARM_DRIVE_POS = -820;
+    static final int ARM_DRIVE_POS = -830;
     static final int ARM_INTAKE_POS = 25;
     static final double LEFT_GRIPPER_OPEN = 0.90;
     //was 1.5
-    static final double LEFT_GRIPPER_CLOSE = 2;
+    static final double LEFT_GRIPPER_CLOSE = 2.2;
     static final double RIGHT_GRIPPER_OPEN = 0.1;
 
     //was -0.5
-    static final double RIGHT_GRIPPER_CLOSE = -0.9;
+    static final double RIGHT_GRIPPER_CLOSE = -1.1;
     static final double WRIST_DROP_POS_LOW = 0.85;
     static final double WRIST_DROP_POS_HIGH = 01;
     static final double WRIST_INTAKE_POS = 0.3;
@@ -156,7 +157,7 @@ public class Driver extends LinearOpMode {
                 leftGripper.setPosition(LEFT_GRIPPER_OPEN);
                 rightGripper.setPosition(RIGHT_GRIPPER_OPEN); // Adjust the position value for the center position
             }
-            if (gamepad1.x) {
+            else if (gamepad1.x) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(LEFT_GRIPPER_CLOSE);
                 rightGripper.setPosition(RIGHT_GRIPPER_CLOSE);// Adjust the position value as needed
@@ -263,7 +264,31 @@ public class Driver extends LinearOpMode {
                         wristServo.setPosition(WRIST_INTAKE_POS);
                         moveArmMotorToPosition(ARM_INTAKE_POS, 2.6);
                     }
+                   /* if (gamepad1.dpad_up) {
+                        armMotor.setTargetPosition(-4185);
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        runtime.reset();
+                        armMotor.setPower(Math.abs(1));
 
+                        armMotor.setPower(0);
+
+                        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                    }
+                    else if (gamepad1.dpad_down){
+                        armMotor.setTargetPosition(1);
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        runtime.reset();
+                        armMotor.setPower(Math.abs(1));
+
+                        armMotor.setPower(0);
+
+                        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                    }
+                    */
+                    leftY = gamepad1.left_trigger * -1;
+                    rightY = gamepad1.right_trigger * 1;
+                    armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
+                    armMotor.setPower(Range.clip(rightY, -1.0, 1.0));
                     //and here put your logic to move the arm up and down
                     try {
                         Thread.sleep(10); // Small delay to prevent looping too fast
