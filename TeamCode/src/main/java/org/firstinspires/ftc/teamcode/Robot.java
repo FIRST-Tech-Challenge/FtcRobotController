@@ -2069,7 +2069,6 @@ public class Robot {
                 }
                 setHeading(90 * polarity, 0.7);
 
-
                 straightBlocking2FixHeading(-97);
 
                 setHeading(90 * polarity, 0.7);
@@ -2103,16 +2102,16 @@ public class Robot {
 
                 setHeading(90 * polarity, 0.7);
 
+                if (isRedAlliance) {
+                    straightBlocking(2, false, 0.7);
+                } else {
+
+                }
+
                 if (!testingOnBert) {
                     moveFingerUp();
                     opMode.sleep(200);
                 }
-
-                if (isRedAlliance) {
-                    straightBlocking(2, false, 0.7);
-                }
-
-                // todo why is this here ^^
 
                 if (isRedAlliance) {
                     straightBlocking(4, true, 0.7);
