@@ -867,8 +867,11 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
 
                 // P3: (43.5, 35.5)
-
-                straightBlocking2(-3);
+                if (isRedAlliance) {
+                straightBlocking2(-5);
+                } else {
+                    straightBlocking2(-3);
+                }
                 setHeading(90 * polarity, 0.7);
 
                 if (!testingOnBert) {
@@ -876,7 +879,11 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(5);
+                if (isRedAlliance) {
+                    straightBlocking2(7);
+                } else {
+                    straightBlocking2(5);
+                }
 
                 // P3: (43.5, 35.5)
 
@@ -2121,8 +2128,15 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(3, true, 0.7);
+                if (isRedAlliance) {
+                    straightBlocking(2, false, 0.7);
+                }
 
+                if (isRedAlliance) {
+                    straightBlocking(4, true, 0.7);
+                } else {
+                    straightBlocking(3,true,0.7);
+                }
                 if (isRedAlliance) {
                     mecanumBlocking2(-36);
                 } else {
