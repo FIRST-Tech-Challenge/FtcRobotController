@@ -87,6 +87,7 @@ public class Robot {
     }
     MARKER_LOCATION markerLocation;
 
+    boolean lowOuttake;
     int autoDelayInSeconds;
     PARKING_POSITION parkingPosition;
 
@@ -2369,6 +2370,12 @@ public class Robot {
         boolean wasPressedDPadUp = false;
 
         while (!opMode.opModeIsActive()) {
+            
+            if (gamepad1.y) {
+                this.lowOuttake = false;
+            } else if (gamepad1.a) {
+                this.lowOuttake = true;
+            }
 
             // b increases wait counter by 1
             if (wasPressedB && !gamepad1.b) {
@@ -2418,6 +2425,12 @@ public class Robot {
 
                 telemetry.addLine("PARKING: DPAD LEFT/UP/RIGHT");
                 telemetry.addData("PARKING POS: ", parkingPosition);
+                telemetry.addLine("");
+
+                telemetry.addLine("OUTTAKE LOW/HIGH: GAMEPAD A/Y");
+                telemetry.addData("OUTTAKE: ", (lowOuttake? "LOW":"HIGH"));
+
+
                 telemetry.update();
                 break;
             }
@@ -2430,11 +2443,16 @@ public class Robot {
             telemetry.addData("PARKING POS: ", parkingPosition);
             telemetry.addLine("");
 
+            telemetry.addLine("OUTTAKE LOW/HIGH: GAMEPAD A/Y");
+            telemetry.addData("OUTTAKE: ", (lowOuttake? "LOW":"HIGH"));
+            telemetry.addLine("");
+
+
             telemetry.addLine("PRESS BOTH BUMPERS TO CONFIRM");
+
 
             telemetry.update();
         }
-
     }
 
     public void configuredParking() {
