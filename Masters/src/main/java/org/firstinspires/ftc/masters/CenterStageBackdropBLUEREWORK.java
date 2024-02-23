@@ -121,22 +121,23 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
         //YELLOW PIXELS
 
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
+                .back(5)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(44, 37, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 39, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence middleyellow = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(44, 31.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 33, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(44, 24.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 24.5, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
@@ -234,7 +235,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                                 if (waitTime.milliseconds() > 1100) {
                                     preloadTime.reset();
 
-                                    itarget = 1500;
+                                    itarget = 1400;
                                     preloadInt = 1;
                                 }
 
@@ -289,14 +290,15 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                         if (resetInt == 1) {
                             if(preloadTime.milliseconds() > 600){
                                 itarget = 0;
+                                drive.followTrajectorySequenceAsync(leftyellow);
                             }
-                            if (preloadTime.milliseconds() > 1000) {
+                            if (preloadTime.milliseconds() > 1200) {
                                 drive.intakeToTransfer();
                                 drive.outtakeToBackdrop();
 
                                 target = 900;
 
-                                drive.followTrajectorySequenceAsync(leftyellow);
+
                                 currentState = State.YELLOW_DEPOSIT;
                             }
                         }
