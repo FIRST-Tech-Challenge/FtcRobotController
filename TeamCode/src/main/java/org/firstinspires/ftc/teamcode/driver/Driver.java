@@ -285,11 +285,37 @@ public class Driver extends LinearOpMode {
                         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                     }
                     */
-                    leftY = gamepad1.left_trigger * -1;
+                    /*leftY = gamepad1.left_trigger * -1;
                     rightY = gamepad1.right_trigger * 1;
                     armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
                     armMotor.setPower(Range.clip(rightY, -1.0, 1.0));
-                    //and here put your logic to move the arm up and down
+                    //and here put your logic to move the arm up and down*/
+                    if (gamepad1.right_trigger>.5 && gamepad1.left_trigger==0) {
+                        armMotor.setTargetPosition(-4185);
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        runtime.reset();
+                        armMotor.setPower(Math.abs(1));
+
+                        armMotor.setPower(0);
+
+                        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                    }
+                    else if (gamepad1.right_trigger<5 && gamepad1.left_trigger<5) {
+                        armMotor.setPower(0);
+
+                        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                    }
+                    else if (gamepad1.left_trigger>.5 && gamepad1.right_trigger==0) {
+                        armMotor.setTargetPosition(1);
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        runtime.reset();
+                        armMotor.setPower(Math.abs(1));
+
+                        armMotor.setPower(0);
+
+                        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                    }
+
                     try {
                         Thread.sleep(10); // Small delay to prevent looping too fast
                     } catch (InterruptedException e) {
