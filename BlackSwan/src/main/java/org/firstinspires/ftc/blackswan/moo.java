@@ -58,13 +58,14 @@ public class moo extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
         double servoPosition = 0.5;
 
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        planeLauncher.setPosition(0.95);
-        turnClaw.setPosition(0.47);
+        planeLauncher.setPosition(0.49);
+        turnClaw.setPosition(0.69);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
 
@@ -95,7 +96,7 @@ public class moo extends LinearOpMode {
             } else if (gamepad2.dpad_up) {
                 armQuickPosition = 1;
             } else if (gamepad2.dpad_left) {
-                turnClaw.setPosition(0.6);
+                turnClaw.setPosition(0.65);
             }
 
             // Flip these signs if the robot rotates the wrong way
@@ -150,10 +151,10 @@ public class moo extends LinearOpMode {
 
 
                 if (gamepad2.x) {
-                    turnClaw.setPosition(0.46);
+                    turnClaw.setPosition(0.69);
                 }
                 if (gamepad2.y) {
-                    turnClaw.setPosition(0.3);
+                    turnClaw.setPosition(0.45);
                 }
                 if (gamepad2.a) {
                     closeClaw.setPosition(0.9);
@@ -162,7 +163,7 @@ public class moo extends LinearOpMode {
                     closeClaw.setPosition(0.2);
                 }
                 if (gamepad1.a) {
-                    planeLauncher.setPosition(0);
+                    planeLauncher.setPosition(.55);
                 }
                 telemetry.update();
 
