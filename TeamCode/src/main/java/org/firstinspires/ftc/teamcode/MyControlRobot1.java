@@ -19,26 +19,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 @TeleOp
 public class MyControlRobot1 extends LinearOpMode {
-    private DcMotor fr;
-    private DcMotor fl;
-    private DcMotor br;
-    private DcMotor bl;
-    private DcMotor xOdometer = null;
-    private DcMotor yOdometer = null;
-    private DcMotor lift;
-    private OpticalDistanceSensor ods;
-    private ColorSensor color;
-
-    private double tolerance = 0.0; //offset for when to stop stopping | Unused as of now, but might be needed later (needs testing)
-    private double x_pos = 0.0;
-    private double y_pos = 0.0;
-    private double x_offset = 0.0;
-    private double y_offset = 0.0;
-    private double previous_x = 0.0;
-    private double previous_y = 0.0;
-    private final int linMax = 3900;
-    private double globalAngle;
-    private Orientation lastAngles = new Orientation();
 
     private double val_to_squares(int val) {
         return (val / 2048.) * 4.8 * Math.PI / 60.9; //by square
@@ -47,15 +27,15 @@ public class MyControlRobot1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        fl = hardwareMap.dcMotor.get("fl");
-        bl = hardwareMap.dcMotor.get("bl");
-        fr = hardwareMap.dcMotor.get("fr");
-        br = hardwareMap.dcMotor.get("br");
-        xOdometer = hardwareMap.get(DcMotor.class, "odo1");
-        yOdometer = hardwareMap.get(DcMotor.class, "odo2");
-        ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
-        color = hardwareMap.get(ColorSensor.class, "color");
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        DcMotor fl = hardwareMap.dcMotor.get("fl");
+        DcMotor bl = hardwareMap.dcMotor.get("bl");
+        DcMotor fr = hardwareMap.dcMotor.get("fr");
+        DcMotor br = hardwareMap.dcMotor.get("br");
+        DcMotor xOdometer = hardwareMap.get(DcMotor.class, "odo1");
+        DcMotor yOdometer = hardwareMap.get(DcMotor.class, "odo2");
+        OpticalDistanceSensor ods = hardwareMap.get(OpticalDistanceSensor.class, "ods");
+        ColorSensor color = hardwareMap.get(ColorSensor.class, "color");
+        DcMotor lift = hardwareMap.get(DcMotor.class, "lift");
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         //fr.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -125,9 +105,10 @@ public class MyControlRobot1 extends LinearOpMode {
             if(gamepad1.right_trigger > 0.3) {
                 SLOW = 1.5;
             }
-            if(Math.abs(lift.getCurrentPosition())<linMax){
+            int linMax = 3900;
+            if(Math.abs(lift.getCurrentPosition())< linMax){
                 if(gamepad2.left_stick_y!=0){
-                    while((gamepad2.left_stick_y!=0)&&(Math.abs(lift.getCurrentPosition())<linMax)){
+                    while((gamepad2.left_stick_y!=0)&&(Math.abs(lift.getCurrentPosition())< linMax)){
                         lift.setPower(-1 * gamepad2.left_stick_y);
                     }
                     lift.setPower(0);
@@ -143,7 +124,9 @@ public class MyControlRobot1 extends LinearOpMode {
 
 
             telemetry.addData("Slowness: ", SLOW);
+            double x_offset = 0.0;
             packet.put("X", val_to_squares(xOdometer.getCurrentPosition()) + x_offset);
+            double y_offset = 0.0;
             packet.put("Y", val_to_squares(yOdometer.getCurrentPosition()) + y_offset);
             packet.put("ODS", ods.getRawLightDetected());
             packet.put("IMU", botHeading);
