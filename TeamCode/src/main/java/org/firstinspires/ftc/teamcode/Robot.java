@@ -923,8 +923,17 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, true, 0.7);
-                setHeading(90 * polarity, 0.7);
+                if(isRedAlliance){
+                    straightBlocking(2, false, 0.7);
+                    setHeading(90 * polarity, 0.7);
+                    straightBlocking(2, true, 0.7);
+                    setHeading(90 * polarity, 0.7);
+                } else {
+//                    straightBlocking(2, false, 0.7);
+//                    setHeading(90 * polarity, 0.7);
+                    straightBlocking(2, true, 0.7);
+//                    setHeading(90 * polarity, 0.7);
+                }
 
                 if (isRedAlliance) {
                     mecanumBlocking2(18);
@@ -1128,7 +1137,7 @@ public class Robot {
         boolean stackAttachmentOut = false;
 
         final long KONSTANT_TIME_GAP_MILLISECONDS = 100;
-        double launcherSpeedTarget = 0.49;
+        double launcherSpeedTarget = 0.5;
         boolean droneShouldHaveLaunched = false;
         //max power = 2800ticks/sec
         //6000rpm rotations per second = 6000/60 rotation per millisecond = (6000/60)/1000 ticks per millisecond = 0.1*28
@@ -1393,14 +1402,14 @@ public class Robot {
                 if (-gamepad2.left_stick_y > 0) {
                     //only if the linear slides aren't at upper the limit
                     if (lsFront.getCurrentPosition() < 3100) {
-                        lsBack.setPower(lsPowerFast);
-                        lsFront.setPower(lsPowerFast);
+                        lsBack.setPower(-gamepad2.left_stick_y);
+                        lsFront.setPower(-gamepad2.left_stick_y);
                     }
                 } else if (-gamepad2.left_stick_y < 0) {
                     //only if the linear slides aren't at the lower limit
                     if (lsFront.getCurrentPosition() > 50 || gamepad2.x) {
-                        lsBack.setPower(-lsPowerFast);
-                        lsFront.setPower(-lsPowerFast);
+                        lsBack.setPower(-gamepad2.left_stick_y);
+                        lsFront.setPower(-gamepad2.left_stick_y);
                     }
                 } else {
                     lsBack.setPower(0 + lsStayUpAddPower);
@@ -1431,8 +1440,9 @@ public class Robot {
             */
 
             Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
-            telemetry.addData("tray angle position servo", trayAngleServoPos);
-            telemetry.addData("imu", getCurrentHeading());
+//            telemetry.addData("tray angle position servo", trayAngleServoPos);
+//            telemetry.addData("imu", getCurrentHeading());
+            telemetry.addData("pigeon head on", allowTrayAngle);
             Log.d("trayAngle", trayAngle + "tray" + getCurrentHeading() + "heading");
             telemetry.update();
         }
@@ -2000,7 +2010,11 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking2(3);
+                if(isRedAlliance) {
+                    straightBlocking2(3);
+                } else {
+
+                }
 
                 if (isRedAlliance) { //
                     mecanumBlocking2(-24.5);
@@ -2044,7 +2058,11 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                straightBlocking(2, true, 0.7);
+                if(isRedAlliance){
+                    straightBlocking(2, true, 0.7);
+                } else {
+                    //straightBlocking(2, true, 0.7); //no need to move
+                }
                 setHeading(90 * polarity, 0.7);
 
                 if (isRedAlliance) {
