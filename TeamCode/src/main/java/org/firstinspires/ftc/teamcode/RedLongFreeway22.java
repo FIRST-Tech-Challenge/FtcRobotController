@@ -8,8 +8,10 @@ public class RedLongFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
+        int maxDelayInSeconds = 0;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
+        robot.setConfigPresets(maxDelayInSeconds, Robot.PARKING_POSITION.BOARD, false);
+
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
@@ -43,6 +45,7 @@ public class RedLongFreeway22 extends LinearOpMode {
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false);
+            robot.configuredParking();
 
             break;
 

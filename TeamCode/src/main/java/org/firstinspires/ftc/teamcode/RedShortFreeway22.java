@@ -8,17 +8,14 @@ public class RedShortFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        int defaultDelay = 0;  // Max delay is 3000
+        int defaultDelay = 0;
         int maxDelayInSeconds = 3;
 
-
-        robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true );
-
+        robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true);
         robot.buttonConfigAtInit(gamepad1);
 
         waitForStart();
@@ -57,6 +54,8 @@ public class RedShortFreeway22 extends LinearOpMode {
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false);
+
+            robot.configuredParking();
 
             break;
 

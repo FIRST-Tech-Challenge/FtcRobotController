@@ -18,9 +18,7 @@ public class BlueShortFreeway22 extends LinearOpMode {
         int defaultDelay = 0;  // Max delay is 3000
         int maxDelayInSeconds = 3;
 
-
         robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true);
-
         robot.buttonConfigAtInit(gamepad1);
 
         waitForStart();
@@ -57,6 +55,7 @@ public class BlueShortFreeway22 extends LinearOpMode {
 
             robot.trayToOuttakePos(true); // pivot tray to outtake position
             robot.autoOuttake(false);
+            robot.configuredParking();
 
             break;
 
