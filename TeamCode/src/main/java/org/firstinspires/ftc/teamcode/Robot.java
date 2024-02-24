@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
+import android.text.BoringLayout;
 import android.util.Log;
 import android.util.Size;
 
@@ -1330,9 +1331,10 @@ public class Robot {
                 allowTrayAngleOverride = !allowTrayAngleOverride;
 
                 trayAngle.setPosition(trayAngleDefault);
+                Log.d("pigeon head override", Boolean.toString(allowTrayAngleOverride));
             } else if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
-
+                Log.d("pigeon head override", "pigeon head on");
                 //checking imu in correct range
                 if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
                     //-0.004
@@ -1344,6 +1346,7 @@ public class Robot {
                 }
 
                 trayAngle.setPosition(trayAngleServoPos);
+                Log.d("pigeon head override", String.valueOf(trayAngleServoPos));
             }
             dpadDownPreviousValue = gamepad2.dpad_down;
 
