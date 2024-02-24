@@ -695,15 +695,10 @@ public class Robot {
                     opMode.sleep(200);
                 }
 
-                if (isRedAlliance) {
-                    straightBlocking2(32);
-                }
-                {
-                    straightBlocking2(31);
-                }
+                setHeading(-90 * polarity, 0.7);
 
                 visionPortal.setProcessorEnabled(aprilTagProcessor, true);
-
+                straightBlocking2(29.5);
                 setHeading(90 * polarity, 0.7);
 
                 break;
