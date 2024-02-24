@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.CenterStageRobot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -86,7 +87,8 @@ public class CenterStageRobot extends RobotEx {
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
 
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(openOuttake(), closeOuttake());
+            .whenPressed(new ConditionalCommand(openOuttake(), closeOuttake(), () -> outtakeSusystem.getState() == OuttakeSusystem.State.INTAKE));
+//                .toggleWhenPressed(openOuttake(), closeOuttake());
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(openExtremeOuttake());
