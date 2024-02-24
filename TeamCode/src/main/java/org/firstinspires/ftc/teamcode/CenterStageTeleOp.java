@@ -103,6 +103,6 @@ public class CenterStageTeleOp extends CommandOpMode {
         RobotConstants.FAST_SPEED_PERC = FAST_SPEED_PERC;
 
 
-        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, RobotEx.OpModeType.TELEOP, true);
+        robot = new CenterStageRobot(hardwareMap, RobotConstants, telemetry, driverOp, toolOp);
     }
 }
