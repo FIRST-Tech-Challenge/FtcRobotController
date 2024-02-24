@@ -176,14 +176,18 @@ public class Robot {
     }
 
     public void trayToIntakePos(boolean blocking) {
-        setServoPos(tray, 0.45);
+        //backup value 0.45
+        //delta 0.3
+        setServoPos(tray, 0.3);
         if (blocking) {
             opMode.sleep(500);
         }
     }
 
     public void trayToOuttakePos(boolean blocking) {
-        setServoPos(tray, 0.15);
+        //backup value 0.15
+        //delta 0.3
+        setServoPos(tray, 0);
         if (blocking) {
             opMode.sleep(100);
         }
