@@ -19,7 +19,7 @@ public class BlueShortFreeway22 extends LinearOpMode {
         int maxDelayInSeconds = 3;
 
 
-        robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true );
+        robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true);
 
         robot.buttonConfigAtInit(gamepad1);
 
@@ -34,12 +34,6 @@ public class BlueShortFreeway22 extends LinearOpMode {
             robot.setMarkerLocation(false, false, robot.markerPos);
             robot.servoToInitPositions();
 
-            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
-                this.sleep(robot.autoDelayInSeconds * 1000);
-            } else {
-                this.sleep(maxDelayInSeconds * 1000);
-            }
-
             robot.shortMoveToBoard2();
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
@@ -47,6 +41,13 @@ public class BlueShortFreeway22 extends LinearOpMode {
             robot.autoOuttake(true);
 
             robot.boardToMiddle();
+
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                this.sleep(robot.autoDelayInSeconds * 1000);
+            } else {
+                this.sleep(maxDelayInSeconds * 1000);
+            }
+
             robot.middleToStackAndIntake();
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();

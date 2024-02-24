@@ -32,12 +32,6 @@ public class RedShortFreeway22 extends LinearOpMode {
             robot.setMarkerLocation(true, false, robot.markerPos);
             robot.servoToInitPositions();
 
-            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
-                this.sleep(robot.autoDelayInSeconds * 1000);
-            } else {
-                this.sleep(maxDelayInSeconds * 1000);
-            }
-
             robot.shortMoveToBoard2();
             robot.alignToBoardFast(robot.wantedAprTagId);
 
@@ -46,6 +40,13 @@ public class RedShortFreeway22 extends LinearOpMode {
             robot.autoOuttake(true);
 
             robot.boardToMiddle();
+
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                this.sleep(robot.autoDelayInSeconds * 1000);
+            } else {
+                this.sleep(maxDelayInSeconds * 1000);
+            }
+
             robot.middleToStackAndIntake();
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
