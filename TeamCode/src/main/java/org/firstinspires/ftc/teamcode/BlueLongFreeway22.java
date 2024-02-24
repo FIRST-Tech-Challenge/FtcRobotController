@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
 public class BlueLongFreeway22 extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -29,18 +30,17 @@ public class BlueLongFreeway22 extends LinearOpMode {
 
             robot.longMoveToBoard(false);
             robot.alignToBoardFast(robot.wantedAprTagId);
-
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 
             robot.autoOuttake(false);
 
             robot.boardToMiddle();
-
             robot.middleToStackAndIntake();
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
             robot.intake.setPower(0);
+
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 

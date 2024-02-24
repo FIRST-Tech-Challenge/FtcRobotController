@@ -9,12 +9,10 @@ public class BlueShortWall22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, false, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         waitForStart();
 
@@ -31,11 +29,6 @@ public class BlueShortWall22 extends LinearOpMode {
 
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
-
-
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
-
 
             robot.autoOuttake(true);
 
