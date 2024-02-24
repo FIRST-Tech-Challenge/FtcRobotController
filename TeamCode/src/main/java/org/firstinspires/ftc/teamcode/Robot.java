@@ -1350,11 +1350,11 @@ public class Robot {
                 allowTrayAngleOverride = !allowTrayAngleOverride;
 
                 trayAngle.setPosition(trayAngleDefault);
-                Log.d("pigeon head override", Boolean.toString(allowTrayAngleOverride));
+                //Log.d("pigeon head override", Boolean.toString(allowTrayAngleOverride));
                 telemetry.addData("pigeon head on", allowTrayAngle);
             } else if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
-                Log.d("pigeon head override", "pigeon head on");
+                //Log.d("pigeon head override", "pigeon head on");
                 //checking imu in correct range
                 if ((relativeHeadingToBoard <= 60 && relativeHeadingToBoard >-60)) {
                     //-0.004
