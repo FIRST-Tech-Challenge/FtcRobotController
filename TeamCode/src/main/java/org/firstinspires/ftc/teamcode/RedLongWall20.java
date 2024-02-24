@@ -8,10 +8,8 @@ public class RedLongWall20 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
         int maxDelayInSeconds = 12;
         Robot robot = new Robot(hardwareMap, this, telemetry, true, true, true);
-
         robot.setConfigPresets(maxDelayInSeconds, Robot.PARKING_POSITION.TRUSS, false);
 
         robot.setUpDrivetrainMotors();
@@ -19,7 +17,6 @@ public class RedLongWall20 extends LinearOpMode {
         robot.initVisionProcessing();
 
         robot.buttonConfigAtInit(gamepad1);
-
 
         waitForStart();
 

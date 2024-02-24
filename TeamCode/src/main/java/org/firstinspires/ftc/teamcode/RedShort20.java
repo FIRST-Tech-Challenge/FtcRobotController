@@ -9,15 +9,13 @@ public class RedShort20 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, false, true, true);
-        int delay = 0;  // Max delay is 12000
+        int delay = 0;
         int maxDelayInSeconds = 11;
         robot.setConfigPresets(delay, Robot.PARKING_POSITION.TRUSS, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        double slideStartingPosition;
 
         robot.buttonConfigAtInit(gamepad1);
 
@@ -41,9 +39,6 @@ public class RedShort20 extends LinearOpMode {
 
             robot.alignToBoardFast(robot.wantedAprTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
-
-            // note slide init position
-            slideStartingPosition = robot.lsFront.getCurrentPosition();
 
             robot.autoOuttake(robot.lowOuttake);
 
