@@ -1,8 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.WaitCommand;
+
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -10,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected SampleMecanumDrive drive;
+
     /*-------------------------------------------------------
     -Params-
     -------------------------------------------------------*/
@@ -17,10 +31,10 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     public static double TileInverted = -24; /*-inches-*/
     public static double RobotX = 12.6; /*-inches-*/
     public static double RobotY = 18; /*-inches-*/
-    public static double BackdropDistance = 1.25; /*-inches-*/
-    public static double RandomizationBackdropDistance = 2; /*-inches-*/
-    public static double StackStationFirstCycleOffset = 2; /*-inches-*/
-    public static double StackStationSecondCycleOffset = 4; /*-inches-*/
+    public static double BackdropDistance = 0.75; /*-inches-*/
+    public static double RandomizationBackdropDistance = 1.75; /*-inches-*/
+    public static double StackStationFirstCycleOffset = 3; /*-inches-*/
+    public static double StackStationSecondCycleOffset = 5; /*-inches-*/
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
@@ -72,6 +86,9 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected ParkingPosition parkingPosition;
     protected PixelStack pixelStack;
     /*-------------------------------------------------------
+    -FTCLib Commands-
+    -------------------------------------------------------*/
+    /*-------------------------------------------------------
     -Poses-
     -------------------------------------------------------*/
 
@@ -95,7 +112,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
 
     protected Pose2d randomizationBackdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
     protected Pose2d randomizationBackdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.5 * Tile, Math.toRadians(180));
-    protected Pose2d randomizationBackdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.3 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d randomizationBackdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + RandomizationBackdropDistance, 1.25 * Tile, Math.toRadians(180)); // Default
 
     protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.5 * Tile, Math.toRadians(180));
@@ -134,9 +151,19 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     /*-------------------------------------------------------
     -La program-
     -------------------------------------------------------*/
+
+    /*-------------------------------------------------------
+    -Mechanisms-
+    -------------------------------------------------------*/
+
+//    private OuttakeSusystem outtakeSusystem;
+//    private ElevatorSubsystem elevatorSubsystem;
+
+
     RoadRunnerSubsystem_BLUE(SampleMecanumDrive sampleDrive, Pose2d HomePose,
-                            StartingPosition startingPosition, Path path,PixelStack pixelStack,
-                            ParkingPosition parkingPosition){
+                             StartingPosition startingPosition, Path path, PixelStack pixelStack,
+                             ParkingPosition parkingPosition, OuttakeSusystem outtakeSusystem,
+                             ElevatorSubsystem elevatorSubsystem){
 
         this.HomePose = HomePose;
         this.drive = sampleDrive;
@@ -146,6 +173,9 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
         this.parkingPosition = parkingPosition;
 
         /*-----------------------------------------------------*/
+
+//        this.outtakeSusystem = outtakeSusystem;
+//        this.elevatorSubsystem = elevatorSubsystem;
 
         drive.setPoseEstimate(HomePose);
     }
@@ -180,6 +210,12 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
         /*----------------------------------------------------------------------------------------*/
 
         backdrop_station_first_cycle = drive.trajectorySequenceBuilder(randomizedBackdrop)
+//                .addTemporalMarker(2, () -> new SequentialCommandGroup(
+//                        new InstantCommand(outtakeSusystem::go_intake_second),
+//                        new WaitCommand(80),
+//                        new InstantCommand(outtakeSusystem::go_intake_first),
+//                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
+//                ).schedule())
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -189,6 +225,12 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
 
         backdrop_station_second_cycle = drive.trajectorySequenceBuilder(backdrop_Unload)
+//                .addTemporalMarker(2, () -> new SequentialCommandGroup(
+//                        new InstantCommand(outtakeSusystem::go_intake_second),
+//                        new WaitCommand(80),
+//                        new InstantCommand(outtakeSusystem::go_intake_first),
+//                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
+//                ).schedule())
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -202,6 +244,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
+//                .addSpatialMarker(() -> elevator().schedule())
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 
         station_backdrop_second_cycle = drive.trajectorySequenceBuilder(stackStationSecondCycle)
@@ -209,6 +252,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
                 .lineTo(stationClose)
+//                .addDisplacementMarker(() -> elevator().schedule())
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 
         /*----------------------------------------------------------------------------------------*/

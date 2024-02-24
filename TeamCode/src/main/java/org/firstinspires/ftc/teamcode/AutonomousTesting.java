@@ -47,17 +47,18 @@ public class AutonomousTesting extends LinearOpMode {
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 new InstantCommand(intakeSubsystem::run, intakeSubsystem),
                 new WaitCommand(150),
-                new SequentialCommandGroup(
-                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(5), intakeArmSubsystem),
-                        new WaitCommand(200),
-                        new InstantCommand(()-> intakeArmSubsystem.auto_pixel(4), intakeArmSubsystem),
-                        new WaitCommand(200)
-                ),
-                new ParallelCommandGroup(
-                        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-                        new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem)
-                ),
-
+                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(5), intakeArmSubsystem),
+                new WaitCommand(2000),
+                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(4), intakeArmSubsystem),
+                new WaitCommand(5000),
+                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(3), intakeArmSubsystem),
+                new WaitCommand(2000),
+                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(2), intakeArmSubsystem),
+                new WaitCommand(5000),
+                new InstantCommand(()-> intakeArmSubsystem.auto_pixel(1), intakeArmSubsystem),
+                new WaitCommand(1000),
+                new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+                new InstantCommand(intakeArmSubsystem::raiseArm, intakeArmSubsystem),
                 new WaitCommand(2000)
         ));
 

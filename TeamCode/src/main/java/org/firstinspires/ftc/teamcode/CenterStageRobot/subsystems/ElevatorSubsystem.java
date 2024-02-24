@@ -40,7 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private Level level;
 
-    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750}; // TODO: Level Values Might Change
+    private int[] levelPositions = {0, 300, 900    , 1050, 1650, 1750}; // TODO: Level Values Might Change
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
