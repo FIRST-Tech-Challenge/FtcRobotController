@@ -196,11 +196,11 @@ public class Robot {
     }
 
     public void trayToOuttakeSplitEditionOne() {
-        setServoPos(tray, 0.35);
+        setServoPos(tray, 0.15);
     }
 
     public void trayToOuttakeSplitEditionTwo() {
-        setServoPos(tray, 0.15);
+        setServoPos(tray, 0.0);
         opMode.sleep(400);
     }
 
@@ -807,7 +807,7 @@ public class Robot {
         double distanceBetweenId = 6;
         boolean movedToDesired = false;
 
-        opMode.sleep(500);
+        opMode.sleep(250);
 
         while (!aligned && opMode.opModeIsActive()) {
             Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
@@ -2465,10 +2465,10 @@ public class Robot {
 
         if (parkingPosition == PARKING_POSITION.FREEWAY) {
             boardToMiddle();
-            straightBlockingWithTimer(14, false, 0.7, 1);
+            straightBlockingWithTimer(12, false, 0.7, 1);
         } else if (parkingPosition == PARKING_POSITION.TRUSS) {
             boardToTruss();
-            straightBlockingWithTimer(14, false, 0.7, 1);
+            straightBlockingWithTimer(12, false, 0.7, 1);
         } else {
             moveLinearSlideByTicksBlocking(slideStartingPosition);
         }
