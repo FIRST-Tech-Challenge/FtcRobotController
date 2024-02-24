@@ -421,6 +421,19 @@ public class Robot {
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
+    public double getCurrentHeadingTeleOp() {
+        double currentYaw;
+        YawPitchRollAngles robotOrientation;
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+
+        if (robotOrientation.getAcquisitionTime() == 0) {
+            Log.d("imu crash", "getCurrentHeading: acquisition time is 0");
+            return 500;
+        }
+
+        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        return currentYaw;
+    }
 
     public void setHeading(double targetAbsDegrees, double maxPower) {
         YawPitchRollAngles robotOrientation;
@@ -433,6 +446,7 @@ public class Robot {
         double power;
         double currentTime;
         double minPower = 0.15;
+
         //while start
         while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
             currentHeading = getCurrentHeading();
@@ -1080,7 +1094,7 @@ public class Robot {
     }
 
     public double getHeadingRelativeToBoard() {
-        double absoluteHeading = getCurrentHeading();
+        double absoluteHeading = getCurrentHeadingTeleOp();
         double relativeHeading;
         if (isRedAlliance) {
             relativeHeading = absoluteHeading + 90;
@@ -1141,7 +1155,7 @@ public class Robot {
         double lsStayUpAddPower = 0.1;
         trayAngleSlope = -0.004;
         teleOpTuneValueTrayAngle = 0;
-        double relativeHeadingToBoard = getCurrentHeading();
+        double relativeHeadingToBoard = getCurrentHeadingTeleOp();
         double trayAngleServoPos = trayAngleDefault;
         boolean dpadDownPreviousValue = false;
         boolean stackAttachmentOut = false;
@@ -1170,7 +1184,8 @@ public class Robot {
 
             // GAMEPAD 1: DRIVER CONTROLS
 
-            // b aligns bot to board
+            /*
+            // b aligns bot to board - disabled because setheading loops imu
             if (gamepad1.b) {
                 if (isRedAlliance) {
                     setHeading(-90, 0.7);
@@ -1178,6 +1193,7 @@ public class Robot {
                     setHeading(90, 0.7);
                 }
             }
+            */
 
 
             //a and y switch which side is front
@@ -1436,10 +1452,13 @@ public class Robot {
                 lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
-            //onebutton outtake
+            /*
+            //one button outtake - disabled this because it uses setheading, which loops imu
             if(gamepad2.dpad_left) {
                 oneButtonOuttake(gamepad1, gamepad2);
             }
+
+            */
 
         /*
             if (gamepad2.x) {
@@ -1677,7 +1696,8 @@ public class Robot {
 
                 // GAMEPAD 1: DRIVER CONTROLS
 
-                // b aligns bot to board
+            /*
+                // b aligns bot to board - disabled this because setheading loops imu
                 if (gamepad1.b) {
                     if (isRedAlliance) {
                         setHeading(-90, 0.7);
@@ -1685,6 +1705,7 @@ public class Robot {
                         setHeading(90, 0.7);
                     }
                 }
+             */
 
                 //a and y switch which side is front
                 if (gamepad1.a) {
