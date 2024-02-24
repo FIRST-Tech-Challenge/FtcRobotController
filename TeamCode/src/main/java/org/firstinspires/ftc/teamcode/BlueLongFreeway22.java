@@ -16,6 +16,7 @@ public class BlueLongFreeway22 extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
+        int delay;
 
         waitForStart();
 
@@ -35,7 +36,14 @@ public class BlueLongFreeway22 extends LinearOpMode {
             robot.autoOuttake(false);
 
             robot.boardToMiddle();
-            robot.middleToStackAndIntake();
+
+            if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
+                delay = robot.autoDelayInSeconds * 1000;
+            } else {
+                delay = maxDelayInSeconds * 1000;
+            }
+
+            robot.middleToStackAndIntake(delay);
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
