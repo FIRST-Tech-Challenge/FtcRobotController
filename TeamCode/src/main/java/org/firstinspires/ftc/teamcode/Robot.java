@@ -45,6 +45,7 @@ public class Robot {
     double planeServoDisengage = 0.73;
     Servo spikeServo;
     Servo trayAngle;
+    double trayAngleDefault = 0.5;
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
@@ -1134,8 +1135,6 @@ public class Robot {
         double lsPowerSlow = 0.3;
         double lsPowerFast = 1;
         double lsStayUpAddPower = 0.1;
-
-        double trayAngleDefault = 0.5;
         trayAngleSlope = -0.004;
         teleOpTuneValueTrayAngle = 0;
         double relativeHeadingToBoard = getCurrentHeading();
@@ -1332,6 +1331,7 @@ public class Robot {
 
                 trayAngle.setPosition(trayAngleDefault);
                 Log.d("pigeon head override", Boolean.toString(allowTrayAngleOverride));
+                telemetry.addData("pigeon head on", allowTrayAngle);
             } else if (allowTrayAngle && !allowTrayAngleOverride) {
                 relativeHeadingToBoard = getHeadingRelativeToBoard();
                 Log.d("pigeon head override", "pigeon head on");
@@ -1347,6 +1347,7 @@ public class Robot {
 
                 trayAngle.setPosition(trayAngleServoPos);
                 Log.d("pigeon head override", String.valueOf(trayAngleServoPos));
+                telemetry.addData("pigeon head on", allowTrayAngle);
             }
             dpadDownPreviousValue = gamepad2.dpad_down;
 
@@ -1448,11 +1449,10 @@ public class Robot {
             }
             */
 
-            Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
+//            Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
 //            telemetry.addData("tray angle position servo", trayAngleServoPos);
 //            telemetry.addData("imu", getCurrentHeading());
-            telemetry.addData("pigeon head on", allowTrayAngle);
-            Log.d("trayAngle", trayAngle + "tray" + getCurrentHeading() + "heading");
+//            Log.d("trayAngle", trayAngle + "tray" + getCurrentHeading() + "heading");
             telemetry.update();
         }
     }
@@ -1637,7 +1637,7 @@ public class Robot {
 
         openClamp(true, false, true);
         opMode.sleep(500);
-        trayAngle.setPosition(0.50);
+        trayAngle.setPosition(trayAngleDefault);
         allowTrayAngle = false;
         opMode.sleep(50);
         trayToIntakePos(false);
@@ -1756,7 +1756,7 @@ public class Robot {
 
                 Log.d("vision ls", "teleOpWhileLoop: lsFront position " + lsFront.getCurrentPosition());
 
-                trayAngle.setPosition(0.50);
+                trayAngle.setPosition(trayAngleDefault);
 
                 if (gamepad2.left_stick_y < 0) {
                     lsFront.setPower(0);
