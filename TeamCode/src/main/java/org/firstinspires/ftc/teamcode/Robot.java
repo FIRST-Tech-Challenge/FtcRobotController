@@ -801,6 +801,8 @@ public class Robot {
         double distanceBetweenId = 6;
         boolean movedToDesired = false;
 
+        opMode.sleep(500);
+
         while (!aligned && opMode.opModeIsActive()) {
             Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
 
