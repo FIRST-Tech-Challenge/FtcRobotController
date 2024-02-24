@@ -133,34 +133,34 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     }
 
     public void runSpike(Randomization rand) {
-        drive.followTrajectorySequence(getSpike(rand).build());
+        drive.followTrajectorySequenceAsync(getSpike(rand).build());
     }
 
     public void runSpike_RandomizedBackdrop() {
-        drive.followTrajectorySequence(spike_randomizedBackdrop.build());
+        drive.followTrajectorySequenceAsync(spike_randomizedBackdrop.build());
     }
 
     public void runBackdrop_Station_First_Cycle(){
-        drive.followTrajectorySequence(backdrop_station_first_cycle.build());
+        drive.followTrajectorySequenceAsync(backdrop_station_first_cycle.build());
     }
 
     public void runBackdrop_Station_Second_Cycle(){
-        drive.followTrajectorySequence(backdrop_station_second_cycle.build());
+        drive.followTrajectorySequenceAsync(backdrop_station_second_cycle.build());
     }
 
     public void runStation_Backdrop_First_Cycle(){
-        drive.followTrajectorySequence(station_backdrop_first_cycle.build());
+        drive.followTrajectorySequenceAsync(station_backdrop_first_cycle.build());
     }
 
     public void runStation_Backdrop_Second_Cycle(){
-        drive.followTrajectorySequence(station_backdrop_second_cycle.build());
+        drive.followTrajectorySequenceAsync(station_backdrop_second_cycle.build());
     }
 
     public void runParking(){
-        drive.followTrajectorySequence(parking.build());
+        drive.followTrajectorySequenceAsync(parking.build());
     }
 
     public void runSpike_Station(){
-        drive.followTrajectorySequence(spike_station.build());
+        drive.followTrajectorySequenceAsync(spike_station.build());
     }
 }

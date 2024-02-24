@@ -126,7 +126,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile + StackStationFirstCycleOffset, Math.toRadians(180));
     protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
 
-    protected Pose2d parkingInner = new Pose2d(2.5 * Tile, Tile/2, Math.toRadians(180));
+    protected Pose2d parkingInner = new Pose2d(2.5 * Tile - 4, Tile/2, Math.toRadians(180));
     protected Pose2d parkingMiddle = new Pose2d(2 * Tile, 1.5 * Tile, Math.toRadians(180));
     protected Pose2d parkingOuter = new Pose2d(2.5 * Tile, 2.5 * Tile, Math.toRadians(180));
 
