@@ -596,7 +596,7 @@ public class Robot {
         ElapsedTime elapsedTime = new ElapsedTime();
         elapsedTime.reset();
 
-        while ((Math.abs(error) >= ERROR_TOLERANCE || elapsedTime.milliseconds() < seconds * 1000) && opMode.opModeIsActive()) {
+        while ((Math.abs(error) >= ERROR_TOLERANCE && elapsedTime.milliseconds() < seconds * 1000) && opMode.opModeIsActive()) {
 
             currentTime = SystemClock.elapsedRealtimeNanos();
             error = endTick - currentTick;
@@ -2456,10 +2456,10 @@ public class Robot {
 
         if (parkingPosition == PARKING_POSITION.FREEWAY) {
             boardToMiddle();
-            straightBlocking2(-14);
+            straightBlockingWithTimer(14, false, 0.7, 1);
         } else if (parkingPosition == PARKING_POSITION.TRUSS) {
             boardToTruss();
-            straightBlocking2(-14);
+            straightBlockingWithTimer(14, false, 0.7, 1);
         } else {
             moveLinearSlideByTicksBlocking(slideStartingPosition);
         }
