@@ -596,7 +596,7 @@ public class Robot {
         ElapsedTime elapsedTime = new ElapsedTime();
         elapsedTime.reset();
 
-        while ((Math.abs(error) >= ERROR_TOLERANCE || elapsedTime.milliseconds() < seconds*1000) && opMode.opModeIsActive()) {
+        while ((Math.abs(error) >= ERROR_TOLERANCE || elapsedTime.milliseconds() < seconds * 1000) && opMode.opModeIsActive()) {
 
             currentTime = SystemClock.elapsedRealtimeNanos();
             error = endTick - currentTick;
@@ -1862,16 +1862,6 @@ public class Robot {
         }
         intake.setPower(-1);
 
-        /*straightBlocking(5, true, 1);
-        straightBlocking(1, false, 1);
-        straightBlocking(1.5, true, 1);
-        straightBlocking(1.5, false, 1);
-        straightBlocking(1, true, 1);
-        straightBlocking(1, false, 1);
-        mecanumBlocking2(1);
-        straightBlocking(1.5, true, 1);
-        straightBlocking(1.5, false, 1);*/
-
         if (isRedAlliance) {
             Log.d("freeway", "free");
             setHeadingRelativeToBoard(-20, 0.7);
@@ -2218,9 +2208,6 @@ public class Robot {
             straightBlockingWithTimer(5, true, 1, 0.4);
             straightBlocking(3, false, 1);
 
-            //straightBlockingWithTimer(3, true, 1, 0.4);
-            //.        straightBlocking(3, false, 1);
-
             setHeadingRelativeToBoard(0, 0.7);
         } else {
             mecanumBlocking2(6);
@@ -2230,18 +2217,10 @@ public class Robot {
             stackAttachmentIn();
             opMode.sleep(500);
 
-            //straightBlockingWithTimer(5.5, true, 0.5, 0.8); //forward
-
-            straightBlocking(6, true, 0.5);
-
-            straightBlocking(6, false, 1); //back
-
-            //closeClamp(true);
-
-            //sideways to get second pixel
-            //mecanumBlocking2(-2); //sideway
-
-            //closeClamp(true);
+            straightBlockingWithTimer(6, true, 0.5, 0.8); //forward
+            straightBlockingWithTimer(6, false, 1, 0.8); //forward
+            //straightBlocking(6, true, 0.5);
+            //straightBlocking(6, false, 1); //back
 
             setHeadingRelativeToBoard(0, 0.7);
         }
