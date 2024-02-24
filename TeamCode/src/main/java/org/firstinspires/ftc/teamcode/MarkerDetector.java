@@ -44,7 +44,7 @@ public class MarkerDetector extends OpenCvPipeline {
     }
 
     @Override
-    public final Mat processFrame(Mat input) {
+     public final Mat processFrame(Mat input) {
         input.copyTo(workingMatrix);
 
         if (workingMatrix.empty()) {
