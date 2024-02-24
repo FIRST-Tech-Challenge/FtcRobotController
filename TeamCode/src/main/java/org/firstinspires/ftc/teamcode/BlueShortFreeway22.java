@@ -3,20 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.nio.file.ClosedWatchServiceException;
-
 @Autonomous
 public class BlueShortFreeway22 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, false, false, true);
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        int defaultDelay = 0;  // Max delay is 3000
+        int defaultDelay = 3;
         int maxDelayInSeconds = 3;
+        int delay;
 
         robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true);
         robot.buttonConfigAtInit(gamepad1);
@@ -41,15 +39,15 @@ public class BlueShortFreeway22 extends LinearOpMode {
             robot.boardToMiddle();
 
             if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
-                this.sleep(robot.autoDelayInSeconds * 1000);
+                delay = robot.autoDelayInSeconds * 1000;
             } else {
-                this.sleep(maxDelayInSeconds * 1000);
+                delay = maxDelayInSeconds * 1000;
             }
 
-            robot.middleToStackAndIntake();
+            robot.middleToStackAndIntake(delay);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
-
+            robot.intake.setPower(0);
             robot.alignToBoardFast(robot.secondWantedTagId);
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, false);
 

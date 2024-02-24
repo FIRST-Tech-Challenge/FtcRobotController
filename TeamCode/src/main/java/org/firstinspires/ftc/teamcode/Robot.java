@@ -807,7 +807,11 @@ public class Robot {
         double distanceBetweenId = 6;
         boolean movedToDesired = false;
 
-        opMode.sleep(250);
+        if (isLong) {
+            opMode.sleep(250);
+        } else {
+            opMode.sleep(500);
+        }
 
         while (!aligned && opMode.opModeIsActive()) {
             Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
@@ -1870,15 +1874,22 @@ public class Robot {
         moveFingerDown();
         opMode.sleep(100);
     }
-    public void middleToStackAndIntake() {
+    public void middleToStackAndIntake(int delay) {
 
         openClamp(true, true, false);
         stackAttachmentOut();
         if (isRedAlliance) {
-            straightBlocking2FixHeading(107);
+            if (isLong) {
+                straightBlocking2FixHeading(107);
+            } else {
+                straightBlocking2FixHeading(105);
+            }
         } else {
             straightBlocking2FixHeading(100);
         }
+
+        opMode.sleep(delay);
+
         intake.setPower(-1);
 
         if (isRedAlliance) {
@@ -1922,7 +1933,7 @@ public class Robot {
         int polarity = (isRedAlliance) ? -1 : 1;
 
         straightBlocking(9, false, 0.6);
-        straightBlocking2FixHeading(-84);
+        straightBlocking2FixHeading(-82);
 
         switch (wantedAprTagId) {
             case 1:

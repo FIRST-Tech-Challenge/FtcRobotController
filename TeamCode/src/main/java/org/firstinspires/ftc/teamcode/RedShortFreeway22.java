@@ -12,11 +12,12 @@ public class RedShortFreeway22 extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         robot.setUpIntakeOuttake();
         robot.initVisionProcessing();
-        int defaultDelay = 0;
+        int defaultDelay = 3;
         int maxDelayInSeconds = 3;
 
         robot.setConfigPresets(defaultDelay, Robot.PARKING_POSITION.BOARD, true);
         robot.buttonConfigAtInit(gamepad1);
+        int delay;
 
         waitForStart();
 
@@ -39,12 +40,12 @@ public class RedShortFreeway22 extends LinearOpMode {
             robot.boardToMiddle();
 
             if (robot.autoDelayInSeconds <= maxDelayInSeconds) {
-                this.sleep(robot.autoDelayInSeconds * 1000);
+                delay = robot.autoDelayInSeconds * 1000;
             } else {
-                this.sleep(maxDelayInSeconds * 1000);
+                delay = maxDelayInSeconds * 1000;
             }
 
-            robot.middleToStackAndIntake();
+            robot.middleToStackAndIntake(delay);
 
             robot.visionPortal.setProcessorEnabled(robot.aprilTagProcessor, true);
             robot.stackToBoard();
