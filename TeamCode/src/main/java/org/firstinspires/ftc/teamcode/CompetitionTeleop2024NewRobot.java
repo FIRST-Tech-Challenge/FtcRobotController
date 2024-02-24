@@ -75,6 +75,7 @@ public class CompetitionTeleop2024NewRobot extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
+        intake = hardwareMap.get(DcMotor.class, "intake");
         //arm = hardwareMap.get(DcMotor.class, "arm");
         //arm1 = hardwareMap.get(DcMotor.class, "arm1");
         //gripper = hardwareMap.get(Servo.class, "gripper");
