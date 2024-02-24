@@ -32,7 +32,7 @@ public class CenterStageRobot extends RobotEx {
     private ElevatorSubsystem elevatorSubsystem;
 
     private DroneSubsystem droneSubsystem;
-    private PixelColorDetectorSubsystem pixelColorDetectorSubsystem;
+//    private PixelColorDetectorSubsystem pixelColorDetectorSubsystem;
 
     public SequentialCommandGroup openOuttake() {
         return new SequentialCommandGroup(
@@ -81,14 +81,16 @@ public class CenterStageRobot extends RobotEx {
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
         elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY());
         droneSubsystem = new DroneSubsystem(hardwareMap);
-        pixelColorDetectorSubsystem = new PixelColorDetectorSubsystem(hardwareMap, telemetry);
+//        pixelColorDetectorSubsystem = new PixelColorDetectorSubsystem(hardwareMap, telemetry);
 
 //        CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
 
         toolOp.getGamepadButton(GamepadKeys.Button.B)
             .whenPressed(new ConditionalCommand(openOuttake(), closeOuttake(), () -> outtakeSusystem.getState() == OuttakeSusystem.State.INTAKE));
-//                .toggleWhenPressed(openOuttake(), closeOuttake());
+
+        toolOp.getGamepadButton(GamepadKeys.Button.B)
+                .whenPressed(new ConditionalCommand(openOuttake(), closeOuttake(), () -> outtakeSusystem.getState() == OuttakeSusystem.State.INTAKE));
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(openExtremeOuttake());
@@ -118,15 +120,16 @@ public class CenterStageRobot extends RobotEx {
                                 new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
                                 closeOuttake(),
                                 new WaitCommand(200),
-//                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
+                                new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
                                 new InstantCommand(outtakeSusystem::wheel_grab),
-                                new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, telemetry),
-                                new InstantCommand(outtakeSusystem::wheel_stop),
-                                new InstantCommand(intakeArmSubsystem::raiseArm),
-                                new WaitCommand(200),
-                                new InstantCommand(intakeSubsystem::reverse, intakeSubsystem),
-                                new WaitCommand(600),
-                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
+//                                new IntakeCommand(intakeSubsystem, pixelColorDetectorSubsystem, telemetry),
+                                new InstantCommand(intakeSubsystem::run, intakeSubsystem)
+//                                new InstantCommand(outtakeSusystem::wheel_stop),
+//                                new InstantCommand(intakeArmSubsystem::raiseArm),
+//                                new WaitCommand(200),
+//                                new InstantCommand(intakeSubsystem::reverse, intakeSubsystem),
+//                                new WaitCommand(600),
+//                                new InstantCommand(intakeSubsystem::stop, intakeSubsystem)
                         ),
                         new SequentialCommandGroup(
                                 new InstantCommand(outtakeSusystem::wheel_stop),
@@ -144,7 +147,14 @@ public class CenterStageRobot extends RobotEx {
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.8)
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_stop));
 
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.8)
-                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.8)
+//                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
+//
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.8)
+//                .whenActive(new InstantCommand(droneSubsystem::grab, droneSubsystem));
+
+
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.05)
+                .whileActiveContinuous(new InstantCommand(() -> droneSubsystem.linearMove(toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), droneSubsystem));
     }
 }
