@@ -92,7 +92,10 @@ public class CenterStageRobot extends RobotEx {
                 .toggleWhenPressed(
                         new SequentialCommandGroup(
                                 new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                                new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE),
+//                                new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE),
+                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                                new WaitCommand(80),
+                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem),
                                 new WaitCommand(200),
                                 new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
                                 new InstantCommand(outtakeSusystem::wheel_grab),

@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeProcCommand;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.concurrent.TimeUnit;
