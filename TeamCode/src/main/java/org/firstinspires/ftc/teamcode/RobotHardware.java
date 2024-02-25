@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.Range;
 
 /*
  * This file works in conjunction with the External Hardware Class sample called: RobotMovement.java
@@ -143,15 +144,7 @@ public class RobotHardware {
         // Use existing function to drive both wheels.
         setDrivePower(left, right);
     }
-
-    /**
-     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
-     *
-     * @param leftWheel     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param rightWheel    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     */
     public void setDrivePower(double leftWheel, double rightWheel) {
-        // Output the values to the motor drives.
         leftDrive.setPower(leftWheel);
         rightDrive.setPower(rightWheel);
     }
@@ -162,28 +155,30 @@ public class RobotHardware {
     public void setA2Power(double power)
     {
         if(power == 0){
-            if(a2ArmMotor.getVelocity() > 0){
-                power += a2ArmMotor.getVelocity()/100;
-            }
-            if(a2ArmMotor.getVelocity() < 0){
-                power -= a2ArmMotor.getVelocity()/100;
-            }
+            int holdAtTicks = a2ArmMotor.getCurrentPosition();
+            a2ArmMotor.setPower(0.05);
+            a2ArmMotor.setTargetPosition(holdAtTicks);
+            a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else{
+            a2ArmMotor.setPower(power);
+            a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void setA1Power(double power)
     {
-        {
-            if(power == 0){
-                if(a1ArmMotor.getVelocity() > 0){
-                    power += a1ArmMotor.getVelocity()/100;
-                }
-                if(a1ArmMotor.getVelocity() < 0){
-                    power -= a1ArmMotor.getVelocity()/100;
-                }
-            }
+        if(power == 0){
+            int holdAtTicks = a1ArmMotor.getCurrentPosition();
+            a1ArmMotor.setPower(0.05);
+            a1ArmMotor.setTargetPosition(holdAtTicks);
+            a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else{
+            a1ArmMotor.setPower(power);
+            a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-
+//
 //    public void setWristPositions(double offset) {
 //        offset = Range.clip(offset, -0.5, 0.5);
 //        leftWrist.setPosition(MID_SERVO + offset);

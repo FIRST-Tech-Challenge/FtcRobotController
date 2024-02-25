@@ -78,7 +78,8 @@ public class RobotMovement extends LinearOpMode {
         double a2 = 0;
         double wristOffset = 0;
         boolean clawOpen = false;
-        double armSpeed = 0.9;
+        double a1ArmSpeed = 0.6;
+        double a2ArmSpeed = 0.3;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
@@ -90,19 +91,13 @@ public class RobotMovement extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
-            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
-            // This way it's also easy to just drive straight, or just turn.
             left = gamepad1.left_stick_y;
             right  =  -gamepad1.right_stick_y;
 
-            // Combine drive and turn for blended motion. Use RobotHardware class
             robot.driveRobot(left, right);
 
             // Use gamepad left & right Bumpers to open and close the claw
-            // Use the SERVO constants defined in RobotHardware class.
-            // Each time around the loop, the servos will move by a small amount.
-            // Limit the total offset to half of the full travel range
+
             if (gamepad1.dpad_down)
                 wristOffset += robot.WRIST_SERVO_SPEED;
             else if (gamepad1.dpad_up)
@@ -112,7 +107,7 @@ public class RobotMovement extends LinearOpMode {
             //A1 CONTROL
             if (gamepad2.left_stick_y != 0)
             {
-                a1 = -gamepad2.left_stick_y * armSpeed;
+                a1 = -gamepad2.left_stick_y * a1ArmSpeed;
             }
             else{
                 a1 = 0;
@@ -122,7 +117,7 @@ public class RobotMovement extends LinearOpMode {
             //A2 CONTROL
             if (gamepad2.right_stick_y != 0)
             {
-                a2 = -gamepad2.right_stick_y * armSpeed;
+                a2 = -gamepad2.right_stick_y * a2ArmSpeed;
             }
             else{
                 a2 = 0;
@@ -135,6 +130,7 @@ public class RobotMovement extends LinearOpMode {
                 clawOpen = !clawOpen;
             }
 
+            //PLANE LAUNCHER
             if(gamepad1.ps && gamepad2.ps){
                 robot.firePlaneLauncher(0.3);
             }
@@ -143,11 +139,17 @@ public class RobotMovement extends LinearOpMode {
             }
 
             //SPEED CONTROLLER
-            if(gamepad1.left_bumper){
-                armSpeed = 0.3;
+            if(gamepad2.left_bumper){
+                a1ArmSpeed = 0.3;
             }
             else{
-                armSpeed = 0.9;
+                a1ArmSpeed = 0.6;
+            }
+            if(gamepad2.right_bumper){
+                a2ArmSpeed = 0.15;
+            }
+            else{
+                a2ArmSpeed = 0.3;
             }
 
             robot.setA1Power(a1);
@@ -163,7 +165,8 @@ public class RobotMovement extends LinearOpMode {
             telemetry.addData("A2",  a2);
             telemetry.addData("Wrist Position",  "Offset = %.2f", wristOffset);
             telemetry.addData("Claw State",  "State = " + clawOpen);
-            telemetry.addData("Arm Speed", armSpeed);
+            telemetry.addData("A1 Arm Speed", a1ArmSpeed);
+            telemetry.addData("A2 Arm Speed", a2ArmSpeed);
             telemetry.update();
 
             // Pace this loop so hands move at a reasonable speed.
