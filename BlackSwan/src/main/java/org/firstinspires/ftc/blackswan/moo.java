@@ -64,8 +64,8 @@ public class moo extends LinearOpMode {
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        planeLauncher.setPosition(0.49);
-        turnClaw.setPosition(0.69);
+        planeLauncher.setPosition(0.47);
+        turnClaw.setPosition(1);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
 
@@ -82,8 +82,9 @@ public class moo extends LinearOpMode {
             double liftPower = pid + ff;
 
             clawUp.setPower(liftPower);
-
+            telemetry.addData("target", target);
             telemetry.addData("claw up", clawUp.getCurrentPosition());
+            telemetry.addData("liftPower", liftPower);
 
             if (armQuickPosition == 0) {
                 target = 25;
@@ -96,7 +97,7 @@ public class moo extends LinearOpMode {
             } else if (gamepad2.dpad_up) {
                 armQuickPosition = 1;
             } else if (gamepad2.dpad_left) {
-                turnClaw.setPosition(0.65);
+                turnClaw.setPosition(0.69);
             }
 
             // Flip these signs if the robot rotates the wrong way
@@ -151,16 +152,16 @@ public class moo extends LinearOpMode {
 
 
                 if (gamepad2.x) {
-                    turnClaw.setPosition(0.69);
+                    turnClaw.setPosition(0.90);
                 }
                 if (gamepad2.y) {
-                    turnClaw.setPosition(0.45);
+                    turnClaw.setPosition(0.43);
                 }
                 if (gamepad2.a) {
-                    closeClaw.setPosition(0.9);
+                    closeClaw.setPosition(1);
                 }
                 if (gamepad2.b) {
-                    closeClaw.setPosition(0.2);
+                    closeClaw.setPosition(0.82);
                 }
                 if (gamepad1.a) {
                     planeLauncher.setPosition(.55);

@@ -21,8 +21,8 @@ public class CSCons {
     public static double clawArm3 = .755;
     public static double clawArm4 = .73;
     public static double clawArm5 = .695;
-    public static double clawArmTransition = .20;
-    public static double clawArmTransfer = .20;
+    public static double clawArmTransition = .23;
+    public static double clawArmTransfer = .23;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0.08;
@@ -49,7 +49,7 @@ public class CSCons {
 
     public enum OuttakePosition{
         BOTTOM (-10),
-        LOW_AUTO(1050),
+        LOW_AUTO(105),
         LOW(1400),
         MID(2400),
         HIGH(3400);
