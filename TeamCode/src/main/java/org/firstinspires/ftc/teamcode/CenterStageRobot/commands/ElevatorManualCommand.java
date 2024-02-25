@@ -46,7 +46,7 @@ public class ElevatorManualCommand extends CommandBase {
         );
 
         // Don't use Feed Forward when the Elevator is in Loading(Down-Most) Position
-        feedForwardValue = elevator.getHeight() < 100 ? elevate_speed.getAsDouble() : feedForwardValue;
+//        feedForwardValue = elevator.getHeight() < 100 ? max_ticks_per_second : feedForwardValue;
 
         elevator.setPower((feedForwardValue / max_ticks_per_second) * elevator.MAX_SPEED);
     }

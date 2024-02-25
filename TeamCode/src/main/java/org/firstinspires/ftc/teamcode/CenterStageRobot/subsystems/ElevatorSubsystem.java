@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.OuttakeCommand;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.function.DoubleSupplier;
@@ -40,7 +41,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private Telemetry telemetry;
     private DoubleSupplier leftY;
 
-    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY) {
+    private OuttakeSusystem outtakeSusystem;
+
+    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY, OuttakeSusystem outtakeSusystem) {
 
         this.leftY = leftY;
         this.telemetry = telemetry;
@@ -60,15 +63,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         setAuto();
         level = Level.LOADING;
         setLevel(Level.LOADING);
+
+        this.outtakeSusystem = outtakeSusystem;
     }
 
     @Override
     public void periodic() {
-        if(getHeight() > 600) {
-//            openOuttake.get().schedule();
-        } else {
-//            closeOuttake.get().schedule();
-        }
+//        if(getHeight() > 600) {
+//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.OPEN).schedule();
+//        } else {
+//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
+//        }
     }
 
     public void run() {

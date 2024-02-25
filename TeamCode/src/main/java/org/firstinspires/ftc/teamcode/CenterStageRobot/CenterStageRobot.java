@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorManualCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
@@ -33,30 +34,6 @@ public class CenterStageRobot extends RobotEx {
 
     private DroneSubsystem droneSubsystem;
 //    private PixelColorDetectorSubsystem pixelColorDetectorSubsystem;
-
-    public SequentialCommandGroup openOuttake() {
-        return new SequentialCommandGroup(
-                new InstantCommand(outtakeSusystem::go_outtake_first, outtakeSusystem),
-                new WaitCommand(80),
-                new InstantCommand(outtakeSusystem::go_outtake_second, outtakeSusystem)
-        );
-    }
-
-    public SequentialCommandGroup closeOuttake() {
-        return new SequentialCommandGroup(
-                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
-                new WaitCommand(80),
-                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem)
-        );
-    }
-
-    public SequentialCommandGroup openExtremeOuttake() {
-        return new SequentialCommandGroup(
-                new InstantCommand(outtakeSusystem::go_extreme_first, outtakeSusystem),
-                new WaitCommand(70),
-                new InstantCommand(outtakeSusystem::go_extreme_second, outtakeSusystem)
-        );
-    }
 
     public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                             GamepadExEx toolOp) {
@@ -79,7 +56,7 @@ public class CenterStageRobot extends RobotEx {
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
-        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY());
+        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> toolOp.getLeftY(), outtakeSusystem);
         droneSubsystem = new DroneSubsystem(hardwareMap);
 //        pixelColorDetectorSubsystem = new PixelColorDetectorSubsystem(hardwareMap, telemetry);
 
@@ -87,13 +64,10 @@ public class CenterStageRobot extends RobotEx {
 //        intakeSubsystem.setDefaultCommand(new IntakeManualCommand(intakeSubsystem, () -> toolOp.getRightY()));
 
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-            .whenPressed(new ConditionalCommand(openOuttake(), closeOuttake(), () -> outtakeSusystem.getState() == OuttakeSusystem.State.INTAKE));
-
-        toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ConditionalCommand(openOuttake(), closeOuttake(), () -> outtakeSusystem.getState() == OuttakeSusystem.State.INTAKE));
+                .whenPressed(new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.TOOGLE));
 
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
-                        .whenPressed(openExtremeOuttake());
+                        .whenPressed(new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.EXTREME));
 
         toolOp.getGamepadButton(GamepadKeys.Button.A)
                 .toggleWhenPressed(
@@ -118,7 +92,7 @@ public class CenterStageRobot extends RobotEx {
                 .toggleWhenPressed(
                         new SequentialCommandGroup(
                                 new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
-                                closeOuttake(),
+                                new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE),
                                 new WaitCommand(200),
                                 new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
                                 new InstantCommand(outtakeSusystem::wheel_grab),
@@ -147,14 +121,14 @@ public class CenterStageRobot extends RobotEx {
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.8)
                 .whenActive(new InstantCommand(outtakeSusystem::wheel_stop));
 
-//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.8)
-//                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
-//
-//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.8)
-//                .whenActive(new InstantCommand(droneSubsystem::grab, droneSubsystem));
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.8)
+                .whenActive(new InstantCommand(droneSubsystem::release, droneSubsystem));
+
+        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.8)
+                .whenActive(new InstantCommand(droneSubsystem::grab, droneSubsystem));
 
 
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.05)
-                .whileActiveContinuous(new InstantCommand(() -> droneSubsystem.linearMove(toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), droneSubsystem));
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.05)
+//                .whileActiveContinuous(new InstantCommand(() -> droneSubsystem.linearMove(toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), droneSubsystem));
     }
 }

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 public class DroneSubsystem extends SubsystemBase {
     private ServoImplEx servo;
 
-    private final double SECURE_POS = 0, RELEASE_POS = 0.25;
+    private final double SECURE_POS = 1, RELEASE_POS = 0.75;
 
     public enum State {
         SECURED,

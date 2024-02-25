@@ -19,8 +19,8 @@ public class OuttakeSusystem extends SubsystemBase {
     private ServoImplEx firstLinkServo, secondLinkServo; // First: Whole Arm, Second: Only Outtake
     private CRServoImpl wheelServo;
 
-    private final double FIRST_MIN = 0.58, FIRST_MID = 0.28, FIRST_MAX = 0;
-    private final double SECOND_MIN = 0.43, SECOND_MID = 0.75, SECOND_MAX = 1;
+    private final double FIRST_MIN = 0.6, FIRST_MID = 0.28, FIRST_MAX = 0;
+    private final double SECOND_MIN = 0.43, SECOND_MID = 0.7, SECOND_MAX = 1;
     private final double WHEEL_POWER = 0.9;
 
     public OuttakeSusystem(HardwareMap hm) {
