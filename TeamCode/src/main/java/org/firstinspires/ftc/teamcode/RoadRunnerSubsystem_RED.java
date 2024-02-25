@@ -12,12 +12,10 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -31,7 +29,6 @@ public class RoadRunnerSubsystem_RED {
     protected ElevatorCommand elevatorCommand;
     protected IntakeArmSubsystem intakeArmSubsystem;
     protected IntakeSubsystem intakeSubsystem;
-    protected PixelFingerSubsystem pixelFingerSubsystem;
     /*-------------------------------------------------------
     -Params-
     -------------------------------------------------------*/
@@ -216,10 +213,9 @@ public class RoadRunnerSubsystem_RED {
         /*-----------------------------------------------------*/
 
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
-        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
+        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0, outtakeSusystem);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
-        pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
         /*-----------------------------------------------------*/
 

@@ -8,12 +8,8 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -22,10 +18,9 @@ public class RoadRunnerCommand_BLUE extends RoadRunnerSubsystem_BLUE {
     RoadRunnerCommand_BLUE(
             SampleMecanumDrive sampleDrive, Pose2d HomePose,
             StartingPosition startingPosition, Path path, PixelStack pixelStack,
-            ParkingPosition parkingPosition, Telemetry telemetry, OuttakeSusystem outtakeSusystem,
-            ElevatorSubsystem elevatorSubsystem
+            ParkingPosition parkingPosition, Telemetry telemetry
     ) {
-        super(sampleDrive, HomePose, startingPosition, path, pixelStack, parkingPosition, outtakeSusystem, elevatorSubsystem);
+        super(sampleDrive, HomePose, startingPosition, path, pixelStack, parkingPosition);
         this.telemetry = telemetry;
     }
 

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -19,7 +17,6 @@ import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsys
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 
 @Autonomous(name = "CenterStageAutonomous_BLUE", group = "Final Autonomous")
@@ -30,7 +27,6 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
     private ElevatorCommand elevatorCommand;
     private IntakeArmSubsystem intakeArmSubsystem;
     private IntakeSubsystem intakeSubsystem;
-    private PixelFingerSubsystem pixelFingerSubsystem;
 
     private SampleMecanumDrive drive;
     private RoadRunnerCommand_BLUE RR_Blue;
@@ -110,16 +106,15 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
     @Override
     public void initialize() {
         outtakeSusystem = new OuttakeSusystem(hardwareMap);
-        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0);
+        elevatorSubsystem = new ElevatorSubsystem(hardwareMap, telemetry, () -> 0, outtakeSusystem);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         intakeArmSubsystem = new IntakeArmSubsystem(hardwareMap);
-        pixelFingerSubsystem = new PixelFingerSubsystem(hardwareMap);
 
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new SampleMecanumDrive(hardwareMap);
         RR_Blue = new RoadRunnerCommand_BLUE(drive, HomePose_SHORT, RoadRunnerSubsystem_BLUE.StartingPosition.SHORT,
                 RoadRunnerSubsystem_BLUE.Path.INNER, RoadRunnerSubsystem_BLUE.PixelStack.INNER,
-                RoadRunnerSubsystem_BLUE.ParkingPosition.INNER, telemetry, outtakeSusystem, elevatorSubsystem);
+                RoadRunnerSubsystem_BLUE.ParkingPosition.INNER, telemetry);
 
         rand = RoadRunnerSubsystem_BLUE.Randomization.RIGHT;
 
@@ -135,7 +130,7 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
         waitForStart();
 
         // SPIKE
-        new InstantCommand(intakeArmSubsystem::LOCK_PIXEL, intakeArmSubsystem).schedule();
+        new InstantCommand(intakeArmSubsystem::lockPixel, intakeArmSubsystem).schedule();
         RR_Blue.runSpike(rand);
         while (!isStopRequested() && opModeIsActive() && drive.isBusy()) {
             run();

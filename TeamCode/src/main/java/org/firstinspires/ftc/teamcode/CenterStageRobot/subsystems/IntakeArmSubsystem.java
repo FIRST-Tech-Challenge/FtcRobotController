@@ -9,37 +9,39 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class IntakeArmSubsystem extends SubsystemBase {
-//    private double MIN = 0.02,MID = 0.1, MAX = 5;
+    private double MIN = 0.1,MID = 0.1, MAX = 0.65;
 
-    private double PIXEL_LOCK_POC = 0.05;
+    private double PIXEL_LOCK_POS = 0.05;
     private double[] AUTO = {0.1, 0.16, 0.22, 0.255, 0.30, 0.55};
-//    private final ServoEx leftArm;
     private final ServoImplEx rightArm;
 
     public IntakeArmSubsystem(HardwareMap hm) {
-//        leftArm = new SimpleServo(hm, "left_intake_arm", 0, 180, AngleUnit.DEGREES); // TODO: Angle Values Might Change
         rightArm = hm.get(ServoImplEx.class, "right_intake_arm");
-        raiseArm();
+
+        setPosition(MAX);
     }
 
     public void setPosition(double position) {
-//        leftArm.setPosition(position);
         rightArm.setPosition(1-position);
+    }
+
+    public void raiseArm() {
+        setPosition(MAX);
+    }
+
+    public void midArm() {
+        setPosition(MID);
+    }
+
+    public void lowerArm() {
+        setPosition(MIN);
     }
 
     public void auto_pixel(int index){
         setPosition(AUTO[index - 1]);
     }
 
-    public void raiseArm() {
-        setPosition(AUTO[5]);; // TODO: Might be 0
-    }
-
-    public void lowerArm() {
-        setPosition(AUTO[0]); // TODO: Might be 1
-    }
-
-    public void LOCK_PIXEL() {
-        setPosition(PIXEL_LOCK_POC); // TODO: Might be 1
+    public void lockPixel() {
+        setPosition(PIXEL_LOCK_POS);
     }
 }

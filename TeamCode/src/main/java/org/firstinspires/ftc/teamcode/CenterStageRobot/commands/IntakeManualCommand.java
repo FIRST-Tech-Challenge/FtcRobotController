@@ -22,7 +22,7 @@ public class IntakeManualCommand extends CommandBase {
         this.intakeSubsystem = intakeSubsystem;
         this.power = power;
 
-        addRequirements(intakeSubsystem);
+        addRequirements(this.intakeSubsystem);
     }
 
     @Override

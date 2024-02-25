@@ -14,25 +14,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.OuttakeCommand;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
     public boolean isAuto = true;
-    private final MotorExEx leftMotor;
-    private final MotorExEx rightMotor;
+    public final MotorExEx leftMotor;
+    public final MotorExEx rightMotor;
     private final MotorGroup motors;
 
     private boolean isAutoEnabled = true;
 
-    private PIDFController controller;
-    private double calculation = 0.0;
-
-    private ElevatorFeedforward feedforward;
-    public double feedforwardCalc = 0;
-
-    public double MAX_SPEED = 0.9; // TODO: Speed Value Might Change
+    public double MAX_SPEED = 0.9;
 
     public enum Level {
         LOADING, HANGING, AUTO, LOW, MID, HIGH
@@ -40,17 +36,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private Level level;
 
-    private int[] levelPositions = {0, 300, 900    , 1050, 1650, 1750}; // TODO: Level Values Might Change
+    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750};
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
 
     private OuttakeSusystem outtakeSusystem;
 
-    private SequentialCommandGroup openOuttake;
-    private SequentialCommandGroup closeOuttake;
-
-    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY) {
+    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY, OuttakeSusystem outtakeSusystem) {
 
         this.leftY = leftY;
         this.telemetry = telemetry;
@@ -62,27 +55,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         motors = new MotorGroup(leftMotor, rightMotor);
 
         motors.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        motors.setPositionTolerance(30); // TODO: allowed maximum error value might change
-        motors.setPositionCoefficient(0.014); // TODO: Kp Value might change
+        motors.setPositionTolerance(30);
+        motors.setPositionCoefficient(0.014);
 
         motors.resetEncoder();
 
         setAuto();
         level = Level.LOADING;
         setLevel(Level.LOADING);
+
+        this.outtakeSusystem = outtakeSusystem;
     }
 
     @Override
     public void periodic() {
-////        feedforwardCalc = feedforward.calculate(motors.getVelocity());
-//        telemetry.addData("Height", getHeight());
-//        telemetry.addData("Stick", leftY.getAsDouble());
-//        if (isAuto) {
-//            telemetry.addData("Auto", "");
+//        if(getHeight() > 600) {
+//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.OPEN).schedule();
 //        } else {
-//            telemetry.addData("Manual", "");
+//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
 //        }
-//        telemetry.update();
     }
 
     public void run() {
@@ -121,7 +112,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setAuto() {
         motors.setRunMode(Motor.RunMode.PositionControl);
         isAuto = true;
-//        motors.setTargetPosition(getHeight().intValue());
     }
 
     public void setPower(double power) {

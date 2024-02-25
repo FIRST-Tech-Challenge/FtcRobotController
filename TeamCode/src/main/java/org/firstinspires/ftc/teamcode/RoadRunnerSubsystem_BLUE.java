@@ -1,21 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.CenterStageRobot.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeArmSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.OuttakeSusystem;
-import org.firstinspires.ftc.teamcode.CenterStageRobot.subsystems.PixelFingerSubsystem;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -156,14 +144,10 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     -Mechanisms-
     -------------------------------------------------------*/
 
-//    private OuttakeSusystem outtakeSusystem;
-//    private ElevatorSubsystem elevatorSubsystem;
-
 
     RoadRunnerSubsystem_BLUE(SampleMecanumDrive sampleDrive, Pose2d HomePose,
                              StartingPosition startingPosition, Path path, PixelStack pixelStack,
-                             ParkingPosition parkingPosition, OuttakeSusystem outtakeSusystem,
-                             ElevatorSubsystem elevatorSubsystem){
+                             ParkingPosition parkingPosition){
 
         this.HomePose = HomePose;
         this.drive = sampleDrive;
@@ -173,9 +157,6 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
         this.parkingPosition = parkingPosition;
 
         /*-----------------------------------------------------*/
-
-//        this.outtakeSusystem = outtakeSusystem;
-//        this.elevatorSubsystem = elevatorSubsystem;
 
         drive.setPoseEstimate(HomePose);
     }
