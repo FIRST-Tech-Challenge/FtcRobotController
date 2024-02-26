@@ -74,6 +74,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 //        } else {
 //            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
 //        }
+
+        if (getHeight() < 600 && leftY.getAsDouble() < -0.05) {
+            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
+        } else if (getHeight() > 600 && leftY.getAsDouble() > 0.05) {
+            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.OPEN).schedule();
+        }
     }
 
     public void run() {

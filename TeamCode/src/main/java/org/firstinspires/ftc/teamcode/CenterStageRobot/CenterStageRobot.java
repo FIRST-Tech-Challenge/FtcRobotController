@@ -81,6 +81,8 @@ public class CenterStageRobot extends RobotEx {
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.MID));
         toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HIGH));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING));
         toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HANGING));
 
