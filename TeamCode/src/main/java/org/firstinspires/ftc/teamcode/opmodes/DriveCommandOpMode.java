@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveWristCommand;
 import org.firstinspires.ftc.teamcode.commands.ThrowAirplaneCommand;
 import org.firstinspires.ftc.teamcode.commands.WristPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.ZeroWristPositionCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
@@ -136,6 +137,8 @@ public class DriveCommandOpMode extends CommandOpMode {
                 .whenPressed(new WristPositionCommand(wristSubsystem, true, moveWristCommand));
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new WristPositionCommand(wristSubsystem, false, moveWristCommand));
+        armerController.getGamepadButton(GamepadKeys.Button.BACK)
+                .whenPressed(new ZeroWristPositionCommand(wristSubsystem));
 
 
         register(driveSubsystem);
