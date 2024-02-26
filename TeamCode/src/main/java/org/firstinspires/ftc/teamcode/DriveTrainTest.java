@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class DriveTrainTest extends LinearOpMode {
 
 
-    private DriveTrain dt;
+    private final DriveTrain dt = new DriveTrain();
 
     @Override
     public void runOpMode() {

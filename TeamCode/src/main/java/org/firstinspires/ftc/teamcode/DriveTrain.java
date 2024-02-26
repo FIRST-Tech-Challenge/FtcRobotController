@@ -21,9 +21,6 @@ public class DriveTrain {
     private DcMotor yOdom;
     HardwareMap hwMap;
 
-    public DriveTrain(HardwareMap hwMap){
-
-    }
     public void init(HardwareMap hwMap){
         this.hwMap = hwMap;
 
