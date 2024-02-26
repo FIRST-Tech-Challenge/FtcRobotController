@@ -83,10 +83,6 @@ public class MyControlRobot2 extends LinearOpMode {
             bl.setPower(backLeftPower);
             fr.setPower(frontRightPower);
             br.setPower(backRightPower);
-
-            if(gamepad1.start){
-                botHeading = 0.0;
-            }
             if (gamepad1.left_trigger > 0.3){
                 SLOW = 4;
 
