@@ -103,15 +103,14 @@ public class RobotHardware {
         a2ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a2");
         planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
 
-        a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         a1ArmMotor.setTargetPositionTolerance(0);
         a2ArmMotor.setTargetPositionTolerance(0);
-
 
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
         a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);

@@ -78,7 +78,7 @@ public class RobotMovement extends LinearOpMode {
         double a2 = 0;
         double wristOffset = 0;
         boolean clawOpen = false;
-        double a1ArmSpeed = 0.6;
+        double a1ArmSpeed = 0.2;
         double a2ArmSpeed = 0.3;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
@@ -95,8 +95,6 @@ public class RobotMovement extends LinearOpMode {
             right  =  -gamepad1.right_stick_y;
 
             robot.driveRobot(left, right);
-
-            // Use gamepad left & right Bumpers to open and close the claw
 
             if (gamepad1.dpad_down)
                 wristOffset += robot.WRIST_SERVO_SPEED;
@@ -140,10 +138,10 @@ public class RobotMovement extends LinearOpMode {
 
             //SPEED CONTROLLER
             if(gamepad2.left_bumper){
-                a1ArmSpeed = 0.3;
+                a1ArmSpeed = 0.05;
             }
             else{
-                a1ArmSpeed = 0.6;
+                a1ArmSpeed = 0.2;
             }
             if(gamepad2.right_bumper){
                 a2ArmSpeed = 0.15;
