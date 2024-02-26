@@ -168,9 +168,6 @@ public class RobotMovement extends LinearOpMode {
             telemetry.addData("A1 Arm Speed", a1ArmSpeed);
             telemetry.addData("A2 Arm Speed", a2ArmSpeed);
             telemetry.update();
-
-            // Pace this loop so hands move at a reasonable speed.
-            sleep(15);
         }
     }
 }
