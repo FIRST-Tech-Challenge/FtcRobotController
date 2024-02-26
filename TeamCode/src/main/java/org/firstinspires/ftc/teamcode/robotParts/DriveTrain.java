@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotParts;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.CustomPID;
 
 /**
  * Manages the DriveTrain of the robot
@@ -49,6 +51,11 @@ public class DriveTrain {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         this.imu.initialize(parameters);
     }
+    public void reInitFieldCentric(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        this.imu.initialize(parameters);
+    }
     public void robotCentricDrive(double leftStickY, double leftStickX, double rightStickX){
         double theta = Math.atan2(leftStickY, leftStickX);
         double power = Math.hypot(leftStickX, leftStickY);
@@ -88,7 +95,7 @@ public class DriveTrain {
         double startingPos = Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition());
         distanceControl.setSetpoint(distance + startingPos);
         double range = 100;
-        while(Math.abs(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition())- distance) <= range / 2.0){
+        while(Math.abs(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition()) - (distance + startingPos)) <= range / 2.0){
             double[] results = distanceControl.calculateGivenRaw(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition()));
             moveInDirection(theta,results[0]);
         }

@@ -1,22 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-
+import org.firstinspires.ftc.teamcode.robotParts.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotParts.LinearLift;
 
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear OpMode")
-@Disabled
 public class DriveTrainTest extends LinearOpMode {
 
 
     private final DriveTrain dt = new DriveTrain();
+    private final LinearLift lin = new LinearLift();
 
     @Override
     public void runOpMode() {
         dt.init(hardwareMap);
+        lin.init(hardwareMap);
         boolean toggle = false;
         while (opModeIsActive()) {
             if(toggle){
@@ -28,7 +28,10 @@ public class DriveTrainTest extends LinearOpMode {
                 toggle = !toggle;
             }
             while(gamepad1.a){
-                dt.getToAngle(new double[]{.000001, 0.00004, 0.00001}, 90);
+                dt.getToAngle(new double[]{1, 0, 2}, 90);
+            }
+            if(gamepad1.options){
+                dt.reInitFieldCentric();
             }
         }
     }
