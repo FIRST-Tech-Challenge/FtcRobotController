@@ -86,9 +86,9 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
                 new WaitCommand(150),
                 new SequentialCommandGroup(
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index)),
-                        new WaitCommand(400),
+                        new WaitCommand(500),
                         new InstantCommand(()-> intakeArmSubsystem.auto_pixel(index - 1)),
-                        new WaitCommand(700)
+                        new WaitCommand(800)
                 ),
                 new ParallelCommandGroup(
                         new InstantCommand(intakeSubsystem::stop),
