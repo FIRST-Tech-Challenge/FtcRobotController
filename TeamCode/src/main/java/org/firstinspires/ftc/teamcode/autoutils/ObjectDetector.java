@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Locale.ENGLISH;
+import static org.firstinspires.ftc.robotcore.internal.system.AppUtil.getDefContext;
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other.WEBCAM;
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Cameras;
 
@@ -35,7 +37,7 @@ public class ObjectDetector {
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "cube.tflite";
+    private static final String TFOD_MODEL_ASSET = "assets/cube.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
@@ -89,7 +91,8 @@ public class ObjectDetector {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private void initTfod() {
+    private void initTfod() throws IllegalStateException {
+        dbp.info(String.format("Assets: %s", getDefContext().getAssets().toString()));
 
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
@@ -147,7 +150,6 @@ public class ObjectDetector {
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);
-
     }   // end method initTfod()
 
     public boolean isObjectRecognized(final String label) {

@@ -12,8 +12,8 @@ public class FingerSubsystem extends SubsystemBase {
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("FingerSubsystem");
 
     public enum FingerPositions {
-        OPEN(1),
-        CLOSED(0);
+        OPEN(0),
+        CLOSED(1);
 
         private final float position;
 
