@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmUtils {
     // Roller
@@ -29,9 +28,13 @@ public class ArmUtils {
     // Pixel Pickup Sequence
     final int PICKUP_EXTEND_TARGET = 1700;
 
-    // Pixel Backdrop Sequence
-    final int BACKDROP_EXTEND_TARGET = 2000;
-    final int BACKDROP_ARM_TARGET = 3000;
+    // Pixel Reverse Backdrop Sequence
+    final int REVERSE_BACKDROP_EXTEND_TARGET = 2000;
+    final int REVERSE_BACKDROP_ARM_TARGET = 3000;
+
+    // Pixel Forward Backdrop Sequence
+    final int FORWARD_BACKDROP_EXTEND_TARGET = 2300;
+    final int FORWARD_BACKDROP_ARM_TARGET = 1000;
 
     final double SEQUENCE_ARM_POWER = 0.5;
 
@@ -47,7 +50,9 @@ public class ArmUtils {
 
     boolean startupSequenceActive = false;
     boolean pickupSequenceActive = false;
-    boolean backdropSequenceActive = false;
+    boolean backdropReverseSequenceActive = false;
+    boolean backdropForwardSequenceActive = false;
+    boolean sequenceActive = false;
 
     ExtendDirection sequenceDirection = ExtendDirection.UNINITIALIZED;
     boolean sequenceGotToPosition = false;
@@ -100,8 +105,12 @@ public class ArmUtils {
         pickupSequenceActive = baseSequence(ARM_MIN_POSITION, PICKUP_EXTEND_TARGET, ROLLER_FLAT, GRIP_OPEN);
     }
 
-    void pixelBackdropSequence() {
-        backdropSequenceActive = baseSequence(BACKDROP_ARM_TARGET, BACKDROP_EXTEND_TARGET, ROLLER_UPSIDEDOWN, leftGrip.getPosition());
+    void pixelReverseBackdropSequence() {
+        backdropReverseSequenceActive = baseSequence(REVERSE_BACKDROP_ARM_TARGET, REVERSE_BACKDROP_EXTEND_TARGET, ROLLER_UPSIDEDOWN, leftGrip.getPosition());
+    }
+
+    void pixelForwardBackdropSequence() {
+        backdropForwardSequenceActive = baseSequence(FORWARD_BACKDROP_ARM_TARGET, FORWARD_BACKDROP_EXTEND_TARGET, ROLLER_FLAT, leftGrip.getPosition());
     }
 
     boolean baseSequence(int armTarget, int extendTarget, double rollerTarget, double gripTarget) {
@@ -128,9 +137,6 @@ public class ArmUtils {
             armExtend.setPower(0);
         }
 
-        controller.Debug("sequenceDirection", sequenceDirection);
-        controller.Debug("got to position", sequenceGotToPosition);
-
         if (!armLift.isBusy() && sequenceGotToPosition) {
             sequenceDirection = ExtendDirection.UNINITIALIZED;
             sequenceGotToPosition = false;
@@ -145,14 +151,15 @@ public class ArmUtils {
     }
 
     public void runSequences(Gamepad gamepad) {
-        controller.Debug("extend pos", -armExtend.getCurrentPosition());
+        sequenceActive = startupSequenceActive || backdropReverseSequenceActive || backdropForwardSequenceActive || pickupSequenceActive;
 
-        if (!startupSequenceActive && !backdropSequenceActive && !pickupSequenceActive) {
+        if (!sequenceActive) {
             if (gamepad.a) {
                 pixelPickupSequence();
             }
             else if (gamepad.y) {
-                pixelBackdropSequence();
+                //pixelReverseBackdropSequence();
+                pixelForwardBackdropSequence();
             }
         }
 
@@ -162,13 +169,16 @@ public class ArmUtils {
         else if (pickupSequenceActive) {
             pixelPickupSequence();
         }
-        else if (backdropSequenceActive) {
-            pixelBackdropSequence();
+        else if (backdropForwardSequenceActive) {
+            pixelForwardBackdropSequence();
+        }
+        else if (backdropReverseSequenceActive) {
+            pixelReverseBackdropSequence();
         }
     }
 
     public void roller(Gamepad gamepad) {
-        if (startupSequenceActive || pickupSequenceActive || backdropSequenceActive) return;
+        if (sequenceActive) return;
 
         boolean overrideMode = gamepad.dpad_down;
 
@@ -184,7 +194,7 @@ public class ArmUtils {
     }
 
     public void extend(Gamepad gamepad) {
-        if (startupSequenceActive || pickupSequenceActive || backdropSequenceActive) return;
+        if (sequenceActive) return;
 
         boolean overrideMode = gamepad.dpad_down;
 
@@ -195,7 +205,7 @@ public class ArmUtils {
     }
 
     public void lift(Gamepad gamepad) {
-        if (startupSequenceActive || pickupSequenceActive || backdropSequenceActive) return;
+        if (sequenceActive) return;
 
         boolean overrideMode = gamepad.dpad_down;
 
@@ -207,7 +217,7 @@ public class ArmUtils {
     }
 
     public void grip(Gamepad gamepad) {
-        if (startupSequenceActive || pickupSequenceActive || backdropSequenceActive) return;
+        if (sequenceActive) return;
 
         if (gamepad.left_bumper) {
             leftGrip.setPosition(GRIP_OPEN);
