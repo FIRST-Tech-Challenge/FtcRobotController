@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.autoutils.OtherAutoUtils.DefinedLoc
 import static org.firstinspires.ftc.teamcode.autoutils.OtherAutoUtils.Quadrants;
 import static org.firstinspires.ftc.teamcode.autoutils.OtherAutoUtils.avoidTruss;
 import static org.firstinspires.ftc.teamcode.autoutils.OtherAutoUtils.getCurrentQuadrant;
+import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Cameras;
 
 import androidx.annotation.NonNull;
 
@@ -43,7 +44,7 @@ public class CompTrajectoryGenerator {
     private final HashMap<Other, DynamicTypeValue> OTHER;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("TrajectoryGen");
 
-    private final String TEAM_PROP_LABEL = "Cube";
+    private final String[] TEAM_PROP_LABEL = ObjectDetector.LABELS;
 
     /* Pre-made Trajectories */
     public final TrajectorySequence BLUE_BOTTOM;
@@ -64,11 +65,8 @@ public class CompTrajectoryGenerator {
         RED_TOP
     }
 
-    private final TrajectoryAccelerationConstraint accelerationConstraint =
-            SampleMecanumDrive.getAccelerationConstraint(25);
-    private final TrajectoryVelocityConstraint velocityConstraint =
-            SampleMecanumDrive.getVelocityConstraint(30,
-                    DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
+    private final TrajectoryAccelerationConstraint accelerationConstraint;
+    private final TrajectoryVelocityConstraint velocityConstraint;
 
     /**
      * Generates pre-made sequences to be used in autonomous mode
@@ -82,6 +80,10 @@ public class CompTrajectoryGenerator {
         DRIVE = drive;
 
         dbp.createNewTelePacket();
+
+        accelerationConstraint = DRIVE.getAccelerationConstraint(25);
+        velocityConstraint = DRIVE.getVelocityConstraint(30,
+                    DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
 
         this.BLUE_BOTTOM = generateFieldTrajectory(trajectories.BLUE_BOTTOM, other, park_left);
         this.BLUE_TOP = generateFieldTrajectory(trajectories.BLUE_TOP, other, park_left);
@@ -596,6 +598,7 @@ public class CompTrajectoryGenerator {
                                         final boolean parkLeft,
                                         BooleanSupplier opModeIsActive,
                                         BooleanSupplier isStopRequested) {
+        DRIVE.setPoseEstimate(startingPose);
         PixelStates state = PixelStates.DETECT_MIDDLE;
 
         final HashMap<PixelStates, TrajectorySequence> PURPLE_PIXEL_SEQUENCES =
@@ -604,7 +607,10 @@ public class CompTrajectoryGenerator {
         ObjectDetector OBJ_DETECTOR;
 
         try {
-            //OBJ_DETECTOR = new ObjectDetector(OTHER);
+            // Camera 1 = Back Camera
+            // Camera 2 = Front Camera
+            OBJ_DETECTOR = new ObjectDetector(OTHER);
+            OBJ_DETECTOR.setCamera(Cameras.CAM2)
         } catch (IllegalStateException ex) {
             dbp.error(ex.getMessage(), true);
             return;
@@ -620,13 +626,11 @@ public class CompTrajectoryGenerator {
                 case DETECT_MIDDLE:
                     dbp.info("In Detect Middle", true);
                     state = PixelStates.PLACE_MIDDLE;
-                    /* TODO: uncomment this and fix object detection
                     state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                                     PixelStates.PLACE_MIDDLE : PixelStates.DETECT_LEFT;
                     dbp.info((OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                             "Detected Team Prop" : "Did not detect team prop...", true);
 
-                     */
                     break;
                 case DETECT_LEFT:
                     dbp.info("In Detect Left", true);
@@ -634,20 +638,18 @@ public class CompTrajectoryGenerator {
                     DRIVE.followTrajectorySequence(
                             Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state))
                     );
-                    /*
+                    
                     state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                             PixelStates.PLACE_LEFT : PixelStates.DETECT_RIGHT;
                     dbp.info((OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                             "Detected Team Prop" : "Did not detect team prop...", true);
 
-                     */
                     break;
                 case DETECT_RIGHT:
                     dbp.info("In Detect Right", true);
                     DRIVE.followTrajectorySequence(
                             Objects.requireNonNull(PURPLE_PIXEL_SEQUENCES.get(state))
                     );
-                    /*
                     if (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) {
                         dbp.info("Detected team prop", true);
                         state = PixelStates.PLACE_RIGHT;
@@ -657,7 +659,6 @@ public class CompTrajectoryGenerator {
                         state = PixelStates.PARK;
                     }
 
-                     */
                     break;
                 case PLACE_MIDDLE:
                 case PLACE_LEFT:
@@ -715,7 +716,8 @@ public class CompTrajectoryGenerator {
                 case IDLE:
                     return;
                 default:
-                    break;
+                    dbp.warn("In default case... Returning...", true)
+                    return;
             }
         }
     }
