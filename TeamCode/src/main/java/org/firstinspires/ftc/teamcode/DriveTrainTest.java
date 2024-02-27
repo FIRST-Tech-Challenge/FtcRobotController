@@ -5,8 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.robotParts.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotParts.LinearLift;
 
