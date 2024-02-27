@@ -26,7 +26,7 @@ public class LinearLift {
     }
     public void gotoPosition(double positionInches){
         CustomPID liftController = new CustomPID(new double[]{.000001, 0.00004, 0.00001});
-        double range = 50;
+        double range = 500;
         while(Math.abs(lift.getCurrentPosition()) - (positionInches / this.ENCODERTOINCHES) <= range / 2.0){
             liftController.setSetpoint(positionInches / this.ENCODERTOINCHES);
             double[] outputs = liftController.calculateGivenRaw(lift.getCurrentPosition());

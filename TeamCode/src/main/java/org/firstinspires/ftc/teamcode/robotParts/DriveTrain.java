@@ -42,11 +42,9 @@ public class DriveTrain {
         this.bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         this.fl.setDirection(DcMotorSimple.Direction.REVERSE);
         this.bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.br.setDirection(DcMotorSimple.Direction.FORWARD);
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         this.imu.initialize(parameters);
@@ -57,16 +55,16 @@ public class DriveTrain {
         this.imu.initialize(parameters);
     }
     public void robotCentricDrive(double leftStickY, double leftStickX, double rightStickX){
-        double theta = Math.atan2(leftStickY, leftStickX);
-        double power = Math.hypot(leftStickX, leftStickY);
+        double theta = Math.atan2(-1 * leftStickY, leftStickX);
+        double power = Math.hypot(leftStickX, -1 * leftStickY);
         double sin = Math.sin(theta - Math.PI/4);
         double cos = Math.cos(theta - Math.PI/4);
         double max = Math.max(Math.abs(sin),Math.abs(cos));
 
         this.fl.setPower(power * cos/max + rightStickX);
-        this.fr.setPower(power * sin/max + rightStickX);
+        this.fr.setPower(power * sin/max - rightStickX);
         this.bl.setPower(power * sin/max + rightStickX);
-        this.br.setPower(power * cos/max + rightStickX);
+        this.br.setPower(power * cos/max - rightStickX);
     }
     public void FieldCentricDrive(double leftStickY, double leftStickX, double rightStickX, double slow){
         double y = -1 * leftStickY; // Remember, this is reversed!
@@ -91,21 +89,34 @@ public class DriveTrain {
         this.br.setPower(backRightPower);
     }
     public void driveToLocation(double[] PidConstants, double theta, double distance){
+        this.xOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.yOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.xOdom.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.yOdom.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theta = Math.toRadians(theta);
         CustomPID distanceControl = new CustomPID(PidConstants);
-        double startingPos = Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition());
-        distanceControl.setSetpoint(distance + startingPos);
         double range = 100;
-        while(Math.abs(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition()) - (distance + startingPos)) <= range / 2.0){
+        distanceControl.setSetpoint(distance);
+        while(!((Math.abs(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition())-distance))<= range/2.0)){
             double[] results = distanceControl.calculateGivenRaw(Math.hypot(xOdom.getCurrentPosition(), yOdom.getCurrentPosition()));
-            moveInDirection(theta,results[0]);
+            moveInDirection(theta, results[0]);
         }
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        moveInDirection(theta, 0);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     public void getToAngle(double[] PidConstants, double angle) {
         CustomPID angleControl = new CustomPID(PidConstants);
         angleControl.setSetpoint(Math.toRadians(angle));
-        double range = Math.PI / 180;
-        while (Math.abs(imu.getAngularOrientation().firstAngle - angle) <= range / 2.0) {
-            double[] results = angleControl.calculateGivenError(AngleWrap(angle - imu.getAngularOrientation().firstAngle));
+        double range = Math.PI / 90;
+        if(!(Math.abs(imu.getAngularOrientation().firstAngle - Math.toRadians(angle)) <= range / 2.0)) {
+            double[] results = angleControl.calculateGivenError(AngleWrap(Math.toRadians(angle) - imu.getAngularOrientation().firstAngle));
             this.fl.setPower(-results[0]);
             this.fr.setPower(results[0]);
             this.bl.setPower(-results[0]);
@@ -121,14 +132,25 @@ public class DriveTrain {
         }
         return radians;
     }
-    private void moveInDirection(double theta, double power){
+    public void moveInDirection(double theta, double power){
         double sin = Math.sin(theta - Math.PI/4);
         double cos = Math.cos(theta - Math.PI/4);
-        double max = Math.max(Math.abs(sin),Math.abs(cos));
 
-        this.fl.setPower(power * cos/max);
-        this.fr.setPower(power * sin/max);
-        this.bl.setPower(power * sin/max);
-        this.br.setPower(power * cos/max);
+        this.fl.setPower(power * cos);
+        this.fr.setPower(power * sin);
+        this.bl.setPower(power * sin);
+        this.br.setPower(power * cos);
+    }
+
+    public BNO055IMU getImu() {
+        return imu;
+    }
+
+    public DcMotor getxOdom() {
+        return xOdom;
+    }
+
+    public DcMotor getyOdom() {
+        return yOdom;
     }
 }
