@@ -598,11 +598,16 @@ public class CompTrajectoryGenerator {
         //
 
         while (opModeIsActive.getAsBoolean() && !isStopRequested.getAsBoolean()) {
+            if (state != null) {
+                System.out.println("Current state: "+state.name());
+            }
             switch (state) {
                 case DETECT_MIDDLE:
                     dbp.info("In Detect Middle", true);
-                    state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
-                                    PixelStates.PLACE_MIDDLE : PixelStates.DETECT_LEFT;
+                    state = PixelStates.PLACE_MIDDLE;
+                    // TODO: uncomment this and fix object detection
+                    //state = (OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
+                    //                PixelStates.PLACE_MIDDLE : PixelStates.DETECT_LEFT;
                     dbp.info((OBJ_DETECTOR.isObjectRecognized(TEAM_PROP_LABEL)) ?
                             "Detected Team Prop" : "Did not detect team prop...", true);
                     break;
