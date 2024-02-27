@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmUtils {
@@ -30,7 +27,7 @@ public class ArmUtils {
     //final int ROLLER_WAIT_TIME = 1000;
 
     // Pixel Pickup Sequence
-    final int PICKUP_EXTEND_TARGET = 100;
+    final int PICKUP_EXTEND_TARGET = 1700;
 
     // Pixel Backdrop Sequence
     final int BACKDROP_EXTEND_TARGET = 2000;
@@ -47,9 +44,13 @@ public class ArmUtils {
     Servo rollerServo = null;
 
     int currentArmLiftPos = 0;
+
     boolean startupSequenceActive = false;
     boolean pickupSequenceActive = false;
     boolean backdropSequenceActive = false;
+
+    ExtendDirection sequenceDirection = ExtendDirection.UNINITIALIZED;
+    boolean sequenceGotToPosition = false;
 
     public ArmUtils(Controller controller, HardwareMap hardwareMap) {
         this.controller = controller;
@@ -96,56 +97,56 @@ public class ArmUtils {
     }
 
     void pixelPickupSequence() {
-        pickupSequenceActive = true;
-
-        armLift.setPower(SEQUENCE_ARM_POWER);
-        currentArmLiftPos = ARM_MIN_POSITION;
-        armLift.setTargetPosition(currentArmLiftPos);
-        leftGrip.setPosition(GRIP_OPEN);
-        rightGrip.setPosition(GRIP_OPEN);
-        rollerServo.setPosition(ROLLER_FLAT);
-
-        controller.Debug("arm extend", -armExtend.getCurrentPosition());
-
-        if (-armExtend.getCurrentPosition() < PICKUP_EXTEND_TARGET) {
-            armExtend.setPower(ARM_EXTEND_SPEED);
-        }
-        else if (-armExtend.getCurrentPosition() > PICKUP_EXTEND_TARGET) {
-            armExtend.setPower(-ARM_EXTEND_SPEED);
-        }
-
-        if (!armLift.isBusy()) {
-            armExtend.setPower(0);
-            armLift.setPower(ARM_LIFT_POWER);
-
-            pickupSequenceActive = false;
-        }
+        pickupSequenceActive = baseSequence(ARM_MIN_POSITION, PICKUP_EXTEND_TARGET, ROLLER_FLAT, GRIP_OPEN);
     }
 
     void pixelBackdropSequence() {
-        backdropSequenceActive = true;
+        backdropSequenceActive = baseSequence(BACKDROP_ARM_TARGET, BACKDROP_EXTEND_TARGET, ROLLER_UPSIDEDOWN, leftGrip.getPosition());
+    }
 
+    boolean baseSequence(int armTarget, int extendTarget, double rollerTarget, double gripTarget) {
         armLift.setPower(SEQUENCE_ARM_POWER);
-        currentArmLiftPos = BACKDROP_ARM_TARGET;
+        currentArmLiftPos = armTarget;
         armLift.setTargetPosition(currentArmLiftPos);
-        rollerServo.setPosition(ROLLER_UPSIDEDOWN);
+        leftGrip.setPosition(gripTarget);
+        rightGrip.setPosition(gripTarget);
+        rollerServo.setPosition(rollerTarget);
 
-        if (-armExtend.getCurrentPosition() < BACKDROP_EXTEND_TARGET) {
-            armExtend.setPower(ARM_EXTEND_SPEED);
+        if (!sequenceGotToPosition) {
+            if (-armExtend.getCurrentPosition() < extendTarget && sequenceDirection != ExtendDirection.BACKWARD) {
+                sequenceDirection = ExtendDirection.FORWARD;
+                armExtend.setPower(ARM_EXTEND_SPEED);
+            }
+            else if (-armExtend.getCurrentPosition() > extendTarget && sequenceDirection != ExtendDirection.FORWARD) {
+                sequenceDirection = ExtendDirection.BACKWARD;
+                armExtend.setPower(-ARM_EXTEND_SPEED);
+            }
+
+            sequenceGotToPosition = (sequenceDirection == ExtendDirection.FORWARD && -armExtend.getCurrentPosition() >= extendTarget) || (sequenceDirection == ExtendDirection.BACKWARD && -armExtend.getCurrentPosition() <= extendTarget);
         }
-        else if (-armExtend.getCurrentPosition() > BACKDROP_EXTEND_TARGET) {
-            armExtend.setPower(-ARM_EXTEND_SPEED);
+        else {
+            armExtend.setPower(0);
         }
 
-        if (!armLift.isBusy()) {
+        controller.Debug("sequenceDirection", sequenceDirection);
+        controller.Debug("got to position", sequenceGotToPosition);
+
+        if (!armLift.isBusy() && sequenceGotToPosition) {
+            sequenceDirection = ExtendDirection.UNINITIALIZED;
+            sequenceGotToPosition = false;
+
             armExtend.setPower(0);
             armLift.setPower(ARM_LIFT_POWER);
 
-            backdropSequenceActive = false;
+            return false;
         }
+
+        return true;
     }
 
     public void runSequences(Gamepad gamepad) {
+        controller.Debug("extend pos", -armExtend.getCurrentPosition());
+
         if (!startupSequenceActive && !backdropSequenceActive && !pickupSequenceActive) {
             if (gamepad.a) {
                 pixelPickupSequence();
@@ -224,4 +225,10 @@ public class ArmUtils {
             rightGrip.setPosition(GRIP_CLOSED);
         }
     }
+}
+
+enum ExtendDirection {
+    UNINITIALIZED,
+    FORWARD,
+    BACKWARD
 }
