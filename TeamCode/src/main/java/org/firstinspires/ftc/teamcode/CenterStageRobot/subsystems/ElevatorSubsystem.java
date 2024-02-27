@@ -36,14 +36,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private Level level;
 
-    private int[] levelPositions = {0, 300, 800, 1050, 1650, 1750};
+    private int[] levelPositions = { 0, 300, 800, 1050, 1650, 1750 };
 
     private Telemetry telemetry;
     private DoubleSupplier leftY;
 
     private OuttakeSusystem outtakeSusystem;
 
-    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY, OuttakeSusystem outtakeSusystem) {
+    public ElevatorSubsystem(HardwareMap hm, Telemetry telemetry, DoubleSupplier leftY,
+            OuttakeSusystem outtakeSusystem) {
 
         this.leftY = leftY;
         this.telemetry = telemetry;
@@ -69,11 +70,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if(getHeight() > 600) {
-//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.OPEN).schedule();
-//        } else {
-//            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
-//        }
+        if (getHeight() < 600 && leftY.getAsDouble() < -0.05) {
+            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE).schedule();
+        } else if (getHeight() > 600 && leftY.getAsDouble() > 0.05) {
+            new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.OPEN).schedule();
+        }
     }
 
     public void run() {
@@ -88,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         level = levelPicked;
         int levelIdx = 0;
 
-        if(level == Level.LOADING)
+        if (level == Level.LOADING)
             levelIdx = 0;
         else if (level == Level.HANGING)
             levelIdx = 1;
@@ -118,7 +119,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         motors.set(power);
     }
 
-    public Double getHeight(){
+    public Double getHeight() {
         return motors.getPositions().get(0);
     }
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.CenterStageRobot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -40,8 +39,9 @@ public class CenterStageRobot extends RobotEx {
     }
 
     public CenterStageRobot(HardwareMap hm, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                            GamepadExEx toolOp, OpModeType opModeType, boolean camera, boolean distance, Pose2d pose) {
-        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera, distance, pose);
+                            GamepadExEx toolOp, OpModeType opModeType, boolean camera, boolean distance_sensor,
+                            Pose2d startingPose) {
+        super(hm, RobotConstants, telemetry, driverOp, toolOp, opModeType, camera, distance_sensor, startingPose);
     }
 
     @Override
@@ -79,6 +79,8 @@ public class CenterStageRobot extends RobotEx {
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.MID));
         toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HIGH));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING));
         toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.HANGING));
 
@@ -91,6 +93,10 @@ public class CenterStageRobot extends RobotEx {
                         new SequentialCommandGroup(
                                 new InstantCommand(intakeArmSubsystem::lowerArm, intakeArmSubsystem),
                                 new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE),
+//                                new OuttakeCommand(outtakeSusystem, OuttakeCommand.Action.CLOSE),
+                                new InstantCommand(outtakeSusystem::go_intake_second, outtakeSusystem),
+                                new WaitCommand(80),
+                                new InstantCommand(outtakeSusystem::go_intake_first, outtakeSusystem),
                                 new WaitCommand(200),
                                 new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING),
                                 new InstantCommand(outtakeSusystem::wheel_grab),

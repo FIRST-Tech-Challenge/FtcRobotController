@@ -29,12 +29,12 @@ public class IntakeArmSubsystem extends SubsystemBase {
         setPosition(MAX);
     }
 
-    public void midArm() {
-        setPosition(MID);
-    }
-
     public void lowerArm() {
         setPosition(MIN);
+    }
+
+    public void midArm() {
+        setPosition(MID);
     }
 
     public void auto_pixel(int index){
