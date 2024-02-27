@@ -116,8 +116,8 @@ public class ConceptTensorFlowObjectDetectionSwitchableCameras extends LinearOpM
     private void initTfod() {
 
         List<String> LABELS = new ArrayList<>();
-        LABELS.add("cube");
-        LABELS.add("not the cube");
+        LABELS.add("red cube");
+        LABELS.add("blue cube");
 
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
