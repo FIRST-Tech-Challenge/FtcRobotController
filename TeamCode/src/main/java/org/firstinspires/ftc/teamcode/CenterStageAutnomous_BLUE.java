@@ -57,7 +57,7 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
     public SequentialCommandGroup scoring_randomization(){
         return new SequentialCommandGroup(
                 new InstantCommand(outtakeSusystem::wheel_release),
-                new WaitCommand(1000),
+                new WaitCommand(800),
                 new InstantCommand(outtakeSusystem::wheel_stop)
         );
     }
@@ -65,7 +65,7 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
     public SequentialCommandGroup scoring(){
         return new SequentialCommandGroup(
                 new InstantCommand(outtakeSusystem::wheel_release),
-                new WaitCommand(2000),
+                new WaitCommand(1300),
                 new InstantCommand(outtakeSusystem::wheel_stop)
         );
     }
@@ -114,7 +114,7 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         RR_Blue = new RoadRunnerCommand_BLUE(drive, HomePose_SHORT, RoadRunnerSubsystem_BLUE.StartingPosition.SHORT,
                 RoadRunnerSubsystem_BLUE.Path.INNER, RoadRunnerSubsystem_BLUE.PixelStack.INNER,
-                RoadRunnerSubsystem_BLUE.ParkingPosition.INNER, telemetry);
+                RoadRunnerSubsystem_BLUE.ParkingPosition.OUTER, telemetry);
 
         rand = RoadRunnerSubsystem_BLUE.Randomization.RIGHT;
 
@@ -148,7 +148,7 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
         }
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
-        temp = randomizationPixelElevator();
+        temp = scoring_randomization();
         temp.schedule();
         while (!isStopRequested() && opModeIsActive() && CommandScheduler.getInstance().isScheduled(temp)) {
             run();
@@ -226,14 +226,15 @@ public class CenterStageAutnomous_BLUE extends CommandOpMode {
         }
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
-        temp = new SequentialCommandGroup(
-                scoring(), resetElevator());
+        temp = scoring();
         temp.schedule();
         while (!isStopRequested() && opModeIsActive() && CommandScheduler.getInstance().isScheduled(temp)) {
             run();
         }
 
 
+        temp = resetElevator();
+        temp.schedule();
         RR_Blue.runParking();
         while (!isStopRequested() && opModeIsActive() && drive.isBusy()) {
             run();

@@ -19,10 +19,14 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     public static double TileInverted = -24; /*-inches-*/
     public static double RobotX = 12.6; /*-inches-*/
     public static double RobotY = 18; /*-inches-*/
-    public static double BackdropDistance = 0.75; /*-inches-*/
-    public static double RandomizationBackdropDistance = 1.75; /*-inches-*/
-    public static double StackStationFirstCycleOffset = 3; /*-inches-*/
-    public static double StackStationSecondCycleOffset = 5; /*-inches-*/
+    public static double BackdropDistance = 1.25; /*-inches-*/
+    public static double RandomizationBackdropDistance = 2.25; /*-inches-*/
+    public static double StackStationFirstCycleOffset = 4; /*-inches-*/
+    public static double StackStationSecondCycleOffset = 6; /*-inches-*/
+
+    public final double StackDistance = 2; /*-inches-*/
+    public final double HIGH_VEL_SPEED = 60.0;
+    public final double LOW_VEL_SPEED = 45.0;
     /*-------------------------------------------------------
     -Trajectories-
     -------------------------------------------------------*/
@@ -73,9 +77,7 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     protected Path path;
     protected ParkingPosition parkingPosition;
     protected PixelStack pixelStack;
-    /*-------------------------------------------------------
-    -FTCLib Commands-
-    -------------------------------------------------------*/
+
     /*-------------------------------------------------------
     -Poses-
     -------------------------------------------------------*/
@@ -104,15 +106,15 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
 
     protected Pose2d backdropLeft = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.75 * Tile, Math.toRadians(180)); // Default
     protected Pose2d backdropCenter = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.5 * Tile, Math.toRadians(180));
-    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.3 * Tile, Math.toRadians(180)); // Default
+    protected Pose2d backdropRight = new Pose2d(2.5 * Tile - (RobotY/2) + BackdropDistance, 1.2 * Tile, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInnerSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
-    protected Pose2d stationMiddleSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2),Tile + StackStationSecondCycleOffset, Math.toRadians(180));
-    protected Pose2d stationOuterSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationInnerSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2)  + StackDistance,Tile/2 + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationMiddleSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2) + StackDistance,Tile + StackStationSecondCycleOffset, Math.toRadians(180));
+    protected Pose2d stationOuterSecondCycle = new Pose2d(3 * TileInverted + (RobotY/2) + StackDistance, 1.5 * Tile + StackStationSecondCycleOffset, Math.toRadians(180)); // Default
 
-    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) ,Tile/2 + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
-    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2),Tile + StackStationFirstCycleOffset, Math.toRadians(180));
-    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2), 1.5 * Tile + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationInner = new Pose2d(3 * TileInverted + (RobotY/2) + StackDistance,Tile/2 + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
+    protected Pose2d stationMiddle = new Pose2d(3 * TileInverted + (RobotY/2) + StackDistance,Tile + StackStationFirstCycleOffset, Math.toRadians(180));
+    protected Pose2d stationOuter = new Pose2d(3 * TileInverted + (RobotY/2) + StackDistance, 1.5 * Tile + StackStationFirstCycleOffset, Math.toRadians(180)); // Default
 
     protected Pose2d parkingInner = new Pose2d(2.5 * Tile - 4, Tile/2, Math.toRadians(180));
     protected Pose2d parkingMiddle = new Pose2d(2 * Tile, 1.5 * Tile, Math.toRadians(180));
@@ -139,11 +141,6 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
     /*-------------------------------------------------------
     -La program-
     -------------------------------------------------------*/
-
-    /*-------------------------------------------------------
-    -Mechanisms-
-    -------------------------------------------------------*/
-
 
     RoadRunnerSubsystem_BLUE(SampleMecanumDrive sampleDrive, Pose2d HomePose,
                              StartingPosition startingPosition, Path path, PixelStack pixelStack,
@@ -191,49 +188,47 @@ public class RoadRunnerSubsystem_BLUE extends SubsystemBase {
         /*----------------------------------------------------------------------------------------*/
 
         backdrop_station_first_cycle = drive.trajectorySequenceBuilder(randomizedBackdrop)
-//                .addTemporalMarker(2, () -> new SequentialCommandGroup(
-//                        new InstantCommand(outtakeSusystem::go_intake_second),
-//                        new WaitCommand(80),
-//                        new InstantCommand(outtakeSusystem::go_intake_first),
-//                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
-//                ).schedule())
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getVelocityConstraint(LOW_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
-                .lineTo(stationFar)
+                .lineTo(stationFar,
+                        SampleMecanumDrive.getVelocityConstraint(HIGH_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(HIGH_VEL_SPEED)
+                )
                 .splineToConstantHeading(stackStation.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
 
         backdrop_station_second_cycle = drive.trajectorySequenceBuilder(backdrop_Unload)
-//                .addTemporalMarker(2, () -> new SequentialCommandGroup(
-//                        new InstantCommand(outtakeSusystem::go_intake_second),
-//                        new WaitCommand(80),
-//                        new InstantCommand(outtakeSusystem::go_intake_first),
-//                        new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Level.LOADING)
-//                ).schedule())
                 .setTangent(Math.toRadians(180))
                 .splineToConstantHeading(stationClose, Math.toRadians(180),
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getVelocityConstraint(LOW_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
-                .lineTo(stationFar)
+                .lineTo(stationFar,
+                        SampleMecanumDrive.getVelocityConstraint(HIGH_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(HIGH_VEL_SPEED)
+                )
                 .splineToConstantHeading(stackStationSecondCycle.vec(), Math.toRadians(stackStationTanget[stackStationTangetValue])); //tan pair 180/225
 
         station_backdrop_first_cycle = drive.trajectorySequenceBuilder(stackStation)
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addSpatialMarker(() -> elevator().schedule())
+                .lineTo(stationClose,
+                        SampleMecanumDrive.getVelocityConstraint(HIGH_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(HIGH_VEL_SPEED)
+                )
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 
         station_backdrop_second_cycle = drive.trajectorySequenceBuilder(stackStationSecondCycle)
                 .setReversed(true)
                 .setTangent(Math.toRadians(0))
                 .splineToConstantHeading(stationFar, Math.toRadians(0))
-                .lineTo(stationClose)
-//                .addDisplacementMarker(() -> elevator().schedule())
+                .lineTo(stationClose,
+                        SampleMecanumDrive.getVelocityConstraint(HIGH_VEL_SPEED, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(HIGH_VEL_SPEED)
+                )
                 .splineToConstantHeading(backdrop_Unload.vec(), Math.toRadians(0));
 
         /*----------------------------------------------------------------------------------------*/
