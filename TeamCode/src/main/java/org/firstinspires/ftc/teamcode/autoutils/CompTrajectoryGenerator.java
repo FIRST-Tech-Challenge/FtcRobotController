@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
@@ -192,6 +194,34 @@ public class CompTrajectoryGenerator {
             default:
                 return null;
         }
+    }
+
+    public TrajectorySequence generateFieldTrajectoryNew(@NonNull final trajectories trajectory,
+                                                      final HashMap<Other, DynamicTypeValue> other,
+                                                      final boolean PARK_LEFT) {
+        final TrajectoryAccelerationConstraint accelerationConstraint =
+                SampleMecanumDrive.getAccelerationConstraint(25);
+        final TrajectoryVelocityConstraint velocityConstraint =
+                SampleMecanumDrive.getVelocityConstraint(30,
+                        DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
+
+        final double WAIT_TIME = 2.4288;
+        int yScale = (trajectory == trajectories.RED_TOP || trajectory == trajectories.RED_BOTTOM) ? -1 : 1;
+
+        switch (trajectory) {
+            case BLUE_BOTTOM:
+            case RED_BOTTOM:
+                // ADD GRAPHS FROM https://www.desmos.com/calculator/bnm9pzy7p5 TO HERE (AND REMEMBER TO MULTIPLY ANGLES/Y VALUES BY yScale)
+
+                break;
+            case BLUE_TOP:
+            case RED_TOP:
+
+                break;
+            default:
+                return null;
+        }
+
     }
 
     private enum PlacePixelState {
