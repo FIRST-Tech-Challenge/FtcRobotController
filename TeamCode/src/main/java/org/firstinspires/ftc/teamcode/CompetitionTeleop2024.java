@@ -226,7 +226,7 @@ public class CompetitionTeleop2024 extends OpMode {
         if (gamepad2.a && !changed) {
             if (gripper.getPosition() < 0.001)
             {
-                gripper.setPosition(.09);
+                gripper.setPosition(.07);
                 //arm.setTargetPosition(150);
                 //arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //arm.setPower(armPower);
