@@ -834,11 +834,10 @@ public class Robot {
         while (!aligned && opMode.opModeIsActive()) {
             Log.d("apriltag", "alignToBoardFast: passed tagid is " + tagId);
 
-            if (numberOfDetectionsProcessed > 200) {
+            numberOfDetectionsProcessed++;
+            if (numberOfDetectionsProcessed > 20) {
                 Log.d("apriltag", "alignToBoardFast: didn't align, distanceToBoard is 12");
                 break;
-            } else {
-                numberOfDetectionsProcessed++;
             }
 
             myAprilTagDetections = aprilTagProcessor.getDetections();
@@ -954,8 +953,8 @@ public class Robot {
                 }
 
                 if(isRedAlliance){
-                    straightBlocking(2, false, 0.7);
-                    setHeading(90 * polarity, 0.7);
+                    //straightBlocking(2, false, 0.7);
+                    //setHeading(90 * polarity, 0.7);
                     straightBlocking(2, true, 0.7);
                     setHeading(90 * polarity, 0.7);
                 } else {
@@ -1207,15 +1206,15 @@ public class Robot {
                         //launch
                         planeLauncherServo.setPosition(0.45);
                         droneShouldHaveLaunched = true;
-                        Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
+                        // Log.d("drone", "reach velocity: " + (currentVelocity >= targetVelocity));
                         opMode.sleep(1000);
                         break;
                     } else {
                         initialPlaneLauncherPower += 0.05;
 
-                        Log.d("drone", "current velocity: " + currentVelocity + "target velocity: " + targetVelocity + "current power" + initialPlaneLauncherPower);
-                        telemetry.addData("currentVelocity: ", currentVelocity);
-                        telemetry.addData("targetVelocity: ", targetVelocity);
+                        // Log.d("drone", "current velocity: " + currentVelocity + "target velocity: " + targetVelocity + "current power" + initialPlaneLauncherPower);
+                        // telemetry.addData("currentVelocity: ", currentVelocity);
+                        // telemetry.addData("targetVelocity: ", targetVelocity);
 
                     }
                 }
