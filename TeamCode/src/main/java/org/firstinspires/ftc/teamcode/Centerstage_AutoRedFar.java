@@ -64,7 +64,7 @@ public class Centerstage_AutoRedFar extends LinearOpMode {
         gobbler = new Gobbler(hardwareMap);
 
         //initTfod();
-        gobbler.intake.intakeDown(false); // TODO: 1/30/24 We can remove this since we are not using a servo to push down the lift anymore.
+
         //robot.outtake.launchDrone(0.0); TODO This was intended to reset the drone launcher servo, we can move the servo manually.
         // Wait for the DS start button to be touched.
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
