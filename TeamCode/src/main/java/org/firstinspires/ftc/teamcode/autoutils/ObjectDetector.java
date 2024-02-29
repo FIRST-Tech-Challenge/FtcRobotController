@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.autoutils;
 
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
 import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -18,15 +22,57 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Locale.ENGLISH;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.internal.system.AppUtil.getDefContext;
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Other.WEBCAM;
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.Cameras;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 
 public class ObjectDetector {
+
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
+        private final AtomicReference<Bitmap> lastFrame =
+                new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
+        @Override
+        public void init(int width, int height, CameraCalibration calibration) {
+            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+        }
+
+        @Override
+        public Object processFrame(Mat frame, long captureTimeNanos) {
+            Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(frame, b);
+            lastFrame.set(b);
+            return null;
+        }
+
+        @Override
+        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
+                                float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
+                                Object userContext) {
+            // do nothing
+        }
+
+        @Override
+        public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
+        }
+    }
+
+
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
@@ -42,7 +88,7 @@ public class ObjectDetector {
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
+    public static final String[] LABELS = {
             "red cube",
             "blue cube"
     };
@@ -61,15 +107,17 @@ public class ObjectDetector {
 
     private final HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> OTHER;
 
-    public ObjectDetector(final HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> other) {
+    public ObjectDetector(final HashMap<RobotHardwareInitializer.Other, DynamicTypeValue> other, OpMode opMode) {
         OTHER = other;
         dbp.createNewTelePacket();
 
         Camera1 =
-                (WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(0);
+                opMode.hardwareMap.get(WebcamName.class, "Webcam 1");
+                //(WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(0);
 
         Camera2 =
-                (WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(1);
+                opMode.hardwareMap.get(WebcamName.class, "Webcam 2");
+                //(WebcamName) ((ArrayTypeValue<?>) Objects.requireNonNull(OTHER.get(WEBCAM))).get(1);
 
         initTfod();
     }
@@ -102,7 +150,7 @@ public class ObjectDetector {
                 // choose one of the following:
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelFileName(TFOD_MODEL_ASSET)
                 //.setModelFileName(TFOD_MODEL_FILE)
 
                 // The following default settings are available to un-comment and edit as needed to
@@ -115,12 +163,20 @@ public class ObjectDetector {
 
                 .build();
 
+        CameraStreamProcessor processor = new CameraStreamProcessor();
+
+        new VisionPortal.Builder()
+                .addProcessors(processor)
+                .setCamera(Camera2)
+                .build();
+
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera((CameraName) Camera1);
+            builder.setCamera(Camera2);
+            FtcDashboard.getInstance().startCameraStream(processor, 0);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -179,7 +235,7 @@ public class ObjectDetector {
     private List<Recognition> telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        dbp.info(String.format(ENGLISH, "%d Objects Detected", currentRecognitions.size()));
+        dbp.info(String.format(ENGLISH, "%d Objects Detected", currentRecognitions.size()), true);
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
