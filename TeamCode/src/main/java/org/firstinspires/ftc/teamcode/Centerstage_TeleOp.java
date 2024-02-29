@@ -48,7 +48,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
             gobbler.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.x, directionToggleTime);
 
             // This functions uses one double input to drive the lift.
-            gobbler.outtake.driveLift(gamepad2.left_stick_y);
+            gobbler.outtake.driveLift(-gamepad2.left_stick_y);
 
             // Provides telemetry for all motors, servos, and sensors.
             telemetry.addData("Front Driving Motors (Left, Right)", "%4.2f, %4.2f",
@@ -70,6 +70,8 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.getBackWDValueLeft(),
                     gobbler.driveTrain.getBackWDValueRight());
+            telemetry.addData("Gamepad X",
+                    String.valueOf(gamepad2.x));
             telemetry.update();
         }
     }

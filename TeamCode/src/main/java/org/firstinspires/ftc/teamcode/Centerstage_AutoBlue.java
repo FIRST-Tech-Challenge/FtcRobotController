@@ -79,7 +79,6 @@ public class Centerstage_AutoBlue extends LinearOpMode {
     public void runOpMode() {
         Gobbler gobbler = new Gobbler(hardwareMap);
         initTfod();
-        gobbler.intake.intakeDown(false);
         //robot.outtake.launchDrone(0.0);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");

@@ -11,18 +11,19 @@ public class Outtake {
     Servo trapdoorServo;
     TouchSensor bottomLimit;
 
-    int encoderTopLimit = 0;
+    int encoderTopLimit = 9700;
 
     boolean mailboxOpen = false;
 
     // Initiates the motors and servos we need for this subsystem.
     public Outtake(HardwareMap hwMap) {
         liftMotor = hwMap.get(DcMotor.class, "outtakeMotor");
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         bottomLimit = hwMap.get(TouchSensor.class, "bottomLimit");
         
         trapdoorServo = hwMap.get(Servo.class, "trapdoorServo");
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     // This functions uses one double input to drive the lift.
@@ -30,11 +31,12 @@ public class Outtake {
 
         if (bottomLimit.isPressed() && power < 0.0) {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftMotor.setPower(0.0);
         }
         else if (power > 0.0 && getLiftMotorPos() > encoderTopLimit) {
             liftMotor.setPower(0.0);
-        } else if (mailboxOpen) {
+        } else if (mailboxOpen && power != 0.0) {
             closeMailbox();
         } else {
             liftMotor.setPower(power);
@@ -59,7 +61,7 @@ public class Outtake {
     }
 
     public void openMailbox() {
-        trapdoorServo.setPosition(0.5);
+        trapdoorServo.setPosition( 1.0);
         mailboxOpen = true;
     }
 
