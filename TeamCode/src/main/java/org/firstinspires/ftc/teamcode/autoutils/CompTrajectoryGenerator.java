@@ -631,7 +631,11 @@ public class CompTrajectoryGenerator {
         SpikeMarkPlacement spikeMarkPlacement = SpikeMarkPlacement.ERROR;
         Pose2d lastPose;
 
-        while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+        while (opMode.opModeIsActive()) {
+            if (opMode.isStopRequested()) {
+                return;
+            }
+
             System.out.println("Current state: " + state.name());
 
             switch (state) {
@@ -672,6 +676,7 @@ public class CompTrajectoryGenerator {
                     }
                     else {
                         dbp.info("Did not detect prop", true);
+                        opMode.terminateOpModeNow();
                         state = PixelStates.PARK;
                     }
 
@@ -728,11 +733,15 @@ public class CompTrajectoryGenerator {
                     break;
                 case PARK:
                     // TODO: implement parking
+                    dbp.warn("In park case... Returning...", true);
+                    opMode.requestOpModeStop();
                     return;
                 case IDLE:
+                    opMode.requestOpModeStop();
                     return;
                 default:
                     dbp.warn("In default case... Returning...", true);
+                    opMode.requestOpModeStop();
                     return;
             }
         }
