@@ -35,6 +35,7 @@ public class RedShort20 extends LinearOpMode {
             } else {
                 this.sleep(maxDelayInSeconds * 1000);
             }
+
             robot.shortMoveToBoard2();
 
             robot.alignToBoardFast(robot.wantedAprTagId);
