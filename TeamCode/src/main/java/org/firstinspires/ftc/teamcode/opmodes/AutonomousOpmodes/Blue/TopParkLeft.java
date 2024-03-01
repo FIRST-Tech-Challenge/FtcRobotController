@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.AutonomousOpmodes.Blue;
 
+import static org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator.trajectories.BLUE_BOTTOM;
 import static org.firstinspires.ftc.teamcode.autoutils.CompTrajectoryGenerator.trajectories.BLUE_TOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -29,5 +30,9 @@ public class TopParkLeft extends LinearOpMode {
         CTG.setStartingPosition(BLUE_TOP);
 
         drive.followTrajectorySequence(CTG.BLUE_TOP);
+        CTG.placePixelOnBoard();
+
+        drive.setPoseEstimate(CTG.BLUE_TOP.end());
+        drive.followTrajectorySequence(CTG.BLUE_TOP_PARK);
     }
 }

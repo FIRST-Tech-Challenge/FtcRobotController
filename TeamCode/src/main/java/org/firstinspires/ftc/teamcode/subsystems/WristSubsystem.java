@@ -25,7 +25,6 @@ public class WristSubsystem extends SubsystemBase {
 
     public WristSubsystem(final DcMotorEx wrist, boolean continuousMode) {
         this.wrist = wrist;
-        this.wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.wrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.wrist.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,11 +40,15 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setWristPosition(int position) {
+        setWristPosition(position, 1);
+    }
+
+    public void setWristPosition(int position, float speed) {
         int adjustedPosition = positionFromAngle(position);
 
         wrist.setTargetPosition(adjustedPosition);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setVelocity(1f);
+        setVelocity(speed);
         System.out.println("POSITION DATA:"+adjustedPosition+", "+position+", "+wrist.getMotorType().getTicksPerRev()+", "+wrist.getMotorType().getGearing());
     }
 

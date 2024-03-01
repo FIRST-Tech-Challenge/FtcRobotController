@@ -28,10 +28,11 @@ public class BottomParkLeft extends LinearOpMode {
 
         CTG.setStartingPosition(BLUE_BOTTOM);
 
-        //CTG.runPurplePixelDetection(CTG.BLUE_BOTTOM.start(), true, true,
-        //        this::opModeIsActive, this::isStopRequested, this);
         drive.followTrajectorySequence(CTG.BLUE_BOTTOM);
         CTG.placePixelOnBoard();
+
+        drive.setPoseEstimate(CTG.BLUE_BOTTOM.end());
+        drive.followTrajectorySequence(CTG.BLUE_BOTTOM_PARK);
 
     }
 }

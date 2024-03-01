@@ -29,5 +29,9 @@ public class TopParkRight extends LinearOpMode {
         CTG.setStartingPosition(BLUE_TOP);
 
         drive.followTrajectorySequence(CTG.BLUE_TOP);
+        CTG.placePixelOnBoard();
+
+        drive.setPoseEstimate(CTG.BLUE_TOP.end());
+        drive.followTrajectorySequence(CTG.BLUE_TOP_PARK);
     }
 }

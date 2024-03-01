@@ -26,7 +26,7 @@ public class WristPositionCommand extends CommandBase {
 
     public static int getBoardTargetPosition() {
         // TODO: tune this
-        return 52;
+        return 58;
     }
 
     private int getTargetPos() {
