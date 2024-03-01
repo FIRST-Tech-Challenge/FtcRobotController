@@ -198,10 +198,10 @@ public class BlueRight extends LinearOpMode {
         utils.dumpClose();
         move.driveSeq(-2, -48, -180);
         move.driveSeq(-2, -42, -180);
-        move.driveSeq(-2, -38, -90);
+        //move.driveSeq(-2, -38, -90);
         move.driveSeq(-2, 40, -90);
         move.driveSeq(-32, 40, 90);
-        move.driveToBoard(-32, 53.25, 90);
+        move.driveToBoard(-32, 54.5, 90);
         move.driveFromBoard(-32, 51.5, 90);
         move.driveSeq(-6, 52.5, 90);
         move.driveSeq(-6, 69, 90);
@@ -216,12 +216,12 @@ public class BlueRight extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-16, -27, 0);
-        move.driveSeq(-5, -27, 0);
-        move.driveSeq(-5, -23, -90);
+        move.driveSeq(-2, -27, 0);
+        //move.driveSeq(-5, -23, -90);
         move.driveSeq(-5, 40, -90);
-        move.driveSeq(-21, 40, 90);
-        move.driveToBoard(-21, 54, 90);
-        move.driveFromBoard(-21, 52,90);
+        move.driveSeq(-20, 40, 90);
+        move.driveToBoard(-20, 54.5, 90);
+        move.driveFromBoard(-20, 52,90);
         move.driveSeq(-2, 53, 90);
         move.driveSeq(-2, 63, 90);
     }

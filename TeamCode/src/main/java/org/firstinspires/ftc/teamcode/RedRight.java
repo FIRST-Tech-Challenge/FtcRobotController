@@ -174,7 +174,7 @@ public class RedRight extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-21, -30, -90);
-        move.driveToBoard(-21, -41.5, -90);
+        move.driveToBoard(-21, -42.5, -90);
         move.driveFromBoard(-21, -37, -90);
         move.driveSeq(-52, -38, -90);
         move.driveSeq(-52, -50, -90);
@@ -189,7 +189,7 @@ public class RedRight extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-27, -30, -90);
-        move.driveToBoard(-27, -40.5, -90);
+        move.driveToBoard(-27, -41.5, -90);
         move.driveFromBoard(-27, -37, -90);
         move.driveSeq(-52, -38, -90);
         move.driveSeq(-52, -50, -90);
@@ -203,7 +203,7 @@ public class RedRight extends LinearOpMode {
         sleep(500);
         utils.dumpClose();
         move.driveSeq(-33, -30, -90);
-        move.driveToBoard(-33, -40.5, -90);
+        move.driveToBoard(-33, -41.5, -90);
         move.driveFromBoard(-33, -38, -90);
         move.driveSeq(-52, -38, -90);
         move.driveSeq(-52, -50, -90);

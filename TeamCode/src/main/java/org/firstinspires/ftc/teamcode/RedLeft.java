@@ -175,11 +175,11 @@ public class RedLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-4, 31.5, -180);
-        move.driveSeq(-4, 27, 90);
+//        move.driveSeq(-4, 27, 90);
         move.driveSeq(-4, -39, 90);
-        move.driveSeq(-23, -39, -90);
-        move.driveToBoard(-23, -49, -90);
-        move.driveFromBoard(-23, -46, -90);
+        move.driveSeq(-25, -39, -90);
+        move.driveToBoard(-25, -50, -90);
+        move.driveFromBoard(-25, -46, -90);
         move.driveSeq(-7, -46, -90);
         move.driveSeq(-7, -60, -90);
     }
@@ -194,7 +194,7 @@ public class RedLeft extends LinearOpMode {
         move.driveSeq(-4, 53, 90);
         move.driveSeq(-4, -39, 90);
         move.driveSeq(-26, -39, -90);
-        move.driveToBoard(-26, -47.5,-90);
+        move.driveToBoard(-26, -50,-90);
         move.driveFromBoard(-26, -45.5, -90);
         move.driveSeq(-2, -45.5, -90);
         move.driveSeq(-2, -60, -90);
@@ -209,11 +209,11 @@ public class RedLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(500);
         move.driveSeq(-4, 39, 0);
-        move.driveSeq(-4, 36, 90);
+//        move.driveSeq(-4, 36, 90);
         move.driveSeq(-4, -39, 90);
-        move.driveSeq(-32, -39, -90);
-        move.driveToBoard(-32, -47.5, -90);
-        move.driveFromBoard(-32, -45.5, -90);
+        move.driveSeq(-34, -39, -90);
+        move.driveToBoard(-34, -51, -90);
+        move.driveFromBoard(-34, -45.5, -90);
         move.driveSeq(-4, -45.5, -90);
         move.driveSeq(-4, -60, -90);
     }
