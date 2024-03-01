@@ -201,7 +201,7 @@ public class CompTrajectoryGenerator {
         }
     }*/
 
-    int wallDistance = 47;
+    int wallDistance = 48;
     final double WAIT_TIME = 2.4288;
     final int WALL_CENTER = 42;
 
@@ -276,13 +276,13 @@ public class CompTrajectoryGenerator {
         int yScale = (trajectory == trajectories.RED_TOP || trajectory == trajectories.RED_BOTTOM) ? -1 : 1;
 
         Pose2d startPosition = new Pose2d(wallDistance, WALL_CENTER*yScale, Math.toRadians(180));
-
+        int distanceFactor = 8;
         // TODO: CHECK IF THIS WORKS
-        int left = 66;
-        int right = 10;
+        int left = 60-distanceFactor;
+        int right = 16+distanceFactor;
         if (yScale == -1) {
-            right = 66;
-            left = 10;
+            right = 60-distanceFactor;
+            left = 16+distanceFactor;
         }
 
         if (PARK_LEFT) {
@@ -401,8 +401,8 @@ public class CompTrajectoryGenerator {
 
                     armSubsystem.positionMoveArm(ArmSubsystem.ArmPosition.BOARD.getPosition());
 
-                    boolean atBack = armSubsystem.getArmMotor1().getCurrentPosition() >= ArmSubsystem.ArmPosition.BOARD.getPosition();
-                    atBack = atBack || !(armSubsystem.getArmMotor1().isBusy());
+                    //boolean atBack = //armSubsystem.getArmMotor1().getCurrentPosition() >= ArmSubsystem.ArmPosition.BOARD.getPosition();
+                    boolean atBack = !(armSubsystem.getArmMotor1().isBusy());
 
                     // Check if it got to the board
                     // It reached the board
@@ -415,8 +415,8 @@ public class CompTrajectoryGenerator {
                     break;
                 case ARM_ADJUSTMENT:
                     // im sorry for this
-                    while (elapsedTime.seconds() < .45) {
-                        armSubsystem.manualMoveArm(.525);
+                    while (elapsedTime.seconds() < .8) {
+                        armSubsystem.manualMoveArm(.555);
                     }
                     armSubsystem.manualMoveArm(0);
 
@@ -435,7 +435,7 @@ public class CompTrajectoryGenerator {
                     break;
                 case RESET_ARM:
                     // optionally move the arm down a bit more so its not in a weird position
-                    while (elapsedTime.seconds() < .5) {
+                    while (elapsedTime.seconds() < 1) {
                         armSubsystem.manualMoveArm(-1);
                     }
                     armSubsystem.manualMoveArm(0);
