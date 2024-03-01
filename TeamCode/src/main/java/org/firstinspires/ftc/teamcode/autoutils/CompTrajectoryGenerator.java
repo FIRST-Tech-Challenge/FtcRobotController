@@ -227,7 +227,7 @@ public class CompTrajectoryGenerator {
         }
     }*/
 
-    int wallDistance = 45;
+    int wallDistance = 47;
     final double WAIT_TIME = 2.4288;
     final int WALL_CENTER = 42;
 
