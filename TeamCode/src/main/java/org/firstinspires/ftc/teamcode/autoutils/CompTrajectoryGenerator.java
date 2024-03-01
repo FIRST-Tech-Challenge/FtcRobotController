@@ -206,7 +206,7 @@ public class CompTrajectoryGenerator {
 
     public TrajectorySequence generateFieldTrajectoryNew(@NonNull final trajectories trajectory,
                                                       final HashMap<Other, DynamicTypeValue> other,
-                                                      final boolean PARK_LEFT) {
+                                                         boolean PARK_LEFT) {
         final TrajectoryAccelerationConstraint accelerationConstraint =
                 SampleMecanumDrive.getAccelerationConstraint(25);
         final TrajectoryVelocityConstraint velocityConstraint =
