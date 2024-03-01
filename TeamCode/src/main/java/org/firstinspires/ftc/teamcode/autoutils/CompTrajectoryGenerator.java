@@ -294,7 +294,7 @@ public class CompTrajectoryGenerator {
         int yScale = (trajectory == trajectories.RED_TOP || trajectory == trajectories.RED_BOTTOM) ? -1 : 1;
 
         Pose2d startPosition = new Pose2d(wallDistance, WALL_CENTER*yScale, Math.toRadians(180));
-        int distanceFactor = 8;
+        int distanceFactor = 2;
         int left = 60-distanceFactor;
         int right = 16+distanceFactor;
         if (yScale == -1) {
@@ -432,7 +432,7 @@ public class CompTrajectoryGenerator {
                     break;
                 case ARM_ADJUSTMENT:
                     // im sorry for this
-                    while (elapsedTime.seconds() < .8) {
+                    while (elapsedTime.seconds() < .95) {
                         armSubsystem.manualMoveArm(.555);
                     }
                     armSubsystem.manualMoveArm(0);
