@@ -27,7 +27,11 @@ public class BottomParkRight extends LinearOpMode {
         waitForStart();
 
         CTG.setStartingPosition(RED_BOTTOM);
-
+                
         drive.followTrajectorySequence(CTG.RED_BOTTOM);
+        CTG.placePixelOnBoard();
+                
+        drive.setPoseEstimate(CTG.RED_BOTTOM.end());
+        drive.followTrajectorySequence(CTG.RED_BOTTOM_PARK);
     }
 }

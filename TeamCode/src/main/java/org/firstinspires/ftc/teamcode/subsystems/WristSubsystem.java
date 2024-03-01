@@ -31,6 +31,12 @@ public class WristSubsystem extends SubsystemBase {
         this.continuousMode = continuousMode;
     }
 
+    public void zero() {
+        DcMotor.RunMode previousMode = this.wrist.getMode();
+        this.wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.wrist.setMode(previousMode);
+    }
+
     public void moveWrist(double frontward, double backward) {
         double power = frontward - backward;
         dbp.debug(String.format(Locale.ENGLISH, "Power: %f", power), true);

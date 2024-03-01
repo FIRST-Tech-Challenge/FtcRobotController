@@ -107,32 +107,6 @@ public class CompTrajectoryGenerator {
         DRIVE.setPoseEstimate(pose);
     }
 
-    public void setStartingPositionEnd(@NonNull trajectories trajectory) {
-        Pose2d pose;
-        switch (trajectory) {
-            case BLUE_BOTTOM:
-                pose = BLUE_BOTTOM.start();
-                break;
-
-            case BLUE_TOP:
-                pose = BLUE_TOP.start();
-                break;
-
-            case RED_BOTTOM:
-                pose = RED_BOTTOM.start();
-                break;
-
-            case RED_TOP:
-                pose = RED_TOP.start();
-                break;
-
-            default:
-                return;
-        }
-
-        DRIVE.setPoseEstimate(pose);
-    }
-
     /**
      * Initializes a pre-made field trajectory based off the given trajectory enum
      * @param trajectory The trajectory to initialize
@@ -303,15 +277,23 @@ public class CompTrajectoryGenerator {
 
         Pose2d startPosition = new Pose2d(wallDistance, WALL_CENTER*yScale, Math.toRadians(180));
 
+        // TODO: CHECK IF THIS WORKS
+        int left = 66;
+        int right = 10;
+        if (yScale == -1) {
+            right = 66;
+            left = 10;
+        }
+
         if (PARK_LEFT) {
             return DRIVE.trajectorySequenceBuilder(startPosition)
                     .setConstraints(velocityConstraint, accelerationConstraint)
-                    .lineTo(new Vector2d(wallDistance, 66 * yScale))
+                    .lineTo(new Vector2d(wallDistance, left * yScale))
                     .build();
         } else {
             return DRIVE.trajectorySequenceBuilder(startPosition)
                     .setConstraints(velocityConstraint, accelerationConstraint)
-                    .lineTo(new Vector2d(wallDistance, 10 * yScale))
+                    .lineTo(new Vector2d(wallDistance, right * yScale))
                     .build();
         }
 
@@ -383,15 +365,16 @@ public class CompTrajectoryGenerator {
         arms.put(RobotHardwareInitializer.Arm.ARM1, armArray.get(0));
         arms.put(RobotHardwareInitializer.Arm.ARM2, armArray.get(1));
 
+        // Zero out the wrist
         WristSubsystem wristSubsystem = new WristSubsystem((DcMotorEx) OTHER.get(Other.WRIST).getValue(), false);
+        wristSubsystem.zero();
+
         ArmSubsystem armSubsystem = new ArmSubsystem(arms);
         FingerSubsystem fingerSubsystem = new FingerSubsystem((Servo) OTHER.get(Other.FINGER).getValue());
 
         ElapsedTime elapsedTime = new ElapsedTime();
         PlacePixelState state = PlacePixelState.START;
-        final int armAdjustmentFactor = 15;
         while (running) {
-
             if (keepFingerPinched) {
                 fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.CLOSED);
             } else {
@@ -402,7 +385,8 @@ public class CompTrajectoryGenerator {
                 case START:
                     // Pinch Fingers
                     keepFingerPinched = true;
-                    if (elapsedTime.seconds() > .1) {
+                    // Pinch fingers for half a second
+                    if (elapsedTime.seconds() > .5) {
                         state = PlacePixelState.ROTATE_ARM_WRIST;
                         elapsedTime.reset();
                     }
@@ -410,7 +394,7 @@ public class CompTrajectoryGenerator {
                 case ROTATE_ARM_WRIST:
                     // Move the arm to the back of the board
 
-                    // Move wrist to the board position
+                    // Move wrist to the board position slowly
                     if (elapsedTime.seconds() >= .6) {
                         wristSubsystem.setWristPosition(WristPositionCommand.getBoardTargetPosition(), .5f);
                     }
@@ -430,11 +414,12 @@ public class CompTrajectoryGenerator {
                     }
                     break;
                 case ARM_ADJUSTMENT:
+                    // im sorry for this
                     while (elapsedTime.seconds() < .45) {
                         armSubsystem.manualMoveArm(.525);
                     }
-
                     armSubsystem.manualMoveArm(0);
+
                     state = PlacePixelState.RELEASE_FINGERS;
                     elapsedTime.reset();
                     break;
@@ -453,6 +438,7 @@ public class CompTrajectoryGenerator {
                     while (elapsedTime.seconds() < .5) {
                         armSubsystem.manualMoveArm(-1);
                     }
+                    armSubsystem.manualMoveArm(0);
                     elapsedTime.reset();
                     state = PlacePixelState.FINISH;
                     break;
