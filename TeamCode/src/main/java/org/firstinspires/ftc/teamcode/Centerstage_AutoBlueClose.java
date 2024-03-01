@@ -185,7 +185,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
         // Note: Decimation can be changed on-the-fly to adapt during a match.
         aprilTag.setDecimation(3);
-
+// HOW DO YOU ENJOY SUFFERING? I TOOK (INSERT FAVORITE SNACK) >:D
         // Create the vision portal by using a builder.
         if (USE_WEBCAM) {
             visionPortal = new VisionPortal.Builder()

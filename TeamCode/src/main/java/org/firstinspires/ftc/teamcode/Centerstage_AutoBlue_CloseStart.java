@@ -217,17 +217,17 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
         // the robot the last leg to in front of the backboard, in position to score a pixel
 //        gobbler.driveTrain.strafe(6, 0.25);
 //        gobbler.driveTrain.moveForward(-20, 0.5);
-        if (DESIRED_TAG_ID == 1) {
+//        if (DESIRED_TAG_ID == 1) {
             finalRightPos();
-        }
-
-        else if (DESIRED_TAG_ID == 2) {
-            finalCenterPos();
-        }
-
-        else if (DESIRED_TAG_ID == 3) {
-            finalLeftPos();
-        }
+//        }
+//
+//        else if (DESIRED_TAG_ID == 2) {
+//            finalCenterPos();
+//        }
+//
+//        else if (DESIRED_TAG_ID == 3) {
+//            finalLeftPos();
+//        }
 
         gobbler.driveTrain.moveBackward(10, 0.5);
 
@@ -369,6 +369,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
                 .setDrawCubeProjection(true)
                 .setDrawAxes(true)
                 .build();
+                aprilTag.setDecimation(3);
 
         // -----------------------------------------------------------------------------------------
         // TFOD Configuration
