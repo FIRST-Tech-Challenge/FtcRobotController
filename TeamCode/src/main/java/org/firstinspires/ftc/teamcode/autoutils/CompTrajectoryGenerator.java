@@ -130,21 +130,21 @@ public class CompTrajectoryGenerator {
 
         switch (trajectory) {
             case BLUE_BOTTOM:
-                if (!PARK_LEFT) {
-                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
+                if (PARK_LEFT) {  
+                    return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(0)))
+                        .setConstraints(velocityConstraint, accelerationConstraint)
+                        .waitSeconds(WAIT_TIME)
+                        .lineTo(new Vector2d(-36, 66))
+                        .lineTo(new Vector2d(50, 66))
+                        .build();
+                }
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(270)))
                             .setConstraints(velocityConstraint, accelerationConstraint)
                             .waitSeconds(WAIT_TIME)
                             .lineTo(new Vector2d(-36, 10))
                             .turn(Math.toRadians(90))
                             .lineTo(new Vector2d(58, 23))
                             .build();
-                }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70, Math.toRadians(0)))
-                        .setConstraints(velocityConstraint, accelerationConstraint)
-                        .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36, 66))
-                        .lineTo(new Vector2d(50, 66))
-                        .build();
 
             case BLUE_TOP:
                 if (PARK_LEFT) {
@@ -195,7 +195,6 @@ public class CompTrajectoryGenerator {
                         .lineTo(new Vector2d(12, -66))
                         .lineTo(new Vector2d(60, -66))
                         .build();
-
             default:
                 return null;
         }
@@ -215,6 +214,20 @@ public class CompTrajectoryGenerator {
                         DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
 
         int yScale = (trajectory == trajectories.RED_TOP || trajectory == trajectories.RED_BOTTOM) ? -1 : 1;
+        // TODO: CHECK IF THIS WORKS
+        if (yScale == -1) {
+            // The code below is based on blue park
+            PARK_LEFT = !PARK_LEFT;
+        }
+
+        // Blue points down (on the graph https://www.desmos.com/calculator/cv0s9vq08g)
+        // which is 270 on a unit circle
+        double forwardAngle = Math.toRadians(270);
+        if (yScale == -1) {
+            // Red points up (on the graph)
+            // which is 90 on a unit circle
+            forwardAngle = Math.toRadians(90);
+        }
 
         switch (trajectory) {
             case BLUE_BOTTOM:
@@ -227,10 +240,11 @@ public class CompTrajectoryGenerator {
                             .lineTo(new Vector2d(-36, 66*yScale))
                             .lineTo(new Vector2d(wallDistance, 66*yScale))
                             .lineTo(new Vector2d(wallDistance, WALL_CENTER*yScale))
+                            // maybe swap the rotation and the move so we dont hit the board
                             .turn(Math.toRadians(180))
                             .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70*yScale, Math.toRadians(270)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70*yScale, forwardAngle))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
                         .lineTo(new Vector2d(-36, 10*yScale))
@@ -248,15 +262,19 @@ public class CompTrajectoryGenerator {
                             .lineTo(new Vector2d(12, 66*yScale))
                             .lineTo(new Vector2d(wallDistance, 66*yScale))
                             .lineTo(new Vector2d(wallDistance, WALL_CENTER*yScale))
+                            // maybe put this line \/ above this line /\
                             .turn(Math.toRadians(180))
                             .build();
                 }
-                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70*yScale, Math.toRadians(270)))
+                return DRIVE.trajectorySequenceBuilder(new Pose2d(12, 70*yScale, forwardAngle))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
                         .lineTo(new Vector2d(12, WALL_CENTER*yScale))
+                        // maybe make this negative to reduce unnessesary turning
+                        // .turn(Math.toRadians(90))
                         .turn(Math.toRadians(90*yScale))
                         .lineTo(new Vector2d(wallDistance, WALL_CENTER*yScale))
+                        // if made the other one negative, remove this line
                         .turn(Math.toRadians(180))
                         .build();
             default:
@@ -277,7 +295,6 @@ public class CompTrajectoryGenerator {
 
         Pose2d startPosition = new Pose2d(wallDistance, WALL_CENTER*yScale, Math.toRadians(180));
         int distanceFactor = 8;
-        // TODO: CHECK IF THIS WORKS
         int left = 60-distanceFactor;
         int right = 16+distanceFactor;
         if (yScale == -1) {
