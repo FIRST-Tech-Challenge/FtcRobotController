@@ -22,6 +22,7 @@ public class Magazine {
 
   public static int pixels = 0;
   double twoPixelTime = 0.0;
+  double dist1=100,dist2=100;
 
   public Magazine() {
     rf = op.hardwareMap.get(LED.class, "rf");
@@ -66,8 +67,8 @@ public class Magazine {
   }
 
   public void updateSensors() {
-    double dist1 = colorSensor1.getDist();
-    double dist2 = colorSensor2.getDist();
+    dist1 = colorSensor1.getDist();
+    dist2 = colorSensor2.getDist();
     pixels=0;
     if (dist1 < 1.7) {
       MagStates.FRONT.setState(true);
@@ -126,7 +127,7 @@ public class Magazine {
   }
 
   public void update() {
-    LOGGER.log("front | back dist: " + frontdist() + " | " + backdist());
+    LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
     LOGGER.log(
         "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
     LOGGER.log("# Pixels: " + getPixels());

@@ -38,9 +38,8 @@ public class BL21 {
         spikey[2] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-50, 26.5,toRadians(120)), toRadians(-90))
-                .lineToLinearHeading(new Pose2d(-48, 36.5,toRadians(120)))
-
+                .splineToLinearHeading(new Pose2d(-40, 18.5,toRadians(90)), toRadians(-90))
+                .lineToLinearHeading(new Pose2d(-44, 36.5,toRadians(90)))
                 .build();
 
         spikey[1] = robot.roadrun
@@ -53,21 +52,21 @@ public class BL21 {
         spikey[0] = robot.roadrun
                 .trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-33,38, toRadians(180)), toRadians(0))
+                .splineToLinearHeading(new Pose2d(-31,36, toRadians(180)), toRadians(0))
                 .build();
         intake[2] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[0].end())
+                .trajectorySequenceBuilder(spikey[2].end())
                 .lineToLinearHeading(new Pose2d(-51, 37.5,toRadians(120)))
-                .lineToLinearHeading(new Pose2d(-50.5,34.25, toRadians(190)))
+                .lineToLinearHeading(new Pose2d(-50,34.25, toRadians(200)))
                 .build();
         intake[1] = robot.roadrun
                 .trajectorySequenceBuilder(spikey[1].end())
-                .lineToLinearHeading(new Pose2d(-51.5,32.25, toRadians(185)))
+                .lineToLinearHeading(new Pose2d(-50,32.25, toRadians(185)))
                 .addTemporalMarker(robot::done)
                 .build();
         intake[0] = robot.roadrun
-                .trajectorySequenceBuilder(spikey[2].end())
-                .lineToLinearHeading(new Pose2d(-50.5,32.25, toRadians(180)))
+                .trajectorySequenceBuilder(spikey[0].end())
+                .lineToLinearHeading(new Pose2d(-50,32.25, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -76,52 +75,52 @@ public class BL21 {
                 .trajectorySequenceBuilder(intake[0].end())
                 .setReversed(false)
                 .lineToLinearHeading(new Pose2d(-43,31, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,58.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(10,58.5, toRadians(180)))
                 .build();
 
         pathy[1] = robot.roadrun
                 .trajectorySequenceBuilder(intake[1].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,58.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(15,58.5, toRadians(180)))
                 .build();
 
         pathy[2] = robot.roadrun
                 .trajectorySequenceBuilder(intake[2].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-38,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38,59.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(10,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(15,59.5, toRadians(180)))
                 .build();
         pathyUltra[0] = robot.roadrun
                 .trajectorySequenceBuilder(intake[0].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-40,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40,58.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(0,57.7, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(10,57, toRadians(130)))
+                .lineToLinearHeading(new Pose2d(0,58.7, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(15,58, toRadians(130)))
                 .build();
 
         pathyUltra[1] = robot.roadrun
                 .trajectorySequenceBuilder(intake[1].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-46,58.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(0,57, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(0,58, toRadians(180)))
 
-                .lineToLinearHeading(new Pose2d(10,57, toRadians(130)))
+                .lineToLinearHeading(new Pose2d(15,58, toRadians(130)))
                 .build();
 
         pathyUltra[2] = robot.roadrun
                 .trajectorySequenceBuilder(intake[2].end())
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46,57.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-46,59.5, toRadians(180)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(0,57, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(10,57, toRadians(130)))
+                .lineToLinearHeading(new Pose2d(0,60, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(15,60, toRadians(130)))
                 .build();
         if(!isLogi){
 
@@ -129,17 +128,17 @@ public class BL21 {
             droppy[0] = robot.roadrun
                     .trajectorySequenceBuilder(pathy[0].end())
                     .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(47,41.5,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.3,41.5,toRadians(180)))
                     .build();
             droppy[1] = robot.roadrun
                     .trajectorySequenceBuilder(pathy[1].end())
                     .lineToLinearHeading(new Pose2d(42.5,35,toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(47,35.25,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.3,35.25,toRadians(180)))
                     .build();
             droppy[2] = robot.roadrun
                     .trajectorySequenceBuilder(pathy[2].end())
                     .lineToLinearHeading(new Pose2d(42.5,32,toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(47,30,toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(46.3,33,toRadians(180)))
                     .build();
         }
         else{
@@ -251,13 +250,13 @@ public class BL21 {
     {
         robot.queuer.queue(false, true);
         robot.upAuto();
-        if (bark != 0) {
+//        if (bark != 0) {
             robot.purpurAuto();
-        }
-        else{
-            robot.queuer.addDelay(3.0);
-            robot.purpurAuto2();
-        }
+//        }
+//        else{
+//            robot.queuer.addDelay(3.0);
+//            robot.purpurAuto2();
+//        }
         if (bark == 0) {
             robot.queuer.addDelay(0.4+delaySec);
         } else {
@@ -290,6 +289,14 @@ public class BL21 {
         robot.resetAuto();
         robot.grabSupAuto();
         robot.followTrajSeq(droppy[bark]);
+        if (bark == 2) {
+            robot.lowAuto(true);
+            robot.yellowAuto(true);
+        }else{
+            robot.lowAuto(false);
+            robot.yellowAuto(false);
+
+        }
         if (ultras) {
             robot.queuer.addDelay(0.2);
             robot.followTrajSeqUltra(check);
@@ -298,23 +305,15 @@ public class BL21 {
                 everChecked = true;
             }
             robot.followTrajSeq(droppy[bark], !everChecked);
-            robot.queuer.queue(false, true);
-        }
-        robot.queuer.addDelay(.5);
-        robot.lowAuto();
-        if (bark == 2) {
-            robot.yellowAuto(true);
-        }else{
-            robot.yellowAuto(false);
 
         }
+
         robot.queuer.waitForFinish();
         robot.drop();
     }
 
     public void park(){
-        robot.queuer.addDelay(.5);
-        robot.resetAuto();
+
         if (ultras) {
             robot.queuer.waitForFinish();
         }
@@ -324,6 +323,8 @@ public class BL21 {
         else{
             robot.followTrajSeq(parkLeft[bark]);
         }
+        robot.queuer.addDelay(.7);
+        robot.resetAuto();
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);
     }

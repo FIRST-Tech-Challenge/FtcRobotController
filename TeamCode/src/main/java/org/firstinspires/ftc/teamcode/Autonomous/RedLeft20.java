@@ -117,7 +117,7 @@ public class RedLeft20 extends LinearOpMode {
             robot.grabSupAuto();
             robot.queuer.waitForFinish();
             robot.queuer.queue(false, true);
-            robot.lowAuto();
+            robot.lowAuto(false);
             robot.queuer.waitForFinish();
             robot.queuer.addDelay(0.5);
             robot.drop();

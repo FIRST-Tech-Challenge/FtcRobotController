@@ -170,7 +170,7 @@ public class RedRightAutCycle extends LinearOpMode {
         stackToBack2.add(new GeneralWaypoint(39, -40, toRadians(-170), 0.9, 0.4, 6));
         stackToBack2.add(new EndWaypoint(46, -35, toRadians(-178), .5, .4, 6, 2, toRadians(10)));
         robot.followPPPath(stackToBack2);
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.drop();
       }
       robot.resetAuto();

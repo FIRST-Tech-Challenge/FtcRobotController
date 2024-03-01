@@ -101,7 +101,7 @@ public class RedLeftAutCycle extends LinearOpMode {
       //            }
       robot.followPPPath(stackToBack);
       robot.grabAuto();
-      robot.lowAuto();
+      robot.lowAuto(false);
       robot.drop();
       for (int i = 0; i < 2; i++) {
         Path backToStack = new Path();
@@ -133,7 +133,7 @@ public class RedLeftAutCycle extends LinearOpMode {
         stackToBack2.add(new GeneralWaypoint(39, -40, toRadians(-170), 0.9, 0.4, 6));
         stackToBack2.add(new EndWaypoint(46, -35, toRadians(-178), .5, .4, 6, 2, toRadians(10)));
         robot.followPPPath(stackToBack2);
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.drop();
       }
       robot.resetAuto();

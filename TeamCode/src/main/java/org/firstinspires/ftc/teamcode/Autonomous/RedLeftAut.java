@@ -78,7 +78,7 @@ public class RedLeftAut extends LinearOpMode {
       robot.queuer.queue(false,true);
       robot.grabAuto();
       robot.queuer.addDelay(0.5);
-      robot.lowAuto();
+      robot.lowAuto(false);
       Path stackToBack = new Path();
       //            if(bark==1){
       double y = 0, yy = 0, h=0;
@@ -135,7 +135,7 @@ public class RedLeftAut extends LinearOpMode {
         stackToBack2.add(new GeneralWaypoint(38, -45, toRadians(-180), 1.0, 0.3, 6));
         stackToBack2.add(new EndWaypoint(44, -38, toRadians(-179), .5, .3, 5, 1, toRadians(10)));
         robot.followPPPath(stackToBack2);
-        robot.lowAuto();
+        robot.lowAuto(false);
         robot.drop();
       }
       robot.resetAuto();

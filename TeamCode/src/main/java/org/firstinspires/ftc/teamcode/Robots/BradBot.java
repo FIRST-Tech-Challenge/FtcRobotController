@@ -113,6 +113,7 @@ public class BradBot extends BasicRobot {
     purped = false;
     ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
+    brokenFollowing= false;
     //12.4,12.2
     update();
   }
@@ -201,10 +202,10 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(true, Twrist.twristStates.DROP.getState()||Twrist.twristStates.OT.getState())) {
       if (currentPose.getX() > 9 && DROP.getState()) {
         if (left) {
-          lift.setPosition(550);
+          lift.setPosition(750);
         }
         else{
-          lift.setPosition(550);
+          lift.setPosition(750);
         }
         if(left){
           twrist.flipTo(Twrist.twristTargetStates.OT);
@@ -265,7 +266,7 @@ public class BradBot extends BasicRobot {
   public void veryLowAuto() {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState())) {
       if (currentPose.getX() > 9) {
-        lift.setPosition(760);
+        lift.setPosition(860);
         intake.stopIntake();
         arm.flipTo(DROP);
         //        if(Wrist.WristStates.LOCK.getState()){
@@ -277,7 +278,7 @@ public class BradBot extends BasicRobot {
       }
   }
 
-  public void lowAuto() {
+  public void lowAuto(boolean left) {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget()==1000)) {
       if (currentPose.getX() > 0) {
         lift.setPosition(900);
@@ -287,6 +288,12 @@ public class BradBot extends BasicRobot {
           wrist.flipTo(Wrist.WristTargetStates.GRAB);
         }
         wrist.flipTo(Wrist.WristTargetStates.DROP);
+        if(left){
+        twrist.flipTo(Twrist.twristTargetStates.OT);
+        }
+        else{
+          twrist.flipTo(Twrist.twristTargetStates.DROP);
+        }
         LOGGER.log("ocook");
       }
     }
@@ -372,7 +379,7 @@ public class BradBot extends BasicRobot {
       if (!queuer.isExecuted()) {
         twrist.flipTo(Twrist.twristTargetStates.GRAB);
         wrist.flipTo(Wrist.WristTargetStates.GRAB);
-        arm.flipTo(HOVER, -.03, false);
+        arm.flipTo(HOVER, -.04, false);
         lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
         LOGGER.log("buh");
       }
@@ -392,7 +399,7 @@ public class BradBot extends BasicRobot {
 //      if(!queuer.isExecuted()){
 //        startIntake = BasicRobot.time;
 //      }
-      if (currentPose.getX()<-49 || intaked) {
+      if (currentPose.getX()<-48 || intaked) {
         intaked=true;
         magazine.updateSensors();
         if(intake.intakeAutoHeight(height)){
@@ -402,10 +409,10 @@ public class BradBot extends BasicRobot {
               roadrun
                   .trajectorySequenceBuilder(currentPose)
                   .lineTo(new Vector2d(currentPose.getX() + 3, currentPose.getY()))
-                      .lineTo(new Vector2d(currentPose.getX()-2, currentPose.getY()))
-                      .lineTo(new Vector2d(currentPose.getX()+3, currentPose.getY()))
-                      .lineTo(new Vector2d(currentPose.getX()-2, currentPose.getY()))
-                      .lineTo(new Vector2d(currentPose.getX()+3, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()-1, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()+4, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()-1, currentPose.getY()))
+                      .lineTo(new Vector2d(currentPose.getX()+5, currentPose.getY()))
                       .build();
           roadrun.followTrajectorySequenceAsync(traj);
           intake.stopIntake();

@@ -101,7 +101,7 @@ public class BlueLeftAut extends LinearOpMode {
 //            }
             robot.followPPPath(stackToBack);
             robot.grabAuto();
-            robot.lowAuto();
+            robot.lowAuto(false);
             robot.drop();
             Path park = new Path();
 //            if(bark==1){

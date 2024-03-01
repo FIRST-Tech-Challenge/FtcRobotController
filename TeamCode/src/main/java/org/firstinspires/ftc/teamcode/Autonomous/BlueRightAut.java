@@ -90,7 +90,7 @@ public class BlueRightAut extends LinearOpMode {
             }
             robot.followPPPath(spikeToBackdrop[bark]);
             robot.queuer.addDelay(0.3);
-            robot.lowAuto();
+            robot.lowAuto(false);
             robot.drop();
             Path back = new Path();
             back.add(new StartWaypoint(new Translation2d(currentPose.getX(), currentPose.getY())));
