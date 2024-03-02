@@ -119,9 +119,9 @@ public class Centerstage_AutoRed_FarStart extends LinearOpMode {
 
         if (opModeIsActive()) {
             placeFirstPixel();
-            setupRobotToPlaceSecondPixel();
-            placeSecondPixel();
-            parkRobot();
+//            setupRobotToPlaceSecondPixel();
+//            placeSecondPixel();
+//            parkRobot();
         }
 
         // Save more CPU resources when camera is no longer needed.

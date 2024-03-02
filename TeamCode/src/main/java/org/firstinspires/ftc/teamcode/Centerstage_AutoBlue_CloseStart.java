@@ -70,7 +70,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
     private TfodProcessor tfod;
     boolean seen = false;
 
-    private int DESIRED_TAG_ID = 0;
+    private int DESIRED_TAG_ID = 1;
     private AprilTagProcessor aprilTag;
     // Variable that will later be used for placing the second pixel.
     private AprilTagDetection desiredTag = null;
@@ -100,11 +100,10 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            placeFirstPixel();
-            setupRobotToPlaceSecondPixel();
+//            placeFirstPixel();
+//            setupRobotToPlaceSecondPixel();
             placeSecondPixel();
-            parkRobot();
-
+//            parkRobot();
         }
 
         // Save more CPU resources when camera is no longer needed.
