@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Full", group = "CenterStage")
-public class TeleOp_Full extends CSBase {
+@TeleOp(name = "Main", group = "CenterStage")
+public class TeleOp_Main extends Base {
 
     // Declare OpMode members for each of the 4 motors.
     boolean wasX = false;

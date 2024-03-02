@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 
 //@Autonomous(name = "Blue Back 50", group = "CenterStage", preselectTeleOp = "Full")
 @Disabled
-public class Auto_BlueBackFull extends CSBase {
+public class Auto_BlueBackFull extends Base {
 
     @Override
     public void runOpMode() {

@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 //@Autonomous(name = "Blue Front 50", group = "CenterStage", preselectTeleOp = "Full")
 @Disabled
-public class Auto_BlueFrontFull extends CSBase {
+public class Auto_BlueFrontFull extends Base {
     @Override
     public void runOpMode() {
         stageSide = side.front;

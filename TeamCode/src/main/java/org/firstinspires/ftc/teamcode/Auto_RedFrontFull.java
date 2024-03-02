@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
-//@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Full")
+//@Autonomous(name = "Red Front 50", group = "CenterStage", preselectTeleOp = "Main")
 @Disabled
-public class Auto_RedFrontFull extends CSBase {
+public class Auto_RedFrontFull extends Base {
     @Override
     public void runOpMode() {
         color teamColor = color.red;

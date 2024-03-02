@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.CSBase;
+import org.firstinspires.ftc.teamcode.Base;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.CSBase;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Disabled
-public class Test_TeamPropDetection extends CSBase {
+public class Test_TeamPropDetection extends Base {
     public void runOpMode() {
 
         tfodModelName = "Prop_Red.tflite";
