@@ -241,6 +241,8 @@ public class AutomatedTeleop extends LinearOpMode {
         ElapsedTime elapsedTime;
         ElapsedTime colorSensorElapsedTime = null;
 
+        boolean movedSlides= false;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
@@ -498,6 +500,7 @@ public class AutomatedTeleop extends LinearOpMode {
                                 microHook.setPosition(CSCons.closeMicroHook);
 
                             }
+                            movedSlides= false;
                         }
                         if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
@@ -529,12 +532,14 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         if (gamepad2.left_trigger > 0.5) {
                             backSlidePos = OuttakePosition.LOW;
+                            movedSlides=false;
 
 
                         }
                         if (gamepad2.right_trigger > 0.5) {
                             backSlidePos = OuttakePosition.MID;
                             target = backSlidePos.getTarget();
+                            movedSlides=false;
                         }
 
                         if (gamepad2.left_stick_y > 0.2) {
@@ -544,14 +549,26 @@ public class AutomatedTeleop extends LinearOpMode {
                             outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
                             target = backSlidePos.getTarget();
                             outtakeState = OuttakeState.MoveToTransfer;
+                            movedSlides=false;
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
                             target -= 15;
+                            movedSlides=false;
                         }
 
                         if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
                             target += 15;
+                            movedSlides=false;
+                        }
+
+                        if (outtakeElapsedTime.milliseconds()>100 && hookPosition==HookPosition.OPEN &&!movedSlides){
+                            if (target>OuttakePosition.LOW.getTarget()){
+                                target=target+50;
+                            } else {
+                                target=OuttakePosition.LOW.getTarget()+50;
+                            }
+                            movedSlides=true;
                         }
 
                         //what button to mode back to transfer?
@@ -566,6 +583,7 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
                         if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
                             outtakeState = OuttakeState.ReadyToDrop;
+                            movedSlides= false;
                         }
                         break;
                     case Align:
