@@ -106,20 +106,20 @@ public abstract class Base extends LinearOpMode {
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
             rf = hardwareMap.get(DcMotorEx.class, "rightFront");
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
-        } catch (Exception e) {except(e); lf = lb = rf = rb = null;}
+        } catch (IllegalArgumentException e) {except(e.getMessage()); lf = lb = rf = rb = null;}
         // If given an error, the motor is already null
-        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (Exception e){except(e);}
-        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (Exception e){except(e);}
-        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (Exception e){except(e);}
-        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (Exception e){except(e);}
-        try {pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (Exception e){except(e);}
-        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (Exception e){except(e);}
-        try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (Exception e){except(e);}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (IllegalArgumentException e){except(e.getMessage());}
         if (useCam) {
             try {
                 WebcamName cam = hardwareMap.get(WebcamName.class, "Webcam 1");
                 initProcessors(cam);
-            } catch (Exception e) {except(e);}
+            } catch (IllegalArgumentException e) {except(e.getMessage());}
         }
 
         if (lf != null) {
@@ -617,7 +617,7 @@ public abstract class Base extends LinearOpMode {
 
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
-    public final void except(Exception e) {
+    public final void except(Object e) {
         print("Exception", e);
     }
 
