@@ -77,8 +77,6 @@ public abstract class Base extends LinearOpMode {
 
     /** Spike mark positions for the team prop. Options: left, middle, right, none **/
     public enum spike { left, middle, right, none }
-    public final String redCode = "\u001B[31m";
-    public final String whiteCode = "\u001B[0m";
 
     /** Initializes all hardware devices on the robot.
      * @param teamColor The color of the team prop.
@@ -90,7 +88,7 @@ public abstract class Base extends LinearOpMode {
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
-            print(red("Warning"),red("teamColor not specified"));
+            print("Warning","teamColor not specified");
             useCam = false;
         }
 
@@ -620,7 +618,7 @@ public abstract class Base extends LinearOpMode {
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
     public final void except(Object e) {
-        print(red("Exception"), red((String) e));
+        print("Exception", e);
     }
 
     /** Sleep a specified number of seconds.
@@ -721,8 +719,5 @@ public abstract class Base extends LinearOpMode {
    /** A less space consuming way to update the displayed telemetry. **/
   public void update() {
        telemetry.update();
-  }
-  public String red(String str){
-      return redCode + str + whiteCode;
   }
 }
