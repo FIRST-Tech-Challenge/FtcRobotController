@@ -368,6 +368,12 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawAngle.setPosition(CSCons.clawAngleTransfer);
                             clawArm.setPosition(CSCons.clawArmTransfer);
                         }
+                        if (gamepad1.right_trigger>0.1) {
+                            intakeSlides.setTargetPosition(1700);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
+                            intakeState = IntakeState.Intake;
+                        }
                         break;
                     case MoveToIntake:
                         if (intakeElapsedTime != null && intakeElapsedTime.time(TimeUnit.MILLISECONDS) > CSCons.transferToBottomIntake) {
