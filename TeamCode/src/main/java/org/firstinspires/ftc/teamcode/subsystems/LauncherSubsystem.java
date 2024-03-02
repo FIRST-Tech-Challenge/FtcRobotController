@@ -24,7 +24,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
     public enum LauncherPosition {
         ZERO(0),
-        ACTIVATE(.75f);
+        ACTIVATE(1f);
 
         float position;
         LauncherPosition(float position) {

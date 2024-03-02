@@ -24,12 +24,13 @@ public class ThrowAirplaneCommand extends CommandBase {
             elapsedTime = new ElapsedTime();
         }
 
-        if (elapsedTime.milliseconds() < 1 * 100) {
+        if (elapsedTime.milliseconds() < 1000) {
             // First task: launch the airplane
             subsystem.setPosition(LauncherSubsystem.LauncherPosition.ACTIVATE);
             return;
         }
-        if (elapsedTime.milliseconds() < 2 * 1000) {
+
+        if (elapsedTime.milliseconds() < 4 * 1000) {
             // Second task: return to zero position
             subsystem.setPosition(LauncherSubsystem.LauncherPosition.ZERO);
             return;
@@ -41,7 +42,7 @@ public class ThrowAirplaneCommand extends CommandBase {
         if (elapsedTime == null) {
             return false;
         }
-        if (elapsedTime.milliseconds() > 2 * 1000) {
+        if (elapsedTime.milliseconds() > 5 * 1000) {
             // Once the launcher has executed for 2 seconds, the command is finished
             elapsedTime = null;
             return true;

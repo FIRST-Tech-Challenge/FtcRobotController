@@ -129,10 +129,12 @@ public class DriveCommandOpMode extends CommandOpMode {
                 });
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new ThrowAirplaneCommand(launcherSubsystem));
+        /*
         armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.OPEN));
         armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new GateCommand(gateSubsystem, GateSubsystem.GateState.CLOSED));
+         */
         armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new WristPositionCommand(wristSubsystem, true, moveWristCommand));
         armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
