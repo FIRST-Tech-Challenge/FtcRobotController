@@ -565,17 +565,17 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
                             target += 15;
-                            movedSlides=false;
+//                            movedSlides=false;
                         }
 
-                        if (outtakeElapsedTime.milliseconds()>100 && hookPosition==HookPosition.OPEN &&!movedSlides){
-                            if (target>OuttakePosition.LOW.getTarget()){
-                                target=target+50;
-                            } else {
-                                target=OuttakePosition.LOW.getTarget()+50;
-                            }
-                            movedSlides=true;
-                        }
+//                        if (outtakeElapsedTime.milliseconds()>100 && hookPosition==HookPosition.OPEN &&!movedSlides){
+//                            if (target>OuttakePosition.LOW.getTarget()){
+//                                target=target+50;
+//                            } else {
+//                                target=OuttakePosition.LOW.getTarget()+50;
+//                            }
+//                            movedSlides=true;
+//                        }
 
                         //what button to mode back to transfer?
                         // what order to move (slide down or flip first?

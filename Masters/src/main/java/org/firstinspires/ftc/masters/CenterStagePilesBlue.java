@@ -21,6 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Config
 @Autonomous(name = "Center Stage Stack Side Blue", group = "competition")
@@ -38,6 +39,10 @@ public class CenterStagePilesBlue extends LinearOpMode {
         RETRACT_SLIDE,
         DRIVE_TO_STACK,
         PICK_UP_FROM_STACK,
+        DRIVE_TO_BACKBOARD,
+        DROP_WHITE,
+        YELLOW_DEPOSIT,
+        DROP_YELLOW,
 
         UNTURN,
         BACKUP_FROM_SPIKES,
@@ -46,7 +51,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
         YELLOW_DEPOSIT_PATH2,
         YELLOW_DEPOSIT_PATH,
         YELLOW_DEPOSIT_STRAIGHT,
-        YELLOW_DEPOSIT,
+
         BACK,
         PARK,
         STOP
@@ -105,7 +110,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(110+180)))
+                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(135+180)))
                 .build();
 
         TrajectorySequence centerPurple = drive.trajectorySequenceBuilder(startPose)
@@ -113,11 +118,11 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
-                .lineToSplineHeading(new Pose2d(-40, 10, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
-                .lineToSplineHeading(new Pose2d(-40, 10, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence straightToBackBoard = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
@@ -125,16 +130,36 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(50, 24))
+                .strafeTo(new Vector2d(58, 20))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(50, 30))
+                .strafeTo(new Vector2d(58, 25))
                 .build();
 
         TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(50, 36))
+                .strafeTo(new Vector2d(58, 30))
                 .build();
+
+        TrajectorySequence strafeToYellowRight = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
+                .strafeTo(new Vector2d(58, 20))
+                .build();
+
+        TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
+                .strafeTo(new Vector2d(58, 32))
+                .build();
+
+        TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
+                .strafeTo(new Vector2d(58, 25))
+                .build();
+
+//        TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
+//                .strafeTo(new Vector2d(58, 25))
+//                .build();
+//
+//        TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
+//                .strafeTo(new Vector2d(58, 30))
+//                .build();
 
 
         TrajectorySequence toStackFromRight = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
@@ -198,8 +223,14 @@ public class CenterStagePilesBlue extends LinearOpMode {
         int backSlidesTarget=0;
         int intakeTarget =0;
         boolean CLAWEXTENDAHHHH = false;
+        boolean clawClose = false;
+        boolean toBackboard = false;
+        boolean openClaw = false;
+        boolean closeHook = false;
 
         drive.closeClaw();
+        drive.openLargeHook();
+        drive.closeSmallHook();
 
         propPos = myPipeline.position;
 
@@ -242,14 +273,21 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
             telemetry.addData("intake slides", drive.getIntakeSlides().getCurrentPosition());
             telemetry.addData("current state", currentState.name());
-            telemetry.addData("Claw", CLAWEXTENDAHHHH);
+            telemetry.addData("elapsed time", elapsedTime.milliseconds());
+            telemetry.addData("previous target", previousIntakeTarget);
 
             switch (currentState) {
 
                 case PURPLE_DEPOSIT_PATH:
 
                     if (!drive.isBusy()){
-                        intakeTarget = 1100;
+                        if (propPos == PropFindLeft.pos.LEFT) {
+                            intakeTarget = 950;
+                        }else if (propPos == PropFindLeft.pos.RIGHT){
+                            intakeTarget = 1400;
+                        } else {
+                            intakeTarget= 1000;
+                        }
                         currentState = State.PURPLE_DEPOSIT;
                     }
                 break;
@@ -282,8 +320,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         elapsedTime = new ElapsedTime();
                         CLAWEXTENDAHHHH = true;
                     }
-                    if (CLAWEXTENDAHHHH && elapsedTime.milliseconds()>200){
-                        telemetry.addData("WHYYYYY", "INSERT SWEAR WORDS IN FUTURE UPDATE");
+                    if (CLAWEXTENDAHHHH && elapsedTime.milliseconds()>200 && previousIntakeTarget==0){
                         previousIntakeTarget = intakeTarget;
                         intakeTarget = 0;
                     }
@@ -294,7 +331,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                     break;
                 case RETRACT_SLIDE:
-                    if (drive.getIntakeSlides().getCurrentPosition()<50){
+                    if (drive.getIntakeSlides().getCurrentPosition()<100){
                         if (propPos == PropFindLeft.pos.LEFT){
                             drive.followTrajectorySequenceAsync(leftPurpleToStack);
                         } else if (propPos== PropFindLeft.pos.RIGHT){
@@ -302,6 +339,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         } else {
                             drive.followTrajectorySequenceAsync(leftPurpleToStack);
                         }
+                        drive.intakeToTopStack();
                         currentState = State.DRIVE_TO_STACK;
                     }
 
@@ -310,110 +348,190 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 case DRIVE_TO_STACK:
                     if (!drive.isBusy()){
                         drive.intakeToTopStack();
-                        intakeTarget = 1400;
+                        intakeTarget = 790;
+                        currentState = State.PICK_UP_FROM_STACK;
+                        clawClose = false;
                     }
 
-
-
-
                     break;
-
-
-
-
-                case BACKUP_FROM_SPIKES:
-                    if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(yellowDepositPath1);
-                        currentState = State.YELLOW_DEPOSIT_PATH1;
+                case PICK_UP_FROM_STACK:
+                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition()>780 || detectPixel())){
+                        drive.closeClaw();
+                        intakeTarget= drive.getIntakeSlides().getTargetPosition();
+                        elapsedTime = new ElapsedTime();
+                        clawClose = true;
+                    }
+                    if (clawClose && elapsedTime.milliseconds()>700){
+                        intakeTarget = 0;
+                        drive.intakeToTransfer();
+                        drive.followTrajectorySequenceAsync(straightToBackBoard);
+                        currentState= State.DRIVE_TO_BACKBOARD;
+                        toBackboard = false;
+                        elapsedTime = new ElapsedTime() ;
                     }
                     break;
-                case YELLOW_DEPOSIT_PATH1:
-                    if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(yellowDepositPath2);
-                        currentState = State.YELLOW_DEPOSIT_PATH2;
-                    }
-                    break;
-                case YELLOW_DEPOSIT_PATH2:
-                    if (!drive.isBusy()) {
-                        if (propPos == PropFindLeft.pos.LEFT){
-                            drive.followTrajectoryAsync(yellowDepositPathL);
-                        } else if (propPos == PropFindLeft.pos.RIGHT){
-                            drive.followTrajectoryAsync(yellowDepositPathR);
-                        } else if (propPos == PropFindLeft.pos.MID){
-                            drive.followTrajectoryAsync(yellowDepositPathC);
+
+                case DRIVE_TO_BACKBOARD:
+                    if (!drive.isBusy() && !toBackboard){
+
+                        if (propPos== PropFindLeft.pos.LEFT || propPos== PropFindLeft.pos.MID){
+                            drive.followTrajectorySequenceAsync(strafeToBoardRight); //to drop white
+                        } else {
+                            drive.followTrajectorySequenceAsync(strafeToBoardLeft);
                         }
-
-                        currentState = State.YELLOW_DEPOSIT_PATH;
-                        //currentState = State.STOP;
-                    } else {
-//                        target= CSCons.OuttakePosition.LOW.getTarget();
-//                        drive.intakeToTransfer();
-//                        drive.outtakeToBackdrop();
+                        toBackboard = true;
                     }
-                    break;
-                case YELLOW_DEPOSIT_PATH:
-                    if (!drive.isBusy() ) {
-                        currentState = State.YELLOW_DEPOSIT_STRAIGHT;
-                    } else {
-//                        target= CSCons.OuttakePosition.LOW.getTarget();
-//                        drive.intakeToTransfer();
-//                        drive.outtakeToBackdrop();
-                    }
-                    break;
-                case YELLOW_DEPOSIT_STRAIGHT:
-                    if(!drive.isBusy()){
-                        Trajectory straight= drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(3).build();
-                        drive.followTrajectoryAsync(straight);
 
-                        currentState= State.YELLOW_DEPOSIT;
+                    if (!drive.isBusy() && toBackboard){
+                        currentState= State.DROP_WHITE;
+                        closeHook= true;
+                    }
+
+                    if (elapsedTime.milliseconds()>1000 && !openClaw){
+                        drive.transferClaw();
+                        openClaw = true;
+                    }
+                    if (elapsedTime.milliseconds()>1500 && !closeHook){
+                        drive.closeHook();
+                        closeHook = true;
+                    }
+
+                    if (drive.getPoseEstimate().getX()>10 && closeHook){
+                        backSlidesTarget= CSCons.OuttakePosition.AUTO.getTarget();
+                        drive.outtakeToBackdrop();
+                    }
+
+                    break;
+                case DROP_WHITE:
+                    if (closeHook) {
+                        drive.openLargeHook();
+                        elapsedTime = new ElapsedTime();
+                        closeHook = false;
+                    }
+
+                    if (!closeHook && elapsedTime.milliseconds()>200){
+                        backSlidesTarget= 1400;
+                        if (drive.getBackSlides().getCurrentPosition()>1350){
+                            if (propPos== PropFindLeft.pos.LEFT){
+                                drive.followTrajectorySequenceAsync(strafeToYellowLeft);
+                            } else if (propPos== PropFindLeft.pos.MID){
+                                drive.followTrajectorySequenceAsync(strafeToYellowCenter); //to drop white
+                            } else {
+                                drive.followTrajectorySequenceAsync(strafeToYellowRight);
+                            }
+                            currentState = State.YELLOW_DEPOSIT;
+                            backSlidesTarget= 900;
+                        }
                     }
                     break;
                 case YELLOW_DEPOSIT:
+                    if (!drive.isBusy()){
+                        drive.openSmallHook();
+                    }
 
-                    if(resetInt == 0){
-                        depositTime.reset();
-                        resetInt++;
-                    }
-                    if(resetInt == 1){
-                    if (!drive.isBusy()) {
 
-                        park = drive.trajectoryBuilder(drive.getPoseEstimate(), false)
-                                .back(4)
-                                .build();
-                        //april tag alignment
-                        //if april tag is aligned drop and
-                        if (depositTime.milliseconds() > 500) {
-                            drive.dropPixel();
-                        }
-                        if (depositTime.milliseconds() > 700) {
-                            drive.followTrajectoryAsync(park);
-                            currentState = State.BACK;
-
-                        }
-                    }
-                    }
-                    break;
-                case BACK:
-                    if (!drive.isBusy()) {
-                        //drive.outtakeToTransfer();
-                        backSlidesTarget = 0;
-                        park = drive.trajectoryBuilder(drive.getPoseEstimate(),false)
-                                .splineToLinearHeading(new Pose2d(new Vector2d(50, 56), Math.toRadians(180)), Math.toRadians(0))
-                                .build();
-                        //drive.followTrajectoryAsync(park);
-                        currentState= State.PARK;
-                    }
-                    break;
-                case PARK:
-                    if (!drive.isBusy()) {
-                       // drive.outtakeToTransfer();
-                       backSlidesTarget=0;
-                    }
-                    break;
+//
+//                case BACKUP_FROM_SPIKES:
+//                    if (!drive.isBusy()) {
+//                        drive.followTrajectoryAsync(yellowDepositPath1);
+//                        currentState = State.YELLOW_DEPOSIT_PATH1;
+//                    }
+//                    break;
+//                case YELLOW_DEPOSIT_PATH1:
+//                    if (!drive.isBusy()) {
+//                        drive.followTrajectoryAsync(yellowDepositPath2);
+//                        currentState = State.YELLOW_DEPOSIT_PATH2;
+//                    }
+//                    break;
+//                case YELLOW_DEPOSIT_PATH2:
+//                    if (!drive.isBusy()) {
+//                        if (propPos == PropFindLeft.pos.LEFT){
+//                            drive.followTrajectoryAsync(yellowDepositPathL);
+//                        } else if (propPos == PropFindLeft.pos.RIGHT){
+//                            drive.followTrajectoryAsync(yellowDepositPathR);
+//                        } else if (propPos == PropFindLeft.pos.MID){
+//                            drive.followTrajectoryAsync(yellowDepositPathC);
+//                        }
+//
+//                        currentState = State.YELLOW_DEPOSIT_PATH;
+//                        //currentState = State.STOP;
+//                    } else {
+////                        target= CSCons.OuttakePosition.LOW.getTarget();
+////                        drive.intakeToTransfer();
+////                        drive.outtakeToBackdrop();
+//                    }
+//                    break;
+//                case YELLOW_DEPOSIT_PATH:
+//                    if (!drive.isBusy() ) {
+//                        currentState = State.YELLOW_DEPOSIT_STRAIGHT;
+//                    } else {
+////                        target= CSCons.OuttakePosition.LOW.getTarget();
+////                        drive.intakeToTransfer();
+////                        drive.outtakeToBackdrop();
+//                    }
+//                    break;
+//                case YELLOW_DEPOSIT_STRAIGHT:
+//                    if(!drive.isBusy()){
+//                        Trajectory straight= drive.trajectoryBuilder(drive.getPoseEstimate())
+//                                .back(3).build();
+//                        drive.followTrajectoryAsync(straight);
+//
+//                        currentState= State.YELLOW_DEPOSIT;
+//                    }
+//                    break;
+//                case YELLOW_DEPOSIT:
+//
+//                    if(resetInt == 0){
+//                        depositTime.reset();
+//                        resetInt++;
+//                    }
+//                    if(resetInt == 1){
+//                    if (!drive.isBusy()) {
+//
+//                        park = drive.trajectoryBuilder(drive.getPoseEstimate(), false)
+//                                .back(4)
+//                                .build();
+//                        //april tag alignment
+//                        //if april tag is aligned drop and
+//                        if (depositTime.milliseconds() > 500) {
+//                            drive.dropPixel();
+//                        }
+//                        if (depositTime.milliseconds() > 700) {
+//                            drive.followTrajectoryAsync(park);
+//                            currentState = State.BACK;
+//
+//                        }
+//                    }
+//                    }
+//                    break;
+//                case BACK:
+//                    if (!drive.isBusy()) {
+//                        //drive.outtakeToTransfer();
+//                        backSlidesTarget = 0;
+//                        park = drive.trajectoryBuilder(drive.getPoseEstimate(),false)
+//                                .splineToLinearHeading(new Pose2d(new Vector2d(50, 56), Math.toRadians(180)), Math.toRadians(0))
+//                                .build();
+//                        //drive.followTrajectoryAsync(park);
+//                        currentState= State.PARK;
+//                    }
+//                    break;
+//                case PARK:
+//                    if (!drive.isBusy()) {
+//                       // drive.outtakeToTransfer();
+//                       backSlidesTarget=0;
+//                    }
+//                    break;
                 case STOP:
                     break;
             }
+        }
+    }
+
+    protected boolean detectPixel(){
+        if (drive.getColorSensor().getRawLightDetected() > CSCons.pixelDetectThreshold ){
+            return true;
+        } else {
+            return false;
         }
     }
 }
