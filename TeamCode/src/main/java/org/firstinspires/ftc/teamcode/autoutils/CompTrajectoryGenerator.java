@@ -200,7 +200,7 @@ public class CompTrajectoryGenerator {
         }
     }*/
 
-    int wallDistance = 48;
+    int wallDistance = 47;
     final double WAIT_TIME = 2.4288;
     final int WALL_CENTER = 42;
 
@@ -247,9 +247,9 @@ public class CompTrajectoryGenerator {
                 return DRIVE.trajectorySequenceBuilder(new Pose2d(-36, 70*yScale, forwardAngle))
                         .setConstraints(velocityConstraint, accelerationConstraint)
                         .waitSeconds(WAIT_TIME)
-                        .lineTo(new Vector2d(-36, 10*yScale))
+                        .lineTo(new Vector2d(-36, 19*yScale))
                         .turn(Math.toRadians(90*yScale))
-                        .lineTo(new Vector2d(wallDistance, 10*yScale))
+                        .lineTo(new Vector2d(wallDistance, 19*yScale))
                         .lineTo(new Vector2d(wallDistance, WALL_CENTER*yScale))
                         .turn(Math.toRadians(180))
                         .build();
@@ -294,23 +294,28 @@ public class CompTrajectoryGenerator {
         int yScale = (trajectory == trajectories.RED_TOP || trajectory == trajectories.RED_BOTTOM) ? -1 : 1;
 
         Pose2d startPosition = new Pose2d(wallDistance, WALL_CENTER*yScale, Math.toRadians(180));
-        int distanceFactor = 8;
-        int left = 60-distanceFactor;
-        int right = 16+distanceFactor;
+        int distanceFactor = 0;
+        int left = 65-distanceFactor;
+        int right = 22+distanceFactor;
         if (yScale == -1) {
-            right = 60-distanceFactor;
-            left = 16+distanceFactor;
+            // swap right and left for red
+            right = 65-distanceFactor;
+            left = 22+distanceFactor;
         }
+
+        final int DISTANCE_FROM_WALL = 8;
 
         if (PARK_LEFT) {
             return DRIVE.trajectorySequenceBuilder(startPosition)
                     .setConstraints(velocityConstraint, accelerationConstraint)
                     .lineTo(new Vector2d(wallDistance, left * yScale))
+                    .lineTo(new Vector2d(wallDistance + DISTANCE_FROM_WALL, left * yScale))
                     .build();
         } else {
             return DRIVE.trajectorySequenceBuilder(startPosition)
                     .setConstraints(velocityConstraint, accelerationConstraint)
                     .lineTo(new Vector2d(wallDistance, right * yScale))
+                    .lineTo(new Vector2d(wallDistance + DISTANCE_FROM_WALL, right * yScale))
                     .build();
         }
 
@@ -432,8 +437,8 @@ public class CompTrajectoryGenerator {
                     break;
                 case ARM_ADJUSTMENT:
                     // im sorry for this
-                    while (elapsedTime.seconds() < .8) {
-                        armSubsystem.manualMoveArm(.555);
+                    while (elapsedTime.seconds() < 1.3) {
+                        armSubsystem.manualMoveArm(.65);
                     }
                     armSubsystem.manualMoveArm(0);
 
