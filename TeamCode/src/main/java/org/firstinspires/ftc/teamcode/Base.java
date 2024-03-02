@@ -77,6 +77,8 @@ public abstract class Base extends LinearOpMode {
 
     /** Spike mark positions for the team prop. Options: left, middle, right, none **/
     public enum spike { left, middle, right, none }
+    public final String redCode = "\u001B[31m";
+    public final String whiteCode = "\u001B[0m";
 
     /** Initializes all hardware devices on the robot.
      * @param teamColor The color of the team prop.
@@ -88,7 +90,7 @@ public abstract class Base extends LinearOpMode {
             tfodModelName = "Prop_Blue.tflite";
         }
         else if (useCam){
-            print("Warning","teamColor not specified");
+            print(red("Warning"),red("teamColor not specified"));
             useCam = false;
         }
 
@@ -106,20 +108,20 @@ public abstract class Base extends LinearOpMode {
             lb = hardwareMap.get(DcMotorEx.class, "leftBack");
             rf = hardwareMap.get(DcMotorEx.class, "rightFront");
             rb = hardwareMap.get(DcMotorEx.class, "rightBack");
-        } catch (IllegalArgumentException e) {except(e.getMessage()); lf = lb = rf = rb = null;}
+        } catch (IllegalArgumentException e) {except("At least one drive train motor is not connected, so all will be disabled"); lf = lb = rf = rb = null;}
         // If given an error, the motor is already null
-        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (IllegalArgumentException e){except(e.getMessage());}
-        try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (IllegalArgumentException e){except(e.getMessage());}
+        try {carWashMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");}catch (IllegalArgumentException e){except("carWashMotor (liftMotor) not conected");}
+        try {pixelLiftingMotor = hardwareMap.get(DcMotorEx.class,"pixelLiftingMotor");}catch (IllegalArgumentException e){except("pixelLiftingMotor not connected");}
+        try {droneServo = hardwareMap.get(Servo.class, "droneServo");}catch (IllegalArgumentException e){except("droneServo not connected");}
+        try {pixelBackServo = hardwareMap.get(Servo.class,"pixelBackServo");}catch (IllegalArgumentException e){except("pixelBackServo not connected");}
+        try {pixelLockingServo = hardwareMap.get(Servo.class, "pixelFrontServo");}catch (IllegalArgumentException e){except("pixelFrontServo not connected");}
+        try {trayTiltingServo = hardwareMap.get(Servo.class,"trayTiltingServo");}catch (IllegalArgumentException e){except("trayTiltingServo not connected");}
+        try {touchSensor = hardwareMap.get(TouchSensor.class,"touchSensor");}catch (IllegalArgumentException e){except("touchSensor not connected");}
         if (useCam) {
             try {
                 WebcamName cam = hardwareMap.get(WebcamName.class, "Webcam 1");
                 initProcessors(cam);
-            } catch (IllegalArgumentException e) {except(e.getMessage());}
+            } catch (IllegalArgumentException e) {except("Webcam not connected");}
         }
 
         if (lf != null) {
@@ -618,7 +620,7 @@ public abstract class Base extends LinearOpMode {
     /** Sends an exception message to Driver Station telemetry.
      * @param e The exception. **/
     public final void except(Object e) {
-        print("Exception", e);
+        print(red("Exception"), red((String) e));
     }
 
     /** Sleep a specified number of seconds.
@@ -719,5 +721,8 @@ public abstract class Base extends LinearOpMode {
    /** A less space consuming way to update the displayed telemetry. **/
   public void update() {
        telemetry.update();
+  }
+  public String red(String str){
+      return redCode + str + whiteCode;
   }
 }
