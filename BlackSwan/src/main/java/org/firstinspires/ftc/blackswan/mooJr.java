@@ -65,17 +65,17 @@ public class mooJr extends LinearOpMode {
         controller = new PIDController(p, i, d);
         controller.setPID(p, i, d);
 
-        planeLauncher.setPosition(0.95);
-        turnClaw.setPosition(0.69);
+        closeClaw.setPosition(.8);
+        turnClaw.setPosition(1);
         telemetry.addData("claw up", clawUp.getCurrentPosition());
         telemetry.update();
 
-        armQuickPosition = 0;
+        armQuickPosition = -1;
 
         waitForStart();
 
-        frontLeft.setPower(.5);
-        frontRight.setPower(.5);
+         frontLeft.setPower(.5);
+       frontRight.setPower(.5);
         backLeft.setPower(.5);
         backRight.setPower(.5);
 

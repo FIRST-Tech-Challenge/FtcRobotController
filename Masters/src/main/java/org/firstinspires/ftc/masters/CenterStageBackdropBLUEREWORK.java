@@ -195,7 +195,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                     if (propPos == PropFindLeft.pos.LEFT) {
                         drive.followTrajectorySequenceAsync(leftPurple);
                         drive.intakeToGround();
-                            currentState = State.PURPLE_DEPOSIT;
+                        currentState = State.PURPLE_DEPOSIT;
                     } else if (propPos == PropFindLeft.pos.RIGHT) {
                         drive.followTrajectorySequenceAsync(rightPurple);
                         drive.intakeToGround();
