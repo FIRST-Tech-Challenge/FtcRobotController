@@ -18,7 +18,7 @@ public class ArmUtils {
 
     // Grip
     final double GRIP_OPEN = 0.5;
-    final double GRIP_CLOSED = 0;
+    final double GRIP_CLOSED = 0.2;
     final double GRIP_TRIGGER_THRESHOLD = 0.1;
 
     // Startup Sequence
@@ -62,9 +62,9 @@ public class ArmUtils {
 
         armLift = hardwareMap.dcMotor.get("armLift");
         armExtend = hardwareMap.dcMotor.get("armExtend");
-        rightGrip = hardwareMap.servo.get("GripR");
-        leftGrip = hardwareMap.servo.get("GripL");
-        rollerServo = hardwareMap.servo.get("Roll");
+        rightGrip = hardwareMap.servo.get("gripR");
+        leftGrip = hardwareMap.servo.get("gripL");
+        rollerServo = hardwareMap.servo.get("roll");
 
         rightGrip.setDirection(Servo.Direction.REVERSE);
         armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
