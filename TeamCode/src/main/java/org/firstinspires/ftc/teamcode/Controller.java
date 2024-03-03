@@ -20,6 +20,7 @@ public class Controller extends LinearOpMode {
     public void runOpMode() {
         MovementUtils movementUtils = new MovementUtils(this, hardwareMap);
         ArmUtils armUtils = new ArmUtils(this, hardwareMap);
+        PixelRumble pixelRumble = new PixelRumble(this, hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -39,14 +40,27 @@ public class Controller extends LinearOpMode {
             armUtils.lift(gamepad2);
             armUtils.grip(gamepad2);
             armUtils.runSequences(gamepad2);
+            pixelRumble.Rumble(gamepad1, gamepad2);
 
             // Debugging
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 
+//            DigitalChannel leftSwitch = hardwareMap.get(DigitalChannel.class, "leftSwitch");
+//            DigitalChannel rightSwitch = hardwareMap.get(DigitalChannel.class, "rightSwitch");
+//            DigitalChannel led1 = hardwareMap.get(DigitalChannel.class, "led1");
+//            DigitalChannel led2 = hardwareMap.get(DigitalChannel.class, "led2");
+//            led1.setMode(DigitalChannel.Mode.OUTPUT);
+//            led2.setMode(DigitalChannel.Mode.OUTPUT);
+//
+//            telemetry.addData("left switch", !leftSwitch.getState());
+//            telemetry.addData("right switch", !rightSwitch.getState());
+//
+//            led1.setState(gamepad2.dpad_up);
+//            led2.setState(gamepad2.dpad_up);
+
             for (DebugData data : debugDataList) {
                 telemetry.addData(data.caption, data.value);
             }
-
             debugDataList.clear();
 
             telemetry.update();
