@@ -27,6 +27,7 @@
         public ColorSensor colorSensorRight, colorSensorLeft, colorSensor;
         public Servo claw;
         public Servo wrist, dropper, launch;
+        public CRServo launcherLeft, launcherRight;
         public DistanceSensor distanceLeft, distanceRight;
     
         HardwareMap hwMap;
@@ -65,6 +66,9 @@
             claw = hwMap.servo.get("claw");
             dropper = hwMap.servo.get("dropper");
             launch = hwMap.servo.get("launch");
+//            launcherLeft = hwMap.crservo.get("launcherLeft");
+//            launcherRight = hwMap.crservo.get("launcherRight");
+
 
             //sensors
             distanceLeft = (DistanceSensor)(hwMap.get("distanceLeft"));
@@ -237,8 +241,8 @@
                 //            telemetry.addData("CascadeLeft: ", cascadeMotorLeft.getCurrentPosition());
                 //            telemetry.addData("CascadeRight: ", cascadeMotorRight.getCurrentPosition());
                 //            telemetry.update();
-                cascadeMotorRight.setPower(.75);
-                cascadeMotorLeft.setPower(.75);
+                cascadeMotorRight.setPower(1);
+                cascadeMotorLeft.setPower(1);
 
 
 

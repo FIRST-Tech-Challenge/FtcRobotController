@@ -160,7 +160,7 @@ public class CustomAutoFarRed extends LinearOpMode {
         while (robot.timer.seconds() < .75) {
             telemetryTfod();
         }
-        robot.encoderStrafeLeft(5);
+        robot.encoderStrafeLeft(4);
         if(position.equals("Center")) {
             DESIRED_TAG_ID = 5;
             robot.encoderDrive(30);
@@ -203,6 +203,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.encoderDrive(-4);
             robot.claw.setPosition(0);
+            sleep(250);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
             sleep(1250);
@@ -271,6 +272,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.encoderDrive(-4);
             robot.claw.setPosition(0);
+            sleep(250);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
             sleep(1250);
@@ -337,6 +339,7 @@ public class CustomAutoFarRed extends LinearOpMode {
             sleep(250);
             robot.encoderDrive(-4);
             robot.claw.setPosition(0);
+            sleep(250);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
             sleep(1250);
