@@ -286,11 +286,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         clawArm.setPosition(CSCons.clawArmGround);
     }
 
-    //TODO: figure out servo position for top of stack
+
     public void intakeToTopStack() {
         clawAngle.setPosition(CSCons.clawAngleGroundToThree);
         clawArm.setPosition(CSCons.clawArm5);
     }
+
+    //pick up pixel 3 and 4
+    public void intakeToPosition3(){
+        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+        clawArm.setPosition(CSCons.clawArm3);
+    }
+
+
 
     public void intakeToTransfer() {
         clawAngle.setPosition(CSCons.clawAngleTransfer);
