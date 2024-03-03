@@ -68,8 +68,8 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Drone Status",
                     String.valueOf(gobbler.planeHang.droneToggle));
             telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
-                    gobbler.driveTrain.getBackWDValueLeft(),
-                    gobbler.driveTrain.getBackWDValueRight());
+                    gobbler.driveTrain.getDistanceLeftValue(),
+                    gobbler.driveTrain.getDistanceRightValue());
             telemetry.addData("Gamepad X",
                     String.valueOf(gamepad2.x));
             telemetry.update();
