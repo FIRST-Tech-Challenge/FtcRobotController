@@ -79,7 +79,7 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
     final double MAX_AUTO_TURN  = 0.3; //  Clip the turn speed to this max value (adjust for your robot)
 
     boolean targetFound = false;
-    private int DESIRED_TAG_ID = 0;
+    private int DESIRED_TAG_ID = 3;
     private AprilTagProcessor aprilTag;
     // Variable that will later be used for placing the second pixel.
     private AprilTagDetection desiredTag = null;
@@ -105,13 +105,13 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
         initDoubleVision();
 
         while (WaitingToStart()) {
-            IdentifyTeamPropLocation();
+            //IdentifyTeamPropLocation();
         }
 
         if (opModeIsActive()) {
-            PlaceFirstPixel();
+//            PlaceFirstPixel();
 //            setupRobotToPlaceSecondPixel();
-//            placeSecondPixel();
+            placeSecondPixel();
 //            parkRobot();
         }
 
@@ -217,8 +217,6 @@ public class Centerstage_AutoBlue_FarStart extends LinearOpMode {
     private void driveToFinalPos() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-//        gobbler.driveTrain.strafe(6, 0.25);
-//        gobbler.driveTrain.moveForward(-20, 0.5);
         if (DESIRED_TAG_ID == 1) {
             finalRightPos();
         }

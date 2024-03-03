@@ -105,17 +105,20 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        runtimeTimer = new ElapsedTime();
+        runtimeTimer.startTime();
+
         gobbler = new Gobbler(hardwareMap);
         initDoubleVision();
 
         while (WaitingToStart()) {
-            IdentifyTeamPropLocation();
+            //IdentifyTeamPropLocation();
         }
 
         if (opModeIsActive()) {
-            PlaceFirstPixel();
+//            PlaceFirstPixel();
 //            setupRobotToPlaceSecondPixel();
-//            placeSecondPixel();
+            placeSecondPixel();
 //            parkRobot();
         }
 
@@ -223,8 +226,6 @@ public class Centerstage_AutoRed_CloseStart extends LinearOpMode {
     private void driveToFinalPosition() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-//        gobbler.driveTrain.strafe(6, 0.25);
-//        gobbler.driveTrain.moveForward(-20, 0.5);
         if (DESIRED_TAG_ID == 4) {
             gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
