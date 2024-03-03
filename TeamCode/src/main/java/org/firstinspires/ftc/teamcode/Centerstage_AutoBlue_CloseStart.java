@@ -95,7 +95,7 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
         initDoubleVision();
 
         while (WaitingToStart()) {
-            identifyTeamPropLocation();
+            //identifyTeamPropLocation();
         }
 
         if (opModeIsActive()) {
@@ -127,10 +127,8 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
 
         // What do we want        to do if we don't identify the target?
         if (targetFound) {
-
             driveToTarget();
             //placePixelOnBackboard();
-
         }
     } // end of PlaceSecondPixel()
 
@@ -214,19 +212,17 @@ public class Centerstage_AutoBlue_CloseStart extends LinearOpMode {
     private void driveToFinalPos() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-//        gobbler.driveTrain.strafe(6, 0.25);
-//        gobbler.driveTrain.moveForward(-20, 0.5);
-//        if (DESIRED_TAG_ID == 1) {
+        if (DESIRED_TAG_ID == 1) {
             finalRightPos();
-//        }
-//
-//        else if (DESIRED_TAG_ID == 2) {
-//            finalCenterPos();
-//        }
-//
-//        else if (DESIRED_TAG_ID == 3) {
-//            finalLeftPos();
-//        }
+        }
+
+        else if (DESIRED_TAG_ID == 2) {
+            finalCenterPos();
+        }
+
+        else if (DESIRED_TAG_ID == 3) {
+            finalLeftPos();
+        }
 
         gobbler.driveTrain.moveBackward(10, 0.5);
 
