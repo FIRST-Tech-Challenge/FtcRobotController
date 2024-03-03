@@ -18,6 +18,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
         ElapsedTime droneToggleTime = new ElapsedTime();
         ElapsedTime trapToggleTime = new ElapsedTime();
         ElapsedTime directionToggleTime = new ElapsedTime();
+        ElapsedTime hangServoTime = new ElapsedTime();
 
 //        gobbler.outtake.resetLiftEncoders();
         gobbler.outtake.closeMailbox();
@@ -36,6 +37,16 @@ public class Centerstage_TeleOp extends LinearOpMode {
             // The first input is the button used to control the drone.
             // The second input is the time the function uses to space out inputs.
             gobbler.planeHang.launchDrone(gamepad2.y, droneToggleTime);
+
+            // This function controls the hanging motors.
+            // The first input is the button used to power the motors.
+            // The second input is the button used to reverse the motors.
+            gobbler.planeHang.hangMotors(gamepad2.dpad_up,gamepad2.dpad_down);
+
+            // This function controls the hanging servo.
+            // The first input is the button used to control the servo.
+            // The second input is the time the function uses to space out inputs.
+            gobbler.planeHang.hangServo(gamepad2.b, hangServoTime);
 
             // This function controls the intake and conveyor.
             // The first input is the button used to control the trap door.

@@ -77,7 +77,7 @@ public class Outtake {
         if (button && time.time() > .50 && !mailboxOpen) {
             mailboxOpen = true;
             time.reset();
-            trapdoorServo.setPosition(0.5);
+            trapdoorServo.setPosition(0.4);
 
         }
         else if (button && time.time() > .50 && mailboxOpen) {
