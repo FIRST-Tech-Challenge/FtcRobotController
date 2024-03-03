@@ -74,9 +74,9 @@ public class CustomAutoCloseRed extends LinearOpMode {
     final double STRAFE_GAIN =  0.02;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     final double TURN_GAIN   =  0.02;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.5;
+    final double MAX_AUTO_SPEED = 0.7;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.7;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.7;
 
     private  int DESIRED_TAG_ID = -1;
     private int ticksForCascade = 920;
@@ -123,7 +123,7 @@ public class CustomAutoCloseRed extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(.4);
+        robot.arm.setPower(.9);
         robot.wrist.setPosition(0.675);
         robot.claw.setPosition(0);
 
@@ -158,20 +158,20 @@ public class CustomAutoCloseRed extends LinearOpMode {
         if(position.equals("Center")) {
             DESIRED_TAG_ID = 5;
             robot.encoderDrive(30.5);
-            sleep(50);
+//            sleep(50);
             robot.encoderStrafeRight(3);
-            sleep(250);
+//            sleep(250);
             robot.dropper.setPosition(1);
-            sleep(500);
+            sleep(250);
             robot.encoderDrive(-5.5);
-            sleep(50);
             robot.encoderTurnRight(23);
             //robot.squareUp();
             sleep(50);
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 2.5){
+            robot.cascadeLock(ticksForCascade);
+            while (robot.timer.seconds() < 1.75){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -181,25 +181,21 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
 
-            robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 820)
-                sleep(100);
             robot.arm.setTargetPosition(450);
-            sleep(1000);
+            sleep(250);
             robot.wrist.setPosition(0.58);
-            sleep(250);
-            robot.encoderDrive(3.5);
-            sleep(250);
+            sleep(100);
+            robot.encoderDrive(2);
             robot.claw.setPosition(.47);
-            sleep(250);
+            sleep(25);
             robot.claw.setPosition(0.8);
-            sleep(250);
+            sleep(100);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
-            sleep(250);
+            sleep(100);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1250);
+            sleep(100);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -217,9 +213,9 @@ public class CustomAutoCloseRed extends LinearOpMode {
         else if(position.equals("Right")){
             DESIRED_TAG_ID = 6;
             robot.encoderDrive(26);
-            sleep(100);
+//            sleep(100);
             robot.encoderStrafeRight(13);
-            sleep(250);
+//            sleep(250);
             robot.dropper.setPosition(1);
             sleep(250);
             robot.encoderDrive(-7.5);
@@ -229,8 +225,8 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-//            robot.cascadeLock(ticksForCascade);
-            while (robot.timer.seconds() < 2.5){
+            robot.cascadeLock(ticksForCascade);
+            while (robot.timer.seconds() < 1.75){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -239,25 +235,24 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
             robot.encoderStrafeRight(desiredTag.ftcPose.x + 1);
             robot.timer.reset();
-            robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 820)
-                sleep(100);
+//            robot.cascadeLock(ticksForCascade);
+//            while (robot.cascadeMotorLeft.getCurrentPosition() < 820)
+//                sleep(100);
             robot.arm.setTargetPosition(450);
-            sleep(1000);
+            sleep(250);
             robot.wrist.setPosition(0.58);
-            sleep(250);
-            robot.encoderDrive(3.5);
-            sleep(250);
+            sleep(100);
+            robot.encoderDrive(2);
             robot.claw.setPosition(.47);
-            sleep(250);
+            sleep(25);
             robot.claw.setPosition(0.8);
-            sleep(250);
+            sleep(100);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
-            sleep(250);
+            sleep(100);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1250);
+            sleep(100);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
@@ -275,14 +270,14 @@ public class CustomAutoCloseRed extends LinearOpMode {
         }
         else{
             DESIRED_TAG_ID = 4;
-            robot.encoderDrive(26.75);
+            robot.encoderDrive(26.55);
             sleep(100);
             robot.encoderStrafeLeft(14.5);
             sleep(250);
             robot.dropper.setPosition(1);
-            sleep(500);
-            robot.encoderDrive(-2);
             sleep(250);
+            robot.encoderDrive(-2);
+//            sleep(250);
             robot.encoderStrafeRight(15);
             robot.encoderTurnRight(21);
             //robot.squareUp();
@@ -290,7 +285,8 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.turnOffEncoders();
             setManualExposure(6, 250);
             robot.timer.reset();
-            while (robot.timer.seconds() < 2.5){
+            robot.cascadeLock(ticksForCascade);
+            while (robot.timer.seconds() < 2.0){
                 aprilTagDetection();
             }
             telemetry.addData("Distance", desiredTag.ftcPose.range);
@@ -299,30 +295,26 @@ public class CustomAutoCloseRed extends LinearOpMode {
             robot.encoderDrive(desiredTag.ftcPose.range - DESIRED_DISTANCE);
             robot.encoderStrafeLeft(desiredTag.ftcPose.x + DESIRED_STRAFE);
             robot.timer.reset();
-            robot.cascadeLock(ticksForCascade);
-            while (robot.cascadeMotorLeft.getCurrentPosition() < 820)
-                sleep(100);
             robot.arm.setTargetPosition(450);
-            sleep(1000);
+            sleep(250);
             robot.wrist.setPosition(0.58);
-            sleep(250);
-            robot.encoderDrive(3.5);
-            sleep(250);
+            sleep(100);
+            robot.encoderDrive(2);
             robot.claw.setPosition(.47);
-            sleep(250);
+            sleep(25);
             robot.claw.setPosition(0.8);
-            sleep(250);
+            sleep(100);
             robot.encoderDrive(-6);
             robot.claw.setPosition(0);
-            sleep(250);
+            sleep(100);
             robot.wrist.setPosition(1);
             robot.arm.setTargetPosition(0);
-            sleep(1250);
+            sleep(100);
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
             if (park.equals("Left")) {
-                robot.encoderStrafeLeft(24);
+                robot.encoderStrafeLeft(21);
                 robot.encoderDrive(18);
             }
             else if (park.equals("Right")){
