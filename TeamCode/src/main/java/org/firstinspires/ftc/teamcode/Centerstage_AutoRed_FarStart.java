@@ -36,9 +36,11 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
@@ -49,23 +51,23 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "SecondBlueClose", group = "Concept")
+@Autonomous(name = "Red Far Start", group = "Concept")
+//Merged Auto file
 //@Disabled
-public class Centerstage_AutoBlueClose extends LinearOpMode {
+public class Centerstage_AutoRed_FarStart extends LinearOpMode {
+    Gobbler gobbler = null;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
-
-    private static final int DESIRED_TAG_ID = 3;
-
-    private AprilTagProcessor aprilTag;
-
-    private AprilTagDetection desiredTag = null;
-
-    boolean targetFound = false;
+    ElapsedTime runtimeTimer = null;
+    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
+    // this is only used for Android Studio when using models in Assets.
+    private static final String TFOD_MODEL_ASSET = "redmayhem_v2.tflite";
+    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
+    // this is used when uploading models directly to the RC using the model upload interface.
+    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    // Define the labels recognized in the model for TFOD (must be in training order!)
+    private static final String[] LABELS = {
+            "Red Mayhem",
+    };
 
     // Do we have the second camera needed to correct the robot positioning relative to the
     // backboard to score a second pixel in autonomy mode
@@ -78,39 +80,52 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
     final double MAX_AUTO_STRAFE= 0.5; //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3; //  Clip the turn speed to this max value (adjust for your robot)
 
-    Gobbler gobbler = null;
 
-    ElapsedTime runtimeTimer = null;
+    private int DESIRED_TAG_ID = 6;
+
+    private AprilTagProcessor aprilTag;
+
+    private AprilTagDetection desiredTag = null;
+
+    boolean targetFound = false;
+
+
+    ElapsedTime trapdoorToggle = new ElapsedTime();
+
+    // Variable that will later be used for placing the second pixel.
+    int borderLine = 450;
+
+    /**
+     * //The variable to store our instance of the TensorFlow Object Detection processor.
+     */
+    private TfodProcessor tfod;
+    boolean seen = false;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal myVisionPortal;
 
     @Override
     public void runOpMode() {
-
         runtimeTimer = new ElapsedTime();
         runtimeTimer.startTime();
-
-        initAprilTag();
-
         gobbler = new Gobbler(hardwareMap);
+        initDoubleVision();
 
-        //initTfod();
-        gobbler.intake.intakeDown(false); // TODO: 1/30/24 We can remove this since we are not using a servo to push down the lift anymore.
-        //robot.outtake.launchDrone(0.0); TODO This was intended to reset the drone launcher servo, we can move the servo manually.
-        // Wait for the DS start button to be touched.
-        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-
-        // Here we need to store an appropriate value in DESIRED_TAG_ID
-
-        waitForStart();
+        while (WaitingToStart()) {
+            //IdentifyTeamPropLocation();
+        }
 
         if (opModeIsActive()) {
-            PlaceSecondPixel();
-            parkRobot();
+//            placeFirstPixel();
+//            setupRobotToPlaceSecondPixel();
+            placeSecondPixel();
+//            parkRobot();
         }
 
         // Save more CPU resources when camera is no longer needed.
-        visionPortal.close();
+        myVisionPortal.close();
 
     }   // end runOpMode()
 
@@ -120,7 +135,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
 
     }
 
-    private void PlaceSecondPixel() {
+    private void placeSecondPixel() {
         // Want to avoid a scenario wherein the camera doesn't recognize the april tag on the first
         // few frames, but is capable of identifying the april tag positions in subsequent frames.
         runtimeTimer.reset();
@@ -169,34 +184,77 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         }
     }
 
-    private void initAprilTag() { // TODO: 1/30/24 Once we implement tensorflow, we'll need to edit this for double vision.
-        // TODO: 1/30/24 If we DO end up using two cameras, there is a way to see both cameras on the driver station.
-        // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder()
-                // TODO: 1/30/24 add the bounding boxes and axis
-                .build();
+    private void setupRobotToPlaceSecondPixel() {
+        eatYellowPixel();
+        faceBackdrop();
+    }
 
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(3);
+    private void eatYellowPixel() {
+        lowerMailbox();
+        gobbler.driveTrain.Wait(1.0);
+        movePixelIntoMailbox();
+    }
 
-        // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Cam1"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else { // TODO: 1/30/24 Maybe we can remove this? We are not planning on using a phone as a camera (i hope).
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
+    private void movePixelIntoMailbox() {
+        gobbler.intake.turnOnConveyorBelt();
+        gobbler.driveTrain.Wait(5.0);
+        gobbler.intake.turnOffConveyorBelt();
+    }
+
+    private void lowerMailbox() {
+        gobbler.outtake.driveLift(0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+    }
+
+    private void faceBackdrop() {
+        if (desiredTag.id == 2) { // This turns the robot to the backboard if it is in the center position
+            gobbler.driveTrain.turnCounterClockwise(-180, 0.5);
+        } else if (desiredTag.id  == 1) { // This turns the robot to the backboard if it is in the right position
+            gobbler.driveTrain.moveBackward(3, 0.5);
+            gobbler.driveTrain.Wait(3.0);
+            gobbler.driveTrain.turnCounterClockwise(-180, 0.5);
+        } else { // This turns the robot to the backboard if it is in the left positions
+            gobbler.driveTrain.turnCounterClockwise(-90, 0.5);
         }
+    }
+
+    private void IdentifyTeamPropLocation() {
+        seen = false; // setting it to false again so that the robot will correctly detect Mayhem on the left piece of tape
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        for (Recognition recognition : currentRecognitions) {
+            double xValue = (recognition.getLeft() + recognition.getRight()) / 2;
+            // To figure out this part, you will have to use the ConceptTensorFlowObjectDetection file
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered center.
+            if (xValue < borderLine) {
+                // center
+                telemetry.addData("position", "Center");
+                DESIRED_TAG_ID = 2;
+                seen = true;
+            }
+
+            // The first two x values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            // The second two y values represent the minimum and maximum value x has to be for the team prop to be considered right.
+            else if (xValue > borderLine) {  //
+                // right
+                telemetry.addData("position", "Right");
+                DESIRED_TAG_ID = 1;
+                seen = true;
+
+            }
+        }
+        // If the team prop is not seen on the center or right, it will assume it is on the left.
+        if (!seen) {
+            telemetry.addData("position", "Left");
+            DESIRED_TAG_ID = 3;
+        }
+
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
     }
 
     private void driveToTarget() {
@@ -250,8 +308,7 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
 
             if (!errorIsAcceptable(rangeError, headingError, yawError)) {
                 gobbler.driveTrain.driveAutonomously(-drive, strafe, turn);
-
-                //telemetry.addData("strafe", "%5.1f", strafe);
+                telemetry.addData("strafe", "%5.1f", strafe);
                 telemetry.addData("Range", "%5.2f inches", desiredTag.ftcPose.range);
                 telemetry.addData("Bearing", "%3.2f degrees", desiredTag.ftcPose.bearing);
                 telemetry.addData("Yaw", "%3.2f degrees", desiredTag.ftcPose.yaw);
@@ -274,23 +331,21 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
     private void driveToFinalPosition() {
         // If using an intermediate position, we'll need to put in the (simple) controls to drive
         // the robot the last leg to in front of the backboard, in position to score a pixel
-//        gobbler.driveTrain.strafe(6, 0.25);
-//        gobbler.driveTrain.moveForward(-20, 0.5);
-        if (DESIRED_TAG_ID == 1) {
+        if (DESIRED_TAG_ID == 4) {
             gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
             gobbler.driveTrain.strafeLeft(2, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
-        else if (DESIRED_TAG_ID == 2) {
+        else if (DESIRED_TAG_ID == 5) {
             gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
             gobbler.driveTrain.strafeLeft(3, 0.5);
             gobbler.driveTrain.Wait(0.5);
         }
 
-        else if (DESIRED_TAG_ID == 3) {
+        else if (DESIRED_TAG_ID == 6) {
             gobbler.driveTrain.moveBackward(12, 0.5);
             gobbler.driveTrain.Wait(0.5);
             gobbler.driveTrain.strafeLeft(6, 0.5);
@@ -309,17 +364,77 @@ public class Centerstage_AutoBlueClose extends LinearOpMode {
         // position before attempting to score a pixel on the backboard.
     }
 
-    // Once we're in position, execute code to put the pixel on the backboard
-    // Probably just a combination of moving the lift and mailbox.
-    private void placePixelOnBackboard() {
-        gobbler.outtake.driveLift(-1.0);
-        gobbler.driveTrain.Wait(2);
-        gobbler.outtake.driveLift(0.0);
-        gobbler.outtake.openTrapdoor();
-        gobbler.driveTrain.Wait(1);
-        gobbler.outtake.closeTrapdoor();
-        gobbler.outtake.driveLift(1.0);
-        gobbler.driveTrain.Wait(1.5);
-        gobbler.outtake.driveLift(0.0);
+    private void initDoubleVision() {
+        // -----------------------------------------------------------------------------------------
+        // AprilTag Configuration
+        // -----------------------------------------------------------------------------------------
+
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawCubeProjection(true)
+                .setDrawAxes(true)
+                .build();
+
+        // -----------------------------------------------------------------------------------------
+        // TFOD Configuration
+        // -----------------------------------------------------------------------------------------
+
+        tfod = new TfodProcessor.Builder()
+                .setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelLabels(LABELS)
+                .build();
+
+        // -----------------------------------------------------------------------------------------
+        // Camera Configuration
+        // -----------------------------------------------------------------------------------------
+
+        if (USE_WEBCAM) {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Cam1"))
+                    .addProcessors(tfod, aprilTag)
+                    .build();
+        } else {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessors(tfod, aprilTag)
+                    .build();
+        }
+    }   // end initDoubleVision()
+
+    private void placeFirstPixel() {
+        if (DESIRED_TAG_ID== 2) { // drives robot to the center position.
+            gobbler.driveTrain.centerPos();
+        }
+
+        else if (DESIRED_TAG_ID == 1) { // drives robot to the right position.
+            gobbler.driveTrain.rightPos();
+        }
+
+        else { // drives robot to the left position.
+            gobbler.driveTrain.leftPos();
+        }
+        //Place first pixel
+
+        PlacePixelOnTape();
+
+        // Push telemetry to the Driver Station.
+        telemetry.update();
+        gobbler.driveTrain.Wait(3.0);
+
+        sleep(50);
     }
+
+    private void PlacePixelOnTape() {
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(-0.5);
+        gobbler.driveTrain.Wait(1.0);
+        gobbler.outtake.driveLift(0.0);
+        gobbler.driveTrain.Wait(2);
+        gobbler.outtake.trapdoor(true, trapdoorToggle);
+    }
+
+    private boolean WaitingToStart() {
+        return (!isStarted() && !isStopRequested());
+    }
+
 }   // end class

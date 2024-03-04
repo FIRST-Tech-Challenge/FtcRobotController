@@ -56,9 +56,9 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftBackDrive.getPower(),
                     gobbler.driveTrain.rightBackDrive.getPower());
-            telemetry.addData("Intake and Conveyor Motors", "%4.2f, %4.2f",
-                   gobbler.intake.intakeMotor.getPower(),
-                   gobbler.intake.conveyorMotor.getPower());
+//            telemetry.addData("Intake and Conveyor Motors", "%4.2f, %4.2f",
+//                   gobbler.intake.intakeMotor.getPower(),
+//                   gobbler.intake.conveyorMotor.getPower());
             telemetry.addData("Stage Motor",
                     gobbler.outtake.stageMotor.getPower());
             telemetry.addData("Trapdoor Status",
