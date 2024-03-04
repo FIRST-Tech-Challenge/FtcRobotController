@@ -18,7 +18,7 @@ public class CSCons {
     public static double clawAngleTransfer = .15;
     public static double clawArmGround = .78;
     public static double clawArm2 = .795;
-    public static double clawArm3 = .66;
+    public static double clawArm3 = .68;
     public static double clawArm4 = .73;
     public static double clawArm5 = .59;
     public static double clawArmTransition = .23;
