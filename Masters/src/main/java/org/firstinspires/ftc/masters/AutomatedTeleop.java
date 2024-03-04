@@ -565,14 +565,14 @@ public class AutomatedTeleop extends LinearOpMode {
                             outtakeHook.setPosition(CSCons.openHook);
                             outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
                             outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-                            if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
+//                            if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
                                 backSlidePos = OuttakePosition.BOTTOM;
                                 target = backSlidePos.getTarget();
                                 outtakeState = OuttakeState.MoveToTransfer;
-                            } else if (!slideNeedstoGoDown){
-                                outtakeElapsedTime = new ElapsedTime();
-                                slideNeedstoGoDown = true;
-                            }
+//                            } else if (!slideNeedstoGoDown){
+//                                outtakeElapsedTime = new ElapsedTime();
+//                                slideNeedstoGoDown = true;
+//                            }
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
@@ -583,12 +583,12 @@ public class AutomatedTeleop extends LinearOpMode {
                             target += 15;
                         }
 
-                        if (slideNeedstoGoDown && outtakeElapsedTime!=null && outtakeElapsedTime.milliseconds()>500){
-                            backSlidePos = OuttakePosition.BOTTOM;
-                            target = backSlidePos.getTarget();
-                            outtakeState = OuttakeState.MoveToTransfer;
-                            slideNeedstoGoDown = false;
-                        }
+//                        if (slideNeedstoGoDown && outtakeElapsedTime!=null && outtakeElapsedTime.milliseconds()>500){
+//                            backSlidePos = OuttakePosition.BOTTOM;
+//                            target = backSlidePos.getTarget();
+//                            outtakeState = OuttakeState.MoveToTransfer;
+//                            slideNeedstoGoDown = false;
+//                        }
 
 
                         //what button to mode back to transfer?
