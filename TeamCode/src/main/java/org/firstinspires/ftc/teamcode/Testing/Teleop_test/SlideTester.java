@@ -10,11 +10,11 @@ public class SlideTester extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor slide = null;
 
-    static final double  COUNTS_PER_MOTOR_REV  = 537.7 ;         // eg: GOBILDA Motor Encoder
+    static final double  COUNTS_PER_MOTOR_REV_SLIDE  = 537.7 ;         // eg: GOBILDA Motor Encoder
     static final double  DRIVE_GEAR_REDUCTION  = 1.0 ;           // No External Gearing.
-        static final double  WHEEL_DIAMETER_INCHES = 1.40357115168 ; // For figuring circumference
-    static final double  COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.14159265359);
+        static final double WHEEL_DIAMETER_INCHES_SLIDE = 1.40357115168 ; // For figuring circumference
+    static final double COUNTS_PER_INCH_SLIDE = (COUNTS_PER_MOTOR_REV_SLIDE * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES_SLIDE * 3.14159265359);
 
     double SlideTicks = 0;
 
@@ -51,9 +51,9 @@ public class SlideTester extends LinearOpMode {
     }
 
     public void encoderSlideUpInches(double Inches) {
-        double TicksToMove = Inches * COUNTS_PER_INCH;
+        double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks += TicksToMove;
-        if ((SlideTicks) < (COUNTS_PER_INCH * 1250)) {
+        if ((SlideTicks) < (COUNTS_PER_INCH_SLIDE * 1250)) {
             slide.setTargetPosition(((int) TicksToMove));
             slide.setPower(0.5);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -79,9 +79,9 @@ public class SlideTester extends LinearOpMode {
     }
 
     public void encoderSlideDownInches(double inches) {
-        double TicksToMove = inches * COUNTS_PER_INCH;
+        double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks -= TicksToMove;
-        if ((SlideTicks) > (COUNTS_PER_INCH * 415)) {
+        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 415)) {
 
             slide.setTargetPosition(-((int) TicksToMove));
             slide.setPower(0.5);

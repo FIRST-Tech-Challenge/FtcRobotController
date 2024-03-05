@@ -63,17 +63,21 @@ public class Main_Tele_op extends LinearOpMode {
     private DcMotor rf_drive = null;
     private DcMotor lb_drive = null;
     private DcMotor rb_drive = null;
-    private DcMotor r_rig = null;
-    private DcMotor l_rig = null;
-    private Servo drone = null;
-    private Servo droneh = null;
+    private DcMotor rig = null;
 
-    private CRServo extender = null;
-    private Servo elbow = null;
-    private DcMotor wrist = null;
-    private CRServo intake = null;
-    private Servo stopper = null;
-    Servo autoarm = null;
+    private DcMotor slide = null;
+    static final double  COUNTS_PER_MOTOR_REV_SLIDE  = 537.7 ;         // eg: GOBILDA Motor Encoder
+    static final double  DRIVE_GEAR_REDUCTION  = 1.0 ;           // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES_SLIDE = 1.40357115168 ; // For figuring circumference
+    static final double COUNTS_PER_INCH_SLIDE = (COUNTS_PER_MOTOR_REV_SLIDE * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES_SLIDE * 3.14159265359);
+
+    double SlideTicks = 0;
+
+//    private Servo drone = null;
+//    private Servo droneh = null;
+
+//    private Servo autoarm = null;
 
 
     @Override
@@ -88,32 +92,25 @@ public class Main_Tele_op extends LinearOpMode {
         rf_drive = hardwareMap.get(DcMotor.class, "rf_drive");
         lb_drive = hardwareMap.get(DcMotor.class, "lb_drive");
         rb_drive = hardwareMap.get(DcMotor.class, "rb_drive");
-        r_rig = hardwareMap.get(DcMotor.class, "r_rig");
-        l_rig = hardwareMap.get(DcMotor.class, "l_rig");
+        rig = hardwareMap.get(DcMotor.class, "rig");
+        slide = hardwareMap.get(DcMotor.class, "slide");
 
-        drone = hardwareMap.get(Servo.class, "air");
-        droneh = hardwareMap.get(Servo.class, "droneh");
+//        drone = hardwareMap.get(Servo.class, "air");
+//        droneh = hardwareMap.get(Servo.class, "droneh");
 
-        extender  = hardwareMap.get(CRServo.class, "extender");
-        elbow  = hardwareMap.get(Servo.class, "elbow");
-        wrist  = hardwareMap.get(DcMotor.class, "wrist");
-        intake  = hardwareMap.get(CRServo.class, "intake");
-        stopper  = hardwareMap.get(Servo.class, "stopper");
-
-        autoarm = hardwareMap.get(Servo.class, "autoarm");
+//        autoarm = hardwareMap.get(Servo.class, "autoarm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         lf_drive.setDirection(DcMotorEx.Direction.REVERSE);
         lb_drive.setDirection(DcMotorEx.Direction.REVERSE);
-        r_rig.setDirection(DcMotorEx.Direction.REVERSE);
+        rig.setDirection(DcMotorEx.Direction.REVERSE);
+        slide.setDirection(DcMotorEx.Direction.REVERSE);
 
-        l_rig.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        r_rig.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rig.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        extender.setDirection(CRServo.Direction.REVERSE);
-        wrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -148,59 +145,91 @@ public class Main_Tele_op extends LinearOpMode {
             rb_drive.setPower(rbPower);
 
             if (gamepad2.dpad_up) {
-                l_rig.setPower(1);
-                r_rig.setPower(1);
+                rig.setPower(1);
             } else if (gamepad2.dpad_down) {
-                l_rig.setPower(-1);
-                r_rig.setPower(-1);
+                rig.setPower(-1);
             } else {
-                l_rig.setPower(0);
-                r_rig.setPower(0);
+                rig.setPower(0);
+            }
+
+            if (gamepad2.y) {
+                encoderSlideUpInches(5);
+                telemetry.update();
+            }
+
+            if (gamepad2.a) {
+                encoderSlideDownInches(5);
+                telemetry.update();
             }
 
 
-            if (gamepad1.x) {
-                droneh.setPosition(0); //hold
-                sleep(500);
-                drone.setPosition(0);
+//            if (gamepad1.x) {
+//                droneh.setPosition(0); //hold
+//                sleep(500);
+//                drone.setPosition(0);
+//            }
+//            if (gamepad1.y) {
+//                drone.setPosition(1);
+//            }
+
+
+//            autoarm.setPosition(1);
+
+            telemetry.addData("CurrentSlideTicks:", SlideTicks);
+            telemetry.update();
+        }
+    }
+
+    public void encoderSlideUpInches(double Inches) {
+        double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
+        SlideTicks += TicksToMove;
+        if ((SlideTicks) < (COUNTS_PER_INCH_SLIDE * 70)) {
+            slide.setTargetPosition(((int) TicksToMove));
+            slide.setPower(0.5);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep((long) (Inches * 2 * 25.4));
+            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide.setPower(0);
+
+            telemetry.addData("Up", "Working");
+            telemetry.update();
+
+            ElapsedTime timer = new ElapsedTime();
+
+            while (timer.milliseconds() < 500) {
+                // do nothing
             }
-            if (gamepad1.y) {
-                drone.setPosition(1);
+        } else {
+            SlideTicks -= TicksToMove;
+            telemetry.addData("Up", "Not Working");
+            telemetry.update();
+        }
+    }
+
+    public void encoderSlideDownInches(double inches) {
+        double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
+        SlideTicks -= TicksToMove;
+        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 10)) {
+
+            slide.setTargetPosition(-((int) TicksToMove));
+            slide.setPower(0.5);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            sleep((long) (inches * 2 * 25.4));
+            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide.setPower(0);
+
+            telemetry.addData("Down", "Working");
+            telemetry.update();
+
+            ElapsedTime timer = new ElapsedTime();
+
+            while (timer.milliseconds() < 500) {
+                // do nothing
             }
-             if(gamepad1.dpad_up){
-                 extender.setPower(1);
-             }
-             if(gamepad1.dpad_down){
-                 extender.setPower(0);
-            }
-
-/*            if (gamepad2.right_stick_y < -0.1 || gamepad2.right_stick_y > 0.1) {
-               extender.setPower(gamepad2.right_stick_y);
-           } else {
-               extender.setPower(0);
-           }
-
-*/
-            elbow.setPosition(gamepad2.right_trigger);
-            wrist.setPower(gamepad2.left_stick_y * 0.2);
-
-            if (gamepad2.right_bumper) {
-                intake.setPower(1);
-            } else {
-                intake.setPower(0);
-            }
-
-            if (gamepad2.right_stick_x < -0.7) {
-                stopper.setPosition(0);
-            } else if (gamepad2.right_stick_x > 0.7) {
-                stopper.setPosition(1);
-            } else {
-                stopper.setPosition(0.5);
-            }
-
-            autoarm.setPosition(1);
-
-
+        } else {
+            SlideTicks += TicksToMove;
+            telemetry.addData("Down", "Not Working");
+            telemetry.update();
         }
     }
 }
