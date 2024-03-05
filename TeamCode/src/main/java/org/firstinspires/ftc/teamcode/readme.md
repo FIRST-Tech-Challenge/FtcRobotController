@@ -15,6 +15,10 @@ Servos:
 - 1: gripR
 - 2: gripL
 
+Digital Devices:
+- 0: "Digital Device" leftSwitch
+- 1: "Digital Device" rightSwitch
+
 _Expansion Hub:_
 
 Motors:
