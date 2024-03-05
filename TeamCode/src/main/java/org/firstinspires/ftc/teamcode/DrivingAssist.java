@@ -17,6 +17,8 @@ public class DrivingAssist {
 
     int ticksRemaining = 0;
     //double tempSpeed = 0;
+    boolean prevLeftSwitchState = false;
+    boolean prevRightSwitchState = false;
 
     public DrivingAssist(Controller controller, HardwareMap hardwareMap, DetectPixel detectPixel) {
         this.controller = controller;
@@ -30,13 +32,29 @@ public class DrivingAssist {
         led2.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
-    public void gripLed() {
+    public void gripLed(Gamepad gamepad1, Gamepad gamepad2) {
         led1.setState(!leftSwitch.getState());
         led2.setState(!rightSwitch.getState());
+
+        controller.Debug("left switch", !leftSwitch.getState());
+        controller.Debug("right switch", !rightSwitch.getState());
+
+        // Check if previous state is false and current state is true
+        if (prevLeftSwitchState && !leftSwitch.getState()) {
+            gamepad1.rumbleBlips(1);
+            gamepad2.rumbleBlips(1);
+        }
+        else if (prevRightSwitchState && !rightSwitch.getState()) {
+            gamepad1.rumbleBlips(2);
+            gamepad2.rumbleBlips(2);
+        }
+
+        prevLeftSwitchState = leftSwitch.getState();
+        prevRightSwitchState = rightSwitch.getState();
     }
 
     public void rumble(Gamepad gamepad1, Gamepad gamepad2) {
-        rumbleSpeed(gamepad1, gamepad2, 0.1);
+        //rumbleSpeed(gamepad1, gamepad2, 0.1);
         //detectPixel.telemetryTfod();
         controller.Debug("test y", detectPixel.getDistance());
 
