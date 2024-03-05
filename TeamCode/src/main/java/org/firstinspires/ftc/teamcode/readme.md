@@ -16,8 +16,8 @@ Servos:
 - 2: gripL
 
 Digital Devices:
-- 0: "Digital Device" leftSwitch
-- 1: "Digital Device" rightSwitch
+- 0: "Digital Device" rightSwitch
+- 1: "Digital Device" leftSwitch
 
 _Expansion Hub:_
 
@@ -27,5 +27,5 @@ Motors:
 
 Digital Devices:
 
-- 0: "Digital Device" led1
 - 2: "Digital Device" led2
+- 4: "Digital Device" led1
