@@ -76,7 +76,7 @@ public class Main_Tele_op extends LinearOpMode {
     Boolean timeoutDown = true;
     Double timerDown = 0.0;
 
-    double slideInterval = 1;
+    double slideCooldown = 0.5;
 
 
 //    private Servo drone = null;
@@ -173,28 +173,36 @@ public class Main_Tele_op extends LinearOpMode {
             }
 
             if (gamepad2.y && !timeoutUp) {
-                encoderSlideUpInches(8);
+                encoderSlideUpInches(10);
                 timeoutUp = true;
                 timerUp = runtime.seconds();
                 telemetry.update();
             }
 
             if (gamepad2.a && !timeoutDown) {
-                encoderSlideDownInches(8);
+                encoderSlideDownInches(5);
                 timeoutDown = true;
                 timerDown = runtime.seconds();
                 telemetry.update();
             }
 
+            if (gamepad2.right_bumper) {
+                l_flick.setPosition(0);
+                r_flick.setPosition(0.577);
+            } else {
+                l_flick.setPosition(0.577);
+                r_flick.setPosition(0);
+            }
 
 
 
 
-            if((runtime.seconds() - timerUp) >= slideInterval) {
+
+            if ((runtime.seconds() - timerUp) >= slideCooldown) {
                 timeoutUp = false;
             }
 
-            if((runtime.seconds() - timerDown) >= slideInterval) {
+            if ((runtime.seconds() - timerDown) >= slideCooldown) {
                 timeoutDown = false;
             }
 
@@ -229,7 +237,7 @@ public class Main_Tele_op extends LinearOpMode {
     public void encoderSlideDownInches(double inches) {
         double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks -= TicksToMove;
-        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 3)) {
+        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 0)) {
 
             slide.setTargetPosition(-((int) TicksToMove));
             slide.setPower(0.5);
