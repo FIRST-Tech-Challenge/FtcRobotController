@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -116,6 +117,7 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             // convert the RGB values to HSV values.
             // multiply by the SCALE_FACTOR.
             // then cast it back to int (SCALE_FACTOR is a double)
+
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
@@ -125,14 +127,8 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             // if the digital channel returns true it's HIGH and the button is unpressed.
             if ( touchSensor.isPressed() ) {
                 telemetry.addData("Digital Touch", "Is Pressed");
-                telemetry.update();
-            } else {
+            } else
                 telemetry.addData("Digital Touch", "Is Not Pressed");
-                telemetry.update();
-            }
-
-            telemetry.update();
-
             // send the info back to driver station using telemetry function.
             telemetry.addData("Distance (cm)",
                     String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
@@ -141,27 +137,84 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             telemetry.addLine("Green");
             telemetry.addLine("Blue ");
             telemetry.addData("Hue", hsvValues[0]);
+            telemetry.addData("Saturation", hsvValues[1]);
+            telemetry.addData("Value", hsvValues[2]);
+            telemetry.addData("Red", sensorColor.red());
+            telemetry.addData("Blue", sensorColor.blue());
+            telemetry.addData("Green", sensorColor.green());
+            // convert the RGB values to HSV values.
+// multiply by the SCALE_FACTOR.
+// then cast it back to int (SCALE_FACTOR is a double)
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
 
-            if (sensorColor.red()>sensorColor.green()&& sensorColor.red()>sensorColor.blue()) {
-                telemetry.addData("Color Detected", "Red");
+            String detectedColor = "Unknown";
+
+            double hue = hsvValues[0];
+            if (hue >= 0 && hue < 60 || hue > 360) {
+                detectedColor = "Red";
+            } else if (hue >= 60 && hue < 120) {
+                detectedColor = "Yellow";
+            } else if (hue >= 120 && hue < 200) {
+                detectedColor = "Green";
+            } else if (hue >= 200 && hue < 300) {
+                detectedColor = "Blue";
+            } else if (hue >= 301 && hue < 360) {
+                detectedColor = "Purple"; // Adjust values for purple
             }
 
-            if (sensorColor.red() < sensorColor.green() && sensorColor.blue() < sensorColor.green()) {
-                telemetry.addData("Color Detected", "Green");
-            }
-
-            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
-                telemetry.addData("Color Detected", "Blue");
-            }
-
-            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
-                telemetry.addData("Color Detected", "Blue");
-            }
+            telemetry.addData("Detected Color", detectedColor);
+            telemetry.update();
 
 
-            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
-                telemetry.addData("Color Detected", "Blue");
-            }
+//            double red = sensorColor.red();
+//            double blue = sensorColor.blue();
+//            double green = sensorColor.green();
+//            if(red > blue * 2 && red > green * 2){
+//                telemetry.addData("Color: ", "Red");
+//            }
+//            else if(blue > red * 2 && blue > green * 2){
+//                telemetry.addData("Color: ", "Blue");
+//            }
+//            else if(green > red * 2 && green > blue * 2){
+//                telemetry.addData("Color: ", "Green");
+//            }
+//            else if(green * 2 < red && green * 2 < blue){
+//                telemetry.addData("Color: ", "Purple");
+//            }
+//            else if(blue * 2 < red && blue * 2 < green){
+//                telemetry.addData("Color: ", "Yellow");
+//            }
+//            else {
+//                telemetry.addData("Color: ", "No Other");
+//            }
+//            telemetry.addData("Red", red);
+//            telemetry.addData("Green", green);
+//            telemetry.addData("Blue", blue);
+
+
+//            if (sensorColor.red()>sensorColor.green()&& sensorColor.red()>sensorColor.blue()) {
+//                telemetry.addData("Color Detected", "Red");
+//            }
+//            if (sensorColor.red() < sensorColor.green() && sensorColor.blue() < sensorColor.green()) {
+//                telemetry.addData("Color Detected", "Green");
+//            }
+//
+//            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
+//                telemetry.addData("Color Detected", "Blue");
+//            }
+//
+//            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
+//                telemetry.addData("Color Detected", "Blue");
+//            }
+//
+//
+//            if (sensorColor.red() <  sensorColor.blue() && sensorColor.green() <  sensorColor.blue()) {
+//                telemetry.addData("Color Detected", "Blue");
+//            }
+
 
             // change the background color to match the color detected by the RGB sensor.
             // pass a reference to the hue, saturation, and value array as an argument
