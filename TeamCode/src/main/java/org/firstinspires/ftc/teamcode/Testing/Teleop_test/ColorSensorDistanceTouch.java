@@ -153,16 +153,32 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             String detectedColor = "Unknown";
 
             double hue = hsvValues[0];
+//            if (hue >= 0 && hue < 60 || hue > 360) {
+//                detectedColor = "Red";
+//            } else if (hue >= 60 && hue < 120) {
+//                detectedColor = "Yellow";
+//            } else if (hue >= 120 && hue < 200) {
+//                detectedColor = "Green";
+//            } else if (hue >= 215 && hue < 300) {
+//                detectedColor = "Blue";
+//            } else if (hue >= 180 && hue < 215) {
+//                detectedColor = "Purple"; // Adjust values for purple
+//            }
+
             if (hue >= 0 && hue < 60 || hue > 360) {
                 detectedColor = "Red";
             } else if (hue >= 60 && hue < 120) {
                 detectedColor = "Yellow";
-            } else if (hue >= 120 && hue < 200) {
+            } else if (hue >= 120 && hue < 150) {
                 detectedColor = "Green";
-            } else if (hue >= 200 && hue < 300) {
+            } else if (hue >= 210 && hue < 300) {
                 detectedColor = "Blue";
-            } else if (hue >= 301 && hue < 360) {
-                detectedColor = "Purple"; // Adjust values for purple
+            } else if (hue >= 180 && hue < 210) {
+                detectedColor = "Purple";
+            } else if(hue > 150 && hue < 180){
+                detectedColor = "White";
+            } else{
+                detectedColor = "Not Detected";
             }
 
             telemetry.addData("Detected Color", detectedColor);
