@@ -237,7 +237,7 @@ public class Main_Tele_op extends LinearOpMode {
     public void encoderSlideDownInches(double inches) {
         double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks -= TicksToMove;
-        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 0)) {
+        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 3)) {
 
             slide.setTargetPosition(-((int) TicksToMove));
             slide.setPower(0.5);
