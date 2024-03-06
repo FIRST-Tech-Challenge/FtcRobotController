@@ -29,10 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.MainFolderComp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -64,7 +62,6 @@ public class Main_Tele_op extends LinearOpMode {
     private DcMotor lb_drive = null;
     private DcMotor rb_drive = null;
     private DcMotor rig = null;
-
     private DcMotor slide = null;
     static final double  COUNTS_PER_MOTOR_REV_SLIDE  = 537.7 ;         // eg: GOBILDA Motor Encoder
     static final double  DRIVE_GEAR_REDUCTION  = 1.0 ;           // No External Gearing.
@@ -74,8 +71,19 @@ public class Main_Tele_op extends LinearOpMode {
 
     double SlideTicks = 0;
 
+    Boolean timeoutUp = false;
+    Double timerUp = 0.0;
+    Boolean timeoutDown = true;
+    Double timerDown = 0.0;
+
+    double slideInterval = 1;
+
+
 //    private Servo drone = null;
 //    private Servo droneh = null;
+
+    private Servo l_flick = null;
+    private Servo r_flick = null;
 
 //    private Servo autoarm = null;
 
@@ -97,6 +105,9 @@ public class Main_Tele_op extends LinearOpMode {
 
 //        drone = hardwareMap.get(Servo.class, "air");
 //        droneh = hardwareMap.get(Servo.class, "droneh");
+
+        l_flick = hardwareMap.get(Servo.class, "lflick");
+        r_flick = hardwareMap.get(Servo.class, "rflick");
 
 //        autoarm = hardwareMap.get(Servo.class, "autoarm");
 
@@ -144,25 +155,6 @@ public class Main_Tele_op extends LinearOpMode {
             lb_drive.setPower(lbPower);
             rb_drive.setPower(rbPower);
 
-            if (gamepad2.dpad_up) {
-                rig.setPower(1);
-            } else if (gamepad2.dpad_down) {
-                rig.setPower(-1);
-            } else {
-                rig.setPower(0);
-            }
-
-            if (gamepad2.y) {
-                encoderSlideUpInches(5);
-                telemetry.update();
-            }
-
-            if (gamepad2.a) {
-                encoderSlideDownInches(5);
-                telemetry.update();
-            }
-
-
 //            if (gamepad1.x) {
 //                droneh.setPosition(0); //hold
 //                sleep(500);
@@ -172,6 +164,39 @@ public class Main_Tele_op extends LinearOpMode {
 //                drone.setPosition(1);
 //            }
 
+            if (gamepad2.dpad_up) {
+                rig.setPower(1);
+            } else if (gamepad2.dpad_down) {
+                rig.setPower(-1);
+            } else {
+                rig.setPower(0);
+            }
+
+            if (gamepad2.y && !timeoutUp) {
+                encoderSlideUpInches(8);
+                timeoutUp = true;
+                timerUp = runtime.seconds();
+                telemetry.update();
+            }
+
+            if (gamepad2.a && !timeoutDown) {
+                encoderSlideDownInches(8);
+                timeoutDown = true;
+                timerDown = runtime.seconds();
+                telemetry.update();
+            }
+
+
+
+
+
+            if((runtime.seconds() - timerUp) >= slideInterval) {
+                timeoutUp = false;
+            }
+
+            if((runtime.seconds() - timerDown) >= slideInterval) {
+                timeoutDown = false;
+            }
 
 //            autoarm.setPosition(1);
 
@@ -194,11 +219,6 @@ public class Main_Tele_op extends LinearOpMode {
             telemetry.addData("Up", "Working");
             telemetry.update();
 
-            ElapsedTime timer = new ElapsedTime();
-
-            while (timer.milliseconds() < 500) {
-                // do nothing
-            }
         } else {
             SlideTicks -= TicksToMove;
             telemetry.addData("Up", "Not Working");
@@ -209,7 +229,7 @@ public class Main_Tele_op extends LinearOpMode {
     public void encoderSlideDownInches(double inches) {
         double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks -= TicksToMove;
-        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 10)) {
+        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 5)) {
 
             slide.setTargetPosition(-((int) TicksToMove));
             slide.setPower(0.5);
@@ -221,11 +241,6 @@ public class Main_Tele_op extends LinearOpMode {
             telemetry.addData("Down", "Working");
             telemetry.update();
 
-            ElapsedTime timer = new ElapsedTime();
-
-            while (timer.milliseconds() < 500) {
-                // do nothing
-            }
         } else {
             SlideTicks += TicksToMove;
             telemetry.addData("Down", "Not Working");
