@@ -11,9 +11,9 @@ Motors:
 - 3: "GoBILDA 5202/3/4" motor3 (Back right motor)
 
 Servos:
-- 0: roll
-- 1: gripR
-- 2: gripL
+- 0: "Servo" roll
+- 1: "Servo" gripR
+- 2: "Servo" gripL
 
 Digital Devices:
 - 0: "Digital Device" rightSwitch
@@ -24,6 +24,9 @@ _Expansion Hub:_
 Motors:
 - 0: "GoBILDA 5202/3/4" armLift
 - 1: "GoBILDA 5202/3/4" armExtend
+
+Servos:
+- 0: "Servo" droneServo
 
 Digital Devices:
 
