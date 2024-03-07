@@ -19,6 +19,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
         ElapsedTime trapToggleTime = new ElapsedTime();
         ElapsedTime directionToggleTime = new ElapsedTime();
         ElapsedTime hangServoTime = new ElapsedTime();
+        ElapsedTime intakeDirectionToggle = new ElapsedTime();
 
 //        gobbler.outtake.resetLiftEncoders();
         gobbler.outtake.closeMailbox();
@@ -41,7 +42,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
             // This function controls the hanging motors.
             // The first input is the button used to power the motors.
             // The second input is the button used to reverse the motors.
-            gobbler.planeHang.hangMotors(gamepad2.dpad_up,gamepad2.dpad_down);
+            gobbler.planeHang.hangMotors(gamepad2.dpad_up, gamepad2.dpad_down);
 
             // This function controls the hanging servo.
             // The first input is the button used to control the servo.
@@ -52,6 +53,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
             // The first input is the button used to control the trap door.
             // The second input is the time the function uses to space out inputs.
             gobbler.intake.driveIntake(gamepad2.a, intakeToggleTime);
+            gobbler.intake.reverseIntake(gamepad2.dpad_left, intakeDirectionToggle);
 
             // This controls the drive train using three double input methods.
             // The fourth input is a boolean for the direction toggle.
@@ -62,18 +64,21 @@ public class Centerstage_TeleOp extends LinearOpMode {
             gobbler.outtake.driveLift(-gamepad2.left_stick_y);
 
             // Provides telemetry for all motors, servos, and sensors.
+            telemetry.addData("Driving Motors", " ");
             telemetry.addData("Front Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftFrontDrive.getPower(),
                     gobbler.driveTrain.rightFrontDrive.getPower());
             telemetry.addData("Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftBackDrive.getPower(),
                     gobbler.driveTrain.rightBackDrive.getPower());
-            telemetry.addData("Intake",
+            telemetry.addData("Intake Motor Power",
                    gobbler.intake.intakeMotor.getPower());
-            telemetry.addData("Lift Motor",
+            telemetry.addData("Lift Motor Power",
                     gobbler.outtake.liftMotor.getPower());
             telemetry.addData("Lift Motor Encoder",
                     gobbler.outtake.getLiftMotorPos());
+            telemetry.addData("Bottom Limit Status",
+                    String.valueOf(gobbler.outtake.bottomLimit.isPressed()));
             telemetry.addData("Trapdoor Status",
                    String.valueOf(gobbler.outtake.mailboxOpen));
             telemetry.addData("Drone Status",
@@ -81,8 +86,6 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.getDistanceLeftValue(),
                     gobbler.driveTrain.getDistanceRightValue());
-            telemetry.addData("Gamepad X",
-                    String.valueOf(gamepad2.x));
             telemetry.update();
         }
     }

@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PlaneHang {
-    Servo droneServo;
-    Servo hangServo;
-    Servo hangServo2;
+    Servo droneServo, leftHangServo, rightHangServo;
     DcMotor hangMotor;
     boolean droneToggle = true;
 
@@ -16,8 +15,13 @@ public class PlaneHang {
 
     public PlaneHang(HardwareMap hMap) {
         droneServo = hMap.get(Servo.class, "droneServo");
+
         hangMotor = hMap.get(DcMotor.class, "hangMotor");
-        hangServo = hMap.get(Servo.class, "hangServo");
+        hangMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        leftHangServo = hMap.get(Servo.class, "leftHangServo");
+        rightHangServo = hMap.get(Servo.class, "rightHangServo");
+
     }
 
     // This function controls the drone.
@@ -49,6 +53,9 @@ public class PlaneHang {
             hangMotor.setPower(-1.0);
 
         }
+        else {
+            hangMotor.setPower(0.0);
+        }
     }
 
     // This function controls the hanging servo.
@@ -58,15 +65,15 @@ public class PlaneHang {
         if (button && time.time() > .50 && !hangUp) {
             hangUp = true;
             time.reset();
-            hangServo.setPosition(1.0);
-            hangServo2.setPosition(1.0);
+            leftHangServo.setPosition(0.1);
+            rightHangServo.setPosition(1);
 
         }
         else if (button && time.time() > .50 && hangUp) {
             hangUp = false;
             time.reset();
-            hangServo.setPosition(0.0);
-            hangServo2.setPosition(0.0);
+            leftHangServo.setPosition(0.6);
+            rightHangServo.setPosition(0.5);
 
         }
     }

@@ -51,8 +51,8 @@ public class DriveTrain {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        distanceRight = hwMap.get(DistanceSensor.class, "distanceRight");
-        distanceLeft = hwMap.get(DistanceSensor.class, "distanceLeft");
+//        distanceRight = hwMap.get(DistanceSensor.class, "distanceRight");
+//        distanceLeft = hwMap.get(DistanceSensor.class, "distanceLeft");
 
     }
 
@@ -61,14 +61,14 @@ public class DriveTrain {
     // The last two variables are for direction switching.
     public void drive(double axial, double lateral, double yaw, boolean directionButton, ElapsedTime time) {
 
-        distanceRightValue = distanceRight.getDistance(DistanceUnit.INCH);
-        distanceLeftValue = distanceLeft.getDistance(DistanceUnit.INCH);
+//        distanceRightValue = distanceRight.getDistance(DistanceUnit.INCH);
+//        distanceLeftValue = distanceLeft.getDistance(DistanceUnit.INCH);
 
         // The next two lines calculate the needed variables for the distance sensor.
         // If BackWDValueLeft is less than BackWDValueRight, then return BackWDValueLeft.
         // If BackWDValueLeft is greater thank BackWDValueRight, then return BackWDValueRight.
-        double effectiveDistance = distanceLeftValue < distanceRightValue ? distanceLeftValue : distanceRightValue;
-        double DistanceEquationValue = slope * effectiveDistance + intercept;
+//        double effectiveDistance = distanceLeftValue < distanceRightValue ? distanceLeftValue : distanceRightValue;
+//        double DistanceEquationValue = slope * effectiveDistance + intercept;
 
         // Adjustable variable for sensitivity. The default is 0.5. (half power)
         double sensitivity = 0.5;
@@ -80,19 +80,19 @@ public class DriveTrain {
 
         double max;
 
-        // Ramps down speed as mailbox approaches backstage.
-        if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
-            yaw *= DistanceEquationValue;
-            if (axial < 0) {
-                axial *= DistanceEquationValue;
-            }
-        }
-        if (effectiveDistance < RampDownEnd){
-            yaw *= RampDownSpeed;
-            if ( axial < 0) {
-                axial *= RampDownSpeed;
-            }
-        }
+//        // Ramps down speed as mailbox approaches backstage.
+//        if (effectiveDistance <= RampDownStart && effectiveDistance >= RampDownEnd){
+//            yaw *= DistanceEquationValue;
+//            if (axial < 0) {
+//                axial *= DistanceEquationValue;
+//            }
+//        }
+//        if (effectiveDistance < RampDownEnd){
+//            yaw *= RampDownSpeed;
+//            if ( axial < 0) {
+//                axial *= RampDownSpeed;
+//            }
+//        }
 
         // This code calculates the power to give to each motor.
         if (Math.abs(axial) > 0.05 || Math.abs(lateral) > 0.05 || Math.abs(yaw) > 0.05) {
