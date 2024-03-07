@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Intake {
-    DcMotor intakeMotor, conveyorMotor;
+    DcMotor intakeMotor;
     Servo intakeServo;
 
     boolean intakeToggle = false;
@@ -16,10 +16,7 @@ public class Intake {
         intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        conveyorMotor = hwMap.get(DcMotor.class, "conveyorMotor");
-        conveyorMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        intakeServo = hwMap.get(Servo.class, "intakeServo");
+//        intakeServo = hwMap.get(Servo.class, "intakeServo");
     }
 
     // This function controls the intake and conveyor.
@@ -30,8 +27,7 @@ public class Intake {
             intakeToggle = true;
             time.reset();
 
-            intakeMotor.setPower(1.0);   
-            conveyorMotor.setPower(1.0);
+            intakeMotor.setPower(1.0);
 
         }
         else if (button && time.time() > .25 && intakeToggle) {
@@ -39,25 +35,24 @@ public class Intake {
             time.reset();
 
             intakeMotor.setPower(0.0);
-            conveyorMotor.setPower(0.0);
 
         }
     }
 
     public void turnOffConveyorBelt() {
-        conveyorMotor.setPower(0.0);
+        intakeMotor.setPower(0.0);
     }
 
     public void turnOnConveyorBelt() {
-        conveyorMotor.setPower(1.0);
+        intakeMotor.setPower(1.0);
     }
 
-    public void intakeDown(boolean down) {
-        if (down) {
-            intakeServo.setPosition(1.0);
-        }
-        else {
-            intakeServo.setPosition(0.0);
-        }
-    }
+//    public void intakeDown(boolean down) {
+//        if (down) {
+//            intakeServo.setPosition(1.0);
+//        }
+//        else {
+//            intakeServo.setPosition(0.0);
+//        }
+//    }
 }
