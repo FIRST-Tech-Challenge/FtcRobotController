@@ -38,7 +38,7 @@ public class Controller extends LinearOpMode {
             armUtils.lift(gamepad2);
             armUtils.grip(gamepad2);
             armUtils.runSequences(gamepad2);
-            drivingAssist.rumble(gamepad1, gamepad2);
+            //drivingAssist.rumble(gamepad1, gamepad2);
             drivingAssist.gripLed(gamepad1, gamepad2);
 
             // Debugging
