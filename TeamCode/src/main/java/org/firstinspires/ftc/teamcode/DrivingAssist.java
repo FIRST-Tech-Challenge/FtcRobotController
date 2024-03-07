@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public class DrivingAssist {
-    final int MAX_TICKS = 100;
+    //final int MAX_TICKS = 100;
 
     DigitalChannel leftSwitch;
     DigitalChannel rightSwitch;
@@ -15,7 +15,7 @@ public class DrivingAssist {
     Controller controller;
     DetectPixel detectPixel;
 
-    int ticksRemaining = 0;
+    //int ticksRemaining = 0;
     //double tempSpeed = 0;
     boolean prevLeftSwitchState = false;
     boolean prevRightSwitchState = false;
@@ -53,26 +53,26 @@ public class DrivingAssist {
         prevRightSwitchState = rightSwitch.getState();
     }
 
-    public void rumble(Gamepad gamepad1, Gamepad gamepad2) {
-        //rumbleSpeed(gamepad1, gamepad2, 0.1);
-        //detectPixel.telemetryTfod();
-        controller.Debug("test y", detectPixel.getDistance());
+//    public void rumble(Gamepad gamepad1, Gamepad gamepad2) {
+//        //rumbleSpeed(gamepad1, gamepad2, 0.1);
+//        //detectPixel.telemetryTfod();
+//        //controller.Debug("test y", detectPixel.getDistance());
+//
+////        tempSpeed -= gamepad2.right_stick_y / 1000;
+////        RumbleSpeed(gamepad1, gamepad2, tempSpeed);
+////        controller.Debug("temp speed", tempSpeed);
+//    }
 
-//        tempSpeed -= gamepad2.right_stick_y / 1000;
-//        RumbleSpeed(gamepad1, gamepad2, tempSpeed);
-//        controller.Debug("temp speed", tempSpeed);
-    }
-
-    void rumbleSpeed(Gamepad gamepad1, Gamepad gamepad2, double speed) {
-        if (speed > 1 || speed < 0) return;
-
-        if (ticksRemaining == 0) {
-            gamepad1.rumble(100);
-            gamepad2.rumble(100);
-            ticksRemaining = MAX_TICKS - (int)(speed * MAX_TICKS);
-        }
-        else {
-            ticksRemaining--;
-        }
-    }
+//    void rumbleSpeed(Gamepad gamepad1, Gamepad gamepad2, double speed) {
+//        if (speed > 1 || speed < 0) return;
+//
+//        if (ticksRemaining == 0) {
+//            gamepad1.rumble(100);
+//            gamepad2.rumble(100);
+//            ticksRemaining = MAX_TICKS - (int)(speed * MAX_TICKS);
+//        }
+//        else {
+//            ticksRemaining--;
+//        }
+//    }
 }
