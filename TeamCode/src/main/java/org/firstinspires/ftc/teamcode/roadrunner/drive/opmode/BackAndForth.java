@@ -29,12 +29,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
  */
 @Config
-@Disabled
 
 @Autonomous(group = "drive")
 public class BackAndForth extends LinearOpMode {
 
-  public static double DISTANCE = 40;
+  public static double DISTANCE = 100;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -58,11 +57,7 @@ public class BackAndForth extends LinearOpMode {
         robot.update();
         drive.update();
       }
-      drive.followTrajectoryAsync(trajectoryBackward);
-      while (opModeIsActive() && !isStopRequested() && drive.isBusy()) {
-        robot.update();
-        drive.update();
-      }
+      break;
     }
   }
 }

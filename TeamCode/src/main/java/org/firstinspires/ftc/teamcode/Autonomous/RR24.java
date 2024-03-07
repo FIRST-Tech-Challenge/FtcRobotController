@@ -33,9 +33,8 @@ public class RR24 {
         robot.roadrun.setPoseEstimate(startPose);
 
         spikey[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61, toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(16.5, -43, toRadians(-60)))
-                .lineToLinearHeading(new Pose2d(7.5, -40, toRadians(-40)))
-                .lineToLinearHeading(new Pose2d(11.5, -40, toRadians(-40)))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(11.5, -37, toRadians(0)), toRadians(180))
                 .build();
 
         spikey[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(17,-61,toRadians(-90)))
@@ -46,7 +45,7 @@ public class RR24 {
 
         if (!isLogi) {
             droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
-                    .lineToLinearHeading(new Pose2d(46.4, -29, toRadians(-180))).build();
+                    .splineToLinearHeading(new Pose2d(46.4, -29, toRadians(-180)),toRadians(0)).build();
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
                     .lineToLinearHeading(new Pose2d(46.4, -35.25, toRadians(-180))).build();
@@ -59,9 +58,9 @@ public class RR24 {
         }
         intake = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(17, -12), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-30, -12), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52, -12), toRadians(180))
+                .splineToConstantHeading(new Vector2d(17, -9), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -9.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52, -10.5), toRadians(180))
                 .build();
         intake2 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
@@ -106,30 +105,30 @@ public class RR24 {
     public void purp()
     {
         robot.queuer.queue(false, true);
-        robot.upAuto();
-        robot.purpurAuto();
+//        robot.upAuto();
+//        robot.purpurAuto();
         robot.queuer.waitForFinish();
         robot.followTrajSeq(spikey[bark]);
-        robot.dropAuto(0);
+//        robot.dropAuto(0);
     }
 
     public void intake(int height){
         robot.queuer.addDelay(0.0);
         robot.followTrajSeq(intake);
-        robot.resetAuto();
-        robot.intakeAuto(height);
+//        robot.resetAuto();
+//        robot.intakeAuto(height);
     }
     public void cycleIntake(int height){
         robot.followTrajSeq(intake);
-        robot.intakeAuto(height);
-        robot.queuer.addDelay(0.3);
-        robot.resetAuto();
+//        robot.intakeAuto(height);
+//        robot.queuer.addDelay(0.3);
+//        robot.resetAuto();
     }
     public void cycleIntake2(int height){
         robot.queuer.addDelay(0.2);
         robot.followTrajSeq(intake2);
-        robot.intakeAuto(height);
-        robot.resetAuto();
+//        robot.intakeAuto(height);
+//        robot.resetAuto();
     }
     public void cycleDrop(){
         robot.queuer.waitForFinish();
@@ -148,9 +147,9 @@ public class RR24 {
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
-        robot.lowAuto(false);
-        robot.yellowAuto(false);
-        robot.drop();
+//        robot.lowAuto(false);
+//        robot.yellowAuto(false);
+//        robot.drop();
     }
 
     public void park(){
