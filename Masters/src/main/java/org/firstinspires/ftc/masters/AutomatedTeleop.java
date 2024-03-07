@@ -305,7 +305,7 @@ public class AutomatedTeleop extends LinearOpMode {
             }
 
             backSlidesMove(target);
-            intakeSlidesMove(intakeSlideTarget);
+        //    intakeSlidesMove(intakeSlideTarget);
 
             if (driveMode!=DriveMode.END_GAME) {
 
@@ -333,9 +333,9 @@ public class AutomatedTeleop extends LinearOpMode {
 
                             intakeSlideTarget = intakeSlides.getCurrentPosition();
 
-//                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
-//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            intakeSlides.setPower(0.5);
+                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(0.5);
                             colorSensorElapsedTime = new ElapsedTime();
                         }
 
@@ -343,9 +343,9 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (intakeSlides.getCurrentPosition() > 50) {
                                 intakeSlideTarget=0;
 
-//                                intakeSlides.setTargetPosition(0);
-//                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                                intakeSlides.setPower(1);
+                                intakeSlides.setTargetPosition(0);
+                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                intakeSlides.setPower(1);
                                 clawAngle.setPosition(CSCons.clawAngleTransition);
                                 clawArm.setPosition(CSCons.clawArmTransition);
                                 intakeState = IntakeState.MoveToTransfer;
@@ -385,9 +385,9 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
                         if (gamepad1.right_trigger>0.1) {
                             intakeSlideTarget = 1700;
-//                            intakeSlides.setTargetPosition(1700);
-//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            intakeSlides.setPower(1);
+                            intakeSlides.setTargetPosition(1700);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
                             intakeState = IntakeState.Intake;
                         }
                         break;
@@ -423,9 +423,9 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         if (gamepad1.dpad_down) {
                             intakeSlideTarget=0;
-//                            intakeSlides.setTargetPosition(0);
-//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            intakeSlides.setPower(1);
+                            intakeSlides.setTargetPosition(0);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
                         }
 
 
@@ -448,9 +448,9 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         if (gamepad1.dpad_down) {
                             intakeSlideTarget =0;
-//                            intakeSlides.setTargetPosition(0);
-//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            intakeSlides.setPower(1);
+                            intakeSlides.setTargetPosition(0);
+                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            intakeSlides.setPower(1);
                         }
 
                         break;
@@ -565,14 +565,14 @@ public class AutomatedTeleop extends LinearOpMode {
                             outtakeHook.setPosition(CSCons.openHook);
                             outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
                             outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-//                            if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
+                            if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
                                 backSlidePos = OuttakePosition.BOTTOM;
                                 target = backSlidePos.getTarget();
                                 outtakeState = OuttakeState.MoveToTransfer;
-//                            } else if (!slideNeedstoGoDown){
-//                                outtakeElapsedTime = new ElapsedTime();
-//                                slideNeedstoGoDown = true;
-//                            }
+                            } else if (!slideNeedstoGoDown){
+                                outtakeElapsedTime = new ElapsedTime();
+                                slideNeedstoGoDown = true;
+                            }
                         }
 
                         if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
@@ -583,12 +583,12 @@ public class AutomatedTeleop extends LinearOpMode {
                             target += 15;
                         }
 
-//                        if (slideNeedstoGoDown && outtakeElapsedTime!=null && outtakeElapsedTime.milliseconds()>500){
-//                            backSlidePos = OuttakePosition.BOTTOM;
-//                            target = backSlidePos.getTarget();
-//                            outtakeState = OuttakeState.MoveToTransfer;
-//                            slideNeedstoGoDown = false;
-//                        }
+                        if (slideNeedstoGoDown && outtakeElapsedTime!=null && outtakeElapsedTime.milliseconds()>500){
+                            backSlidePos = OuttakePosition.BOTTOM;
+                            target = backSlidePos.getTarget();
+                            outtakeState = OuttakeState.MoveToTransfer;
+                            slideNeedstoGoDown = false;
+                        }
 
 
                         //what button to mode back to transfer?

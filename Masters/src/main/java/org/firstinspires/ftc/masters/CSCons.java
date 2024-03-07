@@ -32,7 +32,7 @@ public class CSCons {
     public static double outtakeMovementBackDrop =0;
     public static double outtakeMovementTransfer = .51;
     //public static double[] rightSideBack = {0.955, 0.65};
-    public static double openHook = 0.6;
+    public static double openHook = 0.45;
     public static double closeHook = 1;
     public static double openMicroHook =0.5;
     public static double closeMicroHook =0;
