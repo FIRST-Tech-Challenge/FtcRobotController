@@ -36,7 +36,11 @@ public class ArmUtils {
     final int FORWARD_BACKDROP_EXTEND_TARGET = 2300;
     final int FORWARD_BACKDROP_ARM_TARGET = 1000;
 
+    // All Sequences
     final double SEQUENCE_ARM_POWER = 0.5;
+
+    // Drone
+    final double DRONE_SHOOT = 0.4;
 
     Controller controller;
 
@@ -45,6 +49,7 @@ public class ArmUtils {
     Servo rightGrip = null;
     Servo leftGrip = null;
     Servo rollerServo = null;
+    Servo droneServo = null;
 
     int currentArmLiftPos = 0;
 
@@ -65,6 +70,7 @@ public class ArmUtils {
         rightGrip = hardwareMap.servo.get("gripR");
         leftGrip = hardwareMap.servo.get("gripL");
         rollerServo = hardwareMap.servo.get("roll");
+        droneServo = hardwareMap.servo.get("droneServo");
 
         rightGrip.setDirection(Servo.Direction.REVERSE);
         armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -233,6 +239,12 @@ public class ArmUtils {
 
         if (gamepad.right_trigger > GRIP_TRIGGER_THRESHOLD) {
             rightGrip.setPosition(GRIP_CLOSED);
+        }
+    }
+
+    public void drone(Gamepad gamepad) {
+        if (gamepad.left_trigger > GRIP_TRIGGER_THRESHOLD || gamepad.right_trigger > GRIP_TRIGGER_THRESHOLD) {
+            droneServo.setPosition(DRONE_SHOOT);
         }
     }
 }
