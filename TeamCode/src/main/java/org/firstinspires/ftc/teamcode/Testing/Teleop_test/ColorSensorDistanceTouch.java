@@ -76,9 +76,11 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
      *
      */
     ColorSensor sensorColor;
+    ColorSensor sensorColor2;
     DistanceSensor sensorDistance;
+    DistanceSensor sensorDistance2;
     TouchSensor    touchSensor;
-
+    TouchSensor touchSensor2;
     @Override
     public void runOpMode() {
 
@@ -86,18 +88,22 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
 
         // get a reference to the color sensor.
         sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorColor2 = hardwareMap.get(ColorSensor.class, "sensor_color_distance_2");
 
         // get a reference to the distance sensor that shares the same name.
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
-
+        sensorDistance2 = hardwareMap.get(DistanceSensor.class, "sensor_color_distance_2");
         // get a reference to our digitalTouch object.
         touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
+        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
+        float hsv2Values[] = {0F, 0F, 0F};
 
         // values is a reference to the hsvValues array.
         final float values[] = hsvValues;
+        final float values2[] = hsvValues;
 
         // sometimes it helps to multiply the raw RGB values with a scale factor
         // to amplify/accentuate the measured values.
@@ -126,22 +132,28 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             // send the info back to driver station using telemetry function.
             // if the digital channel returns true it's HIGH and the button is unpressed.
             if ( touchSensor.isPressed() ) {
-                telemetry.addData("Digital Touch", "Is Pressed");
+                telemetry.addData("Left Sensor", "Is Currently Pressed");
             } else
-                telemetry.addData("Digital Touch", "Is Not Pressed");
+                telemetry.addData("Left Sensor", "Is Not Currently Pressed");
+            if ( touchSensor2.isPressed() ) {
+                telemetry.addData("Right Sensor", "Is Currently Pressed");
+            } else
+                telemetry.addData("Right Sensor", "Is Not Currently Pressed");
             // send the info back to driver station using telemetry function.
-            telemetry.addData("Distance (cm)",
+            telemetry.addData("Left Distance (cm)",
                     String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addLine("Alpha");
-            telemetry.addLine("Red  ");
-            telemetry.addLine("Green");
-            telemetry.addLine("Blue ");
-            telemetry.addData("Hue", hsvValues[0]);
-            telemetry.addData("Saturation", hsvValues[1]);
-            telemetry.addData("Value", hsvValues[2]);
-            telemetry.addData("Red", sensorColor.red());
-            telemetry.addData("Blue", sensorColor.blue());
-            telemetry.addData("Green", sensorColor.green());
+            telemetry.addData("Right Distance (cm)",
+                    String.format(Locale.US, "%.02f", sensorDistance2.getDistance(DistanceUnit.CM)));
+//            telemetry.addLine("Alpha");
+//            telemetry.addLine("Red  ");
+//            telemetry.addLine("Green");
+//            telemetry.addLine("Blue ");
+//            telemetry.addData("Hue", hsvValues[0]);
+//            telemetry.addData("Saturation", hsvValues[1]);
+//            telemetry.addData("Value", hsvValues[2]);
+//            telemetry.addData("Red", sensorColor.red());
+//            telemetry.addData("Blue", sensorColor.blue());
+//            telemetry.addData("Green", sensorColor.green());
             // convert the RGB values to HSV values.
 // multiply by the SCALE_FACTOR.
 // then cast it back to int (SCALE_FACTOR is a double)
@@ -149,39 +161,45 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
+            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
+                    (int) (sensorColor2.green() * SCALE_FACTOR),
+                    (int) (sensorColor2.blue() * SCALE_FACTOR),
+                    hsv2Values);
 
-            String detectedColor = "Unknown";
-
+            String leftdetectedColor = "Unknown";
+            String rightdetectedColor = "Unknown";
             double hue = hsvValues[0];
-//            if (hue >= 0 && hue < 60 || hue > 360) {
-//                detectedColor = "Red";
-//            } else if (hue >= 60 && hue < 120) {
-//                detectedColor = "Yellow";
-//            } else if (hue >= 120 && hue < 200) {
-//                detectedColor = "Green";
-//            } else if (hue >= 215 && hue < 300) {
-//                detectedColor = "Blue";
-//            } else if (hue >= 180 && hue < 215) {
-//                detectedColor = "Purple"; // Adjust values for purple
-//            }
-
+            double hue2 = hsv2Values[0];
             if (hue >= 0 && hue < 60 || hue > 360) {
-                detectedColor = "Red";
+                leftdetectedColor = "Red";
             } else if (hue >= 60 && hue < 120) {
-                detectedColor = "Yellow";
+                leftdetectedColor = "Yellow";
             } else if (hue >= 120 && hue < 150) {
-                detectedColor = "Green";
+                leftdetectedColor = "Green";
             } else if (hue >= 210 && hue < 300) {
-                detectedColor = "Blue";
+                leftdetectedColor = "Blue";
             } else if (hue >= 180 && hue < 210) {
-                detectedColor = "Purple";
+                leftdetectedColor = "Purple";
             } else if(hue > 150 && hue < 180){
-                detectedColor = "White";
-            } else{
-                detectedColor = "Not Detected";
+                leftdetectedColor = "White";
             }
 
-            telemetry.addData("Detected Color", detectedColor);
+            if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
+                rightdetectedColor = "Red";
+            } else if (hue2 >= 60 && hue2 < 120) {
+                rightdetectedColor = "Yellow";
+            } else if (hue2 >= 120 && hue2 < 150) {
+                rightdetectedColor = "Green";
+            } else if (hue2 >= 210 && hue2 < 300) {
+                rightdetectedColor = "Blue";
+            } else if (hue2 >= 180 && hue2 < 210) {
+                rightdetectedColor = "Purple";
+            } else if(hue2 > 150 && hue2 < 180){
+                rightdetectedColor = "White";
+            }
+
+            telemetry.addData("Left Color", leftdetectedColor);
+            telemetry.addData("Right Color", rightdetectedColor);
             telemetry.update();
 
 
