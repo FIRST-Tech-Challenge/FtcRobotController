@@ -216,7 +216,7 @@ public class Main_Tele_op extends LinearOpMode {
     public void encoderSlideUpInches(double Inches) {
         double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
         SlideTicks += TicksToMove;
-        if ((SlideTicks) < (COUNTS_PER_INCH_SLIDE * 70)) {
+        if ((SlideTicks) < (COUNTS_PER_INCH_SLIDE * 65)) {
             slide.setTargetPosition(((int) TicksToMove));
             slide.setPower(0.5);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
