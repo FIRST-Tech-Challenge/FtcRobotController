@@ -10,8 +10,8 @@ public class ArmUtils {
 
     // Arm
     final double ARM_EXTEND_SPEED = 0.5;
-    final double ARM_LIFT_SPEED = 6;
-    final double ARM_LIFT_POWER = 0.6;
+    final double ARM_LIFT_SPEED = 40;
+    final double ARM_LIFT_POWER = 0.4;
     final int ARM_MAX_POSITION = 3200;
     final int ARM_MIN_POSITION = -100;
     final int ARM_EXTEND_LIMIT = 3600;
