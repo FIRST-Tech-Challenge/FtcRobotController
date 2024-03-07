@@ -10,19 +10,19 @@ public class CSCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     public static double pixelDetectThreshold = 350;
     public static double clawOpen = 0.05;
-    public static double clawClosed = 0.525;
+    public static double clawClosed = 0.4;
     public static double clawTransfer = 0.2; // .65
     public static double clawAngleGroundToThree = .98;
     public static double clawAngleFourToFive = 1;
     public static double clawAngleTransition = .34;
-    public static double clawAngleTransfer = .05;
+    public static double clawAngleTransfer = .15;
     public static double clawArmGround = .78;
     public static double clawArm2 = .795;
-    public static double clawArm3 = .755;
+    public static double clawArm3 = .68;
     public static double clawArm4 = .73;
-    public static double clawArm5 = .695;
+    public static double clawArm5 = .59;
     public static double clawArmTransition = .23;
-    public static double clawArmTransfer = .20;
+    public static double clawArmTransfer = .23;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0.07;
@@ -51,6 +51,7 @@ public class CSCons {
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
+        AUTO(900),
         LOW(1400),
         MID(2400),
         HIGH(3400);

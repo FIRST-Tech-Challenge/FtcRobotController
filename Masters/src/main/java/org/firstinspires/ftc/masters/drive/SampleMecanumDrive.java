@@ -3,6 +3,9 @@ package org.firstinspires.ftc.masters.drive;
 import static org.firstinspires.ftc.masters.CSCons.clawArmTransfer;
 import static org.firstinspires.ftc.masters.CSCons.clawClosed;
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
+import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
+import static org.firstinspires.ftc.masters.CSCons.openHook;
+import static org.firstinspires.ftc.masters.CSCons.openMicroHook;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -36,6 +39,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -263,6 +267,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         clawServo.setPosition(clawOpen);
     }
 
+    public void transferClaw(){
+        clawServo.setPosition(clawTransfer);
+    }
+
     public void closeClaw(){
         clawServo.setPosition(clawClosed);
     }
@@ -278,11 +286,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         clawArm.setPosition(CSCons.clawArmGround);
     }
 
-    //TODO: figure out servo position for top of stack
+
     public void intakeToTopStack() {
         clawAngle.setPosition(CSCons.clawAngleGroundToThree);
-        clawArm.setPosition(CSCons.clawArmGround);
+        clawArm.setPosition(CSCons.clawArm5);
     }
+
+    //pick up pixel 3 and 4
+    public void intakeToPosition3(){
+        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+        clawArm.setPosition(CSCons.clawArm3);
+    }
+
+
 
     public void intakeToTransfer() {
         clawAngle.setPosition(CSCons.clawAngleTransfer);
@@ -293,6 +309,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         microHook.setPosition(CSCons.closeMicroHook);
         outtakeHook.setPosition(CSCons.closeHook);
     }
+     public void closeSmallHook(){
+        microHook.setPosition(CSCons.closeMicroHook);
+     }
+
+     public void openLargeHook(){
+        outtakeHook.setPosition(openHook);
+     }
+
+     public void openSmallHook(){
+        microHook.setPosition(openMicroHook);
+     }
 
     public void outtakeToBackdrop() {
         outtakeHook.setPosition(CSCons.closeHook);
@@ -523,6 +550,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public DcMotor getIntakeSlides() {
         return intakeSlides;
+    }
+
+    public RevColorSensorV3 getColorSensor(){
+        return colorSensor;
     }
 
 

@@ -14,7 +14,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "CenterStage Piles Blue", group = "competition")
+//@Autonomous(name = "CenterStage Piles Blue", group = "competition")
 public class SkystonePilesSideBlue extends LinearOpMode {
 
     enum State {
