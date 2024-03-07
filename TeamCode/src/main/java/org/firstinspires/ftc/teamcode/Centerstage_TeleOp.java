@@ -71,6 +71,12 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftBackDrive.getPower(),
                     gobbler.driveTrain.rightBackDrive.getPower());
+            telemetry.addData("Front Driving Motors (Left, Right)", "%d, %d",
+                    gobbler.driveTrain.leftFrontDrive.getCurrentPosition(),
+                    gobbler.driveTrain.rightFrontDrive.getCurrentPosition());
+            telemetry.addData("Back Driving Motors (Left, Right)", "%d, %d",
+                    gobbler.driveTrain.leftBackDrive.getCurrentPosition(),
+                    gobbler.driveTrain.rightBackDrive.getCurrentPosition());
             telemetry.addData("Intake Motor Power",
                    gobbler.intake.intakeMotor.getPower());
             telemetry.addData("Lift Motor Power",
