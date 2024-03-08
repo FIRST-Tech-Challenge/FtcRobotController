@@ -195,7 +195,7 @@ public class Main_Tele_op extends LinearOpMode {
             }
 
 
-
+            // add arm code here
 
 
             if ((runtime.seconds() - timerUp) >= slideCooldown) {
@@ -215,44 +215,21 @@ public class Main_Tele_op extends LinearOpMode {
 
     public void encoderSlideUpInches(double Inches) {
         double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
-        SlideTicks += TicksToMove;
-        if ((SlideTicks) < (COUNTS_PER_INCH_SLIDE * 65)) {
-            slide.setTargetPosition(((int) TicksToMove));
-            slide.setPower(0.5);
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            sleep((long) (Inches * 2 * 25.4));
-            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slide.setPower(0);
-
-            telemetry.addData("Up", "Working");
-            telemetry.update();
-
-        } else {
-            SlideTicks -= TicksToMove;
-            telemetry.addData("Up", "Not Working");
-            telemetry.update();
-        }
+        slide.setTargetPosition(((int) TicksToMove));
+        slide.setPower(0.5);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep((long) (Inches * 2 * 25.4));
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setPower(0);
     }
 
     public void encoderSlideDownInches(double inches) {
         double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
-        SlideTicks -= TicksToMove;
-        if ((SlideTicks) > (COUNTS_PER_INCH_SLIDE * 3)) {
-
-            slide.setTargetPosition(-((int) TicksToMove));
-            slide.setPower(0.5);
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            sleep((long) (inches * 2 * 25.4));
-            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slide.setPower(0);
-
-            telemetry.addData("Down", "Working");
-            telemetry.update();
-
-        } else {
-            SlideTicks += TicksToMove;
-            telemetry.addData("Down", "Not Working");
-            telemetry.update();
-        }
+        slide.setTargetPosition(-((int) TicksToMove));
+        slide.setPower(0.5);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep((long) (inches * 2 * 25.4));
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setPower(0);
     }
 }
