@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+//import static java.lang.Thread.sleep;
+
+
+import static android.os.SystemClock.sleep;
+
+import android.icu.text.Transliterator;
+
 import com.qualcomm.robotcore.hardware.*;
 
 public class ArmUtils {
@@ -40,7 +47,7 @@ public class ArmUtils {
     final double SEQUENCE_ARM_POWER = 0.5;
 
     // Drone
-    final double DRONE_SHOOT = 0.4;
+    final double DRONE_SHOOT = 0.3;
 
     Controller controller;
 
@@ -243,8 +250,13 @@ public class ArmUtils {
     }
 
     public void drone(Gamepad gamepad) {
-        if (gamepad.left_trigger > GRIP_TRIGGER_THRESHOLD || gamepad.right_trigger > GRIP_TRIGGER_THRESHOLD) {
+        //if (gamepad.left_trigger > GRIP_TRIGGER_THRESHOLD || gamepad.right_trigger > GRIP_TRIGGER_THRESHOLD) {
+            //droneServo.setPosition(DRONE_SHOOT);
+        //}
+
+        if (gamepad.guide) {
             droneServo.setPosition(DRONE_SHOOT);
+            droneServo.getController().pwmDisable();
         }
     }
 }
