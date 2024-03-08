@@ -37,10 +37,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 }
 dependencies {
-    implementation 'org.openftc:easyopencv:1.7.0'
+    implementation 'org.openftc:easyopencv:1.7.2'
     implementation 'org.openftc:apriltag:2.0.0'
 }
 dependencies {
-    implementation 'com.acmerobotics.roadrunner:ftc:0.1.12'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.15'
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.12"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.15"
 }
