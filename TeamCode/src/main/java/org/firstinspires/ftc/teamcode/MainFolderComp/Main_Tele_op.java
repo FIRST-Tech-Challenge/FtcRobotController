@@ -76,7 +76,7 @@ public class Main_Tele_op extends LinearOpMode {
     Boolean timeoutDown = true;
     Double timerDown = 0.0;
 
-    double slideCooldown = 0.5;
+    double slideCooldown = 0.5; // in seconds
 
 
 //    private Servo drone = null;
