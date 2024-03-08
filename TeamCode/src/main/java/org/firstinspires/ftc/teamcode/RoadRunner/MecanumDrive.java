@@ -15,10 +15,12 @@ import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
@@ -470,19 +472,19 @@ public final class MecanumDrive {
         c.strokePolyline(xPoints, yPoints);
     }
 
-//    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
-//        return new TrajectoryActionBuilder(
-//                new TurnAction,
-//                new FollowTrajectoryAction,
-//                new TrajectoryBuilderParams(
-//                        1e-6,
-//                        new ProfileParams(
-//                                0.25, 0.1, 1e-2
-//                        )
-//                ),
-//                beginPose, 0.0,
-//                defaultTurnConstraints,
-//                defaultVelConstraint, defaultAccelConstraint
-//        );
-//    }
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
+        return new TrajectoryActionBuilder(
+                TurnAction::new,
+                FollowTrajectoryAction::new,
+                new TrajectoryBuilderParams(
+                        1e-6,
+                        new ProfileParams(
+                                0.25, 0.1, 1e-2
+                        )
+                ),
+                beginPose, 0.0,
+                defaultTurnConstraints,
+                defaultVelConstraint, defaultAccelConstraint
+        );
+    }
 }
