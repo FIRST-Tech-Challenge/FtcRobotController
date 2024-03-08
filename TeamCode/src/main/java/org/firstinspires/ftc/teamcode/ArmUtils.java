@@ -250,12 +250,9 @@ public class ArmUtils {
     }
 
     public void drone(Gamepad gamepad) {
-        //if (gamepad.left_trigger > GRIP_TRIGGER_THRESHOLD || gamepad.right_trigger > GRIP_TRIGGER_THRESHOLD) {
-            //droneServo.setPosition(DRONE_SHOOT);
-        //}
-
         if (gamepad.guide) {
             droneServo.setPosition(DRONE_SHOOT);
+            sleep(100);
             droneServo.getController().pwmDisable();
         }
     }
