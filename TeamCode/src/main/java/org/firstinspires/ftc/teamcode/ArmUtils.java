@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-//import static java.lang.Thread.sleep;
-
-
 import static android.os.SystemClock.sleep;
-
-import android.icu.text.Transliterator;
 
 import com.qualcomm.robotcore.hardware.*;
 
@@ -51,12 +46,12 @@ public class ArmUtils {
 
     Controller controller;
 
-    DcMotor armLift = null;
-    DcMotor armExtend = null;
-    Servo rightGrip = null;
-    Servo leftGrip = null;
-    Servo rollerServo = null;
-    Servo droneServo = null;
+    DcMotor armLift;
+    DcMotor armExtend;
+    Servo rightGrip;
+    Servo leftGrip;
+    Servo rollerServo;
+    Servo droneServo;
 
     int currentArmLiftPos = 0;
 
@@ -107,11 +102,6 @@ public class ArmUtils {
 
             startupSequenceActive = false;
         }
-
-        //sleep(ROLLER_WAIT_TIME);
-
-        //currentArmLiftPos = 0;
-        //armLift.setTargetPosition(currentArmLiftPos);
     }
 
     void pixelPickupSequence() {
