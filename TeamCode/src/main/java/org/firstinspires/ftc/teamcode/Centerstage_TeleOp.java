@@ -11,6 +11,8 @@ public class Centerstage_TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+
         // Initiates the robots system and subsystems!
         Gobbler gobbler = new Gobbler(hardwareMap);
 
@@ -21,7 +23,6 @@ public class Centerstage_TeleOp extends LinearOpMode {
         ElapsedTime hangServoTime = new ElapsedTime();
         ElapsedTime intakeDirectionToggle = new ElapsedTime();
 
-//        gobbler.outtake.resetLiftEncoders();
         gobbler.outtake.closeMailbox();
 
         telemetry.addData("Status", "Waiting for Start");
@@ -85,6 +86,8 @@ public class Centerstage_TeleOp extends LinearOpMode {
                     gobbler.outtake.getLiftMotorPos());
             telemetry.addData("Bottom Limit Status",
                     String.valueOf(gobbler.outtake.bottomLimit.isPressed()));
+            telemetry.addData("Stage Motor",
+                    gobbler.outtake.stageMotor.getPower());
             telemetry.addData("Trapdoor Status",
                    String.valueOf(gobbler.outtake.mailboxOpen));
             telemetry.addData("Drone Status",

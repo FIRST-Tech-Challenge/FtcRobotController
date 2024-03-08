@@ -29,6 +29,7 @@ public class Outtake {
     // This functions uses one double input to drive the lift.
     public void driveLift(double power) {
 
+
         if (bottomLimit.isPressed() && power < 0.0) {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -61,19 +62,23 @@ public class Outtake {
     }
 
     public void openMailbox() {
-        trapdoorServo.setPosition( 1.0);
+        trapdoorServo.setPosition(1.0);
         mailboxOpen = true;
     }
 
     public void closeMailbox() {
         trapdoorServo.setPosition(0.0);
         mailboxOpen = false;
+
+        outtakeMotor.setPower(power);
+
     }
 
     // This function controls the trapdoor.
     // The first input is the button used to control the trap door.
     // The second input is the time the function uses to space out inputs.
     public void trapdoor(boolean button, ElapsedTime time) {
+
         if (button && time.time() > .50 && !mailboxOpen) {
             mailboxOpen = true;
             time.reset();
@@ -83,8 +88,17 @@ public class Outtake {
         else if (button && time.time() > .50 && mailboxOpen) {
             mailboxOpen = false;
             time.reset();
+
             trapdoorServo.setPosition(0.0);
 
         }
+    }
+
+    public void openTrapdoor() {
+        trapdoorServo.setPosition(1.0);
+    }
+
+    public void closeTrapdoor() {
+        trapdoorServo.setPosition(0.0);
     }
 }

@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -56,7 +55,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "centerstage_bluemayhem.tflite";
+    private static final String TFOD_MODEL_ASSET = "bluemayhem_v3.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";

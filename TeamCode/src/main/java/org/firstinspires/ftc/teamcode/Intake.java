@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Intake {
     DcMotor intakeMotor;
 
+    Servo intakeServo;
+
     boolean intakeToggle = false;
     boolean intakeDirection = true;
 
@@ -16,6 +18,7 @@ public class Intake {
 
     public Intake(HardwareMap hwMap) {
         intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
+
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
@@ -27,7 +30,9 @@ public class Intake {
             intakeToggle = true;
             time.reset();
 
+
             intakeMotor.setPower(intakePower);
+
 
         }
         else if (button && time.time() > .25 && intakeToggle) {
@@ -38,6 +43,7 @@ public class Intake {
 
         }
     }
+
 
     public void reverseIntake(boolean button, ElapsedTime time) {
         if (button && time.time() > .25 && !intakeDirection) {
@@ -58,3 +64,13 @@ public class Intake {
 
 
 } // end class
+
+    public void turnOffConveyorBelt() {
+        intakeMotor.setPower(0.0);
+    }
+
+    public void turnOnConveyorBelt() {
+        intakeMotor.setPower(1.0);
+    }
+}
+
