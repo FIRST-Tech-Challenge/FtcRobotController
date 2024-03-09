@@ -31,8 +31,10 @@ package org.firstinspires.ftc.teamcode.MainFolderComp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -63,6 +65,9 @@ public class Main_Tele_op extends LinearOpMode {
     private DcMotor rb_drive = null;
     private DcMotor rig = null;
     private DcMotor slide = null;
+    private DcMotor elbow = null;
+
+    private
     static final double  COUNTS_PER_MOTOR_REV_SLIDE  = 537.7 ;         // eg: GOBILDA Motor Encoder
     static final double  DRIVE_GEAR_REDUCTION  = 1.0 ;           // No External Gearing.
     static final double WHEEL_DIAMETER_INCHES_SLIDE = 1.40357115168 ; // For figuring circumference
@@ -84,6 +89,9 @@ public class Main_Tele_op extends LinearOpMode {
 
     private Servo l_flick = null;
     private Servo r_flick = null;
+    private Servo leftBlock = null;
+    private Servo rightBlock = null;
+    private CRServo intake = null;
 
 //    private Servo autoarm = null;
 
@@ -102,12 +110,16 @@ public class Main_Tele_op extends LinearOpMode {
         rb_drive = hardwareMap.get(DcMotor.class, "rb_drive");
         rig = hardwareMap.get(DcMotor.class, "rig");
         slide = hardwareMap.get(DcMotor.class, "slide");
+        elbow = hardwareMap.get(DcMotor.class, "hexy");
 
 //        drone = hardwareMap.get(Servo.class, "air");
 //        droneh = hardwareMap.get(Servo.class, "droneh");
 
         l_flick = hardwareMap.get(Servo.class, "lflick");
         r_flick = hardwareMap.get(Servo.class, "rflick");
+        leftBlock = hardwareMap.get(Servo.class, "lflap");
+        rightBlock = hardwareMap.get(Servo.class, "rflap");
+        intake = hardwareMap.get(CRServo.class, "intake");
 
 //        autoarm = hardwareMap.get(Servo.class, "autoarm");
 
@@ -118,9 +130,11 @@ public class Main_Tele_op extends LinearOpMode {
         lb_drive.setDirection(DcMotorEx.Direction.REVERSE);
         rig.setDirection(DcMotorEx.Direction.REVERSE);
         slide.setDirection(DcMotorEx.Direction.REVERSE);
+        intake.setDirection(CRServo.Direction.REVERSE);
 
         rig.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -186,6 +200,8 @@ public class Main_Tele_op extends LinearOpMode {
                 telemetry.update();
             }
 
+
+
             if (gamepad2.right_bumper) {
                 l_flick.setPosition(0);
                 r_flick.setPosition(0.577);
@@ -193,9 +209,28 @@ public class Main_Tele_op extends LinearOpMode {
                 l_flick.setPosition(0.577);
                 r_flick.setPosition(0);
             }
+            if(gamepad2.left_bumper){
+                intake.setPower(1);
+            }
+            else{
+                intake.setPower(0);
+            }
+            if(gamepad2.dpad_left){
+                leftBlock.setPosition(0.5);
+            }
+            else{
+                leftBlock.setPosition(0);
+            }
+            if(gamepad2.dpad_right){
+                rightBlock.setPosition(0.5);
+            }
+            else{
+                rightBlock.setPosition(0);
+            }
 
 
-            // add arm code here
+            double elbowPower = gamepad2.left_stick_y;
+            elbow.setPower(elbowPower);
 
 
             if ((runtime.seconds() - timerUp) >= slideCooldown) {
