@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -28,21 +29,19 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
     public final Encoder parl, parr, perp;
 
-    public final double inPerTick;
+    public final double inPerTick = 0.002981811;
 
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        // TODO: make sure your config has **motors** with these names (or change them)
-        //   the encoders should be plugged into the slot matching the named motor
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+
         parl = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rig")));
         parr = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "hexy")));
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "slide")));
 
-        // TODO: reverse encoder directions if needed
-        //   par0.setDirection(DcMotorSimple.Direction.REVERSE);
+
+           perp.setDirection(DcMotor.Direction.REVERSE);
 
         this.inPerTick = inPerTick;
 
