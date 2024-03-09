@@ -109,9 +109,9 @@ public class BradBot extends BasicRobot {
     twrist = new Twrist();
     ultras = new Ultrasonics();
     wrist = new Wrist();
-    path = new Path();
+//    path = new Path();
     purped = false;
-    ppui = new PPUI(roadrun);
+//    ppui = new PPUI(roadrun);
     voltage = voltageSensor.getVoltage();
     brokenFollowing= false;
     //12.4,12.2
@@ -817,21 +817,21 @@ public class BradBot extends BasicRobot {
 //    LOGGER.setLogLevel(RFLogger.Severity.FINER);
 //    LOGGER.log("updating each component");
     super.update();
-    arm.update();
+//    arm.update();
     if (!isTeleop) {
-      cv.update();
+//      cv.update();
     }
-    intake.update();
-    lift.update();
+//    intake.update();
+//    lift.update();
     roadrun.update();
-    wrist.update();
-    if (!isTeleop) {
+//    wrist.update();
+    if (isTeleop) {
       ultras.update();
+      magazine.update();
+      hanger.update();
     }
-    twrist.update();
-    claw.update();
-    magazine.update();
-    hanger.update();
+//    twrist.update();
+//    claw.update();
   }
 
   public void stop() {

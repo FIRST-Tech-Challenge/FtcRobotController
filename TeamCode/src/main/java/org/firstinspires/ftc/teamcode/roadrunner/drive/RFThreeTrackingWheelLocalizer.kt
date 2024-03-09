@@ -31,7 +31,7 @@ abstract class RFThreeTrackingWheelLocalizer(
         get() = currentPose
         set(value) {
             lastWheelPositions = emptyList()
-            poseHeadOffset = value.heading- currentPose.heading
+//            poseHeadOffset = value.heading- currentPose.heading
             currentPose = value
         }
     override var poseVelocity: Pose2d? = null
@@ -78,9 +78,9 @@ abstract class RFThreeTrackingWheelLocalizer(
                 .zip(lastWheelPositions)
                 .map { it.first - it.second }
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
-            val heading = currentPose.heading;
+//            val heading = currentPose.heading
             currentPose = Kinematics.relativeOdometryUpdate(currentPose, robotPoseDelta)
-            currentPose = Pose2d(currentPose.x, currentPose.y, heading)
+//            currentPose = Pose2d(currentPose.x, currentPose.y, heading)
         }
 
         val wheelVelocities = getWheelVelocities()
