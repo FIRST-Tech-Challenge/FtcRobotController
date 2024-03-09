@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Disabled
+@TeleOp( name = "postion for stack")
 public class EncoderTest extends LinearOpMode {
     Hardware robot = new Hardware();
     private int ticksForCascade = 810;
@@ -41,14 +41,15 @@ public class EncoderTest extends LinearOpMode {
 
         robot.init(hardwareMap);
         robot.arm.setMode(RUN_USING_ENCODER);
-        robot.arm.setTargetPosition(0);
+        robot.arm.setTargetPosition(-75);
         robot.arm.setMode(RUN_TO_POSITION);
-        robot.arm.setPower(.3);
+        robot.arm.setPower(.9);
+        robot.wrist.setPosition(.4);
 //        robot.wrist.setPosition(1);
 //        telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition());
 //        telemetry.addData("CascadeRight: ", robot.cascadeMotorRight.getCurrentPosition());
 //        telemetry.update();
-        robot.resetEncodersCascade();
+//        robot.resetEncodersCascade();
 
 //        telemetry.addData("arm: ", robot.arm.getCurrentPosition()); //490
 //        telemetry.addData("CascadeLeft: ", robot.cascadeMotorLeft.getCurrentPosition()); //800

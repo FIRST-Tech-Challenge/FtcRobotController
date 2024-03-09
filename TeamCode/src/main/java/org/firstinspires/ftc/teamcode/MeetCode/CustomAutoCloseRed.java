@@ -199,15 +199,16 @@ public class CustomAutoCloseRed extends LinearOpMode {
             while (robot.arm.getCurrentPosition() > 50)
                 sleep(50);
             robot.cascadeLock(0);
-
-            if (park.equals("Left")) {
-                robot.encoderStrafeLeft(30);
-                robot.encoderDrive(18);
-            }
-            else if (park.equals("Right")){
-                robot.encoderStrafeRight(30);
-                robot.encoderDrive(18);
-            }
+            robot.encoderStrafeLeft(30);
+            robot.encoderDrive(-60);
+//            if (park.equals("Left")) {
+//                robot.encoderStrafeLeft(30);
+//                robot.encoderDrive(18);
+//            }
+//            else if (park.equals("Right")){
+//                robot.encoderStrafeRight(30);
+//                robot.encoderDrive(18);
+//            }
 
         }
         else if(position.equals("Right")){
