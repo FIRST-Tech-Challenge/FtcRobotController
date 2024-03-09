@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -89,8 +88,8 @@ public class Main_Tele_op extends LinearOpMode {
 
     private Servo l_flick = null;
     private Servo r_flick = null;
-    private Servo leftBlock = null;
-    private Servo rightBlock = null;
+    private Servo leftFlap = null;
+    private Servo rightFlap = null;
     private CRServo intake = null;
 
 //    private Servo autoarm = null;
@@ -117,8 +116,8 @@ public class Main_Tele_op extends LinearOpMode {
 
         l_flick = hardwareMap.get(Servo.class, "lflick");
         r_flick = hardwareMap.get(Servo.class, "rflick");
-        leftBlock = hardwareMap.get(Servo.class, "lflap");
-        rightBlock = hardwareMap.get(Servo.class, "rflap");
+        leftFlap = hardwareMap.get(Servo.class, "lflap");
+        rightFlap = hardwareMap.get(Servo.class, "rflap");
         intake = hardwareMap.get(CRServo.class, "intake");
 
 //        autoarm = hardwareMap.get(Servo.class, "autoarm");
@@ -204,10 +203,10 @@ public class Main_Tele_op extends LinearOpMode {
 
             if (gamepad2.right_bumper) {
                 l_flick.setPosition(0);
-                r_flick.setPosition(0.577);
+                r_flick.setPosition(1);
             } else {
                 l_flick.setPosition(0.577);
-                r_flick.setPosition(0);
+                r_flick.setPosition(0.423);
             }
             if(gamepad2.left_bumper){
                 intake.setPower(1);
@@ -216,16 +215,16 @@ public class Main_Tele_op extends LinearOpMode {
                 intake.setPower(0);
             }
             if(gamepad2.dpad_left){
-                leftBlock.setPosition(0.5);
+                leftFlap.setPosition(0);
             }
             else{
-                leftBlock.setPosition(0);
+                leftFlap.setPosition(0);
             }
             if(gamepad2.dpad_right){
-                rightBlock.setPosition(0.5);
+                rightFlap.setPosition(0.5);
             }
             else{
-                rightBlock.setPosition(0);
+                rightFlap.setPosition(0);
             }
 
 
