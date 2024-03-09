@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -83,9 +84,12 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
     TouchSensor touchSensor2;
     @Override
     public void runOpMode() {
-
+        double delay = 2.5;
         String foundColor = "null";
+        ElapsedTime runtime = new ElapsedTime();
 
+        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
+        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
         // get a reference to the color sensor.
         sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
         sensorColor2 = hardwareMap.get(ColorSensor.class, "sensor_color_distance_2");
@@ -133,13 +137,29 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             // if the digital channel returns true it's HIGH and the button is unpressed.
             if ( touchSensor.isPressed() ) {
                 telemetry.addData("Left Sensor", "Is Currently Pressed");
+                lastLeftTime = runtime.seconds();
             } else
                 telemetry.addData("Left Sensor", "Is Not Currently Pressed");
             if ( touchSensor2.isPressed() ) {
                 telemetry.addData("Right Sensor", "Is Currently Pressed");
+                lastRightTime = runtime.seconds();
             } else
                 telemetry.addData("Right Sensor", "Is Not Currently Pressed");
             // send the info back to driver station using telemetry function.
+            if(runtime.seconds() - lastLeftTime <= delay){
+                telemetry.addData("Left S ide", "Hit");
+            }
+            else{
+                telemetry.addData("Left Side", "Not Hit");
+
+            }
+            if(runtime.seconds() - lastRightTime <= delay){
+                telemetry.addData("Right Side", "Hit");
+            }
+            else{
+                telemetry.addData("Right Side", "Not Hit");
+            }
+
             telemetry.addData("Left Distance (cm)",
                     String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
             telemetry.addData("Right Distance (cm)",
