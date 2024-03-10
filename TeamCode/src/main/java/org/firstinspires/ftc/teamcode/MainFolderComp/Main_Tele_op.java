@@ -91,8 +91,7 @@ public class Main_Tele_op extends LinearOpMode {
     double slideCooldown = 0.5; // in seconds
 
 
-//    private Servo drone = null;
-//    private Servo droneh = null;
+    private Servo drone = null;
 
     private Servo l_flick = null;
     private Servo r_flick = null;
@@ -132,8 +131,7 @@ public class Main_Tele_op extends LinearOpMode {
         touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
 
 
-//        drone = hardwareMap.get(Servo.class, "air");
-//        droneh = hardwareMap.get(Servo.class, "droneh");
+        drone = hardwareMap.get(Servo.class, "air");
 
         l_flick = hardwareMap.get(Servo.class, "lflick");
         r_flick = hardwareMap.get(Servo.class, "rflick");
@@ -200,14 +198,11 @@ public class Main_Tele_op extends LinearOpMode {
             lb_drive.setPower(lbPower);
             rb_drive.setPower(rbPower);
 
-//            if (gamepad1.x) {
-//                droneh.setPosition(0); //hold
-//                sleep(500);
-//                drone.setPosition(0);
-//            }
-//            if (gamepad1.y) {
-//                drone.setPosition(1);
-//            }
+            if (gamepad1.x) {
+                drone.setPosition(0);
+            } else {
+                drone.setPosition(1);
+            }
 
             if (gamepad2.dpad_up) {
                 rig.setPower(1);
@@ -225,7 +220,7 @@ public class Main_Tele_op extends LinearOpMode {
             }
 
             if (gamepad2.a && !timeoutDown) {
-                encoderSlideDownInches(5);
+                encoderSlideDownInches(3);
                 timeoutDown = true;
                 timerDown = runtime.seconds();
                 telemetry.update();
@@ -235,11 +230,12 @@ public class Main_Tele_op extends LinearOpMode {
 
             if (gamepad2.right_bumper) {
                 l_flick.setPosition(0);
-                r_flick.setPosition(1);
+                r_flick.setPosition(0.9);
             } else {
-                l_flick.setPosition(0.577);
-                r_flick.setPosition(0.423);
+                l_flick.setPosition(0.9);
+                r_flick.setPosition(0);
             }
+
             if(gamepad2.left_bumper){
                 intake.setPower(1);
             }
@@ -247,13 +243,13 @@ public class Main_Tele_op extends LinearOpMode {
                 intake.setPower(0);
             }
             if(gamepad2.dpad_left){
-                leftFlap.setPosition(0);
+                leftFlap.setPosition(0.4);
             }
             else{
-                leftFlap.setPosition(0);
+                leftFlap.setPosition(1);
             }
             if(gamepad2.dpad_right){
-                rightFlap.setPosition(0.5);
+                rightFlap.setPosition(0.6);
             }
             else{
                 rightFlap.setPosition(0);
