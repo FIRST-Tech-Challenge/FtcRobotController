@@ -233,9 +233,9 @@ public class Main_Tele_op extends LinearOpMode {
 
             if (gamepad2.right_bumper) {
                 l_flick.setPosition(0);
-                r_flick.setPosition(0.9);
+                r_flick.setPosition(0.68);
             } else {
-                l_flick.setPosition(0.9);
+                l_flick.setPosition(0.59);
                 r_flick.setPosition(0);
             }
 

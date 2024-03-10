@@ -37,9 +37,9 @@ public class A4bluePipeline extends OpenCvPipeline {
     @Override
     public void init(Mat input) {
 
-        zone1 = input.submat(new Rect(175, 180, 130, 145));
-        zone2 = input.submat(new Rect(590, 230, 50, 140));
-        zone3 = input.submat(new Rect(555, 290, 35, 40));
+        zone1 = input.submat(new Rect(0, 325, 130, 150));
+        zone2 = input.submat(new Rect(640, 290, 105, 75));
+        zone3 = input.submat(new Rect(1150, 350, 130, 150));
 
 
 
