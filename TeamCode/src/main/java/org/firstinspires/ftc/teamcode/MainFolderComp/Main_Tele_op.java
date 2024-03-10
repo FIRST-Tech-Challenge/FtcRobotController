@@ -46,6 +46,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 /*
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -127,8 +129,8 @@ public class Main_Tele_op extends LinearOpMode {
         sensorColor2 = hardwareMap.get(ColorSensor.class, "sensor_color_distance_2");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
         sensorDistance2 = hardwareMap.get(DistanceSensor.class, "sensor_color_distance_2");
-        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
-        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
+//        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
+//        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
 
 
         drone = hardwareMap.get(Servo.class, "air");
@@ -161,14 +163,15 @@ public class Main_Tele_op extends LinearOpMode {
         final double SCALE_FACTOR = 255;
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-        double delay = 2.5;
+//        double delay = 2.5;
         String foundColor = "null";
-        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
-        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
+//        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
+//        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        boolean rightGate = false, leftGate = false;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -244,15 +247,19 @@ public class Main_Tele_op extends LinearOpMode {
             }
             if(gamepad2.dpad_left){
                 leftFlap.setPosition(0.4);
+                leftGate = true;
             }
             else{
                 leftFlap.setPosition(1);
+                leftGate = false;
             }
             if(gamepad2.dpad_right){
                 rightFlap.setPosition(0.6);
+                rightGate = true;
             }
             else{
                 rightFlap.setPosition(0);
+                rightGate = false;
             }
             double elbowPower = gamepad2.left_stick_y;
             elbow.setPower(elbowPower);
@@ -274,40 +281,55 @@ public class Main_Tele_op extends LinearOpMode {
                     (int) (sensorColor2.green() * SCALE_FACTOR),
                     (int) (sensorColor2.blue() * SCALE_FACTOR),
                     hsv2Values);
-            String leftdetectedColor = "Unknown";
-            String rightdetectedColor = "Unknown";
-            double hue = hsvValues[0];
-            double hue2 = hsv2Values[0];
-            if (hue >= 0 && hue < 60 || hue > 360) {
-                leftdetectedColor = "Red";
-            } else if (hue >= 60 && hue < 120) {
-                leftdetectedColor = "Yellow";
-            } else if (hue >= 120 && hue < 150) {
-                leftdetectedColor = "Green";
-            } else if (hue >= 210 && hue < 300) {
-                leftdetectedColor = "Blue";
-            } else if (hue >= 180 && hue < 210) {
-                leftdetectedColor = "Purple";
-            } else if(hue > 150 && hue < 180){
-                leftdetectedColor = "White";
+            String leftdetectedColor = "Gate open or Unknown";
+            String rightdetectedColor = "Gate open or Unknown";
+            double hue = hsvValues[0]; //left
+            double hue2 = hsv2Values[0]; //right
+            if(!leftGate) {
+                if (hue >= 0 && hue < 60 || hue > 360) {
+                    leftdetectedColor = "Red";
+                } else if (hue >= 60 && hue < 120) {
+                    leftdetectedColor = "Yellow";
+                } else if (hue >= 120 && hue < 150) {
+                    leftdetectedColor = "Green";
+                } else if (hue >= 210 && hue < 300) {
+                    leftdetectedColor = "Blue";
+                } else if (hue >= 180 && hue < 210) {
+                    leftdetectedColor = "Purple";
+                } else if (hue > 150 && hue < 180) {
+                    leftdetectedColor = "White";
+                }
             }
-
-            if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
-                rightdetectedColor = "Red";
-            } else if (hue2 >= 60 && hue2 < 120) {
-                rightdetectedColor = "Yellow";
-            } else if (hue2 >= 120 && hue2 < 150) {
-                rightdetectedColor = "Green";
-            } else if (hue2 >= 210 && hue2 < 300) {
-                rightdetectedColor = "Blue";
-            } else if (hue2 >= 180 && hue2 < 210) {
-                rightdetectedColor = "Purple";
-            } else if(hue2 > 150 && hue2 < 180){
-                rightdetectedColor = "White";
+            //telemetry.addData("Hues", hue + " " + hue2);
+            if(!rightGate) {
+                if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
+                    rightdetectedColor = "Red";
+                } else if (hue2 >= 60 && hue2 < 120) {
+                    rightdetectedColor = "Yellow";
+                } else if (hue2 >= 120 && hue2 < 150) {
+                    rightdetectedColor = "Green";
+                } else if (hue2 >= 210 && hue2 < 300) {
+                    rightdetectedColor = "Purple"; //Blue
+                } else if (hue2 >= 180 && hue2 < 210) {
+                    rightdetectedColor = "Purple";
+                } else if (hue2 > 150 && hue2 < 180) {
+                    rightdetectedColor = "White";
+                }
+            }
+            boolean pixelInLeft = true, pixelInRight = true;
+            if(sensorDistance.getDistance(DistanceUnit.INCH) > 1){
+                leftdetectedColor = "No Pixel";
+                pixelInLeft = false;
+            }
+            if(sensorDistance2.getDistance(DistanceUnit.INCH) > 1){
+                rightdetectedColor = "No Pixel";
+                pixelInRight = false;
             }
 
             telemetry.addData("Left Color", leftdetectedColor);
             telemetry.addData("Right Color", rightdetectedColor);
+            telemetry.addData("Left Pixel", pixelInLeft);
+            telemetry.addData("Right Pixel", pixelInRight);
             telemetry.update();
 
         }
