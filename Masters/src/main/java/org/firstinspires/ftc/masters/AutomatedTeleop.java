@@ -242,12 +242,16 @@ public class AutomatedTeleop extends LinearOpMode {
         boolean buttonPushed= false;
         boolean slideNeedstoGoDown = false;
         ElapsedTime slidesElapsedTime;
+        intakeSlides.setTargetPosition(0);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intakeSlides.setPower(0.5);
 
         waitForStart();
 
         runtime.reset();
         ElapsedTime elapsedTime;
         ElapsedTime colorSensorElapsedTime = null;
+        ElapsedTime closeClawElapsedTime=null;
 
 
         // run until the end of the match (driver presses STOP)
@@ -316,11 +320,13 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (clawPosition == ClawPosition.OPEN || clawPosition == ClawPosition.TRANSFER) {
                                 clawPosition = ClawPosition.CLOSED;
                                 clawServo.setPosition(CSCons.clawClosed);
+                                closeClawElapsedTime = new ElapsedTime();
 
                             } else if (clawPosition == ClawPosition.CLOSED) {
                                 clawPosition = ClawPosition.OPEN;
                                 clawServo.setPosition(clawOpen);
                                 claw_last_opened = runtime.time(TimeUnit.MILLISECONDS);
+                                closeClawElapsedTime=null;
                             }
                         }
                         if (!gamepad2.a){
@@ -375,10 +381,31 @@ public class AutomatedTeleop extends LinearOpMode {
                             intakeSlides.setPower(1);
                         }
 
+                        if (clawPosition == ClawPosition.CLOSED && ((colorSensorElapsedTime!=null && colorSensorElapsedTime.milliseconds()>300)
+                                ||(closeClawElapsedTime!=null && closeClawElapsedTime.milliseconds()>300))){
+                            if (intakeSlides.getCurrentPosition() > 50) {
+                                intakeSlideTarget=0;
+
+                                intakeSlides.setTargetPosition(0);
+                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                intakeSlides.setPower(1);
+                                clawAngle.setPosition(CSCons.clawAngleTransition);
+                                clawArm.setPosition(CSCons.clawArmTransition);
+                                intakeState = IntakeState.MoveToTransfer;
+                                colorSensorElapsedTime=null;
+                            } else {
+                                intakeState = IntakeState.Transfer;
+                                clawAngle.setPosition(CSCons.clawAngleTransfer);
+                                clawArm.setPosition(CSCons.clawArmTransfer);
+                            }
+                        }
+
 
                         break;
                     case MoveToTransfer:
-                        if (intakeSlides.getCurrentPosition() < 50) {
+                        closeClawElapsedTime=null;
+                        colorSensorElapsedTime=null;
+                        if (intakeSlides.getCurrentPosition() < 80) {
                             intakeState = IntakeState.Transfer;
                             clawAngle.setPosition(CSCons.clawAngleTransfer);
                             clawArm.setPosition(CSCons.clawArmTransfer);
