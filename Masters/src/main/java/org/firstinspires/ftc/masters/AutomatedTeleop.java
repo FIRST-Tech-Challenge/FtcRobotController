@@ -256,7 +256,8 @@ public class AutomatedTeleop extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-//            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
+            telemetry.addData("intake slide position",  + intakeSlides.getCurrentPosition());
+            telemetry.addData("intake slide target",  + intakeSlideTarget);
 
             if (gamepad1.right_bumper){
                 driveMode= DriveMode.END_GAME;
@@ -370,15 +371,17 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (gamepad1.right_trigger>0.1) {
-                            intakeSlides.setTargetPosition(1700);
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(1);
+                            intakeSlideTarget = 1700;
+//                            intakeSlides.setTargetPosition(1700);
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(1);
                         }
 
                         if (gamepad1.left_trigger>0.1) {
-                            intakeSlides.setTargetPosition(0);
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(1);
+                            intakeSlideTarget =0;
+//                            intakeSlides.setTargetPosition(0);
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(1);
                         }
 
                         if (clawPosition == ClawPosition.CLOSED && ((colorSensorElapsedTime!=null && colorSensorElapsedTime.milliseconds()>300)
@@ -717,16 +720,18 @@ public class AutomatedTeleop extends LinearOpMode {
         otherBackSlides.setPower(liftPower);
     }
 
-    public void intakeSlidesMove(int itarget) {
+    public void intakeSlidesMove(int target) {
 
 
-        int islidePos = intakeSlides.getCurrentPosition();
-        double ipid = intakeController.calculate(islidePos, itarget);
-        double iff = Math.cos(Math.toRadians(itarget / ticks_in_degrees)) * iif;
+        int slidePos = intakeSlides.getCurrentPosition();
+        double pid = intakeController.calculate(slidePos, target);
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * iif;
 
-        double iliftPower = ipid + iff;
+        double liftPower = pid + ff;
 
-        intakeSlides.setPower(iliftPower);
+        intakeSlides.setPower(liftPower);
+        telemetry.addData("intake power",  + liftPower);
+
 
     }
 

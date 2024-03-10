@@ -47,6 +47,10 @@ public class CSCons {
     public static long scoreToTransferOuttake = 200;
     public static long closingHook = 100;
 
+    public static int leftIntakeExtension = 950;
+    public static int centerIntakeExtension = 1500;
+    public static int rightIntakeExtension = 400;
+
 
     public enum OuttakePosition{
         BOTTOM (-10),
