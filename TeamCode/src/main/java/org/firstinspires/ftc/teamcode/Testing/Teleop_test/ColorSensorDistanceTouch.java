@@ -98,8 +98,8 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
         sensorDistance2 = hardwareMap.get(DistanceSensor.class, "sensor_color_distance_2");
         // get a reference to our digitalTouch object.
-        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
-        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
+//        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
+//        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
@@ -133,37 +133,37 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
 
-            // send the info back to driver station using telemetry function.
+            //touch sensor stuff below
             // if the digital channel returns true it's HIGH and the button is unpressed.
-            if ( touchSensor.isPressed() ) {
-                telemetry.addData("Left Sensor", "Is Currently Pressed");
-                lastLeftTime = runtime.seconds();
-            } else
-                telemetry.addData("Left Sensor", "Is Not Currently Pressed");
-            if ( touchSensor2.isPressed() ) {
-                telemetry.addData("Right Sensor", "Is Currently Pressed");
-                lastRightTime = runtime.seconds();
-            } else
-                telemetry.addData("Right Sensor", "Is Not Currently Pressed");
-            // send the info back to driver station using telemetry function.
-            if(runtime.seconds() - lastLeftTime <= delay){
-                telemetry.addData("Left S ide", "Hit");
-            }
-            else{
-                telemetry.addData("Left Side", "Not Hit");
-
-            }
-            if(runtime.seconds() - lastRightTime <= delay){
-                telemetry.addData("Right Side", "Hit");
-            }
-            else{
-                telemetry.addData("Right Side", "Not Hit");
-            }
+//            if ( touchSensor.isPressed() ) {
+//                telemetry.addData("Left Sensor", "Is Currently Pressed");
+//                lastLeftTime = runtime.seconds();
+//            } else
+//                telemetry.addData("Left Sensor", "Is Not Currently Pressed");
+//            if ( touchSensor2.isPressed() ) {
+//                telemetry.addData("Right Sensor", "Is Currently Pressed");
+//                lastRightTime = runtime.seconds();
+//            } else
+//                telemetry.addData("Right Sensor", "Is Not Currently Pressed");
+//            // send the info back to driver station using telemetry function.
+//            if(runtime.seconds() - lastLeftTime <= delay){
+//                telemetry.addData("Left S ide", "Hit");
+//            }
+//            else{
+//                telemetry.addData("Left Side", "Not Hit");
+//
+//            }
+//            if(runtime.seconds() - lastRightTime <= delay){
+//                telemetry.addData("Right Side", "Hit");
+//            }
+//            else{
+//                telemetry.addData("Right Side", "Not Hit");
+//            }
 
             telemetry.addData("Left Distance (cm)",
                     String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
             telemetry.addData("Right Distance (cm)",
-                    String.format(Locale.US, "%.02f", sensorDistance2.getDistance(DistanceUnit.CM)));
+                   String.format(Locale.US, "%.02f", sensorDistance2.getDistance(DistanceUnit.CM)));
 //            telemetry.addLine("Alpha");
 //            telemetry.addLine("Red  ");
 //            telemetry.addLine("Green");
@@ -177,10 +177,7 @@ public class ColorSensorDistanceTouch extends LinearOpMode {
             // convert the RGB values to HSV values.
 // multiply by the SCALE_FACTOR.
 // then cast it back to int (SCALE_FACTOR is a double)
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
+
             Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
                     (int) (sensorColor2.green() * SCALE_FACTOR),
                     (int) (sensorColor2.blue() * SCALE_FACTOR),
