@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,11 +20,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Config
 @Autonomous(name = "Center Stage Stack Side Blue", group = "competition")
-public class CenterStagePilesBlue extends LinearOpMode {
+public class CenterStagePilesRed extends LinearOpMode {
     private OpenCvCamera webcam;
 
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
@@ -92,63 +90,63 @@ public class CenterStagePilesBlue extends LinearOpMode {
         PropFindRight.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap, telemetry);
-        Pose2d startPose = new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(-35, -58.5), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
         State currentState;
 
 
         TrajectorySequence rightPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-38, 55, Math.toRadians(270-11)))
+                .lineToSplineHeading(new Pose2d(-38, -55, Math.toRadians(90-45)))
                 .build();
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(315)))
+                .lineToSplineHeading(new Pose2d(-40, -50, Math.toRadians(90+11)))
                 .build();
 
         TrajectorySequence centerPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(290)))
+                .lineToSplineHeading(new Pose2d(-40, -50, Math.toRadians(90-20)))
                 .build();
 
-        TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
-                .lineToSplineHeading(new Pose2d(-33,30, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(180)))
+        TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
+                .lineToSplineHeading(new Pose2d(-33,-30, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-35, -10, Math.toRadians(180)))
                 .build();
 
-        TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
-                .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
+        TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
+                .lineToSplineHeading(new Pose2d(-40, -8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence centerPurpleToStack = drive.trajectorySequenceBuilder(centerPurple.end())
-                .lineToSplineHeading(new Pose2d(-52, 8, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-52, -8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence straightToBackBoard = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
-                .lineToLinearHeading(new Pose2d(30, 10, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(30, -10, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, 20))
+                .lineToConstantHeading(new Vector2d(56, -20))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(56, 28))
+                .strafeTo(new Vector2d(56, -28))
                 .build();
 
         TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(56, 34))
+                .strafeTo(new Vector2d(56, -34))
                 .build();
 
         TrajectorySequence strafeToYellowRight = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
-                .strafeTo(new Vector2d(56, 22))
+                .strafeTo(new Vector2d(56, -22))
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 34))
+                .strafeTo(new Vector2d(56, -34))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 28))
+                .strafeTo(new Vector2d(56, -28))
                 .build();
 
 //        TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -162,17 +160,17 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         TrajectorySequence toStackFromRight = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 2), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-50, -2), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromCenter = drive.trajectorySequenceBuilder(strafeToBoardCenter.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-50, -7), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromLeft = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-50, -7), Math.toRadians(180))
                 .build();
 
 
@@ -245,9 +243,9 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                     if (!drive.isBusy()) {
                         if (propPos == PropFindRight.pos.LEFT) {
-                            intakeTarget = CSCons.leftIntakeExtension;
-                        } else if (propPos == PropFindRight.pos.RIGHT) {
                             intakeTarget = CSCons.rightIntakeExtension;
+                        } else if (propPos == PropFindRight.pos.RIGHT) {
+                            intakeTarget = CSCons.leftIntakeExtension;
                         } else {
                             intakeTarget = CSCons.centerIntakeExtension;
                         }
