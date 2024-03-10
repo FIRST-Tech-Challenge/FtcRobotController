@@ -29,12 +29,20 @@
 
 package org.firstinspires.ftc.teamcode.MainFolderComp;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -93,7 +101,12 @@ public class Main_Tele_op extends LinearOpMode {
 
 //    private Servo autoarm = null;
 
-
+    ColorSensor sensorColor;
+    ColorSensor sensorColor2;
+    DistanceSensor sensorDistance;
+    DistanceSensor sensorDistance2;
+    TouchSensor touchSensor;
+    TouchSensor touchSensor2;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -102,6 +115,7 @@ public class Main_Tele_op extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+
         lf_drive = hardwareMap.get(DcMotor.class, "lf_drive");
         rf_drive = hardwareMap.get(DcMotor.class, "rf_drive");
         lb_drive = hardwareMap.get(DcMotor.class, "lb_drive");
@@ -109,6 +123,13 @@ public class Main_Tele_op extends LinearOpMode {
         rig = hardwareMap.get(DcMotor.class, "rig");
         slide = hardwareMap.get(DcMotor.class, "slide");
         elbow = hardwareMap.get(DcMotor.class, "hexy");
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorColor2 = hardwareMap.get(ColorSensor.class, "sensor_color_distance_2");
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+        sensorDistance2 = hardwareMap.get(DistanceSensor.class, "sensor_color_distance_2");
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
+        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
+
 
         drone = hardwareMap.get(Servo.class, "air");
 
@@ -133,6 +154,17 @@ public class Main_Tele_op extends LinearOpMode {
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        float hsvValues[] = {0F, 0F, 0F};
+        float hsv2Values[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+        final float values2[] = hsvValues;
+        final double SCALE_FACTOR = 255;
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+        double delay = 2.5;
+        String foundColor = "null";
+        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
+        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -222,16 +254,11 @@ public class Main_Tele_op extends LinearOpMode {
             else{
                 rightFlap.setPosition(0);
             }
-
-
             double elbowPower = gamepad2.left_stick_y;
             elbow.setPower(elbowPower);
-
-
             if ((runtime.seconds() - timerUp) >= slideCooldown) {
                 timeoutUp = false;
             }
-
             if ((runtime.seconds() - timerDown) >= slideCooldown) {
                 timeoutDown = false;
             }
@@ -239,7 +266,50 @@ public class Main_Tele_op extends LinearOpMode {
 //            autoarm.setPosition(1);
 
             telemetry.addData("CurrentSlideTicks:", SlideTicks);
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
+            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
+                    (int) (sensorColor2.green() * SCALE_FACTOR),
+                    (int) (sensorColor2.blue() * SCALE_FACTOR),
+                    hsv2Values);
+            String leftdetectedColor = "Unknown";
+            String rightdetectedColor = "Unknown";
+            double hue = hsvValues[0];
+            double hue2 = hsv2Values[0];
+            if (hue >= 0 && hue < 60 || hue > 360) {
+                leftdetectedColor = "Red";
+            } else if (hue >= 60 && hue < 120) {
+                leftdetectedColor = "Yellow";
+            } else if (hue >= 120 && hue < 150) {
+                leftdetectedColor = "Green";
+            } else if (hue >= 210 && hue < 300) {
+                leftdetectedColor = "Blue";
+            } else if (hue >= 180 && hue < 210) {
+                leftdetectedColor = "Purple";
+            } else if(hue > 150 && hue < 180){
+                leftdetectedColor = "White";
+            }
+
+            if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
+                rightdetectedColor = "Red";
+            } else if (hue2 >= 60 && hue2 < 120) {
+                rightdetectedColor = "Yellow";
+            } else if (hue2 >= 120 && hue2 < 150) {
+                rightdetectedColor = "Green";
+            } else if (hue2 >= 210 && hue2 < 300) {
+                rightdetectedColor = "Blue";
+            } else if (hue2 >= 180 && hue2 < 210) {
+                rightdetectedColor = "Purple";
+            } else if(hue2 > 150 && hue2 < 180){
+                rightdetectedColor = "White";
+            }
+
+            telemetry.addData("Left Color", leftdetectedColor);
+            telemetry.addData("Right Color", rightdetectedColor);
             telemetry.update();
+
         }
     }
 
