@@ -176,7 +176,7 @@ public class odoAutonA4 extends LinearOpMode {
         Action trajectoryActionNull;
 
         trajectoryActionLeft = drive.actionBuilder(drive.pose)
-                .setTangent(1*(Math.PI)/3)
+                .setTangent(Math.toRadians(65))
                 .lineToX(75)
                 .waitSeconds(5)
                 .build();

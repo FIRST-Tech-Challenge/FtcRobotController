@@ -273,18 +273,32 @@ public class Main_Tele_op extends LinearOpMode {
 //            autoarm.setPosition(1);
 
             telemetry.addData("CurrentSlideTicks:", SlideTicks);
-//            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-//                    (int) (sensorColor.green() * SCALE_FACTOR),
-//                    (int) (sensorColor.blue() * SCALE_FACTOR),
-//                    hsvValues);
+
+            double x = runtime.milliseconds();
+//            telemetry.addData("Red", sensorColor.red());
+//            telemetry.addData("Green", sensorColor.green());
+//            telemetry.addData("Blue", sensorColor.blue());
+//            telemetry.addData("Red2", sensorColor2.red());
+//            telemetry.addData("Green2", sensorColor2.green());
+//            telemetry.addData("Blue2", sensorColor2.blue());
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
 //            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
 //                    (int) (sensorColor2.green() * SCALE_FACTOR),
 //                    (int) (sensorColor2.blue() * SCALE_FACTOR),
 //                    hsv2Values);
+
+
+            telemetry.addData("time delay", runtime.milliseconds() - x);
+
             String leftdetectedColor = "Gate open or Unknown";
             String rightdetectedColor = "Gate open or Unknown";
-            double hue = rgb_to_hsv(sensorColor.red(), sensorColor.green(), sensorColor.blue());
-            double hue2 = rgb_to_hsv(sensorColor2.red(), sensorColor2.green(), sensorColor2.blue());
+//            double hue = rgb_to_hsv(sensorColor.red(), sensorColor.green(), sensorColor.blue());
+//            double hue2 = rgb_to_hsv(sensorColor2.red(), sensorColor2.green(), sensorColor2.blue());
+            double hue = hsvValues[0];
+            double hue2 = 10;//hsv2Values[0];
             if(!leftGate) {
                 if (hue >= 0 && hue < 60 || hue > 360) {
                     leftdetectedColor = "Red";
