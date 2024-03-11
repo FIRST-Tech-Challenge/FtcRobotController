@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Stack Side Blue", group = "competition")
+@Autonomous(name = "Center Stage Stack Side Red", group = "competition")
 public class CenterStagePilesRed extends LinearOpMode {
     private OpenCvCamera webcam;
 

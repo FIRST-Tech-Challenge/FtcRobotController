@@ -242,9 +242,6 @@ public class AutomatedTeleop extends LinearOpMode {
         boolean buttonPushed= false;
         boolean slideNeedstoGoDown = false;
         ElapsedTime slidesElapsedTime;
-        intakeSlides.setTargetPosition(0);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intakeSlides.setPower(0.5);
 
         waitForStart();
 
@@ -264,6 +261,16 @@ public class AutomatedTeleop extends LinearOpMode {
             }
             if (gamepad1.left_bumper){
                 driveMode= DriveMode.NORMAL;
+            }
+
+            if (gamepad1.dpad_down){
+                target-=15;
+            }
+            if (gamepad1.x){
+                backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             switch (driveMode) {
                 case NORMAL:
@@ -310,7 +317,7 @@ public class AutomatedTeleop extends LinearOpMode {
             }
 
             backSlidesMove(target);
-        //    intakeSlidesMove(intakeSlideTarget);
+            intakeSlidesMove(intakeSlideTarget);
 
             if (driveMode!=DriveMode.END_GAME) {
 
@@ -340,9 +347,9 @@ public class AutomatedTeleop extends LinearOpMode {
 
                             intakeSlideTarget = intakeSlides.getCurrentPosition();
 
-                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(0.5);
+//                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(0.5);
                             colorSensorElapsedTime = new ElapsedTime();
                         }
 
@@ -350,9 +357,9 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (intakeSlides.getCurrentPosition() > 50) {
                                 intakeSlideTarget=0;
 
-                                intakeSlides.setTargetPosition(0);
-                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                intakeSlides.setPower(1);
+//                                intakeSlides.setTargetPosition(0);
+//                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                                intakeSlides.setPower(1);
                                 clawAngle.setPosition(CSCons.clawAngleTransition);
                                 clawArm.setPosition(CSCons.clawArmTransition);
                                 intakeState = IntakeState.MoveToTransfer;
@@ -378,20 +385,20 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (gamepad1.left_trigger>0.1) {
-                            intakeSlideTarget =0;
+                            intakeSlideTarget =-10;
 //                            intakeSlides.setTargetPosition(0);
 //                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //                            intakeSlides.setPower(1);
                         }
 
-                        if (clawPosition == ClawPosition.CLOSED && ((colorSensorElapsedTime!=null && colorSensorElapsedTime.milliseconds()>300)
-                                ||(closeClawElapsedTime!=null && closeClawElapsedTime.milliseconds()>300))){
+                        if (clawPosition == ClawPosition.CLOSED && ((colorSensorElapsedTime!=null && colorSensorElapsedTime.milliseconds()>200)
+                                ||(closeClawElapsedTime!=null && closeClawElapsedTime.milliseconds()>200))){
                             if (intakeSlides.getCurrentPosition() > 50) {
                                 intakeSlideTarget=0;
 
-                                intakeSlides.setTargetPosition(0);
-                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                                intakeSlides.setPower(1);
+//                                intakeSlides.setTargetPosition(0);
+//                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                                intakeSlides.setPower(1);
                                 clawAngle.setPosition(CSCons.clawAngleTransition);
                                 clawArm.setPosition(CSCons.clawArmTransition);
                                 intakeState = IntakeState.MoveToTransfer;
@@ -415,9 +422,9 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
                         if (gamepad1.right_trigger>0.1) {
                             intakeSlideTarget = 1700;
-                            intakeSlides.setTargetPosition(1700);
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(1);
+//                            intakeSlides.setTargetPosition(1700);
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(1);
                             intakeState = IntakeState.Intake;
                         }
                         break;
@@ -451,11 +458,11 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawArm.setPosition(CSCons.clawArmTransition);
                         }
 
-                        if (gamepad1.dpad_down) {
+                        if (gamepad1.left_trigger>0.1) {
                             intakeSlideTarget=0;
-                            intakeSlides.setTargetPosition(0);
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(1);
+//                            intakeSlides.setTargetPosition(0);
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(1);
                         }
 
 
@@ -476,11 +483,11 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawArm.setPosition(CSCons.clawArmTransfer + CSCons.skewampus);
                         }
 
-                        if (gamepad1.dpad_down) {
-                            intakeSlideTarget =0;
-                            intakeSlides.setTargetPosition(0);
-                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            intakeSlides.setPower(1);
+                        if (gamepad1.left_trigger>0.1) {
+                            intakeSlideTarget =-10;
+//                            intakeSlides.setTargetPosition(0);
+//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            intakeSlides.setPower(1);
                         }
 
                         break;
@@ -684,23 +691,24 @@ public class AutomatedTeleop extends LinearOpMode {
             x = 0;
         }
 
-        double leftFrontPower = y + x + rx;
-        double leftRearPower = y - (x*.69) + rx;
-        double rightFrontPower = y - x - rx;
-        double rightRearPower = y + (x*.69) - rx;
+        double leftFrontPower = y + x*CSCons.frontMultiplier + rx;
+        double leftRearPower = y - (x*CSCons.backMultiplier) + rx;
+        double rightFrontPower = y - x*CSCons.frontMultiplier - rx;
+        double rightRearPower = y + (x*CSCons.backMultiplier) - rx;
 
-        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+        //if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double max;
             max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
             max = Math.max(max, Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(rightRearPower));
 
-            leftFrontPower /= max;
-            leftRearPower /= max;
-            rightFrontPower /= max;
-            rightRearPower /= max;
-        }
+            leftFrontPower /= denominator;
+            leftRearPower /= denominator;
+            rightFrontPower /= denominator;
+            rightRearPower /= denominator;
+        //}
 
         leftFrontMotor.setPower(leftFrontPower);
         leftRearMotor.setPower(leftRearPower);
@@ -729,8 +737,12 @@ public class AutomatedTeleop extends LinearOpMode {
 
         double liftPower = pid + ff;
 
-        intakeSlides.setPower(liftPower);
-        telemetry.addData("intake power",  + liftPower);
+        if (target<100) {
+            intakeSlides.setPower(liftPower);
+        } else {
+            intakeSlides.setPower(Math.min(Math.abs(liftPower), 0.7) * liftPower / Math.abs(liftPower));
+            telemetry.addData("intake power", +Math.min(Math.abs(liftPower), 0.8) * liftPower / Math.abs(liftPower));
+        }
 
 
     }
