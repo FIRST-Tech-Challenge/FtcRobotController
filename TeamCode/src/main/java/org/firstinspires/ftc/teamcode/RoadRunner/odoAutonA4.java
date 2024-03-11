@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.MainFolderComp;
+package org.firstinspires.ftc.teamcode.RoadRunner;
 
-import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -10,16 +9,13 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MainFolderComp.visionPipelines.A4bluePipeline;
+import org.firstinspires.ftc.teamcode.MainFolderComp.A4.A4helpers.A4bluePipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,7 +24,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Objects;
 
 @Config
-@Autonomous(name = "odoAutonA4L", group = "A")
+@Autonomous(name = "odoAutonA4L", group = "odo")
 public class odoAutonA4 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

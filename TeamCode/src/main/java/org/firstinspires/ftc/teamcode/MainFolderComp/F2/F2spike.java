@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MainFolderComp.LongRoute.LongRParkSide;
+package org.firstinspires.ftc.teamcode.MainFolderComp.F2;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,26 +10,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MainFolderComp.visionPipelines.F2redPipeline;
-import org.firstinspires.ftc.teamcode.MainFolderComp.GlobalVar.SpikeVars;
-import org.firstinspires.ftc.teamcode.MainFolderComp.GlobalVar.LongRouteVars;
+import org.firstinspires.ftc.teamcode.MainFolderComp.F2.F2helpers.F2globalVar;
+import org.firstinspires.ftc.teamcode.MainFolderComp.F2.F2helpers.F2redPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name="Auton_F2_LRPS", group="AutonLRPS")
+@Autonomous(name="Auton_F2_Spike", group="F2")
 // @Disabled
-public class F2LRPS extends LinearOpMode {
+public class F2spike extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
     private OpenCvWebcam webcam;
     F2redPipeline pipeline = new F2redPipeline();
-    SpikeVars SpikeVar = new SpikeVars();
-    LongRouteVars LRvar = new LongRouteVars();
+    F2globalVar F2var = new F2globalVar();
 
     static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: GOBILDA Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
@@ -162,53 +160,11 @@ public class F2LRPS extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(SpikeVar.F2mSpike1);
+                encoderDriveForwardInches(F2var.F2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(SpikeVar.F2mSpike2);
-                imuCorrection(0, 0.5);;
-
-                encoderDriveLeftInches(LRvar.F2LongM1);
+                encoderDriveBackwardInches(F2var.F2mSpike2);
                 imuCorrection(0, 0.5);
-
-                TurnLeft(LRvar.F2LongM2);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveLeftInches(LRvar.F2LongM3);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveForwardInches(LRvar.F2LongM4);
-                imuCorrection(-90, 0.5);
-
-                TurnLeft(LRvar.F2LongM5);
-                imuCorrection(90, 0.5);
-
-                encoderDriveLeftInches(LRvar.F2LongM6);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInches(LRvar.F2LongM7);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInchesSlow(LRvar.F2LongM8);
-                imuCorrection(90, 0.5);
-
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveForwardInches(5);
-                imuCorrection(90, 0.5);
-
-                encoderDriveLeftInches(32);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInches(15);
-                imuCorrection(90, 0.5);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -218,52 +174,17 @@ public class F2LRPS extends LinearOpMode {
                 break;
             case "right":
 
-                encoderDriveForwardInches(SpikeVar.F2rSpike1);
+                encoderDriveForwardInches(F2var.F2rSpike1);
                 imuCorrection(0, 0.5);
 
-                TurnLeft(SpikeVar.F2rSpike2);
+                TurnLeft(F2var.F2rSpike2);
                 imuCorrection(-90, 0.5);
 
-                encoderDriveForwardInches(SpikeVar.F2rSpike3);
+                encoderDriveForwardInches(F2var.F2rSpike3);
                 imuCorrection(-90, 0.5);
 
-                encoderDriveBackwardInches(SpikeVar.F2rSpike4);
+                encoderDriveBackwardInches(F2var.F2rSpike4);
                 imuCorrection(-90, 0.5);
-
-                encoderDriveLeftInches(LRvar.F2LongR1);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveForwardInches(LRvar.F2LongR2);
-                imuCorrection(-90, 0.5);
-
-                TurnLeft(LRvar.F2LongR3);
-                imuCorrection(90, 0.1);
-
-                encoderDriveLeftInches(LRvar.F2LongR4);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInches(LRvar.F2LongR5);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInchesSlow(LRvar.F2LongR6);
-                imuCorrection(90, 0.1);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveForwardInches(10);
-                imuCorrection(90,0.1);
-
-                encoderDriveLeftInches(27);
-                imuCorrection(90,0.1);
-
-                encoderDriveBackwardInches(20);
-                imuCorrection(90,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -273,52 +194,14 @@ public class F2LRPS extends LinearOpMode {
                 break;
             case "left":
 
-                encoderDriveLeftInches(SpikeVar.F2lSpike1);
+                encoderDriveLeftInches(F2var.F2lSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveForwardInches(SpikeVar.F2lSpike2);
+                encoderDriveForwardInches(F2var.F2lSpike2);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(SpikeVar.F2lSpike3);
+                encoderDriveBackwardInches(F2var.F2lSpike3);
                 imuCorrection(0, 0.5);
-
-                encoderBackRightStrafe(LRvar.F2LongL1);
-                imuCorrection(0, 0.5);
-
-                encoderDriveForwardInches(LRvar.F2LongL2);
-                imuCorrection(0, 0.5);
-
-                TurnLeft(LRvar.F2LongL3);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveForwardInches(LRvar.F2LongL4);
-                imuCorrection(-90, 0.5);
-
-                TurnLeft(LRvar.F2LongL5);
-                imuCorrection(90, 0.5);
-
-                encoderDriveLeftInches(LRvar.F2LongL6);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInches(LRvar.F2LongL7);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInchesSlow(LRvar.F2LongL8);
-                imuCorrection(90, 0.5);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveLeftInches(25);
-                imuCorrection(90,0.1);
-
-                encoderDriveBackwardInches(10);
-                imuCorrection(90,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -424,26 +307,6 @@ public class F2LRPS extends LinearOpMode {
         lbDrive.setPower(0.5);
         rfDrive.setPower(0.5);
         rbDrive.setPower(0.5);
-        lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep((long)(Inches*2*25.4));
-        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-    public void encoderDriveBackwardInchesSlow(double Inches) {
-        double TotalTicks = Inches*COUNTS_PER_MM*25.4;
-        lfDrive.setTargetPosition(-((int)TotalTicks));
-        lbDrive.setTargetPosition(-((int)TotalTicks));
-        rfDrive.setTargetPosition(-((int)TotalTicks));
-        rbDrive.setTargetPosition(-((int)TotalTicks));
-        lfDrive.setPower(0.1);
-        lbDrive.setPower(0.1);
-        rfDrive.setPower(0.1);
-        rbDrive.setPower(0.1);
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);

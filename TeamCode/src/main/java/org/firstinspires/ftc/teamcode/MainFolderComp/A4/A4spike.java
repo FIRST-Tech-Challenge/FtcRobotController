@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MainFolderComp.LongRoute.LongRParkSide;
+package org.firstinspires.ftc.teamcode.MainFolderComp.A4;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,26 +10,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.MainFolderComp.visionPipelines.F4redPipeline;
-import org.firstinspires.ftc.teamcode.MainFolderComp.GlobalVar.SpikeVars;
-import org.firstinspires.ftc.teamcode.MainFolderComp.GlobalVar.LongRouteVars;
+import org.firstinspires.ftc.teamcode.MainFolderComp.A4.A4helpers.A4bluePipeline;
+import org.firstinspires.ftc.teamcode.MainFolderComp.A4.A4helpers.A4globalVar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name="Auton_F4_LRPS", group="AutonLRPS")
+@Autonomous(name="Auton_A4_Spike", group="A4")
 // @Disabled
-public class F4LRPS extends LinearOpMode {
+public class A4spike extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
     private OpenCvWebcam webcam;
-    F4redPipeline pipeline = new F4redPipeline();
-    SpikeVars SpikeVar = new SpikeVars();
-    LongRouteVars LRvar = new LongRouteVars();
+    A4bluePipeline pipeline = new A4bluePipeline();
+    A4globalVar A4var = new A4globalVar();
+
     static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: GOBILDA Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_MM   = 96.0 ;     // For figuring circumference
@@ -41,6 +40,7 @@ public class F4LRPS extends LinearOpMode {
     private DcMotor lbDrive   = null;  //  Used to control the left back drive wheel
     private DcMotor rbDrive   = null;  //  Used to control the right back drive wheel
     Servo autoarm = null;
+
     IMU imu = null;
 
     boolean usingCV = true;
@@ -63,6 +63,7 @@ public class F4LRPS extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "rb_drive");
         autoarm = hardwareMap.get(Servo.class, "autoarm");
+
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -131,6 +132,7 @@ public class F4LRPS extends LinearOpMode {
                 lbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rfDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rbDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
                 imu.resetYaw();
                 moveToProp();
 
@@ -151,82 +153,31 @@ public class F4LRPS extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(SpikeVar.F4mSpike1);
-                imuCorrection(0, 0.5);
+                encoderDriveForwardInches(A4var.A4mSpike1);
+                imuCorrection(0, 0.1);
 
-                encoderDriveBackwardInches(SpikeVar.F4mSpike2);
-                imuCorrection(0, 0.5);
-
-                TurnLeft(LRvar.F4LongM1);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInches(LRvar.F4LongM2);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInchesSlow(LRvar.F4LongM3);
-                imuCorrection(-90, 0.1);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveForwardInches(5);
-                imuCorrection(90, 0.5);
-
-                encoderDriveLeftInches(32);
-                imuCorrection(90, 0.5);
-
-                encoderDriveBackwardInches(15);
-                imuCorrection(90, 0.5);
+                encoderDriveBackwardInches(A4var.A4mSpike2);
+                imuCorrection(0, 0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
                 lbDrive.setPower(0);
                 rbDrive.setPower(0);
 
-
-
                 break;
             case "right":
 
-                encoderDriveRightInches(SpikeVar.F4rSpike1);
+                encoderDriveForwardInches(A4var.A4rSpike1);
                 imuCorrection(0, 0.1);
 
-                encoderDriveForwardInches(SpikeVar.F4rSpike2);
-                imuCorrection(0, 0.1);
+                TurnLeft(A4var.A4rSpike2);
+                imuCorrection(-90, 0.1);
 
-                encoderDriveBackwardInches(SpikeVar.F4rSpike3);
-                imuCorrection(0, 0.1);
+                encoderDriveForwardInches(A4var.A4rSpike3);
+                imuCorrection(-90, 0.1);
 
-                encoderDriveBackwardInches(LRvar.F4LongR1);
-                imuCorrection(90,0.1);
-
-                encoderDriveBackwardInches(LRvar.F4LongR2);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInchesSlow(LRvar.F4LongR3);
-                imuCorrection(90,0.1);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveForwardInches(10);
-                imuCorrection(90,0.1);
-
-                encoderDriveLeftInches(27);
-                imuCorrection(90,0.1);
-
-                encoderDriveBackwardInches(20);
-                imuCorrection(90,0.1);
+                encoderDriveBackwardInches(A4var.A4rSpike4);
+                imuCorrection(-90, 0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -236,37 +187,14 @@ public class F4LRPS extends LinearOpMode {
                 break;
             case "left":
 
-                encoderDriveForwardInches(SpikeVar.F4lSpike1);
+                encoderDriveLeftInches(A4var.A4lSpike1);
+                imuCorrection(0,0.1);
+
+                encoderDriveForwardInches(A4var.A4lSpike2);
                 imuCorrection(0, 0.1);
 
-                TurnLeft(SpikeVar.F4lSpike2);
-                imuCorrection(90, 0.1);
-
-                encoderDriveForwardInches(SpikeVar.F4lSpike3);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInches(SpikeVar.F4lSpike4);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInches(LRvar.F4LongL1);
-                imuCorrection(90, 0.1);
-
-                encoderDriveBackwardInches(LRvar.F4LongL2);
-                imuCorrection(90,0.1);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(1500);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveLeftInches(25);
-                imuCorrection(90,0.1);
-
-                encoderDriveBackwardInches(10);
-                imuCorrection(90,0.1);
+                encoderDriveBackwardInches(A4var.A4lSpike3);
+                imuCorrection(0, 0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -382,26 +310,6 @@ public class F4LRPS extends LinearOpMode {
         rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public void encoderDriveBackwardInchesSlow(double Inches) {
-        double TotalTicks = Inches*COUNTS_PER_MM*25.4;
-        lfDrive.setTargetPosition(-((int)TotalTicks));
-        lbDrive.setTargetPosition(-((int)TotalTicks));
-        rfDrive.setTargetPosition(-((int)TotalTicks));
-        rbDrive.setTargetPosition(-((int)TotalTicks));
-        lfDrive.setPower(0.1);
-        lbDrive.setPower(0.1);
-        rfDrive.setPower(0.1);
-        rbDrive.setPower(0.1);
-        lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep((long)(Inches*2*25.4));
-        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
     public void encoderDriveRightInches(double inches) {
         double TotalTicks = inches*COUNTS_PER_MM*25.4;
         lfDrive.setTargetPosition(((int)TotalTicks));
@@ -412,6 +320,28 @@ public class F4LRPS extends LinearOpMode {
         lbDrive.setPower(1);
         rfDrive.setPower(1);
         rbDrive.setPower(1);
+        lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep((long)(inches*2*25.4));
+        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void encoderConcentricLeftStrafe(float turnFactor, double inches) {
+        double TotalTicks = inches*COUNTS_PER_MM*25.4;
+        lfDrive.setTargetPosition(-((int)TotalTicks));
+        lbDrive.setTargetPosition(((int)TotalTicks));
+        rfDrive.setTargetPosition(-((int)TotalTicks));
+        rbDrive.setTargetPosition(-((int)TotalTicks));
+        lfDrive.setPower(0.75 - (turnFactor / 10));
+        lbDrive.setPower(0.75 - (turnFactor / 10));
+        rfDrive.setPower(0.75 + (turnFactor / 10));
+        rbDrive.setPower(0.75 + (turnFactor / 10));
+
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -443,7 +373,6 @@ public class F4LRPS extends LinearOpMode {
         rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-
     public void TurnLeft(double degrees) {
         double TotalTicks = (degrees/90)*COUNTS_PER_MOTOR_REV*4.2333333333;
         lfDrive.setTargetPosition(-((int)TotalTicks));
@@ -471,10 +400,10 @@ public class F4LRPS extends LinearOpMode {
         lbDrive.setTargetPosition(((int)TotalTicks));
         rfDrive.setTargetPosition(-((int)TotalTicks));
         rbDrive.setTargetPosition(-((int)TotalTicks));
-        lfDrive.setPower(0.5);
-        lbDrive.setPower(0.5);
-        rfDrive.setPower(0.5);
-        rbDrive.setPower(0.5);
+        lfDrive.setPower(1);
+        lbDrive.setPower(1);
+        rfDrive.setPower(1);
+        rbDrive.setPower(1);
 
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -486,27 +415,10 @@ public class F4LRPS extends LinearOpMode {
         rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public void encoderConcentricRightStrafe(float turnFactor, double inches) {
-        double TotalTicks = inches*COUNTS_PER_MM*25.4;
-        lfDrive.setTargetPosition(-((int)TotalTicks));
-        lbDrive.setTargetPosition(-((int)TotalTicks));
-        rfDrive.setTargetPosition(-((int)TotalTicks));
-        rbDrive.setTargetPosition(((int)TotalTicks));
-        lfDrive.setPower(0.75 - (turnFactor / 10));
-        lbDrive.setPower(0.75 - (turnFactor / 10));
-        rfDrive.setPower(0.75 + (turnFactor / 10));
-        rbDrive.setPower(0.75 + (turnFactor / 10));
+    public void facingPixelBackBoard(){
 
-        lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep((long)(inches*2*25.4));
-        lfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rfDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rbDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+
 }
 
 

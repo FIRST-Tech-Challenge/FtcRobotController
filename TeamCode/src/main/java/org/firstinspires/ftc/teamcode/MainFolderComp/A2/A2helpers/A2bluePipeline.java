@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MainFolderComp.visionPipelines;
+package org.firstinspires.ftc.teamcode.MainFolderComp.A2.A2helpers;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class F2redPipeline extends OpenCvPipeline {
+public class A2bluePipeline extends OpenCvPipeline {
 
-    List<Integer> ELEMENT_COLOR = Arrays.asList(255, 0, 0); //(red, green, blue)
+    List<Integer> ELEMENT_COLOR = Arrays.asList(0, 0, 255); //(red, green, blue)
 
 
     String color_zone = "nothing";
@@ -37,15 +37,13 @@ public class F2redPipeline extends OpenCvPipeline {
     @Override
     public void init(Mat input) {
 
-        zone1 = input.submat(new Rect(145, 165, 130, 140));
-        zone2 = input.submat(new Rect(540, 190, 100, 160));
-        zone3 = input.submat(new Rect(620, 350, 20, 10));
+        zone1 = input.submat(new Rect(0, 160, 140, 145));
+        zone2 = input.submat(new Rect(360, 220, 170, 180));
+        zone3 = input.submat(new Rect(410, 410, 75, 60));
 
 
 
     }
-
-
 
 
 
