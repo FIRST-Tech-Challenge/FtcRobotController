@@ -16,16 +16,16 @@ public class MeepMeepPilesBlueLeft {
                 .setDimensions(15, 17)
 
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, 58.5), Math.toRadians(270)))
-                                        .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(125+180)))
-                                        .lineToSplineHeading(new Pose2d(-40, 10, Math.toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(50, 10, Math.toRadians(180)))
-                                        .strafeTo(new Vector2d(50, 24))
-                                        //deposit here
-                                        .splineToConstantHeading(new Vector2d(40, 10),Math.toRadians(180))
-                                        .splineToConstantHeading(new Vector2d(-40, 10),Math.toRadians(180))
-                                        .lineTo(new Vector2d(50, 10))
-                                        .strafeTo(new Vector2d(50, 24))
+                                drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, -58.5), Math.toRadians(90)))
+                                        .lineToSplineHeading(new Pose2d(-40, -50, Math.toRadians(90-20)))
+                                        .lineToSplineHeading(new Pose2d(-52, -8, Math.toRadians(180)))
+//                                        .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
+//                                        .strafeTo(new Vector2d(50, 24))
+//                                        //deposit here
+//                                        .splineToConstantHeading(new Vector2d(40, 10),Math.toRadians(180))
+//                                        .splineToConstantHeading(new Vector2d(-40, 10),Math.toRadians(180))
+//                                        .lineTo(new Vector2d(50, 10))
+//                                        .strafeTo(new Vector2d(50, 24))
                                         //.lineToSplineHeading(new Pose2d(-38, 17, Math.toRadians(-60)))
 //                                        .lineToSplineHeading(new Pose2d(-32, 17, Math.toRadians(-120)))
 //
