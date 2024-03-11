@@ -46,8 +46,8 @@ public class moo extends LinearOpMode {
         slideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         clawUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         clawUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -161,7 +161,7 @@ public class moo extends LinearOpMode {
                     closeClaw.setPosition(1);
                 }
                 if (gamepad2.b) {
-                    closeClaw.setPosition(0.82);
+                    closeClaw.setPosition(0.80);
                 }
                 if (gamepad1.a) {
                     planeLauncher.setPosition(.55);
