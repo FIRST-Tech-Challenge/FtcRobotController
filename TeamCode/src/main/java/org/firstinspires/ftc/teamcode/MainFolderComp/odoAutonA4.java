@@ -168,18 +168,16 @@ public class odoAutonA4 extends LinearOpMode {
             }
         });
 
-
-            // vision here that outputs position
-        String visionOutputPosition = pipeline.getLocation();
+        // vision pipeline is pipeline.getPosition()
 
         Action trajectoryActionLeft;
         Action trajectoryActionMiddle;
         Action trajectoryActionRight;
-        Action trajectoryActionCloseOut;
+        Action trajectoryActionNull;
 
         trajectoryActionLeft = drive.actionBuilder(drive.pose)
-                .setTangent((1*Math.PI)/12)
-                .lineToX(60)
+                .setTangent(1*(Math.PI)/3)
+                .lineToX(75)
                 .waitSeconds(5)
                 .build();
         trajectoryActionMiddle = drive.actionBuilder(drive.pose)
@@ -196,29 +194,29 @@ public class odoAutonA4 extends LinearOpMode {
                 .splineTo(new Vector2d(48, 48), Math.PI / 2)
                 .waitSeconds(3)
                 .build();
+        trajectoryActionNull = drive.actionBuilder(drive.pose)
+                .build();
 
         // actions that need to happen on init; for instance, a claw tightening.
         Actions.runBlocking(autop.AutoPDown());
 
 
         while (!isStopRequested() && !opModeIsActive()) {
-            String position = visionOutputPosition;
-            telemetry.addData("Position during Init", position);
+            telemetry.addData("Prop Location: ", pipeline.getLocation());
             telemetry.update();
         }
 
-        String startPosition = visionOutputPosition;
-        telemetry.addData("Starting Position", startPosition);
-        telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
 
-        Action trajectoryActionChosen = trajectoryActionLeft;
+        Action trajectoryActionChosen = trajectoryActionNull;
 
-        if (Objects.equals(startPosition, "middle")) {
+        if (Objects.equals(pipeline.getLocation(), "left")) {
             trajectoryActionChosen = trajectoryActionMiddle;
-        } else if ((Objects.equals(startPosition, "right"))) {
+        } else if (Objects.equals(pipeline.getLocation(), "middle")) {
+            trajectoryActionChosen = trajectoryActionMiddle;
+        } else if ((Objects.equals(pipeline.getLocation(), "right"))) {
             trajectoryActionChosen = trajectoryActionRight;
         }
 

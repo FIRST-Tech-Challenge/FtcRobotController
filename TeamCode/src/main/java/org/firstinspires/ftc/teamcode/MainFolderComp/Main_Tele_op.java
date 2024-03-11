@@ -107,8 +107,7 @@ public class Main_Tele_op extends LinearOpMode {
     ColorSensor sensorColor2;
     DistanceSensor sensorDistance;
     DistanceSensor sensorDistance2;
-    TouchSensor touchSensor;
-    TouchSensor touchSensor2;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -129,8 +128,7 @@ public class Main_Tele_op extends LinearOpMode {
         sensorColor2 = hardwareMap.get(ColorSensor.class, "sensor_color_distance_2");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
         sensorDistance2 = hardwareMap.get(DistanceSensor.class, "sensor_color_distance_2");
-//        touchSensor = hardwareMap.get(RevTouchSensor.class, "sensor_digital");
-//        touchSensor2 = hardwareMap.get(RevTouchSensor.class, "sensor_digital_2");
+
 
 
         drone = hardwareMap.get(Servo.class, "air");
@@ -261,6 +259,8 @@ public class Main_Tele_op extends LinearOpMode {
                 rightFlap.setPosition(0);
                 rightGate = false;
             }
+
+
             double elbowPower = gamepad2.left_stick_y;
             elbow.setPower(elbowPower);
             if ((runtime.seconds() - timerUp) >= slideCooldown) {
@@ -273,18 +273,18 @@ public class Main_Tele_op extends LinearOpMode {
 //            autoarm.setPosition(1);
 
             telemetry.addData("CurrentSlideTicks:", SlideTicks);
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
-            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
-                    (int) (sensorColor2.green() * SCALE_FACTOR),
-                    (int) (sensorColor2.blue() * SCALE_FACTOR),
-                    hsv2Values);
+//            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+//                    (int) (sensorColor.green() * SCALE_FACTOR),
+//                    (int) (sensorColor.blue() * SCALE_FACTOR),
+//                    hsvValues);
+//            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
+//                    (int) (sensorColor2.green() * SCALE_FACTOR),
+//                    (int) (sensorColor2.blue() * SCALE_FACTOR),
+//                    hsv2Values);
             String leftdetectedColor = "Gate open or Unknown";
             String rightdetectedColor = "Gate open or Unknown";
-            double hue = hsvValues[0]; //left
-            double hue2 = hsv2Values[0]; //right
+            double hue = rgb_to_hsv(sensorColor.red(), sensorColor.green(), sensorColor.blue());
+            double hue2 = rgb_to_hsv(sensorColor2.red(), sensorColor2.green(), sensorColor2.blue());
             if(!leftGate) {
                 if (hue >= 0 && hue < 60 || hue > 360) {
                     leftdetectedColor = "Red";
@@ -300,7 +300,7 @@ public class Main_Tele_op extends LinearOpMode {
                     leftdetectedColor = "White";
                 }
             }
-            //telemetry.addData("Hues", hue + " " + hue2);
+            telemetry.addData("Hues", hue + " " + hue2);
             if(!rightGate) {
                 if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
                     rightdetectedColor = "Red";
@@ -353,5 +353,47 @@ public class Main_Tele_op extends LinearOpMode {
         sleep((long) (inches * 2 * 25.4));
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setPower(0);
+    }
+    static double rgb_to_hsv(double r, double g, double b)
+    {
+
+        // R, G, B values are divided by 255
+        // to change the range from 0..255 to 0..1
+        r = r / 255.0;
+        g = g / 255.0;
+        b = b / 255.0;
+
+        // h, s, v = hue, saturation, value
+        double cmax = Math.max(r, Math.max(g, b)); // maximum of r, g, b
+        double cmin = Math.min(r, Math.min(g, b)); // minimum of r, g, b
+        double diff = cmax - cmin; // diff of cmax and cmin.
+        double h = -1, s = -1;
+
+        // if cmax and cmax are equal then h = 0
+        if (cmax == cmin)
+            h = 0;
+
+            // if cmax equal r then compute h
+        else if (cmax == r)
+            h = (60 * ((g - b) / diff) + 360) % 360;
+
+            // if cmax equal g then compute h
+        else if (cmax == g)
+            h = (60 * ((b - r) / diff) + 120) % 360;
+
+            // if cmax equal b then compute h
+        else if (cmax == b)
+            h = (60 * ((r - g) / diff) + 240) % 360;
+
+        // if cmax equal zero
+        if (cmax == 0)
+            s = 0;
+        else
+            s = (diff / cmax) * 100;
+
+        // compute v
+        double v = cmax * 100;
+        return h;
+
     }
 }
