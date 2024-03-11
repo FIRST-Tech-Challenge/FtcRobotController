@@ -12,15 +12,15 @@ public class CSCons {
     public static double clawOpen = 0.2;
     public static double clawClosed = 0.53;
     public static double clawTransfer = 0.38; // .65
-    public static double clawAngleGroundToThree = .98;
-    public static double clawAngleFourToFive = 1;
-    public static double clawAngleTransition = .20;
-    public static double clawAngleTransfer = .1;
-    public static double clawArmGround = .75;
-    public static double clawArm2 = .795;
-    public static double clawArm3 = .68;
-    public static double clawArm4 = .73;
-    public static double clawArm5 = .59;
+    public static double clawAngleGroundToThree = .98; //.9?
+    public static double clawAngleFourToFive = .9;
+    public static double clawAngleTransition = .34;
+    public static double clawAngleTransfer = .12;
+    public static double clawArmGround = .78;
+    public static double clawArm2 = .74;
+    public static double clawArm3 = .69;
+    public static double clawArm4 = .66;
+    public static double clawArm5 = .63;
     public static double clawArmTransition = .23;
     public static double clawArmTransfer = .20;
 
@@ -32,7 +32,7 @@ public class CSCons {
     public static double outtakeMovementBackDrop =0;
     public static double outtakeMovementTransfer = .51;
     //public static double[] rightSideBack = {0.955, 0.65};
-    public static double openHook = 0.45;
+    public static double openHook = 0.6;
     public static double closeHook = 1;
     public static double openMicroHook =0.5;
     public static double closeMicroHook =0;

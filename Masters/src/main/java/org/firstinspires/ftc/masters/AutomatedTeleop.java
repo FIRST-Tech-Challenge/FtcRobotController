@@ -248,8 +248,11 @@ public class AutomatedTeleop extends LinearOpMode {
         runtime.reset();
         ElapsedTime elapsedTime;
         ElapsedTime colorSensorElapsedTime = null;
+        ElapsedTime stackElapsedTime = new ElapsedTime();
         ElapsedTime closeClawElapsedTime=null;
 
+        double[] clawStack = {CSCons.clawArmGround,CSCons.clawArm2,CSCons.clawArm3,CSCons.clawArm4,CSCons.clawArm5};
+        int stackPosition = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -371,11 +374,38 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         }
 
-                        if (gamepad2.dpad_left) {
-                            intakeState = IntakeState.Transition;
-                            clawAngle.setPosition(CSCons.clawAngleTransition);
-                            clawArm.setPosition(CSCons.clawArmTransition);
+//                        if (gamepad2.dpad_left) {
+//                            intakeState = IntakeState.Transition;
+//                            clawAngle.setPosition(CSCons.clawAngleTransition);
+//                            clawArm.setPosition(CSCons.clawArmTransition);
+//                        }
+
+                        if (gamepad2.dpad_right &&  stackElapsedTime.milliseconds() > 200) {
+                            stackElapsedTime = new ElapsedTime();
+                            if (stackPosition < 4) {
+                                stackPosition++;
+                            }
+                            if (stackPosition > 2) {
+                                clawAngle.setPosition(CSCons.clawAngleFourToFive);
+                            } else {
+                                clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                            }
+                            clawArm.setPosition(clawStack[stackPosition]);
                         }
+
+                        if (gamepad2.dpad_left &&  stackElapsedTime.milliseconds() > 200) {
+                            stackElapsedTime = new ElapsedTime();
+                            if (stackPosition > 0) {
+                                stackPosition--;
+                            }
+                            if (stackPosition > 2) {
+                                clawAngle.setPosition(CSCons.clawAngleFourToFive);
+                            } else {
+                                clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+                            }
+                            clawArm.setPosition(clawStack[stackPosition]);
+                        }
+                        telemetry.addData("stack position",stackPosition);
 
                         if (gamepad1.right_trigger>0.1) {
                             intakeSlideTarget = 1700;
@@ -457,7 +487,7 @@ public class AutomatedTeleop extends LinearOpMode {
                             clawArm.setPosition(CSCons.clawArmTransition);
                         }
 
-                        if (gamepad1.left_trigger>0.1) {
+                        if (gamepad1.dpad_down) {
                             intakeSlideTarget=0;
                         }
 
@@ -485,10 +515,10 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         break;
                 }
-                if (gamepad2.dpad_right) {
-                    outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-                    outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-                }
+//                if (gamepad2.dpad_right) {
+//                    outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+//                    outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+//                }
                 switch (outtakeState) {
                     case ReadyToTransfer:
 //                        if (!touchBucket.isPressed()) {
