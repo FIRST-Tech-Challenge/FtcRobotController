@@ -200,9 +200,9 @@ public class Main_Tele_op extends LinearOpMode {
             rb_drive.setPower(rbPower);
 
             if (gamepad1.x) {
-                drone.setPosition(0);
-            } else {
                 drone.setPosition(1);
+            } else {
+                drone.setPosition(0);
             }
 
             if (gamepad2.dpad_up) {
