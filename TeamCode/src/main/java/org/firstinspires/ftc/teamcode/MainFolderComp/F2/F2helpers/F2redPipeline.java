@@ -37,9 +37,9 @@ public class F2redPipeline extends OpenCvPipeline {
     @Override
     public void init(Mat input) {
 
-        zone1 = input.submat(new Rect(145, 165, 130, 140));
-        zone2 = input.submat(new Rect(540, 190, 100, 160));
-        zone3 = input.submat(new Rect(620, 350, 20, 10));
+        zone1 = input.submat(new Rect(0, 240, 150, 160));
+        zone2 = input.submat(new Rect(560, 190, 140, 160));
+        zone3 = input.submat(new Rect(1130, 250, 150, 170));
 
 
 

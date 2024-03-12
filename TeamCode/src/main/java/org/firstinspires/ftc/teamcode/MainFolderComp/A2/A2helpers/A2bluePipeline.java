@@ -37,9 +37,9 @@ public class A2bluePipeline extends OpenCvPipeline {
     @Override
     public void init(Mat input) {
 
-        zone1 = input.submat(new Rect(0, 160, 140, 145));
-        zone2 = input.submat(new Rect(360, 220, 170, 180));
-        zone3 = input.submat(new Rect(410, 410, 75, 60));
+        zone1 = input.submat(new Rect(0, 290, 140, 145));
+        zone2 = input.submat(new Rect(580, 180, 170, 180));
+        zone3 = input.submat(new Rect(1140, 220, 140, 200));
 
 
 
@@ -70,14 +70,14 @@ public class A2bluePipeline extends OpenCvPipeline {
 
         max_distance = Math.min(distance3, Math.min(distance1, distance2));
 
-        if  (max_distance == distance3) {
+        if  (max_distance == distance1) {
             //telemetry.addData("Element is on the left side", distance3);
             color_zone = "left";
-        } else if (max_distance == distance1) {
+        } else if (max_distance == distance2) {
             //telemetry.addData("Element is on right side", distance1);
             color_zone = "middle";
 
-        } else if (max_distance == distance2) {
+        } else if (max_distance == distance3) {
             //telemetry.addData("Element is in the middle", distance2);
             color_zone = "right";
         }
