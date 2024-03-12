@@ -18,6 +18,8 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -339,18 +341,34 @@ public class SampleMecanumDrive extends MecanumDrive {
         microHook.setPosition(CSCons.openMicroHook);
     }
 
-    public void alignTag(List<AprilTagDetection> currentDetections) {
+    public  Pose2d aprilTagPosEstimate(List<AprilTagDetection> currentDetections) {
         for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            if (detection.metadata != null) { // 72 - 7.5, 72 - 29.25: left blue april tag
+                Pose2d aprilTagPos = null;
+                if (detection.id == 1) {
+                    aprilTagPos = new Pose2d(72 - 7.5, 72 - 29.25, 0);
+                } else {
+                    aprilTagPos = new Pose2d(0, 0, 0);
+                }
+                return new Pose2d(aprilTagPos.getX() - (detection.ftcPose.range * Math.cos(90 - Math.abs(Math.toDegrees(detection.ftcPose.yaw)))), aprilTagPos.getY() -(detection.ftcPose.range * Math.sin(90 - Math.abs(Math.toDegrees(detection.ftcPose.yaw)))), Math.toDegrees(detection.ftcPose.yaw));} else {
+//                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+//                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }   // end for() loop
+        return new Pose2d(0,0,0);
+    }
+
+    public void alignTag(List<AprilTagDetection> currentDetections) {
+        if (currentDetections != null) {
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) { // 72 - 7.5, 72 - 29.25: left blue april tag
+
+                } else {
+//                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+//                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
+            }   // end for() loop
+        }
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {

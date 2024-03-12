@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,11 +20,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Config
-@Autonomous(name = "Center Stage Stack Side Blue", group = "competition")
-public class CenterStagePilesBlue extends LinearOpMode {
+@Autonomous(name = "Center Stage Stack Side Blue States", group = "competition")
+public class CenterStagePilesBlueSTATES extends LinearOpMode {
     private OpenCvCamera webcam;
 
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
@@ -112,11 +110,11 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
                 .lineToSplineHeading(new Pose2d(-33,30, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(-35, 8, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
-                .lineToSplineHeading(new Pose2d(-40, 6, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence centerPurpleToStack = drive.trajectorySequenceBuilder(centerPurple.end())
@@ -196,8 +194,6 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         telemetry.addData("Position", propPos);
         telemetry.update();
-
-        ElapsedTime waitToPickUpTime= null;
 
         waitForStart();
 
@@ -296,7 +292,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         if (propPos== PropFindRight.pos.RIGHT){
                             intakeTarget=900;
                         } else {
-                            intakeTarget = 800;
+                            intakeTarget = 500;
                         }
                         currentState = State.PICK_UP_FROM_STACK;
                         clawClose = false;
@@ -304,13 +300,12 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                     break;
                 case PICK_UP_FROM_STACK:
-                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel() ||(waitToPickUpTime!=null && waitToPickUpTime.milliseconds()>200))) {
+                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel())) {
                         drive.closeClaw();
                         drive.getIntakeSlides().setPower(0);
                         intakeTarget = drive.getIntakeSlides().getTargetPosition();
                         elapsedTime = new ElapsedTime();
                         clawClose = true;
-                        waitToPickUpTime=null;
                     }
                     if (clawClose && elapsedTime.milliseconds() > 700) {
                         intakeTarget = 0;
@@ -320,10 +315,6 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         toBackboard = false;
                         elapsedTime = new ElapsedTime();
                     }
-                    if (drive.getIntakeSlides().getCurrentPosition()>intakeTarget-10 && waitToPickUpTime==null && !clawClose ){
-                        waitToPickUpTime= new ElapsedTime();
-                    }
-
                     break;
 
                 case DRIVE_TO_BACKBOARD:
@@ -428,22 +419,21 @@ public class CenterStagePilesBlue extends LinearOpMode {
                     break;
 
                 case TO_STACK_CYCLE:
-                    backSlidesTarget = 0;
-                    drive.outtakeToTransfer();
-                    
-//                    if (drive.getPoseEstimate().getX()<0) {
+//                    backSlidesTarget = 0;
+//                    drive.outtakeToTransfer();
+//                    drive.openClaw();
+//                    drive.intakeToPosition3();
+//                    clawClose = false;
+////                    if (drive.getPoseEstimate().getX()<0) {
+////                        intakeTarget = 500;
+////                    }
+//
+//                    if (!drive.isBusy()){
+//                        currentState= State.PICK_UP_FROM_STACK;
+//                        cycle++;
 //                        intakeTarget = 500;
 //                    }
-
-                    if (!drive.isBusy()){
-                        currentState= State.PICK_UP_FROM_STACK;
-                        cycle++;
-                        intakeTarget = 500;
-                        drive.intakeToPosition3();
-                        drive.openClaw();
-                        clawClose = false;
-                    }
-                    break;
+//                    break;
 
 
 
