@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name="Auton_F4_LRPM", group="F2")
+@Autonomous(name="Auton_F4_LRPM", group="F4")
 // @Disabled
 public class F4LRPM extends LinearOpMode {
 
@@ -60,7 +60,7 @@ public class F4LRPM extends LinearOpMode {
         rfDrive = hardwareMap.get(DcMotor.class, "rf_drive");
         lbDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "rb_drive");
-        autoarm = hardwareMap.get(Servo.class, "autoarm");
+        autoarm = hardwareMap.get(Servo.class, "autoy");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -86,7 +86,7 @@ public class F4LRPM extends LinearOpMode {
             public void onOpened() {
 
                 // start streaming the camera
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
 
             }
             @Override
