@@ -86,6 +86,10 @@ public class Magazine {
     if(pixels<1){
       twoPixelTime = BasicRobot.time;
     }
+    LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
+    LOGGER.log(
+            "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
+    LOGGER.log("# Pixels: " + getPixels());
   }
 
   public boolean solidTwoPixels(){

@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.51, TWO=0.53, THREE = 0.555, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.51, TWO=0.535, THREE = 0.555, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -155,6 +155,9 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(THREE);if(height==4)
       intakeServo.setPosition(FOUR);if(height==5)
       intakeServo.setPosition(FIVE);
+  }
+  public double getIntakePower(){
+    return curPower;
   }
 
   /**
