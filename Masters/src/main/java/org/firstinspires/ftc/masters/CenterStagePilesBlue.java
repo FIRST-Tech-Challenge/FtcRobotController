@@ -182,7 +182,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         int backSlidesTarget = 0;
         int intakeTarget = 0;
-        boolean CLAWEXTENDAHHHH = false;
+        boolean HasClawExtended = false;
         boolean clawClose = false;
         boolean toBackboard = false;
         boolean openClaw = false;
@@ -258,16 +258,16 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                 case PURPLE_DEPOSIT:
 
-                    if (!CLAWEXTENDAHHHH && drive.getIntakeSlides().getCurrentPosition() > intakeTarget - 20 && drive.getIntakeSlides().getCurrentPosition() < intakeTarget + 20) {
+                    if (!HasClawExtended && drive.getIntakeSlides().getCurrentPosition() > intakeTarget - 20 && drive.getIntakeSlides().getCurrentPosition() < intakeTarget + 20) {
                         drive.openClaw();
                         elapsedTime = new ElapsedTime();
-                        CLAWEXTENDAHHHH = true;
+                        HasClawExtended = true;
                     }
-                    if (CLAWEXTENDAHHHH && elapsedTime.milliseconds() > 200 && previousIntakeTarget == 0) {
+                    if (HasClawExtended && elapsedTime.milliseconds() > 200 && previousIntakeTarget == 0) {
                         previousIntakeTarget = intakeTarget;
                         intakeTarget = 0;
                     }
-                    if (CLAWEXTENDAHHHH && elapsedTime.milliseconds() > 300 && drive.getIntakeSlides().getCurrentPosition() < previousIntakeTarget - 100) {
+                    if (HasClawExtended && elapsedTime.milliseconds() > 300 && drive.getIntakeSlides().getCurrentPosition() < previousIntakeTarget - 100) {
                         drive.intakeToTransfer();
                         currentState = State.RETRACT_SLIDE;
                     }
@@ -322,12 +322,12 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 case DRIVE_TO_BACKBOARD:
                     if (!drive.isBusy() && !toBackboard) {
 
-//                        if (propPos == PropFindRight.pos.LEFT || propPos == PropFindRight.pos.MID) {
-//                            drive.followTrajectorySequenceAsync(strafeToBoardRight); //to drop white
-//                        } else {
-//                            drive.followTrajectorySequenceAsync(strafeToBoardLeft);
-//                        }
-//                        toBackboard = true;
+                        if (propPos == PropFindRight.pos.LEFT || propPos == PropFindRight.pos.MID) {
+                            drive.followTrajectorySequenceAsync(strafeToBoardRight); //to drop white
+                        } else {
+                            drive.followTrajectorySequenceAsync(strafeToBoardLeft);
+                        }
+                        toBackboard = true;
                     }
 
                     if (!drive.isBusy() && toBackboard) {
