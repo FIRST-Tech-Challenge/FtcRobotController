@@ -289,7 +289,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
     public void intakeToTopStack() {
-        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+        clawAngle.setPosition(CSCons.clawAngleFourToFive);
         clawArm.setPosition(CSCons.clawArm5);
     }
 

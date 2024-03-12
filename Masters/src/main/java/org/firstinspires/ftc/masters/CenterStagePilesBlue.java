@@ -112,11 +112,11 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
                 .lineToSplineHeading(new Pose2d(-33,30, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(-35, 10, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-35, 8, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
-                .lineToSplineHeading(new Pose2d(-40, 8, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-40, 6, Math.toRadians(180)))
                 .build();
 
         TrajectorySequence centerPurpleToStack = drive.trajectorySequenceBuilder(centerPurple.end())
@@ -196,6 +196,8 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         telemetry.addData("Position", propPos);
         telemetry.update();
+
+        ElapsedTime waitToPickUpTime= null;
 
         waitForStart();
 
@@ -302,12 +304,13 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                     break;
                 case PICK_UP_FROM_STACK:
-                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel())) {
+                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel() ||(waitToPickUpTime!=null && waitToPickUpTime.milliseconds()>200))) {
                         drive.closeClaw();
                         drive.getIntakeSlides().setPower(0);
                         intakeTarget = drive.getIntakeSlides().getTargetPosition();
                         elapsedTime = new ElapsedTime();
                         clawClose = true;
+                        waitToPickUpTime=null;
                     }
                     if (clawClose && elapsedTime.milliseconds() > 700) {
                         intakeTarget = 0;
@@ -317,17 +320,21 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         toBackboard = false;
                         elapsedTime = new ElapsedTime();
                     }
+                    if (drive.getIntakeSlides().getCurrentPosition()>intakeTarget-10 && waitToPickUpTime==null && !clawClose ){
+                        waitToPickUpTime= new ElapsedTime();
+                    }
+
                     break;
 
                 case DRIVE_TO_BACKBOARD:
                     if (!drive.isBusy() && !toBackboard) {
 
-//                        if (propPos == PropFindRight.pos.LEFT || propPos == PropFindRight.pos.MID) {
-//                            drive.followTrajectorySequenceAsync(strafeToBoardRight); //to drop white
-//                        } else {
-//                            drive.followTrajectorySequenceAsync(strafeToBoardLeft);
-//                        }
-//                        toBackboard = true;
+                        if (propPos == PropFindRight.pos.LEFT || propPos == PropFindRight.pos.MID) {
+                            drive.followTrajectorySequenceAsync(strafeToBoardRight); //to drop white
+                        } else {
+                            drive.followTrajectorySequenceAsync(strafeToBoardLeft);
+                        }
+                        toBackboard = true;
                     }
 
                     if (!drive.isBusy() && toBackboard) {
@@ -423,9 +430,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 case TO_STACK_CYCLE:
                     backSlidesTarget = 0;
                     drive.outtakeToTransfer();
-                    drive.openClaw();
-                    drive.intakeToPosition3();
-                    clawClose = false;
+                    
 //                    if (drive.getPoseEstimate().getX()<0) {
 //                        intakeTarget = 500;
 //                    }
@@ -434,6 +439,9 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         currentState= State.PICK_UP_FROM_STACK;
                         cycle++;
                         intakeTarget = 500;
+                        drive.intakeToPosition3();
+                        drive.openClaw();
+                        clawClose = false;
                     }
                     break;
 
