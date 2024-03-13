@@ -20,7 +20,7 @@ public class CSCons {
     public static double clawArm2 = .7;
     public static double clawArm3 = .67;
     public static double clawArm4 = .64;
-    public static double clawArm5 = .62;
+    public static double clawArm5 = .59;
     public static double clawArmTransition = .23;
     public static double clawArmTransfer = .20;
 
@@ -48,8 +48,8 @@ public class CSCons {
     public static long closingHook = 100;
 
     public static int leftIntakeExtension = 950;
-    public static int centerIntakeExtension = 1500;
-    public static int rightIntakeExtension = 400;
+    public static int centerIntakeExtension = 1210;
+    public static int rightIntakeExtension = 700;
 
     public static double backMultiplier =0.78;
     public static double frontMultiplier = 1;
