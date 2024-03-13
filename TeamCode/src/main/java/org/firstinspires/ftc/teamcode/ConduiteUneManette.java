@@ -73,9 +73,6 @@ public class ConduiteUneManette extends LinearOpMode {
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if (isInnit == 0) {
@@ -83,37 +80,31 @@ public class ConduiteUneManette extends LinearOpMode {
                 zeroDuHaut = zeroDuBras - 462;
                 isInnit = 1;
             }
+
+            // Récupération valeur joystick gauche
             varY = manette1.left_stick_y;
             varX = manette1.left_stick_x;
 
-            varYpos = abs(varY);
-            varXpos = abs(varX);
+            // Convertion pour Moteurs
+            varYpos = Math.abs(varY);
+            varXpos = Math.abs(varX);
 
+            // Récupération valeur joystick gauche
             varRY = manette1.right_stick_y;
 
-            brasA = bras1.getCurrentPosition();
+            // Récupération valeur bras
             brasA = bras2.getCurrentPosition();
 
-            triggerdroit = manette1.right_trigger;
-            triggergauche = manette1.left_trigger;
-
             /// Mouvements
-            if (varY > 0) //Forward
-            {
+            if (varY > 0) {
                 tgtPowerA = varYpos;
                 tgtPowerB = varYpos;
-
-                debugTkt = 1;
-
                 if (varX < 0) {
                     tgtPowerB = tgtPowerB - varXpos;
                 } else if (varX > 0) {
                     tgtPowerA = tgtPowerA - varXpos;
                 }
-
-
-            } else if (varY < 0) //Backward
-            {
+            } else if (varY < 0) {
                 tgtPowerA = -varYpos;
                 tgtPowerB = -varYpos;
 
@@ -124,10 +115,7 @@ public class ConduiteUneManette extends LinearOpMode {
                 } else if (varX > 0) {
                     tgtPowerB = tgtPowerB + varXpos;
                 }
-
-            }
-
-            else if (varY == 0) {
+            } else if (varY == 0) {
                 tgtPowerA = 0;
                 tgtPowerB = 0;
             }
@@ -151,6 +139,7 @@ public class ConduiteUneManette extends LinearOpMode {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
             }
+
             //Mode Precision (en test)
             if (PrecisionMode){
                 while (gamepad1.dpad_up){
@@ -202,12 +191,12 @@ public class ConduiteUneManette extends LinearOpMode {
             //
 
             // Changement Position Coude
-            if (triggergauche > 0) {
+            if (manette1.left_trigger > 0) {
                 coudeX += coudepas;
                 if (coudeX > 0.83) {
                     coudeX = 0.83;
                 }
-            } else if (triggerdroit > 0) {
+            } else if (manette1.right_trigger > 0) {
                 coudeX -= coudepas;
                 if (coudeX<0.10) {
                     coudeX = 0.10;
@@ -268,9 +257,9 @@ public class ConduiteUneManette extends LinearOpMode {
 
             if (PrecisionMode) {
                 bras1.setPower(tgtBras/1000);
+                bras2.setPower(-tgtBras/1000);
                 bras1.setPower(-tgtBras/1000);
                 bras2.setPower(tgtBras/1000);
-                bras1.setPower(-tgtBras/1000);
             } else {
                 bras1.setPower(tgtBras);
                 bras2.setPower(tgtBras);
