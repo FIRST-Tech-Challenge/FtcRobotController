@@ -8,8 +8,8 @@ public class A2globalVar {
     public double A2lSpike3 = 8; // move forward
     public double A2lSpike4 = 7; // move backward
 
-    public double A2mSpike1 = 31.5; // move forward
-    public double A2mSpike2 = 7; // v  move backward
+    public double A2mSpike1 = 37; // move forward
+    public double A2mSpike2 = 7; // move backward
 
     public double A2rSpike1 = 12.5; // strafe right
     public double A2rSpike2 = 25; // move forward
@@ -26,8 +26,8 @@ public class A2globalVar {
     public double A2LongL6 = 20;//moving backwards slow to get the auto arm ready to deploy
 
     //MID SPIKEMARK RUOTE TO BACK BOARD
-    public double A2LongM1 = 15;//strafre to the white pixels
-    public double A2LongM2 = 90;//turnLeft for next strafe
+    public double A2LongM1 = 17;//strafre to the white pixels
+    public double A2LongM2 = 33;//turnLeft for next strafe
     public double A2LongM3 = 29;//strafe to the middle of fild getting ready to cross the truss
     public double A2LongM4 = 90;//Drive to other side of the fild
     public double A2LongM5 = 180;//spin 180 to face the backboard backwards

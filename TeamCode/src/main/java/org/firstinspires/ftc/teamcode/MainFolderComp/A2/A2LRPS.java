@@ -40,6 +40,7 @@ public class A2LRPS extends LinearOpMode {
     private DcMotor lbDrive   = null;  //  Used to control the left back drive wheel
     private DcMotor rbDrive   = null;  //  Used to control the right back drive wheel
     Servo autoarm = null;
+    Servo AutoP = null;
     IMU imu = null;
 
 
@@ -62,6 +63,7 @@ public class A2LRPS extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "rb_drive");
         autoarm = hardwareMap.get(Servo.class, "autoy");
+        AutoP = hardwareMap.get(Servo.class, "autop");
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -165,52 +167,54 @@ public class A2LRPS extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(A2var.A2mSpike1);
+                encoderDriveRightInches(A2var.A2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(A2var.A2mSpike2);
+                encoderDriveLeftInches(A2var.A2mSpike2);
                 imuCorrection(0, 0.5);
 
-                encoderDriveRightInches(A2var.A2LongM1);
+
+
+                encoderDriveBackwardInches(A2var.A2LongM1);
                 imuCorrection(0, 0.5);
 
-                TurnLeft(A2var.A2LongM2);
-                imuCorrection(90, 0.5);
-
-                encoderDriveRightInches(A2var.A2LongM3);
-                imuCorrection(90, 0.5);
-
+                encoderDriveRightInches(A2var.A2LongM2);
+                imuCorrection(0, 0.5);
+//
+//                encoderDriveRightInches(A2var.A2LongM3);
+//                imuCorrection(90, 0.5);
+//
                 encoderDriveForwardInches(A2var.A2LongM4);
-                imuCorrection(90, 0.5);
-
+                imuCorrection(0, 0.5);
+//
                 TurnLeft(A2var.A2LongM5);
-                imuCorrection(-90, 0.5);
-
+               imuCorrection(-45, 0.5);
+//
                 encoderDriveRightInches(A2var.A2LongM6);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveBackwardInches(A2var.A2LongM7);
-                imuCorrection(-90, 0.5);
-
-                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
-                imuCorrection(-90, 0.5);
-
-                sleep(200);
-
-                autoarm.setPosition(0);
-                sleep(900);
-
-                autoarm.setPosition(1);
-                sleep(100);
-
-                encoderDriveForwardInches(5);
-                imuCorrection(-90,0.1);
-
-                encoderDriveRightInches(23);
-                imuCorrection(-90,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-90,0.1);
+                imuCorrection(-45, 0.5);
+//
+//                encoderDriveBackwardInches(A2var.A2LongM7);
+//                imuCorrection(-90, 0.5);
+//
+//                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+//                imuCorrection(-90, 0.5);
+//
+//                sleep(200);
+//
+//                autoarm.setPosition(0);
+//                sleep(900);
+//
+//                autoarm.setPosition(1);
+//                sleep(100);
+//
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-90,0.1);
+//
+//                encoderDriveRightInches(23);
+//                imuCorrection(-90,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-90,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -464,10 +468,10 @@ public class A2LRPS extends LinearOpMode {
         lbDrive.setTargetPosition(-((int)TotalTicks));
         rfDrive.setTargetPosition(-((int)TotalTicks));
         rbDrive.setTargetPosition(((int)TotalTicks));
-        lfDrive.setPower(1);
-        lbDrive.setPower(1);
-        rfDrive.setPower(1);
-        rbDrive.setPower(1);
+        lfDrive.setPower(0.75);
+        lbDrive.setPower(0.75);
+        rfDrive.setPower(0.75);
+        rbDrive.setPower(0.75);
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
