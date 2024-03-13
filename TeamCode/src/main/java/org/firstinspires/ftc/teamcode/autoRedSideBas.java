@@ -74,6 +74,30 @@ public class autoRedSideBas extends LinearOpMode {
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    void goRight(double power) {
+
+        double ROTATIONS = 0.285 / 0.2827;
+        double COUNTS = ROTATIONS * 515.46;
+        int leftTarget = (int)  COUNTS - motorA.getCurrentPosition();
+        int rightTarget = (int) -COUNTS + motorB.getCurrentPosition();
+        motorA.setTargetPosition(-leftTarget);
+        motorB.setTargetPosition(rightTarget);
+        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorA.setPower(power);
+        motorB.setPower(power);
+        while (motorA.isBusy() || motorB.isBusy()) {
+            telemetry.addData("MA", motorA.getTargetPosition());
+            telemetry.addData("MAC", motorA.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        motorA.setPower(0);
+        motorB.setPower(0);
+        motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     void waitTime(double tps) {
         double t=getRuntime();
         while (getRuntime()-t < tps) {idle();}
@@ -166,11 +190,11 @@ public class autoRedSideBas extends LinearOpMode {
         mainG.setPosition(0);
         mainD.setPosition(1);
 
-        waitTime(3);
+        waitTime(1.5);
 
         driveForwardPID(0.1,1);
 
-        waitTime(1);
+        //waitTime(1);
 
         mainG.setPosition(1);
         mainD.setPosition(0);
@@ -188,21 +212,27 @@ public class autoRedSideBas extends LinearOpMode {
 
         driveForwardPID(0.6,1);
         goLeft(1);
-        driveForwardPID(1.8,1);
+        driveForwardPID(2.16,1);
 
         BrasGoTo(300);
-        coudeG.setPosition(0.2);
-        coudeD.setPosition(1-0.2);
+        coudeG.setPosition(0.25);
+        coudeD.setPosition(1-0.25);
+        waitTime(1);
+        mainG.setPosition(0);
+        mainD.setPosition(1);
+        waitTime(1.5);
+        BrasGoTo(50);
+        coudeG.setPosition(0.91);
+        coudeD.setPosition(1-0.91);
+        goRight(1);
+        driveForwardPID(0.5, 1);
 
 
 
-        waitTime(3);
+
 
         while (opModeIsActive()) {
-            coudeG.setPosition(0.91);
-            coudeD.setPosition(1-0.91);
-            mainG.setPosition(0);
-            mainD.setPosition(1);
+
             telemetry.addData("Status", "Wating for end");
             telemetry.update();
         }

@@ -72,6 +72,29 @@ public class CalibrageDirection extends LinearOpMode {
         motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    void goRight(double power) {
+
+        double ROTATIONS = 0.285 / 0.2827;
+        double COUNTS = ROTATIONS * 515.46;
+        int leftTarget = (int)  COUNTS - motorA.getCurrentPosition();
+        int rightTarget = (int) -COUNTS + motorB.getCurrentPosition();
+        motorA.setTargetPosition(-leftTarget);
+        motorB.setTargetPosition(rightTarget);
+        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorA.setPower(power);
+        motorB.setPower(power);
+        while (motorA.isBusy() || motorB.isBusy()) {
+            telemetry.addData("MA", motorA.getTargetPosition());
+            telemetry.addData("MAC", motorA.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        motorA.setPower(0);
+        motorB.setPower(0);
+        motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
     public void BrasGoTo(double pos) {
         if (bras2.getCurrentPosition() < zeroDuHaut+pos) {
@@ -146,7 +169,11 @@ public class CalibrageDirection extends LinearOpMode {
 
             if (gamepad1.a) {
                 //turnToRight();
-                BrasGoTo(300);
+                goLeft(1);
+            }
+            if (gamepad1.b) {
+                //turnToRight();
+                goRight(1);
             }
 
 
