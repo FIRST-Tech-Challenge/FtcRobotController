@@ -557,6 +557,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         double liftPower = pid + ff;
 
+        liftPower= Math.min(0.5, liftPower);
+
         if (telemetry!=null) {
             telemetry.addData("liftPower", liftPower);
         }

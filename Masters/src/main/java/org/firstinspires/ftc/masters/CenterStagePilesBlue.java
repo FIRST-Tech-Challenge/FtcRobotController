@@ -137,7 +137,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, 20))
+                .lineToConstantHeading(new Vector2d(56, 24))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -153,7 +153,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 34))
+                .strafeTo(new Vector2d(56, 37))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
@@ -171,17 +171,17 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         TrajectorySequence toStackFromRight = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 2), Math.toRadians(180))
+//                .splineToConstantHeading(new Vector2d(-50, 2), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromCenter = drive.trajectorySequenceBuilder(strafeToBoardCenter.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
+//                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromLeft = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
                 .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
+//                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
                 .build();
 
 
@@ -330,12 +330,12 @@ public class CenterStagePilesBlue extends LinearOpMode {
                     if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel() ||(waitToPickUpTime!=null && waitToPickUpTime.milliseconds()>500))) {
                         drive.closeClaw();
                         drive.getIntakeSlides().setPower(0);
-                        intakeTarget = drive.getIntakeSlides().getTargetPosition();
+                        intakeTarget = drive.getIntakeSlides().getCurrentPosition();
                         elapsedTime = new ElapsedTime();
                         clawClose = true;
                         waitToPickUpTime=null;
                     }
-                    if (clawClose && elapsedTime.milliseconds() > 1000) {
+                    if (clawClose && elapsedTime.milliseconds() > 700) {
                         intakeTarget = 0;
                         drive.intakeToTransfer();
                         drive.followTrajectorySequenceAsync(straightToBackBoard);
@@ -369,12 +369,12 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         drive.transferClaw();
                         openClaw = true;
                     }
-                    if (elapsedTime.milliseconds() > 2000 && !closeHook) {
+                    if (elapsedTime.milliseconds() > 1700 && !closeHook) {
                         drive.closeHook();
                         closeHook = true;
                     }
 
-                    if (drive.getPoseEstimate().getX() > 10 && closeHook) {
+                    if (drive.getPoseEstimate().getX() > 15 && closeHook) {
                         backSlidesTarget = CSCons.OuttakePosition.AUTO.getTarget();
                         drive.outtakeToBackdrop();
                     }
@@ -433,8 +433,8 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         telemetry.addData("YELLOW", "WAIT");
                         if (!closeHook && elapsedTime.milliseconds()>400){
                             telemetry.addData("YELLOW", "LIFT");
-                            backSlidesTarget = 2400;
-                            if (drive.getBackSlides().getCurrentPosition() > 2350) {
+                            backSlidesTarget = 1800;
+                            if (drive.getBackSlides().getCurrentPosition() > 1750) {
                                 if (propPos == PropFindRight.pos.LEFT) {
                                     drive.followTrajectorySequenceAsync(toStackFromLeft);
                                 } else if (propPos == PropFindRight.pos.MID) {
