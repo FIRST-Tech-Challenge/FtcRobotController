@@ -188,10 +188,10 @@ public class A2LRPS extends LinearOpMode {
                 imuCorrection(0, 0.5);
 //
                 TurnLeft(A2var.A2LongM5);
-               imuCorrection(-45, 0.5);
+               imuCorrection(-100, 0.5);
 //
                 encoderDriveRightInches(A2var.A2LongM6);
-                imuCorrection(-45, 0.5);
+                imuCorrection(-100, 0.5);
 //
 //                encoderDriveBackwardInches(A2var.A2LongM7);
 //                imuCorrection(-90, 0.5);
