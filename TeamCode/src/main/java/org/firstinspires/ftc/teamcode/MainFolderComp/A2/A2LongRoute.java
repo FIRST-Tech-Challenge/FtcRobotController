@@ -190,6 +190,27 @@ public class A2LongRoute extends LinearOpMode {
                 imuCorrection(0, 0.5);
 //
                 TurnLeft(A2var.A2LongM5);
+
+               imuCorrection(-100, 0.5);
+//
+                encoderDriveRightInches(A2var.A2LongM6);
+                imuCorrection(-100, 0.5);
+//
+//                encoderDriveBackwardInches(A2var.A2LongM7);
+//                imuCorrection(-90, 0.5);
+//
+//                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+//                imuCorrection(-90, 0.5);
+//
+//                sleep(200);
+//
+//                autoarm.setPosition(0);
+//                sleep(900);
+//
+//                autoarm.setPosition(1);
+//                sleep(100);
+//
+
                 imuCorrection(-173, 0.5);
 //
                 encoderDriveRightInches(A2var.A2LongM6);
@@ -208,6 +229,7 @@ public class A2LongRoute extends LinearOpMode {
 
                 autoarm.setPosition(1);
                 sleep(100);
+
 
 //                encoderDriveForwardInches(5);
 //                imuCorrection(-173,0.1);
