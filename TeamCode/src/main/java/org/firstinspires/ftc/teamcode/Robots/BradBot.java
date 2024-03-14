@@ -278,14 +278,21 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+  public void outtakePreload(){
+    if(queuer.queue(true, intake.getHeight()==5)){
+
+    }
+  }
 
   public void lowAuto(boolean left) {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 900)) {
-      if (currentPose.getX() > -15 && Claw.clawStates.GRAB.getState() && Arm.ArmTargetStates.HOVER.getState()) {
-        lift.setPosition(900);
+      LOGGER.log("armor" + Claw.clawStates.GRAB.getState() +" "+ Arm.ArmTargetStates.HOVER.getState()+ " " + (currentPose.getX()>-15));
+      if (currentPose.getX() > -15 && Claw.clawStates.GRAB.getState()) {
+        lift.setPosition(1000);
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
+        twrist.flipTo(Twrist.twristTargetStates.DROP);
         LOGGER.log("ocook");
       }
     }
@@ -376,10 +383,11 @@ public class BradBot extends BasicRobot {
     }
   }
 
+
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
-        ((Magazine.pixels == 1 &&intaked&& time-intake.getStartIntakeTime()>0.5&& magazine.solidTwoPixels() && abs(intake.getVelocity())<1400)|| Magazine.pixels==2 && intaked || Intake.IntakeStates.REVERSING.getState()))) {
+        ((Magazine.pixels == 1 &&intaked&& time-intake.getStartIntakeTime()>0.4&& magazine.solidTwoPixels() && abs(intake.getVelocity())<1300)|| Magazine.pixels==2 && intaked || Intake.IntakeStates.REVERSING.getState()))) {
       if (currentPose.getX() < -30) {
         intaked = true;
         magazine.updateSensors();

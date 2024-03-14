@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -13,16 +12,12 @@ import static java.lang.Math.min;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
-import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.openftc.easyopencv.LIFO_OpModeCallbackDelegate;
 
 /** Warren Class to contain flipping intake and associated functions */
 @Config
@@ -41,7 +36,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.51, TWO=0.535, THREE = 0.555, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.51, TWO=0.535, THREE = 0.56, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -243,7 +238,9 @@ public class Intake extends RFMotor {
     return intakePathTIme;
   }
 
-
+  public int getHeight(){
+    return height;
+  }
 
 
   public void setHeight(int height){

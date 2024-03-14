@@ -94,7 +94,7 @@ public class Magazine {
 
   public boolean solidTwoPixels(){
     if (Magazine.pixels == 1) {
-      return BasicRobot.time - twoPixelTime > 0.35;
+      return BasicRobot.time - twoPixelTime > 0.5;
     }
     else{
       return false;

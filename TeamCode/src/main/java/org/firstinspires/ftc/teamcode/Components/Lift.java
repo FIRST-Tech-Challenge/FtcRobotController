@@ -144,7 +144,7 @@ public class Lift extends RFDualMotor {
       }
     }
 
-    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-20-getVelocity()*0.4)
+    if (super.getCurrentPosition() < LiftPositionStates.LOW_SET_LINE.position-70-getVelocity()*0.4)
       LiftPositionStates.AT_ZERO.setStateTrue();
     else LiftPositionStates.AT_ZERO.state = false;
 
