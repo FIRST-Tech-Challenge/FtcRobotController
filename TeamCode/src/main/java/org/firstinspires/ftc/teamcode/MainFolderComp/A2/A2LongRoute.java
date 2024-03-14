@@ -18,9 +18,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name="Auton_A2_LRPM", group="A2")
+@Autonomous(name="Auton_A2_Long", group="A2")
 // @Disabled
-public class A2LRPM extends LinearOpMode {
+public class A2LongRoute extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -40,6 +40,7 @@ public class A2LRPM extends LinearOpMode {
     private DcMotor lbDrive   = null;  //  Used to control the left back drive wheel
     private DcMotor rbDrive   = null;  //  Used to control the right back drive wheel
     Servo autoarm = null;
+    Servo AutoP = null;
     IMU imu = null;
 
 
@@ -62,6 +63,7 @@ public class A2LRPM extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "rb_drive");
         autoarm = hardwareMap.get(Servo.class, "autoy");
+        AutoP = hardwareMap.get(Servo.class, "autop");
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -115,6 +117,9 @@ public class A2LRPM extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            telemetry.addData("Yaw: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+
 
             if (usingCV) {
                 if (getRuntime() >= 3.0) {
@@ -165,35 +170,36 @@ public class A2LRPM extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(A2var.A2mSpike1);
+                encoderDriveRightInches(A2var.A2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(A2var.A2mSpike2);
+                encoderDriveLeftInches(A2var.A2mSpike2);
                 imuCorrection(0, 0.5);
 
-                encoderDriveRightInches(A2var.A2LongM1);
+
+                encoderDriveBackwardInches(A2var.A2LongM1);
                 imuCorrection(0, 0.5);
 
-                TurnLeft(A2var.A2LongM2);
-                imuCorrection(90, 0.5);
-
-                encoderDriveRightInches(A2var.A2LongM3);
-                imuCorrection(90, 0.5);
-
+                encoderDriveRightInches(A2var.A2LongM2);
+                imuCorrection(0, 0.5);
+//
+//                encoderDriveRightInches(A2var.A2LongM3);
+//                imuCorrection(90, 0.5);
+//
                 encoderDriveForwardInches(A2var.A2LongM4);
-                imuCorrection(90, 0.5);
-
+                imuCorrection(0, 0.5);
+//
                 TurnLeft(A2var.A2LongM5);
-                imuCorrection(-90, 0.5);
-
+                imuCorrection(-173, 0.5);
+//
                 encoderDriveRightInches(A2var.A2LongM6);
-                imuCorrection(-90, 0.5);
+                imuCorrection(-173, 0.5);
 
                 encoderDriveBackwardInches(A2var.A2LongM7);
-                imuCorrection(-90, 0.5);
+                imuCorrection(-173, 0.5);
 
                 encoderDriveBackwardInchesSlow(A2var.A2LongM8);
-                imuCorrection(-90, 0.5);
+//                imuCorrection(-173, 0.5);
 
                 sleep(200);
 
@@ -203,14 +209,14 @@ public class A2LRPM extends LinearOpMode {
                 autoarm.setPosition(1);
                 sleep(100);
 
-                encoderDriveForwardInches(5);
-                imuCorrection(-90,0.1);
-
-                encoderDriveLeftInches(23);
-                imuCorrection(-90,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-90,0.1);
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveRightInches(23);
+//                imuCorrection(-90,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-90,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -264,7 +270,7 @@ public class A2LRPM extends LinearOpMode {
                 encoderDriveForwardInches(5);
                 imuCorrection(-90,0.1);
 
-                encoderDriveLeftInches(35);
+                encoderDriveRightInches(35);
                 imuCorrection(-90,0.1);
 
                 encoderDriveBackwardInches(12);
@@ -319,7 +325,7 @@ public class A2LRPM extends LinearOpMode {
                 encoderDriveForwardInches(5);
                 imuCorrection(-90,0.1);
 
-                encoderDriveLeftInches(20);
+                encoderDriveRightInches(20);
                 imuCorrection(-90,0.1);
 
                 encoderDriveBackwardInches(15);
@@ -464,10 +470,10 @@ public class A2LRPM extends LinearOpMode {
         lbDrive.setTargetPosition(-((int)TotalTicks));
         rfDrive.setTargetPosition(-((int)TotalTicks));
         rbDrive.setTargetPosition(((int)TotalTicks));
-        lfDrive.setPower(1);
-        lbDrive.setPower(1);
-        rfDrive.setPower(1);
-        rbDrive.setPower(1);
+        lfDrive.setPower(0.75);
+        lbDrive.setPower(0.75);
+        rfDrive.setPower(0.75);
+        rbDrive.setPower(0.75);
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
