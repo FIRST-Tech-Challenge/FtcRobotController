@@ -75,10 +75,10 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
-    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.1, 1);
+    public static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0.0, 0.5);
+    public static final PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0.1, 0.5);
 
-    public static final double LATERAL_MULTIPLIER = 1.4;
+    public static final double LATERAL_MULTIPLIER = 1.3;
 
     public static final double VX_WEIGHT = 1;
     public static final double VY_WEIGHT = 1;
@@ -209,11 +209,11 @@ public class SampleMecanumDrive extends MecanumDrive {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
 
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        imu.resetYaw();
+//        imu = hardwareMap.get(IMU.class, "imu");
+//
+//        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+//        imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);

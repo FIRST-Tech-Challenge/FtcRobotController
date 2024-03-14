@@ -33,6 +33,7 @@ public class Magazine {
     colorSensor1 = new RFColorSensor("colorSensor");
     colorSensor2 = new RFColorSensor("colorSensor2");
     blinkin = new RFLEDStrip("blinkin");
+    pixels=0;
   }
 
   public enum MagStates {
@@ -70,26 +71,30 @@ public class Magazine {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 1.7) {
+    if (dist1 < 1.6) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 > 1.7) {
+    } else if (dist1 > 1.6) {
       MagStates.FRONT.setState(false);
     }
-    if (dist2 < 1) {
+    if (dist2 < 0.9) {
       MagStates.BACK.setState(true);
       pixels++;
-    } else if (dist2 > 1) {
+    } else if (dist2 > 0.9) {
       MagStates.BACK.setState(false);
     }
-    if(pixels!=2){
+    if(pixels<1){
       twoPixelTime = BasicRobot.time;
     }
+    LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
+    LOGGER.log(
+            "front | back state: " + MagStates.FRONT.getState() + " | " + MagStates.BACK.getState());
+    LOGGER.log("# Pixels: " + getPixels());
   }
 
   public boolean solidTwoPixels(){
-    if (Magazine.pixels == 2) {
-      return BasicRobot.time - twoPixelTime > 0.15;
+    if (Magazine.pixels == 1) {
+      return BasicRobot.time - twoPixelTime > 0.35;
     }
     else{
       return false;

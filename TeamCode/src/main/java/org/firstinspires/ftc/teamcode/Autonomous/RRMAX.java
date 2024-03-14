@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
-public class RR24 {
+public class RRMAX {
     boolean logi=false;
     LinearOpMode op;
     BradBot robot;
@@ -21,72 +21,62 @@ public class RR24 {
     TrajectorySequence[] droppy = new TrajectorySequence[3];
     TrajectorySequence drop, drop2, intake, intake2, intake3, park;
 
-    public RR24(LinearOpMode op, boolean isLogi){
+    public RRMAX(LinearOpMode op, boolean isLogi){
         logi = isLogi;
         this.op=op;
         robot = new BradBot(op, false,isLogi);
-        Pose2d startPose = new Pose2d(17,-64.5,toRadians(-90));
-        Vector2d[] droppos = new Vector2d[3];
-        droppos[0] = new Vector2d(46.4, -29);
-        droppos[1] = new Vector2d(46.4, -35.25);
-        droppos[2] = new Vector2d(46.4, -38.5);
+        Pose2d startPose = new Pose2d(17,-62.5,toRadians(-90));
         robot.roadrun.setPoseEstimate(startPose);
 
-        spikey[0] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .setReversed(true)
-                .splineToLinearHeading(new Pose2d(11.5, -37, toRadians(0)), toRadians(180))
-                .build();
 
         spikey[1] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(16.5, -36.5, toRadians(-91))).build();
+                .lineToLinearHeading(new Pose2d(16.5, -38.5, toRadians(-91)))
+                .addTemporalMarker(robot::done)
+                .build();
 
-        spikey[2] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(25.5,-40, toRadians(1890))).build();
 
         if (!isLogi) {
-            droppy[0] = robot.roadrun.trajectorySequenceBuilder(spikey[0].end())
-                    .setReversed(true)
-                    .splineToLinearHeading(new Pose2d(46.4, -29, toRadians(-180)),toRadians(0)).build();
+
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
-                    .lineToLinearHeading(new Pose2d(46.4, -35.25, toRadians(-180))).build();
+                    .lineToLinearHeading(new Pose2d(48.5, -36.25, toRadians(-180)))
+                    .addTemporalMarker(robot::done)
+                    .build();
 
-            droppy[2] = robot.roadrun.trajectorySequenceBuilder(spikey[2].end())
-                    .lineToLinearHeading(new Pose2d(46.4, -41.5, toRadians(-180))).build();
         } else{
 
 
         }
         intake = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(17, -16), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-30, -16), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52, -16), toRadians(180))
+                .splineToConstantHeading(new Vector2d(17, -35.25), toRadians(180))
+//                .splineToConstantHeading(new Vector2d(-30, -34.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52.5, -34.25), toRadians(180))
                 .build();
         intake2 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(18.5, -16.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-31.5, -16.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-54.5, -16.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-31.5, -34.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53, -34.25), toRadians(180))
                 .build();
         intake3 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(18.5, -16.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-31.5, -16.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-54.5, -16.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-31.5, -34.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53, -34.25), toRadians(180))
                 .build();
         drop = robot.roadrun.trajectorySequenceBuilder(intake.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-30, -15.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -15.5), toRadians(0))
-                .splineToConstantHeading(droppos[bark], toRadians(0))
+                .splineToConstantHeading(new Vector2d(-30, -37.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -37.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(48.5,-37.25), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         drop2 = robot.roadrun.trajectorySequenceBuilder(intake2.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-30, -15.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -15.5), toRadians(0))
-                .splineToConstantHeading(droppos[bark], toRadians(0))
+                .splineToConstantHeading(new Vector2d(-30, -37.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -37.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(48.5,-37.25), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         park = robot.roadrun.trajectorySequenceBuilder(drop2.end())
@@ -107,67 +97,68 @@ public class RR24 {
             robot.update();
         }
         op.resetRuntime();
+        bark=1;
         time=0;
     }
     public void purp()
     {
         robot.queuer.queue(false, true);
-//        robot.upAuto();
-//        robot.purpurAuto();
-        robot.queuer.waitForFinish();
+        robot.upAuto();
+        robot.purpurAuto();
         robot.followTrajSeq(spikey[bark]);
-//        robot.dropAuto(0);
+        robot.queuer.waitForFinish();
+        robot.dropAuto(0);
     }
 
     public void intake(int height){
-        robot.queuer.addDelay(0.0);
         robot.followTrajSeq(intake);
-//        robot.resetAuto();
-//        robot.intakeAuto(height);
+        robot.queuer.addDelay(0.2);
+        robot.resetAuto();
+        robot.intakeAuto(height);
     }
     public void cycleIntake(int height){
         robot.followTrajSeq(intake);
-//        robot.intakeAuto(height);
-//        robot.queuer.addDelay(0.3);
-//        robot.resetAuto();
+        robot.intakeAuto(height);
+        robot.queuer.addDelay(0.2);
+        robot.resetAuto();
     }
     public void cycleIntake2(int height){
-        robot.queuer.addDelay(0.2);
         robot.followTrajSeq(intake2);
-//        robot.intakeAuto(height);
-//        robot.resetAuto();
+        robot.intakeAuto(height);
+        robot.queuer.addDelay(0.2);
+        robot.resetAuto();
     }
     public void cycleIntake3(int height){
-        robot.queuer.addDelay(0.2);
         robot.followTrajSeq(intake3);
-//        robot.intakeAuto(height);
-//        robot.resetAuto();
+        robot.intakeAuto(height);
+        robot.queuer.addDelay(0.2);
+        robot.resetAuto();
     }
     public void cycleDrop(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop);
-//        robot.grabAuto();
-//        robot.lowAuto(false);
-//        robot.drop();
+        robot.grabAuto();
+        robot.lowAuto(false);
+        robot.drop();
     }
     public void cycleDrop2(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop2);
-//        robot.grabAuto();
-//        robot.lowAuto(false);
-//        robot.drop();
+        robot.grabAuto();
+        robot.lowAuto(false);
+        robot.drop();
     }
     public void pre(){
         robot.queuer.waitForFinish();
         robot.followTrajSeq(droppy[bark]);
-//        robot.lowAuto(false);
-//        robot.yellowAuto(false);
-//        robot.drop();
+        robot.lowAuto(false);
+        robot.yellowAuto(false);
+        robot.drop();
     }
 
     public void park(){
         robot.queuer.addDelay(.5);
-//        robot.resetAuto();
+        robot.resetAuto();
         robot.followTrajSeq(park);
         robot.queuer.waitForFinish();
         robot.queuer.queue(false, true);

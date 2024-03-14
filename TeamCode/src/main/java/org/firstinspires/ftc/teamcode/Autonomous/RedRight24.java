@@ -17,7 +17,7 @@ public class RedRight24 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RR24 aut = new RR24(this, false);
+        RRMAX aut = new RRMAX(this, false);
         aut.waitForStart();
         while (!isStopRequested() && opModeIsActive()&& aut.isAutDone()) {
             aut.purp();
@@ -26,7 +26,8 @@ public class RedRight24 extends LinearOpMode {
             aut.cycleDrop();
             aut.cycleIntake2(3);
             aut.cycleDrop2();
-            aut.park();
+            aut.cycleIntake3(2);
+            aut.cycleDrop2();
             aut.update();
         }
     }

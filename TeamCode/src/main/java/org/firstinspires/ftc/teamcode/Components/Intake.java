@@ -41,7 +41,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.53, TWO=0.565, THREE = 0.585, FOUR = 0.595, FIVE =0.615, STOP_DELAY = 0.8, UPPIES = 0.74, SUPPER_UPIES = 0.84;
+  public static double ONE=0.51, TWO=0.535, THREE = 0.555, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.4, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -156,6 +156,9 @@ public class Intake extends RFMotor {
       intakeServo.setPosition(FOUR);if(height==5)
       intakeServo.setPosition(FIVE);
   }
+  public double getIntakePower(){
+    return curPower;
+  }
 
   /**
    * Sets intake power to REVERSE_POWER, logs that the robot is reversing to general and intake
@@ -190,20 +193,12 @@ public class Intake extends RFMotor {
     if (curPower != 0) {
       uppies();
       LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 + ", ");
-      double pos = this.getVelocity() * 0.3 + this.getCurrentPosition();
-      pos %= TICKS_PER_REV;
-      if (pos > TICKS_PER_REV / 2) {
-        pos -= TICKS_PER_REV;
-      }
-      if (abs(pos) < TICKS_PER_REV / 4) {
-        setRawPower(0);
-        curPower=0;
-      }
-      pixeled1 = false;
-
-      //        }
-      //        LOGGER.log("position" + pos);
+      setRawPower(0);
+      IntakeStates.STOPPED.setStateTrue();
     }
+  }
+  public double getStartIntakeTime(){
+    return startIntakeTime;
   }
 
   /**
@@ -232,41 +227,11 @@ public class Intake extends RFMotor {
   }
 
   public boolean intakeAutoHeight(int p_height) {
-    if( IntakeStates.STOPPED.getState()){
-      startIntakeTime=BasicRobot.time;
-      storPixel=Magazine.pixels;
-      height = p_height;
+    if (curPower == 0) {
+      startIntakeTime = time;
     }
-    if(BasicRobot.time - startIntakeTime>8){
-      stopIntake();
-    }
-
-    if (BasicRobot.time - lastHeightTime > 5) {
-      height = p_height;
-      setHeight(max(height, p_height-2));
-      lastHeightTime = BasicRobot.time;
-    }
-    if (BasicRobot.time - lastHeightTime > 1) {
-      height--;
-      if(height<=p_height-2){
-        return false;
-      }
-      height=max(height,1);
-      setHeight(max(height, p_height-2));
-      lastHeightTime = BasicRobot.time;
-    }
-    if(Magazine.pixels==1&&storPixel==0&&BasicRobot.time - lastHeightTime > 1){
-      height = max(1, height - 1);
-      if(height<=p_height-2){
-        return false;
-      }
-      setHeight(height);
-      lastHeightTime = BasicRobot.time;
-    }
-    if(Magazine.pixels!=2){
-      intake();
-    }
-    storPixel=Magazine.pixels;
+    intake();
+    setHeight(p_height);
     return false;
   }
   public void setIntakePath(boolean p_intakePath){
@@ -277,6 +242,7 @@ public class Intake extends RFMotor {
   public double getIntakePathTIme(){
     return intakePathTIme;
   }
+
 
 
 
@@ -321,7 +287,6 @@ public class Intake extends RFMotor {
       if(i.state&&i==IntakeStates.INTAKING)intake();
       if(i.state&&i==IntakeStates.STOPPED)stopIntake();
       if(i.state&&i==IntakeStates.REVERSING)reverseIntake();
-
     }
     if(Magazine.pixels==1){
       pixeled1=true;

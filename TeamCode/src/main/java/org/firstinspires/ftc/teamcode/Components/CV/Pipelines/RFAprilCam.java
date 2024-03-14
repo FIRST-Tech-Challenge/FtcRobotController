@@ -57,7 +57,10 @@ import java.util.concurrent.TimeUnit;
 /** Warren All operations associated with aprilTag */
 @Config
 public class RFAprilCam {
-  public static double X_OFFSET = 6.5, Y_OFFSET = -4.75, UPSAMPLE_THRESHOLD = 25, NUMBER_OF_SAMPLES = 7;
+  public static double X_OFFSET = 6.5,
+      Y_OFFSET = -4.75,
+      UPSAMPLE_THRESHOLD = 25,
+      NUMBER_OF_SAMPLES = 7;
   public static int EXPOSURE_MS = 3, GAIN = 5;
   public static double FOCAL_LENGTH = 820;
   public static double DOWNSAMPLE = 6, UPSAMPLE = 7;
@@ -86,7 +89,7 @@ public class RFAprilCam {
   private Pose2d camPoseError = new Pose2d(0, 0, 0);
   private double poseCount = 0;
 
-  boolean isLogi=false;
+  boolean isLogi = false;
 
   ArrayList<Pose2d> poseHistory = new ArrayList<>();
   private double[][] directions = {
@@ -164,32 +167,31 @@ public class RFAprilCam {
               .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
               .build();
       tuned = false;
-      Y_OFFSET=-4.75;
+      Y_OFFSET = -4.75;
       X_OFFSET = 6.5;
-    }
-    else{
+    } else {
       aprilTag =
-              new AprilTagProcessor.Builder()
-                      .setDrawAxes(false)
-                      .setDrawCubeProjection(false)
-                      .setDrawTagOutline(true)
-                      .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                      .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                      .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                      .setLensIntrinsics(822.317f, 822.317f, 319.495f, 242.502f)
-                      .build();
+          new AprilTagProcessor.Builder()
+              .setDrawAxes(false)
+              .setDrawCubeProjection(false)
+              .setDrawTagOutline(true)
+              .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+              .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+              .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+              .setLensIntrinsics(822.317f, 822.317f, 319.495f, 242.502f)
+              .build();
       aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_SQPNP);
       aprilTag.setDecimation((float) UPSAMPLE);
 
       visionPortal =
-              new RFVisionPortal.Builder()
-                      .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 1"))
-                      .setCameraResolution(new Size(640, 480))
-                      .addProcessor(aprilTag)
-                      .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
-                      .build();
+          new RFVisionPortal.Builder()
+              .setCamera(op.hardwareMap.get(WebcamName.class, "Webcam 1"))
+              .setCameraResolution(new Size(640, 480))
+              .addProcessor(aprilTag)
+              .setStreamFormat(RFVisionPortal.StreamFormat.MJPEG)
+              .build();
       tuned = true;
-      Y_OFFSET=3.0;
+      Y_OFFSET = 3.0;
       X_OFFSET = 5.1;
     }
   }
@@ -199,19 +201,19 @@ public class RFAprilCam {
    * finest verbosity level
    */
   public void update() {
-    if(visionPortal.getCameraState() == RFVisionPortal.CameraState.STREAMING&&!tuned){
+    if (visionPortal.getCameraState() == RFVisionPortal.CameraState.STREAMING && !tuned) {
       exposureControl = visionPortal.getCameraControl(ExposureControl.class);
       exposureControl.setMode(UvcApiExposureControl.Mode.Manual);
       exposureControl.setExposure(EXPOSURE_MS, TimeUnit.MILLISECONDS);
-      tuned=true;
+      tuned = true;
       packet.put("tuned", true);
-//      gainControl = visionPortal.getCameraControl(GainControl.class);
-//      gainControl.setGain(GAIN);
+      //      gainControl = visionPortal.getCameraControl(GainControl.class);
+      //      gainControl.setGain(GAIN);
     }
 
     ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
     poseHistory.add(0, currentPose);
-    if(poseHistory.size()>histoLength){
+    if (poseHistory.size() > histoLength) {
       poseHistory.remove(histoLength);
     }
 
@@ -229,20 +231,23 @@ public class RFAprilCam {
           VectorF values = tagData.fieldPosition;
           Vector2d pos = new Vector2d(values.get(0), values.get(1));
           Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
-//          offset = offset.rotated(currentPose.getHeading());
+          //          offset = offset.rotated(currentPose.getHeading());
           Pose2d camPose =
               new Pose2d(
                   pos.plus(
                       new Vector2d(
-                          -(p_x) * directions[p_ind][0] - offset.getX(),
-                          -(p_y) * directions[p_ind][1] - offset.getY()).rotated(currentPose.getHeading()+PI)),
-                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 +toRadians(5.2)+ PI);
-          if(isLogi){
+                              -(p_x) * directions[p_ind][0] - offset.getX(),
+                              -(p_y) * directions[p_ind][1] - offset.getY())
+                          .rotated(currentPose.getHeading() + PI)),
+                  -directions[p_ind][0] * poseFtc.yaw * PI / 180 + toRadians(5.2) + PI);
+          if (isLogi) {
             camPose =
-                    new Pose2d(
-                            camPose.getX(),camPose.getY(),camPose.getHeading()-toRadians(8.1));
+                new Pose2d(camPose.getX(), camPose.getY(), camPose.getHeading() - toRadians(8.1));
           }
-          if (poseFtc.range < UPSAMPLE_THRESHOLD && (!isLogi||currentVelocity.vec().norm()<1)/*camPose.vec().distTo(currentPose.vec())<5*/) {
+          if (poseFtc.range < UPSAMPLE_THRESHOLD
+              && (!isLogi
+                  || currentVelocity.vec().norm()
+                      < 1) /*camPose.vec().distTo(currentPose.vec())<5*/) {
             //                        if (!upsample) {
             //                            aprilTag.setDecimation((float) UPSAMPLE);
             //                        }
@@ -275,9 +280,10 @@ public class RFAprilCam {
         }
         if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
           LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-          camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(), 0/*camPoseError.getHeading()*/);
+          camPoseError =
+              new Pose2d(camPoseError.getX(), camPoseError.getY(), 0 /*camPoseError.getHeading()*/);
           LOGGER.log("oldPose" + currentPose);
-          poseHeadOffset += camPoseError.getHeading()/poseCount;
+          poseHeadOffset += camPoseError.getHeading() / poseCount;
           currentPose = currentPose.plus(camPoseError.div(poseCount));
           LOGGER.log("newPose" + currentPose);
           poseCount = 0;
@@ -286,7 +292,7 @@ public class RFAprilCam {
         }
       }
     } else {
-LOGGER.log("waitForApril");      //                aprilTag.setDecimation((float)DOWNSAMPLE);
+      LOGGER.log("waitForApril"); //                aprilTag.setDecimation((float)DOWNSAMPLE);
     }
   }
 

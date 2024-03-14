@@ -83,6 +83,7 @@ public class RFServo implements Servo {
         if (time - plastTime > FLIP_TIME || p_position == 0.06 || p_position==0.02) {
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
                         + df.format(p_position), true);
+            LOGGER.log("moving to:"+p_position);
             rfServo.setPosition(p_position);
             plastTime = time;
             LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
