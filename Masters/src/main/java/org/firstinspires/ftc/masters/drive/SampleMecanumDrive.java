@@ -69,7 +69,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 58.0/60.0;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -286,7 +286,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
     public void intakeToTopStack() {
-        clawAngle.setPosition(CSCons.clawAngleGroundToThree);
+        clawAngle.setPosition(CSCons.clawAngleFourToFive);
         clawArm.setPosition(CSCons.clawArm5);
     }
 
@@ -587,6 +587,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
         double liftPower = pid + ff;
+
+        liftPower= Math.min(0.5, liftPower);
 
         if (telemetry!=null) {
             telemetry.addData("liftPower", liftPower);
