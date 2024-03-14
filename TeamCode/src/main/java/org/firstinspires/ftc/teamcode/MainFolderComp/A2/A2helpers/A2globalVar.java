@@ -31,9 +31,9 @@ public class A2globalVar {
     public double A2LongM3 = 29;//strafe to the middle of fild getting ready to cross the truss
     public double A2LongM4 = 95;//Drive to other side of the fild
     public double A2LongM5 = 180;//spin 180 to face the backboard backwards
-    public double A2LongM6 = 38;//straffe to get alined with the middle apriltag
+    public double A2LongM6 = 40;//straffe to get alined with the middle apriltag
     public double A2LongM7 = 8;//moving backwards to getting the arm set for pixel drop
-    public double A2LongM8 = 40;//moving backwards slower to getting the arm set for pixel drop
+    public double A2LongM8 = 50;//moving backwards slower to getting the arm set for pixel drop
     //RIGHT SPIKEMARK RUOTE TO BACK BOARD
     public double A2LongR1 = 23;//moving backwards and straffing away from the spikemark
     public double A2LongR2 = 38;//getting the robot in position to cross the truss
