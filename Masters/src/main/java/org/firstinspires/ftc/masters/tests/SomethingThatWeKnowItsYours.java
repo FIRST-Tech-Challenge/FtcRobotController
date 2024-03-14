@@ -41,3 +41,6 @@ public class SomethingThatWeKnowItsYours extends LinearOpMode {
 
 
 // Hello human it seems you have scrolled to the end of the code i hope you have a great rest of your day :)
+
+// Your supreme lord and master here, what the fuck is the naming convention for this file.
+// Fix it, you knaves

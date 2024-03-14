@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.PropFindProcessor;
-import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -63,7 +62,7 @@ public class testAlignTag extends LinearOpMode {
 
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
+                    .setCamera(hardwareMap.get(WebcamName.class, "backWebcam"))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         } else {
@@ -106,8 +105,17 @@ public class testAlignTag extends LinearOpMode {
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
             }   // end for() loop
-            telemetry.addData("April Tag Pos Es",drive.aprilTagPosEstimate(currentDetections));
-            drive.alignTag(currentDetections);
+            telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
+            if (gamepad1.a) {
+                drive.turnToTag(currentDetections, 1);
+                sleep(200);
+            }
+
+            if (gamepad1.b) {
+                drive.strafeToTag(currentDetections, 1);
+                sleep(200);
+            }
+
             telemetry.update();
         }
     }
