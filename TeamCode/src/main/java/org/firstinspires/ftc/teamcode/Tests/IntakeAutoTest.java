@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
 //@Disabled
 @Config
 @Autonomous
@@ -24,13 +26,14 @@ public class IntakeAutoTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
     robot.roadrun.setPoseEstimate(new Pose2d(-55, 0, toRadians(-180)));
+        TrajectorySequence run = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-55,0, toRadians(-180))).
+                back(10).build();
         waitForStart();
         while (!isStopRequested() && opModeIsActive()) {
-            robot.drop();
             robot.resetAuto();
             robot.intakeAuto(height);
             robot.queuer.waitForFinish();
-            robot.queuer.queue(false, false);
+            robot.followTrajSeq(run);
             robot.update();
             robot.queuer.setFirstLoop(false);
         }
