@@ -117,6 +117,9 @@ public class A2LRPS extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            telemetry.addData("Yaw: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+
 
             if (usingCV) {
                 if (getRuntime() >= 3.0) {
@@ -174,7 +177,6 @@ public class A2LRPS extends LinearOpMode {
                 imuCorrection(0, 0.5);
 
 
-
                 encoderDriveBackwardInches(A2var.A2LongM1);
                 imuCorrection(0, 0.5);
 
@@ -188,27 +190,27 @@ public class A2LRPS extends LinearOpMode {
                 imuCorrection(0, 0.5);
 //
                 TurnLeft(A2var.A2LongM5);
-               imuCorrection(-45, 0.5);
+                imuCorrection(-173, 0.5);
 //
                 encoderDriveRightInches(A2var.A2LongM6);
-                imuCorrection(-45, 0.5);
-//
-//                encoderDriveBackwardInches(A2var.A2LongM7);
-//                imuCorrection(-90, 0.5);
-//
-//                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
-//                imuCorrection(-90, 0.5);
-//
-//                sleep(200);
-//
-//                autoarm.setPosition(0);
-//                sleep(900);
-//
-//                autoarm.setPosition(1);
-//                sleep(100);
-//
+                imuCorrection(-173, 0.5);
+
+                encoderDriveBackwardInches(A2var.A2LongM7);
+                imuCorrection(-173, 0.5);
+
+                encoderDriveBackwardInchesSlow(A2var.A2LongM8);
+//                imuCorrection(-173, 0.5);
+
+                sleep(200);
+
+                autoarm.setPosition(0);
+                sleep(900);
+
+                autoarm.setPosition(1);
+                sleep(100);
+
 //                encoderDriveForwardInches(5);
-//                imuCorrection(-90,0.1);
+//                imuCorrection(-173,0.1);
 //
 //                encoderDriveRightInches(23);
 //                imuCorrection(-90,0.1);
