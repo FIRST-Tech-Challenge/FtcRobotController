@@ -168,7 +168,7 @@ public class A2ShortRoute extends LinearOpMode {
                 encoderDriveRightInches(A2var.A2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveLeftInches(A2var.A2mSpike2);
+                encoderDriveLeftInches(A2var.A2mSpike2-2);
                 imuCorrection(0, 0.5);
 
                 encoderDriveLeftInches(28);
@@ -194,14 +194,14 @@ public class A2ShortRoute extends LinearOpMode {
                 autoarm.setPosition(1);
                 sleep(100);
 
-                encoderDriveForwardInches(5);
-                imuCorrection(-173,0.1);
-
-                encoderDriveRightInches(26);
-                imuCorrection(-173,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-173,0.1);
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveRightInches(26);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-173,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -211,13 +211,13 @@ public class A2ShortRoute extends LinearOpMode {
                 break;
             case "right":
 
-                encoderDriveRightInches(A2var.A2rSpike1);
+                encoderDriveBackwardInches(A2var.A2rSpike1);
                 imuCorrection(0, 0.3);
 
-                encoderDriveForwardInches(A2var.A2rSpike2);
+                encoderDriveRightInches(A2var.A2rSpike2);
                 imuCorrection(0, 0.3);
 
-                encoderDriveBackwardInches(A2var.A2rSpike2-2);
+                encoderDriveLeftInches(A2var.A2rSpike2-2);
                 imuCorrection(0,0.3);
 
                 encoderDriveForwardInches(72);
@@ -240,14 +240,14 @@ public class A2ShortRoute extends LinearOpMode {
                 autoarm.setPosition(1);
                 sleep(100);
 
-                encoderDriveForwardInches(5);
-                imuCorrection(-173,0.1);
-
-                encoderDriveRightInches(30);
-                imuCorrection(-173,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-173,0.1);
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveRightInches(30);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-173,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -289,14 +289,14 @@ public class A2ShortRoute extends LinearOpMode {
                 autoarm.setPosition(1);
                 sleep(100);
 
-                encoderDriveForwardInches(5);
-                imuCorrection(-173,0.1);
-
-                encoderDriveRightInches(22);
-                imuCorrection(-173,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-173,0.1);
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveRightInches(22);
+//                imuCorrection(-173,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-173,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
