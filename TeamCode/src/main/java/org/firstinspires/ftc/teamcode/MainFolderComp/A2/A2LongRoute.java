@@ -248,38 +248,39 @@ public class A2LongRoute extends LinearOpMode {
                 break;
             case "right":
 
-                encoderDriveRightInches(A2var.A2rSpike1);
-                imuCorrection(0, 0.3);
+                encoderDriveBackwardInches(A2var.A2rSpike1);
+                imuCorrection(0, 0.5);
+                sleep(1000);
 
-                encoderDriveForwardInches(A2var.A2rSpike2);
-                imuCorrection(0, 0.3);
+                encoderDriveRightInches(A2var.A2rSpike2);
+                imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(A2var.A2rSpike3);
-                imuCorrection(0,0.3);
+                encoderDriveLeftInches(A2var.A2rSpike3);
+                imuCorrection(0,0.5);
 
-                encoderBackLeftStrafe(A2var.A2LongR1);
-                imuCorrection(0, 0.3);
+                encoderDriveForwardInches(A2var.A2LongR1);
+                imuCorrection(0, 0.5);
 
-                encoderDriveForwardInches(A2var.A2LongR2);
-                imuCorrection(0, 0.3);
-
-                TurnLeft(A2var.A2LongR3);
-                imuCorrection(90, 0.3);
-
+                encoderDriveRightInches(A2var.A2LongR2);
+                imuCorrection(0, 0.5);
+//
+//                TurnLeft(A2var.A2LongR3);
+//                imuCorrection(90, 0.3);
+//
                 encoderDriveForwardInches(A2var.A2LongR4);
-                imuCorrection(90, 0.3);
+                imuCorrection(0, 0.5);
 
                 TurnLeft(A2var.A2LongR5);
-                imuCorrection(-90, 0.3);
+                imuCorrection(-173, 0.5);
 
                 encoderDriveRightInches(A2var.A2LongR6);
-                imuCorrection(-90, 0.3);
+                imuCorrection(-173, 0.5);
 
                 encoderDriveBackwardInches(A2var.A2LongR7);
-                imuCorrection(-90, 0.5);
+                imuCorrection(-173, 0.5);
 
                 encoderDriveBackwardInchesSlow(A2var.A2LongR8);
-                imuCorrection(-90, 0.5);
+                imuCorrection(-173, 0.5);
 
                 sleep(200);
 
@@ -289,14 +290,14 @@ public class A2LongRoute extends LinearOpMode {
                 autoarm.setPosition(1);
                 sleep(100);
 
-                encoderDriveForwardInches(5);
-                imuCorrection(-90,0.1);
-
-                encoderDriveRightInches(35);
-                imuCorrection(-90,0.1);
-
-                encoderDriveBackwardInches(12);
-                imuCorrection(-90,0.1);
+//                encoderDriveForwardInches(5);
+//                imuCorrection(-90,0.1);
+//
+//                encoderDriveRightInches(35);
+//                imuCorrection(-90,0.1);
+//
+//                encoderDriveBackwardInches(12);
+//                imuCorrection(-90,0.1);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -306,7 +307,7 @@ public class A2LongRoute extends LinearOpMode {
                 break;
             case "left":
 
-                encoderDriveForwardInches(A2var.A2lSpike1);
+                encoderDriveRightInches(A2var.A2lSpike1);
                 imuCorrection(0, 0.1);
 
                 TurnLeft(A2var.A2lSpike2);
@@ -452,10 +453,10 @@ public class A2LongRoute extends LinearOpMode {
         lbDrive.setTargetPosition(-((int)TotalTicks));
         rfDrive.setTargetPosition(-((int)TotalTicks));
         rbDrive.setTargetPosition(-((int)TotalTicks));
-        lfDrive.setPower(0.7);
-        lbDrive.setPower(0.7);
-        rfDrive.setPower(0.7);
-        rbDrive.setPower(0.7);
+        lfDrive.setPower(0.6);
+        lbDrive.setPower(0.6);
+        rfDrive.setPower(0.6);
+        rbDrive.setPower(0.6);
         lfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lbDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rfDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
