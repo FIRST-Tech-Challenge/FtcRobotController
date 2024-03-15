@@ -93,7 +93,7 @@ public class CenterStagePilesRed extends LinearOpMode {
 
 
         TrajectorySequence rightPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-38, -55, Math.toRadians(90-20)))
+                .lineToSplineHeading(new Pose2d(-38, -55, Math.toRadians(90-35)))
                 .build();
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(startPose)
@@ -101,17 +101,17 @@ public class CenterStagePilesRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence centerPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-40, -50, Math.toRadians(90-35)))
+                .lineToSplineHeading(new Pose2d(-40, -50, Math.toRadians(90-20)))
                 .build();
 
-        TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end().plus(new Pose2d(0, 0, Math.toRadians(-11))))
+        TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end().plus(new Pose2d(0, 0, Math.toRadians(-11))))
                 .strafeRight(10)
                 .build();
 
         TrajectorySequence leftPurpleToStack1 = drive.trajectorySequenceBuilder(leftPurpleToStack.end())
 
                 .lineToSplineHeading(new Pose2d(-36, -12, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(-40, -10, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-40, -9, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
         TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -127,27 +127,27 @@ public class CenterStagePilesRed extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, -26))
+                .lineToConstantHeading(new Vector2d(55, -26))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(56, -28))
+                .strafeTo(new Vector2d(55, -28))
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(56, -34))
+                .strafeTo(new Vector2d(55, -34))
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
-                .strafeTo(new Vector2d(56, -20))
+                .strafeTo(new Vector2d(55, -20))
                 .build();
 
         TrajectorySequence strafeToYellowRight= drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, -38))
+                .strafeTo(new Vector2d(55, -38))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, -34))
+                .strafeTo(new Vector2d(55, -35))
                 .build();
 
 
@@ -234,7 +234,7 @@ public class CenterStagePilesRed extends LinearOpMode {
 
                     if (!drive.isBusy()) {
                         if (propPos == PropFindLeft.pos.LEFT) {
-                            intakeTarget = CSCons.rightIntakeExtension;
+                            intakeTarget = CSCons.redRightIntakeExtension;
                         } else if (propPos == PropFindLeft.pos.RIGHT) {
                             intakeTarget = CSCons.leftIntakeExtension;
                         } else {
@@ -264,10 +264,10 @@ public class CenterStagePilesRed extends LinearOpMode {
                     break;
                 case RETRACT_SLIDE:
                     if (drive.getIntakeSlides().getCurrentPosition() < 100) {
-                        if (propPos == PropFindLeft.pos.LEFT) {
+                        if (propPos == PropFindLeft.pos.RIGHT) {
                             drive.followTrajectorySequenceAsync(leftPurpleToStack);
                             currentState = State.DRIVE_TO_STACK;
-                        } else if (propPos == PropFindLeft.pos.RIGHT) {
+                        } else if (propPos == PropFindLeft.pos.LEFT) {
                             drive.followTrajectorySequenceAsync(leftPurpleToStack);
                             currentState = State.SPIN;
                         } else {

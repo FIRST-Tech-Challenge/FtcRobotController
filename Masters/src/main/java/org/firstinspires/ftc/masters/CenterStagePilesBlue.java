@@ -117,7 +117,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
         TrajectorySequence rightPurpleToStack1 = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
 
                 .lineToSplineHeading(new Pose2d(-36, 12, Math.toRadians(270)))
-                .splineToLinearHeading(new Pose2d(-40, 10, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-40, 9, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -133,7 +133,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, 26))
+                .lineToConstantHeading(new Vector2d(56, 23))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -149,7 +149,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 38))
+                .strafeTo(new Vector2d(56, 24))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())

@@ -47,9 +47,11 @@ public class CSCons {
     public static long scoreToTransferOuttake = 200;
     public static long closingHook = 100;
 
-    public static int leftIntakeExtension = 940;
+    public static int leftIntakeExtension = 960;
     public static int centerIntakeExtension = 1240;
-    public static int rightIntakeExtension = 700;
+    public static int rightIntakeExtension = 620;
+
+    public static int redRightIntakeExtension= 660;
 
     public static double backMultiplier =0.78;
     public static double frontMultiplier = 1;
