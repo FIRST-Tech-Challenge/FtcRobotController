@@ -33,8 +33,6 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
     enum State {
         PURPLE_DEPOSIT_PATH,
-        //        PURPLE_DEPOSIT_PATH1,
-//        PURPLE_DEPOSIT_PATH2,
         PURPLE_DEPOSIT,
         RETRACT_SLIDE,
         DRIVE_TO_STACK,
@@ -44,8 +42,6 @@ public class CenterStagePilesBlue extends LinearOpMode {
         YELLOW_DEPOSIT,
         DROP_YELLOW,
         TO_STACK_CYCLE,
-
-
 
         BACK,
         SPIN,
@@ -159,15 +155,6 @@ public class CenterStagePilesBlue extends LinearOpMode {
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
                 .strafeTo(new Vector2d(56, 34))
                 .build();
-
-//        TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-//                .strafeTo(new Vector2d(58, 25))
-//                .build();
-//
-//        TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-//                .strafeTo(new Vector2d(58, 30))
-//                .build();
-
 
         TrajectorySequence toStackFromRight = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
                 .splineToConstantHeading(new Vector2d(48, 5), Math.toRadians(180))
