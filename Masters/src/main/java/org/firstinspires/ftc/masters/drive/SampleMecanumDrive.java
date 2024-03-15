@@ -18,8 +18,6 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
-import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -40,8 +38,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -54,7 +50,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -341,7 +336,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         microHook.setPosition(CSCons.openMicroHook);
     }
 
-    public  Pose2d aprilTagPosEstimate(List<AprilTagDetection> currentDetections) {
+    public  Pose2d aprilTagCoarsePosEstimate(List<AprilTagDetection> currentDetections) {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) { // 72 - 7.5, 72 - 29.25: left blue april tag
                 Pose2d aprilTagPos = null;
@@ -350,25 +345,61 @@ public class SampleMecanumDrive extends MecanumDrive {
                 } else {
                     aprilTagPos = new Pose2d(0, 0, 0);
                 }
-                return new Pose2d(aprilTagPos.getX() - (detection.ftcPose.range * Math.cos(90 - Math.abs(Math.toDegrees(detection.ftcPose.yaw)))), aprilTagPos.getY() -(detection.ftcPose.range * Math.sin(90 - Math.abs(Math.toDegrees(detection.ftcPose.yaw)))), Math.toDegrees(detection.ftcPose.yaw));} else {
-//                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-//                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                double theta = 90 + Math.abs(detection.ftcPose.bearing) - Math.abs(detection.ftcPose.yaw);
+//                return new Pose2d(72 - 29.25 - Math.abs(detection.ftcPose.range * Math.sin(theta)), 72  - 7.5  - Math.abs(detection.ftcPose.range * Math.cos(theta)), Math.toRadians(detection.ftcPose.yaw));
+                return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
             }
         }   // end for() loop
         return new Pose2d(0,0,0);
     }
 
-    public void alignTag(List<AprilTagDetection> currentDetections) {
+//
+//    public void alignTag(List<AprilTagDetection> currentDetections, int targetTag) {
+//        if (currentDetections != null) {
+//            Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
+//            if (relTagPos.getX() != 8641000) {
+//                while (relTagPos.getHeading() > 4 || relTagPos.getHeading() < -4 ) {
+//                    relTagPos = getRelativeTagPos(currentDetections,targetTag);
+//                    if (relTagPos.getHeading() > 4) {
+//                        setMotorPowers(-.25,-.25,.25,.25);
+//                    }
+//                    else if (relTagPos.getHeading() < -4) {
+//                        setMotorPowers(.25,.25,-.25,-.25);
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    public void turnToTag(List<AprilTagDetection> currentDetections, int targetTag) {
+        Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
+        this.turn(Math.toRadians(relTagPos.getHeading()));
+    }
+
+    public void strafeToTag(List<AprilTagDetection> currentDetections, int targetTag) {
+        Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
+        Trajectory strafe = this.trajectoryBuilder(getPoseEstimate(),false)
+                .strafeLeft(relTagPos.getX())
+                .build();
+        this.followTrajectoryAsync(strafe);
+    }
+
+    public Pose2d getRelativeTagPos (List<AprilTagDetection> currentDetections, int targetTag) {
+        double tag_x = 8641000;
+        double tag_y =0;
+        double tag_yaw = 0;
         if (currentDetections != null) {
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) { // 72 - 7.5, 72 - 29.25: left blue april tag
-
-                } else {
-//                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-//                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                    if (detection.id == targetTag) {
+                        tag_x = detection.ftcPose.x;
+                        tag_y = detection.ftcPose.y;
+                        tag_yaw = detection.ftcPose.yaw;
+                    }
                 }
-            }   // end for() loop
+            }
         }
+        return new Pose2d(tag_x,tag_y,tag_yaw);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
