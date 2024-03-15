@@ -164,7 +164,7 @@ public class F2LongRoute extends LinearOpMode {
                 imuCorrection(0, 0.5);
 
                 encoderDriveLeftInches(F2var.F2mSpike2);
-                imuCorrection(0, 0.5);;
+                imuCorrection(0, 0.5);
 
                 encoderDriveForwardInches(F2var.F2LongM1);
                 imuCorrection(0, 0.5);

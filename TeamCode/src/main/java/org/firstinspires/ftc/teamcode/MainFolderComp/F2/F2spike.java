@@ -160,10 +160,10 @@ public class F2spike extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(F2var.F2mSpike1);
+                encoderDriveRightInches(F2var.F2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(F2var.F2mSpike2);
+                encoderDriveLeftInches(F2var.F2mSpike2);
                 imuCorrection(0, 0.5);
 
                 lfDrive.setPower(0);
@@ -174,17 +174,17 @@ public class F2spike extends LinearOpMode {
                 break;
             case "right":
 
-                encoderDriveForwardInches(F2var.F2rSpike1);
+                encoderDriveRightInches(F2var.F2rSpike1);
                 imuCorrection(0, 0.5);
 
-                TurnLeft(F2var.F2rSpike2);
-                imuCorrection(-90, 0.5);
+//                TurnLeft(F2var.F2rSpike2);
+//                imuCorrection(0, 0.5);
 
-                encoderDriveForwardInches(F2var.F2rSpike3);
-                imuCorrection(-90, 0.5);
+                encoderDriveBackwardInches(F2var.F2rSpike3);
+                imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(F2var.F2rSpike4);
-                imuCorrection(-90, 0.5);
+                encoderDriveForwardInches(F2var.F2rSpike4);
+                imuCorrection(0, 0.5);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
@@ -194,13 +194,13 @@ public class F2spike extends LinearOpMode {
                 break;
             case "left":
 
-                encoderDriveLeftInches(F2var.F2lSpike1);
+                encoderDriveForwardInches(F2var.F2lSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveForwardInches(F2var.F2lSpike2);
+                encoderDriveRightInches(F2var.F2lSpike2);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(F2var.F2lSpike3);
+                encoderDriveLeftInches(F2var.F2lSpike3);
                 imuCorrection(0, 0.5);
 
                 lfDrive.setPower(0);

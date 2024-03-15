@@ -171,10 +171,10 @@ public class A2spike extends LinearOpMode {
         switch (pipeline.getLocation()) {
             case "middle":
 
-                encoderDriveForwardInches(A2var.A2mSpike1);
+                encoderDriveRightInches(A2var.A2mSpike1);
                 imuCorrection(0, 0.5);
 
-                encoderDriveBackwardInches(A2var.A2mSpike2);
+                encoderDriveLeftInches(A2var.A2mSpike2);
                 imuCorrection(0, 0.5);
 
                 lfDrive.setPower(0);
@@ -185,13 +185,14 @@ public class A2spike extends LinearOpMode {
                 break;
             case "right":
 
-                encoderDriveRightInches(A2var.A2rSpike1);
+                encoderDriveBackwardInches(A2var.A2rSpike1);
+                imuCorrection(0, 0.5);
+                sleep(1000);
+
+                encoderDriveRightInches(A2var.A2rSpike2);
                 imuCorrection(0, 0.5);
 
-                encoderDriveForwardInches(A2var.A2rSpike2);
-                imuCorrection(0, 0.5);
-
-                encoderDriveBackwardInches(A2var.A2rSpike3);
+                encoderDriveLeftInches(A2var.A2rSpike3);
                 imuCorrection(0,0.5);
 
                 lfDrive.setPower(0);
@@ -202,7 +203,7 @@ public class A2spike extends LinearOpMode {
                 break;
             case "left":
 
-                encoderDriveForwardInches(A2var.A2lSpike1);
+                encoderDriveRightInches(A2var.A2lSpike1);
                 imuCorrection(0, 0.1);
 
                 TurnLeft(A2var.A2lSpike2);
