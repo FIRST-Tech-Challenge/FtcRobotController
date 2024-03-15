@@ -15,12 +15,15 @@ public class ProgrammingBoard {
     private static DcMotor rightFrontMotor_3;
     private static DcMotor intakeMotor;
     private static DcMotor armMotor;
+    private static DcMotor testMotor;
 
     private static Servo clawServo;
     private static Servo wristServo;
     private static Servo droneServo;
 
     // Defines the motors.
+
+    private double tickPerRotation;
 
 
     public void init(HardwareMap hwMap) {
@@ -30,12 +33,14 @@ public class ProgrammingBoard {
         leftBackMotor_1 = hwMap.get(DcMotor.class, "leftBackMotor_1");
         rightBackMotor_2 = hwMap.get(DcMotor.class, "rightBackMotor_2");
         rightFrontMotor_3 = hwMap.get(DcMotor.class, "rightFrontMotor_3");
+        testMotor = hwMap.get(DcMotor.class, "testMotor");
         // Maps motors.
 
         leftFrontMotor_0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackMotor_1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackMotor_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontMotor_3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        testMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Sets the mode. *See official FTC guide for more options.
 
         leftFrontMotor_0.setDirection(DcMotor.Direction.REVERSE);
@@ -56,6 +61,8 @@ public class ProgrammingBoard {
         wristServo = hwMap.get(Servo.class, "wristServo");
         droneServo = hwMap.get(Servo.class, "droneServo");
         clawServo.setDirection(Servo.Direction.REVERSE);
+
+        tickPerRotation = testMotor.getMotorType().getTicksPerRev();
     }
 
     public void setDCMotorPower(double leftFrontPower, double leftBackPower, double rightFrontPower, double rightBackPower){
@@ -76,7 +83,13 @@ public class ProgrammingBoard {
     public void setClawServo (double clawAngle) {clawServo.setPosition(clawAngle);}
 
     public void setWristServo (double wristAngle) {wristServo.setPosition(wristAngle);}
+
     public void setDroneServo (double droneAngle) {droneServo.setPosition(droneAngle);}
+
+    public void setTestMotor (double motorSpeed) {testMotor.setPower(motorSpeed);}
+
+    public double getMotorRotation() {return testMotor.getCurrentPosition()/tickPerRotation;}
+
 
 
 

@@ -57,21 +57,6 @@ public class CompetitionCode extends OpMode {
         yaw = gamepad1.right_stick_x;
         intakePower = -gamepad1.left_trigger + gamepad1.right_trigger;
 
-
-//        if (gamepad1.right_bumper) {
-//            armPower = .3;
-//            telemetry.addLine("Arm up!");
-//        } else if (gamepad1.left_bumper) {
-//            armPower = -.3;
-//            telemetry.addLine("Arm down!");
-//        } else if (gamepad1.left_stick_button) {
-//            armPower = 1;
-//            telemetry.addLine("Arm destroy!");
-//        } else {
-//            armPower = 0;
-//            telemetry.addLine("Arm neutral!");
-//        }
-
         if (gamepad2.right_bumper && gamepad2.left_bumper) {
             armPower = 1;
         } else {
@@ -102,7 +87,10 @@ public class CompetitionCode extends OpMode {
 
         Board.setDroneServo(droneAngle);
 
-        // Servo supposedly measured where 1 unit = 180 degrees
+        telemetry.addData("Motor Position", Board.getMotorRotation());
+
+
+
 
 // This function sends the game pad inputs to the Traction class.
         DriveTrain.controllerDrive(axial, lateral, yaw);
