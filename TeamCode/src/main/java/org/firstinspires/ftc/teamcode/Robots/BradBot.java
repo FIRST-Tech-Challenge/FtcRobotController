@@ -8,6 +8,7 @@ import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 import static org.firstinspires.ftc.teamcode.Components.Arm.DROP_POS;
+import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
@@ -201,7 +202,7 @@ public class BradBot extends BasicRobot {
   public void yellowAuto(boolean left) {
     if (queuer.queue(
         true, Twrist.twristStates.DROP.getState() || Twrist.twristStates.OT.getState())) {
-      if (currentPose.getX() > 9 && DROP.getState()) {
+      if (currentPose.getX() > -10 && DROP.getState()) {
         if (left) {
           lift.setPosition(750);
         } else {
@@ -287,8 +288,8 @@ public class BradBot extends BasicRobot {
   public void lowAuto(boolean left) {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 900)) {
       LOGGER.log("armor" + Claw.clawStates.GRAB.getState() +" "+ Arm.ArmTargetStates.HOVER.getState()+ " " + (currentPose.getX()>-15));
-      if (currentPose.getX() > -15 && Claw.clawStates.GRAB.getState()) {
-        lift.setPosition(1000);
+      if (currentPose.getX() > -20 && Claw.clawStates.GRAB.getState()) {
+        lift.setPosition(900);
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
@@ -301,10 +302,9 @@ public class BradBot extends BasicRobot {
   public void grabAuto() {
     if (queuer.queue(
         true, Claw.clawStates.GRAB.getState() && Arm.ArmTargetStates.HOVER.getState())) {
-      if (Magazine.pixels == 2
+      if (pixels == 2
           && !GRAB.state
-          && lift.getCurrentPosition() < 10
-          && !Intake.IntakeStates.INTAKING.getState()) {
+          && lift.getCurrentPosition() < 10) {
         arm.flipTo(GRAB);
         wrist.flipTo(Wrist.WristTargetStates.LOCK);
         claw.flipTo(Claw.clawTargetStates.CLOSE);
@@ -387,11 +387,16 @@ public class BradBot extends BasicRobot {
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
-        ((Magazine.pixels == 1 &&intaked&& time-intake.getStartIntakeTime()>0.4&& magazine.solidTwoPixels() && abs(intake.getVelocity())<1300)|| Magazine.pixels==2 && intaked || Intake.IntakeStates.REVERSING.getState()))) {
-      if (currentPose.getX() < -30) {
+        ((pixels == 1 && time-intake.getStartIntakeTime()>0.4&& magazine.solidTwoPixels() && abs(intake.getVelocity())<1450)|| pixels==2 && intaked || Intake.IntakeStates.REVERSING.getState()))) {
+//      packet.put("pixel", pixels);
+//      packet.put("timeInt",time-intake.getStartIntakeTime());
+//      packet.put("solidTwoPixels", magazine.solidTwoPixels());
+//      packet.put("intakeVel", intake.getVelocity());
+
+      if (currentPose.getX() < -20) {
         intaked = true;
         magazine.updateSensors();
-        intake.intakeAutoHeight(max(height-Magazine.pixels, height-1));
+        intake.intakeAutoHeight(max(height- pixels, height-1));
       }
     }
   }
@@ -416,13 +421,16 @@ public class BradBot extends BasicRobot {
   }
 
   public void drop() {
-    if (queuer.queue(false, queuer.isNextExecuted())) {
+    if (queuer.queue(true, Claw.clawStates.CLOSE.getState()&&lift.getCurrentPosition()>100)) {
       //      if (!queuer.isExecuted()) {
-      claw.moveTwo(false);
-      claw.moveOne(false);
-      Claw.clawStates.CLOSE.setStateTrue();
-      gapped = false;
-      intaked = false;
+      if(currentPose.getX()+abs(currentVelocity.getX())*0.3>48 && abs(currentVelocity.getX())<15){
+        claw.moveTwo(false);
+        claw.moveOne(false);
+        Claw.clawStates.CLOSE.setStateTrue();
+        gapped = false;
+        intaked = false;
+        queuer.done();
+      }
       //      }
     }
   }
@@ -758,7 +766,7 @@ public class BradBot extends BasicRobot {
         new Pose2d(
             -op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x));
     update();
-    if (Magazine.pixels == 2
+    if (pixels == 2
         && !GRAB.state
         && !Arm.ArmTargetStates.HOVER.getState()
         && lift.getCurrentPosition() < 10

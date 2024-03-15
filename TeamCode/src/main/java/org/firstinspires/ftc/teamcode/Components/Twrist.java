@@ -89,7 +89,7 @@ public class Twrist extends RFServo {
                 }
                 twristTargetStates.GRAB.state = true;
             } else if(p_state == twristTargetStates.DROP){
-                if((Arm.ArmStates.DROP.state) && super.getPosition() != DROPPY){
+                if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != DROPPY){
                     super.setPosition(DROPPY);
                     LOGGER.log("twrist to DROP");
                     lastTime = time;
@@ -116,7 +116,7 @@ public class Twrist extends RFServo {
             }
             else if(p_state == twristTargetStates.OT) {
 
-                if((Arm.ArmStates.DROP.state) && super.getPosition() != 1.0){
+                if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != 1.0){
                     super.setPosition(1.0);
                     LOGGER.log("OT claw");
                     lastTime = time;
@@ -125,7 +125,7 @@ public class Twrist extends RFServo {
             }
             else if(p_state == twristTargetStates.VERT) {
 
-                if((Arm.ArmStates.DROP.state) && super.getPosition() != VERT){
+                if(   (Arm.ArmTargetStates.DROP.state) && super.getPosition() != VERT){
                     super.setPosition(VERT);
                     LOGGER.log("VERT claw");
                     lastTime = time;

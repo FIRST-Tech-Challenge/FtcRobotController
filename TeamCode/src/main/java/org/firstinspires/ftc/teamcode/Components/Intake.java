@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
@@ -36,7 +37,7 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.51, TWO=0.535, THREE = 0.56, FOUR = 0.585, FIVE =0.615, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.51, TWO=0.54, THREE = 0.565, FOUR = 0.585, FIVE =0.612, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
@@ -282,14 +283,14 @@ public class Intake extends RFMotor {
     for (var i : IntakeStates.values()) {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
-      if(i.state&&i==IntakeStates.STOPPED)stopIntake();
+      if(i.state&&i==IntakeStates.STOPPED){stopIntake();Magazine.twoPixelTime=time;pixels = 2;}
       if(i.state&&i==IntakeStates.REVERSING)reverseIntake();
     }
-    if(Magazine.pixels==1){
+    if(pixels==1){
       pixeled1=true;
     }
 
-    if(Magazine.pixels==2){
+    if(pixels==2){
       if(!pixeled){
         lastTime = time;
         pixeled=true;
