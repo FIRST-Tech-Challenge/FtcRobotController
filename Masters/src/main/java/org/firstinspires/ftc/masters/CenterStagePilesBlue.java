@@ -104,7 +104,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(315)))
+                .lineToSplineHeading(new Pose2d(-40, 50, Math.toRadians(305)))
                 .build();
 
         TrajectorySequence centerPurple = drive.trajectorySequenceBuilder(startPose)
@@ -120,7 +120,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
         TrajectorySequence rightPurpleToStack1 = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
 
-                .lineToSplineHeading(new Pose2d(-38, 12, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-36, 12, Math.toRadians(270)))
                 .splineToLinearHeading(new Pose2d(-40, 10, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
@@ -137,7 +137,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, 24))
+                .lineToConstantHeading(new Vector2d(56, 26))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -149,15 +149,15 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToYellowRight = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
-                .strafeTo(new Vector2d(56, 22))
+                .strafeTo(new Vector2d(56, 20))
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 37))
+                .strafeTo(new Vector2d(56, 38))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 28))
+                .strafeTo(new Vector2d(56, 34))
                 .build();
 
 //        TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -170,17 +170,17 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
 
         TrajectorySequence toStackFromRight = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(48, 5), Math.toRadians(180))
 //                .splineToConstantHeading(new Vector2d(-50, 2), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromCenter = drive.trajectorySequenceBuilder(strafeToBoardCenter.end())
-                .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(48, 5), Math.toRadians(180))
 //                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
                 .build();
 
         TrajectorySequence toStackFromLeft = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
-                .splineToConstantHeading(new Vector2d(40, 0), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(48, 5), Math.toRadians(180))
 //                .splineToConstantHeading(new Vector2d(-50, 7), Math.toRadians(180))
                 .build();
 
@@ -317,7 +317,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         if (propPos== PropFindRight.pos.RIGHT){
                             intakeTarget=900;
                         } else if (propPos == PropFindRight.pos.MID) {
-                            intakeTarget = 210;
+                            intakeTarget = 180;
                         } else {
                             intakeTarget = 800;
                         }
@@ -442,7 +442,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                                 } else {
                                     drive.followTrajectorySequenceAsync(toStackFromRight);
                                 }
-                                currentState = State.TO_STACK_CYCLE;
+                                currentState = State.PARK;
                                 closeHook = true;
 
                             }
@@ -451,21 +451,21 @@ public class CenterStagePilesBlue extends LinearOpMode {
                     break;
 
                 case TO_STACK_CYCLE:
-                    backSlidesTarget = 0;
-                    drive.outtakeToTransfer();
+//                    backSlidesTarget = 0;
+//                    drive.outtakeToTransfer();
                     
 //                    if (drive.getPoseEstimate().getX()<0) {
 //                        intakeTarget = 500;
 //                    }
 
-                    if (!drive.isBusy()){
-                        currentState= State.PICK_UP_FROM_STACK;
-                        cycle++;
-                        intakeTarget = 500;
-                        drive.intakeToPosition3();
-                        drive.openClaw();
-                        clawClose = false;
-                    }
+//                    if (!drive.isBusy()){
+//                        currentState= State.PICK_UP_FROM_STACK;
+//                        cycle++;
+//                        intakeTarget = 500;
+//                        drive.intakeToPosition3();
+//                        drive.openClaw();
+//                        clawClose = false;
+//                    }
                     break;
 
 

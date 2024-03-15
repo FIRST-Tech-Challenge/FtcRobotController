@@ -12,17 +12,17 @@ public class CSCons {
     public static double clawOpen = 0.2;
     public static double clawClosed = 0.55;
     public static double clawTransfer = 0.38; // .65
-    public static double clawAngleGroundToThree = .98; //.9?
-    public static double clawAngleFourToFive = .9;
+    public static double clawAngleGroundToThree = 1; //.9?
+    public static double clawAngleFourToFive = .98;
     public static double clawAngleTransition = .34;
     public static double clawAngleTransfer = .12;
-    public static double clawArmGround = 0.41;//.78;
-    public static double clawArm2 = .7;
-    public static double clawArm3 = .67;
-    public static double clawArm4 = .64;
-    public static double clawArm5 = .61;
+    public static double clawArmGround = 0.82;//.78;
+    public static double clawArm2 = .75;
+    public static double clawArm3 = .72;
+    public static double clawArm4 = .69;
+    public static double clawArm5 = .655;
     public static double clawArmTransition = .23;
-    public static double clawArmTransfer = .20;
+    public static double clawArmTransfer = .24;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0.07;
@@ -30,7 +30,7 @@ public class CSCons {
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop =0.25;
-    public static double outtakeMovementTransfer = .76;
+    public static double outtakeMovementTransfer = .72;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -47,8 +47,8 @@ public class CSCons {
     public static long scoreToTransferOuttake = 200;
     public static long closingHook = 100;
 
-    public static int leftIntakeExtension = 930;
-    public static int centerIntakeExtension = 1270;
+    public static int leftIntakeExtension = 940;
+    public static int centerIntakeExtension = 1240;
     public static int rightIntakeExtension = 700;
 
     public static double backMultiplier =0.78;

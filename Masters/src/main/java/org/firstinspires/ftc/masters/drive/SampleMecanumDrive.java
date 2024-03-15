@@ -557,7 +557,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         double liftPower = pid + ff;
 
-        liftPower= Math.min(0.5, liftPower);
+//        liftPower= Math.min(0.5, liftPower);
 
         if (telemetry!=null) {
             telemetry.addData("liftPower", liftPower);
@@ -574,6 +574,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         double iff = Math.cos(Math.toRadians(itarget / iticks_in_degree)) * iif;
 
         double iliftPower = ipid + iff;
+
+        iliftPower= Math.min(0.8, iliftPower);
 
         intakeSlides.setPower(iliftPower);
 

@@ -332,6 +332,7 @@ public class AutomatedTeleop extends LinearOpMode {
                                 clawPosition = ClawPosition.CLOSED;
                                 clawServo.setPosition(CSCons.clawClosed);
                                 closeClawElapsedTime = new ElapsedTime();
+                                intakeSlideTarget = intakeSlides.getCurrentPosition();
 
                             } else if (clawPosition == ClawPosition.CLOSED) {
                                 clawPosition = ClawPosition.OPEN;
@@ -352,11 +353,6 @@ public class AutomatedTeleop extends LinearOpMode {
                                 clawPosition = ClawPosition.CLOSED;
                                 clawServo.setPosition(CSCons.clawClosed);
 
-
-//                            intakeSlides.setTargetPosition(intakeSlides.getCurrentPosition());
-//                            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            intakeSlides.setPower(0.5);
-
                                 colorSensorElapsedTime = new ElapsedTime();
                             }
                         }
@@ -365,9 +361,6 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (intakeSlides.getCurrentPosition() > 50) {
                                 intakeSlideTarget=0;
 
-//                                intakeSlides.setTargetPosition(0);
-//                                intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                                intakeSlides.setPower(1);
                                 clawAngle.setPosition(CSCons.clawAngleTransition);
                                 clawArm.setPosition(CSCons.clawArmTransition);
                                 intakeState = IntakeState.MoveToTransfer;
@@ -434,7 +427,7 @@ public class AutomatedTeleop extends LinearOpMode {
                         }
 
                         if (clawPosition == ClawPosition.CLOSED && ((colorSensorElapsedTime!=null && colorSensorElapsedTime.milliseconds()>200)
-                                ||(closeClawElapsedTime!=null && closeClawElapsedTime.milliseconds()>200))){
+                                ||(closeClawElapsedTime!=null && closeClawElapsedTime.milliseconds()>300))){
                             if (intakeSlides.getCurrentPosition() > 50) {
                                 intakeSlideTarget=0;
 
