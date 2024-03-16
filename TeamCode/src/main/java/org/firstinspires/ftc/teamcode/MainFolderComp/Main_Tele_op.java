@@ -90,7 +90,7 @@ public class Main_Tele_op extends LinearOpMode {
     Boolean timeoutDown = true;
     Double timerDown = 0.0;
 
-    double slideCooldown = 0.5; // in seconds
+    double slideCooldown = 0.3; // in seconds
 
 
     private Servo drone = null;
@@ -192,10 +192,10 @@ public class Main_Tele_op extends LinearOpMode {
             double rbPower;
             double lbPower;
 
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper || gamepad1.left_bumper) {
                 double drive  =  gamepad1.right_stick_x * 0.5;
                 double strafe =  gamepad1.left_stick_x  * 0.5;
-                double turn   = -gamepad1.left_stick_y  * 0.5;
+                double turn   = -gamepad1.left_stick_y  * 0.33;
                 lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
                 rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
                 lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
@@ -203,7 +203,7 @@ public class Main_Tele_op extends LinearOpMode {
             } else {
                 double drive  =  gamepad1.right_stick_x;
                 double strafe =  gamepad1.left_stick_x;
-                double turn   = -gamepad1.left_stick_y;
+                double turn   = -gamepad1.left_stick_y * 0.75;
                 lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
                 rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
                 lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
@@ -230,35 +230,29 @@ public class Main_Tele_op extends LinearOpMode {
             }
 
             if (gamepad2.y && !timeoutUp) {
-                encoderSlideUpInches(10);
+                encoderSlideUpInches(13);
                 timeoutUp = true;
                 timerUp = runtime.seconds();
                 telemetry.update();
             }
 
             if (gamepad2.a && !timeoutDown) {
-                encoderSlideDownInches(3);
+                encoderSlideDownInches(5);
                 timeoutDown = true;
                 timerDown = runtime.seconds();
                 telemetry.update();
             }
 
-
-
-            if (gamepad2.right_bumper && flickIn && !flickTimeout) {
+            if (gamepad2.right_bumper) {
                 l_flick.setPosition(0.59); // flick out
                 r_flick.setPosition(0);
-                flickIn = false;
 
-                flickTimer = runtime.seconds();
             }
 
-            if (gamepad2.right_bumper && !flickIn && !flickTimeout) {
+            if (gamepad2.right_trigger > 0.5) {
                 l_flick.setPosition(0); // flick in
                 r_flick.setPosition(0.68);
-                flickIn = true;
 
-                flickTimer = runtime.seconds();
             }
 
             if(gamepad2.left_bumper){
@@ -269,19 +263,19 @@ public class Main_Tele_op extends LinearOpMode {
             }
             if(gamepad2.dpad_left){
                 leftFlap.setPosition(0.4);
-                leftGate = true;
+
             }
             else{
                 leftFlap.setPosition(1);
-                leftGate = false;
+
             }
             if(gamepad2.dpad_right){
                 rightFlap.setPosition(0.6);
-                rightGate = true;
+
             }
             else{
                 rightFlap.setPosition(0);
-                rightGate = false;
+
             }
 
 
@@ -295,9 +289,9 @@ public class Main_Tele_op extends LinearOpMode {
                 timeoutDown = false;
             }
 
-            if ((runtime.seconds() - flickTimer) >= flickCooldown) {
-                flickTimeout = false;
-            }
+//            if ((runtime.seconds() - flickTimer) >= flickCooldown) {
+//                flickTimeout = false;
+//            }
 
             autoarm.setPosition(1);
 
