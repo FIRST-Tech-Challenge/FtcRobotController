@@ -133,7 +133,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardRight = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .lineToConstantHeading(new Vector2d(56, 23))
+                .lineToConstantHeading(new Vector2d(56, 26))
                 .build();
 
         TrajectorySequence strafeToBoardCenter = drive.trajectorySequenceBuilder(straightToBackBoard.end())
@@ -149,7 +149,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 24))
+                .strafeTo(new Vector2d(56, 37))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
@@ -194,6 +194,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
         telemetry.update();
 
         ElapsedTime waitToPickUpTime= null;
+        ElapsedTime extendSlidesTime= null;
 
         waitForStart();
 
@@ -308,13 +309,14 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         } else {
                             intakeTarget = 800;
                         }
+                        extendSlidesTime= new ElapsedTime();
                         currentState = State.PICK_UP_FROM_STACK;
                         clawClose = false;
                     }
 
                     break;
                 case PICK_UP_FROM_STACK:
-                    if (!clawClose && (drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || detectPixel() ||(waitToPickUpTime!=null && waitToPickUpTime.milliseconds()>500))) {
+                    if (!clawClose && ((drive.getIntakeSlides().getCurrentPosition() > intakeTarget-10 || extendSlidesTime.milliseconds()>2000) ) && (detectPixel() ||(waitToPickUpTime!=null && waitToPickUpTime.milliseconds()>500) )) {
                         drive.closeClaw();
                         drive.getIntakeSlides().setPower(0);
                         intakeTarget = drive.getIntakeSlides().getCurrentPosition();
@@ -330,7 +332,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         toBackboard = false;
                         elapsedTime = new ElapsedTime();
                     }
-                    if (drive.getIntakeSlides().getCurrentPosition()>intakeTarget-10 && waitToPickUpTime==null && !clawClose ){
+                    if ((drive.getIntakeSlides().getCurrentPosition()>intakeTarget-10 ||  extendSlidesTime.milliseconds()>2000)  && waitToPickUpTime==null && !clawClose ){
                         waitToPickUpTime= new ElapsedTime();
                     }
 

@@ -10,7 +10,7 @@ public class CSCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     public static double pixelDetectThreshold = 350;
     public static double clawOpen = 0.2;
-    public static double clawClosed = 0.55;
+    public static double clawClosed = 0.57;
     public static double clawTransfer = 0.38; // .65
     public static double clawAngleGroundToThree = 1; //.9?
     public static double clawAngleFourToFive = .98;
@@ -25,8 +25,8 @@ public class CSCons {
     public static double clawArmTransfer = .24;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
-    public static double outtakeAngleFolder=0.07;
-    public static double outtakeAngleTransfer=.6;
+    public static double outtakeAngleFolder=0;
+    public static double outtakeAngleTransfer=.62;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop =0.25;
@@ -47,11 +47,14 @@ public class CSCons {
     public static long scoreToTransferOuttake = 200;
     public static long closingHook = 100;
 
-    public static int leftIntakeExtension = 960;
+    public static int leftIntakeExtension = 990;
     public static int centerIntakeExtension = 1240;
     public static int rightIntakeExtension = 620;
 
     public static int redRightIntakeExtension= 660;
+    public static int redCenterIntakeExtension = 1240;
+    public static int getLeftIntakeExtension = 960;
+
 
     public static double backMultiplier =0.78;
     public static double frontMultiplier = 1;

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = "Center Stage Automated TeleOp TEST", group = "test")
+//@TeleOp(name = "Center Stage Automated TeleOp TEST", group = "test")
 public class AutomatedTeleopTEST extends LinearOpMode {
 
     static int target = 0;
