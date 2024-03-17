@@ -180,7 +180,7 @@ public class F2LongRoute extends LinearOpMode {
 ////                imuCorrection(0, 0.5);
 //
                 encoderDriveRightInches(F2var.F2LongM3);
-                imuCorrection(0, 0.5);
+                imuCorrection(5, 0.5);
 
                 encoderDriveBackwardInches(F2var.F2LongM4);
                 imuCorrection(0, 0.5);
@@ -237,9 +237,9 @@ public class F2LongRoute extends LinearOpMode {
 
                 encoderDriveRightInches(F2var.F2rSpike3);
                // imuCorrection(-90, 0.5);
-                sleep(500);
+                sleep(600);
                 AutoP.setPosition(1);
-                sleep(500);
+                sleep(750);
 
                 encoderDriveLeftInches(F2var.F2rSpike4);
 
@@ -307,7 +307,7 @@ public class F2LongRoute extends LinearOpMode {
                 sleep(500);
 
                 encoderDriveLeftInches(F2var.F2lSpike3);
-                imuCorrection(0, 0.5);
+                imuCorrection(10, 0.5);
 
                 encoderDriveBackwardInches(F2var.F2LongL1);
                 imuCorrection(0, 0.5);
