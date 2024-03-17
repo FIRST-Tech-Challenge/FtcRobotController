@@ -174,7 +174,8 @@ public class A2LongRoute extends LinearOpMode {
                 imuCorrection(0, 0.5);
 
                 sleep(500);
-                AutoP.setPosition(10);
+                AutoP.setPosition(1);
+                sleep(500);
 
 
                 encoderDriveLeftInches(A2var.A2mSpike2);
@@ -265,7 +266,8 @@ public class A2LongRoute extends LinearOpMode {
                 imuCorrection(0, 0.5);
 
                 sleep(500);
-                AutoP.setPosition(10);
+                AutoP.setPosition(1);
+                sleep(500);
 
 
                 encoderDriveLeftInches(A2var.A2rSpike3);
@@ -334,6 +336,8 @@ public class A2LongRoute extends LinearOpMode {
 
                 sleep(500);
                 AutoP.setPosition(10);
+
+                sleep(500);
 
 
                 encoderDriveLeftInches(A2var.A2lSpike4);
