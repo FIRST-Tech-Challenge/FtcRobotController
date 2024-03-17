@@ -175,8 +175,7 @@ public class A2LongRoute extends LinearOpMode {
 
                 sleep(500);
                 AutoP.setPosition(10);
-                sleep(500);
-                AutoP.setPosition(0);
+
 
                 encoderDriveLeftInches(A2var.A2mSpike2);
                 imuCorrection(0, 0.5);
@@ -245,6 +244,9 @@ public class A2LongRoute extends LinearOpMode {
 //                encoderDriveBackwardInches(12);
 //                imuCorrection(-90,0.1);
 
+                sleep(500);
+                AutoP.setPosition(0);
+
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
                 lbDrive.setPower(0);
@@ -264,8 +266,7 @@ public class A2LongRoute extends LinearOpMode {
 
                 sleep(500);
                 AutoP.setPosition(10);
-                sleep(500);
-                AutoP.setPosition(0);
+
 
                 encoderDriveLeftInches(A2var.A2rSpike3);
                 imuCorrection(0,0.5);
@@ -311,6 +312,9 @@ public class A2LongRoute extends LinearOpMode {
 //                encoderDriveBackwardInches(12);
 //                imuCorrection(-90,0.1);
 
+                sleep(500);
+                AutoP.setPosition(0);
+
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
                 lbDrive.setPower(0);
@@ -330,8 +334,7 @@ public class A2LongRoute extends LinearOpMode {
 
                 sleep(500);
                 AutoP.setPosition(10);
-                sleep(500);
-                AutoP.setPosition(0);
+
 
                 encoderDriveLeftInches(A2var.A2lSpike4);
                 imuCorrection(90, 0.1);
@@ -370,6 +373,9 @@ public class A2LongRoute extends LinearOpMode {
 //
 //                encoderDriveBackwardInches(15);
 //               // imuCorrection(-90,0.1);
+
+                sleep(500);
+                AutoP.setPosition(0);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);

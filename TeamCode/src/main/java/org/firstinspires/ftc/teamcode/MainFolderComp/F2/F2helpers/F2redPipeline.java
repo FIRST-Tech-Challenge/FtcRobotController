@@ -72,14 +72,14 @@ public class F2redPipeline extends OpenCvPipeline {
 
         max_distance = Math.min(distance3, Math.min(distance1, distance2));
 
-        if  (max_distance == distance3) {
+        if  (max_distance == distance1) {
             //telemetry.addData("Element is on the left side", distance3);
             color_zone = "left";
-        } else if (max_distance == distance1) {
+        } else if (max_distance == distance2) {
             //telemetry.addData("Element is on right side", distance1);
             color_zone = "middle";
 
-        } else if (max_distance == distance2) {
+        } else if (max_distance == distance3) {
             //telemetry.addData("Element is in the middle", distance2);
             color_zone = "right";
         }

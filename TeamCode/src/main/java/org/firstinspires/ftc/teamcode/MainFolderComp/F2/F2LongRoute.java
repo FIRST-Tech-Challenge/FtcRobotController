@@ -40,6 +40,8 @@ public class F2LongRoute extends LinearOpMode {
     private DcMotor lbDrive   = null;  //  Used to control the left back drive wheel
     private DcMotor rbDrive   = null;  //  Used to control the right back drive wheel
     Servo autoarm = null;
+
+    Servo AutoP = null;
     IMU imu = null;
 
     boolean usingCV = true;
@@ -61,6 +63,7 @@ public class F2LongRoute extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "rb_drive");
         autoarm = hardwareMap.get(Servo.class, "autoy");
+        AutoP = hardwareMap.get(Servo.class, "autop");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -163,24 +166,28 @@ public class F2LongRoute extends LinearOpMode {
                 encoderDriveRightInches(F2var.F2mSpike1);
                 imuCorrection(0, 0.5);
 
+                sleep(500);
+                AutoP.setPosition(10);
+
+
                 encoderDriveLeftInches(F2var.F2mSpike2);
                 imuCorrection(0, 0.5);
 
                 encoderDriveForwardInches(F2var.F2LongM1);
                 imuCorrection(0, 0.5);
-
-//                TurnLeft(F2var.F2LongM2);
-//                imuCorrection(0, 0.5);
-
+//
+////                TurnLeft(F2var.F2LongM2);
+////                imuCorrection(0, 0.5);
+//
                 encoderDriveRightInches(F2var.F2LongM3);
                 imuCorrection(0, 0.5);
 
                 encoderDriveBackwardInches(F2var.F2LongM4);
                 imuCorrection(0, 0.5);
-
-//                TurnLeft(F2var.F2LongM5);
-//                imuCorrection(0, 0.5);
-
+//
+////                TurnLeft(F2var.F2LongM5);
+////                imuCorrection(0, 0.5);
+//
                 encoderDriveLeftInches(F2var.F2LongM6);
                 imuCorrection(0, 0.5);
 
@@ -207,6 +214,8 @@ public class F2LongRoute extends LinearOpMode {
 //
 //                encoderDriveBackwardInches(15);
 //                imuCorrection(90, 0.5);
+                sleep(500);
+                AutoP.setPosition(0);
 
                 lfDrive.setPower(0);
                 rfDrive.setPower(0);
