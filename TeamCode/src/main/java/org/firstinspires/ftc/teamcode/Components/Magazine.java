@@ -71,10 +71,10 @@ public class Magazine {
     dist1 = colorSensor1.getDist();
     dist2 = colorSensor2.getDist();
     pixels=0;
-    if (dist1 < 1.6) {
+    if (dist1 < 1.2) {
       MagStates.FRONT.setState(true);
       pixels++;
-    } else if (dist1 > 1.6) {
+    } else if (dist1 > 1.2) {
       MagStates.FRONT.setState(false);
     }
     if (dist2 < 0.9) {
@@ -84,10 +84,10 @@ public class Magazine {
       MagStates.BACK.setState(false);
     }
 
-    if(pixels!=1 && dist2>1.3){
+    if(pixels!=1 && dist2>1){
       twoPixelTime = BasicRobot.time;
     }
-    if(dist2<1.3&&pixels==0){
+    if(dist2<1&&pixels==0){
       pixels=1;
     }
     LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
@@ -98,7 +98,7 @@ public class Magazine {
 
   public boolean solidTwoPixels(){
     if (Magazine.pixels == 1) {
-      return BasicRobot.time - twoPixelTime > 0.3;
+      return BasicRobot.time - twoPixelTime > 0.4;
     }
     else{
       return false;

@@ -279,15 +279,20 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-  public void outtakePreload(){
-    if(queuer.queue(true, intake.getHeight()==5)){
 
-    }
+  public void outtakePreload() {
+    if (queuer.queue(true, intake.getHeight() == 5)) {}
   }
 
   public void lowAuto(boolean left) {
     if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 900)) {
-      LOGGER.log("armor" + Claw.clawStates.GRAB.getState() +" "+ Arm.ArmTargetStates.HOVER.getState()+ " " + (currentPose.getX()>-15));
+      LOGGER.log(
+          "armor"
+              + Claw.clawStates.GRAB.getState()
+              + " "
+              + Arm.ArmTargetStates.HOVER.getState()
+              + " "
+              + (currentPose.getX() > -15));
       if (currentPose.getX() > -20 && Claw.clawStates.GRAB.getState()) {
         lift.setPosition(900);
         intake.stopIntake();
@@ -302,9 +307,7 @@ public class BradBot extends BasicRobot {
   public void grabAuto() {
     if (queuer.queue(
         true, Claw.clawStates.GRAB.getState() && Arm.ArmTargetStates.HOVER.getState())) {
-      if (pixels == 2
-          && !GRAB.state
-          && lift.getCurrentPosition() < 10) {
+      if (pixels == 2 && !GRAB.state && lift.getCurrentPosition() < 10) {
         arm.flipTo(GRAB);
         wrist.flipTo(Wrist.WristTargetStates.LOCK);
         claw.flipTo(Claw.clawTargetStates.CLOSE);
@@ -383,20 +386,28 @@ public class BradBot extends BasicRobot {
     }
   }
 
-
   public void intakeAuto(int height) {
     if (queuer.queue(
         true,
-        ((pixels == 1 && time-intake.getStartIntakeTime()>0.4&& magazine.solidTwoPixels() && abs(intake.getVelocity())<1450)|| pixels==2 && intaked || Intake.IntakeStates.REVERSING.getState()))) {
-//      packet.put("pixel", pixels);
-//      packet.put("timeInt",time-intake.getStartIntakeTime());
-//      packet.put("solidTwoPixels", magazine.solidTwoPixels());
-//      packet.put("intakeVel", intake.getVelocity());
+        ((pixels == 1
+                && time - intake.getStartIntakeTime() > 0.4
+                && magazine.solidTwoPixels()
+                && abs(intake.getVelocity()) < 1450)
+            || pixels == 2 && intaked
+            || Intake.IntakeStates.REVERSING.getState()))) {
+      //      packet.put("pixel", pixels);
+      //      packet.put("timeInt",time-intake.getStartIntakeTime());
+      //      packet.put("solidTwoPixels", magazine.solidTwoPixels());
+      //      packet.put("intakeVel", intake.getVelocity());
 
-      if (currentPose.getX() < -20) {
+      if (currentPose.getX() < -10) {
         intaked = true;
+        int minus=0;
+        if(abs(intake.getVelocity()) < 1250 && time - intake.getStartIntakeTime()>0.5){
+            minus=-1;
+        }
         magazine.updateSensors();
-        intake.intakeAutoHeight(max(height- pixels, height-1));
+        intake.intakeAutoHeight(max(height - pixels + minus, height - 1));
       }
     }
   }
@@ -405,6 +416,35 @@ public class BradBot extends BasicRobot {
     if (queuer.queue(true, lift.getCurrentPosition() < 5)) {
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       lift.setPosition(0);
+    }
+  }
+
+  public void breakAtX(double pos, boolean greater) {
+    if (queuer.queue(
+        true, !roadrun.isBusy()&& (greater && currentPose.getX() > pos) || (!greater && currentPose.getX() < pos))) {
+      if (greater) {
+        if (currentPose.getX() > pos) {
+          queuer.done();
+        }
+      } else {
+        if (currentPose.getX() < pos) {
+          queuer.done();
+        }
+      }
+    }
+  }
+  public void breakAtY(double pos, boolean greater) {
+    if (queuer.queue(
+            true, !roadrun.isBusy()&&(greater && currentPose.getY() > pos) || (!greater && currentPose.getY() < pos))) {
+      if (greater) {
+        if (currentPose.getY() > pos) {
+          queuer.done();
+        }
+      } else {
+        if (currentPose.getY() < pos) {
+          queuer.done();
+        }
+      }
     }
   }
 
@@ -421,9 +461,10 @@ public class BradBot extends BasicRobot {
   }
 
   public void drop() {
-    if (queuer.queue(true, Claw.clawStates.CLOSE.getState()&&lift.getCurrentPosition()>100)) {
+    if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if(currentPose.getX()+abs(currentVelocity.getX())*0.3>48 && abs(currentVelocity.getX())<15){
+      if (currentPose.getX() + abs(currentVelocity.getX()) * 0 > 43.5
+          && abs(currentVelocity.getX()) < 5) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();
@@ -492,6 +533,39 @@ public class BradBot extends BasicRobot {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
         roadrun.followTrajectorySequenceAsync(p_traj);
+      }
+    }
+  }
+  public void followTrajSeq(TrajectorySequence p_traj, double pos, boolean greater,boolean isX) {
+    if (queuer.queue(false, !roadrun.isBusy())) {
+      if (!queuer.isExecuted()) {
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("going from: " + p_traj.start() + " to: " + p_traj.end());
+        roadrun.followTrajectorySequenceAsync(p_traj);
+      }
+      packet.put("greater", currentPose.getY()>pos);
+      if(isX){
+        if(greater){
+          if(currentPose.getX()>pos){
+            queuer.done();
+          }
+        }
+        else{
+          if(currentPose.getX()<pos){
+            queuer.done();
+          }
+        }
+      } else{
+        if(greater){
+          if(currentPose.getY()>pos){
+            queuer.done();
+          }
+        }
+        else{
+          if(currentPose.getY()<pos){
+            queuer.done();
+          }
+        }
       }
     }
   }
@@ -795,17 +869,18 @@ public class BradBot extends BasicRobot {
    */
   public void update() {
     //    LOGGER.setLogLevel(RFLogger.Severity.FINER);
+
     //    LOGGER.log("updating each component");
     super.update();
     arm.update();
-//    if (!isTeleop) {
-//      if(intake.getIntakePower()==0&&Magazine.pixels==2){
-//        Magazine.pixels =0;
-//        intaked=false;
-//      }
-////      cv.update();
-//    }
-    if(!isTeleop&&abs(intake.getIntakePower())>0){
+    //    if (!isTeleop) {
+    //      if(intake.getIntakePower()==0&&Magazine.pixels==2){
+    //        Magazine.pixels =0;
+    //        intaked=false;
+    //      }
+    ////      cv.update();
+    //    }
+    if (!isTeleop && abs(intake.getIntakePower()) > 0) {
       magazine.updateSensors();
     }
     intake.update();

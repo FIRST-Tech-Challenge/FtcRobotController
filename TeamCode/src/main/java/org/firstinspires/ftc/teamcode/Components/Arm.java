@@ -211,12 +211,12 @@ public class Arm extends RFServo {
               "Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
         }
       }
-      if(position == i.pos && i== HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.2){
+      if(position == i.pos && i== HOVER && ArmStates.GRAB.getState() && time > lastTime + 0.3){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
       }
-      if(position == i.pos && i==ArmStates.GRAB && HOVER.getState() && time > lastTime + 0.2){
+      if(position == i.pos && i==ArmStates.GRAB && HOVER.getState() && time > lastTime + 0.3){
         i.setStateTrue();
         ArmTargetStates.values()[i.ordinal()].state = false;
         LOGGER.log("Assigned false to target state: " + ArmTargetStates.values()[i.ordinal()].name());
