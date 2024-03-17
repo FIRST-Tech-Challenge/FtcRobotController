@@ -3,30 +3,29 @@ package org.firstinspires.ftc.teamcode.MainFolderComp.F2.F2helpers;
 public class F2globalVar {
 
     // spike mark
-    public double F2lSpike1 = 12.5; // strafe right
+    public double F2lSpike1 = 8; // strafe right
     public double F2lSpike2 = 25; // move forward
     public double F2lSpike3 = 7; // move backward
 
     public double F2mSpike1 = 38; // move forward
     public double F2mSpike2 = 8; // move backward
 
-    public double F2rSpike1 = 30; // move forward
+    public double F2rSpike1 = 34; // move forward
     public double F2rSpike2 = 230; // turn left
-    public double F2rSpike3 = 8; // move forward
-    public double F2rSpike4 = 7; // move backward
+    public double F2rSpike3 =9; // move forward
+    public double F2rSpike4 = 8; // move backward
 
     // movement
+      //LEFT SPIKEMARK
 
-    //LEFT SPIKEMARK
-
-    public double F2LongL1 = 23;//Straffe left
-    public double F2LongL2 = 36;//straffe and backward
+    public double F2LongL1 = 10;//Straffe left
+    public double F2LongL2 = 43 ;//straffe and backward
     public double F2LongL3 = 270;//Turn left
-    public double F2LongL4 = 82;//foward
+    public double F2LongL4 = 86;//foward
     public double F2LongL5 = 180;//Turn left
-    public double F2LongL6 = 13;//Straffe left
+    public double F2LongL6 = 17.5;//Straffe left
     public double F2LongL7 = 5;//backward
-    public double F2LongL8 = 25;//moving backwards slower to get the auto arm ready to deploy
+    public double F2LongL8 = 35;//moving backwards slower to get the auto arm ready to deploy
 
     //Mid SPIKEMARK
     public double F2LongM1 = 12;//Straffe left
@@ -39,11 +38,11 @@ public class F2globalVar {
     public double F2LongM8 = 40;//moving backwards slower to getting the arm set for pixel drop
 
     //RIGHT SPIKEMARK
-    public double F2LongR1 = 34;//Straffe left
-    public double F2LongR2 = 78;//foward
-    public double F2LongR3 = 180;//turn
-    public double F2LongR4 = 30;//Straffe left
-    public double F2LongR5 = 11;//barckwards
-    public double F2LongR6 = 20;//moving backwards slow to get the auto arm ready to deploy
+    public double F2LongR1 = 26;//Straffe left
+    public double F2LongR2 = 88;//foward
+    public double F2LongR3 = 87;//turn
+    public double F2LongR4 = 38;//Straffe left
+    public double F2LongR5 = 12;//barckwards
+    public double F2LongR6 = 45;//moving backwards slow to get the auto arm ready to deploy
 
 }

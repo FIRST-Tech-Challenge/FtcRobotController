@@ -192,23 +192,22 @@ public class Main_Tele_op extends LinearOpMode {
             double rbPower;
             double lbPower;
 
+            double drive;
+            double strafe;
+            double turn;
             if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                double drive  =  gamepad1.right_stick_x * 0.5;
-                double strafe =  gamepad1.left_stick_x  * 0.5;
-                double turn   = -gamepad1.left_stick_y  * 0.33;
-                lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
-                rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
-                lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
-                rbPower = Range.clip(turn + strafe - drive, -1.0, 1.0);
+                drive =   gamepad1.right_stick_x * 0.2;
+                strafe =  gamepad1.left_stick_x  * 0.5;
+                turn   = -gamepad1.left_stick_y  * 0.5;
             } else {
-                double drive  =  gamepad1.right_stick_x;
-                double strafe =  gamepad1.left_stick_x;
-                double turn   = -gamepad1.left_stick_y * 0.75;
-                lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
-                rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
-                lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
-                rbPower = Range.clip(turn + strafe - drive, -1.0, 1.0);
+                drive  =  gamepad1.right_stick_x * 0.2;
+                strafe =  gamepad1.left_stick_x;
+                turn   = -gamepad1.left_stick_y;
             }
+            lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
+            rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
+            lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
+            rbPower = Range.clip(turn + strafe - drive, -1.0, 1.0);
 
             lf_drive.setPower(lfPower);
             rf_drive.setPower(rfPower);
@@ -296,6 +295,10 @@ public class Main_Tele_op extends LinearOpMode {
             autoarm.setPosition(1);
 
             telemetry.addData("CurrentSlideTicks:", SlideTicks);
+            telemetry.addData("lfPower:", lfPower);
+            telemetry.addData("lbPower:", lbPower);
+            telemetry.addData("rfPower:", rfPower);
+            telemetry.addData("rbPower:", rbPower);
             telemetry.update();
 
         }

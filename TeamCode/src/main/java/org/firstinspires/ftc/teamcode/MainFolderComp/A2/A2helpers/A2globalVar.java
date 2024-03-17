@@ -24,7 +24,7 @@ public class A2globalVar {
     public double A2LongL3 = 90;//turing backwards to get the auto arm facing the backboard
     public double A2LongL4 = 50;//straffing to the backboar
     public double A2LongL5 = 11;//moving backwards to get the auto arm ready to deploy
-    public double A2LongL6 = 65;//moving backwards slow to get the auto arm ready to deploy
+    public double A2LongL6 = 70;//moving backwards slow to get the auto arm ready to deploy
     //MID SPIKE MARK ROUTE TO BACK BOARD
     public double A2LongM1 = 17;//strafe to the white pixels
     public double A2LongM2 = 33;//turnLeft for next strafe
