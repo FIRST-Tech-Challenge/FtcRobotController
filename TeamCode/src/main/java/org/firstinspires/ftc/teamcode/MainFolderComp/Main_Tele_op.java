@@ -200,7 +200,7 @@ public class Main_Tele_op extends LinearOpMode {
                 strafe =  gamepad1.left_stick_x  * 0.5;
                 turn   = -gamepad1.left_stick_y  * 0.5;
             } else {
-                drive  =  gamepad1.right_stick_x * 0.2;
+                drive  =  gamepad1.right_stick_x * 0.5;
                 strafe =  gamepad1.left_stick_x;
                 turn   = -gamepad1.left_stick_y;
             }
