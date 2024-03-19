@@ -100,18 +100,21 @@ public class Robot {
 
     double yCoordinate;
     double deltaY;
-    double currentY;
+    double currentY = 0;
 
     double xCoordinate;
     double deltaX;
-    double currentX;
+    double currentX = 0;
     double theta;
-    double initialAngle;
+    double initialAngle = 0;
     double distanceMiddle;
     double innerDistance;
     double outerDistance;
     double trackWidth = 304.8;
+    double angleCoordinate;
     double deltaAngle;
+    double currentAngle;
+
 
 
     //CONSTRUCTOR
@@ -159,9 +162,6 @@ public class Robot {
     }
 
     public void odometryProbably () {
-        initialAngle = 0;
-        currentX = 0;
-        currentY = 0;
 
         outerDistance = rightEncoder.getCurrentPosition();
         innerDistance = leftEncoder.getCurrentPosition();
@@ -175,6 +175,7 @@ public class Robot {
 
         xCoordinate = currentX + deltaX;
         yCoordinate = currentY + deltaY;
+        angleCoordinate = currentAngle + deltaAngle;
 
         telemetry.addData("x coordinate", xCoordinate);
         telemetry.addData("y coordinate", yCoordinate);
