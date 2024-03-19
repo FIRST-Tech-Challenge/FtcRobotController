@@ -131,6 +131,11 @@ public class MecanumDriver extends OpMode
             forward = gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER;
             strafe = gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER;
         }
+        if (currentHeading == -0.0) {
+            gyro.resetDeviceConfigurationForOpMode();
+            gyro = hardwareMap.get(IMU.class, "imu");
+            gyro.resetYaw();
+        }
 
         double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
