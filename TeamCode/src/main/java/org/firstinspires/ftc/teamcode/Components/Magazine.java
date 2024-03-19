@@ -87,7 +87,7 @@ public class Magazine {
     if(pixels!=1 && dist2>1){
       twoPixelTime = BasicRobot.time;
     }
-    if(dist2<1&&pixels==0){
+    if(dist2<1.3&&pixels==0){
       pixels=1;
     }
     LOGGER.log("front | back dist: " + dist1 + " | " + dist2);
@@ -98,7 +98,7 @@ public class Magazine {
 
   public boolean solidTwoPixels(){
     if (Magazine.pixels == 1) {
-      return BasicRobot.time - twoPixelTime > 0.4;
+      return BasicRobot.time - twoPixelTime > 0.2;
     }
     else{
       return false;

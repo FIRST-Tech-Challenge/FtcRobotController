@@ -36,7 +36,7 @@ public class RRMAX {
 
 
         spikey[1] = robot.roadrun.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(16.5, -36.5, toRadians(-91)))
+                .lineToLinearHeading(new Pose2d(16.5, -37.5, toRadians(-91)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -57,35 +57,38 @@ public class RRMAX {
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(17, -36.25), toRadians(180))
 //                .splineToConstantHeading(new Vector2d(-30, -34.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.6, -34.5), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52.2, -34.25), toRadians(177))
                 .addTemporalMarker(robot::done)
                 .build();
         intake2 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
                 .splineToConstantHeading(new Vector2d(-31.5, -34.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.9, -34.75), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-52.3, -34.25), toRadians(177))
                 .addTemporalMarker(robot::done)
                 .build();
         intake3 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(42 ))
                 .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-20.5, -35.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-51.9, -23.25), toRadians(170))
+                .splineToConstantHeading(new Vector2d(-18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51.7, -22.25), toRadians(170))
                 .addTemporalMarker(robot::done)
                 .build();
         intake4 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(41 ))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(90,4,15))
                 .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-20.5, -35.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-51.6, -23.25), toRadians(170))
+                .splineToConstantHeading(new Vector2d(-18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53, -20.25), toRadians(170))
                 .addTemporalMarker(robot::done)
                 .build();
         drop = robot.roadrun.trajectorySequenceBuilder(intake.end())
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-30, -35.25), toRadians(0))
                 .splineToConstantHeading(new Vector2d(5, -38.25), toRadians(0))
-                .splineToConstantHeading(new Vector2d(48,-38.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(49,-38.25), toRadians(0))
 //                .addTemporalMarker(robot::done)
                 .build();
     drop2 =
@@ -93,7 +96,7 @@ public class RRMAX {
             .roadrun
             .trajectorySequenceBuilder(intake3.end())
             .setReversed(true)
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(39.5 ))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(100,5,15))
             .splineToConstantHeading(new Vector2d(-23, -36.25), toRadians(0))
             .splineToConstantHeading(new Vector2d(5, -36.25), toRadians(0))
@@ -101,8 +104,7 @@ public class RRMAX {
 //            .addTemporalMarker(robot::done)
             .build();
         park = robot.roadrun.trajectorySequenceBuilder(drop2.end())
-                .lineToLinearHeading(new Pose2d(43.8,-40, toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(45, -60,toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(43, -36.25,toRadians(-180)))
                 .build();
 
         robot.setRight(true);
@@ -169,8 +171,8 @@ public class RRMAX {
         robot.queuer.waitForFinish();
         robot.followTrajSeq(drop2);
         robot.grabAuto();
-        robot.lowAuto(false);
-        robot.drop();
+        robot.lessLowAuto(false);
+        robot.drop2();
     }
     public void pre(){
         robot.followTrajSeq(droppy[bark]);
@@ -179,11 +181,7 @@ public class RRMAX {
     }
 
     public void park(){
-        robot.queuer.addDelay(.5);
-        robot.resetAuto();
-//        robot.followTrajSeq(park);
-        robot.queuer.waitForFinish();
-        robot.queuer.addDelay(1.5);
+        robot.followTrajSeq(park);
         robot.queuer.queue(false, true);
     }
 

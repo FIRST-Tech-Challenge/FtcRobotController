@@ -303,6 +303,25 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+  public void lessLowAuto(boolean left) {
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 1100)) {
+      LOGGER.log(
+              "armor"
+                      + Claw.clawStates.GRAB.getState()
+                      + " "
+                      + Arm.ArmTargetStates.HOVER.getState()
+                      + " "
+                      + (currentPose.getX() > -15));
+      if (currentPose.getX() > -20 && Claw.clawStates.GRAB.getState()) {
+        lift.setPosition(1100);
+        intake.stopIntake();
+        arm.flipTo(DROP);
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        twrist.flipTo(Twrist.twristTargetStates.DROP);
+        LOGGER.log("ocook");
+      }
+    }
+  }
 
   public void grabAuto() {
     if (queuer.queue(
@@ -400,12 +419,14 @@ public class BradBot extends BasicRobot {
       //      packet.put("solidTwoPixels", magazine.solidTwoPixels());
       //      packet.put("intakeVel", intake.getVelocity());
 
+
       if (currentPose.getX() < -10) {
-        intaked = true;
         int minus=0;
-        if(abs(intake.getVelocity()) < 1250 && time - intake.getStartIntakeTime()>0.5){
-            minus=-1;
-        }
+        intaked = true;
+//        if(abs(intake.getVelocity()) < 1300 && time - intake.getStartIntakeTime()>0.8 && intake.getIntakePower()!=0){
+//            minus=-1;
+//        }
+
         magazine.updateSensors();
         intake.intakeAutoHeight(max(height - pixels + minus, height - 1));
       }
@@ -463,8 +484,22 @@ public class BradBot extends BasicRobot {
   public void drop() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if (currentPose.getX() + abs(currentVelocity.getX()) * 0 > 43.5
+      if (currentPose.getX() - abs(currentVelocity.getX()) * 0.025 > 42.5
           && abs(currentVelocity.getX()) < 5) {
+        claw.moveTwo(false);
+        claw.moveOne(false);
+        Claw.clawStates.CLOSE.setStateTrue();
+        gapped = false;
+        intaked = false;
+        queuer.done();
+      }
+      //      }
+    }
+  }
+  public void drop2() {
+    if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
+      //      if (!queuer.isExecuted()) {
+      if (currentPose.getX()  > 40) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();

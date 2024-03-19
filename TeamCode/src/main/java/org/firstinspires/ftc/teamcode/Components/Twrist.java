@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -80,60 +79,59 @@ public class Twrist extends RFServo {
         }
     }
     public void flipTo(twristTargetStates p_state){
-        if (!twristStates.values()[p_state.ordinal()].state&& abs(time - lastTime) > FLIP_TIME) {
-            if (p_state == twristTargetStates.GRAB){
-                if((Arm.ArmStates.HOVER.state || Arm.ArmStates.GRAB.state) && super.getPosition() != GRABBY){
-                    super.setPosition(GRABBY);
-                    LOGGER.log("twrist to GRAB");
-                    lastTime = time;
-                }
-                twristTargetStates.GRAB.state = true;
-            } else if(p_state == twristTargetStates.DROP){
-                if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != DROPPY){
-                    super.setPosition(DROPPY);
-                    LOGGER.log("twrist to DROP");
-                    lastTime = time;
-                }
-                twristTargetStates.DROP.state = true;
-            }
-            else if(p_state == twristTargetStates.LEFT_TILT) {
+    if (!twristStates.values()[p_state.ordinal()].state) {
+      if (abs(time - lastTime) > FLIP_TIME) {
+        if (p_state == twristTargetStates.GRAB) {
+          if ((Arm.ArmStates.HOVER.state || Arm.ArmStates.GRAB.state)
+              && super.getPosition() != GRABBY) {
+            super.setPosition(GRABBY);
+            LOGGER.log("twrist to GRAB");
+            lastTime = time;
+          }
+          twristTargetStates.GRAB.state = true;
+        } else if (p_state == twristTargetStates.DROP) {
+          if ((Arm.ArmTargetStates.DROP.state|| Arm.ArmStates.DROP.getState()) && super.getPosition() != DROPPY) {
+            super.setPosition(DROPPY);
+            LOGGER.log("twrist to DROP");
+            lastTime = time;
+          }
+          twristTargetStates.DROP.state = true;
+        } else if (p_state == twristTargetStates.LEFT_TILT) {
 
-                if((Arm.ArmStates.DROP.state) && super.getPosition() != LEFT_TILTY){
-                    super.setPosition(LEFT_TILTY);
-                    LOGGER.log("left tilting claw");
-                    lastTime = time;
-                }
-                twristTargetStates.LEFT_TILT.state = true;
-            }
-            else if(p_state == twristTargetStates.RIGHT_TILT) {
+          if ((Arm.ArmStates.DROP.state) && super.getPosition() != LEFT_TILTY) {
+            super.setPosition(LEFT_TILTY);
+            LOGGER.log("left tilting claw");
+            lastTime = time;
+          }
+          twristTargetStates.LEFT_TILT.state = true;
+        } else if (p_state == twristTargetStates.RIGHT_TILT) {
 
-                if((Arm.ArmStates.DROP.state) && super.getPosition() != RIGHT_TILTY){
-                    super.setPosition(RIGHT_TILTY);
-                    LOGGER.log("right tilting claw");
-                    lastTime = time;
-                }
-                twristTargetStates.RIGHT_TILT.state = true;
-            }
-            else if(p_state == twristTargetStates.OT) {
+          if ((Arm.ArmStates.DROP.state|| Arm.ArmStates.DROP.getState()) && super.getPosition() != RIGHT_TILTY) {
+            super.setPosition(RIGHT_TILTY);
+            LOGGER.log("right tilting claw");
+            lastTime = time;
+          }
+          twristTargetStates.RIGHT_TILT.state = true;
+        } else if (p_state == twristTargetStates.OT) {
 
-                if((Arm.ArmTargetStates.DROP.state) && super.getPosition() != 1.0){
-                    super.setPosition(1.0);
-                    LOGGER.log("OT claw");
-                    lastTime = time;
-                }
-                twristTargetStates.OT.state = true;
-            }
-            else if(p_state == twristTargetStates.VERT) {
+          if ((Arm.ArmTargetStates.DROP.state|| Arm.ArmStates.DROP.getState()) && super.getPosition() != 1.0) {
+            super.setPosition(1.0);
+            LOGGER.log("OT claw");
+            lastTime = time;
+          }
+          twristTargetStates.OT.state = true;
+        } else if (p_state == twristTargetStates.VERT) {
 
-                if(   (Arm.ArmTargetStates.DROP.state) && super.getPosition() != VERT){
-                    super.setPosition(VERT);
-                    LOGGER.log("VERT claw");
-                    lastTime = time;
-                }
-                twristTargetStates.VERT.state = true;
-            }
-
+          if ((Arm.ArmTargetStates.DROP.state || Arm.ArmStates.DROP.getState())
+              && super.getPosition() != VERT) {
+            super.setPosition(VERT);
+            LOGGER.log("VERT claw");
+            lastTime = time;
+          }
+          twristTargetStates.VERT.state = true;
         }
+      }
+            }
         p_state.state=true;
     }
     public void update() {
