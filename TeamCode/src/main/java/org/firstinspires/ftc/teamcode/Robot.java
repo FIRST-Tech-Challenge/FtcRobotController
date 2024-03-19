@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
-import android.text.BoringLayout;
 import android.util.Log;
 import android.util.Size;
 
@@ -30,6 +29,9 @@ public class Robot {
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
+    DcMotor rightEncoder;
+    DcMotor leftEncoder;
+    DcMotor backEncoder;
     DcMotor fLeft;
     DcMotor fRight;
     DcMotor bLeft;
@@ -59,7 +61,7 @@ public class Robot {
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     boolean isRedAlliance;
-    boolean testingOnBert = false;
+    boolean testingOnBert = true;
     boolean allowTrayAngle = false;
     boolean allowTrayAngleOverride = false;
     double hardStopTrayAngleBig;
@@ -78,7 +80,6 @@ public class Robot {
     private double trayAngleSlope;
     private double teleOpTuneValueTrayAngle;
     double slideStartingPosition;
-
     boolean isLong;
 
     public enum MARKER_LOCATION {
@@ -92,6 +93,26 @@ public class Robot {
     boolean lowOuttake;
     int autoDelayInSeconds;
     PARKING_POSITION parkingPosition;
+
+    double deadWheelRadius = 24;
+    double ticksPerRev = 2000;
+    double CM_PER_TICK = 2.0 * Math.PI * deadWheelRadius / ticksPerRev;
+
+    double yCoordinate;
+    double deltaY;
+    double currentY;
+
+    double xCoordinate;
+    double deltaX;
+    double currentX;
+    double theta;
+    double initialAngle;
+    double distanceMiddle;
+    double innerDistance;
+    double outerDistance;
+    double trackWidth = 304.8;
+    double deltaAngle;
+
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean isLong, boolean red, boolean isAutonomous) {
@@ -135,6 +156,28 @@ public class Robot {
             bRightMecanumController = new PIDController("br mecanum", 0.005, 0.0000005, 0.4, true);
             setHeadingController = new PIDController("set heading", 0.06, 0, 2_500_000, false);
         }
+    }
+
+    public void odometryProbably () {
+        initialAngle = 0;
+        currentX = 0;
+        currentY = 0;
+
+        outerDistance = rightEncoder.getCurrentPosition();
+        innerDistance = leftEncoder.getCurrentPosition();
+        distanceMiddle = (innerDistance + outerDistance)/2;
+
+        theta = (outerDistance- innerDistance)/trackWidth;
+        deltaAngle = theta/2;
+
+        deltaX = distanceMiddle * Math.cos(initialAngle+deltaAngle);
+        deltaY = distanceMiddle * Math.sin(initialAngle+deltaAngle);
+
+        xCoordinate = currentX + deltaX;
+        yCoordinate = currentY + deltaY;
+
+        telemetry.addData("x coordinate", xCoordinate);
+        telemetry.addData("y coordinate", yCoordinate);
     }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
@@ -359,6 +402,10 @@ public class Robot {
         fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        rightEncoder = bRight;
+        leftEncoder = bLeft;
+        backEncoder = fRight;
+
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -367,6 +414,8 @@ public class Robot {
         bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
     }
 
     public void resetDrivetrainEncoders () {
@@ -1480,7 +1529,7 @@ public class Robot {
         }
     }
 
-    private double maxAbsValueDouble(double a, double... others) {
+    public double maxAbsValueDouble(double a, double... others) {
         double max = a;
 
         for (double next : others) {
