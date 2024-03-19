@@ -8,36 +8,89 @@ public class TestTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(hardwareMap, this, telemetry, true, true, false);
-        robot.initForTeleOp();
+        Robot robot = new Robot(hardwareMap, this, telemetry, false, false, false);
+        //robot.initForTeleOp();
+        robot.setUpDrivetrainMotors();
+        int TRIGGER_PRESSED = 0; // TODO: test
+        int frontFacing = 1;
+        boolean slowMode = false;
 
-        boolean motorsStopped = false;
+        //doubles for amount of input for straight, turning, and mecanuming variables
+        double straight;
+        double turning;
+        double mecanuming;
 
+        double fLeftPower;
+        double fRightPower;
+        double bLeftPower;
+        double bRightPower;
+        double maxPower;
+        double scale;
+
+        double fLeftPowerPrev = 0;
+        double fRightPowerPrev = 0;
+        double bLeftPowerPrev = 0;
+        double bRightPowerPrev = 0;
         waitForStart();
 
         while (opModeIsActive()) {
+            straight = (gamepad1.left_stick_y)*(gamepad1.left_stick_y)*(gamepad1.left_stick_y) * frontFacing * -1;
+            mecanuming = (gamepad1.left_stick_x)*(gamepad1.left_stick_x)*(gamepad1.left_stick_x) * frontFacing;
 
-            if (gamepad1.a) {
+            //turning stays the same
+            turning = (gamepad1.right_stick_x) * (gamepad1.right_stick_x) * (gamepad1.right_stick_x);
 
-                robot.planeLauncherServo.setPosition(0.5);
-                motorsStopped = false;
-
-            } else if (gamepad1.b) {
-
-                robot.trayAngle.setPosition(0.5);
-                motorsStopped = false;
-
-            } else if (gamepad1.x) {
-
-                robot.stackAttachment.setPosition(0.5);
-                motorsStopped = false;
-
-            } else if (gamepad1.y) {
-
-                robot.spikeServo.setPosition(0.5);
-                motorsStopped = false;
-
+            //Pure Mecanum overrides straight and turn
+            if (gamepad1.right_trigger != 0) {
+                straight = 0;
+                turning = 0;
+                mecanuming = 0.7;
+            } else if (gamepad1.left_trigger != 0) {
+                straight = 0;
+                turning = 0;
+                mecanuming = -0.7;
             }
+
+            //set powers using this input
+            fLeftPower = straight + turning + mecanuming;
+            fRightPower = straight - turning - mecanuming;
+            bLeftPower = straight + turning - mecanuming;
+            bRightPower = straight - turning + mecanuming;
+
+
+            //scale powers
+            maxPower = robot.maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
+
+            if (Math.abs(maxPower) > 1) {
+                scale = Math.abs(maxPower);
+                fLeftPower /= scale;
+                bLeftPower /= scale;
+                fRightPower /= scale;
+                bRightPower /= scale;
+            }
+
+            //uses different powers based on which bumper was pressed last
+            if (slowMode) {
+                fLeftPower *= 0.7;
+                bLeftPower *= 0.7;
+                fRightPower *= 0.7;
+                bRightPower *= 0.7;
+            }
+
+            //set motor power ONLY if a value has changed. else, use previous value.
+            if (fLeftPowerPrev != fLeftPower || fRightPowerPrev != fRightPower
+                    || bLeftPowerPrev != bLeftPower || bRightPowerPrev != bRightPower) {
+                robot.setMotorPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+                fLeftPowerPrev = fLeftPower;
+                fRightPowerPrev = fRightPower;
+                bLeftPowerPrev = bLeftPower;
+                bRightPowerPrev = bRightPower;
+            }
+            telemetry.addData("left", robot.leftEncoder.getCurrentPosition());
+            telemetry.addData("right", robot.rightEncoder.getCurrentPosition());
+            telemetry.addData("back", robot.backEncoder.getCurrentPosition());
+            telemetry.update();
         }
     }
 }
