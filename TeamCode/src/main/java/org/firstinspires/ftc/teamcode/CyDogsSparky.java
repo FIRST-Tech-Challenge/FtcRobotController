@@ -215,7 +215,7 @@ public class CyDogsSparky extends CyDogsChassis{
             StrafeRight(DistanceBetweenScoreBoardAprilTags+130,.5,300);
         }
         int targetTag = getAprilTagTarget(mySpike, myAlliance);
-        myOpMode.sleep(400);
+       // myOpMode.sleep(400);
 
         double degreesBearing;
         double inchesXMovement;
@@ -237,30 +237,33 @@ public class CyDogsSparky extends CyDogsChassis{
         // Adjust a 2nd Time
       // foundTag = GetAprilTag(targetTag);
         // Bearing
-        if(foundTag != null) {
-            degreesBearing = foundTag.ftcPose.bearing;
-            if(targetTag==3)
-            {
-                degreesBearing = degreesBearing*.9;
-            }
 
-
-            RotateRight((int)(-degreesBearing*.9),.5,300);
-        }
      //   myOpMode.sleep(400);
      //   foundTag = GetAprilTag(targetTag);
         // X
         double extraInches =0;
-        if(targetTag==6)
-        {
-            extraInches += 1.5;
-        }
-        if(targetTag==3){
-            extraInches -= 0.0;
-        }
+ //       if(targetTag==6)
+ //       {
+ //           extraInches += 1.5;
+ //       }
+ //       if(targetTag==3){
+ //           extraInches -= 0.0;
+ //       }
         if(foundTag != null) {
             inchesXMovement = foundTag.ftcPose.x;
-            StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 300);
+            StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 400);
+        }
+
+        foundTag = GetAprilTag(targetTag);
+        if(foundTag != null) {
+            degreesBearing = foundTag.ftcPose.bearing;
+            //       if(targetTag==3)
+            //     {
+            //       degreesBearing = degreesBearing*.9;
+            // }
+
+
+            RotateRight((int)(-degreesBearing*.8),.5,300);
         }
 
         // Y
@@ -284,9 +287,9 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(foundTag ==null) {
-            MoveStraight(315,.5,450);
+                MoveStraight(315,.5,450);
         } else {
-            if (targetTag == 1 && corner == "BlueRight") {
+  /*          if (targetTag == 1 && corner == "BlueRight") {
                 MoveStraight(7, .5, 400);
             }
             if (targetTag == 3 && corner == "BlueLeft") {
@@ -304,7 +307,7 @@ public class CyDogsSparky extends CyDogsChassis{
             if (targetTag == 6 && corner == "RedRight") {
                 StrafeRight(25, .5, 400);
             }
-        }
+   */     }
 
      //     myOpMode.sleep(8000);
     }

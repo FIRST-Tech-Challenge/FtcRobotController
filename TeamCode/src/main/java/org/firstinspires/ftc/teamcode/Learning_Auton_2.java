@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Learning_Auton_2 extends LinearOpMode {
 // This is a SHORT side Auton
 
-    CyDogsSparky mySparky;
+    CyDogsChassis myBot = new CyDogsChassis(this);
 
     // This is a SHORT side Auton
     @Override
@@ -24,8 +24,7 @@ public class Learning_Auton_2 extends LinearOpMode {
 
 
         if (opModeIsActive()) {
-            mySparky.initializePositions();
-            sleep(300);
+
 
 
         }
