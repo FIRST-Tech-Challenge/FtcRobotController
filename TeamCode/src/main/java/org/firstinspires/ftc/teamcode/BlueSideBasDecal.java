@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 
-@Autonomous(name="RedSide bas", group="AutoRedSide")
-public class autoRedSideBas extends LinearOpMode {
+@Autonomous(name="BlueSideBasDecal", group="Blue Side")
+public class BlueSideBasDecal extends LinearOpMode {
     private DcMotorEx motorA;
     private DcMotorEx motorB;
     private DcMotorEx bras1;
