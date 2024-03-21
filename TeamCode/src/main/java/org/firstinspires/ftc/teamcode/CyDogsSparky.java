@@ -36,8 +36,8 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int ArmMedium = 3600;
     public static final int ArmHigh = 6300;
     public static final int ArmRaiseBeforeElbowMovement = 3400;
-    public static final double WristForDriving = 0.18;
-    public static final double WristForScoring = 0.45;
+    public static final double WristForDriving = 0.44;
+    public static final double WristForScoring = 0.75;
     public static final double ElbowHomePosition = 0.233;
     public static final double ElbowScoringPosition = 0.5;
     public static final double FingerLeftOpen = 0.4;
@@ -542,11 +542,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment+90,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+leftAdjustment+120,.7,StandardAutonWaitTime);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment+80,.5,StandardAutonWaitTime);
+            StrafeRight(OneTileMM+rightAdjustment+120,.7,StandardAutonWaitTime);
         }
     }
 

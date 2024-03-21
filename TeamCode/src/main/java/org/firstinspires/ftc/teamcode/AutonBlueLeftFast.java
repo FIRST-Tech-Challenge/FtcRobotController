@@ -25,15 +25,15 @@ SpikeCam.location mySpikeLocation;
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
 
         // Create the instance of sparky, initialize the SpikeCam, devices, and positions
-        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.BLUE,300);
+        mySparky = new CyDogsSparky(this, CyDogsChassis.Alliance.BLUE,280);
         mySparky.initializeSpikeCam();
         mySparky.initializeDevices();
 
         mySparky.initializeAprilTags();
 
         // Ask the initialization questions
-        parkingSpot = mySparky.askParkingSpot();
-
+      //  parkingSpot = mySparky.askParkingSpot();
+        parkingSpot = CyDogsChassis.Direction.LEFT;
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
@@ -44,11 +44,17 @@ SpikeCam.location mySpikeLocation;
             mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
             // Get to standard position before placing purple pixel
-            mySparky.MoveStraight(-300, .5, mySparky.StandardAutonWaitTime);
-            mySparky.StrafeLeft(75,0.5, mySparky.StandardAutonWaitTime);
+            mySparky.MoveStraight(-290, .5, mySparky.StandardAutonWaitTime);
+            if(mySpikeLocation== SpikeCam.location.RIGHT) {
+                mySparky.StrafeLeft(85,0.5, mySparky.StandardAutonWaitTime);
+            }
+            else {
+                mySparky.StrafeLeft(75,0.5, mySparky.StandardAutonWaitTime);
+            }
             mySparky.MoveStraight(-445, .5, mySparky.StandardAutonWaitTime);
 
             // Place purple pixel and back away from it
+
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
             if(mySpikeLocation== SpikeCam.location.LEFT) {
                 mySparky.MoveStraight(65, .5, mySparky.StandardAutonWaitTime);
@@ -56,7 +62,7 @@ SpikeCam.location mySpikeLocation;
                 sleep(400);
             }
             else {
-                mySparky.MoveStraight(30, .5, mySparky.StandardAutonWaitTime);
+                mySparky.MoveStraight(40, .5, mySparky.StandardAutonWaitTime);
             }
 
 
@@ -68,7 +74,7 @@ SpikeCam.location mySpikeLocation;
                 mySparky.MoveStraight(-CyDogsChassis.OneTileMM-160, .5, mySparky.StandardAutonWaitTime);
                 mySparky.StrafeLeft(CyDogsChassis.OneTileMM-40, .5, mySparky.StandardAutonWaitTime);
 
-                mySparky.RotateLeft(188, .5, 400);
+                mySparky.RotateLeft(188, .5, 1000);
             } else if (mySpikeLocation == SpikeCam.location.MIDDLE) {
                 mySparky.RotateRight(92, .5, mySparky.StandardAutonWaitTime);
                 // We're 50mm further away from start position
@@ -81,7 +87,7 @@ SpikeCam.location mySpikeLocation;
                 mySparky.RotateLeft(3,.5,mySparky.StandardAutonWaitTime);
                 mySparky.StrafeLeft(40,.5,mySparky.StandardAutonWaitTime);
                 mySparky.raiseArmToScore(CyDogsSparky.ArmRaiseBeforeElbowMovement);
-                mySparky.MoveStraight(675, .5, 2000);
+                mySparky.MoveStraight(675, .5, 1000);
                 // I took 200 off the above to be far enough away to read april tags
             }
 
@@ -98,8 +104,10 @@ SpikeCam.location mySpikeLocation;
             sleep(300);
 
 
-            mySparky.MoveStraight(-50,.5,300);
+            mySparky.MoveStraight(-100,.5,300);
+            mySparky.RotateRight(4,.5,300);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+            mySparky.StrafeLeft(140,.5,300);
             mySparky.returnArmFromScoring();
             mySparky.LowerArmAtAutonEnd();
             //mySparky.MoveStraight(100,.5,300);
@@ -115,21 +123,22 @@ SpikeCam.location mySpikeLocation;
             mySparky.StrafeRight(CyDogsSparky.DistanceBetweenScoreBoardAprilTags+130,.5,300);
         }
         int targetTag = mySparky.getAprilTagTarget(mySpike, CyDogsChassis.Alliance.BLUE);
-        sleep(400);
+        mySparky.SwingElbow();
+        sleep(800);
 
         double degreesBearing;
         double inchesXMovement;
         double inchesYMovement;
         // Adjust once
         AprilTagDetection foundTag = mySparky.GetAprilTag(targetTag);
-        mySparky.SwingElbow();
+
 
 
 
         // Bearing
         if(foundTag != null) {
             degreesBearing = foundTag.ftcPose.bearing;
-            if(targetTag==3)
+            if(targetTag==3 || targetTag==1)
             {
                 degreesBearing = degreesBearing*.9;
             }
@@ -141,7 +150,7 @@ SpikeCam.location mySpikeLocation;
         //   foundTag = GetAprilTag(targetTag);
         // X
         double extraInches =0;
-        if(targetTag==6)
+        if(targetTag==1)
         {
             extraInches += 1.5;
         }
@@ -154,7 +163,7 @@ SpikeCam.location mySpikeLocation;
         }
         mySparky.raiseArmToScore(CyDogsSparky.ArmLow);
         // Y
-        double adjustY = 6.5;
+        double adjustY = 2;
         //    if(targetTag==2)
         //  {
         //    adjustY = 6.5;
@@ -174,7 +183,8 @@ SpikeCam.location mySpikeLocation;
         }
 
         if(foundTag ==null) {
-            mySparky.MoveStraight(315,.5,450);
+
+            mySparky.MoveStraight(295,.5,450);
         } else {
             if (targetTag == 1 && corner == "BlueRight") {
                 mySparky.MoveStraight(7, .5, 400);
