@@ -24,6 +24,7 @@ public class autoRedSideBas extends LinearOpMode {
 
     private double zeroDuBras;
     private double zeroDuHaut;
+    private double targetBras;
 
     public void driveForwardPID(double distance, double power) {
         //normalSpeed();
@@ -41,7 +42,32 @@ public class autoRedSideBas extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
-            idle();
+            BrasGoTo();
+        }
+        motorA.setPower(0);
+        motorB.setPower(0);
+        motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //resetMotors();
+    }
+
+    public void driveBackwardPID(double distance, double power) {
+        //normalSpeed();
+        double ROTATIONS = distance / 0.2827;
+        double COUNTS = ROTATIONS * -515.46;
+        int leftTarget = (int) COUNTS - motorA.getCurrentPosition();
+        int rightTarget = (int) COUNTS + motorB.getCurrentPosition();
+        motorA.setTargetPosition(-leftTarget);
+        motorB.setTargetPosition(rightTarget);
+        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorA.setPower(power);
+        motorB.setPower(power);
+        while (motorA.isBusy() || motorB.isBusy()) {
+            telemetry.addData("MA", motorA.getTargetPosition());
+            telemetry.addData("MAC", motorA.getCurrentPosition());
+            telemetry.update();
+            BrasGoTo();
         }
         motorA.setPower(0);
         motorB.setPower(0);
@@ -52,7 +78,7 @@ public class autoRedSideBas extends LinearOpMode {
 
     void goLeft(double power) {
 
-        double ROTATIONS = 0.29 / 0.2827;
+        double ROTATIONS = 0.285 / 0.2827;
         double COUNTS = ROTATIONS * 515.46;
         int leftTarget = (int)  COUNTS + motorA.getCurrentPosition();
         int rightTarget = (int) COUNTS + motorB.getCurrentPosition();
@@ -100,7 +126,7 @@ public class autoRedSideBas extends LinearOpMode {
 
     void waitTime(double tps) {
         double t=getRuntime();
-        while (getRuntime()-t < tps) {idle();}
+        while (getRuntime()-t < tps) {BrasGoTo();}
     }
 
     void coudeTo(double pos, double speed) {
@@ -132,7 +158,8 @@ public class autoRedSideBas extends LinearOpMode {
         }
     }
 
-    public void BrasGoTo(double pos) {
+    public void BrasGoTo() {
+        double pos = targetBras;
         if (bras2.getCurrentPosition() < zeroDuHaut+pos) {
             while (bras2.getCurrentPosition() < zeroDuHaut+pos) {
                 bras1.setPower(0.3);
@@ -167,6 +194,7 @@ public class autoRedSideBas extends LinearOpMode {
         double t;
         zeroDuBras = bras2.getCurrentPosition();
         zeroDuHaut = zeroDuBras - 462;
+        targetBras = 462;
 
 
 
@@ -187,8 +215,8 @@ public class autoRedSideBas extends LinearOpMode {
         //coudeTo(0.2,0.0001);
         coudeG.setPosition(0.2);
         coudeD.setPosition(1-0.2);
-        mainG.setPosition(0);
-        mainD.setPosition(1);
+        mainG.setPosition(1);
+        mainD.setPosition(0);
 
         waitTime(1.5);
 
@@ -196,32 +224,42 @@ public class autoRedSideBas extends LinearOpMode {
 
         //waitTime(1);
 
-        mainG.setPosition(1);
-        mainD.setPosition(0);
+        mainG.setPosition(0);
+        mainD.setPosition(1);
 
 
-        waitTime(1.5);
+        waitTime(1);
         coudeG.setPosition(0.91);
         coudeD.setPosition(1-0.91);
 
-        bras1.setPower(-0.3);
-        bras2.setPower(-0.3);
-        waitTime(0.5);
-        bras1.setPower(0);
-        bras2.setPower(0);
+
+        targetBras = 432;
+        BrasGoTo();
 
         driveForwardPID(0.6,1);
         goLeft(1);
-        driveForwardPID(2.16,1);
+        driveBackwardPID(0.3,1);
+        waitTime(0.1);
+        coudeG.setPosition(0.05);
+        coudeD.setPosition(1-0.5);
+        waitTime(0.2);
+        driveForwardPID(1.78,1);
+        coudeG.setPosition(0.91);
+        coudeD.setPosition(1-0.91);
+        driveForwardPID(0.67,1);
 
-        BrasGoTo(300);
+        targetBras = 300;
+        BrasGoTo();
         coudeG.setPosition(0.25);
         coudeD.setPosition(1-0.25);
         waitTime(1);
-        mainG.setPosition(0);
-        mainD.setPosition(1);
-        waitTime(1.5);
-        BrasGoTo(50);
+        mainG.setPosition(1);
+        mainD.setPosition(0);
+        waitTime(1);
+
+
+        targetBras = 50;
+        BrasGoTo();
         coudeG.setPosition(0.91);
         coudeD.setPosition(1-0.91);
         goRight(1);

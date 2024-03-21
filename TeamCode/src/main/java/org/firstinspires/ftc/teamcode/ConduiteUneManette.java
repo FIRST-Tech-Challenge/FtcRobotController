@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -69,7 +67,7 @@ public class ConduiteUneManette extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        lanceur.setPosition(1);
+        lanceur.setPosition(0);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -266,9 +264,9 @@ public class ConduiteUneManette extends LinearOpMode {
             }
 
             if (manette1.left_stick_button) {
-                lanceur.setPosition(0);
-                waitTime(1);
                 lanceur.setPosition(1);
+                waitTime(1);
+                lanceur.setPosition(0);
 
             }
 
