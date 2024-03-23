@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp
+@TeleOp(name="PID back")
 @Config
 public class PIDF_ScoreSlides extends OpMode {
 

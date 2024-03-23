@@ -125,21 +125,21 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
 
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -23, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, -28, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence middleyellow = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -31.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, -35, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(46.5, -40, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, -43, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
@@ -217,7 +217,7 @@ public class CenterStageBackdropRedREWORK extends LinearOpMode {
                                 if (waitTime.milliseconds() > 1100) {
                                     preloadTime.reset();
 
-                                    itarget = 1500;
+                                    itarget = 1300;
                                     preloadInt = 1;
                                 }
 

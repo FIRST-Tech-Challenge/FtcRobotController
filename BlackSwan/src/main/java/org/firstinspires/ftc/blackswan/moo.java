@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.blackswan;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,11 +10,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
+@Config
 @TeleOp(name = "moo")
 public class moo extends LinearOpMode {
 
     private PIDController controller;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public static double p = 0.012, i = 0, d = 0.0001;
     public static double f = 0.1;
@@ -23,7 +26,13 @@ public class moo extends LinearOpMode {
 
     public static int armQuickPosition = 0;
 
+    public static double openClawVal=0.8;
+    public static double closeClawVal= 1;
+    public static double upClaw =0.5;
+    public static double downClaw=0.3;
+
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
@@ -97,7 +106,7 @@ public class moo extends LinearOpMode {
             } else if (gamepad2.dpad_up) {
                 armQuickPosition = 1;
             } else if (gamepad2.dpad_left) {
-                turnClaw.setPosition(0.69);
+                turnClaw.setPosition(0.8);
             }
 
             // Flip these signs if the robot rotates the wrong way
@@ -152,16 +161,16 @@ public class moo extends LinearOpMode {
 
 
                 if (gamepad2.x) {
-                    turnClaw.setPosition(0.90);
+                    turnClaw.setPosition(upClaw);
                 }
                 if (gamepad2.y) {
-                    turnClaw.setPosition(0.43);
+                    turnClaw.setPosition(downClaw);
                 }
                 if (gamepad2.a) {
-                    closeClaw.setPosition(1);
+                    closeClaw.setPosition(closeClawVal);
                 }
                 if (gamepad2.b) {
-                    closeClaw.setPosition(0.80);
+                    closeClaw.setPosition(openClawVal);
                 }
                 if (gamepad1.a) {
                     planeLauncher.setPosition(.55);

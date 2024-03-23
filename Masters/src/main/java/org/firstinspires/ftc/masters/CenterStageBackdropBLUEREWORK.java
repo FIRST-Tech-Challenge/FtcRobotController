@@ -102,13 +102,13 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
                 .setTangent(Math.toRadians(-40))
-                .splineToLinearHeading(new Pose2d(32, 25, Math.toRadians(180)), Math.toRadians(-70))
+                .splineToLinearHeading(new Pose2d(35, 25, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
         TrajectorySequence middlePurple = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)))
                 .setTangent(Math.toRadians(-40))
-                .splineToLinearHeading(new Pose2d(26, 20, Math.toRadians(180)), Math.toRadians(-70))
+                .splineToLinearHeading(new Pose2d(26, 18.5, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
@@ -123,21 +123,21 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
                 .back(5)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 39, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 40, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence middleyellow = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 33, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 34, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 24.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, 27.5, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
@@ -235,7 +235,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                                 if (waitTime.milliseconds() > 1100) {
                                     preloadTime.reset();
 
-                                    itarget = 1400;
+                                    itarget = 1200;
                                     preloadInt = 1;
                                 }
 
