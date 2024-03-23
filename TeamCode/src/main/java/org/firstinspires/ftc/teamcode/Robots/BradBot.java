@@ -9,6 +9,7 @@ import static org.apache.commons.math3.util.FastMath.min;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 import static org.firstinspires.ftc.teamcode.Components.Arm.DROP_POS;
 import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
@@ -92,31 +93,35 @@ public class BradBot extends BasicRobot {
    * @param p_is_Teleop is the program a teleop program
    */
   public BradBot(LinearOpMode p_op, boolean p_is_Teleop, boolean isLogi) {
-    super(p_op, p_is_Teleop);
-    LOGGER.setLogLevel(RFLogger.Severity.INFO);
-    LOGGER.log("Initializing Components!");
-    arm = new Arm();
-    if (!isTeleop) {
-      cv = new CVMaster(isLogi);
-    }
-    claw = new Claw();
-    magazine = new Magazine();
-    hanger = new Hanger();
-    intake = new Intake();
-    launcher = new Launcher();
-    lift = new Lift();
-    //    preloader = new Preloader();
-    roadrun = new SampleMecanumDrive(p_op.hardwareMap);
-    twrist = new Twrist();
-    ultras = new Ultrasonics();
-    wrist = new Wrist();
-    //    path = new Path();
-    purped = false;
-    //    ppui = new PPUI(roadrun);
-    voltage = voltageSensor.getVoltage();
-    brokenFollowing = false;
-    // 12.4,12.2
-    update();
+    this(p_op, p_is_Teleop, isLogi, false);
+  }
+  public BradBot(LinearOpMode p_op, boolean p_is_Teleop, boolean isLogi, boolean isFlipped){
+      super(p_op, p_is_Teleop, isFlipped);
+      LOGGER.setLogLevel(RFLogger.Severity.INFO);
+      LOGGER.log("Initializing Components!");
+      arm = new Arm();
+      if (!isTeleop) {
+          cv = new CVMaster(isLogi);
+      }
+      claw = new Claw();
+      magazine = new Magazine();
+      hanger = new Hanger();
+      intake = new Intake();
+      launcher = new Launcher();
+      lift = new Lift();
+      //    preloader = new Preloader();
+      roadrun = new SampleMecanumDrive(p_op.hardwareMap);
+      twrist = new Twrist();
+      ultras = new Ultrasonics();
+      wrist = new Wrist();
+      //    path = new Path();
+      purped = false;
+      //    ppui = new PPUI(roadrun);
+      voltage = voltageSensor.getVoltage();
+      brokenFollowing = false;
+//      MAX_ACCEL*=voltage / 13;
+      // 12.4,12.2
+      update();
   }
 
   public BradBot(LinearOpMode p_op, boolean p_isTeleop) {
@@ -304,7 +309,7 @@ public class BradBot extends BasicRobot {
     }
   }
   public void lessLowAuto(boolean left) {
-    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 1100)) {
+    if (queuer.queue(true, Wrist.WristStates.DROP.getState() || lift.getTarget() == 1200)) {
       LOGGER.log(
               "armor"
                       + Claw.clawStates.GRAB.getState()
@@ -313,7 +318,7 @@ public class BradBot extends BasicRobot {
                       + " "
                       + (currentPose.getX() > -15));
       if (currentPose.getX() > -20 && Claw.clawStates.GRAB.getState()) {
-        lift.setPosition(1100);
+        lift.setPosition(1200);
         intake.stopIntake();
         arm.flipTo(DROP);
         wrist.flipTo(Wrist.WristTargetStates.DROP);
@@ -486,7 +491,7 @@ public class BradBot extends BasicRobot {
   public void drop() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if (currentPose.getX() - abs(currentVelocity.getX()) * 0.025 > 42.5
+      if (currentPose.getX() > 44
           && abs(currentVelocity.getX()) < 5) {
         claw.moveTwo(false);
         claw.moveOne(false);
@@ -501,7 +506,7 @@ public class BradBot extends BasicRobot {
   public void drop2() {
     if (queuer.queue(true, Claw.clawStates.CLOSE.getState() && lift.getCurrentPosition() > 100)) {
       //      if (!queuer.isExecuted()) {
-      if (currentPose.getX()  > 42.5) {
+      if (currentPose.getX()  > 43.5) {
         claw.moveTwo(false);
         claw.moveOne(false);
         Claw.clawStates.CLOSE.setStateTrue();

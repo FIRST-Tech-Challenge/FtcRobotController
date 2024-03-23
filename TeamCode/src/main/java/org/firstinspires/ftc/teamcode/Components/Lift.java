@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isFlipped;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -44,8 +45,14 @@ public class Lift extends RFDualMotor {
     super.setDirection2(DcMotorSimple.Direction.FORWARD);
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
-    super.setTarget(0);
-    LiftMovingStates.AT_ZERO.setStateTrue();
+    if (isFlipped) {
+      super.setTarget(800);
+      LiftMovingStates.LOW.setStateTrue();
+    }
+    else{
+      super.setTarget(0);
+      LiftMovingStates.AT_ZERO.setStateTrue();
+    }
     lastPower = 0;
     lastManualTime = -100;
     target = 0;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.DROP;
 import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.HOVER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
@@ -11,6 +12,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /** Harry Class to contain all Arm functions */
 @Config
@@ -32,12 +34,22 @@ public class Arm extends RFServo {
       position = GRAB_POS;
 
     } else {
+      if(BasicRobot.isFlipped){
+        super.setPosition(DROP_POS);
+        super.setFlipTime(FLIP_TIME);
+        DROP.setStateTrue();
+        ArmTargetStates.DROP.setStateTrue();
+        ArmTargetStates.DROP.state = false;
+        position = HOVER_POS;
+      }
+      else{
       super.setPosition(HOVER_POS);
       super.setFlipTime(FLIP_TIME);
       HOVER.setStateTrue();
       ArmTargetStates.HOVER.setStateTrue();
       ArmTargetStates.HOVER.state = false;
       position = HOVER_POS;
+      }
     }
     lastTime = -100;
     super.setLastTime(-100);
@@ -110,7 +122,7 @@ public class Arm extends RFServo {
   public void purpurPigzl() {
     if (position != DROP_POS) {
       ArmTargetStates.DROP.state = true;
-      flipTo(ArmStates.DROP, 0.02, true);
+      flipTo(DROP, 0.02, true);
       LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
       lastTime = time;
     }
@@ -118,7 +130,7 @@ public class Arm extends RFServo {
   public void purpurPigzl2() {
     if (position != DROP_POS) {
       ArmTargetStates.DROP.state = true;
-      flipTo(ArmStates.DROP, 0.02, true);
+      flipTo(DROP, 0.02, true);
       LOGGER.log(RFLogger.Severity.INFO, "flipping to PURPUR");
       lastTime = time;
     }
@@ -136,9 +148,9 @@ public class Arm extends RFServo {
   }
   public void flipTo(ArmStates p_state, double offset, boolean override) {
     if (time - lastTime > FLIP_TIME || override) {
-      if ((p_state == ArmStates.DROP || p_state == HOVER)
+      if ((p_state == DROP || p_state == HOVER)
               && super.getPosition() != p_state.pos) {
-        if (p_state == ArmStates.DROP) {
+        if (p_state == DROP) {
           ArmTargetStates.DROP.state = true;
           if (ArmStates.GRAB.getState()) {
             flipTo(HOVER);
@@ -161,7 +173,7 @@ public class Arm extends RFServo {
             super.setPosition(HOVER_POS+offset);
             position = HOVER_POS;
             ArmTargetStates.HOVER.state = true;
-            if (ArmStates.DROP.state){
+            if (DROP.state){
               HOVER.state = false;
             } LOGGER.log(RFLogger.Severity.INFO, "flipping to HOVER");
 //            Wrist.WristTargetStates.GRAB.setStateTrue();
