@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters.tests;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.PropFindProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -92,6 +93,8 @@ public class testAlignTag extends LinearOpMode {
 
         waitForStart();
 
+        ElapsedTime inputDelay = new ElapsedTime();
+
         while (opModeIsActive()) {
             currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
@@ -106,15 +109,27 @@ public class testAlignTag extends LinearOpMode {
                 }
             }   // end for() loop
             telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
-            if (gamepad1.a) {
-                drive.turnToTag(currentDetections, 1);
-                sleep(200);
+
+            if (gamepad1.a && inputDelay.milliseconds() > 300) {
+                drive.turnToTag(currentDetections, 2);
+                inputDelay = new ElapsedTime();
             }
 
-            if (gamepad1.b) {
-                drive.strafeToTag(currentDetections, 1);
-                sleep(200);
+            if (gamepad1.b && inputDelay.milliseconds() > 300) {
+                drive.strafeToTag(currentDetections, 2);
+                inputDelay = new ElapsedTime();
             }
+
+            if (gamepad1.x && inputDelay.milliseconds() > 300) {
+                drive.fwdToTag(currentDetections,2);
+                inputDelay = new ElapsedTime();
+            }
+
+            if (gamepad1.y && inputDelay.milliseconds() > 300) {
+                drive.trajToTag(currentDetections,2);
+            }
+
+            drive.update();
 
             telemetry.update();
         }

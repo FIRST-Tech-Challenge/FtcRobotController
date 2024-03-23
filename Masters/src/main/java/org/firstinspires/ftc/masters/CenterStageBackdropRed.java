@@ -12,8 +12,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -24,12 +30,14 @@ import java.util.List;
 @Config
 @Autonomous(name = "Center Stage Backdrop Red", group = "competition")
 public class CenterStageBackdropRed extends LinearOpMode {
-    private OpenCvCamera webcam;
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    private static final int CAMERA_WIDTH  = 640; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+    private AprilTagProcessor aprilTag;
+    private PropFindProcessor propFindProcessor;
 
     TelemetryPacket packet = new TelemetryPacket();
+
+    private VisionPortal myVisionPortal;
 
     enum State {
         PURPLE_DEPOSIT_PATH,
@@ -53,26 +61,8 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindRight myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindRight(telemetry,packet));
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+        initDoubleVision();
+        myVisionPortal.setProcessorEnabled(aprilTag, false);
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -81,7 +71,7 @@ public class CenterStageBackdropRed extends LinearOpMode {
         }
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        PropFindRight.pos propPos = null;
+        PropFindProcessor.pos propPos = null;
 
         drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(new Vector2d(12, -58.5), Math.toRadians(90)); //Start position for roadrunner
@@ -146,7 +136,7 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
         drive.closeClaw();
 
-        propPos = myPipeline.position;
+        propPos = propFindProcessor.position;
 
         waitForStart();
 
@@ -155,14 +145,16 @@ public class CenterStageBackdropRed extends LinearOpMode {
 
         while (time < 50 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            propPos = myPipeline.position;
+            propPos = propFindProcessor.position;
             telemetry.addData("Position", propPos);
         }
 
+        myVisionPortal.setProcessorEnabled(propFindProcessor, false);
+
         currentState = State.PURPLE_DEPOSIT_PATH;
-        if (propPos == PropFindRight.pos.LEFT) {
+        if (propPos == PropFindProcessor.pos.LEFT) {
             drive.followTrajectoryAsync(purpleDepositPathL);
-        } else if (propPos == PropFindRight.pos.RIGHT) {
+        } else if (propPos == PropFindProcessor.pos.RIGHT) {
             drive.followTrajectoryAsync(purpleDepositPathR);
         } else {
             drive.followTrajectoryAsync(purpleDepositPathC);
@@ -184,9 +176,9 @@ public class CenterStageBackdropRed extends LinearOpMode {
                         drive.openClaw();
                         drive.closeHook();
                     sleep(500);
-                    if (propPos == PropFindRight.pos.LEFT){
+                    if (propPos == PropFindProcessor.pos.LEFT){
                         drive.followTrajectory(purpleBackUpL);
-                    } else if (propPos== PropFindRight.pos.RIGHT){
+                    } else if (propPos== PropFindProcessor.pos.RIGHT){
                         drive.followTrajectory(purpleBackUpR);
                     } else {
                         drive.followTrajectoryAsync(purpleBackUpC);
@@ -197,9 +189,9 @@ public class CenterStageBackdropRed extends LinearOpMode {
                     if (!drive.isBusy()) {
                         drive.intakeToTransfer();
                         sleep(300);
-                        if (propPos == PropFindRight.pos.LEFT) {
+                        if (propPos == PropFindProcessor.pos.LEFT) {
                             drive.turn(Math.toRadians(-45));
-                        } else if (propPos == PropFindRight.pos.RIGHT) {
+                        } else if (propPos == PropFindProcessor.pos.RIGHT) {
                             drive.turn(Math.toRadians(60));
                         }
                         currentState = CenterStageBackdropRed.State.UNTURN;
@@ -214,11 +206,11 @@ public class CenterStageBackdropRed extends LinearOpMode {
                     break;
                 case BACKUP_FROM_SPIKES:
                     if (!drive.isBusy()) {
-                        if (propPos == PropFindRight.pos.LEFT){
+                        if (propPos == PropFindProcessor.pos.LEFT){
                             drive.followTrajectoryAsync(yellowDepositPathL);
-                        } else if (propPos == PropFindRight.pos.RIGHT){
+                        } else if (propPos == PropFindProcessor.pos.RIGHT){
                             drive.followTrajectoryAsync(yellowDepositPathR);
-                        } else if (propPos == PropFindRight.pos.MID){
+                        } else if (propPos == PropFindProcessor.pos.MID){
                             drive.followTrajectoryAsync(yellowDepositPathC);
                         }
 
@@ -266,9 +258,9 @@ public class CenterStageBackdropRed extends LinearOpMode {
                                 target = CSCons.OuttakePosition.LOW_AUTO.getTarget()+200;
                             }
                             if (depositTime.milliseconds() > 1100) {
-                                if (propPos== PropFindRight.pos.LEFT){
+                                if (propPos== PropFindProcessor.pos.LEFT){
                                     drive.followTrajectoryAsync(parkL);
-                                } else if (propPos== PropFindRight.pos.RIGHT){
+                                } else if (propPos== PropFindProcessor.pos.RIGHT){
                                     drive.followTrajectoryAsync(parkR);
                                 } else{
                                     drive.followTrajectoryAsync(parkC);
@@ -295,4 +287,34 @@ public class CenterStageBackdropRed extends LinearOpMode {
             }
         }
     }
+    private void initDoubleVision() {
+
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagOutline(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .build();
+
+        propFindProcessor = new PropFindProcessor(telemetry,packet);
+
+        // -----------------------------------------------------------------------------------------
+        // Camera Configuration
+        // -----------------------------------------------------------------------------------------
+
+        if (USE_WEBCAM) {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
+                    .addProcessors(propFindProcessor, aprilTag)
+                    .build();
+        } else {
+            myVisionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessors(propFindProcessor, aprilTag)
+                    .build();
+        }
+    }   // end initDoubleVision()
+
 }
