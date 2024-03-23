@@ -114,6 +114,7 @@ public class Robot {
     double angleCoordinate;
     double deltaAngle;
     double currentAngle;
+    final double TICKS_TO_MM = 13.2625995;
 
 
 
@@ -163,22 +164,28 @@ public class Robot {
 
     public void odometryProbably () {
 
-        outerDistance = rightEncoder.getCurrentPosition();
-        innerDistance = leftEncoder.getCurrentPosition();
+        outerDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
+        innerDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
         distanceMiddle = (innerDistance + outerDistance)/2;
 
-        theta = (outerDistance- innerDistance)/trackWidth;
+        theta = (outerDistance - innerDistance)/trackWidth;
         deltaAngle = theta/2;
 
-        deltaX = distanceMiddle * Math.cos(initialAngle+deltaAngle);
-        deltaY = distanceMiddle * Math.sin(initialAngle+deltaAngle);
+        deltaX = distanceMiddle * Math.cos(initialAngle + deltaAngle);
+        deltaY = distanceMiddle * Math.sin(initialAngle + deltaAngle);
 
         xCoordinate = currentX + deltaX;
         yCoordinate = currentY + deltaY;
         angleCoordinate = currentAngle + deltaAngle;
 
+
+        telemetry.addData("theta", theta);
+        telemetry.addData("delta y", deltaY);
+        telemetry.addData("delta x", deltaX);
+
         telemetry.addData("x coordinate", xCoordinate);
         telemetry.addData("y coordinate", yCoordinate);
+        telemetry.addData("angle", angleCoordinate);
     }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
