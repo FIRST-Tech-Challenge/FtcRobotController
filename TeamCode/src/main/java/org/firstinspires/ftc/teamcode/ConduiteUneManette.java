@@ -132,7 +132,6 @@ public class ConduiteUneManette extends LinearOpMode {
             if (manette1.left_bumper) {
                 motorA.setPower(tgtPowerA);
                 motorB.setPower(-tgtPowerB);
-                manette1.rumble(100);
             } else {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
@@ -140,23 +139,23 @@ public class ConduiteUneManette extends LinearOpMode {
 
             //Mode Precision (en test)
             if (PrecisionMode){
-                while (gamepad1.dpad_up){
+                while (manette2.dpad_up){
                     PrecisionMode = false;
                     coudepas = 0.003;
                 }
             } else {
-                while (gamepad1.dpad_up){
+                while (manette2.dpad_up){
                     PrecisionMode = true;
                     coudepas = 0.001;
             }}
 
             if (OvercloakMode){
-               while (gamepad1.dpad_down){
+               while (manette2.dpad_down){
                    OvercloakMode = false;
                    coudepas = 0.003;
                }
             } else {
-                while (gamepad1.dpad_down){
+                while (manette2.dpad_down){
                     OvercloakMode = true;
                     coudepas = 0.05;
                 }
