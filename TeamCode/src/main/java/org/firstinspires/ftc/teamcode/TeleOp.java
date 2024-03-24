@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "Test")
+@TeleOp(name = "TeleOp")
 public class drivercontrol extends OpMode {
     private CoyotesRobot robot;
 
