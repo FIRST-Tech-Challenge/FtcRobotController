@@ -180,6 +180,9 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
         clawAngle = hardwareMap.servo.get("clawAngle");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
 
+        outtakeServo1 = hardwareMap.servo.get("outtakeHook");
+        outtakeServo2 = hardwareMap.servo.get("microHook");
+
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchBucket = hardwareMap.touchSensor.get("touchBucket");
@@ -231,8 +234,8 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawOpen);
 
-        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
 
         hookPosition = HookPosition.OPEN;
         planeRaise.setPosition(CSCons.droneFlat);
@@ -321,8 +324,8 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                     }
 
                     if (backSlides.getCurrentPosition()>2000){
-                        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
-                        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleFolder);
+                        outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
                     break;
@@ -535,14 +538,14 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                         break;
                 }
 //                if (gamepad2.dpad_right) {
-//                    outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-//                    outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+//                    outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+//                    outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
 //                }
                 switch (outtakeState) {
                     case ReadyToTransfer:
 //                        if (!touchBucket.isPressed()) {
 //                            bucketMovedBy = bucketMovedBy + .01;
-//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.wristOuttakeAngleTransfer);
 //                        }
                         if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
@@ -643,8 +646,8 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
                             outtakeServo1.setPosition(servo1Up);
                             outtakeServo2.setPosition(servo2Up);
-                            outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-                            outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                            outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+                            outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
                             if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
                                 backSlidePos = OuttakePosition.BOTTOM;
                                 target = backSlidePos.getTarget();
@@ -677,8 +680,8 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                         break;
                     case MoveToDrop:
                         if (backSlides.getCurrentPosition() > 100) {
-                            outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-                            outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                            outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                            outtakeRotationTarget = CSCons.wristOuttakeAngleFolder + angleRotationAdjustment;
                             outtakeRotation.setPosition(outtakeRotationTarget);
                         }
                         if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {

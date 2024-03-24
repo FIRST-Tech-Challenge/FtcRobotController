@@ -26,11 +26,15 @@ public class CSCons {
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0;
+    public static double wristOuttakeAngleFolder =0;
     public static double outtakeAngleTransfer=.62;
+    public static double wristOuttakeAngleTransfer =0.5;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
     public static double outtakeMovementBackDrop =0.25;
     public static double outtakeMovementTransfer = .72;
+    public static double wristOuttakeMovementTransfer=0.5;
+    public static double wristOuttakeMovementBackdrop =0.25;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -65,6 +69,11 @@ public class CSCons {
     public static double servo2Down= 0.35;
 
     public static double wristCenter = 0.5;
+
+    public static double tagX = 63;
+    public static double tag1Y = 42;
+    public static double tag2Y = 35.5;
+    public static double tag3Y = 29;
 
 
     public enum OuttakePosition{

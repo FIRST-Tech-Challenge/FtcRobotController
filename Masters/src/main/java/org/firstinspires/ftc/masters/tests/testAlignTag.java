@@ -36,7 +36,7 @@ public class testAlignTag extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap, telemetry);
 
         // -----------------------------------------------------------------------------------------
             // AprilTag Configuration
