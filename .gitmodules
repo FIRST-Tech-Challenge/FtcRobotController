@@ -1,0 +1,3 @@
+[submodule "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CoyotesRobot"]
+	path = TeamCode/src/main/java/org/firstinspires/ftc/teamcode/CoyotesRobot
+	url = https://github.com/chsRobotix/CoyotesRobot.git
