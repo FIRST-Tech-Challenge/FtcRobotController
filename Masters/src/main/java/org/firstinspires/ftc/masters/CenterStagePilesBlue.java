@@ -141,15 +141,15 @@ public class CenterStagePilesBlue extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeToBoardLeft = drive.trajectorySequenceBuilder(straightToBackBoard.end())
-                .strafeTo(new Vector2d(56, 34))
+                .strafeTo(new Vector2d(56.3, 34))
                 .build();
 
         TrajectorySequence strafeToYellowRight = drive.trajectorySequenceBuilder(strafeToBoardLeft.end())
-                .strafeTo(new Vector2d(56, 20))
+                .strafeTo(new Vector2d(56, 24.5))
                 .build();
 
         TrajectorySequence strafeToYellowLeft = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
-                .strafeTo(new Vector2d(56, 37))
+                .strafeTo(new Vector2d(56, 41))
                 .build();
 
         TrajectorySequence strafeToYellowCenter = drive.trajectorySequenceBuilder(strafeToBoardRight.end())
@@ -244,7 +244,7 @@ public class CenterStagePilesBlue extends LinearOpMode {
 
                     if (!drive.isBusy()) {
                         if (propPos == PropFindRight.pos.LEFT) {
-                            intakeTarget = CSCons.leftIntakeExtension;
+                            intakeTarget = CSCons.leftIntakeExtension+200;
                         } else if (propPos == PropFindRight.pos.RIGHT) {
                             intakeTarget = CSCons.rightIntakeExtension;
                         } else {
@@ -354,11 +354,11 @@ public class CenterStagePilesBlue extends LinearOpMode {
                         closeHook = true;
                     }
 
-                    if (elapsedTime.milliseconds() > 1000 && !openClaw) {
+                    if (elapsedTime.milliseconds() > 1200 && !openClaw) {
                         drive.transferClaw();
                         openClaw = true;
                     }
-                    if (elapsedTime.milliseconds() > 1700 && !closeHook) {
+                    if (elapsedTime.milliseconds() > 1900 && !closeHook) {
                         drive.closeHook();
                         closeHook = true;
                     }

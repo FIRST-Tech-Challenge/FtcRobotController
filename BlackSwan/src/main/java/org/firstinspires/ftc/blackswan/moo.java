@@ -26,8 +26,8 @@ public class moo extends LinearOpMode {
 
     public static int armQuickPosition = 0;
 
-    public static double openClawVal=0.8;
-    public static double closeClawVal= 1;
+    public static double openClawVal=0.1;
+    public static double closeClawVal= 0.5;
     public static double upClaw =0.5;
     public static double downClaw=0.3;
 

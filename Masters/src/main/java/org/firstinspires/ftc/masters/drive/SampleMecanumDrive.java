@@ -346,8 +346,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                     aprilTagPos = new Pose2d(0, 0, 0);
                 }
                 double theta = 90 + Math.abs(detection.ftcPose.bearing) - Math.abs(detection.ftcPose.yaw);
-//                return new Pose2d(72 - 29.25 - Math.abs(detection.ftcPose.range * Math.sin(theta)), 72  - 7.5  - Math.abs(detection.ftcPose.range * Math.cos(theta)), Math.toRadians(detection.ftcPose.yaw));
-                return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
+                return new Pose2d(72 - 29.25 - Math.abs(detection.ftcPose.range * Math.sin(Math.toRadians(theta))), 72  - 7.5  - Math.abs(detection.ftcPose.range * Math.cos(Math.toRadians(theta))), Math.toRadians(detection.ftcPose.yaw));
+             //   return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
             }
         }   // end for() loop
         return new Pose2d(0,0,0);

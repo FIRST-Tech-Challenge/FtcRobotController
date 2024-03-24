@@ -19,8 +19,8 @@ public class CSCons {
     public static double clawArmGround = 0.82;//.78;
     public static double clawArm2 = .75;
     public static double clawArm3 = .72;
-    public static double clawArm4 = .69;
-    public static double clawArm5 = .655;
+    public static double clawArm4 = .65;
+    public static double clawArm5 = .62;
     public static double clawArmTransition = .23;
     public static double clawArmTransfer = .24;
 
@@ -58,6 +58,13 @@ public class CSCons {
 
     public static double backMultiplier =0.78;
     public static double frontMultiplier = 1;
+
+    public static double servo1Up = 0.4;
+    public static double servo1Down = 0.65;
+    public static double servo2Up =0.6;
+    public static double servo2Down= 0.35;
+
+    public static double wristCenter = 0.5;
 
 
     public enum OuttakePosition{
