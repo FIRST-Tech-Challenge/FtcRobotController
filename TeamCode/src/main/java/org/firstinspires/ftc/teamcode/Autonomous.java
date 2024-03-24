@@ -17,4 +17,4 @@ public class redNearAutonomous extends LinearOpMode {
         // wait until the player press the start button
         waitForStart();
     }
-}
+} 
