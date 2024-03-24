@@ -27,6 +27,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -378,10 +379,41 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void strafeToTag(List<AprilTagDetection> currentDetections, int targetTag) {
         Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
-        Trajectory strafe = this.trajectoryBuilder(getPoseEstimate(),false)
-                .strafeLeft(relTagPos.getX())
-                .build();
+        Trajectory strafe;
+        if (relTagPos.getX() < 0) {
+            strafe = this.trajectoryBuilder(getPoseEstimate(), false)
+                    .strafeRight(relTagPos.getX())
+                    .build();
+        } else {
+            strafe = this.trajectoryBuilder(getPoseEstimate(), false)
+                    .strafeLeft(relTagPos.getX())
+                    .build();
+        }
         this.followTrajectoryAsync(strafe);
+    }
+
+    public void fwdToTag(List<AprilTagDetection> currentDetections, int targetTag) {
+        Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
+        Trajectory fwd;
+        if (relTagPos.getY() < 0) {
+            fwd = this.trajectoryBuilder(getPoseEstimate(), false)
+                    .back(relTagPos.getY()-5)
+                    .build();
+        } else {
+            fwd = this.trajectoryBuilder(getPoseEstimate(), false)
+                    .back(relTagPos.getY()-5)
+                    .build();
+        }
+        this.followTrajectoryAsync(fwd);
+    }
+
+    public void trajToTag(List<AprilTagDetection> currentDetections, int targetTag) {
+        Pose2d relTagPos = getRelativeTagPos(currentDetections,targetTag);
+        Trajectory align;
+        align = this.trajectoryBuilder(new Pose2d(), false)
+                .splineToLinearHeading(new Pose2d(new Vector2d(getPoseEstimate().getX() + relTagPos.getY()-5,getPoseEstimate().getY() + relTagPos.getX()),Math.toRadians(0)),Math.toRadians(0))
+                .build();
+        this.followTrajectoryAsync(align);
     }
 
     public Pose2d getRelativeTagPos (List<AprilTagDetection> currentDetections, int targetTag) {
@@ -399,7 +431,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 }
             }
         }
-        return new Pose2d(tag_x,tag_y,tag_yaw);
+        return new Pose2d(new Vector2d(tag_x,tag_y),tag_yaw);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
