@@ -88,12 +88,8 @@ public class TestTeleOp extends LinearOpMode {
                 bRightPowerPrev = bRightPower;
             }
 
-            robot.odometryProbably();
+            robot.odometryCluelessProbably();
 
-            telemetry.addData("left", robot.leftEncoder.getCurrentPosition());
-            telemetry.addData("right", robot.rightEncoder.getCurrentPosition());
-            telemetry.addData("back", robot.backEncoder.getCurrentPosition());
-            telemetry.update();
         }
     }
 }

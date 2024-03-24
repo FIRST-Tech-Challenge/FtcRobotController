@@ -81,6 +81,21 @@ public class Robot {
     private double teleOpTuneValueTrayAngle;
     double slideStartingPosition;
     boolean isLong;
+    private double forwardRadius;
+    private double mecanumRadius;
+    private double deltaForward;
+    private double deltaTheta;
+    private double deltaMecanum;
+    private double forward;
+    private double backDistance;
+    private final double backDistanceToMid = 69.85;
+    private double mecanum;
+    private double prevRightDistance;
+    private double deltaRightDistance;
+    private double deltaLeftDistance;
+    private double prevLeftDistance;
+    private double deltaBackDistance;
+    private double prevBackDistance;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -98,24 +113,26 @@ public class Robot {
     double ticksPerRev = 2000;
     double CM_PER_TICK = 2.0 * Math.PI * deadWheelRadius / ticksPerRev;
 
-    double yCoordinate;
-    double deltaY;
-    double currentY = 0;
+    double yCoordinate = 0;
+    double deltaY = 0;
+    double prevY = 0;
 
-    double xCoordinate;
-    double deltaX;
-    double currentX = 0;
-    double theta;
+    double xCoordinate = 0;
+    double deltaX = 0;
+    double prevX = 0;
+    double theta = 0;
     double initialAngle = 0;
     double distanceMiddle;
-    double innerDistance;
-    double outerDistance;
-    double trackWidth = 304.8;
+    double leftDistance;
+    double rightDistance;
+    final double TRACK_WIDTH = 304.8;
     double angleCoordinate;
     double deltaAngle;
     double currentAngle;
     final double TICKS_TO_MM = 13.2625995;
 
+    final double rightTrackWidth = -0.5 * TRACK_WIDTH;
+    final double leftTrackWidth = 0.5 * TRACK_WIDTH;
 
 
     //CONSTRUCTOR
@@ -162,20 +179,20 @@ public class Robot {
         }
     }
 
-    public void odometryProbably () {
+    public void odometryAluminumCobblersProbably() {
 
-        outerDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
-        innerDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
-        distanceMiddle = (innerDistance + outerDistance)/2;
+        rightDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
+        leftDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
+        distanceMiddle = (leftDistance + rightDistance)/2;
 
-        theta = (outerDistance - innerDistance)/trackWidth;
+        theta = (rightDistance - leftDistance)/ TRACK_WIDTH;
         deltaAngle = theta/2;
 
         deltaX = distanceMiddle * Math.cos(initialAngle + deltaAngle);
         deltaY = distanceMiddle * Math.sin(initialAngle + deltaAngle);
 
-        xCoordinate = currentX + deltaX;
-        yCoordinate = currentY + deltaY;
+        xCoordinate = prevX + deltaX;
+        yCoordinate = prevY + deltaY;
         angleCoordinate = currentAngle + deltaAngle;
 
 
@@ -186,6 +203,74 @@ public class Robot {
         telemetry.addData("x coordinate", xCoordinate);
         telemetry.addData("y coordinate", yCoordinate);
         telemetry.addData("angle", angleCoordinate);
+    }
+
+    public void odometryCluelessProbably () {
+        rightDistance = rightEncoder.getCurrentPosition() / TICKS_TO_MM;
+        leftDistance = leftEncoder.getCurrentPosition() / TICKS_TO_MM;
+        backDistance = backEncoder.getCurrentPosition() / TICKS_TO_MM;
+
+        deltaRightDistance = rightDistance - prevRightDistance;
+        deltaLeftDistance = leftDistance - prevLeftDistance;
+        deltaBackDistance = backDistance - prevBackDistance;
+
+        prevRightDistance = rightDistance;
+        prevLeftDistance = leftDistance;
+        prevBackDistance = backDistance;
+
+        forward = (leftDistance + rightDistance)/2;
+        theta = (rightDistance - leftDistance)/ TRACK_WIDTH;
+        mecanum = backDistance - backDistanceToMid * theta;
+
+        deltaForward = (deltaLeftDistance + deltaRightDistance)/2;
+        Log.d("delta", String.valueOf(deltaForward));
+        deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
+        Log.d("delta", String.valueOf(deltaTheta));
+
+        if (deltaTheta == 0) {
+//            telemetry.addLine("stop x coordinate: " + xCoordinate);
+//            telemetry.addLine("y coordinate: " + yCoordinate);
+//            telemetry.addData("angle", theta);
+//            telemetry.addData("delta y", deltaY);
+//            telemetry.addData("delta x", deltaX);
+//            telemetry.addData("delta theta", deltaTheta);//0????
+            return;
+        }
+
+        deltaMecanum = (deltaBackDistance - backDistanceToMid) * deltaTheta;
+        Log.d("delta", String.valueOf(deltaMecanum));
+
+        forwardRadius = deltaForward/deltaTheta;
+        mecanumRadius = deltaMecanum/deltaTheta;
+
+        telemetry.addData("forward radius", forwardRadius);//NaN
+        telemetry.addData("mecanum radius", mecanumRadius);//NaN
+        telemetry.addData("delta theta", deltaTheta);//0????
+
+        deltaX = forwardRadius * Math.sin(deltaTheta) - mecanumRadius * (1 - Math.cos(deltaTheta));
+        deltaY = mecanumRadius * Math.sin(deltaTheta) + forwardRadius * (1 - Math.cos(deltaTheta));
+
+        telemetry.addData(" sine of delta theta", Math.sin(deltaTheta));//0
+        telemetry.addData(" cosine of delta theta", Math.cos(deltaTheta));//1
+
+        xCoordinate = prevX + deltaX * Math.cos(theta) - deltaY * Math.sin(theta);
+        yCoordinate = prevY + deltaY * Math.cos(theta) + deltaX * Math.sin(theta);
+
+        telemetry.addData("theta", theta);//-0.1438548
+        telemetry.addData("prev x", prevX);//NaN
+        telemetry.addData("prev y", prevY);//NaN
+
+        prevX = xCoordinate;
+        prevY = yCoordinate;
+
+        telemetry.addData("theta", theta);
+        telemetry.addData("delta y", deltaY);
+        telemetry.addData("delta x", deltaX);
+
+        telemetry.addData("x coordinate", xCoordinate);
+        telemetry.addData("y coordinate", yCoordinate);
+        telemetry.update();
+
     }
 
     public void moveLinearSlideByTicksBlocking(double targetDistanceInTicks) {
