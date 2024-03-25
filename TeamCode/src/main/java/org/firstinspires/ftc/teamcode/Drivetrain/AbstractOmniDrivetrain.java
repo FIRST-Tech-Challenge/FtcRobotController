@@ -19,9 +19,9 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
             motor.setPower(power);
         }
     }
-    public void mecanumDrive(float forward, float strafe, double turn){
+    public void mecanumDrive(float forward, float strafe, double turn, double heading){
         VectorF powerVector = new VectorF(forward, strafe);
-        rotateVector(powerVector, impulseRotation);
+        rotateVector(powerVector, heading);
 
         float negativeGroup = (float) (powerVector.get(0) / (Math.sqrt(2) / 2));
         float positiveGroup = (float) (powerVector.get(1) / (Math.sqrt(2) / 2));
@@ -36,14 +36,13 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
 
 
 
-    public static VectorF rotateVector(VectorF originalVector, double angle){
+    public static void rotateVector(VectorF originalVector, double angle){
         float x = originalVector.get(0);
         float y = originalVector.get(1);
 
         originalVector.put(0, (float) ((x * Math.cos(angle)) + ( y * Math.sin(angle))));
         originalVector.put(1, (float) ((x * -Math.sin(angle)) + (y * Math.cos(angle))));
 
-        return originalVector;
     }
 
 }

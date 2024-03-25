@@ -35,7 +35,7 @@ public class Control extends OpMode {
     }
 
     public void mecanumDrive(float forward, float strafe, double turn){
-        robot.drivetrain.mecanumDrive(forward, strafe, turn);
+        robot.drivetrain.mecanumDrive(forward, strafe, turn, robot.getHeading());
     }
 
     @Override
