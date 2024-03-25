@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CoyotesRobot;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
@@ -6,8 +6,14 @@ import com.qualcomm.robotcore.hardware.*;
 public class CoyotesRobot {
     private OpMode opMode;
 
+    // Whether the robot will automatically sleep after each command
+    // Will automatically sleep by default
+    private boolean autoSleepEnabled;
+
     public Hardware(OpMode opMode) {
         this.opMode = opMode;
+
+        autoSleepEnabled = true;
     }
 
     /**
