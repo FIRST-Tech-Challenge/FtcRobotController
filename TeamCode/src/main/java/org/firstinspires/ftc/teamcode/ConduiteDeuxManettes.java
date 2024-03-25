@@ -7,118 +7,113 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 @TeleOp
 public class ConduiteDeuxManettes extends LinearOpMode {
-    private DcMotor motorA;
-    private DcMotor motorB;
+    void waitTime(double tps) {
+        double t=getRuntime();
+        while (getRuntime()-t < tps) {idle();}
+    }
+    private DcMotorEx motorA;
+    private DcMotorEx motorB;
     private DcMotorEx bras1;
     private DcMotorEx bras2;
 
-    private Servo coude;
+    private Servo coudeG;
+    private Servo coudeD;
 
     private Servo mainG;
     private Servo mainD;
-
+    private Servo lanceur;
     @Override
     public void runOpMode() {
-        motorA = hardwareMap.get(DcMotor.class, "moteur1");
-        motorB = hardwareMap.get(DcMotor.class, "moteur2");
+        motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
+        motorB = hardwareMap.get(DcMotorEx.class, "moteur2");
         bras1 = hardwareMap.get(DcMotorEx.class, "bras1");
         bras2 = hardwareMap.get(DcMotorEx.class, "bras2");
-        coude = hardwareMap.get(Servo.class, "coude");
+        coudeG = hardwareMap.get(Servo.class, "coudeG");
+        coudeD = hardwareMap.get(Servo.class, "coudeD");
         mainG = hardwareMap.get(Servo.class, "mainG");
         mainD = hardwareMap.get(Servo.class, "mainD");
+        lanceur = hardwareMap.get(Servo.class, "lanceur");
 
         double tgtPowerA = 0;
         double tgtPowerB = 0;
-
         double tgtBras = 0;
-        double maPosBras = 0;
-
+        int maPosBras = 0;
         double varY = 0;
         double varX = 0;
         double varYpos = 0;
         double varXpos = 0;
-
-        double coudeZero = 0.18;
+        double coudeZero = 0.91;
         double coudeX = coudeZero;
-        double brasA = 0;
+        int brasA = 0;
         double triggergauche = 0;
         double triggerdroit = 0;
         double varRY = 0;
         double maPosCoude = 0;
-        int posbraszero = 0;
-        int goTo = 0;
-        Dictionary<String, Double> mesPosBras = new Hashtable();
-        Dictionary<String, Double> mesPosCoude = new Hashtable();
+        int bras0 = 0;
+        double debugTkt = 0;
+        int isInnit = 0;
+        int zeroDuBras=0;
+        int zeroDuHaut=0;
+        boolean PrecisionMode = false;
+        boolean OvercloakMode = false;
+        double coudepas = 0.003;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad2;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+        lanceur.setPosition(0);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        mesPosBras.put("x",0.0);
-        mesPosBras.put("y",0.0);
-        mesPosBras.put("a",0.0);
-        mesPosBras.put("b",0.0);
-        mesPosCoude.put("x",0.0);
-        mesPosCoude.put("y",0.0);
-        mesPosCoude.put("a",0.0);
-        mesPosCoude.put("b",0.0);
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            if (isInnit == 0) {
+                zeroDuBras = bras2.getCurrentPosition();
+                zeroDuHaut = zeroDuBras - 462;
+                isInnit = 1;
+            }
+
+            // Récupération valeur joystick gauche
             varY = manette1.left_stick_y;
             varX = manette1.left_stick_x;
 
+            // Convertion pour Moteurs
             varYpos = Math.abs(varY);
             varXpos = Math.abs(varX);
 
+            // Récupération valeur joystick gauche
             varRY = manette2.right_stick_y;
 
-            brasA = bras1.getCurrentPosition();
+            // Récupération valeur bras
             brasA = bras2.getCurrentPosition();
 
-            triggerdroit = manette2.right_trigger;
-            triggergauche = manette2.left_trigger;
-
             /// Mouvements
-            if (varY > 0) //Forward
-            {
+            if (varY > 0) {
                 tgtPowerA = varYpos;
                 tgtPowerB = varYpos;
-
                 if (varX < 0) {
-                    tgtPowerA = tgtPowerA - varXpos;
-                } else if (varX > 0) {
                     tgtPowerB = tgtPowerB - varXpos;
+                } else if (varX > 0) {
+                    tgtPowerA = tgtPowerA - varXpos;
                 }
-
-            } else if (varY < 0) //Backward
-            {
+            } else if (varY < 0) {
                 tgtPowerA = -varYpos;
                 tgtPowerB = -varYpos;
+
+                debugTkt = -1;
 
                 if (varX < 0) {
                     tgtPowerA = tgtPowerA + varXpos;
                 } else if (varX > 0) {
                     tgtPowerB = tgtPowerB + varXpos;
                 }
-
-            }
-
-            else if (varY == 0) {
+            } else if (varY == 0) {
                 tgtPowerA = 0;
                 tgtPowerB = 0;
             }
@@ -143,102 +138,153 @@ public class ConduiteDeuxManettes extends LinearOpMode {
                 motorB.setPower(-(tgtPowerB / 2));
             }
 
-            /// Bras + Coude + Main
-
-            if (varRY < 0) {
-                tgtBras = varRY/2;
-
+            //Mode Precision (en test)
+            if (PrecisionMode){
+                while (manette2.dpad_up){
+                    PrecisionMode = false;
+                    coudepas = 0.003;
+                }
             } else {
-                tgtBras = varRY/4;
+                while (manette2.dpad_up){
+                    PrecisionMode = true;
+                    coudepas = 0.001;
+                }}
+
+            if (OvercloakMode){
+                while (manette2.dpad_down){
+                    OvercloakMode = false;
+                    coudepas = 0.003;
+                }
+            } else {
+                while (manette2.dpad_down){
+                    OvercloakMode = true;
+                    coudepas = 0.05;
+                }
             }
 
-            coudeX += manette2.left_stick_y*0.02;
-            coude.setPosition(coudeX);
-            if (coudeX < 0) { coudeX = 0;}
-            if (coudeX > 1) { coudeX = 1;}
 
+            // Changement Position Bras
+            if (!OvercloakMode){
+                if (varRY < 0) {
+                    tgtBras = varRY/3;
+                    bras0 = brasA;
 
-            if (manette2.dpad_left) {
-                mesPosBras.put("x",brasA);
-                mesPosCoude.put("x",coude.getPosition());
-            }
-            if (manette2.dpad_right) {
-                mesPosBras.put("b",brasA);
-                mesPosCoude.put("b",coude.getPosition());
-            }
-            if (manette2.dpad_up) {
-                mesPosBras.put("y",brasA);
-                mesPosCoude.put("y",coude.getPosition());
-            }
-            if (manette2.dpad_down) {
-                mesPosBras.put("a",brasA);
-                mesPosCoude.put("a",coude.getPosition());
-            }
-
-            if (manette2.x) {
-                maPosBras = mesPosBras.get("x");
-                maPosCoude = mesPosCoude.get("x");
-                goTo = 1;
-            }
-            else if (manette2.b) {
-                maPosBras = mesPosBras.get("b");
-                maPosCoude = mesPosCoude.get("b");
-                goTo = 1;
-            }
-            else if (manette2.y) {
-                maPosBras = mesPosBras.get("y");
-                maPosCoude = mesPosCoude.get("y");
-                goTo = 1;
-            }
-            else if (manette2.a) {
-                maPosBras = mesPosBras.get("a");
-                maPosCoude = mesPosCoude.get("a");
-                goTo = 1;
-            }
-            else {goTo = 0;}
-
-            if (goTo == 1) {
-                if (brasA> maPosBras) {
-                    tgtBras = -0.3;
-                } else if (brasA < maPosBras) {
-                        tgtBras = 0.3;
+                } else if (varRY > 0) {
+                    tgtBras = varRY/3;
+                    bras0 = brasA;
                 } else {
+                    if (brasA > bras0) {
+                        tgtBras = -0.1;
+                    } else if (brasA < bras0) {
+                        tgtBras = 0.1;
+                    } else {
                         tgtBras = 0;
+                    }
+                }
+            } else {
+                tgtBras = varRY / 2;
+                bras0 = brasA;
+            }
+
+            //
+
+            // Changement Position Coude
+            if (manette2.left_trigger > 0) {
+                coudeX += coudepas;
+                if (coudeX > 0.83) {
+                    coudeX = 0.83;
+                }
+            } else if (manette2.right_trigger > 0) {
+                coudeX -= coudepas;
+                if (coudeX<0.10) {
+                    coudeX = 0.10;
+                }
+            }
+            //
+
+            // Activation Mode Enregistré
+            if (manette2.x) {
+                if (brasA > maPosBras) {
+                    if (zeroDuHaut + brasA < 100) {
+                        tgtBras = -0.05;
+                    } else {
+                        tgtBras = -0.3;
+                    }
+                } else if (brasA < maPosBras) {
+                    tgtBras = 0.3;
+                } else {
+                    tgtBras = 0;
                 }
                 coudeX = maPosCoude;
+                bras0 = maPosBras;
             }
+            //
 
-            bras1.setPower(tgtBras);
-            bras2.setPower(tgtBras);
-            coude.setPosition(coudeX);
+            // Enregistrement de la Position
+            if (manette2.y) {
+                maPosBras = brasA;
+                maPosCoude = coudeG.getPosition();
+            }
+            //
 
-            if (mainG.getPosition() > 0.50) {
-                while (manette2.left_bumper) {
+            // Position Mains
+            if (mainG.getPosition() > 0.10) {
+                while (manette2.a) {
                     mainG.setPosition(0);
+                }}
+            if (mainG.getPosition() < 0.2){
+                while (manette2.a) {
+                    mainG.setPosition(1);
                 }
             }
-            if (mainG.getPosition() < 0.20){
-                while (manette2.left_bumper) {
-                    mainG.setPosition(0.65);
-                }
-            }
-
-            if (mainD.getPosition() > 0.50) {
-                while (manette2.right_bumper) {
+            if (mainD.getPosition() > 0.3) {
+                while (manette2.b) {
                     mainD.setPosition(0);
                 }}
-            if (mainD.getPosition() < 0.20){
-                while (manette2.right_bumper) {
-                    mainD.setPosition(0.65);
+            if (mainD.getPosition() < 0.3){
+                while (manette2.b) {
+                    mainD.setPosition(1);
                 }
             }
+            //
 
+            // Changement des position - Hardware
+            coudeG.setPosition(coudeX);
+            coudeD.setPosition(1 - coudeX);
+
+            if (PrecisionMode) {
+                bras1.setPower(tgtBras/1000);
+                bras2.setPower(-tgtBras/1000);
+                bras1.setPower(-tgtBras/1000);
+                bras2.setPower(tgtBras/1000);
+            } else {
+                bras1.setPower(tgtBras);
+                bras2.setPower(tgtBras);
+            }
+
+            if (manette1.left_stick_button) {
+                lanceur.setPosition(1);
+                waitTime(1);
+                lanceur.setPosition(0);
+
+            }
+
+
+            //
+
+            telemetry.addData("zeroDuBras", zeroDuBras);
+            telemetry.addData("zeroDuHaut", zeroDuHaut);
+            telemetry.addData("Position Actuelle Bras", brasA);
             telemetry.addData("Target Power A", tgtPowerA);
             telemetry.addData("Target Power B", tgtPowerB);
-            telemetry.addData("Var Y", varRY);
-            telemetry.addData("Coude", coudeX);
-            telemetry.addData("Bras", brasA);
-            telemetry.addData("Postion du bras eng", maPosBras);
+            telemetry.addData("Joystick Gauche : VarY", varRY);
+            telemetry.addData("CoudeG", coudeG.getPosition());
+            telemetry.addData("CoudeD", coudeD.getPosition());
+            telemetry.addData("Postion bras - Enregistre", maPosBras);
+            telemetry.addData("Postion coude - Enregistre", maPosCoude);
+            telemetry.addData("Position bras - Resistance", bras0);
+            telemetry.addData("PrecisionMode", PrecisionMode);
+            telemetry.addData("OvercloakMode", OvercloakMode);
             telemetry.addData("Status", "Running");
             telemetry.update();
 
