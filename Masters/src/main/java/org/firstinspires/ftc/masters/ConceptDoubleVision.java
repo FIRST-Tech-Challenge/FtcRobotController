@@ -30,9 +30,7 @@
 package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -64,7 +62,7 @@ public class ConceptDoubleVision extends LinearOpMode {
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
-    private PropFindProcessor propFindProcessor;
+    private PropFindRightProcessor propFindProcessor;
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -147,7 +145,7 @@ public class ConceptDoubleVision extends LinearOpMode {
         // TFOD Configuration
         // -----------------------------------------------------------------------------------------
 
-        propFindProcessor = new PropFindProcessor(telemetry,packet);
+        propFindProcessor = new PropFindRightProcessor(telemetry,packet);
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration

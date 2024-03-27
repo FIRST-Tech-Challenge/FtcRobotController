@@ -22,16 +22,15 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
+public class PropFindRightProcessor implements VisionProcessor, CameraStreamSource {
 
-    public final Rect interestMid = new Rect(35, 185, 32, 50);
-    public final Rect interestRight = new Rect(320, 260, 32, 50);
+    public  Rect interestMid = new Rect(35, 185, 32, 50);
+    public  Rect interestRight = new Rect(320, 260, 32, 50);
 
     private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
     private final Scalar lower = new Scalar(255,255,255); // upper bounds for masking
     private TextPaint textPaint = null;
     private Paint linePaint = null;
-
 
 
     public enum pos {
@@ -40,7 +39,7 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
         RIGHT,
     }
 
-    public PropFindProcessor.pos position = PropFindProcessor.pos.LEFT;
+    public PropFindRightProcessor.pos position = PropFindRightProcessor.pos.LEFT;
 
     Telemetry telemetry;
     TelemetryPacket packet;
@@ -73,7 +72,7 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
     }
 
 
-    public PropFindProcessor(Telemetry telemetry, TelemetryPacket packet) {
+    public PropFindRightProcessor(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
         this.packet = packet;
 
@@ -127,11 +126,11 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
         avg_s_right = (int) Core.mean(region_s_right).val[0];
 
         if (avg_s_mid <5) {
-            position = PropFindProcessor.pos.MID;
+            position = PropFindRightProcessor.pos.MID;
         } else if (avg_s_right <5) {
-            position = PropFindProcessor.pos.RIGHT;
+            position = PropFindRightProcessor.pos.RIGHT;
         } else {
-            position = PropFindProcessor.pos.LEFT;
+            position = PropFindRightProcessor.pos.LEFT;
         }
 
         telemetry.addData("position", position);

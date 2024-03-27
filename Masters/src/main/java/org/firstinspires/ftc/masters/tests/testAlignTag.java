@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.PropFindProcessor;
+import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +24,7 @@ public class testAlignTag extends LinearOpMode {
 
     private AprilTagProcessor aprilTag;
 
-    private PropFindProcessor propFindProcessor;
+    private PropFindRightProcessor propFindProcessor;
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -55,7 +55,7 @@ public class testAlignTag extends LinearOpMode {
         // TFOD Configuration
         // -----------------------------------------------------------------------------------------
 
-        propFindProcessor = new PropFindProcessor(telemetry,packet);
+        propFindProcessor = new PropFindRightProcessor(telemetry,packet);
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration

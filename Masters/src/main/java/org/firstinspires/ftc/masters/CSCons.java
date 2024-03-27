@@ -74,6 +74,12 @@ public class CSCons {
     public static double tag1Y = 42;
     public static double tag2Y = 35.5;
     public static double tag3Y = 29;
+    public static double tag4Y = -29;
+    public static double tag5Y = -35.5;
+    public static double tag6Y = -42;
+
+    public static double cameraOffsetX= 3;
+    public static double cameraOffsetY = 10;
 
 
     public enum OuttakePosition{

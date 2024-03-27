@@ -2,25 +2,22 @@ package org.firstinspires.ftc.masters.tests;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.masters.PropFindProcessor;
-import org.firstinspires.ftc.masters.PropFindRight;
+import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.opencv.core.Scalar;
 
 @Autonomous(name="Processor CV", group="cv")
 public class PropFindProcessorOpMode extends OpMode {
     private VisionPortal visionPortal;
-    private PropFindProcessor propFindProcessor;
+    private PropFindRightProcessor propFindProcessor;
     
     TelemetryPacket packet = new TelemetryPacket();
 
     @Override
     public void init() {
-        propFindProcessor = new PropFindProcessor(
+        propFindProcessor = new PropFindRightProcessor(
                 telemetry,
                 packet
         );
@@ -52,7 +49,7 @@ public class PropFindProcessorOpMode extends OpMode {
         }
 
         // gets the recorded prop position
-        PropFindProcessor.pos recordedPropPosition = propFindProcessor.position;
+        PropFindRightProcessor.pos recordedPropPosition = propFindProcessor.position;
     }
 
     @Override
