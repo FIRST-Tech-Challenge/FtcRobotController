@@ -2,6 +2,10 @@ package org.firstinspires.ftc.masters;
 
 
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
+import static org.firstinspires.ftc.masters.CSCons.servo1Down;
+import static org.firstinspires.ftc.masters.CSCons.servo1Up;
+import static org.firstinspires.ftc.masters.CSCons.servo2Down;
+import static org.firstinspires.ftc.masters.CSCons.servo2Up;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,15 +21,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons.*;
-
+import org.firstinspires.ftc.masters.CSCons.ClawPosition;
+import org.firstinspires.ftc.masters.CSCons.DriveMode;
+import org.firstinspires.ftc.masters.CSCons.HookPosition;
+import org.firstinspires.ftc.masters.CSCons.IntakeState;
+import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
+import org.firstinspires.ftc.masters.CSCons.OuttakeState;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = "Center Stage Automated TeleOp", group = "competition")
-public class AutomatedTeleop extends LinearOpMode {
+@TeleOp(name = "TeleOp Wrist Outtake", group = "competition")
+public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
     static int target = 0;
     OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
@@ -63,10 +71,10 @@ public class AutomatedTeleop extends LinearOpMode {
     Servo clawArm;
     Servo clawAngle;
     Servo cameraTurning;
-    Servo outtakeHook;
+
     Servo outtakeRotation;
     Servo outtakeMovement;
-    Servo microHook;
+
 
     TouchSensor touchBucket;
 
@@ -106,6 +114,9 @@ public class AutomatedTeleop extends LinearOpMode {
     private HookPosition hookPosition = HookPosition.OPEN;
     RevColorSensorV3 colorSensor;
     double angleRotationAdjustment = 0;
+
+    private Servo wristServo;
+    private Servo outtakeServo1, outtakeServo2;
 
     @Override
     public void runOpMode() {
@@ -168,8 +179,10 @@ public class AutomatedTeleop extends LinearOpMode {
         clawArm = hardwareMap.servo.get("clawArm");
         clawAngle = hardwareMap.servo.get("clawAngle");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
-        outtakeHook = hardwareMap.servo.get("outtakeHook");
-        microHook = hardwareMap.servo.get("microHook");
+
+        outtakeServo1 = hardwareMap.servo.get("outtakeHook");
+        outtakeServo2 = hardwareMap.servo.get("microHook");
+
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
         touchBucket = hardwareMap.touchSensor.get("touchBucket");
@@ -221,16 +234,18 @@ public class AutomatedTeleop extends LinearOpMode {
         clawAngle.setPosition(CSCons.clawAngleTransition);
         clawServo.setPosition(CSCons.clawOpen);
 
-        outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
-        outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-        outtakeHook.setPosition(CSCons.openHook);
-        microHook.setPosition(CSCons.openMicroHook);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+
         hookPosition = HookPosition.OPEN;
         planeRaise.setPosition(CSCons.droneFlat);
 
         outtakeController = new PIDController(p, i, d);
         outtakeController.setPID(p, i, d);
         intakeController = new PIDController(ip, ii, iid);
+
+        outtakeServo1.setPosition(CSCons.servo1Up);
+        outtakeServo2.setPosition(CSCons.servo2Up);
 
         target = backSlidePos.getTarget();
         angleRotationAdjustment = 0;
@@ -309,8 +324,8 @@ public class AutomatedTeleop extends LinearOpMode {
                     }
 
                     if (backSlides.getCurrentPosition()>2000){
-                        outtakeRotation.setPosition(CSCons.outtakeAngleFolder);
-                        outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
+                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleFolder);
+                        outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
                     break;
@@ -523,32 +538,32 @@ public class AutomatedTeleop extends LinearOpMode {
                         break;
                 }
 //                if (gamepad2.dpad_right) {
-//                    outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-//                    outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+//                    outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+//                    outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
 //                }
                 switch (outtakeState) {
                     case ReadyToTransfer:
 //                        if (!touchBucket.isPressed()) {
 //                            bucketMovedBy = bucketMovedBy + .01;
-//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.outtakeAngleTransfer);
+//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.wristOuttakeAngleTransfer);
 //                        }
                         if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
-                                outtakeHook.setPosition(CSCons.openHook);
-                                microHook.setPosition(CSCons.openMicroHook);
+                                outtakeServo1.setPosition(servo1Up);
+                                outtakeServo2.setPosition(servo2Up);
                             } else {
-                                outtakeHook.setPosition(CSCons.closeHook);
-                                microHook.setPosition(CSCons.closeMicroHook);
+                                outtakeServo1.setPosition(servo1Down);
+                                outtakeServo2.setPosition(servo2Down);
                             }
                         }
                         if (gamepad2.x && hookPosition == HookPosition.OPEN) { // closes hook with x
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = closeHook();
                             } else {
-                                outtakeHook.setPosition(CSCons.openHook);
-                                microHook.setPosition(CSCons.openMicroHook);
+                                outtakeServo1.setPosition(servo1Up);
+                                outtakeServo2.setPosition(servo2Up);
                             }
                         }
 
@@ -568,8 +583,8 @@ public class AutomatedTeleop extends LinearOpMode {
                         break;
                     case MoveToTransfer:
                         if (backSlides.getCurrentPosition() < 50) {
-                            outtakeHook.setPosition(CSCons.openHook);
-                            microHook.setPosition(CSCons.openMicroHook);
+                            outtakeServo1.setPosition(servo1Up);
+                            outtakeServo2.setPosition(servo2Up);
                             outtakeState = OuttakeState.ReadyToTransfer;
                             target = 0;
                         }
@@ -582,11 +597,11 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
-                                outtakeHook.setPosition(CSCons.openHook);
-                                microHook.setPosition(CSCons.openMicroHook);
+                                outtakeServo1.setPosition(servo1Up);
+                                outtakeServo2.setPosition(servo2Up);
                             } else {
-                                outtakeHook.setPosition(CSCons.closeHook);
-                                microHook.setPosition(CSCons.closeMicroHook);
+                                outtakeServo1.setPosition(servo1Down);
+                                outtakeServo2.setPosition(servo2Down);
 
                             }
 
@@ -595,7 +610,7 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.HALF;
-                                outtakeHook.setPosition(CSCons.openHook);
+                                outtakeServo1.setPosition(servo1Up);
 
                             }
                         }
@@ -604,8 +619,8 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = new ElapsedTime();
                                 hookPosition = HookPosition.OPEN;
-                                outtakeHook.setPosition(CSCons.openHook);
-                                microHook.setPosition(CSCons.openMicroHook);
+                                outtakeServo1.setPosition(servo1Up);
+                                outtakeServo2.setPosition(servo2Up);
 
                             }
                         }
@@ -615,7 +630,7 @@ public class AutomatedTeleop extends LinearOpMode {
                             if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                 outtakeElapsedTime = closeHook();
                             } else {
-                                outtakeHook.setPosition(CSCons.openHook);
+                                outtakeServo2.setPosition(servo2Up);
                             }
                         }
 
@@ -629,9 +644,10 @@ public class AutomatedTeleop extends LinearOpMode {
 
                         if (gamepad2.left_stick_y > 0.2) {
 
-                            outtakeHook.setPosition(CSCons.openHook);
-                            outtakeRotation.setPosition(CSCons.outtakeAngleTransfer);
-                            outtakeMovement.setPosition(CSCons.outtakeMovementTransfer);
+                            outtakeServo1.setPosition(servo1Up);
+                            outtakeServo2.setPosition(servo2Up);
+                            outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+                            outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
                             if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+100) {
                                 backSlidePos = OuttakePosition.BOTTOM;
                                 target = backSlidePos.getTarget();
@@ -664,8 +680,8 @@ public class AutomatedTeleop extends LinearOpMode {
                         break;
                     case MoveToDrop:
                         if (backSlides.getCurrentPosition() > 100) {
-                            outtakeMovement.setPosition(CSCons.outtakeMovementBackDrop);
-                            outtakeRotationTarget = CSCons.outtakeAngleFolder + angleRotationAdjustment;
+                            outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
+                            outtakeRotationTarget = CSCons.wristOuttakeAngleFolder + angleRotationAdjustment;
                             outtakeRotation.setPosition(outtakeRotationTarget);
                         }
                         if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
@@ -780,8 +796,8 @@ public class AutomatedTeleop extends LinearOpMode {
     protected ElapsedTime closeHook(){
         ElapsedTime time = new ElapsedTime();
         hookPosition = HookPosition.CLOSED;
-        outtakeHook.setPosition(CSCons.closeHook);
-        microHook.setPosition(CSCons.closeMicroHook);
+        outtakeServo1.setPosition(servo1Down);
+        outtakeServo2.setPosition(servo2Down);
         return time;
     }
 

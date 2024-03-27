@@ -30,9 +30,7 @@
 package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -52,7 +50,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: Double Vision", group = "Concept")
+//@TeleOp(name = "Concept: Double Vision", group = "Concept")
 public class ConceptDoubleVision extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -64,7 +62,7 @@ public class ConceptDoubleVision extends LinearOpMode {
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
-    private PropFindProcessor propFindProcessor;
+    private PropFindRightProcessor propFindProcessor;
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -147,7 +145,7 @@ public class ConceptDoubleVision extends LinearOpMode {
         // TFOD Configuration
         // -----------------------------------------------------------------------------------------
 
-        propFindProcessor = new PropFindProcessor(telemetry,packet);
+        propFindProcessor = new PropFindRightProcessor(telemetry,packet);
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration

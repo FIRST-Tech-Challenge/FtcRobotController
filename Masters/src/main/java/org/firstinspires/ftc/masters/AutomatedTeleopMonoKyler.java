@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = "Center Stage Automated TeleOp Mono Kyler", group = "competition")
+//@TeleOp(name = "Center Stage Automated TeleOp Mono Kyler", group = "competition")
 public class AutomatedTeleopMonoKyler extends LinearOpMode {
 
     static int target = 0;

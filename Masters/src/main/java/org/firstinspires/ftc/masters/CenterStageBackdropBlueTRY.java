@@ -23,7 +23,7 @@ import java.util.List;
 
 @Config
 @Autonomous(name = "Center Stage Backdrop Blue REWORK", group = "competition")
-public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
+public class CenterStageBackdropBlueTRY extends LinearOpMode {
     private OpenCvCamera webcam;
 
 
@@ -60,28 +60,33 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        drive = new SampleMecanumDrive(hardwareMap);
+        drive.initializeAprilTagProcessing();
+        drive.initializeAprilTagProcessing();
+        drive.initializeVisionPortal(drive.getPropFindProcessor());
+        
+       
 
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindLeft myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
+//        PropFindRightProcessor myPipeline;
+//        webcam.setPipeline(myPipeline = new PropFindRightProcessor(telemetry,packet));
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//                /*
+//                 * This will be called if the camera could not be opened
+//                 */
+//            }
+//        });
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -90,11 +95,12 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
         }
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        PropFindRightProcessor.pos propPos = null;
 
-
-        PropFindLeft.pos propPos = null;
-
-        drive = new SampleMecanumDrive(hardwareMap);
+//        PropFindRightProcessor.pos propPos = null;
+        
+        
+        
         Pose2d startPose = new Pose2d(new Vector2d(12, 58.5), Math.toRadians(270)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
@@ -159,12 +165,12 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
         State currentState;
 
 
-        int target=0;
-        int itarget=0;
+        int outtakeTarget=0;
+        int intakeTarget=0;
 
         drive.closeClaw();
 
-        propPos = myPipeline.position;
+        propPos = drive.getPropFindProcessor().position;
 
         waitForStart();
 
@@ -173,7 +179,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
 
         while (time < 50 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            propPos = myPipeline.position;
+            propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
 
@@ -182,8 +188,8 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
-            drive.backSlidesMove(target);
-            drive.intakeSlidesMove(itarget);
+            drive.backSlidesMove(outtakeTarget);
+            drive.intakeSlidesMove(intakeTarget);
 
 
 
@@ -192,11 +198,11 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
             switch (currentState) {
                 case PURPLE_DEPOSIT_PATH:
 
-                    if (propPos == PropFindLeft.pos.LEFT) {
+                    if (propPos == PropFindRightProcessor.pos.LEFT) {
                         drive.followTrajectorySequenceAsync(leftPurple);
                         drive.intakeToGround();
                         currentState = State.PURPLE_DEPOSIT;
-                    } else if (propPos == PropFindLeft.pos.RIGHT) {
+                    } else if (propPos == PropFindRightProcessor.pos.RIGHT) {
                         drive.followTrajectorySequenceAsync(rightPurple);
                         drive.intakeToGround();
                         currentState = State.PURPLE_DEPOSIT;
@@ -209,7 +215,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                     break;
 
                 case PURPLE_DEPOSIT:
-                    if(propPos == PropFindLeft.pos.LEFT) {
+                    if(propPos == PropFindRightProcessor.pos.LEFT) {
                         if (preloadInt == 0) {
                             if (!drive.isBusy()) {
                                 if (waitTime.milliseconds() > 300) {
@@ -229,13 +235,13 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                             }
 
                         }
-                    }else if(propPos == PropFindLeft.pos.RIGHT) {
+                    }else if(propPos == PropFindRightProcessor.pos.RIGHT) {
                         if (preloadInt == 0) {
                             if (!drive.isBusy()) {
                                 if (waitTime.milliseconds() > 1100) {
                                     preloadTime.reset();
 
-                                    itarget = 1200;
+                                    intakeTarget = 1200;
                                     preloadInt = 1;
                                 }
 
@@ -278,7 +284,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
 
                 case YELLOW_DEPOSIT_PATH:
 
-                    if(propPos == PropFindLeft.pos.LEFT) {
+                    if(propPos == PropFindRightProcessor.pos.LEFT) {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
@@ -289,20 +295,20 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                         }
                         if (resetInt == 1) {
                             if(preloadTime.milliseconds() > 600){
-                                itarget = 0;
+                                intakeTarget = 0;
                                 drive.followTrajectorySequenceAsync(leftyellow);
                             }
                             if (preloadTime.milliseconds() > 1200) {
                                 drive.intakeToTransfer();
                                 drive.outtakeToBackdrop();
 
-                                target = 900;
+                                outtakeTarget = 900;
 
 
                                 currentState = State.YELLOW_DEPOSIT;
                             }
                         }
-                    }else if(propPos == PropFindLeft.pos.RIGHT) {
+                    }else if(propPos == PropFindRightProcessor.pos.RIGHT) {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
@@ -315,8 +321,8 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                             if (preloadTime.milliseconds() > 1000) {
                                 drive.intakeToTransfer();
                                 drive.outtakeToBackdrop();
-                                itarget = 0;
-                                target = 900;
+                                intakeTarget = 0;
+                                outtakeTarget = 900;
 
                                 drive.followTrajectorySequenceAsync(rightyellow);
                                 currentState = State.YELLOW_DEPOSIT;
@@ -335,8 +341,8 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                             if (preloadTime.milliseconds() > 1000) {
                                 drive.intakeToTransfer();
                                 drive.outtakeToBackdrop();
-                                itarget = 0;
-                                target = 900;
+                                intakeTarget = 0;
+                                outtakeTarget = 900;
 
                                 drive.followTrajectorySequenceAsync(middleyellow);
                                 currentState = State.YELLOW_DEPOSIT;
@@ -356,7 +362,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
                         }
                         if(preloadInt == 1){
                             if(preloadTime.milliseconds() > 1000) {
-                                target = 1700;
+                                outtakeTarget = 1700;
                                 currentState = State.TOPARK;
                             }
 
@@ -376,7 +382,7 @@ public class CenterStageBackdropBLUEREWORK extends LinearOpMode {
 
                         drive.outtakeToTransfer();
 
-                        target = 0;
+                        outtakeTarget = 0;
                         currentState = State.END;
 
 

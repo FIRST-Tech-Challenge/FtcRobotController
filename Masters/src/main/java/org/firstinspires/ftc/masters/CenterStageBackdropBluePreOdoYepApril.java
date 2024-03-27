@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Blue Pre Odo April", group = "competition")
+//@Autonomous(name = "Center Stage Backdrop Blue Pre Odo April", group = "competition")
 public class CenterStageBackdropBluePreOdoYepApril extends LinearOpMode {
 
     //Robot robot;

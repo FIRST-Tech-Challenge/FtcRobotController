@@ -3,9 +3,9 @@ package org.firstinspires.ftc.masters.tests;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.PropFindProcessor;
-import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
+import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +24,7 @@ public class testAlignTag extends LinearOpMode {
 
     private AprilTagProcessor aprilTag;
 
-    private PropFindProcessor propFindProcessor;
+    private PropFindRightProcessor propFindProcessor;
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -36,7 +36,7 @@ public class testAlignTag extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap, telemetry);
 
         // -----------------------------------------------------------------------------------------
             // AprilTag Configuration
@@ -55,7 +55,7 @@ public class testAlignTag extends LinearOpMode {
         // TFOD Configuration
         // -----------------------------------------------------------------------------------------
 
-        propFindProcessor = new PropFindProcessor(telemetry,packet);
+        propFindProcessor = new PropFindRightProcessor(telemetry,packet);
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration
@@ -63,7 +63,7 @@ public class testAlignTag extends LinearOpMode {
 
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
+                    .setCamera(hardwareMap.get(WebcamName.class, "backWebcam"))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         } else {
@@ -93,6 +93,8 @@ public class testAlignTag extends LinearOpMode {
 
         waitForStart();
 
+        ElapsedTime inputDelay = new ElapsedTime();
+
         while (opModeIsActive()) {
             currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
@@ -106,8 +108,29 @@ public class testAlignTag extends LinearOpMode {
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
             }   // end for() loop
-            telemetry.addData("April Tag Pos Es",drive.aprilTagPosEstimate(currentDetections));
-            drive.alignTag(currentDetections);
+            telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
+
+            if (gamepad1.a && inputDelay.milliseconds() > 300) {
+                drive.turnToTag(currentDetections, 2);
+                inputDelay = new ElapsedTime();
+            }
+
+            if (gamepad1.b && inputDelay.milliseconds() > 300) {
+                drive.strafeToTag(currentDetections, 2);
+                inputDelay = new ElapsedTime();
+            }
+
+            if (gamepad1.x && inputDelay.milliseconds() > 300) {
+                drive.fwdToTag(currentDetections,2);
+                inputDelay = new ElapsedTime();
+            }
+
+            if (gamepad1.y && inputDelay.milliseconds() > 300) {
+                drive.trajToTag(currentDetections,2);
+            }
+
+            drive.update();
+
             telemetry.update();
         }
     }

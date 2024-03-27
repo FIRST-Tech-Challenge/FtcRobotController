@@ -22,9 +22,9 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
+public class AutoBackdropProcessor implements VisionProcessor, CameraStreamSource {
 
-    public final Rect interestMid = new Rect(35, 185, 32, 50);
+    public final Rect interestLeft = new Rect(35, 185, 32, 50);
     public final Rect interestRight = new Rect(320, 260, 32, 50);
 
     private final Scalar upper = new Scalar(0,50,0); // lower bounds for masking
@@ -32,15 +32,13 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
     private TextPaint textPaint = null;
     private Paint linePaint = null;
 
-
-
     public enum pos {
         LEFT,
-        MID,
+        NONE,
         RIGHT,
     }
 
-    public PropFindProcessor.pos position = PropFindProcessor.pos.LEFT;
+    public AutoBackdropProcessor.pos position = AutoBackdropProcessor.pos.NONE;
 
     Telemetry telemetry;
     TelemetryPacket packet;
@@ -51,13 +49,13 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
     Mat S = new Mat();
     Mat V = new Mat();
 
-    Mat region_h_mid = new Mat();
-    Mat region_s_mid = new Mat();
+    Mat region_h_left = new Mat();
+    Mat region_s_left = new Mat();
     Mat region_h_right = new Mat();
     Mat region_s_right = new Mat();
 
-    int avg_h_mid = 0;
-    int avg_s_mid = 0;
+    int avg_h_left = 0;
+    int avg_s_left = 0;
     int avg_h_right = 0;
     int avg_s_right = 0;
 
@@ -73,7 +71,7 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
     }
 
 
-    public PropFindProcessor(Telemetry telemetry, TelemetryPacket packet) {
+    public AutoBackdropProcessor(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
         this.packet = packet;
 
@@ -108,7 +106,7 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
         Core.inRange(HSV, new Scalar(0,50,0), new Scalar(255,255,255), mask);
 
         diff_im = new Mat();
-        Core.add(diff_im, Scalar.all(0), diff_im);
+        Core.add(diff_im, Scalar.all(255), diff_im);
         Core.bitwise_not(mask,mask);
         input.copyTo(diff_im, mask);
         diff_im.copyTo(input);
@@ -116,22 +114,22 @@ public class PropFindProcessor implements VisionProcessor, CameraStreamSource {
 
         inputToHSV(input);
 
-        region_h_mid = H.submat(interestMid);
-        region_s_mid = S.submat(interestMid);
+        region_h_left = H.submat(interestLeft);
+        region_s_left = S.submat(interestLeft);
         region_h_right = H.submat(interestRight);
         region_s_right = S.submat(interestRight);
 
-        avg_h_mid = (int) Core.mean(region_h_mid).val[0];
-        avg_s_mid = (int) Core.mean(region_s_mid).val[0];
+        avg_h_left = (int) Core.mean(region_h_left).val[0];
+        avg_s_left = (int) Core.mean(region_s_left).val[0];
         avg_h_right = (int) Core.mean(region_h_right).val[0];
         avg_s_right = (int) Core.mean(region_s_right).val[0];
 
-        if (avg_s_mid <5) {
-            position = PropFindProcessor.pos.MID;
-        } else if (avg_s_right <5) {
-            position = PropFindProcessor.pos.RIGHT;
+        if (avg_s_left >200) {
+            position = pos.LEFT;
+        } else if (avg_s_right >200) {
+            position = pos.RIGHT;
         } else {
-            position = PropFindProcessor.pos.LEFT;
+            position = AutoBackdropProcessor.pos.NONE;
         }
 
         telemetry.addData("position", position);
