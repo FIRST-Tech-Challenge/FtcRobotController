@@ -21,6 +21,13 @@ public class Control extends OpMode {
         LOCAL
     }
 
+    public enum FieldSide{
+        BLUE_LEFT,
+        BLUE_RIGHT,
+        RED_LEFT,
+        RED_RIGHT
+    }
+
     @Override
     public void init() {
         robot = new RobotClass(hardwareMap);

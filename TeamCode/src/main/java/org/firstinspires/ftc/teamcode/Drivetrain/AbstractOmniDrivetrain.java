@@ -19,8 +19,11 @@ public abstract class AbstractOmniDrivetrain extends AbstractDrivetrain {
             motor.setPower(power);
         }
     }
-    public void mecanumDrive(float forward, float strafe, double turn, double heading){
-        VectorF powerVector = new VectorF(forward, strafe);
+    public void mecanumDrive(float x, float y, double turn, double heading){
+        double direction = Math.atan2(x, y);
+        double magnitude = Math.sqrt((x*x) + (y*y));
+
+        VectorF powerVector = new VectorF(x, y);
         rotateVector(powerVector, heading);
 
         float negativeGroup = (float) (powerVector.get(0) / (Math.sqrt(2) / 2));

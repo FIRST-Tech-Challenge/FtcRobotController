@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@Autonomous
-public class Auto extends OpMode {
-    @Override
-    public void init() {
+import org.firstinspires.ftc.teamcode.Control;
 
-    }
 
-    @Override
-    public void loop() {
+public class Auto extends Control {
 
-    }
+   public void Auto(FieldSide fieldSide){
+
+   }
+
 }
