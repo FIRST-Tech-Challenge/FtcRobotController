@@ -437,20 +437,15 @@ public class SampleMecanumDrive extends MecanumDrive {
              //   return new Pose2d(72 - 7.5 - detection.ftcPose.y, 72 - 29.25 + detection.ftcPose.x,detection.ftcPose.yaw);
 
                 Pose2d robotPosition;
-                double xOffsetRobot = CSCons.cameraOffsetX/Math.sin(Math.toRadians(90-detection.ftcPose.yaw));
-                double yOffsetRobot = CSCons.cameraOffsetY/Math.cos(Math.toRadians(90-detection.ftcPose.yaw));
+                double xOffsetRobot = CSCons.cameraOffsetX*Math.cos(Math.toRadians (180+detection.ftcPose.yaw));
+                double yOffsetRobot = CSCons.cameraOffsetX*Math.sin(Math.toRadians (180+detection.ftcPose.yaw));
 
                 if (telemetry!=null){
                     telemetry.addData("robot x offset", xOffsetRobot);
                     telemetry.addData("robot y offset", yOffsetRobot);
                 }
 
-
-                if (detection.ftcPose.yaw>0){
-                    robotPosition = new Pose2d(cameraPosition.getX()-xOffsetRobot, cameraPosition.getY()-yOffsetRobot, detection.ftcPose.yaw);
-                } else {
-                    robotPosition = new Pose2d(cameraPosition.getX()-xOffsetRobot, cameraPosition.getY()+yOffsetRobot, detection.ftcPose.yaw);
-                }
+                robotPosition = new Pose2d(cameraPosition.getX()+xOffsetRobot, cameraPosition.getY()+yOffsetRobot, Math.toRadians(180+detection.ftcPose.yaw));
 
                 return robotPosition;
 
