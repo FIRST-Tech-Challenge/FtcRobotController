@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isFlipped;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -12,18 +13,26 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Wrist extends RFServo {
   public static double GRABBY = 0.41
-          , DROPPY = .63, FLIP_TIME=0.43, LOCKY=0.44;
+          , DROPPY = .61, FLIP_TIME=0.43, LOCKY=0.44;
   private double lastTime=-100;
   public Wrist(){
     super("wristServo", 1.0);
     lastTime = -100;
     super.setLastTime(-100);
     if (isTeleop) {
-      super.setPosition(GRABBY);
-      super.setFlipTime(FLIP_TIME);
-      WristStates.GRAB.setStateTrue();
-      WristTargetStates.GRAB.setStateTrue();
-      WristTargetStates.GRAB.state = false;
+      if(isFlipped){
+        super.setPosition(DROPPY);
+        super.setFlipTime(FLIP_TIME);
+        WristStates.DROP.setStateTrue();
+        WristTargetStates.DROP.setStateTrue();
+        WristTargetStates.DROP.state = false;
+      } else {
+        super.setPosition(GRABBY);
+        super.setFlipTime(FLIP_TIME);
+        WristStates.GRAB.setStateTrue();
+        WristTargetStates.GRAB.setStateTrue();
+        WristTargetStates.GRAB.state = false;
+      }
     }
     else{
       super.setPosition(LOCKY);

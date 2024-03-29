@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.firstinspires.ftc.teamcode.Components.Intake.IntakeStates.REVERSING;
 import static org.firstinspires.ftc.teamcode.Components.Magazine.pixels;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
@@ -37,14 +38,14 @@ public class Intake extends RFMotor {
   private int storPixel=0;
 
   private boolean stopped = true;
-  public static double ONE=0.53, TWO=0.534, THREE = 0.563, FOUR = 0.585, FIVE =0.61, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
+  public static double ONE=0.524, TWO=0.542, THREE = 0.565, FOUR = 0.58, FIVE =0.609, STOP_DELAY = 0.3, UPPIES = 0.9, SUPPER_UPIES = 0.9;
   double lastTime =0;
   double reverseTime = -100;
   boolean pixeled = false;
   boolean pixeled1= false;
 
   boolean intakePath = false;
-  int height = 5;
+  int height = -1;
 
   double startIntakeTime = -100;
 
@@ -67,7 +68,7 @@ public class Intake extends RFMotor {
     intakeServo.setPosition(SUPPER_UPIES);
     intakeServo.setLastTime(-100);
     IntakeStates.STOPPED.setStateTrue();
-    if(!isTeleop){
+    if(isTeleop){
       height = 5;
     }
     lastHeightTime=-5;
@@ -164,7 +165,7 @@ public class Intake extends RFMotor {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("reversing intake, power : " + REVERSE_POWER);
     if(curPower!=1){setRawPower(-REVERSE_POWER);curPower=1;}
-    IntakeStates.REVERSING.setStateTrue();
+    REVERSING.setStateTrue();
   }
 
   public void uppies(){
@@ -228,7 +229,9 @@ public class Intake extends RFMotor {
       startIntakeTime = time;
     }
     intake();
-    setHeight(p_height);
+    if (p_height != height) {
+      setHeight(p_height);
+    }
     return false;
   }
   public void setIntakePath(boolean p_intakePath){
@@ -247,6 +250,7 @@ public class Intake extends RFMotor {
 
   public void setHeight(int height){
     double autoOff = -0.00;
+    this.height = height;
     if(isTeleop){
       autoOff=0;
     }
@@ -285,7 +289,7 @@ public class Intake extends RFMotor {
       if (i.state) packet.put("IntakeState", i.name());
       if(i.state&&i==IntakeStates.INTAKING)intake();
       if(i.state&&i==IntakeStates.STOPPED){stopIntake();Magazine.twoPixelTime=time;pixels = 2;}
-      if(i.state&&i==IntakeStates.REVERSING)reverseIntake();
+      if(i.state&&i== REVERSING)reverseIntake();
     }
     if(pixels==1){
       pixeled1=true;
@@ -307,9 +311,8 @@ public class Intake extends RFMotor {
       pixeled = false;
       stopped = false;
     }
-    if(stopped&& time-reverseTime>0.3){
+    if(REVERSING.getState()&&Magazine.pixels == 2 && time-reverseTime>0.3){
       stopIntake();
-      intakePath=false;
       stopped = false;
     }
 

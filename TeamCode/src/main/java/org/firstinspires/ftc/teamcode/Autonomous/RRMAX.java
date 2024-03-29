@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltage;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.voltageSensor;
 import static java.lang.Math.toRadians;
 
@@ -47,7 +48,7 @@ public class RRMAX {
 
 
             droppy[1] = robot.roadrun.trajectorySequenceBuilder(spikey[1].end())
-                    .lineToLinearHeading(new Pose2d(48, -37.5, toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(48.2, -36.5, toRadians(-180)))
 //                    .addTemporalMarker(robot::done)
                     .build();
 
@@ -57,32 +58,32 @@ public class RRMAX {
         }
         intake = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(17, -36.25), toRadians(180))
-//                .splineToConstantHeading(new Vector2d(-30, -34.5), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.5, -35), toRadians(177))
+                .splineToConstantHeading(new Vector2d(17, -37), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -37), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51.9, -34.5), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         intake2 = robot.roadrun.trajectorySequenceBuilder(droppy[bark].end())
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(18.5, -36.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-31.5, -34.75), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.4, -34.75), toRadians(177))
+                .splineToConstantHeading(new Vector2d(18.5, -37), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-30, -37), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51.75, -33.5), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
 
         drop = robot.roadrun.trajectorySequenceBuilder(intake.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-30, -36.25), toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -38.75), toRadians(0))
-                .splineToConstantHeading(new Vector2d(48,-38.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(-30, -37.25), toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -39), toRadians(0))
+                .splineToConstantHeading(new Vector2d(48.5,-39.25), toRadians(0))
 //                .addTemporalMarker(robot::done)
                 .build();
         intake3 = robot.roadrun.trajectorySequenceBuilder(drop.end())
                 .setReversed(false)
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(44 ))
-                .splineToConstantHeading(new Vector2d(18.5, -36.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-15.5, -36.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-51.8, -23.75), toRadians(170))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(41*BasicRobot.voltage/13))
+                .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-15.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51.0, -20), toRadians(170))
                 .addTemporalMarker(robot::done)
                 .build();
     drop2 =
@@ -90,21 +91,21 @@ public class RRMAX {
             .roadrun
             .trajectorySequenceBuilder(intake3.end())
             .setReversed(true)
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(43.5*BasicRobot.voltage/12))
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(100,5,15))
-            .splineToConstantHeading(new Vector2d(-23, -37.25), toRadians(0))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(46.5*BasicRobot.voltage/13))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(90,5,15))
+            .splineToConstantHeading(new Vector2d(-23, -36.25), toRadians(0))
             .splineToConstantHeading(new Vector2d(10, -37.25), toRadians(0))
-            .splineToConstantHeading(new Vector2d(44.5, -36.25), toRadians(0))
+            .splineToConstantHeading(new Vector2d(44.8, -35.5), toRadians(0))
 //            .addTemporalMarker(robot::done)
             .build();
 
         intake4 = robot.roadrun.trajectorySequenceBuilder(drop2.end())
                 .setReversed(false)
-                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(44))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(42*BasicRobot.voltage/13))
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(90,4,15))
-                .splineToConstantHeading(new Vector2d(18.5, -36.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-15.5, -36.25), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-52.2, -21.25), toRadians(170))
+                .splineToConstantHeading(new Vector2d(18.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-15.5, -35.25), toRadians(180))
+                .splineToConstantHeading(new Vector2d(-51.0, -19.25), toRadians(170))
                 .addTemporalMarker(robot::done)
                 .build();
         park = robot.roadrun.trajectorySequenceBuilder(drop2.end())
@@ -149,13 +150,13 @@ public class RRMAX {
     public void cycleIntake2(int height){
         robot.followTrajSeq(intake2);
         robot.intakeAuto(height);
-        robot.queuer.addDelay(0.2);
+        robot.queuer.addDelay(0.3);
         robot.resetAuto();
     }
     public void cycleIntake3(int height){
         robot.followTrajSeq(intake3);
         robot.intakeAuto(height);
-        robot.queuer.addDelay(0.2);
+        robot.queuer.addDelay(0.3);
         robot.resetAuto();
     }
     public void cycleIntake4(int height){
@@ -181,7 +182,7 @@ public class RRMAX {
     public void pre(){
         robot.followTrajSeq(droppy[bark]);
         robot.yellowAuto(false);
-        robot.drop();
+        robot.drop2();
     }
 
     public void park(){
