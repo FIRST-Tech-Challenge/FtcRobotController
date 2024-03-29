@@ -145,6 +145,18 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
                     errorAngleRadians = APRIL_TAG_8.getAngleRadians() - errorAngleRadians;
                     result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
                     break;
+                case 9:
+                    errorX = APRIL_TAG_9.getX() - errorX;
+                    errorY = APRIL_TAG_9.getY() - errorY;
+                    errorAngleRadians = APRIL_TAG_9.getAngleRadians() - errorAngleRadians;
+                    result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
+                    break;
+                case 10:
+                    errorX = APRIL_TAG_10.getX() - errorX;
+                    errorY = APRIL_TAG_10.getY() - errorY;
+                    errorAngleRadians = APRIL_TAG_10.getAngleRadians() - errorAngleRadians;
+                    result = new FieldCoordinate(errorX, errorY, errorAngleRadians);
+                    break;
                 default:
                     result = null;
             }
