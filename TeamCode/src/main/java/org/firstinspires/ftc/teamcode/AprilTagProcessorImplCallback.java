@@ -31,12 +31,14 @@ public class AprilTagProcessorImplCallback extends AprilTagProcessorImpl {
     // Backdrop AprilTag 6, right backdrop right april tag
     // Center tag + 6"
     public static final FieldCoordinate APRIL_TAG_6 = new FieldCoordinate(112.5, 130.25, Math.toRadians(90.0));
-    // Left side stack image
+    // Left side stack images
     // 23" + 0.75" + 11.5"
     public static final FieldCoordinate APRIL_TAG_7 = new FieldCoordinate(35.25, 0.0, Math.toRadians(270.0));
-    // Right side stack image
+    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(35.25, 0.0, Math.toRadians(270.0));
+    // Right side stack images
     // 4x23" + 4x0.75" + 11.5"
-    public static final FieldCoordinate APRIL_TAG_8 = new FieldCoordinate(106.5, 0.0, Math.toRadians(270.0));
+    public static final FieldCoordinate APRIL_TAG_9 = new FieldCoordinate(106.5, 0.0, Math.toRadians(270.0));
+    public static final FieldCoordinate APRIL_TAG_10 = new FieldCoordinate(106.5, 0.0, Math.toRadians(270.0));
     protected FieldCoordinate robotPosition;
     public AprilTagProcessorImplCallback(double fx, double fy, double cx, double cy, DistanceUnit outputUnitsLength,
                                          AngleUnit outputUnitsAngle, AprilTagLibrary tagLibrary, boolean drawAxes,
