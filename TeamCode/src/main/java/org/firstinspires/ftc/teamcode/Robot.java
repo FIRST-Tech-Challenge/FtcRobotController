@@ -32,9 +32,9 @@ public class Robot {
     DcMotor rightEncoder;
     DcMotor leftEncoder;
     DcMotor backEncoder;
-    DcMotor fLeft;
+    public DcMotor fLeft;
     DcMotor fRight;
-    DcMotor bLeft;
+    public DcMotor bLeft;
     DcMotor bRight;
     DcMotor intake;
     DcMotor lsBack;
@@ -61,7 +61,7 @@ public class Robot {
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     boolean isRedAlliance;
-    boolean testingOnBert = true;
+    boolean testingOnBert = false;
     boolean allowTrayAngle = false;
     boolean allowTrayAngleOverride = false;
     double hardStopTrayAngleBig;
@@ -69,7 +69,7 @@ public class Robot {
 
     PIDController straightController;
     PIDController fLeftMecanumController;
-    PIDController bRightMecanumController;
+    public PIDController bRightMecanumController;
     PIDController setHeadingController;
     double robotX = 0;
     double robotY = 0;
@@ -2433,6 +2433,54 @@ public class Robot {
 
         setMotorPower(0, 0, 0, 0); // stop, to be safe
         opMode.sleep(100);
+    }
+
+    public static void moveMotorToTicksParallel(DcMotor motor, int ticks) {
+        int errorTicks = ticks - motor.getCurrentPosition();
+        double p_constant = 0.005;
+        motor.setPower(errorTicks*p_constant);
+    }
+
+    public void mecanumRobotToTicksParallel(int inchesMove) {
+        resetDrivetrainEncoders();
+        fLeftMecanumController.integral = 0;
+        fLeftMecanumController.lastError = 0;
+        fLeftMecanumController.lastTime = 0;
+        double currentPos = fLeft.getCurrentPosition();
+        double targetPos = currentPos + (bRightMecanumController.convertInchesToTicks(inchesMove));
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+        int counter = 0;
+
+        if (opMode.opModeIsActive() && (counter < 3 || lsFront.getCurrentPosition() > 30)) {
+            if ((Math.abs(fLeftMecanumController.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
+                counter++;
+            } else { //todo: test this
+                counter = 0;
+            }
+
+            currentPos = fLeft.getCurrentPosition();
+            power = fLeftMecanumController.calculatePID(currentPos, targetPos);
+            setMotorPower(power, -1 * power, -1 * power, power);
+        }
+
+        setMotorPower(0, 0, 0, 0); // stop, to be safe
+        opMode.sleep(100);
+    }
+
+    public void mecanumParallel(double inches) {
+        fLeftMecanumController.integral = 0;
+        fLeftMecanumController.lastError = 0;
+        fLeftMecanumController.lastTime = 0;
+        double currentPos = fLeft.getCurrentPosition();
+        double targetPos = bRightMecanumController.convertInchesToTicks(inches);
+        double power;
+        double ERROR_TOLERANCE_IN_TICKS = 15;
+
+        if (opMode.opModeIsActive() && (Math.abs((targetPos - currentPos)) > ERROR_TOLERANCE_IN_TICKS)) {
+            power = fLeftMecanumController.calculatePID(currentPos, targetPos);
+            setMotorPower(power, -1 * power, -1 * power, power);
+        }
     }
 
     public void moveFingerUp() {
