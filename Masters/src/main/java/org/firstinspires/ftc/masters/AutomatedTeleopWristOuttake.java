@@ -635,7 +635,23 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                                 wristButtonPressed= false;
                             }
 
-                            wristServo.setPosition(outtakeWristPosition.getPosition());
+//                            wristServo.setPosition(outtakeWristPosition.getPosition());
+
+                            if(outtakeWristPosition ==OuttakeWrist.angleLeft){
+                                wristServo.setPosition(CSCons.wristAngleLeft);
+                            }
+                            if(outtakeWristPosition ==OuttakeWrist.angleRight){
+                            wristServo.setPosition(CSCons.wristAngleRight);
+                            }
+                            if(outtakeWristPosition ==OuttakeWrist.vertical){
+                            wristServo.setPosition(CSCons.wristVertical);
+                            }
+                            if(outtakeWristPosition ==OuttakeWrist.flatLeft){
+                            wristServo.setPosition(CSCons.wristFlatLeft);
+                            }
+                            if(outtakeWristPosition ==OuttakeWrist.flatRight){
+                            wristServo.setPosition(CSCons.wristFlatRight);
+                            }
 
 //                        if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
 //                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
