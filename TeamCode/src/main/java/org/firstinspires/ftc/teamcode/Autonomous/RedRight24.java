@@ -25,10 +25,14 @@ public class RedRight24 extends LinearOpMode {
             aut.cycleIntake(5);
             aut.cycleDrop();
             aut.cycleIntake2(3);
+            aut.cycleDrop();
+            aut.cycleIntake3(5);
             aut.cycleDrop2();
-            aut.cycleIntake3(2);
-            aut.cycleDrop2();
+//            aut.cycleIntake4(3);
+//            aut.cycleDrop2();
+            aut.park();
             aut.update();
         }
+        stop();
     }
 }
