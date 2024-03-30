@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+// This is a test op mode for the spike cam.  it is not used normally, but do not delete.
 @Autonomous
 @Disabled
 public class SpikeMark extends OpMode {

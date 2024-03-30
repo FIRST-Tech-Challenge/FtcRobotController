@@ -17,12 +17,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.List;
 
-
+// CyDogsSparky is the class that represents the Sparky robot for the 2023 robotics year.
+//   it contains all the functionality needed to do the basic activities on the robot.
+//   It is designed to be instantiated in the op mode programs we write.  It inherits from
+//   CyDogsChassis which is our basic chassis code.
 public class CyDogsSparky extends CyDogsChassis{
 
     private LinearOpMode myOpMode;
     public SpikeCam spikeCam;
     public Direction parkingSpot;
+
+    // this lets us swing the elbow back and forth by keeping track if it is open or closed
     private boolean isElbowOpen = false;
 
     private Alliance myAlliance;
@@ -31,6 +36,8 @@ public class CyDogsSparky extends CyDogsChassis{
 
     private VisionPortal visionPortal;
 
+    // This section is all of our settings for our servos.  We code them here once and use the
+    //   variable names so that we only have them stored in one place in case we need to change them.
     public static final int ArmHomePosition = 0;
     public static final int ArmLow = 1800;
     public static final int ArmMedium = 3600;
@@ -44,12 +51,13 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final double FingerLeftClosed = 0.5;
     public static final double FingerRightOpen = 0.4;
     public static final double FingerRightClosed = 0.53;
-    public static final double DroneSecure = 0.53;
-    public static final double DroneRelease = 0.3;
+
 
     public static final int BackUpDistanceFromSpike = 30;
     public static final int DistanceBetweenScoreBoardAprilTags = 150;
 
+    // We have a common standard auton wait time built in so that we can tweak the overall speed
+    //  of the auton when needed.  A parameter is in the constructor call to set this.
     public int StandardAutonWaitTime = 500;
 
 
@@ -59,22 +67,14 @@ public class CyDogsSparky extends CyDogsChassis{
     public Servo Elbow;
     public Servo FingerLeft;
     public Servo FingerRight;
-    public DcMotor Intake1;
-    public DcMotor Intake2;
-    public DcMotor TheCaptain;
-    final double DESIRED_DISTANCE = 12.0;
-    final double SPEED_GAIN  =  0.02  ;
-    final double STRAFE_GAIN =  0.015 ;
-    final double TURN_GAIN   =  0.01  ;
-    final double MAX_AUTO_SPEED = 0.5;
-    final double MAX_AUTO_STRAFE= 0.5;
-    final double MAX_AUTO_TURN  = 0.3;
 
 
-
-
+    // This is the constructor, passing in the current op mode, what alliance we are, and what
+    //   standard wait time we want.
     public CyDogsSparky(LinearOpMode currentOp, Alliance currentAlliance, int standardWaitTime) {
+        // this line also ensures the constructor for CyDogsChassis also gets called
         super(currentOp);
+
         myAlliance = currentAlliance;
         myOpMode = currentOp;
         StandardAutonWaitTime = standardWaitTime;
@@ -91,6 +91,7 @@ public class CyDogsSparky extends CyDogsChassis{
 
         Wrist = myOpMode.hardwareMap.get(Servo.class, "Wrist");
         ArmLift = myOpMode.hardwareMap.get(DcMotor.class, "ArmLift");
+        //  Note this was added in prep for moving Teleop to Java
         DroneReleaseServo = myOpMode.hardwareMap.get(Servo.class, "DroneRelease");
         Elbow = myOpMode.hardwareMap.get(Servo.class, "Elbow");
         FingerLeft = myOpMode.hardwareMap.get(Servo.class, "FingerLeft");
@@ -150,6 +151,8 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift.setTargetPosition(ArmHomePosition);
     }
 
+    // this is designed to force the arm down at the end of autonomous in an attempt to ensure it's
+    //   all the way down
     public void LowerArmAtAutonEnd()
     {
         ArmLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -166,11 +169,11 @@ public class CyDogsSparky extends CyDogsChassis{
     }
 
 
-    public void SetLiftToZero() {
-        ArmLift.setPower(0.6);
-        ArmLift.setTargetPosition(0);
-    }
+
     public void SwingElbow() {
+        // check to see if the arm is high enough before moving the elbow.  Do nothing if it is not.
+        //   ROBOT MAY BREAK if elbow moves when arm is too low.  The -20 is a small amount that
+        //   compensates for if the motor didn't get exactly to the right spot.
         if (ArmLift.getCurrentPosition() > ArmRaiseBeforeElbowMovement-20) {
             if (!isElbowOpen) {
                 Elbow.setPosition(ElbowScoringPosition);
@@ -254,17 +257,17 @@ public class CyDogsSparky extends CyDogsChassis{
             StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 400);
         }
 
-        foundTag = GetAprilTag(targetTag);
-        if(foundTag != null) {
-            degreesBearing = foundTag.ftcPose.bearing;
+    //    foundTag = GetAprilTag(targetTag);
+      //  if(foundTag != null) {
+      //      degreesBearing = foundTag.ftcPose.bearing;
             //       if(targetTag==3)
             //     {
             //       degreesBearing = degreesBearing*.9;
             // }
 
 
-            RotateRight((int)(-degreesBearing*.8),.5,300);
-        }
+      //      RotateRight((int)(-degreesBearing*.8),.5,300);
+     //   }
 
         // Y
         double adjustY = 6.5;
@@ -486,38 +489,7 @@ public class CyDogsSparky extends CyDogsChassis{
         }
     }
 
-    public void AutonPrepareToTravelThroughCenter(SpikeCam.location mySpike, CyDogsChassis.Direction myPath) {
-        // this complex function determines where it is based on spike location and sets it up
-        //   in front of the right path through center
-        int adjustHorizontalDistance = 0;
-        int adjustVerticalDistance = 0;
 
-        // First, let's get ourselves straight facing scoring area
-        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
-        if(mySpike== SpikeCam.location.LEFT){
-            //Already facing the correct way
-            //We're 'BackUpDistanceFromSpike' closer to scoreboard
-            adjustVerticalDistance = -BackUpDistanceFromSpike;
-        } else if (mySpike==SpikeCam.location.MIDDLE) {
-            RotateLeft(90,.5,StandardAutonWaitTime);
-            // We're 50mm further away from start position
-            adjustHorizontalDistance = -50;
-        } else {
-            RotateRight(180,.5,StandardAutonWaitTime);
-            // We're 'BackUpDistanceFromSpike' further from scoreboard
-            adjustVerticalDistance = -BackUpDistanceFromSpike;
-        }
-        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
-
-        // we want to go left by default
-        if(myPath==Direction.RIGHT) {
-            StrafeRight(OneTileMM+adjustHorizontalDistance,.5,StandardAutonWaitTime);
-        } else if (myPath==Direction.CENTER) {
-            // Should be aligned in the center already
-        } else {
-            StrafeLeft(OneTileMM-adjustHorizontalDistance,.5,StandardAutonWaitTime);
-        }
-    }
 
     public void AutonCenterOnScoreboardBasedOnPath(Direction myPath) {
         if(myPath==Direction.LEFT) {
