@@ -97,9 +97,23 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
     private double claw_last_opened;
 
     private enum Retract {
-        back,
+        back ,
         flip_bar,
         cartridge
+    }
+
+    private enum OuttakeWrist{
+        flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight),
+        vertical(CSCons.wristVertical), angleLeft(CSCons.wristAngleLeft), flatLeft(CSCons.wristFlatLeft);
+        double position;
+        private OuttakeWrist(double position){
+            this.position= position;
+        }
+
+        public double getPosition(){
+            return position;
+        }
+
     }
 
     private boolean isRetracting = false;
@@ -117,6 +131,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
+    private OuttakeWrist outtakeWristPosition;
 
     @Override
     public void runOpMode() {
@@ -178,6 +193,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
         clawServo = hardwareMap.servo.get("clawServo");
         clawArm = hardwareMap.servo.get("clawArm");
         clawAngle = hardwareMap.servo.get("clawAngle");
+        wristServo = hardwareMap.servo.get("wrist");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
 
         outtakeServo1 = hardwareMap.servo.get("outtakeHook");
@@ -247,6 +263,9 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
         outtakeServo1.setPosition(CSCons.servo1Up);
         outtakeServo2.setPosition(CSCons.servo2Up);
 
+        outtakeWristPosition= OuttakeWrist.vertical;
+        wristServo.setPosition(CSCons.wristVertical);
+
         target = backSlidePos.getTarget();
         angleRotationAdjustment = 0;
 
@@ -268,6 +287,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
         double[] clawStack = {CSCons.clawArmGround,CSCons.clawArm2,CSCons.clawArm3,CSCons.clawArm4,CSCons.clawArm5};
         int stackPosition = 0;
+        boolean wristButtonPressed = false;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -593,46 +613,86 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                         //if touch sensor => ready to transfer
                         break;
                     case ReadyToDrop:
-                        if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
-                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                outtakeElapsedTime = new ElapsedTime();
-                                hookPosition = HookPosition.OPEN;
-                                outtakeServo1.setPosition(servo1Up);
-                                outtakeServo2.setPosition(servo2Up);
+
+                            if (gamepad2.x && !wristButtonPressed){
+                                if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                    outtakeWristPosition= OuttakeWrist.flatLeft;
+                                }else {
+                                    outtakeWristPosition = OuttakeWrist.angleLeft;
+                                }
+                                wristButtonPressed=true;
+                            } else if (gamepad2.y && ! wristButtonPressed){
+                                outtakeWristPosition= OuttakeWrist.vertical;
+                                wristButtonPressed= true;
+                            } else if (gamepad2.b && !wristButtonPressed){
+                                if (outtakeWristPosition == OuttakeWrist.angleRight){
+                                    outtakeWristPosition= OuttakeWrist.flatRight;
+                                } else{
+                                    outtakeWristPosition= OuttakeWrist.angleRight;
+                                }
+                                wristButtonPressed = true;
                             } else {
-                                outtakeServo1.setPosition(servo1Down);
-                                outtakeServo2.setPosition(servo2Down);
-
+                                wristButtonPressed= false;
                             }
 
-                        }
-                        if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
-                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                outtakeElapsedTime = new ElapsedTime();
-                                hookPosition = HookPosition.HALF;
-                                outtakeServo1.setPosition(servo1Up);
+//                            wristServo.setPosition(outtakeWristPosition.getPosition());
 
+                            if(outtakeWristPosition ==OuttakeWrist.angleLeft){
+                                wristServo.setPosition(CSCons.wristAngleLeft);
                             }
-                        }
-
-                        if (gamepad2.y && hookPosition == HookPosition.HALF) {
-                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                outtakeElapsedTime = new ElapsedTime();
-                                hookPosition = HookPosition.OPEN;
-                                outtakeServo1.setPosition(servo1Up);
-                                outtakeServo2.setPosition(servo2Up);
-
+                            if(outtakeWristPosition ==OuttakeWrist.angleRight){
+                            wristServo.setPosition(CSCons.wristAngleRight);
                             }
-                        }
-
-
-                        if (gamepad2.x && hookPosition == HookPosition.OPEN) {
-                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                outtakeElapsedTime = closeHook();
-                            } else {
-                                outtakeServo2.setPosition(servo2Up);
+                            if(outtakeWristPosition ==OuttakeWrist.vertical){
+                            wristServo.setPosition(CSCons.wristVertical);
                             }
-                        }
+                            if(outtakeWristPosition ==OuttakeWrist.flatLeft){
+                            wristServo.setPosition(CSCons.wristFlatLeft);
+                            }
+                            if(outtakeWristPosition ==OuttakeWrist.flatRight){
+                            wristServo.setPosition(CSCons.wristFlatRight);
+                            }
+
+//                        if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
+//                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+//                                outtakeElapsedTime = new ElapsedTime();
+//                                hookPosition = HookPosition.OPEN;
+//                                outtakeServo1.setPosition(servo1Up);
+//                                outtakeServo2.setPosition(servo2Up);
+//                            } else {
+//                                outtakeServo1.setPosition(servo1Down);
+//                                outtakeServo2.setPosition(servo2Down);
+//
+//                            }
+//
+//                        }
+//                        if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
+//                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+//                                outtakeElapsedTime = new ElapsedTime();
+//                                hookPosition = HookPosition.HALF;
+//                                outtakeServo1.setPosition(servo1Up);
+//
+//                            }
+//                        }
+//
+//                        if (gamepad2.y && hookPosition == HookPosition.HALF) {
+//                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+//                                outtakeElapsedTime = new ElapsedTime();
+//                                hookPosition = HookPosition.OPEN;
+//                                outtakeServo1.setPosition(servo1Up);
+//                                outtakeServo2.setPosition(servo2Up);
+//
+//                            }
+//                        }
+//
+//
+//                        if (gamepad2.x && hookPosition == HookPosition.OPEN) {
+//                            if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+//                                outtakeElapsedTime = closeHook();
+//                            } else {
+//                                outtakeServo2.setPosition(servo2Up);
+//                            }
+//                        }
 
                         if (gamepad2.left_trigger > 0.5) {
                             backSlidePos = OuttakePosition.LOW;

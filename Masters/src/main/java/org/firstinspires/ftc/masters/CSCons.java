@@ -41,6 +41,12 @@ public class CSCons {
     public static double openMicroHook =0.5;
     public static double closeMicroHook =0;
 
+    public static double wristFlatRight=0.5; //
+    public static double wristAngleRight=0.75; //
+    public static double wristVertical= 0.5; //
+    public static double wristAngleLeft =0.3; //
+    public static double wristFlatLeft =0; //
+
     public static double droneFlat = 0.59;
     public static double droneShooting = 0.2;
 
