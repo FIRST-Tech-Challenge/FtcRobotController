@@ -82,6 +82,15 @@ public class CSCons {
     public static double cameraOffsetY = 10;
 
 
+    public static double intakeBottom = 0.2;
+    public static double intake2 =0.3;
+    public static double intake3 =0.4;
+    public static double intake4 =0.5;
+    public static double intake5 =0.6;
+
+
+
+
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
