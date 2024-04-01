@@ -59,7 +59,7 @@ public class BlueAuto1 extends PlaceLinePixel {
                     if (Location1 == true) {
                         PixelLocation1();
                     } else if (Location2 == true) {
-                        PixelLocation2();
+                         PixelLocation2();
                     } else if (Location3 == true) {
                         PixelLocation3();
                     } else {
