@@ -67,7 +67,7 @@ public class ConduiteUneManette extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        lanceur.setPosition(0);
+        lanceur.setPosition(1);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -263,9 +263,9 @@ public class ConduiteUneManette extends LinearOpMode {
             }
 
             if (manette1.left_stick_button) {
-                lanceur.setPosition(1);
-                waitTime(1);
                 lanceur.setPosition(0);
+                waitTime(1);
+                lanceur.setPosition(1);
 
             }
 

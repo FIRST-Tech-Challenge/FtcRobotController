@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+@Disabled
 public class ConduiteDeuxManettesTest extends LinearOpMode {
     void waitTime(double tps) {
         double t=getRuntime();
@@ -67,7 +69,7 @@ public class ConduiteDeuxManettesTest extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        lanceur.setPosition(0);
+        lanceur.setPosition(1);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -263,16 +265,16 @@ public class ConduiteDeuxManettesTest extends LinearOpMode {
             }
 
             if (manette1.right_stick_button) {
-                lanceur.setPosition(1);
-                waitTime(1);
                 lanceur.setPosition(0);
+                waitTime(1);
+                lanceur.setPosition(1);
 
             }
 
 
             //
 
-            telemetry.addData("zeroDuBras", zeroDuBras);
+            telemetry.addData("zeroDuBras", zeroDuBras); 
             telemetry.addData("zeroDuHaut", zeroDuHaut);
             telemetry.addData("Position Actuelle Bras", brasA);
             telemetry.addData("Target Power A", tgtPowerA);

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +26,32 @@ public class ConduiteDeuxManettes extends LinearOpMode {
     private Servo mainG;
     private Servo mainD;
     private Servo lanceur;
+
+    double tgtBras = 0;
+    int maPosBras = 0;
+    int zeroDuBras=0;
+    int zeroDuHaut=0;
+    int bras0 = 0;
+    double coudeX;
+    int brasA = 0;
+    double maPosCoude = 0;
+
+    private void engGoto(int epb, double epc) {
+        if (brasA > epb) {
+            if (zeroDuHaut + brasA < 100) {
+                tgtBras = -0.05;
+            } else {
+                tgtBras = -0.3;
+            }
+        } else if (brasA < epb) {
+            tgtBras = 0.3;
+        } else {
+            tgtBras = 0;
+        }
+        coudeX = epc;
+        bras0 = epb;
+
+    }
     @Override
     public void runOpMode() {
         motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
@@ -38,27 +66,25 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
         double tgtPowerA = 0;
         double tgtPowerB = 0;
-        double tgtBras = 0;
-        int maPosBras = 0;
         double varY = 0;
         double varX = 0;
         double varYpos = 0;
         double varXpos = 0;
         double coudeZero = 0.91;
-        double coudeX = coudeZero;
-        int brasA = 0;
+
         double triggergauche = 0;
         double triggerdroit = 0;
         double varRY = 0;
-        double maPosCoude = 0;
-        int bras0 = 0;
+
+
         double debugTkt = 0;
         int isInnit = 0;
-        int zeroDuBras=0;
-        int zeroDuHaut=0;
+
         boolean PrecisionMode = false;
         boolean OvercloakMode = false;
         double coudepas = 0.003;
+
+        coudeX = coudeZero;
 
         Gamepad manette1 = this.gamepad1;
         Gamepad manette2 = this.gamepad2;
@@ -67,7 +93,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        lanceur.setPosition(0);
+        lanceur.setPosition(1);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -84,11 +110,11 @@ public class ConduiteDeuxManettes extends LinearOpMode {
             varX = manette1.left_stick_x;
 
             // Convertion pour Moteurs
-            varYpos = Math.abs(varY);
-            varXpos = Math.abs(varX);
+            varYpos = abs(varY);
+            varXpos = abs(varX);
 
-            // Récupération valeur joystick gauche
-            varRY = manette2.right_stick_y;
+            // Récupération valeur joystick gauche -> Bras
+            varRY = manette2.left_stick_y;
 
             // Récupération valeur bras
             brasA = bras2.getCurrentPosition();
@@ -132,7 +158,6 @@ public class ConduiteDeuxManettes extends LinearOpMode {
             if (manette1.left_bumper) {
                 motorA.setPower(tgtPowerA);
                 motorB.setPower(-tgtPowerB);
-                manette1.rumble(100);
             } else {
                 motorA.setPower((tgtPowerA / 2));
                 motorB.setPower(-(tgtPowerB / 2));
@@ -189,13 +214,13 @@ public class ConduiteDeuxManettes extends LinearOpMode {
             //
 
             // Changement Position Coude
-            if (manette2.left_trigger > 0) {
-                coudeX += coudepas;
+            if (manette2.right_stick_y > 0) {
+                coudeX += coudepas*abs(manette2.right_stick_y);
                 if (coudeX > 0.83) {
                     coudeX = 0.83;
                 }
-            } else if (manette2.right_trigger > 0) {
-                coudeX -= coudepas;
+            } else if (manette2.right_stick_y < 0) {
+                coudeX -= coudepas*abs(manette2.right_stick_y);
                 if (coudeX<0.10) {
                     coudeX = 0.10;
                 }
@@ -204,45 +229,35 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
             // Activation Mode Enregistré
             if (manette2.x) {
-                if (brasA > maPosBras) {
-                    if (zeroDuHaut + brasA < 100) {
-                        tgtBras = -0.05;
-                    } else {
-                        tgtBras = -0.3;
-                    }
-                } else if (brasA < maPosBras) {
-                    tgtBras = 0.3;
-                } else {
-                    tgtBras = 0;
-                }
-                coudeX = maPosCoude;
-                bras0 = maPosBras;
+                engGoto(zeroDuHaut,0.5);
             }
-            //
-
-            // Enregistrement de la Position
             if (manette2.y) {
-                maPosBras = brasA;
-                maPosCoude = coudeG.getPosition();
+                engGoto(zeroDuHaut,0.5);
+            }
+            if (manette2.a) {
+                engGoto(zeroDuHaut,0.5);
+            }
+            if (manette2.b) {
+                engGoto(zeroDuHaut,0.5);
             }
             //
 
             // Position Mains
             if (mainG.getPosition() > 0.10) {
-                while (manette2.a) {
+                while (manette2.left_bumper) {
                     mainG.setPosition(0);
                 }}
             if (mainG.getPosition() < 0.2){
-                while (manette2.a) {
+                while (manette2.left_bumper) {
                     mainG.setPosition(1);
                 }
             }
             if (mainD.getPosition() > 0.3) {
-                while (manette2.b) {
+                while (manette2.right_bumper) {
                     mainD.setPosition(0);
                 }}
             if (mainD.getPosition() < 0.3){
-                while (manette2.b) {
+                while (manette2.right_bumper) {
                     mainD.setPosition(1);
                 }
             }
@@ -250,6 +265,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
             // Changement des position - Hardware
             coudeG.setPosition(coudeX);
+
             coudeD.setPosition(1 - coudeX);
 
             if (PrecisionMode) {
@@ -262,10 +278,10 @@ public class ConduiteDeuxManettes extends LinearOpMode {
                 bras2.setPower(tgtBras);
             }
 
-            if (manette1.left_stick_button) {
-                lanceur.setPosition(1);
-                waitTime(1);
+            if (manette1.right_stick_button) {
                 lanceur.setPosition(0);
+                waitTime(1);
+                lanceur.setPosition(1);
 
             }
 
@@ -290,4 +306,5 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
         }
     }
+
 }
