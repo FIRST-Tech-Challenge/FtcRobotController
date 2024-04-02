@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="53"
-          android:versionName="9.1">
+          android:versionName="9.0">
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
