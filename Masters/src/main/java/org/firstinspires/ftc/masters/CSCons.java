@@ -153,7 +153,7 @@ public class CSCons {
         OPEN, CLOSED, HALF
     }
 
-    public enum IntakePosition{
+    public enum IntakeDirection {
         ON, OFF, BACKWARD
     }
 

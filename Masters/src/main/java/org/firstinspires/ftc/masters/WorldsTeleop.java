@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters;
 
 
-import static org.firstinspires.ftc.masters.CSCons.clawOpen;
 import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
@@ -18,13 +17,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.CSCons.ClawPosition;
 import org.firstinspires.ftc.masters.CSCons.DriveMode;
 import org.firstinspires.ftc.masters.CSCons.HookPosition;
-import org.firstinspires.ftc.masters.CSCons.IntakeState;
 import org.firstinspires.ftc.masters.CSCons.OuttakePosition;
 import org.firstinspires.ftc.masters.CSCons.OuttakeState;
 
@@ -41,17 +37,10 @@ public class WorldsTeleop extends LinearOpMode {
     private final double ticks_in_degrees = 384.5 / 180;
 
     PIDController outtakeController;
-    PIDController intakeController;
 
     public static double p = 0.01, i = 0, d = 0.0001;
     public static double f = 0.05;
 
-    public static double ip = 0.01, ii = 0, iid = 0.00;
-    public static double iif = 0.05;
-
-//    double y = 0;
-//    double x = 0;
-//    double rx = 0;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -72,14 +61,11 @@ public class WorldsTeleop extends LinearOpMode {
     Servo outtakeRotation;
     Servo outtakeMovement;
 
-    boolean clawClosed = true;
-    boolean hookEngaged = false;
-    boolean hookPressed = false;
-    boolean presetPushed = false;
-    double claw2transfer_time = -1;
-    double claw2transfer_delay = .5;
-    double x_last_pressed = -1;
+    private Servo wristServo;
+    private Servo outtakeServo1, outtakeServo2;
+    private OuttakeWrist outtakeWristPosition;
 
+    int numberOfPixelsInRamp= 0;
 
     double outtakeRotationTarget;
 
@@ -87,6 +73,7 @@ public class WorldsTeleop extends LinearOpMode {
     private enum OuttakeWrist{
         flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight), verticalDown(CSCons.wristVerticalDown),
         vertical(CSCons.wristVertical), angleLeft(CSCons.wristAngleLeft), flatLeft(CSCons.wristFlatLeft);
+
         double position;
         private OuttakeWrist(double position){
             this.position= position;
@@ -95,26 +82,15 @@ public class WorldsTeleop extends LinearOpMode {
         public double getPosition(){
             return position;
         }
-
     }
-
-    private boolean isRetracting = false;
-
 
     private DriveMode driveMode = DriveMode.NORMAL;
     private OuttakeState outtakeState = OuttakeState.ReadyToTransfer;
-    private IntakeState intakeState = IntakeState.Transition;
 
-
-    private ClawPosition clawPosition = ClawPosition.OPEN;
-    private CSCons.IntakePosition intakePosition = CSCons.IntakePosition.OFF;
+    private CSCons.IntakeDirection intakeDirection = CSCons.IntakeDirection.OFF;
     private HookPosition hookPosition = HookPosition.OPEN;
-    RevColorSensorV3 colorSensor;
-    double angleRotationAdjustment = 0;
 
-    private Servo wristServo;
-    private Servo outtakeServo1, outtakeServo2;
-    private OuttakeWrist outtakeWristPosition;
+
 
     @Override
     public void runOpMode() {
@@ -180,8 +156,6 @@ public class WorldsTeleop extends LinearOpMode {
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
 
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
 
@@ -227,7 +201,6 @@ public class WorldsTeleop extends LinearOpMode {
 
         outtakeController = new PIDController(p, i, d);
         outtakeController.setPID(p, i, d);
-        intakeController = new PIDController(ip, ii, iid);
 
         outtakeServo1.setPosition(CSCons.servo1Up);
         outtakeServo2.setPosition(CSCons.servo2Up);
@@ -237,7 +210,7 @@ public class WorldsTeleop extends LinearOpMode {
         wristServo.setPosition(CSCons.wristVertical);
         intakeHeight.setPosition(CSCons.intakeInit);
         target = backSlidePos.getTarget();
-        angleRotationAdjustment = 0;
+
 
         ElapsedTime intakeElapsedTime = null, outtakeElapsedTime = null, pickupElapsedTime = null;
 
@@ -281,26 +254,20 @@ public class WorldsTeleop extends LinearOpMode {
             }
             switch (driveMode) {
                 case NORMAL:
-                    if (colorSensorElapsedTime != null) {
-                        if (colorSensorElapsedTime.milliseconds() < 450) {
-                            drive(0, 0, 0);
-                        } else {
-                            drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-                        }
-                    } else {
-                        drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-                    }
+
+                    drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+
                     break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-                    if (gamepad2.y) {
-                        planeRaise.setPosition(CSCons.droneShooting);
-                        elapsedTime = new ElapsedTime();
-                        while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
-
-                        }
-                        planeRaise.setPosition((CSCons.droneFlat));
-                    }
+//                    if (gamepad2.y) {
+//                        planeRaise.setPosition(CSCons.droneShooting);
+//                        elapsedTime = new ElapsedTime();
+//                        while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
+//
+//                        }
+//                        planeRaise.setPosition((CSCons.droneFlat));
+//                    }
 
                     if (gamepad2.left_bumper) { //down
                         backSlidePos = OuttakePosition.BOTTOM;
@@ -328,13 +295,23 @@ public class WorldsTeleop extends LinearOpMode {
 
             if (driveMode != DriveMode.END_GAME) {
 
+
+                if (gamepad1.y) {
+                    planeRaise.setPosition(CSCons.droneShooting);
+                    elapsedTime = new ElapsedTime();
+                    while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
+
+                    }
+                    planeRaise.setPosition((CSCons.droneFlat));
+                }
+
                 if (gamepad1.right_trigger >= 0.1 && !buttonPushed) {
                     //intake start/stop
-                    if (intakePosition == CSCons.IntakePosition.OFF || intakePosition == CSCons.IntakePosition.BACKWARD) {
-                        intakePosition = CSCons.IntakePosition.ON;
+                    if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.BACKWARD) {
+                        intakeDirection = CSCons.IntakeDirection.ON;
                         intake.setPower(CSCons.speed);
                     } else {
-                        intakePosition = CSCons.IntakePosition.OFF;
+                        intakeDirection = CSCons.IntakeDirection.OFF;
                         intake.setPower(0);
                     }
                     buttonPushed = true;
@@ -344,7 +321,7 @@ public class WorldsTeleop extends LinearOpMode {
                 }
 
                 if (gamepad1.left_trigger > 0.1) {
-                    intakePosition = CSCons.IntakePosition.BACKWARD;
+                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
                     intake.setPower(-CSCons.speed);
                 }
 
@@ -396,48 +373,45 @@ public class WorldsTeleop extends LinearOpMode {
 
                     switch (outtakeState) {
                         case ReadyToTransfer:
-//                        if (!touchBucket.isPressed()) {
-//                            bucketMovedBy = bucketMovedBy + .01;
-//                            outtakeRotation.setPosition(bucketMovedBy + CSCons.wristOuttakeAngleTransfer);
-//                        }
-//                            if (gamepad2.x && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
-//                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-//                                    outtakeElapsedTime = new ElapsedTime();
-//                                    hookPosition = HookPosition.OPEN;
-//                                    outtakeServo1.setPosition(servo1Up);
-//                                    outtakeServo2.setPosition(servo2Up);
-//                                } else {
-//                                    outtakeMovement.setPosition(CSCons.wristOuttakePickup);
-//                                    pickupElapsedTime = new ElapsedTime();
-//
-//                                }
-//                            }
-//                            if (gamepad2.x && hookPosition == HookPosition.OPEN) { // closes hook with x
-//                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-//                                    outtakeElapsedTime = closeHook();
-//                                } else {
-//                                    outtakeServo1.setPosition(servo1Up);
-//                                    outtakeServo2.setPosition(servo2Up);
-//                                }
-//                            }
-//
-//                            if (pickupElapsedTime != null && pickupElapsedTime.milliseconds() > 200) {
-//                                outtakeServo1.setPosition(servo1Down);
-//                                outtakeServo2.setPosition(servo2Down);
-//                                pickupElapsedTime = null;
-//                            }
 
-//                        if (gamepad2.left_trigger > 0.5) {
-//                            backSlidePos = OuttakePosition.LOW;
-//                            outtakeElapsedTime = closeHook();
-//                            outtakeState = OuttakeState.ClosingHook;
-//
-//                        }
-//                        if (gamepad2.right_trigger > 0.5) {
-//                            backSlidePos = OuttakePosition.MID;
-//                            outtakeElapsedTime = closeHook();
-//                            outtakeState = OuttakeState.ClosingHook;
-//                        }
+                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
+                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                    outtakeElapsedTime = new ElapsedTime();
+                                    hookPosition = HookPosition.OPEN;
+                                    outtakeServo1.setPosition(servo1Up);
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else {
+                                    outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                    pickupElapsedTime = new ElapsedTime();
+
+                                }
+                            }
+                            if (gamepad2.left_stick_y<0.5 && Math.abs(gamepad2.left_stick_x)<0.5 && hookPosition == HookPosition.OPEN) { // closes hook with x
+                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+                                    outtakeElapsedTime = closeHook();
+                                } else {
+                                    outtakeServo1.setPosition(servo1Up);
+                                    outtakeServo2.setPosition(servo2Up);
+                                }
+                            }
+
+                            if (pickupElapsedTime != null && pickupElapsedTime.milliseconds() > 200) {
+                                outtakeServo1.setPosition(servo1Down);
+                                outtakeServo2.setPosition(servo2Down);
+                                pickupElapsedTime = null;
+                            }
+
+                        if (gamepad2.left_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.LOW;
+                            outtakeElapsedTime = closeHook();
+                            outtakeState = OuttakeState.ClosingHook;
+
+                        }
+                        if (gamepad2.right_trigger > 0.5) {
+                            backSlidePos = OuttakePosition.MID;
+                            outtakeElapsedTime = closeHook();
+                            outtakeState = OuttakeState.ClosingHook;
+                        }
 
                             if (gamepad2.dpad_left && !wristButtonPressed) {
                                 if (outtakeWristPosition == OuttakeWrist.angleLeft) {
@@ -523,46 +497,61 @@ public class WorldsTeleop extends LinearOpMode {
                                 wristServo.setPosition(CSCons.wristVerticalDown);
                             }
 
-                            if (gamepad2.x && (hookPosition == HookPosition.CLOSED || hookPosition == HookPosition.HALF)) {
+                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) {
                                 if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                     outtakeElapsedTime = new ElapsedTime();
-                                    hookPosition = HookPosition.OPEN;
-                                    outtakeServo1.setPosition(servo1Up);
-                                    outtakeServo2.setPosition(servo2Up);
-                                } else {
-                                    outtakeServo1.setPosition(servo1Down);
-                                    outtakeServo2.setPosition(servo2Down);
-
+                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
+                                        outtakeServo1.setPosition(servo1Up);
+                                    } else {
+                                        outtakeServo2.setPosition(servo2Up);
+                                    }
                                 }
 
                             }
-                            if (gamepad2.y && hookPosition == HookPosition.CLOSED) {
+                            if (gamepad2.right_stick_y>0.5 && Math.abs(gamepad2.right_stick_x)<0.5) {
                                 if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                     outtakeElapsedTime = new ElapsedTime();
-                                    hookPosition = HookPosition.HALF;
-                                    outtakeServo1.setPosition(servo1Up);
+                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
+                                        outtakeServo1.setPosition(servo2Up);
+                                    } else {
+                                        outtakeServo2.setPosition(servo1Up);
+                                    }
 
                                 }
                             }
 
-                            if (gamepad2.y && hookPosition == HookPosition.HALF) {
+                            if (gamepad2.right_stick_y<-0.5 && Math.abs(gamepad2.right_stick_x)<0.5 ) {
                                 if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
                                     outtakeElapsedTime = new ElapsedTime();
-                                    hookPosition = HookPosition.OPEN;
-                                    outtakeServo1.setPosition(servo1Up);
-                                    outtakeServo2.setPosition(servo2Up);
+                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
+                                        outtakeServo1.setPosition(servo1Down);
+                                    } else {
+                                        outtakeServo2.setPosition(servo2Down);
+                                    }
 
                                 }
                             }
 
-
-                            if (gamepad2.x && hookPosition == HookPosition.OPEN) {
+                            if (gamepad2.left_stick_y<-0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) {
                                 if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = closeHook();
-                                } else {
-                                    outtakeServo2.setPosition(servo2Up);
+                                    outtakeElapsedTime = new ElapsedTime();
+                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
+                                        outtakeServo1.setPosition(servo2Down);
+                                    } else {
+                                        outtakeServo2.setPosition(servo1Down);
+                                    }
+
                                 }
                             }
+
+
+//                            if (gamepad2.x && hookPosition == HookPosition.OPEN) {
+//                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
+//                                    outtakeElapsedTime = closeHook();
+//                                } else {
+//                                    outtakeServo2.setPosition(servo2Up);
+//                                }
+//                            }
 
                             if (gamepad2.left_trigger > 0.5) {
                                 backSlidePos = OuttakePosition.LOW;
@@ -613,7 +602,7 @@ public class WorldsTeleop extends LinearOpMode {
                         case MoveToDrop:
                             if (backSlides.getCurrentPosition() > 100) {
                                 outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
-                                outtakeRotationTarget = CSCons.wristOuttakeAngleFolder + angleRotationAdjustment;
+                                outtakeRotationTarget = CSCons.wristOuttakeAngleFolder;
                                 outtakeRotation.setPosition(outtakeRotationTarget);
                             }
                             if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
