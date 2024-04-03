@@ -31,9 +31,12 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -50,7 +53,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-//@TeleOp(name = "Concept: Double Vision", group = "Concept")
+@TeleOp(name = "Concept: Double Vision", group = "Concept")
 public class ConceptDoubleVision extends LinearOpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -58,6 +61,10 @@ public class ConceptDoubleVision extends LinearOpMode {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
+    private WebcamName webcam1, webcam2;
+    private boolean oldLeftBumper;
+    private boolean oldRightBumper;
+
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -77,10 +84,10 @@ public class ConceptDoubleVision extends LinearOpMode {
 
         // This OpMode loops continuously, allowing the user to switch between
         // AprilTag and TensorFlow Object Detection (TFOD) image processors.
-        while (!isStopRequested())  {
+        while (!isStopRequested()) {
 
             if (opModeInInit()) {
-                telemetry.addData("DS preview on/off","3 dots, Camera Stream");
+                telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
                 telemetry.addLine();
                 telemetry.addLine("----------------------------------------");
             }
@@ -117,6 +124,12 @@ public class ConceptDoubleVision extends LinearOpMode {
                 myVisionPortal.setProcessorEnabled(propFindProcessor, true);
             }
 
+            if (gamepad1.left_bumper) {
+                myVisionPortal.setActiveCamera(webcam1);
+            } else if (gamepad1.right_bumper) {
+                myVisionPortal.setActiveCamera(webcam2);
+            }
+
             sleep(20);
 
         }   // end while loop
@@ -145,22 +158,29 @@ public class ConceptDoubleVision extends LinearOpMode {
         // TFOD Configuration
         // -----------------------------------------------------------------------------------------
 
-        propFindProcessor = new PropFindRightProcessor(telemetry,packet);
+        propFindProcessor = new PropFindRightProcessor(telemetry, packet);
+
 
         // -----------------------------------------------------------------------------------------
         // Camera Configuration
         // -----------------------------------------------------------------------------------------
 
+        webcam1 = hardwareMap.get(WebcamName.class, "frontWebcam");
+        webcam2 = hardwareMap.get(WebcamName.class, "backWebcam");
+        CameraName switchableCamera = ClassFactory.getInstance()
+                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
+
+
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
-                .addProcessors(propFindProcessor, aprilTag)
-                .build();
+                    .setCamera(switchableCamera)
+                    .addProcessors(propFindProcessor, aprilTag)
+                    .build();
         } else {
             myVisionPortal = new VisionPortal.Builder()
-                .setCamera(BuiltinCameraDirection.BACK)
-                .addProcessors(propFindProcessor, aprilTag)
-                .build();
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessors(propFindProcessor, aprilTag)
+                    .build();
         }
     }   // end initDoubleVision()
 
@@ -186,13 +206,14 @@ public class ConceptDoubleVision extends LinearOpMode {
 
     }   // end method telemetryAprilTag()
 
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
-    private void telemetryPropFind() {
+
+        /**
+         * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
+         */
+    private void telemetryPropFind () {
         telemetry.addData("# Objects Detected", propFindProcessor.position);
 
     }   // end method telemetryTfod()
 
-}   // end class
-
+      // end class
+}
