@@ -193,7 +193,7 @@ public class WorldsTeleop extends LinearOpMode {
         backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        outtakeMovement.setPosition(CSCons.wristOuttakeMovementIntake);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
 
         hookPosition = HookPosition.OPEN;
@@ -205,7 +205,7 @@ public class WorldsTeleop extends LinearOpMode {
         outtakeServo1.setPosition(CSCons.servo1Up);
         outtakeServo2.setPosition(CSCons.servo2Up);
 
-        outtakeMovement.setPosition(CSCons.wristOuttakeMovementIntake);
+
         outtakeWristPosition = OuttakeWrist.vertical;
         wristServo.setPosition(CSCons.wristVertical);
         intakeHeight.setPosition(CSCons.intakeInit);
@@ -316,13 +316,19 @@ public class WorldsTeleop extends LinearOpMode {
                     }
                     buttonPushed = true;
                 }
-                if (gamepad1.right_trigger < 0.1) {
+                if (gamepad1.right_trigger < 0.1 && gamepad1.left_trigger<0.1) {
                     buttonPushed = false;
                 }
 
-                if (gamepad1.left_trigger > 0.1) {
-                    intakeDirection = CSCons.IntakeDirection.BACKWARD;
-                    intake.setPower(-CSCons.speed);
+                if (gamepad1.left_trigger > 0.1 && !buttonPushed) {
+                    if (intakeDirection == CSCons.IntakeDirection.OFF || intakeDirection == CSCons.IntakeDirection.ON) {
+                        intakeDirection = CSCons.IntakeDirection.BACKWARD;
+                        intake.setPower(-CSCons.speed);
+                    } else {
+                        intakeDirection = CSCons.IntakeDirection.OFF;
+                        intake.setPower(0);
+                    }
+                    buttonPushed = true;
                 }
 
                 if (gamepad2.a) {
@@ -374,32 +380,24 @@ public class WorldsTeleop extends LinearOpMode {
                     switch (outtakeState) {
                         case ReadyToTransfer:
 
-                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 && hookPosition == HookPosition.CLOSED) { // if press x and hook is closed, open hook
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = new ElapsedTime();
-                                    hookPosition = HookPosition.OPEN;
-                                    outtakeServo1.setPosition(servo1Up);
-                                    outtakeServo2.setPosition(servo2Up);
-                                } else {
-                                    outtakeMovement.setPosition(CSCons.wristOuttakePickup);
-                                    pickupElapsedTime = new ElapsedTime();
+                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // if press x and hook is closed, open hook
+                                outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                pickupElapsedTime = new ElapsedTime();
 
-                                }
                             }
-                            if (gamepad2.left_stick_y<0.5 && Math.abs(gamepad2.left_stick_x)<0.5 && hookPosition == HookPosition.OPEN) { // closes hook with x
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = closeHook();
-                                } else {
-                                    outtakeServo1.setPosition(servo1Up);
-                                    outtakeServo2.setPosition(servo2Up);
-                                }
-                            }
+                            if (gamepad2.left_stick_y<-0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // closes hook with x
 
-                            if (pickupElapsedTime != null && pickupElapsedTime.milliseconds() > 200) {
                                 outtakeServo1.setPosition(servo1Down);
                                 outtakeServo2.setPosition(servo2Down);
-                                pickupElapsedTime = null;
                             }
+
+                            if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>200){
+                                outtakeServo1.setPosition(servo1Down);
+                                outtakeServo2.setPosition(servo2Down);
+                                pickupElapsedTime =null;
+                            }
+
+
 
                         if (gamepad2.left_trigger > 0.5) {
                             backSlidePos = OuttakePosition.LOW;
@@ -414,8 +412,8 @@ public class WorldsTeleop extends LinearOpMode {
                         }
 
                             if (gamepad2.dpad_left && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                    outtakeWristPosition = OuttakeWrist.flatLeft;
+                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
+                                    outtakeWristPosition = OuttakeWrist.flatRight;
                                 } else {
                                     outtakeWristPosition = OuttakeWrist.angleLeft;
                                 }
@@ -424,8 +422,8 @@ public class WorldsTeleop extends LinearOpMode {
                                 outtakeWristPosition = OuttakeWrist.vertical;
                                 wristButtonPressed = true;
                             } else if (gamepad2.dpad_right && !wristButtonPressed) {
-                                if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                    outtakeWristPosition = OuttakeWrist.flatRight;
+                                if (outtakeWristPosition == OuttakeWrist.angleLeft) {
+                                    outtakeWristPosition = OuttakeWrist.flatLeft;
                                 } else {
                                     outtakeWristPosition = OuttakeWrist.angleRight;
                                 }
@@ -441,8 +439,7 @@ public class WorldsTeleop extends LinearOpMode {
                             break;
                         case MoveToTransfer:
                             if (backSlides.getCurrentPosition() < 50) {
-                                outtakeServo1.setPosition(servo1Up);
-                                outtakeServo2.setPosition(servo2Up);
+                              liftOuttakeFingers();
                                 outtakeState = OuttakeState.ReadyToTransfer;
                                 target = 0;
                             }
@@ -478,80 +475,51 @@ public class WorldsTeleop extends LinearOpMode {
 
 //                            wristServo.setPosition(outtakeWristPosition.getPosition());
 
-                            if (outtakeWristPosition == OuttakeWrist.angleLeft) {
-                                wristServo.setPosition(CSCons.wristAngleLeft);
-                            }
-                            if (outtakeWristPosition == OuttakeWrist.angleRight) {
-                                wristServo.setPosition(CSCons.wristAngleRight);
-                            }
-                            if (outtakeWristPosition == OuttakeWrist.vertical) {
-                                wristServo.setPosition(CSCons.wristVertical);
-                            }
-                            if (outtakeWristPosition == OuttakeWrist.flatLeft) {
-                                wristServo.setPosition(CSCons.wristFlatLeft);
-                            }
-                            if (outtakeWristPosition == OuttakeWrist.flatRight) {
-                                wristServo.setPosition(CSCons.wristFlatRight);
-                            }
-                            if (outtakeWristPosition == OuttakeWrist.verticalDown) {
-                                wristServo.setPosition(CSCons.wristVerticalDown);
-                            }
+                           setWristServoPosition();
 
-                            if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) {
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = new ElapsedTime();
-                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
-                                        outtakeServo1.setPosition(servo1Up);
-                                    } else {
-                                        outtakeServo2.setPosition(servo2Up);
-                                    }
-                                }
 
-                            }
-                            if (gamepad2.right_stick_y>0.5 && Math.abs(gamepad2.right_stick_x)<0.5) {
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = new ElapsedTime();
-                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
-                                        outtakeServo1.setPosition(servo2Up);
-                                    } else {
-                                        outtakeServo2.setPosition(servo1Up);
-                                    }
-
+                            if(gamepad2.y){
+                                if (outtakeWristPosition== OuttakeWrist.vertical){
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else if (outtakeWristPosition==OuttakeWrist.angleRight){
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else if (outtakeWristPosition== OuttakeWrist.verticalDown){
+                                    outtakeServo1.setPosition(servo1Up);
                                 }
                             }
 
-                            if (gamepad2.right_stick_y<-0.5 && Math.abs(gamepad2.right_stick_x)<0.5 ) {
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = new ElapsedTime();
-                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
-                                        outtakeServo1.setPosition(servo1Down);
-                                    } else {
-                                        outtakeServo2.setPosition(servo2Down);
-                                    }
+                            if (gamepad2.a){
+                                if (outtakeWristPosition== OuttakeWrist.vertical){
+                                    outtakeServo1.setPosition(servo1Up);
+                                }
+                                if (outtakeWristPosition== OuttakeWrist.verticalDown){
+                                    outtakeServo2.setPosition(servo2Up);
+                                }
 
+                            }
+
+                            if (gamepad2.b){
+                                if (outtakeWristPosition== OuttakeWrist.flatLeft){
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else if (outtakeWristPosition== OuttakeWrist.flatRight){
+                                    outtakeServo1.setPosition(servo1Up);
+                                } else if (outtakeWristPosition==OuttakeWrist.angleRight) {
+                                    outtakeServo1.setPosition(servo1Up);
                                 }
                             }
 
-                            if (gamepad2.left_stick_y<-0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) {
-                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-                                    outtakeElapsedTime = new ElapsedTime();
-                                    if (outtakeWristPosition == OuttakeWrist.angleLeft || outtakeWristPosition == OuttakeWrist.flatLeft || outtakeWristPosition == OuttakeWrist.vertical ) {
-                                        outtakeServo1.setPosition(servo2Down);
-                                    } else {
-                                        outtakeServo2.setPosition(servo1Down);
-                                    }
-
+                            if (gamepad2.x){
+                                if (outtakeWristPosition== OuttakeWrist.flatRight){
+                                    outtakeServo2.setPosition(servo2Up);
+                                } else if (outtakeWristPosition== OuttakeWrist.flatLeft){
+                                    outtakeServo1.setPosition(servo1Up);
+                                }else if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                    outtakeServo1.setPosition(servo1Up);
                                 }
                             }
 
-
-//                            if (gamepad2.x && hookPosition == HookPosition.OPEN) {
-//                                if (outtakeElapsedTime == null || outtakeElapsedTime.time(TimeUnit.MILLISECONDS) > 300) {
-//                                    outtakeElapsedTime = closeHook();
-//                                } else {
-//                                    outtakeServo2.setPosition(servo2Up);
-//                                }
-//                            }
 
                             if (gamepad2.left_trigger > 0.5) {
                                 backSlidePos = OuttakePosition.LOW;
@@ -563,12 +531,10 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.left_stick_y > 0.2) {
 
-                                outtakeServo1.setPosition(servo1Up);
-                                outtakeServo2.setPosition(servo2Up);
-                                outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
-                                outtakeMovement.setPosition(CSCons.wristOuttakeMovementIntake);
-                                outtakeWristPosition = OuttakeWrist.vertical;
-                                wristServo.setPosition(CSCons.wristVertical);
+                                liftOuttakeFingers();
+                                setOuttakeToTransfer();
+
+                                //setup slides
                                 if (backSlides.getCurrentPosition() > OuttakePosition.LOW.getTarget() + 400) {
                                     backSlidePos = OuttakePosition.BOTTOM;
                                     target = backSlidePos.getTarget();
@@ -579,12 +545,20 @@ public class WorldsTeleop extends LinearOpMode {
                                 }
                             }
 
+                            if (gamepad2.right_stick_y>0.2){
+                                liftOuttakeFingers();
+                            }
+                            if (gamepad2.right_stick_y<-0.2){
+                                outtakeServo1.setPosition(servo1Down);
+                                outtakeServo2.setPosition(servo2Down);
+                            }
+
                             if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
-                                target -= 15;
+                                target -= 10;
                             }
 
                             if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
-                                target += 15;
+                                target += 10;
                             }
 
                             if (slideNeedstoGoDown && outtakeElapsedTime != null && outtakeElapsedTime.milliseconds() > 500) {
@@ -644,6 +618,9 @@ public class WorldsTeleop extends LinearOpMode {
 //            telemetry.addData("front right", rightFrontMotor.getCurrentPosition());
 //            telemetry.addData("TOUCH:", touchBucket.isPressed());
 //            telemetry.update();
+
+            telemetry.addData("Wrist Position: ", outtakeWristPosition.name());
+
 
                 telemetry.update();
             }
@@ -718,9 +695,42 @@ public class WorldsTeleop extends LinearOpMode {
     protected ElapsedTime closeHook(){
         ElapsedTime time = new ElapsedTime();
         hookPosition = HookPosition.CLOSED;
-        outtakeServo1.setPosition(servo1Down);
-        outtakeServo2.setPosition(servo2Down);
+//        outtakeServo1.setPosition(servo1Down);
+//        outtakeServo2.setPosition(servo2Down);
         return time;
+    }
+
+    protected void liftOuttakeFingers(){
+        outtakeServo1.setPosition(servo1Up);
+        outtakeServo2.setPosition(servo2Up);
+    }
+
+    protected void setOuttakeToTransfer(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+        outtakeWristPosition = OuttakeWrist.vertical;
+        wristServo.setPosition(CSCons.wristVertical);
+    }
+
+    protected void setWristServoPosition(){
+        if (outtakeWristPosition == OuttakeWrist.angleLeft) {
+            wristServo.setPosition(CSCons.wristAngleLeft);
+        }
+        if (outtakeWristPosition == OuttakeWrist.angleRight) {
+            wristServo.setPosition(CSCons.wristAngleRight);
+        }
+        if (outtakeWristPosition == OuttakeWrist.vertical) {
+            wristServo.setPosition(CSCons.wristVertical);
+        }
+        if (outtakeWristPosition == OuttakeWrist.flatLeft) {
+            wristServo.setPosition(CSCons.wristFlatLeft);
+        }
+        if (outtakeWristPosition == OuttakeWrist.flatRight) {
+            wristServo.setPosition(CSCons.wristFlatRight);
+        }
+        if (outtakeWristPosition == OuttakeWrist.verticalDown) {
+            wristServo.setPosition(CSCons.wristVerticalDown);
+        }
     }
 
 
