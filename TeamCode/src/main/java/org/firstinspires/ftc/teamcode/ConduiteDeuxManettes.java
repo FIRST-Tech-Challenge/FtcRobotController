@@ -72,10 +72,9 @@ public class ConduiteDeuxManettes extends LinearOpMode {
         double varXpos = 0;
         double coudeZero = 0.91;
 
-        double triggergauche = 0;
-        double triggerdroit = 0;
+        double lanceurPret = 0;
+        double lanceurGo = 1;
         double varRY = 0;
-
 
         double debugTkt = 0;
         int isInnit = 0;
@@ -93,7 +92,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        lanceur.setPosition(1);
+        lanceur.setPosition(lanceurPret);
         bras1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bras2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -216,13 +215,13 @@ public class ConduiteDeuxManettes extends LinearOpMode {
             // Changement Position Coude
             if (manette2.right_stick_y > 0) {
                 coudeX += coudepas*abs(manette2.right_stick_y);
-                if (coudeX > 0.83) {
-                    coudeX = 0.83;
+                if (coudeX > 1) {
+                    coudeX = 1;
                 }
             } else if (manette2.right_stick_y < 0) {
                 coudeX -= coudepas*abs(manette2.right_stick_y);
-                if (coudeX<0.10) {
-                    coudeX = 0.10;
+                if (coudeX<0) {
+                    coudeX = 0;
                 }
             }
             //
@@ -279,9 +278,9 @@ public class ConduiteDeuxManettes extends LinearOpMode {
             }
 
             if (manette1.right_stick_button) {
-                lanceur.setPosition(0);
+                lanceur.setPosition(lanceurGo);
                 waitTime(1);
-                lanceur.setPosition(1);
+                lanceur.setPosition(lanceurPret);
 
             }
 

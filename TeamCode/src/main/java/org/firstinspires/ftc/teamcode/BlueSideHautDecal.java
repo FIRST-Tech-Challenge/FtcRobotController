@@ -42,6 +42,7 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
+            if (!opModeIsActive()) {break;}
             BrasGoTo();
         }
         motorA.setPower(0);
@@ -67,6 +68,7 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
+            if (!opModeIsActive()) {break;}
             BrasGoTo();
         }
         motorA.setPower(0);
@@ -92,6 +94,7 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
+            if (!opModeIsActive()) {break;}
             idle();
         }
         motorA.setPower(0);
@@ -116,6 +119,7 @@ public class BlueSideHautDecal extends LinearOpMode {
             telemetry.addData("MA", motorA.getTargetPosition());
             telemetry.addData("MAC", motorA.getCurrentPosition());
             telemetry.update();
+            if (!opModeIsActive()) {break;}
             idle();
         }
         motorA.setPower(0);
@@ -126,7 +130,10 @@ public class BlueSideHautDecal extends LinearOpMode {
 
     void waitTime(double tps) {
         double t=getRuntime();
-        while (getRuntime()-t < tps) {BrasGoTo();}
+        while (getRuntime()-t < tps) {
+            BrasGoTo();
+            if (!opModeIsActive()) {break;}
+        }
     }
 
     void coudeTo(double pos, double speed) {
@@ -180,7 +187,7 @@ public class BlueSideHautDecal extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
         motorB = hardwareMap.get(DcMotorEx.class, "moteur2");
         bras1 = hardwareMap.get(DcMotorEx.class, "bras1");
@@ -213,8 +220,8 @@ public class BlueSideHautDecal extends LinearOpMode {
         telemetry.update();
 
         //coudeTo(0.2,0.0001);
-        coudeG.setPosition(0.2);
-        coudeD.setPosition(1-0.2);
+        coudeG.setPosition(0.95);
+        coudeD.setPosition(1-95);
         mainG.setPosition(1);
         mainD.setPosition(0);
 
@@ -229,8 +236,8 @@ public class BlueSideHautDecal extends LinearOpMode {
 
 
         waitTime(1);
-        coudeG.setPosition(0.91);
-        coudeD.setPosition(1-0.91);
+        coudeG.setPosition(0.1);
+        coudeD.setPosition(1-0.1);
 
 
         targetBras = 432;
@@ -242,18 +249,18 @@ public class BlueSideHautDecal extends LinearOpMode {
 
         targetBras = 300;
         BrasGoTo();
-        coudeG.setPosition(0.25);
-        coudeD.setPosition(1-0.25);
-        waitTime(1);
+        coudeG.setPosition(1);
+        coudeD.setPosition(1-1);
+        waitTime(1.2);
         mainG.setPosition(1);
         mainD.setPosition(0);
-        waitTime(1);
+        waitTime(0.5);
 
 
         targetBras = 50;
         BrasGoTo();
-        coudeG.setPosition(0.91);
-        coudeD.setPosition(1-0.91);
+        coudeG.setPosition(0.25);
+        coudeD.setPosition(1-0.25);
         goRight(1);
         driveForwardPID(0.5, 1);
 
