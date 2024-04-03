@@ -21,25 +21,38 @@ public class CSCons {
     public static double clawArm3 = .72;
     public static double clawArm4 = .65;
     public static double clawArm5 = .62;
-    public static double clawArmTransition = .23;
-    public static double clawArmTransfer = .24;
+    public static double clawArmTransition = .3;
+    public static double clawArmTransfer = .3;
+//    public static double clawArmTransition = .23;
+//    public static double clawArmTransfer = .24;
 
     //public static double[]outtakeAngle={0.234, 0.9}; //folder, transfer
     public static double outtakeAngleFolder=0;
-    public static double wristOuttakeAngleFolder =0;
-    public static double outtakeAngleTransfer=.62;
-    public static double wristOuttakeAngleTransfer =0.5;
+
+    public static double outtakeAngleTransfer=1;
     //test public static double outtakeAngleTransfer=.53;
     //public static double[] doubleServoBack= {0.7, 0.15}; //drop, transfer
-    public static double outtakeMovementBackDrop =0.25;
+    public static double outtakeMovementBackDrop =0.4;
     public static double outtakeMovementTransfer = .72;
-    public static double wristOuttakeMovementTransfer=0.5;
+
+    public static double wristOuttakeAngleFolder =0.05;
+    public static double wristOuttakeAngleTransfer =1;
+    public static double wristOuttakeMovementTransfer=0.05;
+    public static double wristOuttakeMovementIntake = 0.1;
+    public static double wristOuttakePickup=0;
     public static double wristOuttakeMovementBackdrop =0.25;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
     public static double openMicroHook =0.5;
     public static double closeMicroHook =0;
+
+    public static double wristFlatRight=0.15; //
+    public static double wristAngleRight=0.35; //
+    public static double wristVertical= 0.45; //
+    public static double wristAngleLeft =0.55; //
+    public static double wristFlatLeft =0.72; //
+    public static double wristVerticalDown=0.98;
 
     public static double droneFlat = 0.59;
     public static double droneShooting = 0.2;
@@ -63,10 +76,10 @@ public class CSCons {
     public static double backMultiplier =0.78;
     public static double frontMultiplier = 1;
 
-    public static double servo1Up = 0.4;
-    public static double servo1Down = 0.65;
-    public static double servo2Up =0.6;
-    public static double servo2Down= 0.35;
+    public static double servo1Up = 0.7;
+    public static double servo1Down = 0.35;
+    public static double servo2Up =0.3;
+    public static double servo2Down= 0.65;
 
     public static double wristCenter = 0.5;
 
@@ -78,8 +91,25 @@ public class CSCons {
     public static double tag5Y = -35.5;
     public static double tag6Y = -42;
 
+    public static double tag7X= -72;
+    public static double tag9Y= 36;
+    public static double tag10Y= 41.5;
+    public static double tag7Y = -41.5;
+    public static double tag8Y = -36;
+
     public static double cameraOffsetX= 3;
     public static double cameraOffsetY = 10;
+
+
+    public static double intakeBottom = 0.33;
+    public static double intake2 =0.28;
+    public static double intake3 =0.26;
+    public static double intake4 =0.24;
+    public static double intake5 =0.22;
+    public static double intakeAboveTop =0.2;
+    public static double intakeInit =0;
+
+    public static double speed =-1;
 
 
     public enum OuttakePosition{
@@ -121,6 +151,10 @@ public class CSCons {
 
     public enum  HookPosition{
         OPEN, CLOSED, HALF
+    }
+
+    public enum IntakeDirection {
+        ON, OFF, BACKWARD
     }
 
 /**

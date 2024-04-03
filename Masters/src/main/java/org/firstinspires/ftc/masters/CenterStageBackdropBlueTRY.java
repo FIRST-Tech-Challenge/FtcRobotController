@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Blue REWORK", group = "competition")
+@Autonomous(name = "Center Stage Backdrop Blue TRY", group = "competition")
 public class CenterStageBackdropBlueTRY extends LinearOpMode {
     private OpenCvCamera webcam;
 
@@ -56,6 +56,12 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
     ElapsedTime preloadTime = new ElapsedTime();
     ElapsedTime liftTime = new ElapsedTime();
     SampleMecanumDrive drive;
+
+    Vector2d yellowLeftPos = new Vector2d();
+    Vector2d yellowMidPos = new Vector2d();
+    Vector2d yellowRightPos = new Vector2d();
+
+    Pose2d tagAlignmentPosition = new Pose2d(54, 36, Math.toRadians(180));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -124,6 +130,24 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
 
                 .build();
 
+        TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
+                .back(5)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence tagAlignMid = drive.trajectorySequenceBuilder(middlePurple.end())
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence tagAlignRight = drive.trajectorySequenceBuilder(rightPurple.end())
+                .back(5)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(tagAlignmentPosition, Math.toRadians(0))
+                .build();
+
+
         //YELLOW PIXELS
 
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -191,26 +215,20 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
             drive.backSlidesMove(outtakeTarget);
             drive.intakeSlidesMove(intakeTarget);
 
-
-
-
-
             switch (currentState) {
                 case PURPLE_DEPOSIT_PATH:
 
                     if (propPos == PropFindRightProcessor.pos.LEFT) {
                         drive.followTrajectorySequenceAsync(leftPurple);
-                        drive.intakeToGround();
-                        currentState = State.PURPLE_DEPOSIT;
+
                     } else if (propPos == PropFindRightProcessor.pos.RIGHT) {
                         drive.followTrajectorySequenceAsync(rightPurple);
-                        drive.intakeToGround();
-                        currentState = State.PURPLE_DEPOSIT;
+
                     } else {
                         drive.followTrajectorySequenceAsync(middlePurple);
-                        drive.intakeToGround();
-                        currentState = State.PURPLE_DEPOSIT;
                     }
+                    drive.intakeToGround();
+                    currentState = State.PURPLE_DEPOSIT;
 
                     break;
 
@@ -288,9 +306,6 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
-
-
-
                             resetInt++;
                         }
                         if (resetInt == 1) {
@@ -304,7 +319,6 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
 
                                 outtakeTarget = 900;
 
-
                                 currentState = State.YELLOW_DEPOSIT;
                             }
                         }
@@ -312,9 +326,6 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
-
-
-
                             resetInt++;
                         }
                         if (resetInt == 1) {
@@ -332,8 +343,6 @@ public class CenterStageBackdropBlueTRY extends LinearOpMode {
                         if(resetInt == 0) {
                             preloadTime.reset();
                             preloadInt = 0;
-
-
 
                             resetInt++;
                         }

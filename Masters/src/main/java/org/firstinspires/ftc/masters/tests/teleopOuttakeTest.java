@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.tests;
 
 
 import static org.firstinspires.ftc.masters.CSCons.clawOpen;
@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.CSCons.ClawPosition;
 import org.firstinspires.ftc.masters.CSCons.DriveMode;
 import org.firstinspires.ftc.masters.CSCons.HookPosition;
@@ -32,8 +33,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = "TeleOp Wrist Outtake", group = "competition")
-public class AutomatedTeleopWristOuttake extends LinearOpMode {
+//@TeleOp(name = "TeleOp Wrist Outtake ", group = "competition")
+public class teleopOuttakeTest extends LinearOpMode {
 
     static int target = 0;
     OuttakePosition backSlidePos = OuttakePosition.BOTTOM;
@@ -174,25 +175,25 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
     TODO: LB - Hang down
     TODO: RB - Hang up
         */
-        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("backRight");
-
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
-        intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
-        backSlides = hardwareMap.dcMotor.get("backSlides");
-        otherBackSlides=hardwareMap.dcMotor.get("otherBackSlides");
-
-        planeRaise = hardwareMap.servo.get("planeRaise");
-        clawServo = hardwareMap.servo.get("clawServo");
-        clawArm = hardwareMap.servo.get("clawArm");
-        clawAngle = hardwareMap.servo.get("clawAngle");
+//        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
+//        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
+//        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
+//        rightRearMotor = hardwareMap.dcMotor.get("backRight");
+//
+//        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
+//        intakeSlides = hardwareMap.dcMotor.get("intakeSlides");
+//        backSlides = hardwareMap.dcMotor.get("backSlides");
+//        otherBackSlides=hardwareMap.dcMotor.get("otherBackSlides");
+//
+//        planeRaise = hardwareMap.servo.get("planeRaise");
+//        clawServo = hardwareMap.servo.get("clawServo");
+//        clawArm = hardwareMap.servo.get("clawArm");
+//        clawAngle = hardwareMap.servo.get("clawAngle");
         wristServo = hardwareMap.servo.get("wrist");
         //cameraTurning = hardwareMap.servo.get("cameraTurning");
 
@@ -201,40 +202,40 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
         outtakeRotation = hardwareMap.servo.get("outtakeRotation");
         outtakeMovement = hardwareMap.servo.get("backSlideServo");
-        touchBucket = hardwareMap.touchSensor.get("touchBucket");
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
-
-
-        // Set the drive motor direction:
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
-        otherBackSlides.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-//        intakeSlides.setTargetPosition(0);
-//        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        intakeSlides.setPower(.5);
-
-        backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        touchBucket = hardwareMap.touchSensor.get("touchBucket");
+//        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
+//
+//
+//        // Set the drive motor direction:
+//        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+//        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+//        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+//        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+//        otherBackSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+//
+//        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        //backSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        otherBackSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        hangingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+////        intakeSlides.setTargetPosition(0);
+////        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////        intakeSlides.setPower(.5);
+//
+//        backSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        otherBackSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -242,13 +243,13 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        clawArm.setPosition(CSCons.clawArmTransition);
-        clawAngle.setPosition(CSCons.clawAngleTransition);
-        clawServo.setPosition(CSCons.clawOpen);
+//        backSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        otherBackSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        intakeSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        clawArm.setPosition(CSCons.clawArmTransition);
+//        clawAngle.setPosition(CSCons.clawAngleTransition);
+//        clawServo.setPosition(CSCons.clawOpen);
 
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
@@ -607,7 +608,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                         }
 
                         if (gamepad2.dpad_left && !wristButtonPressed){
-                            if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                            if (outtakeWristPosition== OuttakeWrist.angleLeft){
                                 outtakeWristPosition= OuttakeWrist.flatLeft;
                             }else {
                                 outtakeWristPosition = OuttakeWrist.angleLeft;
@@ -649,7 +650,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                     case ReadyToDrop:
 
                             if (gamepad2.dpad_left && !wristButtonPressed){
-                                if (outtakeWristPosition==OuttakeWrist.angleLeft){
+                                if (outtakeWristPosition== OuttakeWrist.angleLeft){
                                     outtakeWristPosition= OuttakeWrist.flatLeft;
                                 }else {
                                     outtakeWristPosition = OuttakeWrist.angleLeft;
@@ -676,22 +677,22 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
 
 //                            wristServo.setPosition(outtakeWristPosition.getPosition());
 
-                            if(outtakeWristPosition ==OuttakeWrist.angleLeft){
+                            if(outtakeWristPosition == OuttakeWrist.angleLeft){
                                 wristServo.setPosition(CSCons.wristAngleLeft);
                             }
-                            if(outtakeWristPosition ==OuttakeWrist.angleRight){
+                            if(outtakeWristPosition == OuttakeWrist.angleRight){
                             wristServo.setPosition(CSCons.wristAngleRight);
                             }
-                            if(outtakeWristPosition ==OuttakeWrist.vertical){
+                            if(outtakeWristPosition == OuttakeWrist.vertical){
                             wristServo.setPosition(CSCons.wristVertical);
                             }
-                            if(outtakeWristPosition ==OuttakeWrist.flatLeft){
+                            if(outtakeWristPosition == OuttakeWrist.flatLeft){
                             wristServo.setPosition(CSCons.wristFlatLeft);
                             }
-                            if(outtakeWristPosition ==OuttakeWrist.flatRight){
+                            if(outtakeWristPosition == OuttakeWrist.flatRight){
                             wristServo.setPosition(CSCons.wristFlatRight);
                             }
-                            if (outtakeWristPosition ==OuttakeWrist.verticalDown){
+                            if (outtakeWristPosition == OuttakeWrist.verticalDown){
                                 wristServo.setPosition(CSCons.wristVerticalDown);
                             }
 
@@ -750,7 +751,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                             outtakeServo2.setPosition(servo2Up);
                             outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
                             outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
-                            outtakeWristPosition =OuttakeWrist.vertical;
+                            outtakeWristPosition = OuttakeWrist.vertical;
                             wristServo.setPosition(CSCons.wristVertical);
                             if (backSlides.getCurrentPosition()> OuttakePosition.LOW.getTarget()+400) {
                                 backSlidePos = OuttakePosition.BOTTOM;
