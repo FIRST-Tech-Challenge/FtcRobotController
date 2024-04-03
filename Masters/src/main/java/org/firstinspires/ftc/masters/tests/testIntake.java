@@ -45,10 +45,13 @@ public class testIntake extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.a){
-                intake.setPower(1);
+                intake.setPower(CSCons.speed);
             }
             if (gamepad1.b){
                 intake.setPower(0);
+            }
+            if (gamepad1.x){
+                intake.setPower(-1);
             }
 
             angle.setPosition(CSCons.intakeBottom);
