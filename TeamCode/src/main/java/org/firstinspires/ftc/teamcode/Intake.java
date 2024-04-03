@@ -61,10 +61,6 @@ public class Intake {
 
         }
     }
-
-
-} // end class
-
     public void turnOffConveyorBelt() {
         intakeMotor.setPower(0.0);
     }
@@ -72,5 +68,10 @@ public class Intake {
     public void turnOnConveyorBelt() {
         intakeMotor.setPower(1.0);
     }
-}
+
+
+} // end class
+
+
+
 

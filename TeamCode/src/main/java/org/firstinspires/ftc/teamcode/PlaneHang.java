@@ -77,5 +77,10 @@ public class PlaneHang {
 
         }
     }
+
+    public void initServo() {
+        leftHangServo.setPosition(0.6);
+        rightHangServo.setPosition(0.5);
+    }
 }
 

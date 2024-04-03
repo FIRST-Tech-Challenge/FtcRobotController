@@ -24,6 +24,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
         ElapsedTime intakeDirectionToggle = new ElapsedTime();
 
         gobbler.outtake.closeMailbox();
+        gobbler.planeHang.initServo();
 
         telemetry.addData("Status", "Waiting for Start");
         telemetry.update();
@@ -65,36 +66,32 @@ public class Centerstage_TeleOp extends LinearOpMode {
             gobbler.outtake.driveLift(-gamepad2.left_stick_y);
 
             // Provides telemetry for all motors, servos, and sensors.
-            telemetry.addData("Driving Motors", " ");
             telemetry.addData("Front Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftFrontDrive.getPower(),
                     gobbler.driveTrain.rightFrontDrive.getPower());
             telemetry.addData("Back Driving Motors (Left, Right)", "%4.2f, %4.2f",
                     gobbler.driveTrain.leftBackDrive.getPower(),
                     gobbler.driveTrain.rightBackDrive.getPower());
-            telemetry.addData("Front Driving Motors (Left, Right)", "%d, %d",
+            telemetry.addData("Front Driving Motor Encoders (Left, Right)", "%d, %d",
                     gobbler.driveTrain.leftFrontDrive.getCurrentPosition(),
                     gobbler.driveTrain.rightFrontDrive.getCurrentPosition());
-            telemetry.addData("Back Driving Motors (Left, Right)", "%d, %d",
+            telemetry.addData("Back Driving Motor Encoders (Left, Right)", "%d, %d",
                     gobbler.driveTrain.leftBackDrive.getCurrentPosition(),
                     gobbler.driveTrain.rightBackDrive.getCurrentPosition());
-            telemetry.addData("Intake Motor Power",
+            telemetry.addData("Intake Motor Power/Encoder",
                    gobbler.intake.intakeMotor.getPower());
-            telemetry.addData("Lift Motor Power",
-                    gobbler.outtake.liftMotor.getPower());
-            telemetry.addData("Lift Motor Encoder",
+            telemetry.addData("Lift Motor Power", "%4.2f, %d",
+                    gobbler.outtake.liftMotor.getPower(),
                     gobbler.outtake.getLiftMotorPos());
             telemetry.addData("Bottom Limit Status",
-                    String.valueOf(gobbler.outtake.bottomLimit.isPressed()));
-            telemetry.addData("Stage Motor",
-                    gobbler.outtake.stageMotor.getPower());
-            telemetry.addData("Trapdoor Status",
-                   String.valueOf(gobbler.outtake.mailboxOpen));
+                    gobbler.outtake.getBottomLimitStatus());
+            telemetry.addData("Mailbox Status",
+                   gobbler.outtake.getMailboxStatus());
             telemetry.addData("Drone Status",
                     String.valueOf(gobbler.planeHang.droneToggle));
-            telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
-                    gobbler.driveTrain.getDistanceLeftValue(),
-                    gobbler.driveTrain.getDistanceRightValue());
+//            telemetry.addData("Distance Sensors (Left, Right)", "%4.2f, %4.2f",
+//                    gobbler.driveTrain.getDistanceLeftValue(),
+//                    gobbler.driveTrain.getDistanceRightValue());
             telemetry.update();
         }
     }
