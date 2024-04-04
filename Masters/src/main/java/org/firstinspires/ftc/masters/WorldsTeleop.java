@@ -354,6 +354,14 @@ public class WorldsTeleop extends LinearOpMode {
                     intakeStackButtonPushed = false;
                 }
 
+                if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
+                    target -= 10;
+                }
+
+                if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
+                    target += 10;
+                }
+
                 switch (stackPosition) {
                     case 0:
                         intakeHeight.setPosition(CSCons.intakeBottom);
@@ -396,7 +404,6 @@ public class WorldsTeleop extends LinearOpMode {
                                 outtakeServo2.setPosition(servo2Down);
                                 pickupElapsedTime =null;
                             }
-
 
 
                         if (gamepad2.left_trigger > 0.5) {
@@ -473,8 +480,6 @@ public class WorldsTeleop extends LinearOpMode {
                                 wristButtonPressed = false;
                             }
 
-//                            wristServo.setPosition(outtakeWristPosition.getPosition());
-
                            setWristServoPosition();
 
 
@@ -497,7 +502,6 @@ public class WorldsTeleop extends LinearOpMode {
                                 if (outtakeWristPosition== OuttakeWrist.verticalDown){
                                     outtakeServo2.setPosition(servo2Up);
                                 }
-
                             }
 
                             if (gamepad2.b){
@@ -553,13 +557,7 @@ public class WorldsTeleop extends LinearOpMode {
                                 outtakeServo2.setPosition(servo2Down);
                             }
 
-                            if (gamepad2.left_bumper && driveMode != DriveMode.END_GAME) { //down
-                                target -= 10;
-                            }
 
-                            if (gamepad2.right_bumper && driveMode != DriveMode.END_GAME) { //up
-                                target += 10;
-                            }
 
                             if (slideNeedstoGoDown && outtakeElapsedTime != null && outtakeElapsedTime.milliseconds() > 500) {
                                 backSlidePos = OuttakePosition.BOTTOM;
