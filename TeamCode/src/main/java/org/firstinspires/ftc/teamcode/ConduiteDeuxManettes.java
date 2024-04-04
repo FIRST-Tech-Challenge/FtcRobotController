@@ -37,21 +37,19 @@ public class ConduiteDeuxManettes extends LinearOpMode {
     double maPosCoude = 0;
 
     private void engGoto(int epb, double epc) {
-        if (brasA > epb) {
-            if (zeroDuHaut + brasA < 100) {
-                tgtBras = -0.05;
-            } else {
-                tgtBras = -0.3;
-            }
-        } else if (brasA < epb) {
-            tgtBras = 0.3;
+
+        if (brasA > zeroDuBras+epb) {
+            tgtBras = -0.4;
+        } else if (brasA < zeroDuBras+epb) {
+            tgtBras = 0.4;
         } else {
             tgtBras = 0;
         }
         coudeX = epc;
-        bras0 = epb;
+        bras0 = zeroDuBras+epb;
 
     }
+
     @Override
     public void runOpMode() {
         motorA = hardwareMap.get(DcMotorEx.class, "moteur1");
@@ -70,7 +68,7 @@ public class ConduiteDeuxManettes extends LinearOpMode {
         double varX = 0;
         double varYpos = 0;
         double varXpos = 0;
-        double coudeZero = 0.91;
+        double coudeZero = 0;
 
         double lanceurPret = 0;
         double lanceurGo = 1;
@@ -162,18 +160,6 @@ public class ConduiteDeuxManettes extends LinearOpMode {
                 motorB.setPower(-(tgtPowerB / 2));
             }
 
-            //Mode Precision (en test)
-            if (PrecisionMode){
-                while (manette2.dpad_up){
-                    PrecisionMode = false;
-                    coudepas = 0.003;
-                }
-            } else {
-                while (manette2.dpad_up){
-                    PrecisionMode = true;
-                    coudepas = 0.001;
-                }}
-
             if (OvercloakMode){
                 while (manette2.dpad_down){
                     OvercloakMode = false;
@@ -228,16 +214,16 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
             // Activation Mode Enregistré
             if (manette2.x) {
-                engGoto(zeroDuHaut,0.5);
+                engGoto(0,1);
             }
             if (manette2.y) {
-                engGoto(zeroDuHaut,0.5);
+                engGoto(-10,0);
             }
             if (manette2.a) {
-                engGoto(zeroDuHaut,0.5);
+                engGoto(-10,0.6);
             }
             if (manette2.b) {
-                engGoto(zeroDuHaut,0.5);
+                engGoto(-177,0.95);
             }
             //
 
