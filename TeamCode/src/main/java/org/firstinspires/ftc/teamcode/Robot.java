@@ -96,6 +96,7 @@ public class Robot {
     private double prevLeftDistance;
     private double deltaBackDistance;
     private double prevBackDistance;
+    private double deltaAngleDegrees;
 
     public enum MARKER_LOCATION {
         INNER, CENTER, OUTER
@@ -187,6 +188,7 @@ public class Robot {
 
         theta = (rightDistance - leftDistance)/ TRACK_WIDTH;
         deltaAngle = theta/2;
+        deltaAngleDegrees = Math.toDegrees(deltaAngle);
 
         deltaX = distanceMiddle * Math.cos(initialAngle + deltaAngle);
         deltaY = distanceMiddle * Math.sin(initialAngle + deltaAngle);
@@ -220,25 +222,18 @@ public class Robot {
 
         forward = (leftDistance + rightDistance)/2;
         theta = (rightDistance - leftDistance)/ TRACK_WIDTH;
-        mecanum = backDistance - backDistanceToMid * theta;
-
+        mecanum = backDistance - backDistance * theta;
+        
         deltaForward = (deltaLeftDistance + deltaRightDistance)/2;
         Log.d("delta", String.valueOf(deltaForward));
         deltaTheta = (deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
         Log.d("delta", String.valueOf(deltaTheta));
-
-        if (deltaTheta == 0) {
-//            telemetry.addLine("stop x coordinate: " + xCoordinate);
-//            telemetry.addLine("y coordinate: " + yCoordinate);
-//            telemetry.addData("angle", theta);
-//            telemetry.addData("delta y", deltaY);
-//            telemetry.addData("delta x", deltaX);
-//            telemetry.addData("delta theta", deltaTheta);//0????
-            return;
-        }
-
         deltaMecanum = (deltaBackDistance - backDistanceToMid) * deltaTheta;
         Log.d("delta", String.valueOf(deltaMecanum));
+
+        if (deltaTheta == 0) {
+            return;
+        }
 
         forwardRadius = deltaForward/deltaTheta;
         mecanumRadius = deltaMecanum/deltaTheta;
