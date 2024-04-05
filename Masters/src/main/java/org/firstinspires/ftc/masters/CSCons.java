@@ -36,23 +36,23 @@ public class CSCons {
     public static double outtakeMovementTransfer = .72;
 
     public static double wristOuttakeAngleFolder =0.05;
-    public static double wristOuttakeAngleTransfer =1;
+    public static double wristOuttakeAngleTransfer =0.96;
     public static double wristOuttakeMovementTransfer=0.32;
 
-    public static double wristOuttakePickup=0.26;
-    public static double wristOuttakeMovementBackdrop =0.64;
+    public static double wristOuttakePickup=0.25;
+    public static double wristOuttakeMovementBackdrop =0.68;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
     public static double openMicroHook =0.5;
     public static double closeMicroHook =0;
 
-    public static double wristFlatRight=0.15; //
+    public static double wristFlatRight=0.17; //
     public static double wristAngleRight=0.35; //
     public static double wristVertical= 0.46; //
     public static double wristAngleLeft =0.55; //
-    public static double wristFlatLeft =0.72; //
-    public static double wristVerticalDown=0.98;
+    public static double wristFlatLeft =0.745; //
+    public static double wristVerticalDown=1;
 
     public static double droneFlat = 0.59;
     public static double droneShooting = 0.2;
@@ -101,11 +101,11 @@ public class CSCons {
     public static double cameraOffsetY = 10;
 
 
-    public static double intakeBottom = 0.33;
-    public static double intake2 =0.28;
-    public static double intake3 =0.26;
-    public static double intake4 =0.24;
-    public static double intake5 =0.22;
+    public static double intakeBottom = 0.32;
+    public static double intake2 =0.29;
+    public static double intake3 =0.27;
+    public static double intake4 =0.25;
+    public static double intake5 =0.23;
     public static double intakeAboveTop =0.2;
     public static double intakeInit =0;
 

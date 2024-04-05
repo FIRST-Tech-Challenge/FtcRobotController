@@ -260,14 +260,14 @@ public class WorldsTeleop extends LinearOpMode {
                     break;
                 case END_GAME:
                     drive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-//                    if (gamepad2.y) {
-//                        planeRaise.setPosition(CSCons.droneShooting);
-//                        elapsedTime = new ElapsedTime();
-//                        while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
-//
-//                        }
-//                        planeRaise.setPosition((CSCons.droneFlat));
-//                    }
+                    if (gamepad2.y) {
+                        planeRaise.setPosition(CSCons.droneShooting);
+                        elapsedTime = new ElapsedTime();
+                        while (elapsedTime.time(TimeUnit.MILLISECONDS) < 500 && opModeIsActive()) {
+
+                        }
+                        planeRaise.setPosition((CSCons.droneFlat));
+                    }
 
                     if (gamepad2.left_bumper) { //down
                         backSlidePos = OuttakePosition.BOTTOM;
@@ -331,26 +331,26 @@ public class WorldsTeleop extends LinearOpMode {
                     buttonPushed = true;
                 }
 
-                if (gamepad2.a) {
+                if (gamepad2.a && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeHeight.setPosition(CSCons.intakeBottom);
                     stackPosition = 0;
                 }
-                if (gamepad2.y) {
+                if (gamepad2.y && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition = 5;
                     intakeHeight.setPosition(CSCons.intakeAboveTop);
                 }
 
-                if (gamepad2.x && !intakeStackButtonPushed) {
+                if (gamepad2.x && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition--;
                     intakeStackButtonPushed = true;
                 }
 
-                if (gamepad2.b && !intakeStackButtonPushed) {
+                if (gamepad2.b && !intakeStackButtonPushed && outtakeState!=OuttakeState.ReadyToDrop) {
                     stackPosition++;
                     intakeStackButtonPushed = true;
                 }
 
-                if (!gamepad2.x && !gamepad2.b) {
+                if (!gamepad2.x && !gamepad2.b && outtakeState!=OuttakeState.ReadyToDrop) {
                     intakeStackButtonPushed = false;
                 }
 
@@ -395,11 +395,13 @@ public class WorldsTeleop extends LinearOpMode {
                             }
                             if (gamepad2.left_stick_y<-0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // closes hook with x
 
-                                outtakeServo1.setPosition(servo1Down);
-                                outtakeServo2.setPosition(servo2Down);
+                                outtakeServo1.setPosition(servo1Up);
+                                outtakeServo2.setPosition(servo2Up);
+                                outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
+                                outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
                             }
 
-                            if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>200){
+                            if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
                                 outtakeServo1.setPosition(servo1Down);
                                 outtakeServo2.setPosition(servo2Down);
                                 pickupElapsedTime =null;
