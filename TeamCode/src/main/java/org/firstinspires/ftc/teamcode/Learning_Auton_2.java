@@ -24,8 +24,8 @@ public class Learning_Auton_2 extends LinearOpMode {
 
 
         if (opModeIsActive()) {
-
-
+myBot.MoveStraight(100000,0.8, 1000);
+myBot.RotateLeft(1440, 0.8, 1000);
 
         }
     }
