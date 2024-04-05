@@ -265,10 +265,10 @@ public class BlueSideBasDecal extends LinearOpMode {
         waitTime(0.5);
 
 
-        targetBras = 50;
+        coudeG.setPosition(0);
+        coudeD.setPosition(1);
+        targetBras = 462;
         BrasGoTo();
-        coudeG.setPosition(0.25);
-        coudeD.setPosition(1-0.25);
         goRight(1);
         driveForwardPID(0.5, 1);
 
