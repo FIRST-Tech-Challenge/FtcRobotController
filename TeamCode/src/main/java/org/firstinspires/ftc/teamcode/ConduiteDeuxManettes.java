@@ -214,13 +214,13 @@ public class ConduiteDeuxManettes extends LinearOpMode {
 
             // Activation Mode Enregistré
             if (manette2.x) {
-                engGoto(0,1);
+                engGoto(-20,1);
             }
             if (manette2.y) {
-                engGoto(-10,0);
+                engGoto(-20,0);
             }
             if (manette2.a) {
-                engGoto(-10,0.6);
+                engGoto(-20,0.8);
             }
             if (manette2.b) {
                 engGoto(-177,0.95);
