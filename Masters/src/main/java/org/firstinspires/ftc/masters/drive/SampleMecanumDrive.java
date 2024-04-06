@@ -294,7 +294,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void initializeVisionPortal(PropFindRightProcessor propFindProcessor){
         if (USE_WEBCAM) {
             myVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "backWebcam"))
+                    .setCamera(hardwareMap.get(WebcamName.class, "frontWebcam"))
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         } else {
