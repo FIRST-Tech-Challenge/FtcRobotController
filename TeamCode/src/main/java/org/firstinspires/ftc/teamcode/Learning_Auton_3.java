@@ -16,16 +16,16 @@ public class Learning_Auton_3 extends LinearOpMode {
     public void runOpMode() {
 
         ElapsedTime runtime = new ElapsedTime();
-        
-
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
 
+
         if (opModeIsActive()) {
-
-
+          myBot.MoveStraight(2000,0.5,300);
+          myBot.RotateRight(920,.5,300);
+          myBot.RotateLeft(920,.5,300);
 
 
         }
