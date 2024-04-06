@@ -67,8 +67,8 @@ public class Robot {
     double hardStopTrayAngleBig;
     double hardStopTrayAngleSmall;
 
-    PIDController straightController;
-    PIDController fLeftMecanumController;
+    public PIDController straightController;
+    public PIDController fLeftMecanumController;
     public PIDController bRightMecanumController;
     PIDController setHeadingController;
     double robotX = 0;
@@ -2560,9 +2560,6 @@ public class Robot {
     }
 
     public DrivetrainPowers mecanumParallelPowerPID(double currentPos, double targetPos) {
-        fLeftMecanumController.state.integral = 0;
-        fLeftMecanumController.state.lastError = 0;
-        fLeftMecanumController.state.lastTime = 0;
         double power;
         double ERROR_TOLERANCE_IN_TICKS = 15;
 
@@ -2574,46 +2571,21 @@ public class Robot {
         return new DrivetrainPowers(0,0,0,0);
     }
 
-    public DrivetrainPowers straightParallelPowerPID(double currentPos, double targetPos, boolean forward, int inches, double maxPower) {
-        double ERROR_TOLERANCE = 10;
+    public DrivetrainPowers straightParallelPowerPID(double currentPos, double targetPos, double maxPower) {
+        double ERROR_TOLERANCE = 15;
         double power;
-        final double KP = 0.01;
-        final double KD = 500_000;
-        final double minPower = 0.2;
-        double currentTick = fLeft.getCurrentPosition();
-        double errorDer;
-        double currentTime;
 
-        //inch to tick
-        final double wheelDiaMm = 96;
-        final double PI = Math.PI;
-        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
-        final double IN_TO_TICK = 537 / wheelCircIn;
-
-        double error = targetPos - currentTick;
+        double error = targetPos - currentPos;
 
         if (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
 
-            currentTime = SystemClock.elapsedRealtimeNanos();
-            error = targetPos - currentTick;
-            errorDer = (error - prevError) / (currentTime - prevTime);
-            power = (KP * error) + (KD * errorDer);
-
-            if (power > 0 && power < minPower) {
-                power += minPower;
-            } else if (power < 0 && power > -1 * minPower) {
-                power -= minPower;
-            }
+            power = straightController.calculatePID(currentPos, targetPos);
 
             //cap power
             power = Range.clip(power, -1 * maxPower, maxPower);
 
-            prevTime = currentTime;
-            prevError = error;
-
-            return new DrivetrainPowers(power, power, power, power);
+            return new DrivetrainPowers(power,power,power,power);
         }
-
         return new DrivetrainPowers(0,0,0,0);
     }
 
