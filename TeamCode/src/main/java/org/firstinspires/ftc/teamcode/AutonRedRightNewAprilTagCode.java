@@ -87,7 +87,7 @@ public class AutonRedRightNewAprilTagCode extends LinearOpMode {
              }
 
 
-            mySparky.AdjustToAprilTag(mySpikeLocation,"RedRight");
+        //    mySparky.AdjustToAprilTag(mySpikeLocation,"RedRight");
             newAprilTags.DriveToAprilTag(mySparky.getAprilTagTarget(mySpikeLocation, mySparky.myAlliance));
             mySparky.scoreFromDrivingPositionAndReturn();
             mySparky.MoveStraight(-50,.5,300);
