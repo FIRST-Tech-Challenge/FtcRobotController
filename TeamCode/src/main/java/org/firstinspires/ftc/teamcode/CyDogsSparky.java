@@ -43,8 +43,8 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int ArmMedium = 3600;
     public static final int ArmHigh = 6300;
     public static final int ArmRaiseBeforeElbowMovement = 3400;
-    public static final double WristForDriving = 0.44;
-    public static final double WristForScoring = 0.75;
+    public static final double WristForDriving = 0.47;
+    public static final double WristForScoring = 0.76;
     public static final double ElbowHomePosition = 0.233;
     public static final double ElbowScoringPosition = 0.5;
     public static final double FingerLeftOpen = 0.4;
@@ -254,6 +254,7 @@ public class CyDogsSparky extends CyDogsChassis{
  //       }
         if(foundTag != null) {
             inchesXMovement = foundTag.ftcPose.x;
+
             StrafeRight((int) (-(inchesXMovement +extraInches)* 25.4), .5, 400);
         }
 
