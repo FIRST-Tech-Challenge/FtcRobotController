@@ -333,6 +333,18 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     }
 
+    public void startIntake(){
+        intake.setPower(CSCons.speed);
+    }
+
+    public void revertIntake(){
+        intake.setPower(-CSCons.speed);
+    }
+
+    public void  stopIntake(){
+        intake.setPower(0);
+    }
+
     public void dropIntake(){
         intakeHeight.setPosition(CSCons.intakeGround);
     }
@@ -346,10 +358,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        clawArm.setPosition(CSCons.clawArmGround);
     }
 
+    public void intakeOverSTack(){
+        intakeHeight.setPosition(CSCons.intakeAboveTop);
+    }
 
     public void intakeToTopStack() {
-//        clawAngle.setPosition(CSCons.clawAngleFourToFive);
-//        clawArm.setPosition(CSCons.clawArm5);
+        intakeHeight.setPosition(CSCons.intake5);
     }
 
     //pick up pixel 3 and 4
@@ -392,6 +406,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
     }
 
+    public void outtakeToPickup(){
+        outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+    }
+
     public void dropPixel() {
 //        outtakeHook.setPosition(CSCons.openHook);
 //        microHook.setPosition(CSCons.openMicroHook);
@@ -404,6 +422,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void openFingers(){
         outtakeServo1.setPosition(servo1Up);
+        outtakeServo2.setPosition(servo2Up);
+    }
+
+    public void openFrontFinger(){
+        outtakeServo1.setPosition(servo1Up);
+    }
+
+    public void openBackFinger(){
         outtakeServo2.setPosition(servo2Up);
     }
 
@@ -789,5 +815,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementTransfer);
         wristServo.setPosition(CSCons.wristVertical);
     }
+
+    public void setOuttakeToGround(){
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
+        outtakeMovement.setPosition(CSCons.getWristOuttakeMovementGround);
+
+    }
+
 
 }
