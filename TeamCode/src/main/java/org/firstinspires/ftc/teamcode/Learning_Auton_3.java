@@ -21,8 +21,6 @@ public class Learning_Auton_3 extends LinearOpMode {
         waitForStart();
 
 
-
-
         if (opModeIsActive()) {
           myBot.MoveStraight(2000,0.5,300);
           myBot.RotateRight(920,.5,300);
