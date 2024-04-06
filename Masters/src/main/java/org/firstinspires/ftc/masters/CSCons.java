@@ -101,6 +101,7 @@ public class CSCons {
     public static double cameraOffsetY = 10;
 
 
+    public static double intakeGround = 0.38; //for autonomous, purple pixel
     public static double intakeBottom = 0.32;
     public static double intake2 =0.29;
     public static double intake3 =0.27;
@@ -155,6 +156,20 @@ public class CSCons {
 
     public enum IntakeDirection {
         ON, OFF, BACKWARD
+    }
+
+    public enum OuttakeWrist{
+        flatRight (CSCons.wristFlatRight), angleRight(CSCons.wristAngleRight), verticalDown(CSCons.wristVerticalDown),
+        vertical(CSCons.wristVertical), angleLeft(CSCons.wristAngleLeft), flatLeft(CSCons.wristFlatLeft);
+
+        double position= -1;
+        private OuttakeWrist(double position){
+            this.position= position;
+        }
+
+        public double getPosition(){
+            return position;
+        }
     }
 
 /**

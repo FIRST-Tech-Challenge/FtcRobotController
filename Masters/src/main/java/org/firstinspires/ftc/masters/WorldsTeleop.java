@@ -148,7 +148,6 @@ public class WorldsTeleop extends LinearOpMode {
 
         planeRaise = hardwareMap.servo.get("planeRaise");
         wristServo = hardwareMap.servo.get("wrist");
-        //cameraTurning = hardwareMap.servo.get("cameraTurning");
 
         outtakeServo1 = hardwareMap.servo.get("outtakeHook");
         outtakeServo2 = hardwareMap.servo.get("microHook");
@@ -664,33 +663,17 @@ public class WorldsTeleop extends LinearOpMode {
     protected void backSlidesMove(int target) {
 
         int slidePos = backSlides.getCurrentPosition();
+        int otherSlidePos = otherBackSlides.getCurrentPosition();
         double pid = outtakeController.calculate(slidePos, target);
+        double otherPid = outtakeController.calculate(otherSlidePos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
         double liftPower = pid + ff;
 
         backSlides.setPower(liftPower);
-        otherBackSlides.setPower(liftPower);
+        otherBackSlides.setPower(otherPid+ff);
     }
 
-//    public void intakeSlidesMove(int target) {
-//
-//
-//        int slidePos = intakeSlides.getCurrentPosition();
-//        double pid = intakeController.calculate(slidePos, target);
-//        double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * iif;
-//
-//        double liftPower = pid + ff;
-//
-////        if (target<500) {
-////            intakeSlides.setPower(liftPower);
-////        } else {
-//            intakeSlides.setPower(Math.min(Math.abs(liftPower), 1) * liftPower / Math.abs(liftPower));
-//           // telemetry.addData("intake power", +Math.min(Math.abs(liftPower), 0.8) * liftPower / Math.abs(liftPower));
-//       // }
-//
-//
-//    }
 
     protected ElapsedTime closeHook(){
         ElapsedTime time = new ElapsedTime();
