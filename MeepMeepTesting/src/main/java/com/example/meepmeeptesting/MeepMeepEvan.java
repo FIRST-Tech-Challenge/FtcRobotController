@@ -423,6 +423,106 @@ public class MeepMeepEvan {
                                 .build()
                 );
 
+        RoadRunnerBotEntity BlueFarStageC = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.50)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, 61.2), Math.toRadians(270)))
+                                .setTangent(Math.toRadians(-50))
+                                .splineToLinearHeading(new Pose2d(-45, 14, Math.toRadians(-120)), Math.toRadians(-110))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(-140))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 34, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+                                //2+3
+
+                                .setTangent(Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+                                //2+5
+
+                                .setTangent(Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+
+
+
+                                .build()
+                );
+
+        RoadRunnerBotEntity BlueFarStageL = new DefaultBotBuilder(meepMeep)
+                .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.50)
+                .setDimensions(15, 17.8)
+
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, 61.2), Math.toRadians(270)))
+                                .setTangent(Math.toRadians(-110))
+                                .splineToLinearHeading(new Pose2d(-35, 35, Math.toRadians(-180)), Math.toRadians(-30))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(-90))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 38, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+                                //2+3
+
+                                .setTangent(Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+                                //2+5
+
+                                .setTangent(Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(0.5)
+
+                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                                .waitSeconds(0.5)
+
+
+
+
+                                .build()
+                );
+
+
+
         RoadRunnerBotEntity BlueFarTrussR = new DefaultBotBuilder(meepMeep)
                 .setConstraints(45, 45, Math.toRadians(60), Math.toRadians(60), 12.5)
                 .setDimensions(15, 17.8)
@@ -485,7 +585,7 @@ public class MeepMeepEvan {
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(BlueFarStageR)
+                .addEntity(BlueFarStageL)
                 .start();
     }
 }
