@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.PropFindLeft;
 import org.firstinspires.ftc.masters.PropFindRight;
+import org.firstinspires.ftc.masters.YellowPixelProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -26,9 +27,9 @@ public class CVTesting extends LinearOpMode {
     public void runOpMode()
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
-        PropFindLeft myPipeline;
-        webcam.setPipeline(myPipeline = new PropFindLeft(telemetry,packet));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "backWebcam"), cameraMonitorViewId);
+        YellowPixelCVTest myPipeline;
+        webcam.setPipeline(myPipeline = new YellowPixelCVTest(telemetry,packet));
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
