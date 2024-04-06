@@ -27,7 +27,7 @@ public class Learning_Auton_1 extends LinearOpMode {
         if (opModeIsActive()) {
             // Put code that should run during the active mode HERE in this area
 
-myBot.StrafeLeft(10000,0.5,300);
+myBot.StrafeLeft(1000,0.5,300);
         }
     }
 }
