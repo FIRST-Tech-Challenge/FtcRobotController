@@ -30,7 +30,7 @@ public class CyDogsSparky extends CyDogsChassis{
     // this lets us swing the elbow back and forth by keeping track if it is open or closed
     private boolean isElbowOpen = false;
 
-    private Alliance myAlliance;
+    public Alliance myAlliance;
 
     private AprilTagProcessor aprilTag;
 
