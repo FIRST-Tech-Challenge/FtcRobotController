@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Center Stage Backdrop Blue TRY", group = "competition")
+@Autonomous(name = "Backdrop blue 2 + 0", group = "competition")
 public class BlueBackDrop_2_0 extends LinearOpMode {
     private OpenCvCamera webcam;
 
@@ -51,7 +51,7 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
     int resetInt = 0;
     int preloadInt = 0;
     ElapsedTime purpleDepositTime = null;
-    ElapsedTime depositTime = new ElapsedTime();
+    ElapsedTime depositTime = null;
     ElapsedTime waitTime = new ElapsedTime();
     ElapsedTime preloadTime = new ElapsedTime();
     ElapsedTime liftTime = new ElapsedTime();
@@ -68,9 +68,11 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        drive = new SampleMecanumDrive(hardwareMap, telemetry);
         drive.initializeAprilTagProcessing();
-        drive.initializeAprilTagProcessing();
+        drive.initializePropFindRightProcessing();
         drive.initializeVisionPortal(drive.getPropFindProcessor());
 
 
@@ -79,7 +81,6 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         PropFindRightProcessor.pos propPos = null;
 
@@ -92,7 +93,7 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
 
         TrajectorySequence rightPurple = drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-40))
-                .splineToLinearHeading(new Pose2d(10, 30, Math.toRadians(180)), Math.toRadians(-70))
+                .splineToLinearHeading(new Pose2d(12, 30, Math.toRadians(180)), Math.toRadians(-70))
 
                 .build();
 
@@ -133,29 +134,28 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
         TrajectorySequence leftyellow = drive.trajectorySequenceBuilder(leftPurple.end())
                 .back(5)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 40, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, 42, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence middleyellow = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(48, 34, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, 34, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
 
         TrajectorySequence rightyellow = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(50, 29, Math.toRadians(180)), Math.toRadians(0))
 
                 .build();
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(middleyellow.end())
-                .setTangent(Math.toRadians(120))
-                .splineToLinearHeading(new Pose2d(44, 58, Math.toRadians(180)), Math.toRadians(80))
+        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightyellow.end())
+                .forward(5)
 
                 .build();
 
@@ -188,6 +188,7 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
             propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
+        propPos= PropFindRightProcessor.pos.LEFT;
 
         currentState = State.PURPLE_DEPOSIT_PATH;
 
@@ -218,7 +219,7 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
                     if (!drive.isBusy()){
                         if (purpleDepositTime ==null){
                             drive.raiseIntake();
-                            outtakeWristPosition = CSCons.OuttakeWrist.flatLeft;
+                            outtakeWristPosition = CSCons.OuttakeWrist.flatRight;
                             purpleDepositTime = new ElapsedTime();
                         } else if (purpleDepositTime.milliseconds()>100) {
                             outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
@@ -239,18 +240,23 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
                     break;
 
                 case YELLOW_DEPOSIT_PATH:
-                    if (drive.getBackSlides().getCurrentPosition()>100){
+
+                    if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
                         drive.outtakeToBackdrop();
-                    }
-                    if (drive.getBackSlides().getCurrentPosition()>100){
-                        drive.setWristServoPosition(CSCons.OuttakeWrist.flatLeft);
+                        drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
+                    } else if (drive.getBackSlides().getCurrentPosition()>10){
+                        drive.outtakeToBackdrop();
                     }
 
                     if (!drive.isBusy()){
                         drive.openFingers();
+                        if (depositTime==null){
+                            depositTime= new ElapsedTime();
+                        } else if (depositTime.milliseconds()>100){
+//                            drive.followTrajectorySequenceAsync(backAway);
+//                            currentState= State.END;
+                        }
                     }
-
-
 
 
                     break;
@@ -294,9 +300,9 @@ public class BlueBackDrop_2_0 extends LinearOpMode {
 //
 //                    break;
 //
-//                case END:
-//
-//                    break;
+                case END:
+
+                    break;
             }
 
 

@@ -108,7 +108,7 @@ public class CSCons {
     public static double intake4 =0.25;
     public static double intake5 =0.23;
     public static double intakeAboveTop =0.2;
-    public static double intakeInit =0;
+    public static double intakeInit =0.05;
 
     public static double speed =-1;
 
@@ -116,7 +116,7 @@ public class CSCons {
     public enum OuttakePosition{
         BOTTOM (-10),
         LOW_AUTO(105),
-        AUTO(900),
+        AUTO(400),
         LOW(1400),
         MID(2400),
         HIGH(3400);

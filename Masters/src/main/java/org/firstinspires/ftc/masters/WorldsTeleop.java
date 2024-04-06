@@ -663,15 +663,15 @@ public class WorldsTeleop extends LinearOpMode {
     protected void backSlidesMove(int target) {
 
         int slidePos = backSlides.getCurrentPosition();
-        int otherSlidePos = otherBackSlides.getCurrentPosition();
+
         double pid = outtakeController.calculate(slidePos, target);
-        double otherPid = outtakeController.calculate(otherSlidePos, target);
+
         double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
         double liftPower = pid + ff;
 
         backSlides.setPower(liftPower);
-        otherBackSlides.setPower(otherPid+ff);
+        otherBackSlides.setPower(liftPower);
     }
 
 
