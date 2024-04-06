@@ -479,7 +479,7 @@ public class MeepMeepEvan {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-39, 61.2), Math.toRadians(270)))
                                 .setTangent(Math.toRadians(-110))
-                                .splineToLinearHeading(new Pose2d(-34, 35, Math.toRadians(-180)), Math.toRadians(-30))
+                                .splineToLinearHeading(new Pose2d(-35, 35, Math.toRadians(-180)), Math.toRadians(-30))
                                 .waitSeconds(0.5)
 
                                 .setTangent(Math.toRadians(-90))
