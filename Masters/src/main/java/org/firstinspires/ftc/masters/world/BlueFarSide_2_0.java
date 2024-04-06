@@ -104,14 +104,14 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftPurple = drive.trajectorySequenceBuilder(startPose)
-                .setTangent(Math.toRadians(-50))
-                .splineToLinearHeading(new Pose2d(-47, 15, Math.toRadians(-90)), Math.toRadians(-110))
+                .setTangent(Math.toRadians(-110))
+                .splineToLinearHeading(new Pose2d(-35, 35, Math.toRadians(-180)), Math.toRadians(-30))
 
                 .build();
 
         TrajectorySequence middlePurple = drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(-50))
-                .splineToLinearHeading(new Pose2d(-47, 15, Math.toRadians(-90)), Math.toRadians(-110))
+                .splineToLinearHeading(new Pose2d(-45, 14, Math.toRadians(-120)), Math.toRadians(-110))
 
                 .build();
 
@@ -121,25 +121,32 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
         TrajectorySequence midPurpleToStack = drive.trajectorySequenceBuilder(middlePurple.end())
+                .setTangent(Math.toRadians(-140))
+                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
                 .build();
 
 
         TrajectorySequence stackToRightYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
+                .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence stackToMidYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
-                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(47, 34, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence stackToLeftYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
-                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(47, 42, Math.toRadians(180)), Math.toRadians(0))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, 38, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
 
@@ -276,13 +283,13 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                             currentState = State.YELLOW_DEPOSIT_PATH;
                             switch (propPos){
                                 case LEFT:
-                                    drive.followTrajectorySequenceAsync(leftPurpleToStack);
+                                    drive.followTrajectorySequenceAsync(stackToLeftYellow);
                                     break;
                                 case RIGHT:
-                                    drive.followTrajectorySequenceAsync(rightPurpleToStack);
+                                    drive.followTrajectorySequenceAsync(stackToRightYellow);
                                     break;
                                 case MID:
-                                    drive.followTrajectorySequenceAsync(midPurpleToStack);
+                                    drive.followTrajectorySequenceAsync(stackToMidYellow);
                                     break;
                             }
                         }
