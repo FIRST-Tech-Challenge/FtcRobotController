@@ -19,13 +19,14 @@ public class Learning_Auton_2 extends LinearOpMode {
         
 
 
+
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
 
         if (opModeIsActive()) {
-
-
+myBot.MoveStraight(1000,0.8, 1000);
+myBot.RotateLeft(1440, 0.8, 1000);
 
         }
     }
