@@ -213,19 +213,21 @@ public class Main_Tele_op extends LinearOpMode {
                 rig.setPower(0);
             }
 
-            if (gamepad1.y && !timeoutUp) {
-                encoderSlideUpInches(10);
-                timeoutUp = true;
-                timerUp = runtime.seconds();
-                telemetry.update();
+            while (gamepad1.y) {
+                slide.setPower(0.5);
+//                timeoutUp = true;
+//                timerUp = runtime.seconds();
+//                telemetry.update();
             }
 
-            if (gamepad1.a && !timeoutDown) {
-                encoderSlideDownInches(3);
-                timeoutDown = true;
-                timerDown = runtime.seconds();
-                telemetry.update();
+            while (gamepad1.a) {
+                slide.setPower(-0.5);
+
+//                timeoutDown = true;
+//                timerDown = runtime.seconds();
+//                telemetry.update();
             }
+            slide.setPower(0);
 
 
 
