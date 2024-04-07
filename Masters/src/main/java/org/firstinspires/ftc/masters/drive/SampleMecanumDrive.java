@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.masters.drive;
 
-import static org.firstinspires.ftc.masters.CSCons.clawArmTransfer;
-import static org.firstinspires.ftc.masters.CSCons.clawClosed;
-import static org.firstinspires.ftc.masters.CSCons.clawOpen;
-import static org.firstinspires.ftc.masters.CSCons.clawTransfer;
-import static org.firstinspires.ftc.masters.CSCons.openHook;
-import static org.firstinspires.ftc.masters.CSCons.openMicroHook;
 import static org.firstinspires.ftc.masters.CSCons.servo1Down;
 import static org.firstinspires.ftc.masters.CSCons.servo1Up;
 import static org.firstinspires.ftc.masters.CSCons.servo2Down;
@@ -43,7 +37,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -51,17 +44,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.masters.PropFindLeftProcessor;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.CSCons;
-import org.firstinspires.ftc.masters.WorldsTeleop;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -397,7 +387,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void outtakeToBackdrop() {
         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
-        outtakeRotation.setPosition(CSCons.wristOuttakeAngleFolder);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
     }
 
     public void outtakeToTransfer() {

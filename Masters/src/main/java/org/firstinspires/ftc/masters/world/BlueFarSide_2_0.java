@@ -134,19 +134,19 @@ public class BlueFarSide_2_0 extends LinearOpMode {
         TrajectorySequence stackToRightYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(51, 29, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence stackToMidYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(20, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(47, 34, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(51, 34, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence stackToLeftYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(30, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(47, 38, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(51, 38, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
 
@@ -276,7 +276,7 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                         if(liftTime==null) {
                             drive.intakeToTopStack();
                             liftTime = new ElapsedTime();
-                        } else if (liftTime.milliseconds()>100){
+                        } else if (liftTime.milliseconds()>150){
                             drive.stopIntake();
                             drive.outtakeToPickup();
                             pickupElapsedTime = new ElapsedTime();

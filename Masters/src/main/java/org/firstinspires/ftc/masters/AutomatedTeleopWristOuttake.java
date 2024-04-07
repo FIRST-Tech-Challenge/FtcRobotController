@@ -344,7 +344,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                     }
 
                     if (backSlides.getCurrentPosition()>2000){
-                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleFolder);
+                        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
                         outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
                     }
 
@@ -785,7 +785,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                     case MoveToDrop:
                         if (backSlides.getCurrentPosition() > 100) {
                             outtakeMovement.setPosition(CSCons.wristOuttakeMovementBackdrop);
-                            outtakeRotationTarget = CSCons.wristOuttakeAngleFolder + angleRotationAdjustment;
+                            outtakeRotationTarget = CSCons.wristOuttakeAngleBackdrop + angleRotationAdjustment;
                             outtakeRotation.setPosition(outtakeRotationTarget);
                         }
                         if (backSlides.getCurrentPosition() > backSlidePos.getTarget() - 100) {
