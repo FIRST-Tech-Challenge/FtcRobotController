@@ -90,22 +90,18 @@ public class Main_Tele_op extends LinearOpMode {
     Boolean timeoutDown = true;
     Double timerDown = 0.0;
 
-    double slideCooldown = 0.3; // in seconds
+    double slideCooldown = 0.5; // in seconds
 
 
     private Servo drone = null;
 
     private Servo l_flick = null;
     private Servo r_flick = null;
-    double flickTimer = 0.0;
-    double flickCooldown = 0.5;
-    Boolean flickTimeout = true;
-
     private Servo leftFlap = null;
     private Servo rightFlap = null;
     private CRServo intake = null;
 
-    private Servo autoarm = null;
+//    private Servo autoarm = null;
 
     ColorSensor sensorColor;
     ColorSensor sensorColor2;
@@ -143,7 +139,7 @@ public class Main_Tele_op extends LinearOpMode {
         rightFlap = hardwareMap.get(Servo.class, "rflap");
         intake = hardwareMap.get(CRServo.class, "intake");
 
-        autoarm = hardwareMap.get(Servo.class, "autoy");
+//        autoarm = hardwareMap.get(Servo.class, "autoarm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -170,17 +166,10 @@ public class Main_Tele_op extends LinearOpMode {
 //        double lastLeftTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 //        double lastRightTime = -(delay) - 0.01; //so that it wouldn't light up at the start
 
-        l_flick.setPosition(0);
-        r_flick.setPosition(0.68);
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
         boolean rightGate = false, leftGate = false;
-        boolean flickIn = true;
-
-        l_flick.setPosition(0);
-        r_flick.setPosition(0.68);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -192,18 +181,14 @@ public class Main_Tele_op extends LinearOpMode {
             double rbPower;
             double lbPower;
 
-            double drive;
-            double strafe;
-            double turn;
-            if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                drive =   gamepad1.right_stick_x * 0.2;
-                strafe =  gamepad1.left_stick_x  * 0.5;
-                turn   = -gamepad1.left_stick_y  * 0.5;
-            } else {
-                drive  =  gamepad1.right_stick_x * 0.5;
-                strafe =  gamepad1.left_stick_x;
-                turn   = -gamepad1.left_stick_y;
-            }
+            // Choose to drive using either Tank Mode, or POV Mode
+            // Comment out the method that's not used.  The default below is POV.
+
+            // POV Mode uses left stick to go forward, and right stick to turn.
+            // - This uses basic math to combine motions and is easier to drive straight.
+            double drive = gamepad1.right_stick_x * 0.75;
+            double strafe = gamepad1.left_stick_x;
+            double turn = -gamepad1.left_stick_y;
             lfPower = Range.clip(turn + strafe + drive, -1.0, 1.0);
             rfPower = Range.clip(turn - strafe - drive, -1.0, 1.0);
             lbPower = Range.clip(turn - strafe + drive, -1.0, 1.0);
@@ -214,125 +199,165 @@ public class Main_Tele_op extends LinearOpMode {
             lb_drive.setPower(lbPower);
             rb_drive.setPower(rbPower);
 
-            if (gamepad1.x || gamepad1.square) {
-                drone.setPosition(1);
-            } else {
-                drone.setPosition(0);
-            }
+//            if (gamepad1.x) {
+//                drone.setPosition(1);
+//            } else {
+//                drone.setPosition(0);
+//            }
 
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
                 rig.setPower(1);
-            } else if (gamepad2.dpad_down) {
+            } else if (gamepad1.dpad_down) {
                 rig.setPower(-1);
             } else {
                 rig.setPower(0);
             }
 
-            if (gamepad2.y && !timeoutUp) {
-                encoderSlideUpInches(13);
+            if (gamepad1.y && !timeoutUp) {
+                encoderSlideUpInches(10);
                 timeoutUp = true;
                 timerUp = runtime.seconds();
                 telemetry.update();
             }
 
-            if (gamepad2.a && !timeoutDown) {
-                encoderSlideDownInches(5);
+            if (gamepad1.a && !timeoutDown) {
+                encoderSlideDownInches(3);
                 timeoutDown = true;
                 timerDown = runtime.seconds();
                 telemetry.update();
             }
 
-            if (gamepad2.right_bumper) {
-                l_flick.setPosition(0.59); // flick out
-                r_flick.setPosition(0);
 
-            }
 
-            if (gamepad2.right_trigger > 0.5) {
-                l_flick.setPosition(0); // flick in
-                r_flick.setPosition(0.68);
-
-            }
-
-            if(gamepad2.left_bumper){
+            if (gamepad1.left_stick_button) {
                 intake.setPower(1);
-            }
-            else{
+
+            } else {
                 intake.setPower(0);
             }
-            if(gamepad2.dpad_left){
-                leftFlap.setPosition(0.4);
 
+            if(gamepad1.right_bumper){
+                l_flick.setPosition(0);
+                r_flick.setPosition(0.68);
+            }
+            if(gamepad1.left_bumper){
+                l_flick.setPosition(0.59);
+                r_flick.setPosition(0);
+            }
+
+            if(gamepad1.x){
+                leftFlap.setPosition(0.4);
+                leftGate = true;
             }
             else{
                 leftFlap.setPosition(1);
-
+                leftGate = false;
             }
-            if(gamepad2.dpad_right){
+            if(gamepad1.b){
                 rightFlap.setPosition(0.6);
-
+                rightGate = true;
             }
             else{
                 rightFlap.setPosition(0);
-
+                rightGate = false;
             }
 
 
-            double elbowPower = gamepad2.left_stick_y;
-            elbow.setPower(elbowPower);
-
-            if ((runtime.seconds() - timerUp) >= slideCooldown) {
-                timeoutUp = false;
-            }
-            if ((runtime.seconds() - timerDown) >= slideCooldown) {
-                timeoutDown = false;
-            }
-
-//            if ((runtime.seconds() - flickTimer) >= flickCooldown) {
-//                flickTimeout = false;
+//            double elbowPower = gamepad2.left_stick_y;
+//            elbow.setPower(elbowPower);
+//            if ((runtime.seconds() - timerUp) >= slideCooldown) {
+//                timeoutUp = false;
 //            }
+//            if ((runtime.seconds() - timerDown) >= slideCooldown) {
+//                timeoutDown = false;
+//            }
+            while (gamepad1.dpad_left) {
+                elbow.setPower(0.5);
+            }
+            while (gamepad1.dpad_right) {
+                elbow.setPower(-0.5);
+            }
 
-            autoarm.setPosition(1);
+//            autoarm.setPosition(1);
 
             telemetry.addData("CurrentSlideTicks:", SlideTicks);
-            telemetry.addData("lfPower:", lfPower);
-            telemetry.addData("lbPower:", lbPower);
-            telemetry.addData("rfPower:", rfPower);
-            telemetry.addData("rbPower:", rbPower);
-            telemetry.update();
+
+            double x = runtime.milliseconds();
+//            telemetry.addData("Red", sensorColor.red());
+//            telemetry.addData("Green", sensorColor.green());
+//            telemetry.addData("Blue", sensorColor.blue());
+//            telemetry.addData("Red2", sensorColor2.red());
+//            telemetry.addData("Green2", sensorColor2.green());
+////            telemetry.addData("Blue2", sensorColor2.blue());
+//            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+//                    (int) (sensorColor.green() * SCALE_FACTOR),
+//                    (int) (sensorColor.blue() * SCALE_FACTOR),
+//                    hsvValues);
+//            Color.RGBToHSV((int) (sensorColor2.red() * SCALE_FACTOR),
+//                    (int) (sensorColor2.green() * SCALE_FACTOR),
+//                    (int) (sensorColor2.blue() * SCALE_FACTOR),
+//                    hsv2Values);
+
+
+            telemetry.addData("time delay", runtime.milliseconds() - x);
+
+            String leftdetectedColor = "Gate open or Unknown";
+            String rightdetectedColor = "Gate open or Unknown";
+//            double hue = rgb_to_hsv(sensorColor.red(), sensorColor.green(), sensorColor.blue());
+//            double hue2 = rgb_to_hsv(sensorColor2.red(), sensorColor2.green(), sensorColor2.blue());
+//            double hue = hsvValues[0];
+//            double hue2 = hsv2Values[0];
+//            if(!leftGate) {
+//                if (hue >= 0 && hue < 60 || hue > 360) {
+//                    leftdetectedColor = "Red";
+//                } else if (hue >= 60 && hue < 120) {
+//                    leftdetectedColor = "Yellow";
+//                } else if (hue >= 120 && hue < 150) {
+//                    leftdetectedColor = "Green";
+//                } else if (hue >= 210 && hue < 300) {
+//                    leftdetectedColor = "Blue";
+//                } else if (hue >= 180 && hue < 210) {
+//                    leftdetectedColor = "Purple";
+//                } else if (hue > 150 && hue < 180) {
+//                    leftdetectedColor = "White";
+//                }
+//            }
+//
+//            telemetry.addData("Hues", hue + " " + hue2);
+//            if(!rightGate) {
+//                if (hue2 >= 0 && hue2 < 60 || hue2 > 360) {
+//                    rightdetectedColor = "Red";
+//                } else if (hue2 >= 60 && hue2 < 120) {
+//                    rightdetectedColor = "Yellow";
+//                } else if (hue2 >= 120 && hue2 < 150) {
+//                    rightdetectedColor = "Green";
+//                } else if (hue2 >= 210 && hue2 < 300) {
+//                    rightdetectedColor = "Blue";
+//                } else if (hue2 >= 180 && hue2 < 210) {
+//                    rightdetectedColor = "Purple";
+//                } else if (hue2 > 150 && hue2 < 180) {
+//                    rightdetectedColor = "White";
+//                }
+//            }
+//            boolean pixelInLeft = true, pixelInRight = true;
+//            if(sensorDistance.getDistance(DistanceUnit.INCH) > 1){
+//                leftdetectedColor = "No Pixel";
+//                pixelInLeft = false;
+//            }
+//            if(sensorDistance2.getDistance(DistanceUnit.INCH) > 1){
+//                rightdetectedColor = "No Pixel";
+//                pixelInRight = false;
+//            }
+
+//            telemetry.addData("Left Color", leftdetectedColor);
+//            telemetry.addData("Right Color", rightdetectedColor);
+//            telemetry.addData("Left Pixel", pixelInLeft);
+//            telemetry.addData("Right Pixel", pixelInRight);
+//            telemetry.update();
 
         }
     }
 
-    public void encoderSlideUpInches(double Inches) {
-        double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
-        slide.setTargetPosition(((int) TicksToMove));
-        slide.setPower(0.5);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep((long) (Inches * 2 * 25.4));
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setPower(0);
-    }
-
-    public void encoderSlideDownInches(double inches) {
-        double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
-        slide.setTargetPosition(-((int) TicksToMove));
-        slide.setPower(0.5);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sleep((long) (inches * 2 * 25.4));
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setPower(0);
-    }
-
-    public void flickGoIn() {
-        l_flick.setPosition(0); // flick in
-        r_flick.setPosition(0.68);
-    }
-
-    public void flickGoOut() {
-        l_flick.setPosition(0.59); // flick out
-        r_flick.setPosition(0);
-    }
     static double rgb_to_hsv(double r, double g, double b)
     {
 
@@ -374,5 +399,24 @@ public class Main_Tele_op extends LinearOpMode {
         double v = cmax * 100;
         return h;
 
+    }
+
+    public void encoderSlideUpInches(double Inches) {
+        double TicksToMove = Inches * COUNTS_PER_INCH_SLIDE;
+        slide.setTargetPosition(((int) TicksToMove));
+        slide.setPower(0.5);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep((long) (Inches * 2 * 25.4));
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setPower(0);
+    }
+    public void encoderSlideDownInches(double inches) {
+        double TicksToMove = inches * COUNTS_PER_INCH_SLIDE;
+        slide.setTargetPosition(-((int) TicksToMove));
+        slide.setPower(0.5);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep((long) (inches * 2 * 25.4));
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setPower(0);
     }
 }
