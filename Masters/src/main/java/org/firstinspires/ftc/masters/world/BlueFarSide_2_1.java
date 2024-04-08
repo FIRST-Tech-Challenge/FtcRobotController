@@ -7,13 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
-import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 
 @Config
-@Autonomous(name = "Blue Backdrop 2 + 0", group = "competition")
-public class BlueBackDrop_2_0 extends BackDropOpMode {
-
-
+@Autonomous(name = "Far Side blue 2 + 1", group = "competition")
+public class BlueFarSide_2_1 extends FarSideOpMode {
 
 
     Vector2d yellowLeftPos = new Vector2d();
@@ -24,7 +22,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindRightProcessing();
+        drive.initializePropFindLeftProcessing();
     }
 
     @Override
@@ -32,18 +30,32 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
         initAuto();
 
-        Pose2d startPose = new Pose2d(new Vector2d(16, 61.2), Math.toRadians(270)); //Start position for roadrunner
+
+        Pose2d startPose = new Pose2d(new Vector2d(-39, 61.2), Math.toRadians(270)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
         drive.setWristServoPosition(outtakeWristPosition);
 
         //PURPLE PIXEL
 
-       rightPurple = BlueBackDropPath.getRightPurple(drive, startPose);
+        rightPurple = BlueFarSidePath.getRightPurple(drive, startPose);
+
+        leftPurple = BlueFarSidePath.getLeftPurple(drive, startPose);
+
+        middlePurple = BlueFarSidePath.getMidPurple(drive, startPose);
+
+        rightPurpleToStack = BlueFarSidePath.getRightPurpleToStack(drive, rightPurple.end());
 
 
-        leftPurple = BlueBackDropPath.getLeftPurple(drive, startPose);
+        leftPurpleToStack = BlueFarSidePath.getLeftPurpleToStack(drive, leftPurple.end());
 
-        middlePurple = BlueBackDropPath.getMidPurple(drive, startPose);
+        midPurpleToStack = BlueFarSidePath.getMidPurpleToStack(drive, middlePurple.end());
+
+        stackToRightYellow = BlueFarSidePath.getStackToRightYellow(drive, rightPurpleToStack.end());
+
+        stackToMidYellow = BlueFarSidePath.getStackToMidYellow(drive, midPurpleToStack.end());
+
+        stackToLeftYellow = BlueFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
+
 
 
         TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -64,20 +76,10 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
                 .build();
 
 
-        //YELLOW PIXELS
-
-        leftYellow = BlueBackDropPath.getLeftYellow(drive, leftPurple.end());
-
-
-        midYellow = BlueBackDropPath.getMidYellow(drive, middlePurple.end());
-
-
-        rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
-
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+        TrajectorySequence backAway = drive.trajectorySequenceBuilder(stackToRightYellow.end())
                 .forward(5)
 
                 .build();
@@ -91,43 +93,39 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
 
 
-        drive.raiseIntake();
-        drive.closeFingers();
-
-
         propPos = drive.getPropFindProcessor().position;
 
         waitForStart();
 
         currentState = State.PURPLE_DEPOSIT_PATH;
+
         drive.dropIntake();
 
         retrievePropPos();
 
-        propPos= PropFindRightProcessor.pos.LEFT;
+        propPos= PropFindRightProcessor.pos.RIGHT;
 
-
-//TO DO: go park
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 
+
             switch (currentState){
                 case PURPLE_DEPOSIT_PATH:
-                    purpleDepositPathState();
+                    purpleDepositPath();
                     break;
                 case PURPLE_DEPOSIT:
-                    purpleDepositState();
+                    purpleDeposit();
+                    break;
+                case TO_STACK:
+                    toStack();
                     break;
                 case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPathState(State.PARK);
-                    break;
-                case PARK:
+                    yellowDepositPath();
                     break;
 
             }
-
 
 
         }

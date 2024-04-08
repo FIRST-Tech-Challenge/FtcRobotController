@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 
 @Config
-@Autonomous(name = "Blue Backdrop 2 + 0", group = "competition")
-public class BlueBackDrop_2_0 extends BackDropOpMode {
-
-
+@Autonomous(name = "Blue backdrop 2 + 2", group = "competition")
+public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
 
 
     Vector2d yellowLeftPos = new Vector2d();
@@ -38,7 +37,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
         //PURPLE PIXEL
 
-       rightPurple = BlueBackDropPath.getRightPurple(drive, startPose);
+        rightPurple = BlueBackDropPath.getRightPurple(drive, startPose);
 
 
         leftPurple = BlueBackDropPath.getLeftPurple(drive, startPose);
@@ -74,20 +73,31 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
         rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
 
+        //cycle
+
+        toStackFromMid= BlueBackDropPath.toStackTruss(drive, midYellow.end());
+        toStackFromRight= BlueBackDropPath.toStackTruss(drive, rightYellow.end());
+        toStackFromLeft = BlueBackDropPath.toStackTruss(drive, leftYellow.end());
+
+        toBackBoard = BlueBackDropPath.fromStackToBoardTruss(drive, toStackFromMid.end());
+
+        park = BlueBackDropPath.park(drive, toBackBoard.end());
+
+
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-                .forward(5)
-
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
+//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+//                .forward(5)
+//
+//                .build();
+//
+//
+//        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                .build();
 
 
 
@@ -99,7 +109,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
 
         waitForStart();
 
-        currentState = State.PURPLE_DEPOSIT_PATH;
+        currentState = BackDropOpMode.State.PURPLE_DEPOSIT_PATH;
         drive.dropIntake();
 
         retrievePropPos();
@@ -121,7 +131,7 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPathState(State.PARK);
+                    yellowDepositPathState(BackDropOpMode.State.PARK);
                     break;
                 case PARK:
                     break;
