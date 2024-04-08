@@ -47,19 +47,14 @@ public class MecanumDriver extends OpMode
     private DcMotor backRight;
     private DcMotor frontLeft;
     private DcMotor frontRight;
-
-    public final boolean isFieldCentric = true;
-
-
     private ElapsedTime runtime = new ElapsedTime();
     private IMU gyro;
     private double wantedHeading = 0.0;
-    private double lastAngle = 0.0;
-    private double offSet = 0.0;
     private final double TURN_POWER = 2.0;
     private final double FORWARD_POWER = 1.0;
     private final double STRAFE_POWER = FORWARD_POWER * 1.192;
     private final double SPEED_MULTIPLIER = 2.3;
+    public final boolean isFieldCentric = true;
 
     @Override
     public void init() {
@@ -73,7 +68,7 @@ public class MecanumDriver extends OpMode
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
-        gyro = hardwareMap.get(IMU.class, "imu");
+        gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();
     }
 
@@ -83,7 +78,7 @@ public class MecanumDriver extends OpMode
 
     public double getAngleImuDegrees() {
         return normalize(
-                gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - offSet);
+                gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
     }
 
     public static double normalize(double degrees) {
@@ -116,8 +111,7 @@ public class MecanumDriver extends OpMode
         double turn = 0.0;
         double forward = 0.0;
         double strafe = 0.0;
-        boolean imuReset = false;
-        double currentHeading = -getAngleImuDegrees();
+        double currentHeading = getAngleImuDegrees();
 
         if (gamepad1.right_stick_x != 0) {
             wantedHeading = currentHeading;
@@ -129,19 +123,16 @@ public class MecanumDriver extends OpMode
             forward = ((gamepad1.left_stick_y * Math.cos(currentHeading * (Math.PI / 180))) +
                     (gamepad1.left_stick_x * Math.sin(currentHeading * (Math.PI / 180)))) * SPEED_MULTIPLIER * FORWARD_POWER;
             strafe = ((gamepad1.left_stick_y * Math.sin(currentHeading * (Math.PI / 180))) -
-                (gamepad1.left_stick_x * Math.cos(currentHeading * (Math.PI / 180)))) * SPEED_MULTIPLIER * STRAFE_POWER;
+                    (gamepad1.left_stick_x * Math.cos(currentHeading * (Math.PI / 180)))) * SPEED_MULTIPLIER * STRAFE_POWER;
         } else {
             forward = gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER;
             strafe = gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER;
         }
         if (currentHeading == -0.0 || ((Double) currentHeading).isNaN()) {
-            offSet = lastAngle;
             gyro.resetDeviceConfigurationForOpMode();
             gyro = hardwareMap.get(IMU.class, "imu");
             gyro.resetYaw();
-            imuReset = true;
         }
-        lastAngle = currentHeading;
 
         double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
@@ -157,9 +148,6 @@ public class MecanumDriver extends OpMode
         telemetry.addData("Strafe", "Strafe: " + strafe);
         telemetry.addData("Turn", "Turn: " + turn);
         telemetry.addData("Heading", "Heading: " + currentHeading);
-        telemetry.addData("IMUReset", "Was the IMU Reset? " + imuReset);
-        telemetry.addData("Offset", "Offset: " + offSet);
-        telemetry.addData("IMU Type", "IMU Type: " + gyro.getDeviceName());
     }
 
     @Override
