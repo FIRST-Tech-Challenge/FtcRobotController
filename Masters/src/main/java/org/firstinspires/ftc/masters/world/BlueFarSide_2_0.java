@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.masters.world;
 
-import static org.firstinspires.ftc.masters.CSCons.servo1Down;
-import static org.firstinspires.ftc.masters.CSCons.servo2Down;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -55,7 +52,9 @@ public class BlueFarSide_2_0 extends LinearOpMode {
 
     int resetInt = 0;
     int preloadInt = 0;
-    ElapsedTime purpleDepositTime = null;
+    ElapsedTime purplePathTime = null;
+    ElapsedTime purpleDropTime = null;
+    ElapsedTime stackPickUpTime = null;
     ElapsedTime depositTime = null;
     ElapsedTime waitTime =null;
     ElapsedTime preloadTime = null;
@@ -117,24 +116,24 @@ public class BlueFarSide_2_0 extends LinearOpMode {
 
         TrajectorySequence rightPurpleToStack = drive.trajectorySequenceBuilder(rightPurple.end())
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, 11, Math.toRadians(181)), Math.toRadians(181))
                 .build();
 
         TrajectorySequence leftPurpleToStack = drive.trajectorySequenceBuilder(leftPurple.end())
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, 11, Math.toRadians(181)), Math.toRadians(181))
                 .build();
 
         TrajectorySequence midPurpleToStack = drive.trajectorySequenceBuilder(middlePurple.end())
                 .setTangent(Math.toRadians(-140))
-                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, 11, Math.toRadians(181)), Math.toRadians(181))
                 .build();
 
 
         TrajectorySequence stackToRightYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(51, 29, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(51, 33, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence stackToMidYellow = drive.trajectorySequenceBuilder(rightPurpleToStack.end())
@@ -212,6 +211,7 @@ public class BlueFarSide_2_0 extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested()) {
+            telemetry.update();
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 
@@ -228,25 +228,34 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                     } else {
                         drive.followTrajectorySequenceAsync(middlePurple);
                     }
-
+                    purplePathTime = new ElapsedTime();
                     currentState = State.PURPLE_DEPOSIT;
-                    purpleDepositTime = new ElapsedTime();
+
 
                     break;
 
                 case PURPLE_DEPOSIT:
-                    if (purpleDepositTime.milliseconds()>500){
+                    if (purplePathTime!=null && purplePathTime.milliseconds()>200){
                         outtakeTarget= CSCons.OuttakePosition.LOW_AUTO.getTarget();
-                    }
-                    if (drive.getBackSlides().getCurrentPosition()>50){
                         drive.setOuttakeToGround();
                     }
+//                    if (Math.abs( drive.getBackSlides().getCurrentPosition())>90){
+//                        telemetry.addData("outtake to ground", "true");
+//                        drive.setOuttakeToGround();
+//                    }
                     if (!drive.isBusy()){
-                        if (liftTime==null) {
+                        drive.setOuttakeToGround();
+
+                        if (purpleDropTime==null) {
+
+                            purpleDropTime = new ElapsedTime();
+
+                        } else if (purpleDropTime.milliseconds()>2000){
                             drive.openFrontFinger();
-                            liftTime = new ElapsedTime();
-                        } else {
-                            liftTime=null;
+                        }
+                        else if (purpleDropTime.milliseconds()>1250){
+                            purplePathTime=null;
+                            purpleDropTime=null;
                             outtakeTarget = 0;
                             drive.setOuttakeToTransfer();
                             drive.intakeOverSTack();
@@ -272,12 +281,16 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                     break;
 
                 case TO_STACK:
+                    if (drive.isBusy()) {
+                        drive.setOuttakeToTransfer();
+                    }
                     if (!drive.isBusy()){
-                        if(liftTime==null) {
+                        if(pickupElapsedTime==null) {
                             drive.intakeToTopStack();
-                            liftTime = new ElapsedTime();
-                        } else if (liftTime.milliseconds()>150){
+                            pickupElapsedTime = new ElapsedTime();
+                        } else if (pickupElapsedTime.milliseconds()>1000){
                             drive.stopIntake();
+                            drive.raiseIntake();
                             drive.outtakeToPickup();
                             pickupElapsedTime = new ElapsedTime();
                             currentState = State.YELLOW_DEPOSIT_PATH;
@@ -301,16 +314,18 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                     if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
                         drive.closeFingers();
                         pickupElapsedTime =null;
+                        drive.revertIntake();
                     }
-                    if (drive.getPoseEstimate().getX()>12){
+                    if (drive.getPoseEstimate().getX()>30){
                         outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
-                    }
-
-                    if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
-                        drive.outtakeToBackdrop();
-                        drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
-                    } else if (drive.getBackSlides().getCurrentPosition()>10){
-                        drive.outtakeToBackdrop();
+                        drive.closeFingers();
+                        if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
+                            drive.outtakeToBackdrop();
+                            drive.setWristServoPosition(CSCons.OuttakeWrist.flatLeft);
+                        } else if (drive.getBackSlides().getCurrentPosition()>10){
+                            drive.outtakeToBackdrop();
+                        }
+                        drive.stopIntake();
                     }
 
                     if (!drive.isBusy()){

@@ -807,8 +807,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void setOuttakeToGround(){
-        outtakeRotation.setPosition(CSCons.wristOuttakeAngleTransfer);
-        outtakeMovement.setPosition(CSCons.getWristOuttakeMovementGround);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAngleBackdrop);
+        outtakeMovement.setPosition(CSCons.wristOuttakeMovementGround);
 
     }
 
