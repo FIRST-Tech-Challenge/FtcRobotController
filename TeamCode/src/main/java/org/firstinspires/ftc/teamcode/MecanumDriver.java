@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,15 +40,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 @TeleOp(name="Mecanum Driver", group="TeleOp")
-public class MecanumDriver extends OpMode
-{
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
+public class MecanumDriver extends OpMode {
+    MecanumRobotController robotController;
     private ElapsedTime runtime = new ElapsedTime();
-    private IMU gyro;
-    private double wantedHeading = 0.0;
     private final static double TURN_POWER = 2.0;
     private final static double FORWARD_POWER = 1.0;
     private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
@@ -58,46 +51,23 @@ public class MecanumDriver extends OpMode
 
     @Override
     public void init() {
-        backLeft = hardwareMap.get(DcMotor.class, "BACKLEFT");
-        backRight = hardwareMap.get(DcMotor.class, "BACKRIGHT");
-        frontLeft = hardwareMap.get(DcMotor.class, "FRONTLEFT");
-        frontRight = hardwareMap.get(DcMotor.class, "FRONTRIGHT");
+        DcMotor backLeft = hardwareMap.get(DcMotor.class, "BACKLEFT");
+        DcMotor backRight = hardwareMap.get(DcMotor.class, "BACKRIGHT");
+        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "FRONTLEFT");
+        DcMotor frontRight = hardwareMap.get(DcMotor.class, "FRONTRIGHT");
 
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
-        gyro = hardwareMap.get(IMU.class, "imu2");
+        IMU gyro = hardwareMap.get(IMU.class, "imu2");
         gyro.resetYaw();
+        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro);
     }
 
     @Override
     public void init_loop() {
-    }
-
-    public double getAngleImuDegrees() {
-        return normalize(
-                gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-    }
-
-    public static double normalize(double degrees) {
-        double normalizedAngle = degrees;
-        while (normalizedAngle > 180) normalizedAngle -= 360;
-        while (normalizedAngle <= -180) normalizedAngle += 360;
-        return normalizedAngle;
-    }
-
-    public double calculateP(double power, double deadBand, double wantedHeading) {
-        double currentHeading = getAngleImuDegrees();
-        double headingCorrection = currentHeading - wantedHeading;
-       headingCorrection = normalize(headingCorrection);
-
-        if (Math.abs(headingCorrection) > deadBand) {
-            telemetry.addData("Dead band activated", "WARNING dead band was activated, heading correction exceeded limit of " + deadBand + " degrees.");
-            return 0.0;
-        }
-        return headingCorrection * power;
     }
 
     @Override
@@ -107,46 +77,13 @@ public class MecanumDriver extends OpMode
 
     @Override
     public void loop() {
-        double turn = 0.0;
-        double forward = 0.0;
-        double strafe = 0.0;
-        double currentHeading = getAngleImuDegrees();
-
-        if (gamepad1.right_stick_x != 0) {
-            wantedHeading = currentHeading;
-            turn = gamepad1.right_stick_x * TURN_POWER;
-        } else {
-            turn = calculateP(0.02, 60, wantedHeading);
-        }
-        if (isFieldCentric) {
-            forward = ((gamepad1.left_stick_y * Math.cos(currentHeading * (Math.PI / 180))) +
-                    (gamepad1.left_stick_x * Math.sin(currentHeading * (Math.PI / 180)))) * SPEED_MULTIPLIER * FORWARD_POWER;
-            strafe = ((gamepad1.left_stick_y * Math.sin(currentHeading * (Math.PI / 180))) -
-                    (gamepad1.left_stick_x * Math.cos(currentHeading * (Math.PI / 180)))) * SPEED_MULTIPLIER * STRAFE_POWER;
-        } else {
-            forward = gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER;
-            strafe = gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER;
-        }
-        if (currentHeading == -0.0 || ((Double) currentHeading).isNaN()) {
-            gyro.resetDeviceConfigurationForOpMode();
-            gyro = hardwareMap.get(IMU.class, "imu");
-            gyro.resetYaw();
-        }
-
-        double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
-        double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
-        double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
-        double frontRightPower = Range.clip((forward - strafe + turn) / 3, -1.0, 1.0);
-
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-
-        telemetry.addData("Forward", "Forward: " + forward);
-        telemetry.addData("Strafe", "Strafe: " + strafe);
-        telemetry.addData("Turn", "Turn: " + turn);
-        telemetry.addData("Heading", "Heading: " + currentHeading);
+        robotController.continuousDrive(gamepad1.left_stick_y * SPEED_MULTIPLIER * FORWARD_POWER,
+                gamepad1.left_stick_x * SPEED_MULTIPLIER * STRAFE_POWER,
+                gamepad1.right_stick_x * TURN_POWER, isFieldCentric);
+//        telemetry.addData("Forward", "Forward: " + forward);
+//        telemetry.addData("Strafe", "Strafe: " + strafe);
+//        telemetry.addData("Turn", "Turn: " + turn);
+//        telemetry.addData("Heading", "Heading: " + currentHeading);
     }
 
     @Override
