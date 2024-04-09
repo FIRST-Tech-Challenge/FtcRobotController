@@ -131,9 +131,15 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPathState(BackDropOpMode.State.PARK);
+                    yellowDepositPathState(State.TO_STACK);
                     break;
+                case TO_STACK:
+                    toStack();
+                    break;
+                case TO_BACKBOARD:
+                    toBackboard(State.PARK);
                 case PARK:
+                    park();
                     break;
 
             }

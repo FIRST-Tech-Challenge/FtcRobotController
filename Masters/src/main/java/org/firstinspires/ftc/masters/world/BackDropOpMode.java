@@ -155,6 +155,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
                     drive.followTrajectorySequenceAsync(park);
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
+                    outtakeTarget=0;
+                    drive.outtakeToTransfer();
                     switch(propPos){
                         case RIGHT:
                             drive.followTrajectorySequenceAsync(toStackFromRight);
@@ -192,68 +194,59 @@ public abstract class BackDropOpMode extends LinearOpMode {
         }
     }
 
-    protected void followPath(){
-        switch (currentState) {
-            case PURPLE_DEPOSIT_PATH:
+    protected void toBackboard(State nextState){
+        if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
+            drive.closeFingers();
+            drive.revertIntake();
+            pickupElapsedTime =null;
+        }
+        if (drive.getPoseEstimate().getX()>25){
+            outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
+            drive.closeFingers();
+            if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
+                drive.outtakeToBackdrop();
+                drive.setWristServoPosition(CSCons.OuttakeWrist.flatLeft);
+            } else if (drive.getBackSlides().getCurrentPosition()>10){
+                drive.outtakeToBackdrop();
+            }
+            drive.stopIntake();
+        }
+        if (!drive.isBusy()){
+            drive.openFingers();
+            if (depositTime==null){
+                depositTime= new ElapsedTime();
+            } else if (depositTime.milliseconds()>100){
+                if (nextState == State.PARK){
 
+                    drive.followTrajectorySequenceAsync(park);
+                } else if (nextState == State.TO_STACK){
+                    drive.intakeOverStack();
+                    outtakeTarget=0;
+                    drive.outtakeToTransfer();
+                    switch(propPos){
+                        case RIGHT:
+                            drive.followTrajectorySequenceAsync(toStackFromRight);
+                            break;
+                        case LEFT:
+                            drive.followTrajectorySequenceAsync(toStackFromLeft);
+                            break;
+                        case MID:
+                            drive.followTrajectorySequenceAsync(toStackFromMid);
+                            break;
+                    }
+                }
+                currentState= nextState;
+            }
+        }
 
+    }
 
-                break;
-
-            case PURPLE_DEPOSIT:
-
-                break;
-
-            case YELLOW_DEPOSIT_PATH:
-
-
-
-
-                break;
-
-//                case YELLOW_DEPOSIT:
-//                    if(!drive.isBusy()) {
-//                        if (preloadInt == 0) {
-//                            preloadTime.reset();
-//                            drive.dropPixel();
-//                            preloadInt++;
-//                        }
-//                        if(preloadInt == 1){
-//                            if(preloadTime.milliseconds() > 1000) {
-//                                outtakeTarget = 1700;
-//                                currentState = State.TOPARK;
-//                            }
-//
-//                        }
-//                    }
-//                    break;
-//
-//                case TOPARK:
-//                    drive.followTrajectorySequenceAsync(backAway);
-//                    currentState = State.PARK;
-//                    break;
-//
-//                case PARK:
-//                    if(!drive.isBusy()){
-//
-//                        drive.followTrajectorySequenceAsync(Park);
-//
-//                        drive.outtakeToTransfer();
-//
-//                        outtakeTarget = 0;
-//                        currentState = State.END;
-//
-//
-//                    }
-//
-//
-//
-//                    break;
-//
-            case END:
-
-                break;
+    protected  void park(){
+        if (!drive.isBusy()){
+            outtakeTarget = 0;
+            drive.outtakeToTransfer();
         }
     }
+
 
 }

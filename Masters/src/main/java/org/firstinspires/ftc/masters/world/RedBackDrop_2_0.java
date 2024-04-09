@@ -119,6 +119,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
                     yellowDepositPathState(State.PARK);
                     break;
                 case PARK:
+                    park();
                     break;
 
             }

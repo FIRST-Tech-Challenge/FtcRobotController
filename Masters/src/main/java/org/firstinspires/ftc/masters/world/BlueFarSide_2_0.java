@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Far Side blue 2 + 0", group = "competition")
+
 public class BlueFarSide_2_0 extends LinearOpMode {
     private OpenCvCamera webcam;
 
@@ -258,7 +258,7 @@ public class BlueFarSide_2_0 extends LinearOpMode {
                             purpleDropTime=null;
                             outtakeTarget = 0;
                             drive.setOuttakeToTransfer();
-                            drive.intakeOverSTack();
+                            drive.intakeOverStack();
                             drive.startIntake();
                             currentState= State.TO_STACK;
                             switch (propPos){

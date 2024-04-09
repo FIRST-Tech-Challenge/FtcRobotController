@@ -149,12 +149,16 @@ public abstract class FarSideOpMode extends LinearOpMode {
     }
 
     protected void toStack(){
+        if (drive.isBusy()) {
+            drive.setOuttakeToTransfer();
+        }
         if (!drive.isBusy()){
-            if(liftTime==null) {
+            if(pickupElapsedTime==null) {
                 drive.intakeToTopStack();
-                liftTime = new ElapsedTime();
-            } else if (liftTime.milliseconds()>100){
+                pickupElapsedTime = new ElapsedTime();
+            } else if (pickupElapsedTime.milliseconds()>1000){
                 drive.stopIntake();
+                drive.raiseIntake();
                 drive.outtakeToPickup();
                 pickupElapsedTime = new ElapsedTime();
                 currentState = State.YELLOW_DEPOSIT_PATH;
@@ -176,17 +180,19 @@ public abstract class FarSideOpMode extends LinearOpMode {
     protected void yellowDepositPath(){
         if (pickupElapsedTime!=null &&  pickupElapsedTime.milliseconds()>250){
             drive.closeFingers();
+            drive.revertIntake();
             pickupElapsedTime =null;
         }
-        if (drive.getPoseEstimate().getX()>12){
+        if (drive.getPoseEstimate().getX()>30){
             outtakeTarget = CSCons.OuttakePosition.AUTO.getTarget();
-        }
-
-        if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
-            drive.outtakeToBackdrop();
-            drive.setWristServoPosition(CSCons.OuttakeWrist.flatRight);
-        } else if (drive.getBackSlides().getCurrentPosition()>10){
-            drive.outtakeToBackdrop();
+            drive.closeFingers();
+            if (drive.getBackSlides().getCurrentPosition()>outtakeTarget- 200){
+                drive.outtakeToBackdrop();
+                drive.setWristServoPosition(CSCons.OuttakeWrist.flatLeft);
+            } else if (drive.getBackSlides().getCurrentPosition()>10){
+                drive.outtakeToBackdrop();
+            }
+            drive.stopIntake();
         }
 
         if (!drive.isBusy()){
@@ -213,28 +219,7 @@ public abstract class FarSideOpMode extends LinearOpMode {
 
 
             case TO_STACK:
-                if (!drive.isBusy()){
-                    if(liftTime==null) {
-                        drive.intakeToTopStack();
-                        liftTime = new ElapsedTime();
-                    } else if (liftTime.milliseconds()>100){
-                        drive.stopIntake();
-                        drive.outtakeToPickup();
-                        pickupElapsedTime = new ElapsedTime();
-                        currentState = State.YELLOW_DEPOSIT_PATH;
-                        switch (propPos){
-                            case LEFT:
-                                drive.followTrajectorySequenceAsync(stackToLeftYellow);
-                                break;
-                            case RIGHT:
-                                drive.followTrajectorySequenceAsync(stackToRightYellow);
-                                break;
-                            case MID:
-                                drive.followTrajectorySequenceAsync(stackToMidYellow);
-                                break;
-                        }
-                    }
-                }
+
 
                 break;
 
