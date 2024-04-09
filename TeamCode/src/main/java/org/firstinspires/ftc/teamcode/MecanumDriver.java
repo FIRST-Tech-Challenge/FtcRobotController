@@ -50,10 +50,10 @@ public class MecanumDriver extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private IMU gyro;
     private double wantedHeading = 0.0;
-    private final double TURN_POWER = 2.0;
-    private final double FORWARD_POWER = 1.0;
-    private final double STRAFE_POWER = FORWARD_POWER * 1.192;
-    private final double SPEED_MULTIPLIER = 2.3;
+    private final static double TURN_POWER = 2.0;
+    private final static double FORWARD_POWER = 1.0;
+    private final static double STRAFE_POWER = FORWARD_POWER * 1.192;
+    private final static double SPEED_MULTIPLIER = 2.3;
     public final boolean isFieldCentric = true;
 
     @Override

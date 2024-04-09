@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumRobotController {
     // Need to find this.
     public static final double COUNTS_PER_INCH = 30.59;
+    public static final boolean DEFAULT_FIELD_CENTRIC = true
 
     private DcMotor backLeft;
     private DcMotor backRight;
@@ -44,7 +45,7 @@ public class MecanumRobotController {
     //      - double forward: The forward power for the robot.
     //      - double strafe: The strafe power for the robot.
     //      - double turn: The turn power fo the robot.
-    public void move(double forward, double strafe, double turn) {
+    private void move(double forward, double strafe, double turn) {
         double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
         double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
@@ -56,22 +57,32 @@ public class MecanumRobotController {
         frontRight.setPower(frontRightPower);
     }
 
-    // TODO: Find exact values for distance and time and implement them to make this method precise.
+    // TODO: Find exact values for distance and implement it in COUNTS_PER_INCH to make this method precise.
     // Behavior: Drives the robot a given distance in a given direction without turning it.
     // Params:
     //      - double distance: The distance to drive the robot in inches.
     //      - double direction: The direction, in degrees, that the robot will drive in. This is
     //                          based on the direction the robot was initialized in.
-    //      - double time: The amount of time in milliseconds it should take to drive the wanted
-    //                     distance. Basically the speed but more precise.
-    public void drive(double distance, double direction, double time) {
+    //      - double speed: The speed at which the robot will move.
+    //      - boolean isFieldCentric: determines whether the direction is based from the robot
+    //                                or the field. If its field centric, the robot will always
+    //                                move the same direction for the same inputted direction,
+    //                                no matter what direction the robot is facing.
+    public void distanceDrive(double distance, double direction, double speed, boolean isFieldCentric) {
         double currentHeading = getAngleImuDegrees();
 
         // This still needs testing.
-        double forward = ((Math.cos(direction) * Math.cos(currentHeading * (Math.PI / 180))) +
-                (Math.sin(direction) * Math.sin(currentHeading * (Math.PI / 180))));
-        double strafe = ((Math.cos(direction) * Math.sin(currentHeading * (Math.PI / 180))) -
-                (Math.sin(direction) * Math.cos(currentHeading * (Math.PI / 180))));
+        double forward;
+        double strafe;
+        if (isFieldCentric) {
+            forward = ((Math.cos(direction) * Math.cos(currentHeading * (Math.PI / 180))) +
+                    (Math.sin(direction) * Math.sin(currentHeading * (Math.PI / 180))));
+            strafe = ((Math.cos(direction) * Math.sin(currentHeading * (Math.PI / 180))) -
+                    (Math.sin(direction) * Math.cos(currentHeading * (Math.PI / 180))));
+        } else {
+            forward = Math.cos(direction);
+            strafe = Math.sin(direction);
+        }
 
         int forwardCounts = (int)(forward * distance * COUNTS_PER_INCH);
         int strafeCounts = (int)(strafe * distance * COUNTS_PER_INCH);
@@ -94,10 +105,10 @@ public class MecanumRobotController {
         // Needs troubleshooting probably. Don't know if I can call isOpModeActive() either so idk
         // how that works.
         while (backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) {
-            // Regulates speed, need to make this consistent.
-            move(1.0, 0.0, 0.0);
+            move(speed, 0.0, 0.0);
         }
 
+        // Stop movement and switch modes
         move(0, 0, 0);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -105,11 +116,52 @@ public class MecanumRobotController {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    // TODO:
+    // Behavior: Overloaded method of distanceDrive. This sets the default of isFieldCentric.
+    //                          based on the direction the robot was initialized in.
+    //      - double speed: The speed at which the robot will move.
+    public void distanceDrive(double distance, double direction, double speed) {
+        distanceDrive(distance, direction, speed, DEFAULT_FIELD_CENTRIC);
+    }
+
+    // Behavior: Drives the robot continuously based on forward, strafe, and turn power.
+    // Params:
+    //      - double forwardPower: The power at which the robot will move forward.
+    //      - double strafePower: The power at which the robot will strafe.
+    //      - double turn: The power at which the robot will turn.
+    //      - boolean isFieldCentric: Determines whether the forward direction is based on the
+    //                                direction of the robot, or the direction the robot was
+    //                                initialized in.
+    public void continuousDrive(double forwardPower, double strafePower, double turn, boolean isFieldCentric) {
+        double currentHeading = getAngleImuDegrees();
+        double forward;
+        double strafe;
+        if (isFieldCentric) {
+            forward = ((forwardPower * Math.cos(currentHeading * (Math.PI / 180))) +
+                    (strafePower * Math.sin(currentHeading * (Math.PI / 180))));
+            strafe = ((forwardPower * Math.sin(currentHeading * (Math.PI / 180))) -
+                    (strafePower * Math.cos(currentHeading * (Math.PI / 180))));
+        } else {
+            forward = forwardPower;
+            strafe = strafePower;
+        }
+
+        move(forward, strafe, turn);
+    }
+
+    // Behavior: Overloaded method of continuousDrive. This sets the default of isFieldCentric.
+    // Params:
+    //      - double forwardPower: The power at which the robot will move forward.
+    //      - double strafePower: The power at which the robot will strafe.
+    //      - double turn: The power at which the robot will turn.
+    public void continuousDrive(double forwardPower, double strafePower, double turn) {
+        continuousDrive(forwardPower, strafePower, turn, DEFAULT_FIELD_CENTRIC);
+    }
+
+    // TODO: make
     // Behavior: Turns the robot to a given angle
     //      - double degrees: The angle to turn the robot to in degrees.
     //      - double speed: The speed at which the robot should turn.
-    public void turnTo(double angle, double time) {
+    public void turnTo(double angle, double speed) {
 
     }
 
