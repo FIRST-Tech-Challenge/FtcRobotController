@@ -18,13 +18,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumRobotController {
     // Need to find this.
     public static final double COUNTS_PER_INCH = 30.59;
-    public static final boolean DEFAULT_FIELD_CENTRIC = true
+    public static final boolean DEFAULT_FIELD_CENTRIC = true;
+    public static final double HEADING_CORRECTION_POWER = 0.02;
+    public static final double MAX_CORRECTION_ERROR = 0.5;
 
     private DcMotor backLeft;
     private DcMotor backRight;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private IMU gyro;
+    private double wantedHeading;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
     // servo, or sensor is added, put that in here so the class can access it.
@@ -37,15 +40,24 @@ public class MecanumRobotController {
         this.frontRight = frontRight;
 
         this.gyro = gyro;
+        this.wantedHeading = 0;
     }
 
-    // TODO: Implement turn correction on the move function.
     // Behavior: Moves the robot using a given forward, strafe, and turn power.
     // Params:
     //      - double forward: The forward power for the robot.
     //      - double strafe: The strafe power for the robot.
     //      - double turn: The turn power fo the robot.
-    private void move(double forward, double strafe, double turn) {
+    //      - double headingCorrectionPower: The speed of heading correction.
+    private void move(double forward, double strafe, double turn, double headingCorrectionPower) {
+        if (turn == 0) {
+            double currentHeading = getAngleImuDegrees();
+            double headingCorrection = currentHeading - wantedHeading;
+            headingCorrection = normalize(headingCorrection);
+            turn = headingCorrectionPower * headingCorrection;
+        } else {
+            wantedHeading = getAngleImuDegrees();
+        }
         double backLeftPower = Range.clip((forward + strafe - turn) / 3, -1.0, 1.0);
         double backRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
         double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
@@ -105,11 +117,11 @@ public class MecanumRobotController {
         // Needs troubleshooting probably. Don't know if I can call isOpModeActive() either so idk
         // how that works.
         while (backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) {
-            move(speed, 0.0, 0.0);
+            move(speed, 0.0, 0.0, HEADING_CORRECTION_POWER);
         }
 
         // Stop movement and switch modes
-        move(0, 0, 0);
+        move(0, 0, 0, HEADING_CORRECTION_POWER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -145,7 +157,7 @@ public class MecanumRobotController {
             strafe = strafePower;
         }
 
-        move(forward, strafe, turn);
+        move(forward, strafe, turn, HEADING_CORRECTION_POWER);
     }
 
     // Behavior: Overloaded method of continuousDrive. This sets the default of isFieldCentric.
@@ -162,7 +174,9 @@ public class MecanumRobotController {
     //      - double degrees: The angle to turn the robot to in degrees.
     //      - double speed: The speed at which the robot should turn.
     public void turnTo(double angle, double speed) {
-
+        wantedHeading = angle;
+        while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR)
+            move(0, 0, 0, speed);
     }
 
     // Behavior: Normalizes a given degree value to the range (-180, 180]
