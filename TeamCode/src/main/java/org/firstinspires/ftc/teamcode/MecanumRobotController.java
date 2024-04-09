@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class MecanumRobotController {
     // Need to find this.
     public static final double COUNTS_PER_INCH = 30.59;
-    public static final boolean DEFAULT_FIELD_CENTRIC = true
+    public static final boolean DEFAULT_FIELD_CENTRIC = true;
 
     private DcMotor backLeft;
     private DcMotor backRight;
@@ -62,7 +62,8 @@ public class MecanumRobotController {
     // Params:
     //      - double distance: The distance to drive the robot in inches.
     //      - double direction: The direction, in degrees, that the robot will drive in. This is
-    //                          based on the direction the robot was initialized in.
+    //                          based on the direction the robot was initialized in if its field
+    //                          centric, otherwise, the robots current direction.
     //      - double speed: The speed at which the robot will move.
     //      - boolean isFieldCentric: determines whether the direction is based from the robot
     //                                or the field. If its field centric, the robot will always
