@@ -91,8 +91,7 @@ public class MecanumDriver extends OpMode
     public double calculateP(double power, double deadBand, double wantedHeading) {
         double currentHeading = getAngleImuDegrees();
         double headingCorrection = currentHeading - wantedHeading;
-        while (headingCorrection > 180) headingCorrection -= 360;
-        while (headingCorrection <= -180) headingCorrection += 360;
+       headingCorrection = normalize(headingCorrection);
 
         if (Math.abs(headingCorrection) > deadBand) {
             telemetry.addData("Dead band activated", "WARNING dead band was activated, heading correction exceeded limit of " + deadBand + " degrees.");
