@@ -10,8 +10,10 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
 
 @Config
-@Autonomous(name = "Red Backdrop 2 + 0", group = "competition")
-public class RedBackDrop_2_0 extends BackDropOpMode {
+@Autonomous(name = "Blue backdrop 2 + 4 Truss", group = "competition")
+public class BlueBackdrop_2_4_Truss extends BackDropOpMode {
+
+
     Vector2d yellowLeftPos = new Vector2d();
     Vector2d yellowMidPos = new Vector2d();
     Vector2d yellowRightPos = new Vector2d();
@@ -20,8 +22,9 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
     @Override
     protected void initializeProp(){
-        drive.initializePropFindLeftProcessing();
+        drive.initializePropFindRightProcessing();
     }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -69,20 +72,31 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
 
+        //cycle
+
+        toStackFromMid= BlueBackDropPath.toStackTruss(drive, midYellow.end());
+        toStackFromRight= BlueBackDropPath.toStackTruss(drive, rightYellow.end());
+        toStackFromLeft = BlueBackDropPath.toStackTruss(drive, leftYellow.end());
+
+        toBackBoard = BlueBackDropPath.fromStackToBoardTruss(drive, toStackFromMid.end());
+
+        park = BlueBackDropPath.park(drive, toBackBoard.end());
+
+
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-                .forward(5)
-
-                .build();
-
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
+//        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
+//                .forward(5)
+//
+//                .build();
+//
+//
+//        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
+//                .setTangent(Math.toRadians(0))
+//                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
+//
+//                .build();
 
 
 
@@ -94,13 +108,13 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         waitForStart();
 
-        currentState = BackDropOpMode.State.PURPLE_DEPOSIT_PATH;
+        currentState = State.PURPLE_DEPOSIT_PATH;
         drive.dropIntake();
 
         retrievePropPos();
 
         propPos= PropFindRightProcessor.pos.LEFT;
-
+        TrajectorySequence nextPath=null;
 
 //TO DO: go park
 
@@ -116,8 +130,30 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK, park);
+                    if (cycleCount ==0){
+                        switch (propPos) {
+                            case RIGHT:
+                                nextPath = toStackFromRight;
+                                break;
+                            case LEFT:
+                                nextPath = toStackFromLeft;
+                                break;
+                            case MID:
+                                drive.followTrajectorySequenceAsync(toStackFromMid);
+                                break;
+                        }
+                        backdropDepositPath(State.TO_STACK, nextPath);
+
+                    } else if (cycleCount==1){
+                        backdropDepositPath(State.TO_STACK, toStackFromLeft);
+                    }
+                    else {
+                        backdropDepositPath(State.PARK , park);
+                    }
+
                     break;
+                case TO_STACK:
+                    toStack();
                 case PARK:
                     park();
                     break;

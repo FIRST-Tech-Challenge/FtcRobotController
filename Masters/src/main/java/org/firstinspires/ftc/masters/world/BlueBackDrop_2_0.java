@@ -120,8 +120,8 @@ public class BlueBackDrop_2_0 extends BackDropOpMode {
                 case PURPLE_DEPOSIT:
                     purpleDepositState();
                     break;
-                case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPathState(State.PARK);
+                case BACKDROP_DEPOSIT_PATH:
+                    backdropDepositPath(State.PARK,park);
                     break;
                 case PARK:
                     break;

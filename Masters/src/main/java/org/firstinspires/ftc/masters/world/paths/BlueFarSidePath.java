@@ -81,4 +81,20 @@ public class BlueFarSidePath {
                 .build();
     }
 
+    public static TrajectorySequence toStackFromBackboardGate (SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-57, 11.5, Math.toRadians(180)), Math.toRadians(180))
+                .build();
+    }
+
+    public static TrajectorySequence toBackboardGate(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(10, 11.5, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, 28, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+    }
+
 }

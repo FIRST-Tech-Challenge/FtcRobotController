@@ -105,7 +105,7 @@ public class RedFarSide_2_1 extends FarSideOpMode {
         retrievePropPos();
 
         propPos= PropFindRightProcessor.pos.RIGHT;
-
+        TrajectorySequence nextPath= null;
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -120,10 +120,21 @@ public class RedFarSide_2_1 extends FarSideOpMode {
                     purpleDeposit();
                     break;
                 case TO_STACK:
-                    toStack();
+                    switch (propPos){
+                        case LEFT:
+                            nextPath = stackToLeftYellow;
+                            break;
+                        case RIGHT:
+                            nextPath = stackToRightYellow;
+                            break;
+                        case MID:
+                            nextPath = stackToMidYellow;
+                            break;
+                    }
+                    toStack(nextPath);
                     break;
-                case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPath();
+                case BACKDROP_DEPOSIT_PATH:
+                    backdropDepositPath(State.PARK, park);
                     break;
 
             }

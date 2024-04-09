@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
-import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.masters.world.paths.RedBackDropPath;
 
 @Config
-@Autonomous(name = "Red Backdrop 2 + 0", group = "competition")
-public class RedBackDrop_2_0 extends BackDropOpMode {
+@Autonomous(name = "Red Backdrop 2 + 2 Truss", group = "competition")
+public class RedBackdrop_2_2_Truss extends BackDropOpMode {
     Vector2d yellowLeftPos = new Vector2d();
     Vector2d yellowMidPos = new Vector2d();
     Vector2d yellowRightPos = new Vector2d();
@@ -33,12 +33,12 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         //PURPLE PIXEL
 
-        rightPurple = BlueBackDropPath.getRightPurple(drive, startPose);
+        rightPurple = RedBackDropPath.getRightPurple(drive, startPose);
 
 
-        leftPurple = BlueBackDropPath.getLeftPurple(drive, startPose);
+        leftPurple = RedBackDropPath.getLeftPurple(drive, startPose);
 
-        middlePurple = BlueBackDropPath.getMidPurple(drive, startPose);
+        middlePurple = RedBackDropPath.getMidPurple(drive, startPose);
 
 
         TrajectorySequence tagAlignLeft = drive.trajectorySequenceBuilder(leftPurple.end())
@@ -61,28 +61,25 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         //YELLOW PIXELS
 
-        leftYellow = BlueBackDropPath.getLeftYellow(drive, leftPurple.end());
+        leftYellow = RedBackDropPath.getLeftYellow(drive, leftPurple.end());
 
 
-        midYellow = BlueBackDropPath.getMidYellow(drive, middlePurple.end());
+        midYellow = RedBackDropPath.getMidYellow(drive, middlePurple.end());
 
 
-        rightYellow = BlueBackDropPath.getRightYellow(drive, rightPurple.end());
+        rightYellow = RedBackDropPath.getRightYellow(drive, rightPurple.end());
 
 
         //OTHER PATHS
 
-        TrajectorySequence backAway = drive.trajectorySequenceBuilder(rightYellow.end())
-                .forward(5)
+        toStackFromMid= RedBackDropPath.toStackTruss(drive, midYellow.end());
+        toStackFromRight= RedBackDropPath.toStackTruss(drive, rightYellow.end());
+        toStackFromLeft = RedBackDropPath.toStackTruss(drive, leftYellow.end());
 
-                .build();
+        toBackBoard = RedBackDropPath.fromStackToBoardTruss(drive, toStackFromMid.end());
 
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(backAway.end())
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(48, 58, Math.toRadians(180)), Math.toRadians(0))
-
-                .build();
+        park = RedBackDropPath.park(drive, toBackBoard.end());
+        
 
 
 
@@ -94,13 +91,13 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
 
         waitForStart();
 
-        currentState = BackDropOpMode.State.PURPLE_DEPOSIT_PATH;
+        currentState = State.PURPLE_DEPOSIT_PATH;
         drive.dropIntake();
 
         retrievePropPos();
 
         propPos= PropFindRightProcessor.pos.LEFT;
-
+        TrajectorySequence nextPath= null;
 
 //TO DO: go park
 
@@ -108,7 +105,7 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
             drive.update();
             drive.backSlidesMove(outtakeTarget);
 
-            switch (currentState){
+            switch (currentState) {
                 case PURPLE_DEPOSIT_PATH:
                     purpleDepositPathState();
                     break;
@@ -116,8 +113,28 @@ public class RedBackDrop_2_0 extends BackDropOpMode {
                     purpleDepositState();
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK, park);
+                    if (cycleCount == 0){
+                        switch (propPos) {
+                            case RIGHT:
+                                nextPath = toStackFromRight;
+                                break;
+                            case LEFT:
+                                nextPath = toStackFromLeft;
+                                break;
+                            case MID:
+                                drive.followTrajectorySequenceAsync(toStackFromMid);
+                                break;
+                        }
+                        backdropDepositPath(State.TO_STACK, nextPath);
+
+                    } else {
+                        backdropDepositPath(State.PARK , park);
+                    }
+
                     break;
+                case TO_STACK:
+                    toStack();
+
                 case PARK:
                     park();
                     break;

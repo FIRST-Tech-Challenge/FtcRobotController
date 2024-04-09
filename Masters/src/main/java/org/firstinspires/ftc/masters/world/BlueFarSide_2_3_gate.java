@@ -10,8 +10,8 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 
 @Config
-@Autonomous(name = "Far Side blue 2 + 1", group = "competition")
-public class BlueFarSide_2_1 extends FarSideOpMode {
+@Autonomous(name = "Far Side blue 2 + 3 Gate", group = "competition")
+public class BlueFarSide_2_3_gate extends FarSideOpMode {
 
 
     Vector2d yellowLeftPos = new Vector2d();
@@ -55,6 +55,12 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
         stackToMidYellow = BlueFarSidePath.getStackToMidYellow(drive, midPurpleToStack.end());
 
         stackToLeftYellow = BlueFarSidePath.getStackToLeftYellow(drive, leftPurpleToStack.end());
+
+        toStackCycleGateLeft = BlueFarSidePath.toStackFromBackboardGate(drive, stackToLeftYellow.end() );
+        toStackCycleGateMid = BlueFarSidePath.toStackFromBackboardGate(drive, stackToMidYellow.end());
+        toStackCycleGateRight = BlueFarSidePath.toStackFromBackboardGate(drive, stackToRightYellow.end());
+
+        toBackboardCycleGate = BlueFarSidePath.toBackboardGate(drive, toStackCycleGateLeft.end());
 
 
 
@@ -119,7 +125,7 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
                     purpleDeposit();
                     break;
                 case TO_STACK:
-
+                    if (cycleCount ==0) {
                         switch (propPos) {
                             case LEFT:
                                 nextPath = stackToLeftYellow;
@@ -131,11 +137,28 @@ public class BlueFarSide_2_1 extends FarSideOpMode {
                                 nextPath = stackToMidYellow;
                                 break;
                         }
+                    } else {
+                        nextPath= toBackboardCycleGate;
+                    }
 
                     toStack(nextPath);
                     break;
                 case BACKDROP_DEPOSIT_PATH:
-                    backdropDepositPath(State.PARK, park);
+                    if (cycleCount==0) {
+                        switch (propPos) {
+                            case LEFT:
+                                nextPath = toStackCycleGateLeft;
+                                break;
+                            case RIGHT:
+                                nextPath = toStackCycleGateRight;
+                                break;
+                            case MID:
+                                nextPath = toStackCycleGateMid;
+                                break;
+                        }
+                    } else {
+                        backdropDepositPath(State.PARK, park);
+                    }
                     break;
                 case PARK:
                     park();

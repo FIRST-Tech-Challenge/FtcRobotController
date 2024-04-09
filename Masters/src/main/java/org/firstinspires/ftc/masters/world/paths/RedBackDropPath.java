@@ -58,4 +58,34 @@ public class RedBackDropPath {
                 .build();
     }
 
+    public static TrajectorySequence toStackTruss(SampleMecanumDrive drive, Pose2d startPose) {
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(10, -58, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-30, -58, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-58, -35.2, Math.toRadians(180)), Math.toRadians(-140-180))
+                .build();
+
+    }
+
+    public static TrajectorySequence fromStackToBoardTruss(SampleMecanumDrive drive, Pose2d startPose) {
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(40))
+                .splineToLinearHeading(new Pose2d(-30, -58, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(20, -58, Math.toRadians(180)), Math.toRadians(0))
+
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(48, -38, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+    }
+
+    public static TrajectorySequence park(SampleMecanumDrive drive, Pose2d startPose){
+        return drive.trajectorySequenceBuilder(startPose)
+                .setTangent(Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(44, -60, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+
+    }
+
+
 }

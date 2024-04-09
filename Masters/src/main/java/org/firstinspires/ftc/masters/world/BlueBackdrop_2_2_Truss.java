@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
-import org.firstinspires.ftc.masters.world.paths.BlueFarSidePath;
 
 @Config
-@Autonomous(name = "Blue backdrop 2 + 2", group = "competition")
+@Autonomous(name = "Blue backdrop 2 + 2 Truss", group = "competition")
 public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
 
 
@@ -115,7 +114,7 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
         retrievePropPos();
 
         propPos= PropFindRightProcessor.pos.LEFT;
-
+        TrajectorySequence nextPath=null;
 
 //TO DO: go park
 
@@ -130,14 +129,28 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
                 case PURPLE_DEPOSIT:
                     purpleDepositState();
                     break;
-                case YELLOW_DEPOSIT_PATH:
-                    yellowDepositPathState(State.TO_STACK);
+                case BACKDROP_DEPOSIT_PATH:
+                    if (cycleCount == 0){
+                        switch (propPos) {
+                            case RIGHT:
+                                nextPath = toStackFromRight;
+                                break;
+                            case LEFT:
+                                nextPath = toStackFromLeft;
+                                break;
+                            case MID:
+                                drive.followTrajectorySequenceAsync(toStackFromMid);
+                                break;
+                        }
+                        backdropDepositPath(State.TO_STACK, nextPath);
+
+                    } else {
+                        backdropDepositPath(State.PARK , park);
+                    }
+
                     break;
                 case TO_STACK:
                     toStack();
-                    break;
-                case TO_BACKBOARD:
-                    toBackboard(State.PARK);
                 case PARK:
                     park();
                     break;
