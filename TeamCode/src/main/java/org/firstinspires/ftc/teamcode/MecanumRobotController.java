@@ -23,7 +23,7 @@ public class MecanumRobotController {
     public static final double COUNTS_PER_INCH = 30.59;
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final double HEADING_CORRECTION_POWER = 0.02;
-    public static final double MAX_CORRECTION_ERROR = 1.0;
+    public static final double MAX_CORRECTION_ERROR = 2.0;
 
     private final DcMotor backLeft;
     private final DcMotor backRight;
@@ -136,11 +136,14 @@ public class MecanumRobotController {
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        double correctionPower = HEADING_CORRECTION_POWER;
+        if (Math.abs(direction - currentHeading) < 90) correctionPower *= -1;
+
         // Concerned about what happens if this is still going when OpMode deactivates.
         // Needs troubleshooting probably. Don't know if I can call isOpModeActive() either so idk
         // how that works.
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) && robot.opModeIsActive()) {
-            move(speed, 0.0, 0.0, HEADING_CORRECTION_POWER);
+            move(speed, 0.0, 0.0, correctionPower);
             sendTelemetry(robot.telemetry);
             robot.telemetry.addData("BackLeftTarget", "BackLeftTarget: " + backLeftTarget);
             robot.telemetry.addData("BackRightTarget", "BackRightTarget: " + backRightTarget);
@@ -204,7 +207,7 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot should turn.
     public void turnTo(double angle, double speed) {
         wantedHeading = angle;
-        while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR)
+        while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR && robot.opModeIsActive())
             move(0, 0, 0, speed);
         // Stop the robot
         move(0, 0, 0, 0);
