@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
+// TODO: For everything, test!!
 public class MecanumRobotController {
     // Need to find this.
     public static final double COUNTS_PER_INCH = 30.59;
@@ -22,11 +23,11 @@ public class MecanumRobotController {
     public static final double HEADING_CORRECTION_POWER = 0.02;
     public static final double MAX_CORRECTION_ERROR = 0.5;
 
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private IMU gyro;
+    private final DcMotor backLeft;
+    private final DcMotor backRight;
+    private final DcMotor frontLeft;
+    private final DcMotor frontRight;
+    private final IMU gyro;
     private double wantedHeading;
 
     // Create the controller with all the motors needed to control the robot. If another motor,
@@ -82,18 +83,15 @@ public class MecanumRobotController {
     //                                no matter what direction the robot is facing.
     public void distanceDrive(double distance, double direction, double speed, boolean isFieldCentric) {
         double currentHeading = getAngleImuDegrees();
-
         // This still needs testing.
         double forward;
         double strafe;
         if (isFieldCentric) {
-            forward = ((Math.cos(direction) * Math.cos(currentHeading * (Math.PI / 180))) +
-                    (Math.sin(direction) * Math.sin(currentHeading * (Math.PI / 180))));
-            strafe = ((Math.cos(direction) * Math.sin(currentHeading * (Math.PI / 180))) -
-                    (Math.sin(direction) * Math.cos(currentHeading * (Math.PI / 180))));
+            forward = Math.cos((direction - currentHeading) * (Math.PI / 180));
+            strafe = Math.sin((direction - currentHeading) * (Math.PI / 180));
         } else {
-            forward = Math.cos(direction);
-            strafe = Math.sin(direction);
+            forward = Math.cos(direction * (Math.PI / 180));
+            strafe = Math.sin(direction * (Math.PI / 180));
         }
 
         int forwardCounts = (int)(forward * distance * COUNTS_PER_INCH);
@@ -114,6 +112,7 @@ public class MecanumRobotController {
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        // Concerned about what happens if this is still going when OpMode deactivates.
         // Needs troubleshooting probably. Don't know if I can call isOpModeActive() either so idk
         // how that works.
         while (backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy()) {
@@ -169,7 +168,6 @@ public class MecanumRobotController {
         continuousDrive(forwardPower, strafePower, turn, DEFAULT_FIELD_CENTRIC);
     }
 
-    // TODO: make
     // Behavior: Turns the robot to a given angle
     //      - double degrees: The angle to turn the robot to in degrees.
     //      - double speed: The speed at which the robot should turn.
