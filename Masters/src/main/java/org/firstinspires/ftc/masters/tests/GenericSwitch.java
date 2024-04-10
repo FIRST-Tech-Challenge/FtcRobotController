@@ -26,7 +26,7 @@ public class GenericSwitch extends LinearOpMode {
          */
 
         DigitalChannel genericSwitch;
-        genericSwitch = hardwareMap.digitalChannel.get("switch");
+        genericSwitch = hardwareMap.digitalChannel.get("breakBeam1");
         genericSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // wait for the start button to be pressed.

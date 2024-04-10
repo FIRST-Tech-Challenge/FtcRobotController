@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
-@TeleOp(name = "Sensor: Generic Switch", group = "Sensor")
+@TeleOp(name = "test break beam intake", group = "Sensor")
 //@Disabled
 public class TestIntakeBreakBeam extends LinearOpMode {
 
@@ -49,7 +49,7 @@ public class TestIntakeBreakBeam extends LinearOpMode {
     }
 
     protected boolean has2Pixels(){
-        return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
+        return !drive.frontBreakBeam.getState() && !drive.backBreakBeam.getState();
     }
 }
 

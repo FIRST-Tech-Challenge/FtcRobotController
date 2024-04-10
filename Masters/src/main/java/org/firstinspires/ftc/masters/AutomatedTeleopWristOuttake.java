@@ -575,6 +575,7 @@ public class AutomatedTeleopWristOuttake extends LinearOpMode {
                                 outtakeServo2.setPosition(servo2Up);
                             } else {
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
                             }

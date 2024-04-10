@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
+import org.firstinspires.ftc.masters.apriltesting.SkystoneDatabase;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -47,7 +48,7 @@ public class testAlignTag extends LinearOpMode {
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
+//                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
 
@@ -97,6 +98,7 @@ public class testAlignTag extends LinearOpMode {
 
         while (opModeIsActive()) {
             currentDetections = aprilTag.getDetections();
+            telemetry.addData("current size", currentDetections.size());
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
                     telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));

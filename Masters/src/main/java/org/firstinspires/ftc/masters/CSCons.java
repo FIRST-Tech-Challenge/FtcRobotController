@@ -42,7 +42,8 @@ public class CSCons {
     public static double wristOuttakeMovementGround = 1;
 
     public static double wristOuttakePickup=0.42;
-    public static double wristOuttakeMovementBackdrop =0.84;
+    public static double wristOuttakeAnglePickup=0.95;
+    public static double wristOuttakeMovementBackdrop =0.81;
     //public static double[] rightSideBack = {0.955, 0.65};
     public static double openHook = 0.6;
     public static double closeHook = 1;
@@ -99,8 +100,10 @@ public class CSCons {
     public static double tag7Y = -41.5;
     public static double tag8Y = -36;
 
-    public static double cameraOffsetX= 3;
-    public static double cameraOffsetY = 10;
+    public static double cameraOffsetY= 0;
+    public static double cameraOffsetX = -9;
+    public static double cameraFrontOffsetY= -6;
+    public static double cameraFrontOffsetX=9;
 
 
     public static double intakeGround = 0.38; //for autonomous, purple pixel

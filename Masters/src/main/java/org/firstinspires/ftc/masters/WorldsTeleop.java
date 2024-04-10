@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -63,6 +64,8 @@ public class WorldsTeleop extends LinearOpMode {
     private Servo wristServo;
     private Servo outtakeServo1, outtakeServo2;
     private OuttakeWrist outtakeWristPosition;
+
+    DigitalChannel frontBreakBeam, backBreakBeam;
 
     int numberOfPixelsInRamp= 0;
 
@@ -157,6 +160,11 @@ public class WorldsTeleop extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
 
+        frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
+        frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+        backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
+        backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
+
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -218,13 +226,14 @@ public class WorldsTeleop extends LinearOpMode {
         boolean intakeStackButtonPushed= false;
         boolean slideNeedstoGoDown = false;
         ElapsedTime slidesElapsedTime;
+        ElapsedTime buttonPushedTime=new ElapsedTime();
 
         waitForStart();
 
         runtime.reset();
         ElapsedTime elapsedTime;
         ElapsedTime colorSensorElapsedTime = null;
-        ElapsedTime stackElapsedTime = new ElapsedTime();
+//        ElapsedTime stackElapsedTime = new ElapsedTime();
         ElapsedTime closeClawElapsedTime = null;
 
         double[] clawStack = {CSCons.clawArmGround, CSCons.clawArm2, CSCons.clawArm3, CSCons.clawArm4, CSCons.clawArm5};
@@ -390,6 +399,7 @@ public class WorldsTeleop extends LinearOpMode {
 
                             if (gamepad2.left_stick_y>0.5 && Math.abs(gamepad2.left_stick_x)<0.5 ) { // if press x and hook is closed, open hook
                                 outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+                                outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
                                 pickupElapsedTime = new ElapsedTime();
 
                             }
@@ -420,26 +430,30 @@ public class WorldsTeleop extends LinearOpMode {
                             outtakeState = OuttakeState.ClosingHook;
                         }
 
-                            if (gamepad2.dpad_left && !wristButtonPressed) {
+                            if (gamepad2.dpad_left && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
                                 if (outtakeWristPosition == OuttakeWrist.angleRight) {
                                     outtakeWristPosition = OuttakeWrist.flatRight;
                                 } else {
                                     outtakeWristPosition = OuttakeWrist.angleLeft;
                                 }
                                 wristButtonPressed = true;
-                            } else if (gamepad2.dpad_up && !wristButtonPressed) {
+                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_up && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
                                 outtakeWristPosition = OuttakeWrist.vertical;
                                 wristButtonPressed = true;
-                            } else if (gamepad2.dpad_right && !wristButtonPressed) {
+                                buttonPushedTime= new ElapsedTime();
+                            } else if (gamepad2.dpad_right && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
                                 if (outtakeWristPosition == OuttakeWrist.angleLeft) {
                                     outtakeWristPosition = OuttakeWrist.flatLeft;
                                 } else {
                                     outtakeWristPosition = OuttakeWrist.angleRight;
                                 }
                                 wristButtonPressed = true;
-                            } else if (gamepad2.dpad_down && !wristButtonPressed) {
+                                buttonPushedTime = new ElapsedTime();
+                            } else if (gamepad2.dpad_down && !wristButtonPressed && buttonPushedTime.milliseconds()>100) {
                                 outtakeWristPosition = OuttakeWrist.verticalDown;
                                 wristButtonPressed = true;
+                                buttonPushedTime = new ElapsedTime();
                             } else {
                                 wristButtonPressed = false;
                             }

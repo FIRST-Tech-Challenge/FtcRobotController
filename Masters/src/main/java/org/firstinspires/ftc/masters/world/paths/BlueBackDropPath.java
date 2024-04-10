@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.masters.world.paths;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -61,9 +62,9 @@ public class BlueBackDropPath {
     public static TrajectorySequence toStackTruss(SampleMecanumDrive drive, Pose2d startPose) {
         return drive.trajectorySequenceBuilder(startPose)
                 .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(10, 60, Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-35, 60, Math.toRadians(180)), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-57, 35.2, Math.toRadians(180)), Math.toRadians(-140))
+                .splineToLinearHeading(new Pose2d(10, 62, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-35, 62, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-45, 30, Math.toRadians(180)), Math.toRadians(-140))
                 .build();
 
     }
@@ -85,6 +86,13 @@ public class BlueBackDropPath {
                 .splineToLinearHeading(new Pose2d(44, 60, Math.toRadians(180)), Math.toRadians(0))
                 .build();
 
+    }
+
+    public static TrajectorySequence toStackWing(SampleMecanumDrive drive, Pose2d startPose) {
+
+        return drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading( new Pose2d(-58, 36, Math.toRadians(180)))
+                .build();
     }
 
 }

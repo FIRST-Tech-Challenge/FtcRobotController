@@ -221,9 +221,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeHeight = hardwareMap.servo.get("intakeServo");
 
-        frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
+        frontBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
         frontBreakBeam.setMode(DigitalChannel.Mode.INPUT);
-        backBreakBeam = hardwareMap.digitalChannel.get("breakBeam2");
+        backBreakBeam = hardwareMap.digitalChannel.get("breakBeam1");
         backBreakBeam.setMode(DigitalChannel.Mode.INPUT);
 
         controller = new PIDController(p, i, d);
@@ -283,7 +283,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
+//                .setTagLibrary((SkystoneDatabase.SkystoneDatabase()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
     }
@@ -318,6 +318,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                     .addProcessors(propFindProcessor, aprilTag)
                     .build();
         }
+
+
     }
 
     public VisionPortal getMyVisionPortal() {
@@ -333,6 +335,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void activateFrontCamera (){
+
+        myVisionPortal.getCameraState();
         myVisionPortal.setActiveCamera(frontWebcam);
     }
 
@@ -442,6 +446,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void outtakeToPickup(){
         outtakeMovement.setPosition(CSCons.wristOuttakePickup);
+        outtakeRotation.setPosition(CSCons.wristOuttakeAnglePickup);
     }
 
     public void dropPixel() {
@@ -483,19 +488,26 @@ public class SampleMecanumDrive extends MecanumDrive {
                 double yOffset =  Math.abs(detection.ftcPose.range * Math.cos(Math.toRadians(theta)));
 
                 if (detection.ftcPose.x<0){
+
                     yOffset= -yOffset;
                 }
+
                 if (telemetry!=null) {
                     telemetry.addData("Xoffset", xOffset);
                     telemetry.addData("Yoffset", yOffset);
                 }
                 Pose2d cameraPosition = null;
 
+                double cameraXOffset = CSCons.cameraOffsetX;
+                double cameraYOffset = CSCons.cameraOffsetY;
+
                 switch(detection.id){
                     case 1:
+
                         cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag1Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
                     break;
                     case 2:
+
                         cameraPosition = new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag2Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
                         break;
                     case 3:
@@ -512,28 +524,48 @@ public class SampleMecanumDrive extends MecanumDrive {
                         cameraPosition =  new Pose2d(CSCons.tagBackboardX - xOffset, CSCons.tag6Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
                         break;
                     case 7:
-                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag7Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag7Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        cameraXOffset= CSCons.cameraFrontOffsetX;
+                        cameraYOffset= CSCons.cameraFrontOffsetY;
                         break;
                     case 8:
-                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag8Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                        break;
+                        continue;
+                        //cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag8Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                       // break;
                     case 9:
-                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag9Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
-                        break;
+                        continue;
+                        //cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag9Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                       // break;
                     case 10:
-                        cameraPosition =  new Pose2d(CSCons.tagAudienceX - xOffset, CSCons.tag10Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
+                        cameraXOffset= CSCons.cameraFrontOffsetX;
+                        cameraYOffset= CSCons.cameraFrontOffsetY;
+                        cameraPosition =  new Pose2d(CSCons.tagAudienceX + xOffset, CSCons.tag10Y + yOffset, Math.toRadians(detection.ftcPose.yaw));
                         break;
 
                 }
 
 
                 Pose2d robotPosition;
-                double xOffsetRobot = CSCons.cameraOffsetX*Math.cos(Math.toRadians (180+detection.ftcPose.yaw));
-                double yOffsetRobot = CSCons.cameraOffsetX*Math.sin(Math.toRadians (180+detection.ftcPose.yaw));
+                double xOffsetRobot=0;
+                double yOffsetRobot=0;
+
+                if (detection.id==10 || detection.id==7) {
+                    xOffsetRobot = Math.abs(cameraXOffset * Math.cos(Math.toRadians(detection.ftcPose.yaw)));
+                    yOffsetRobot = cameraYOffset * Math.sin(Math.toRadians(90 + detection.ftcPose.yaw));
+                } else {
+
+                    xOffsetRobot = - Math.abs(CSCons.cameraOffsetX * Math.cos(Math.toRadians(180 + detection.ftcPose.yaw)));
+                    yOffsetRobot = CSCons.cameraOffsetX * Math.sin(Math.toRadians(180 + detection.ftcPose.yaw));
+                }
+
+
 
                 if (telemetry!=null){
                     telemetry.addData("robot x offset", xOffsetRobot);
                     telemetry.addData("robot y offset", yOffsetRobot);
+                    telemetry.addData("camera x", cameraPosition.getX());
+                    telemetry.addData("camera y", cameraPosition.getY());
+                    telemetry.addData("tag id", detection.id);
                 }
                 if (cameraPosition!=null) {
 

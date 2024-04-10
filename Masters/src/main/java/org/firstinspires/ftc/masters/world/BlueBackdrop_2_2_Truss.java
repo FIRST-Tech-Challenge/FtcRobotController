@@ -151,6 +151,10 @@ public class BlueBackdrop_2_2_Truss extends BackDropOpMode {
                     break;
                 case TO_STACK:
                     toStack();
+                    break;
+                case TO_STACK_TAG:
+                    toStackTag();
+                    break;
                 case PARK:
                     park();
                     break;

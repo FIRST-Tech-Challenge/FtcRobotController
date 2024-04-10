@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters.world;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.masters.CSCons;
 import org.firstinspires.ftc.masters.PropFindRightProcessor;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.firstinspires.ftc.masters.world.paths.BlueBackDropPath;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -33,6 +36,7 @@ public abstract class BackDropOpMode extends LinearOpMode {
         PURPLE_DEPOSIT,
 
         TO_STACK,
+        TO_STACK_TAG,
         TO_BACKBOARD,
 
         BACKDROP_DEPOSIT_PATH,
@@ -64,6 +68,8 @@ public abstract class BackDropOpMode extends LinearOpMode {
     protected State currentState;
     protected int outtakeTarget = 0;
 
+    protected boolean switched= false;
+
     protected void initAuto(){
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -72,9 +78,22 @@ public abstract class BackDropOpMode extends LinearOpMode {
         drive.initializeAprilTagProcessing();
         initializeProp();
         drive.initializeVisionPortal();
-        drive.activateFrontCamera();
-        drive.enablePropProcessor();
 
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        VisionPortal visionPortal = drive.getMyVisionPortal();
+        while(time<2000 && opModeIsActive()){
+//        while(visionPortal.getCameraState()!= VisionPortal.CameraState.CAMERA_DEVICE_READY
+//                 && opModeIsActive()){
+            time = new Date().getTime() - startTime;
+            telemetry.addData("camera state", visionPortal.getCameraState());
+            telemetry.update();
+        }
+
+
+//        drive.activateFrontCamera();
+        drive.enablePropProcessor();
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -101,8 +120,9 @@ public abstract class BackDropOpMode extends LinearOpMode {
             propPos = drive.getPropFindProcessor().position;
             telemetry.addData("Position", propPos);
         }
-        drive.activateBackCamera();
+
         drive.enableAprilTag();
+
     }
 
     protected void purpleDepositPathState(){
@@ -120,6 +140,11 @@ public abstract class BackDropOpMode extends LinearOpMode {
     }
 
     protected void purpleDepositState(){
+//        if (!switched) {
+//            drive.activateBackCamera();
+//            switched=true;
+//        }
+
         if (!drive.isBusy()){
             if (purpleDepositTime ==null){
                 drive.raiseIntake();
@@ -180,13 +205,12 @@ public abstract class BackDropOpMode extends LinearOpMode {
             if (depositTime==null){
                 depositTime= new ElapsedTime();
             } else if (depositTime.milliseconds()>100){
-
+                dropTime = new ElapsedTime();
                 if (nextState == State.PARK){
                     drive.followTrajectorySequenceAsync(park);
                 } else if (nextState == State.TO_STACK){
                     drive.intakeOverStack();
-                    outtakeTarget=0;
-                    drive.outtakeToTransfer();
+
                     drive.followTrajectorySequenceAsync(nextPath);
                 }
                 cycleCount++;
@@ -196,9 +220,12 @@ public abstract class BackDropOpMode extends LinearOpMode {
     }
 
     protected void toStack(){
-        if (drive.getPoseEstimate().getX()<-30){
-            drive.startIntake();
+
+        if (dropTime!=null && dropTime.milliseconds()>300){
+            outtakeTarget=0;
+            drive.outtakeToTransfer();
         }
+
         if (!drive.isBusy()){
             List<AprilTagDetection> currentDetections = drive.getAprilTag().getDetections();
             for (AprilTagDetection detection : currentDetections) {
@@ -213,14 +240,41 @@ public abstract class BackDropOpMode extends LinearOpMode {
                 }
             }   // end for() loop
             telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
-            drive.aprilTagCoarsePosEstimate(currentDetections);
+             Pose2d robotPosition =drive.aprilTagCoarsePosEstimate(currentDetections);
+             while (robotPosition.epsilonEquals(drive.getPoseEstimate())){
+                 currentDetections = drive.getAprilTag().getDetections();
+                 for (AprilTagDetection detection : currentDetections) {
+                     if (detection.metadata != null) {
+                         telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                         telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                         telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                         telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                     } else {
+                         telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                         telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                     }
+                 }   // end for() loop
+                 telemetry.addData("April Tag Pos Es", drive.aprilTagCoarsePosEstimate(currentDetections));
+                 robotPosition =drive.aprilTagCoarsePosEstimate(currentDetections);
+             }
+            currentState= State.TO_STACK_TAG;
+            drive.setPoseEstimate(robotPosition);
+            drive.followTrajectorySequenceAsync(BlueBackDropPath.toStackWing(drive, robotPosition));
 
 
-//            if(pickupElapsedTime==null) {
-//                drive.intakeToTopStack();
-//                pickupElapsedTime = new ElapsedTime();
-//            }
-//            if (has2Pixels() ){
+
+        }
+    }
+
+    protected void toStackTag(){
+
+        if (!drive.isBusy()){
+            if(pickupElapsedTime==null) {
+                drive.intakeToTopStack();
+                pickupElapsedTime = new ElapsedTime();
+                drive.getMyVisionPortal().getActiveCamera().close();
+            }
+            //            if (has2Pixels() ){
 //                pickupElapsedTime = new ElapsedTime();
 //            }
 //
@@ -236,17 +290,16 @@ public abstract class BackDropOpMode extends LinearOpMode {
         }
     }
 
-
-
     protected  void park(){
         if (!drive.isBusy()){
             outtakeTarget = 0;
             drive.outtakeToTransfer();
         }
+
     }
 
     protected boolean has2Pixels(){
-        return drive.frontBreakBeam.getState() && drive.backBreakBeam.getState();
+        return !drive.frontBreakBeam.getState() && !drive.backBreakBeam.getState();
     }
 
 
